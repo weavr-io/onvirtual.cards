@@ -1,0 +1,45 @@
+.form-control,
+.custom-select {
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
+}
+
+.is-invalid {
+  .form-control, .custom-select {
+    border-color: $danger;
+  }
+}
+
+.input-group {
+  .input-group-text {
+    border: none;
+    border-bottom: 2px solid $primary;
+    background: transparent;
+    color: $text-muted;
+  }
+}
+
+.weavr-input {
+  border-bottom: 2px solid $primary;
+}
+
+.weavr-account-radio {
+  .custom-radio {
+    padding: ($spacer*2) 0;
+    border-bottom: 1px solid $border-color;
+
+    label {
+      width: 100%;
+
+      span {
+        width: 100%;
+        display: block;
+
+        .account-balance {
+          text-align: right;
+        }
+      }
+    }
+  }
+}

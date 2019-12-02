@@ -1,0 +1,55 @@
+$primary: #7F28D9;
+$secondary: #6D7490;
+$text-muted: #B6B9C7;
+$card: #F6F7FC;
+$body-color:#232A47;
+
+$card-purple: #C3B5FF;
+$card-red: #FFAA8B;
+$card-yellow: #FFDF8B;
+$card-disabled: #fafafa;
+
+$shadow-color: #5768FF4D;
+
+$theme-colors: ("card": $card, "card-purple": $card-purple, "card-red": $card-red, "card-yellow": $card-yellow, "card-disabled": $card-disabled);
+
+
+
+$btn-padding-y-sm: .5rem;
+$btn-padding-x-sm: 1rem;
+
+$btn-padding-y: 0.7rem;
+$btn-padding-x: 1.9rem;
+
+$btn-padding-y-lg: 1rem !default;
+$btn-padding-x-lg: 1.9rem !default;
+
+
+$btn-border-radius: 100px;
+
+
+$font-family-sans-serif: 'Be Vietnam',
+sans-serif;
+
+
+$btn-box-shadow: 0px 7px 14px $shadow-color;
+
+
+$input-border-color: transparent;
+$input-focus-box-shadow: none;
+$input-border-color: $primary;
+$input-border-radius: 0;
+$input-border-width: 2px;
+
+$custom-select-border-color: transparent;
+$custom-select-focus-box-shadow: none;
+$custom-select-border-color: $primary;
+$custom-select-border-radius: 0;
+$custom-select-border-width: 2px;
+
+$link-color: $secondary;
+
+
+$box-shadow-sm: 0 .125rem .25rem $shadow-color;
+$box-shadow: 0 .5rem 1rem $shadow-color;
+$box-shadow-lg: 0 1rem 3rem $shadow-color;

@@ -1,0 +1,39 @@
+.cards-card {
+  border-radius: 20px;
+
+  .card-body {
+    padding: 0;
+
+    a {
+      padding: 27px 33px;
+      display: block;
+      text-decoration: none;
+      color: $body-color;
+    }
+  }
+
+  .card {
+    &-name {
+      margin: 30px 0;
+      font-size: 1.5rem;
+      font-weight: 300;
+    }
+
+    &-balance {
+      font-size: 1.3rem;
+    }
+
+    &-cvv,
+    &-expiry {
+      &-label {
+        font-size: 0.7rem;
+        color: $secondary;
+      }
+
+      &-value {
+        font-size: 0.9rem;
+      }
+    }
+
+  }
+}

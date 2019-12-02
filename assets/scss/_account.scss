@@ -1,0 +1,30 @@
+.account-card {
+  .card-body {
+    padding: 0;
+
+    a {
+      padding: 27px 33px;
+      display: block;
+      text-decoration: none;
+      color: $body-color;
+    }
+  }
+
+  border-radius: 20px;
+
+  .account {
+    &-bottom-row {
+      margin-top: 80px;
+      font-size: 1.3rem;
+    }
+
+    &-currency {
+      font-weight: 100;
+    }
+
+    &-friendly-name {
+      font-weight: 300;
+      margin: 0;
+    }
+  }
+}

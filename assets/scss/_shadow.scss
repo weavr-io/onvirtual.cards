@@ -1,0 +1,23 @@
+.shadow-hover {
+  transition: $transition-base;
+
+  &:hover {
+    box-shadow: $box-shadow;
+  }
+
+  &-sm {
+    transition: $transition-base;
+
+    &:hover {
+      box-shadow: $box-shadow-sm;
+    }
+  }
+
+  &-lg {
+    transition: $transition-base;
+
+    &:hover {
+      box-shadow: $box-shadow-lg;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+.dashboard-header {
+  .nav-item {
+    padding: 0;
+
+    .nav-link {
+      padding: 1rem 0rem;
+      margin: 0rem 1rem;
+
+
+      &.active {
+        border-bottom: 2px solid $primary;
+      }
+    }
+  }
+}
