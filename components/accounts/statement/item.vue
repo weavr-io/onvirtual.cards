@@ -42,7 +42,7 @@
         <!-- <div class="transaction-from text-muted">From:</div> -->
       </b-col>
       <b-col class="text-right">
-        {{ transaction.balanceAfter | weavr_currency(transaction.currency) }}
+        {{ transaction.adjustment | weavr_currency(transaction.currency) }}
       </b-col>
     </b-row>
   </div>
