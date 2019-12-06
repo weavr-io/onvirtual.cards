@@ -97,9 +97,8 @@ export default class AddCardPage extends VueWithRouter {
   @Auth.Getter corporateId
 
   currencyOptions = [
-    { value: null, text: 'Please select currecy' },
-    { value: 'EUR', text: 'Euro' },
-    { value: 'GBP', text: 'Great Britian Pound' }
+    { value: 'EUR', text: 'EUR' },
+    { value: 'GBP', text: 'GBP' }
   ]
 
   public request: ManagedCardsSchemas.CreateManagedCardRequest = {
