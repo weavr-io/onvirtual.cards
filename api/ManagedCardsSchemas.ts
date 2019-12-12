@@ -4,7 +4,7 @@ import { Schemas as CommonSchemas, Schemas } from '~/api/Schemas'
 
 export module ManagedCardsSchemas {
   export interface ManagedInstrumentBalances {
-    availableBalance?: number
+    availableBalance?: string
     actualBalance?: number
   }
 

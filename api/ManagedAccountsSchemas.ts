@@ -47,7 +47,7 @@ export module ManagedAccountsSchemas {
   }
 
   export interface ManagedInstrumentBalances {
-    availableBalance?: number
+    availableBalance?: string
     actualBalance?: number
   }
 
