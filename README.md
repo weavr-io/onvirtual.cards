@@ -27,7 +27,7 @@ $ npm run build
 # generate docker image
 $ docker build . -t weavr-demo-app
 # run docker container (Served with nginx port 80)
-$ docker run -p 80:80 weavr-demo-app -d
+$ docker run -p 80:80 -d weavr-demo-app
 ```
 
 # Proxy
@@ -48,5 +48,5 @@ $ envsubst < default.conf.template > default.conf
 $ docker build . -t weavr-demo-app-proxy
 # run docker container (Served with nginx port 81)
 # matches BASE_URL in app .env file 
-$ docker run -p 81:80 weavr-demo-app-proxy -d
+$ docker run -p 81:80 -d weavr-demo-app-proxy
 ```
