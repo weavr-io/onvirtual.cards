@@ -2,7 +2,7 @@ export default {
   api: {
     baseUrl: process.env.BASE_URL,
     tenantId: process.env.TENANT_ID,
-    programmeId: '' + process.env.PROGRAMME_ID,
+    programmeId: '' + process.env.APPLICATION_ID,
     secretKey: process.env.SECRET_KEY,
     sharedKey: process.env.SHARED_KEY
   },
