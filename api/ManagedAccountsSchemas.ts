@@ -35,7 +35,7 @@ export module ManagedAccountsSchemas {
     friendlyName: string
     active?: boolean
     currency: string
-    balances: InstrumentBalances
+    balances: ManagedInstrumentBalances
     state: InstrumentState
     fiProvider: string
     creationTimestamp: string
@@ -46,12 +46,9 @@ export module ManagedAccountsSchemas {
     [k: string]: number
   }
 
-  export interface InstrumentBalances {
-    availableBalance?: string
-    reservedBalance?: string
-    deltaBalance?: string
-    pendingBalance?: string
-    limitBalance?: string
+  export interface ManagedInstrumentBalances {
+    availableBalance?: number
+    actualBalance?: number
   }
 
   export enum ManagedAccountAction {

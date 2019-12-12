@@ -3,6 +3,11 @@ import { CardBrand, CardType } from '~/api/Constants/Card'
 import { Schemas as CommonSchemas, Schemas } from '~/api/Schemas'
 
 export module ManagedCardsSchemas {
+  export interface ManagedInstrumentBalances {
+    availableBalance?: number
+    actualBalance?: number
+  }
+
   export interface ManagedCard {
     id: {
       type: string
@@ -17,13 +22,7 @@ export module ManagedCardsSchemas {
     friendlyName: string
     active: boolean
     currency: Currencies
-    balances: {
-      availableBalance: string
-      reservedBalance: string
-      deltaBalance: string
-      pendingBalance: string
-      limitBalance: string
-    }
+    balances: ManagedInstrumentBalances
     state: {
       blockTypes: object
       destroyType: string
