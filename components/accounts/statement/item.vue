@@ -23,7 +23,7 @@
       <b-col>
         <div class="transaction-type">
           <div class="transaction text-capitalize">
-            <template v-if="transaction.txId.type === 'transfers'">
+            <template v-if="transaction.txId.type === 'TRANSFER'">
               <template v-if="isIncrease">
                 Account Load
               </template>
@@ -31,7 +31,7 @@
                 Account Unload
               </template>
             </template>
-            <template v-else-if="transaction.txId.type === 'settlements'">
+            <template v-else-if="transaction.txId.type === 'SETTLEMENT'">
               Deposit
             </template>
             <template v-else>
