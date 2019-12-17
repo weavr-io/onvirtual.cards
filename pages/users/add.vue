@@ -11,25 +11,21 @@
           <b-form @submit="doAdd">
             <b-form-row>
               <b-col>
-                <b-form-group label="Type:">
-                  <b-form-input v-model="request.request.type" />
-                </b-form-group>
-              </b-col>
-            </b-form-row>
-            <b-form-row>
-              <b-col>
                 <b-form-group label="Username:">
                   <b-form-input v-model="request.request.username" />
                 </b-form-group>
               </b-col>
             </b-form-row>
-            <!-- <b-form-row>
+            <b-form-row>
               <b-col>
                 <b-form-group label="Title:">
-                  <b-form-input v-model="request.request.title" />
+                  <b-form-select
+                    v-model="request.request.title"
+                    :options="titleOptions"
+                  />
                 </b-form-group>
               </b-col>
-            </b-form-row> -->
+            </b-form-row>
             <b-form-row>
               <b-col>
                 <b-form-group label="Name:">
@@ -72,11 +68,6 @@
                 </b-form-group>
               </b-col>
             </b-form-row>
-            <b-form-row>
-              <b-col>
-                <b-form-checkbox v-model="request.request.active">Active</b-form-checkbox>
-              </b-col>
-            </b-form-row>
             <loader-button
               :is-loading="isLoading"
               button-text="send invite"
@@ -111,6 +102,12 @@ export default class AddCardPage extends VueWithRouter {
   @Corporates.Getter isLoading
 
   @Auth.Getter corporateId
+
+  titleOptions = [
+    { value: 'MR', text: 'Mr.' },
+    { value: 'MRS', text: 'Mrs.' },
+    { value: 'MS', text: 'Ms.' }
+  ]
 
   public request: CorporatesSchemas.CreateCorporateUserFullRequest = {
     corporateId: 0,

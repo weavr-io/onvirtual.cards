@@ -3,14 +3,16 @@
     <b-container class="mb-5">
       <b-row>
         <b-col class="text-right">
-          <b-button to="/managed-accounts/add" variant="border-primary">+ add new account</b-button>
+          <b-button to="/managed-accounts/add" variant="border-primary">
+            + add new account
+          </b-button>
         </b-col>
       </b-row>
     </b-container>
     <b-container>
       <b-row>
         <b-col>
-          <b-card-group columns v-if="accounts">
+          <b-card-group v-if="accounts" columns>
             <b-card
               v-for="(account, key) in accounts.account"
               :key="key"
@@ -19,16 +21,25 @@
               bg-variant="card"
             >
               <b-card-body>
-                <b-link :to="'/managed-accounts/'+account.id.id">
-                  <b-card-title class="account-friendly-name">{{ account.friendlyName }}</b-card-title>
-                  <p class="account-currency">{{account.currency}}</p>
+                <b-link :to="'/managed-accounts/' + account.id.id">
+                  <b-card-title class="account-friendly-name">
+                    {{ account.friendlyName }}
+                  </b-card-title>
+                  <p class="account-currency">
+                    {{ account.currency }}
+                  </p>
                   <b-row class="account-bottom-row">
                     <b-col>
-                      <div
-                        class="account-available-balance"
-                      >{{account.balances.availableBalance | weavr_currency(account.currency)}}</div>
+                      <div class="account-available-balance">
+                        {{
+                          account.balances.availableBalance
+                            | weavr_currency(account.currency)
+                        }}
+                      </div>
                     </b-col>
-                    <b-col class="text-right">-></b-col>
+                    <b-col class="text-right">
+                      ->
+                    </b-col>
                   </b-row>
                 </b-link>
               </b-card-body>

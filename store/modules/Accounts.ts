@@ -87,6 +87,7 @@ export const actions: Actions<State, RootState> = {
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
     const body = {
+      active: true,
       paging: {
         count: true,
         offset: 0,

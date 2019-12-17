@@ -59,6 +59,10 @@ Vue.filter('weavr_underscore', function(value) {
   return value.split('_').join(' ')
 })
 
+Vue.filter('weavr_coma_to_newline', function(value) {
+  return value.split(',').join(',\n')
+})
+
 Vue.filter('weavr_convert_camelcase', function(value) {
   const result = value.replace(/([A-Z])/g, ' $1')
   return result.charAt(0).toUpperCase() + result.slice(1)

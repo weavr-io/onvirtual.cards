@@ -40,6 +40,14 @@ export module ManagedAccountsSchemas {
     fiProvider: string
     creationTimestamp: string
     action: ManagedAccountAction
+    bankAccountDetails?: {
+      beneficiary?: string
+      address?: string
+      beneficiaryBank?: string
+      bankIdentifierCode?: string
+      iban?: string
+      paymentReference?: string
+    }
   }
 
   export interface InstrumentState {

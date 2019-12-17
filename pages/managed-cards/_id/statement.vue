@@ -61,14 +61,14 @@
           </h6>
         </b-col>
         <b-col class="text-right">
-          <b-button
-            v-if="managedCard && managedCard.active"
-            variant="link"
-            class="px-0"
-            @click="deleteCard"
-          >
-            delete card
-          </b-button>
+<!--          <b-button-->
+<!--            v-if="managedCard && managedCard.active"-->
+<!--            variant="link"-->
+<!--            class="px-0"-->
+<!--            @click="deleteCard"-->
+<!--          >-->
+<!--            delete card-->
+<!--          </b-button>-->
         </b-col>
       </b-row>
 
