@@ -1,25 +1,22 @@
 <template>
   <section>
     <b-container>
-      <b-row>
+      <b-row class="full-height-vh py-5" align-v="center">
         <b-col id="login-box" lg="6" offset-lg="3">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" />
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay">
           </div>
           <div class="mx-md-3 px-md-5">
-            <h2 class="text-center font-weight-lighter" style="margin-bottom: 100px">Login</h2>
+            <h2 class="text-center font-weight-lighter" style="margin-bottom: 100px">
+              Login
+            </h2>
 
             <form id="contact-form" class="mt-5" @submit="login">
               <error-alert
                 message="Incorrect email and password combination.  If you do not have an account please click on Register."
               />
               <b-form-group id="ig-code" label="Username:" label-for="form-code">
-                <b-form-input
-                  id="from-code"
-                  v-model="loginRequest.code"
-                  class="form-control"
-                  name="setCode"
-                />
+                <b-form-input id="from-code" v-model="loginRequest.code" class="form-control" name="setCode" />
               </b-form-group>
               <no-ssr placeholder="Loading...">
                 <weavr-form ref="passwordForm">
@@ -47,19 +44,17 @@
                   />
                 </weavr-form>
               </no-ssr>
-              <!-- <div class="text-center mb-5 mt-3">
-                <b-button
-                  to="/register"
-                  variant="link"
-                  size="sm"
-                >Don't have an account? Register Now</b-button>
-              </div> -->
               <loader-button
                 style="margin-top: 100px"
                 :is-loading="isLoading"
                 button-text="sign in"
                 class="text-center"
               />
+              <div class="text-center mb-5 mt-3">
+                <b-button to="/password/reset" variant="link" size="sm">
+                  Forgot password?
+                </b-button>
+              </div>
             </form>
           </div>
         </b-col>
@@ -91,7 +86,7 @@ export default class LoginPage extends VueWithRouter {
 
   @Auth.Action authenticate
 
-  @Auth.Getter isLoading
+  @Auth.Getter isLoading!: boolean
 
   public loginRequest: Schemas.LoginRequest = {
     programmeId: config.api.programmeId,
@@ -127,7 +122,7 @@ export default class LoginPage extends VueWithRouter {
   }
 
   asyncData({ store, redirect }) {
-    let isLoggedIn = store.getters['auth/isLoggedIn']
+    const isLoggedIn = store.getters['auth/isLoggedIn']
 
     if (isLoggedIn) {
       redirect('/dashboard')
@@ -135,8 +130,3 @@ export default class LoginPage extends VueWithRouter {
   }
 }
 </script>
-<style lang="scss" scoped>
-section {
-  padding: 100px 0;
-}
-</style>

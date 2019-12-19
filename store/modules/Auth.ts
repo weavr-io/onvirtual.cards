@@ -62,10 +62,46 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post(
-      '/app/api/corporates/' + request.corporateId + '/users/email/verify',
-      request.request
-    )
+    const req = api.post('/app/api/corporates/' + request.corporateId + '/users/email/verify', request.request)
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
+  lostPasswordStart({ commit }, request) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/auth/lost_password/start', request)
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
+  lostPasswordValidate({ commit }, request) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/auth/lost_password/validate', request)
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
+  lostPasswordResume({ commit }, request) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/auth/lost_password/resume', request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
@@ -93,7 +129,7 @@ export const mutations: MutationTree<State> = {
     delete api.defaults.headers.Authorization
     delete api.defaults.headers['X-Tenant']
 
-    //this.$weavrSecurityAssociate(api.defaults.headers.Authorization)
+    // this.$weavrSecurityAssociate(api.defaults.headers.Authorization)
   },
   [types.SET_IS_LOADING](state, isLoading: boolean) {
     state.isLoading = isLoading

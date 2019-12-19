@@ -15,7 +15,7 @@ class WeavrInput extends Vue {
 
   @Prop() readonly value!: string
 
-  @Prop() readonly field!: string
+  @Prop() readonly field!: 'password' | 'cardNumber' | 'cvv'
 
   @Prop() readonly options!: object
 
