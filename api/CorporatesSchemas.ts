@@ -91,6 +91,6 @@ export module CorporatesSchemas {
 
   export interface CreateCorporateUserFullRequest {
     request: CreateCorporateUserRequest
-    corporateId: number
+    corporateId: string
   }
 }

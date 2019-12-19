@@ -49,6 +49,10 @@ export module _Functions {
   export interface sendVerificationCodeEmail {
     (request: _Requests.sendVerificationEmailFull)
   }
+
+  export interface addUser {
+    (request: CorporatesSchemas.CreateCorporateUserFullRequest)
+  }
 }
 
 export module _Requests {

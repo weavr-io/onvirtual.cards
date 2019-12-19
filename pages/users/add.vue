@@ -3,7 +3,9 @@
     <b-container>
       <b-row>
         <b-col>
-          <h2 class="text-center font-weight-lighter mb-5">Invite User</h2>
+          <h2 class="text-center font-weight-lighter mb-5">
+            Invite User
+          </h2>
         </b-col>
       </b-row>
       <b-row>
@@ -19,10 +21,7 @@
             <b-form-row>
               <b-col>
                 <b-form-group label="Title:">
-                  <b-form-select
-                    v-model="request.request.title"
-                    :options="titleOptions"
-                  />
+                  <b-form-select v-model="request.request.title" :options="titleOptions" />
                 </b-form-group>
               </b-col>
             </b-form-row>
@@ -68,11 +67,7 @@
                 </b-form-group>
               </b-col>
             </b-form-row>
-            <loader-button
-              :is-loading="isLoading"
-              button-text="send invite"
-              class="mt-5 text-center"
-            />
+            <loader-button :is-loading="isLoading" button-text="send invite" class="mt-5 text-center" />
           </b-form>
         </b-col>
       </b-row>
@@ -86,6 +81,7 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as AuthStore from '~/store/modules/Auth'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
+import { _Functions, _Requests } from '~/store/modules/Contracts/Corporates'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -97,20 +93,19 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class AddCardPage extends VueWithRouter {
-  @Corporates.Action addUser
+  @Corporates.Action addUser!: _Functions.addUser
+
+  @Corporates.Action
+  sendVerificationCodeEmail!: _Functions.sendVerificationCodeEmail
 
   @Corporates.Getter isLoading
 
   @Auth.Getter corporateId
 
-  titleOptions = [
-    { value: 'MR', text: 'Mr.' },
-    { value: 'MRS', text: 'Mrs.' },
-    { value: 'MS', text: 'Ms.' }
-  ]
+  titleOptions = [{ value: 'MR', text: 'Mr.' }, { value: 'MRS', text: 'Mrs.' }, { value: 'MS', text: 'Ms.' }]
 
   public request: CorporatesSchemas.CreateCorporateUserFullRequest = {
-    corporateId: 0,
+    corporateId: '0',
     request: {
       type: 'USER',
       username: '',
@@ -130,7 +125,17 @@ export default class AddCardPage extends VueWithRouter {
 
   doAdd(evt) {
     evt.preventDefault()
-    this.addUser(this.request).then(() => {
+    this.addUser(this.request).then(this.userAdded.bind(this))
+  }
+
+  userAdded() {
+    const _request: _Requests.sendVerificationEmailFull = {
+      body: {
+        emailAddress: this.request.request.email
+      },
+      corporateId: this.request.corporateId
+    }
+    this.sendVerificationCodeEmail(_request).then(() => {
       this.$router.push('/users')
     })
   }
