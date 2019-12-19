@@ -10,7 +10,14 @@
               </h2>
             </b-col>
           </b-row>
-          <b-row class="py-5">
+          <b-row class="py-4">
+            <b-col>
+              <b-alert show variant="warning">
+                Please remember to include payment reference.
+              </b-alert>
+            </b-col>
+          </b-row>
+          <b-row>
             <b-col>
               <b-table-simple>
                 <b-tbody>
@@ -32,9 +39,7 @@
                   </b-tr>
                   <b-tr>
                     <b-th>Address</b-th>
-                    <b-td style="white-space: pre">{{
-                      account.bankAccountDetails.address | weavr_coma_to_newline
-                    }}</b-td>
+                    <b-td style="white-space: pre">{{ account.bankAccountDetails.address | weavr_coma_to_newline }}</b-td>
                   </b-tr>
                   <b-tr>
                     <b-th>Payment Reference</b-th>
@@ -48,11 +53,7 @@
           </b-row>
           <b-row>
             <b-col class="text-center">
-              <b-button
-                variant="primary"
-                class="px-5"
-                :to="'/managed-accounts/' + accountId"
-              >
+              <b-button variant="primary" class="px-5" :to="'/managed-accounts/' + accountId">
                 close
               </b-button>
             </b-col>
