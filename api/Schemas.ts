@@ -34,7 +34,6 @@ export module Schemas {
   }
 
   export interface PagingRequest {
-    count?: boolean
     offset?: number
     limit?: number
   }

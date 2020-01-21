@@ -45,29 +45,6 @@ export module ManagedCardsSchemas {
     action: any[]
   }
 
-  export interface ManagedCards {
-    card: ManagedCard[]
-    count: number
-    action: []
-  }
-
-  export interface ManagedCardsFilter {
-    paging?: CommonSchemas.PagingRequest
-    ownerId?: CommonSchemas.TypeId
-    friendlyName?: string
-    active?: boolean | null
-    currency?: string
-    fiProvider?: string
-    chanelProvider?: string
-    type?: CardType
-    cardBrand?: CardBrand
-    cardNumberFirstSix?: string
-    cardNumberLastFour?: string
-    expiryMmyy?: string
-    createdFrom?: string
-    createdTos?: string
-  }
-
   export interface ManagedCardStatementRequest {
     paging?: CommonSchemas.PagingRequest
     orderByTimestamp?: CommonSchemas.OrderType
@@ -84,6 +61,7 @@ export module ManagedCardsSchemas {
   export interface ManagedCardStatement {
     entry: ManagedCardStatementEntry[]
     count?: number
+    responseCount?: number
   }
 
   export interface ManagedCardStatementEntry {

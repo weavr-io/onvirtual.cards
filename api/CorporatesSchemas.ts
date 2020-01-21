@@ -24,7 +24,7 @@ export module CorporatesSchemas {
     companyRegistrationAddress: string
     companyBusinessAddress: string
     registrationCountry: string
-    companyRegistrationTimestamp: number
+    companyRegistrationDate: number
     acceptedTerms: boolean
     ipAddress: string
     rootCompanyPosition: string
@@ -49,7 +49,7 @@ export module CorporatesSchemas {
     companyRegistrationAddress: string
     companyBusinessAddress: string
     registrationCountry: string
-    companyRegistrationTimestamp: number
+    companyRegistrationDate: number
     acceptedTerms: boolean
   }
 

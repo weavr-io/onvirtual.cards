@@ -4,12 +4,7 @@
       <b-row class="w-100 align-self-center">
         <b-col id="login-box" class="my-5 bg-white" md="6" offset-md="3">
           <div class="mt-5 text-center pb-5">
-            <img
-              src="/img/logo.svg"
-              width="200"
-              class="d-inline-block align-top"
-              alt="DevPay"
-            />
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" >
           </div>
           <div class="my-4 mx-3">
             <div class="form-screens">
@@ -50,10 +45,8 @@ const Auth = namespace(AuthStore.name)
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
-    PersonalDetailsForm: () =>
-      import('~/components/registration/PersonalDetails.vue'),
-    CompanyDetailsForm: () =>
-      import('~/components/registration/CompanyDetails.vue')
+    PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
+    CompanyDetailsForm: () => import('~/components/registration/CompanyDetails.vue')
   }
 })
 export default class RegistrationPage extends VueWithRouter {
@@ -87,7 +80,7 @@ export default class RegistrationPage extends VueWithRouter {
     companyName: '',
     companyRegistrationAddress: '',
     companyRegistrationNumber: '',
-    companyRegistrationTimestamp: 0,
+    companyRegistrationDate: 0,
     companyType: CorporatesSchemas.CompanyType.LLC,
     ipAddress: '111.222.333.444',
     profileId: 0,
@@ -119,8 +112,7 @@ export default class RegistrationPage extends VueWithRouter {
       this.registrationRequest.rootSurname = _data.rootSurname
       this.registrationRequest.rootTitle = _data.rootTitle
       this.registrationRequest.rootCompanyPosition = _data.rootCompanyPosition
-      this.registrationRequest.rootMobileCountryCode =
-        '+' + _data.rootMobileCountryCode
+      this.registrationRequest.rootMobileCountryCode = '+' + _data.rootMobileCountryCode
       this.registrationRequest.rootMobileNumber = _data.rootMobileNumber
       this.nextScreen()
     }
@@ -129,13 +121,10 @@ export default class RegistrationPage extends VueWithRouter {
   form3Submit(_data) {
     if (_data != null) {
       this.registrationRequest.companyName = _data.companyName
-      this.registrationRequest.companyRegistrationNumber =
-        _data.companyRegistrationNumber
-      this.registrationRequest.companyRegistrationAddress =
-        _data.companyRegistrationAddress
+      this.registrationRequest.companyRegistrationNumber = _data.companyRegistrationNumber
+      this.registrationRequest.companyRegistrationAddress = _data.companyRegistrationAddress
       this.registrationRequest.registrationCountry = _data.registrationCountry
-      this.registrationRequest.companyRegistrationTimestamp =
-        _data.companyRegistrationTimestamp
+      this.registrationRequest.companyRegistrationDate = _data.companyRegistrationDate
       this.registrationRequest.supportEmail = _data.supportEmail
       this.registrationRequest.acceptedTerms = _data.acceptedTerms
 
@@ -146,9 +135,7 @@ export default class RegistrationPage extends VueWithRouter {
   doRegister() {
     this.registrationRequest.companyBusinessAddress = this.registrationRequest.companyRegistrationAddress
 
-    this.register(this.registrationRequest).then(
-      this.doCreateCorporatePasswordIdentity.bind(this)
-    )
+    this.register(this.registrationRequest).then(this.doCreateCorporatePasswordIdentity.bind(this))
   }
 
   doCreateCorporatePasswordIdentity() {
@@ -158,9 +145,7 @@ export default class RegistrationPage extends VueWithRouter {
         profileId: this.registrationRequest.profileId
       }
     }
-    this.createCorporatePasswordIdentity(_req).then(
-      this.doCreateCorporatePassword.bind(this)
-    )
+    this.createCorporatePasswordIdentity(_req).then(this.doCreateCorporatePassword.bind(this))
   }
 
   doCreateCorporatePassword() {

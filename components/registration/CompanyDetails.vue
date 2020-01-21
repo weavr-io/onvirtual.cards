@@ -30,7 +30,7 @@
     </b-form-group>
     <b-form-group
       label="Company Registration Date:"
-      :state="isInvalid($v.form.companyRegistrationTimestamp)"
+      :state="isInvalid($v.form.companyRegistrationDate)"
     >
       <b-form-input
         v-model="companyRegistrationDate"
@@ -87,7 +87,7 @@ const Corporates = namespace(CorporatesStore.name)
         required,
         maxLength: maxLength(2)
       },
-      companyRegistrationTimestamp: {
+      companyRegistrationDate: {
         required
       },
       supportEmail: {
@@ -125,7 +125,7 @@ export default class CompanyDetailsForm extends VueWithRouter {
     companyRegistrationNumber: string
     companyRegistrationAddress: string
     registrationCountry: string
-    companyRegistrationTimestamp: null | number
+    companyRegistrationDate: null | number
     supportEmail: string
     acceptedTerms: boolean
   } = {
@@ -133,7 +133,7 @@ export default class CompanyDetailsForm extends VueWithRouter {
     companyRegistrationNumber: '',
     companyRegistrationAddress: '',
     registrationCountry: '',
-    companyRegistrationTimestamp: null,
+    companyRegistrationDate: null,
     supportEmail: '',
     acceptedTerms: false
   }
@@ -154,7 +154,7 @@ export default class CompanyDetailsForm extends VueWithRouter {
 
   updatedCompanyRegistrationDate(val) {
     const newDate = new Date(val)
-    this.form.companyRegistrationTimestamp = newDate.getTime()
+    this.form.companyRegistrationDate = newDate.getTime()
   }
 }
 </script>

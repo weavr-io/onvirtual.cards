@@ -18,6 +18,7 @@ export module ManagedAccountsSchemas {
   export interface ManagedAccounts {
     account: ManagedAccount[]
     count: number
+    responseCount: number
     action: []
   }
 
@@ -68,6 +69,7 @@ export module ManagedAccountsSchemas {
 
   export interface ManagedAccountStatement {
     count: number
+    responseCount: number
     entry: ManagedAccountStatementEntry[]
   }
 
