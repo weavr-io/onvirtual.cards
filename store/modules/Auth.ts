@@ -129,7 +129,7 @@ export const mutations: MutationTree<State> = {
     delete api.defaults.headers.Authorization
     delete api.defaults.headers['X-Tenant']
 
-    // this.$weavrSecurityAssociate(api.defaults.headers.Authorization)
+    this.$weavrSecurityAssociate(null)
   },
   [types.SET_IS_LOADING](state, isLoading: boolean) {
     state.isLoading = isLoading

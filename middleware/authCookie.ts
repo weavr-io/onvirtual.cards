@@ -14,15 +14,16 @@ export default function(ctxt) {
       auth = JSON.parse(authCookie)
       ctxt.store.commit('auth/AUTHENTICATE', auth, { root: true })
       if (auth != null) {
-        return ctxt.app
-          .$weavrSecurityAssociate('X-TOKEN ' + auth.token)
-          .catch((err) => {
-            console.log(err)
-          })
+        return ctxt.app.$weavrSecurityAssociate('X-TOKEN ' + auth.token).catch((err) => {
+          console.log(err)
+        })
+      } else {
+        return ctxt.app.$weavrSecurityAssociate(null)
       }
     }
   } catch (err) {
     console.error(err)
+    return ctxt.app.$weavrSecurityAssociate(null)
     // No valid cookie found
   }
 }

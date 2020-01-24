@@ -90,14 +90,14 @@ export default class LoginPage extends VueWithRouter {
 
   public loginRequest: Schemas.LoginRequest = {
     programmeId: config.api.programmeId,
-    code: '',
+    code: 'mark.bonnici_2',
     password: ''
   }
 
   login(evt) {
     evt.preventDefault()
-    const form = this.$refs.passwordForm as WeavrForm
-    form.form.tokenize(
+    const form: WeavrForm = this.$refs.passwordForm as WeavrForm
+    form.tokenize(
       (tokens) => {
         this.loginRequest.password = tokens.password
         this.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
