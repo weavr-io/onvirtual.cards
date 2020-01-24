@@ -16,8 +16,17 @@ const Corporates = namespace(CorporatesStore.name)
   layout: 'dashboard'
 })
 export default class DashboardPage extends VueWithRouter {
-  asyncData({ redirect }) {
-    redirect('/managed-accounts')
+  async asyncData({ redirect, store }) {
+    const _corpId = store.getters['auth/auth'].identity.id
+    await store.dispatch('corporates/getCorporateDetails', _corpId)
+
+    const _corp = store.getters['corporates/corporate']
+
+    if (_corp.kyb.directorsVerified !== 'true') {
+
+    } else {
+      redirect('/managed-accounts')
+    }
   }
 }
 </script>

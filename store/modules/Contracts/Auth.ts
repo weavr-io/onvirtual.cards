@@ -3,6 +3,8 @@ import { Schemas } from '~/api/Schemas'
 import { LostPasswordStartRequest } from '~/api/Requests/Auth/LostPasswordStartRequest'
 import { LostPasswordValidateRequest } from '~/api/Requests/Auth/LostPasswordValidateRequest'
 import { LostPasswordContinueRequest } from '~/api/Requests/Auth/LostPasswordContinueRequest'
+import { AxiosPromise } from '~/node_modules/axios'
+import LoginResult = Schemas.LoginResult
 
 export const types = {
   AUTHENTICATE: 'AUTHENTICATE',
@@ -11,15 +13,12 @@ export const types = {
 }
 
 export interface State {
-  auth: {
-    token?: string | null
-    identity?: { type: string; id: number }
-  }
+  auth: LoginResult
   isLoading: boolean
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
-  authenticate(context: ActionContext<S, R>, loginRequest: Schemas.LoginRequest)
+  authenticate(context: ActionContext<S, R>, loginRequest: Schemas.LoginRequest): AxiosPromise<LoginResult>
 
   invalidateToken(context: ActionContext<S, R>)
 

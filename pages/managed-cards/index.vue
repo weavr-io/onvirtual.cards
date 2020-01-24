@@ -8,9 +8,15 @@
       </b-row>
     </b-container>
     <b-container class="mt-5">
-      <b-row>
+      <b-row v-if="!hasCards">
+        <b-col class="py-5 text-center">
+          <h4 class="font-weight-light">You have no cards.</h4>
+          <h5 class="font-weight-lighter">Click <b-link to="/managed-cards/add">add new card</b-link> to create your first card.</h5>
+        </b-col>
+      </b-row>
+      <b-row v-if="hasCards">
         <b-col>
-          <b-card-group columns v-if="cards">
+          <b-card-group columns>
             <weavr-card v-for="(card, key) in cards" :key="key" no-body class="mb-3" :card="card"></weavr-card>
           </b-card-group>
         </b-col>
@@ -38,6 +44,10 @@ export default class CardsPage extends VueWithRouter {
 
   asyncData({ store }) {
     return store.dispatch('cards/getCards')
+  }
+
+  get hasCards(): boolean {
+    return this.cards.length > 0
   }
 }
 </script>

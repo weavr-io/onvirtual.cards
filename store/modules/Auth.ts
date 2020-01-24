@@ -4,6 +4,8 @@ import * as Loader from './Loader'
 import { api } from '~/api/Axios'
 import { Actions, State, types } from '~/store/modules/Contracts/Auth'
 import { Schemas } from '~/api/Schemas'
+import LoginRequest = Schemas.LoginRequest
+import LoginResult = Schemas.LoginResult
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -12,9 +14,7 @@ export const name = 'auth'
 export const namespaced = true
 
 export const state = (): State => ({
-  auth: {
-    token: null
-  },
+  auth: {},
   isLoading: false
 })
 
@@ -24,6 +24,9 @@ export const getters: GetterTree<State, RootState> = {
   },
   token: (state) => {
     return state.auth.token
+  },
+  auth: (state) => {
+    return state.auth
   },
   corporateId: (state) => {
     return state.auth.identity ? state.auth.identity.id : null
@@ -41,7 +44,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post('/app/api/auth/login_with_password', loginRequest)
+    const req = api.post<LoginResult>('/app/api/auth/login_with_password', loginRequest)
 
     req.then((res) => {
       commit(types.AUTHENTICATE, res.data)
@@ -113,16 +116,13 @@ export const actions: Actions<State, RootState> = {
 }
 
 export const mutations: MutationTree<State> = {
-  [types.AUTHENTICATE](state, { token, identity }) {
-    state.auth = {
-      token: token,
-      identity: identity
-    }
+  [types.AUTHENTICATE](state, _res: LoginResult) {
+    state.auth = _res
     Cookie.set('auth-onvirtual', state.auth)
     api.defaults.headers.Authorization = 'X-TOKEN ' + state.auth.token
   },
   [types.LOGOUT](state) {
-    state.auth.token = null
+    state.auth = {}
 
     Cookie.remove('auth-onvirtual')
 

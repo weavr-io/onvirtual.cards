@@ -10,9 +10,15 @@
       </b-row>
     </b-container>
     <b-container>
-      <b-row>
+      <b-row v-if="!hasAccounts">
+        <b-col class="py-5 text-center">
+          <h4 class="font-weight-light">You have no accounts.</h4>
+          <h5 class="font-weight-lighter">Click <b-link to="/managed-accounts/add">add new account</b-link> to create your first account.</h5>
+        </b-col>
+      </b-row>
+      <b-row v-if="hasAccounts">
         <b-col>
-          <b-card-group v-if="accounts" columns>
+          <b-card-group columns>
             <b-card
               v-for="(account, key) in accounts.account"
               :key="key"
@@ -31,10 +37,7 @@
                   <b-row class="account-bottom-row">
                     <b-col>
                       <div class="account-available-balance">
-                        {{
-                          account.balances.availableBalance
-                            | weavr_currency(account.currency)
-                        }}
+                        {{ account.balances.availableBalance | weavr_currency(account.currency) }}
                       </div>
                     </b-col>
                     <b-col class="text-right">
@@ -57,6 +60,7 @@ import { namespace } from 'vuex-class'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
 import * as AccountsStore from '~/store/modules/Accounts'
+
 const Accounts = namespace(AccountsStore.name)
 
 @Component({
@@ -67,6 +71,10 @@ export default class CardsPage extends VueWithRouter {
 
   asyncData({ store }) {
     return store.dispatch('accounts/index')
+  }
+
+  get hasAccounts(): boolean {
+    return this.accounts.count > 0
   }
 }
 </script>
