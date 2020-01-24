@@ -4,7 +4,7 @@
       <b-row class="w-100 align-self-center">
         <b-col id="login-box" class="my-5 bg-white" md="6" offset-md="3">
           <div class="mt-5 text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay">
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" />
           </div>
           <div class="my-4 mx-3">
             <div class="form-screens">
@@ -13,10 +13,10 @@
                 <register-form :request="registrationRequest" @submit-form="form1Submit" />
               </div>
               <div v-if="screen === 1" class="form-screen">
-                <personal-details-form :request="registrationRequest" @submit-form="form2Submit" />
+                <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
               </div>
               <div v-if="screen === 2" class="form-screen">
-                <company-details-form :request="registrationRequest" @submit-form="form3Submit" />
+                <company-details-form :request="registrationRequest" @submit-form="form3Submit" @go-back="goBack" />
               </div>
             </div>
           </div>
@@ -71,6 +71,10 @@ export default class RegistrationPage extends VueWithRouter {
 
   nextScreen() {
     this.screen++
+  }
+
+  goBack() {
+    this.screen--
   }
 
   public registrationRequest: CorporatesSchemas.CreateCorporateRequest = {
@@ -185,7 +189,9 @@ export default class RegistrationPage extends VueWithRouter {
   }
 
   goToVerifyEmail() {
-    this.$router.push('/register/verify/corporates/' + this.corporate.id.id)
+    this.$router.push(
+      '/register/verify?corp=' + this.corporate.id.id + '&email=' + this.registrationRequest.rootEmail
+    )
   }
 
   checkOnKeyUp(e) {

@@ -23,8 +23,11 @@
     <b-form-group label="Mobile Number:" :state="isInvalid($v.form.rootMobileNumber)">
       <b-form-input v-model="form.rootMobileNumber" />
     </b-form-group>
-    <b-form-row class="mt-5">
-      <b-col class="text-center">
+    <b-form-row class="my-5">
+      <b-col>
+        <b-button variant="outline" @click="goBack"><-</b-button>
+      </b-col>
+      <b-col class="text-right">
         <b-button variant="primary" type="submit">
           Continue
           <span class="pl-5">-></span>
@@ -103,6 +106,11 @@ export default class PersonalDetailsForm extends VueWithRouter {
     }
 
     return this.form
+  }
+
+  @Emit()
+  goBack(e) {
+    e.preventDefault()
   }
 }
 </script>

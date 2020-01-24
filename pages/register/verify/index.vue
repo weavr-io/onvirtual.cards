@@ -4,13 +4,12 @@
       <b-row class="w-100 align-self-center">
         <b-col lg="6" offset-lg="3">
           <div class="mt-5 text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" />
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay">
           </div>
           <div class="mx-md-3 px-md-5">
             <b-card class="mt-5" bg-variant="secondary" text-variant="white">
               <b-card-text>
-                We sent you a verification code by email. Please enter that
-                code to verify your email address.
+                We sent you a verification code by email. Please enter that code to verify your email address.
               </b-card-text>
             </b-card>
             <form id="contact-form" class="mt-5" @submit="doVerify">
@@ -61,7 +60,13 @@ export default class EmailVerificationPage extends VueWithRouter {
   }
 
   mounted() {
-    this.request.corporateId = this.$route.params.corporate
+    this.request.corporateId = this.$route.query.corp
+    this.request.request.emailAddress = this.$route.query.email + ''
+    this.request.request.nonce = this.$route.query.nonce ? this.$route.query.nonce + '' : ''
+
+    if (this.request.request.nonce !== '') {
+      this.verifyEmail(this.request).then(this.goToLogin.bind(this))
+    }
   }
 
   doVerify(evt) {
