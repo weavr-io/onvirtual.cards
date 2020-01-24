@@ -4,19 +4,19 @@
       <b-row class="w-100 align-self-center">
         <b-col id="login-box" class="my-5 bg-white" md="6" offset-md="3">
           <div class="mt-5 text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" >
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay">
           </div>
           <div class="my-4 mx-3">
             <div class="form-screens">
               <error-alert />
               <div v-if="screen === 0" class="form-screen">
-                <register-form @submit-form="form1Submit" />
+                <register-form :request="registrationRequest" @submit-form="form1Submit" />
               </div>
               <div v-if="screen === 1" class="form-screen">
-                <personal-details-form @submit-form="form2Submit" />
+                <personal-details-form :request="registrationRequest" @submit-form="form2Submit" />
               </div>
               <div v-if="screen === 2" class="form-screen">
-                <company-details-form @submit-form="form3Submit" />
+                <company-details-form :request="registrationRequest" @submit-form="form3Submit" />
               </div>
             </div>
           </div>
@@ -135,7 +135,19 @@ export default class RegistrationPage extends VueWithRouter {
   doRegister() {
     this.registrationRequest.companyBusinessAddress = this.registrationRequest.companyRegistrationAddress
 
-    this.register(this.registrationRequest).then(this.doCreateCorporatePasswordIdentity.bind(this))
+    this.register(this.registrationRequest)
+      .then(this.doCreateCorporatePasswordIdentity.bind(this))
+      .catch(this.registrationFailed.bind(this))
+  }
+
+  registrationFailed(err) {
+    const _errCode = err.response.data.errorCode
+
+    if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
+      this.screen = 0
+    }
+
+    this.$weavrToastError(err.response.data.errorCode)
   }
 
   doCreateCorporatePasswordIdentity() {

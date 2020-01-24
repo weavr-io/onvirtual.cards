@@ -90,7 +90,7 @@ export default class LoginPage extends VueWithRouter {
 
   public loginRequest: Schemas.LoginRequest = {
     programmeId: config.api.programmeId,
-    code: 'mark.bonnici_2',
+    code: '',
     password: ''
   }
 

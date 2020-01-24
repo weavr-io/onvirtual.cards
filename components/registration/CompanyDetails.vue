@@ -7,58 +7,29 @@
     <b-form-group label="Company Name:" :state="isInvalid($v.form.companyName)">
       <b-form-input v-model="form.companyName" />
     </b-form-group>
-    <b-form-group
-      label="Company Registration Number:"
-      :state="isInvalid($v.form.companyRegistrationNumber)"
-    >
+    <b-form-group label="Company Registration Number:" :state="isInvalid($v.form.companyRegistrationNumber)">
       <b-form-input v-model="form.companyRegistrationNumber" />
     </b-form-group>
-    <b-form-group
-      label="Company Registration Address:"
-      :state="isInvalid($v.form.companyRegistrationAddress)"
-    >
+    <b-form-group label="Company Registration Address:" :state="isInvalid($v.form.companyRegistrationAddress)">
       <b-form-input v-model="form.companyRegistrationAddress" />
     </b-form-group>
-    <b-form-group
-      label="Registration Country:"
-      :state="isInvalid($v.form.registrationCountry)"
-    >
-      <b-form-select
-        v-model="form.registrationCountry"
-        :options="countiesOptions"
-      />
+    <b-form-group label="Registration Country:" :state="isInvalid($v.form.registrationCountry)">
+      <b-form-select v-model="form.registrationCountry" :options="countiesOptions" />
     </b-form-group>
-    <b-form-group
-      label="Company Registration Date:"
-      :state="isInvalid($v.form.companyRegistrationDate)"
-    >
-      <b-form-input
-        v-model="companyRegistrationDate"
-        type="date"
-        @update="updatedCompanyRegistrationDate"
-      />
+    <b-form-group label="Company Registration Date:" :state="isInvalid($v.form.companyRegistrationDate)">
+      <b-form-input v-model="companyRegistrationDate" type="date" @update="updatedCompanyRegistrationDate" />
     </b-form-group>
-    <b-form-group
-      label="Company Email:"
-      :state="isInvalid($v.form.supportEmail)"
-    >
+    <b-form-group label="Company Email:" :state="isInvalid($v.form.supportEmail)">
       <b-form-input v-model="form.supportEmail" type="email" />
     </b-form-group>
     <b-form-row>
       <b-col>
-        <b-form-checkbox
-          v-model="form.acceptedTerms"
-          :state="isInvalid($v.form.acceptedTerms)"
-        >
+        <b-form-checkbox v-model="form.acceptedTerms" :state="isInvalid($v.form.acceptedTerms)">
           I accept the terms and use
         </b-form-checkbox>
       </b-col>
     </b-form-row>
-    <loader-button
-      :is-loading="isLoading"
-      button-text="Finish"
-      class="my-5 text-center"
-    />
+    <loader-button :is-loading="isLoading" button-text="Finish" class="my-5 text-center" />
   </b-form>
 </template>
 <script lang="ts">
@@ -66,6 +37,9 @@ import { Component, Emit, namespace } from 'nuxt-property-decorator'
 import { required, maxLength, email, sameAs } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
+import { Prop } from '~/node_modules/nuxt-property-decorator'
+import { CorporatesSchemas } from '~/api/CorporatesSchemas'
+
 const Countries = require('~/static/json/countries.json')
 const Corporates = namespace(CorporatesStore.name)
 @Component({
@@ -106,6 +80,18 @@ const Corporates = namespace(CorporatesStore.name)
 })
 export default class CompanyDetailsForm extends VueWithRouter {
   $v
+
+  @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
+
+  mounted() {
+    this.form.companyName = this.request.companyName
+    this.form.companyRegistrationNumber = this.request.companyRegistrationNumber
+    this.form.companyRegistrationAddress = this.request.companyRegistrationAddress
+    this.form.registrationCountry = this.request.registrationCountry
+    this.form.companyRegistrationDate = this.request.companyRegistrationDate
+    this.form.supportEmail = this.request.supportEmail
+    this.form.acceptedTerms = this.request.acceptedTerms
+  }
 
   @Corporates.Getter isLoading
 

@@ -12,24 +12,15 @@
     <b-form-group label="Title:" :state="isInvalid($v.form.rootTitle)">
       <b-form-select v-model="form.rootTitle" :options="titleOptions" />
     </b-form-group>
-    <b-form-group
-      label="Company Position:"
-      :state="isInvalid($v.form.rootCompanyPosition)"
-    >
+    <b-form-group label="Company Position:" :state="isInvalid($v.form.rootCompanyPosition)">
       <b-form-input v-model="form.rootCompanyPosition" />
     </b-form-group>
-    <b-form-group
-      label="Mobile Country Code:"
-      :state="isInvalid($v.form.rootMobileCountryCode)"
-    >
+    <b-form-group label="Mobile Country Code:" :state="isInvalid($v.form.rootMobileCountryCode)">
       <b-input-group prepend="+">
         <b-form-input v-model="form.rootMobileCountryCode" />
       </b-input-group>
     </b-form-group>
-    <b-form-group
-      label="Mobile Number:"
-      :state="isInvalid($v.form.rootMobileNumber)"
-    >
+    <b-form-group label="Mobile Number:" :state="isInvalid($v.form.rootMobileNumber)">
       <b-form-input v-model="form.rootMobileNumber" />
     </b-form-group>
     <b-form-row class="mt-5">
@@ -46,6 +37,8 @@
 import { Component, Emit } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { Prop } from '~/node_modules/nuxt-property-decorator'
+import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 
 @Component({
   validations: {
@@ -76,11 +69,18 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 export default class PersonalDetailsForm extends VueWithRouter {
   $v
 
-  titleOptions = [
-    { value: 'Mr', text: 'Mr' },
-    { value: 'Mrs', text: 'Mrs' },
-    { value: 'Ms', text: 'Ms' }
-  ]
+  @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
+
+  mounted() {
+    this.form.rootName = this.request.rootName
+    this.form.rootSurname = this.request.rootSurname
+    this.form.rootTitle = this.request.rootTitle
+    this.form.rootCompanyPosition = this.request.rootCompanyPosition
+    this.form.rootMobileCountryCode = this.request.rootMobileCountryCode
+    this.form.rootMobileNumber = this.request.rootMobileNumber
+  }
+
+  titleOptions = [{ value: 'Mr', text: 'Mr' }, { value: 'Mrs', text: 'Mrs' }, { value: 'Ms', text: 'Ms' }]
 
   public form = {
     rootName: '',

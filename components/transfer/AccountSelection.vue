@@ -9,10 +9,7 @@
     </b-row>
     <b-row class="py-5 my-5">
       <b-col>
-        <b-form-group
-          class="weavr-account-radio"
-          :state="isInvalid($v.request.source.id)"
-        >
+        <b-form-group class="weavr-account-radio" :state="isInvalid($v.request.source.id)">
           <b-form-radio-group
             v-model="request.source.id"
             :options="formattedAccounts"
@@ -85,11 +82,9 @@ export default class AccountSelectionForm extends VueWithRouter {
       return []
     }
 
-    const _accounts = this.accounts.account.filter(
-      (_account: ManagedAccountsSchemas.ManagedAccount) => {
-        return _account.active
-      }
-    )
+    const _accounts = this.accounts.account.filter((_account: ManagedAccountsSchemas.ManagedAccount) => {
+      return _account.active
+    })
 
     return _accounts.map((val: ManagedAccountsSchemas.ManagedAccount) => {
       const formatter = new Intl.NumberFormat('en-US', {
@@ -99,11 +94,16 @@ export default class AccountSelectionForm extends VueWithRouter {
         currencyDisplay: 'symbol'
       })
 
-      let _availableBalance = '0'
+      let _availableBalance = 0
       if (val.balances.availableBalance) {
-        _availableBalance = formatter.format(
-          parseInt(val.balances.availableBalance) / 100
-        )
+        _availableBalance = parseInt(val.balances.availableBalance) / 100
+      }
+
+      const isDisabled = _availableBalance < 10
+
+      let disabledP = ''
+      if (isDisabled) {
+        disabledP = '<em class="m-0 text-danger">Not enough funds.</em>'
       }
 
       return {
@@ -111,13 +111,16 @@ export default class AccountSelectionForm extends VueWithRouter {
         text: val.friendlyName,
         html:
           '<div class="row w-100">' +
-          '<div class="col col-6 account-name">' +
+          '<div class="col col-6 account-name"><p class="m-0">' +
           val.friendlyName +
+          '</p>' +
+          disabledP +
           '</div>' +
           '<div class="col col-6 account-balance text-right">' +
-          _availableBalance +
+          formatter.format(_availableBalance) +
           '</div>' +
-          '</div>'
+          '</div>',
+        disabled: isDisabled
       }
     })
   }

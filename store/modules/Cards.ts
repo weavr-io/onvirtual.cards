@@ -99,10 +99,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post(
-      '/app/api/managed_cards/' + request.id + '/statement/get',
-      request
-    )
+    const req = api.post('/app/api/managed_cards/' + request.id + '/statement/get', request)
 
     req.then((res) => {
       commit(types.SET_STATEMENT, res.data)
@@ -125,10 +122,24 @@ export const actions: Actions<State, RootState> = {
     return req
   },
   destroyManagedCard({}, request) {
-    return api.post(
-      '/app/api/managed_cards/' + request.id + '/destroy',
-      request.body
-    )
+    return api.post('/app/api/managed_cards/' + request.id + '/destroy', request.body)
+  },
+  freeze({ commit }, id) {
+    const req = api.post('/app/api/managed_cards/' + id + '/freeze', {})
+
+    req.then((res) => {
+      commit(types.SET_MANAGED_CARD, res.data)
+    })
+
+    return req
+  },
+  unfreeze({ commit }, id) {
+    const req = api.post('/app/api/managed_cards/' + id + '/unfreeze', {})
+    req.then((res) => {
+      commit(types.SET_MANAGED_CARD, res.data)
+    })
+
+    return req
   }
 }
 

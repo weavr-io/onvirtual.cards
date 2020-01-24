@@ -17,9 +17,7 @@
           </b-row>
           <b-row>
             <b-col>
-              <span class="card-number">
-                •••• {{ managedCard.cardNumberLastFour }}
-              </span>
+              <span class="card-number"> •••• {{ managedCard.cardNumberLastFour }} </span>
 
               <span class="card-expiry ml-5">
                 <span class="card-expiry-label">EXP</span>
@@ -32,10 +30,10 @@
         </b-col>
         <b-col cols="2" lg="1" class="text-right">
           <b-button
+            v-if="managedCard.active && !isFrozen"
             variant="primary"
             class="add-funds"
             :to="'/transfer?destination=' + managedCard.id.id"
-            v-if="managedCard.active"
           >
             +
           </b-button>
@@ -46,12 +44,22 @@
               balance
             </div>
             <div class="card-balance-value">
-              {{
-                managedCard.balances.availableBalance
-                  | weavr_currency(managedCard.currency)
-              }}
+              {{ managedCard.balances.availableBalance | weavr_currency(managedCard.currency) }}
             </div>
           </div>
+        </b-col>
+        <b-col cols="1" lg="1" class="text-right">
+          <b-dropdown variant="link" toggle-class="text-decoration-none" no-caret>
+            <template v-slot:button-content>
+              <b-icon icon="three-dots-vertical" />
+            </template>
+            <b-dropdown-item v-if="!isFrozen" @click="freezeCard">
+              Freeze Card
+            </b-dropdown-item>
+            <b-dropdown-item v-if="isFrozen" @click="unfreezeCard">
+              Unfreeze Card
+            </b-dropdown-item>
+          </b-dropdown>
         </b-col>
       </b-row>
       <b-row class="mb-5" align-v="center">
@@ -61,14 +69,14 @@
           </h6>
         </b-col>
         <b-col class="text-right">
-<!--          <b-button-->
-<!--            v-if="managedCard && managedCard.active"-->
-<!--            variant="link"-->
-<!--            class="px-0"-->
-<!--            @click="deleteCard"-->
-<!--          >-->
-<!--            delete card-->
-<!--          </b-button>-->
+          <!--          <b-button-->
+          <!--            v-if="managedCard && managedCard.active"-->
+          <!--            variant="link"-->
+          <!--            class="px-0"-->
+          <!--            @click="deleteCard"-->
+          <!--          >-->
+          <!--            delete card-->
+          <!--          </b-button>-->
         </b-col>
       </b-row>
 
@@ -92,12 +100,7 @@
       content-class="transparent-modal"
       size="md"
     >
-      <b-card
-        v-if="managedCard"
-        no-body
-        class="border-0 cards-card"
-        bg-variant="card-purple"
-      >
+      <b-card v-if="managedCard" no-body class="border-0 cards-card" bg-variant="card-purple">
         <b-card-body class="card-body-modal">
           <b-link :to="'/managed-cards/' + managedCard.id.id + '/statement'">
             <b-container fluid class="p-0">
@@ -176,7 +179,7 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 
-import { BModal } from 'bootstrap-vue'
+import { BModal, BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 
 import * as ManagedCardsStore from '~/store/modules/Cards'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
@@ -187,7 +190,9 @@ const ManagedCards = namespace(ManagedCardsStore.name)
 
 @Component({
   components: {
-    StatementItem: () => import('~/components/cards/statement/item.vue')
+    StatementItem: () => import('~/components/cards/statement/item.vue'),
+    BIcon,
+    BIconThreeDotsVertical
   }
 })
 export default class ManagedCardsTable extends Vue {
@@ -205,6 +210,10 @@ export default class ManagedCardsTable extends Vue {
   @ManagedCards.Getter managedCard
 
   @ManagedCards.Action destroyManagedCard
+
+  @ManagedCards.Action freeze
+
+  @ManagedCards.Action unfreeze
 
   public fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
 
@@ -227,6 +236,36 @@ export default class ManagedCardsTable extends Vue {
 
   toggleModal() {
     this.$refs['card-modal'].toggle()
+  }
+
+  freezeCard() {
+    this.freeze(this.cardId).then(
+      () => {
+        this.$weavrToast('Card Frozen')
+      },
+      (err) => {
+        const data = err.response.data
+        const error = data.message ? data.message : data.errorCode
+        this.$weavrToastError(error)
+      }
+    )
+  }
+
+  unfreezeCard() {
+    this.unfreeze(this.cardId).then(
+      () => {
+        this.$weavrToast('Card Unfrozen')
+      },
+      (err) => {
+        const data = err.response.data
+        const error = data.message ? data.message : data.errorCode
+        this.$weavrToastError(error)
+      }
+    )
+  }
+
+  get isFrozen() {
+    return Object.entries(this.managedCard.state.blockTypes).length > 0 || this.managedCard.state.destroyType !== ''
   }
 
   deleteCard() {
@@ -256,6 +295,7 @@ export default class ManagedCardsTable extends Vue {
   .card-balance-label {
     font-size: 0.8rem;
   }
+
   .card-balance-value {
     font-size: 1.5rem;
   }
@@ -272,6 +312,7 @@ export default class ManagedCardsTable extends Vue {
   &-name {
     font-size: 1.2rem;
   }
+
   &-cvv,
   &-expiry {
     &-label {

@@ -17,17 +17,13 @@ export interface State {
 
 export interface Actions<S, R> extends ActionTree<S, R> {
   getCards(context: ActionContext<S, R>)
-  addCard(
-    context: ActionContext<S, R>,
-    request: ManagedCardsSchemas.CreateManagedCardRequest
-  )
+  addCard(context: ActionContext<S, R>, request: ManagedCardsSchemas.CreateManagedCardRequest)
   getManagedCard(context: ActionContext<S, R>, id: number): Promise<R>
-  destroyManagedCard(
-    context: ActionContext<S, R>,
-    request: ManagedCardsSchemas.DestroyRequest
-  ): Promise<R>
+  destroyManagedCard(context: ActionContext<S, R>, request: ManagedCardsSchemas.DestroyRequest): Promise<R>
   getCardStatement(
     context: ActionContext<S, R>,
     request: ManagedCardsSchemas.GetManagedCardStatementRequest
   ): Promise<R>
+  freeze(context: ActionContext<S, R>, id): Promise<R>
+  unfreeze(context: ActionContext<S, R>, id): Promise<R>
 }

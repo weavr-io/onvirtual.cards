@@ -26,7 +26,7 @@ Vue.filter('weavr_currency', function(value, _currency) {
       _amount = value
     }
   } catch (e) {
-    //debugger
+    // debugger
   }
 
   const formatter = new Intl.NumberFormat('en-US', {
@@ -70,12 +70,7 @@ Vue.filter('weavr_convert_camelcase', function(value) {
 
 Vue.filter('card', function(value, _first6, _last4) {
   if (typeof _first6 === 'undefined' && typeof _last4 === 'undefined') {
-    return value.replace(/(\+?\d{6})(\d+)(\d{4})/g, function(
-      match,
-      start,
-      middle,
-      end
-    ) {
+    return value.replace(/(\+?\d{6})(\d+)(\d{4})/g, function(match, start, middle, end) {
       return start + '*'.repeat(middle.length) + end
     })
   } else {
@@ -95,8 +90,9 @@ export default ({}, inject) => {
   inject('weavrToast', (message: string, options?: BvToastOptions) => {
     const vm = new Vue()
 
-    let _options: BvToastOptions = {
-      toaster: 'b-toaster-bottom-right'
+    const _options: BvToastOptions = {
+      toaster: 'b-toaster-bottom-right',
+      variant: 'success',
     }
 
     Object.assign(_options, options)
@@ -106,10 +102,10 @@ export default ({}, inject) => {
   inject('weavrToastError', (message: string, options?: BvToastOptions) => {
     const vm = new Vue()
 
-    let _options: BvToastOptions = {
+    const _options: BvToastOptions = {
       toaster: 'b-toaster-bottom-right',
       variant: 'danger',
-      title: `An error occured!`
+      title: 'An error occured!'
     }
 
     Object.assign(_options, options)

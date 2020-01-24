@@ -10,11 +10,7 @@
       <b-form-input v-model="form.rootEmail" />
     </b-form-group>
     <b-form-group label="Password:" :state="isInvalid($v.form.password)">
-      <b-form-input
-        v-model="form.password"
-        type="password"
-        placeholder="****"
-      />
+      <b-form-input v-model="form.password" type="password" placeholder="****" />
     </b-form-group>
     <b-form-row class="mt-5">
       <b-col class="text-center">
@@ -27,9 +23,10 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit } from 'nuxt-property-decorator'
+import { Component, Emit, Prop } from 'nuxt-property-decorator'
 import { required, helpers, email, maxLength } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 
 @Component({
   validations: {
@@ -53,6 +50,13 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
   }
 })
 export default class RegisterForm1 extends VueWithRouter {
+  @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
+
+  mounted() {
+    this.form.rootUsername = this.request.rootUsername
+    this.form.rootEmail = this.request.rootEmail
+  }
+
   public form = {
     rootUsername: '',
     rootEmail: '',

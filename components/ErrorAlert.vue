@@ -1,17 +1,15 @@
 <template>
   <div>
-    <div v-if="hasError()">
+    <div v-if="hasError">
       <div class="error-alert" role="alert">
         <p>
           {{ errorMessage }}
-          <b-link
-            v-if="errorLink != null"
-            :to="errorLink.link"
-            class="error-alert-link"
-          >{{ errorLink.text }}</b-link>
+          <b-link v-if="errorLink != null" :to="errorLink.link" class="error-alert-link">
+            {{ errorLink.text }}
+          </b-link>
         </p>
         <button @click="onClose">
-          <img src="/img/close.svg" width="16" alt />
+          <img src="/img/close.svg" width="16" alt >
         </button>
       </div>
     </div>
@@ -44,7 +42,7 @@ class ErrorAlert extends Vue {
     this.resetErrors()
   }
 
-  hasError(): boolean {
+  get hasError(): boolean {
     return this.errors != null
   }
 
@@ -61,12 +59,13 @@ class ErrorAlert extends Vue {
           return 'This email address already exists in the system.  Do you want to log in instead?'
         case 'INVALID_CREDENTIALS':
           return 'Invalid Credentials'
+        case 'ROOT_USERNAME_NOT_UNIQUE':
+          return 'Username already exists in the system. Please try a different username.'
         default:
           return 'An error occurred. Please try again.'
       }
     }
   }
-
 }
 
 export default ErrorAlert
