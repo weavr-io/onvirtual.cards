@@ -4,8 +4,13 @@
       <b-row class="full-height-vh" align-v="center">
         <b-col md="6" offset-md="3">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
           </div>
+          <b-card body-class="px-6 py-5">
+            <div class="form-screens">
+              <error-alert />
+            </div>
+          </b-card>
         </b-col>
       </b-row>
     </b-container>
@@ -26,17 +31,16 @@ const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
 
 @Component({
-  layout: 'auth'
-})
-export default class RegistrationPage extends VueWithRouter {
-  asyncData({ store, redirect }) {
-    const isLoggedIn = store.getters['auth/isLoggedIn']
-
-    if (isLoggedIn) {
-      redirect('/dashboard')
-    } else {
-      redirect('/register/corporate')
-    }
+  layout: 'auth',
+  components: {
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
+    RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
+    PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
+    CompanyDetailsForm: () => import('~/components/registration/CompanyDetails.vue')
   }
+})
+export default class ConsumerRegistrationPage extends VueWithRouter {
+
 }
 </script>

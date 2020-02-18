@@ -46,17 +46,17 @@ class AuthLayout extends VueWithRouter {
   }
 
   get showRegister(): boolean {
+    return !this.showLogin
+  }
+
+  get showLogin(): boolean {
     const _matchedName = this.$route.matched[0].name
     if (_matchedName) {
-      const _registration = ['register']
+      const _registration = ['login']
       return !_registration.includes(_matchedName)
     } else {
       return false
     }
-  }
-
-  get showLogin(): boolean {
-    return !this.showRegister
   }
 }
 
