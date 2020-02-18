@@ -37,6 +37,8 @@ export default class Header extends Vue {
   }
 
   redirectToLogin() {
+    // @ts-ignore
+    this.$segment.reset()
     this.$router.push('/login')
   }
 }

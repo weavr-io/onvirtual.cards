@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+
 const env = dotenv.config({ debug: true })
 
 const config = {
@@ -69,8 +70,9 @@ const config = {
     // Doc: https://bootstrap-vue.js.org/docs/
     'bootstrap-vue/nuxt',
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
     // '@nuxtjs/eslint-module'
+    '@dansmaculotte/nuxt-segment'
   ],
   bootstrapVue: {
     bootstrapCSS: false, // Or `css: false`
