@@ -15,9 +15,7 @@ export default function(ctxt) {
       ctxt.store.commit('auth/AUTHENTICATE', auth, { root: true })
       if (auth != null) {
         return ctxt.app.$weavrSecurityAssociate('X-TOKEN ' + auth.token).then(
-          () => {
-
-          },
+          () => {},
           (err) => {
             console.log(err)
           }

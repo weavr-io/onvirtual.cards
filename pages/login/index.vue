@@ -4,7 +4,7 @@
       <b-row class="full-height-vh" align-v="center">
         <b-col lg="6" offset-lg="3">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" />
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" >
           </div>
           <b-card body-class="px-6 py-5">
             <h2 class="text-center font-weight-lighter mb-6">
@@ -44,11 +44,7 @@
                   />
                 </weavr-form>
               </client-only>
-              <loader-button
-                :is-loading="isLoading"
-                button-text="sign in"
-                class="text-center mt-6"
-              />
+              <loader-button :is-loading="isLoading" button-text="sign in" class="text-center mt-6" />
               <div class="text-center mt-3">
                 <b-button to="/password/reset" variant="link" size="sm">
                   Forgot password?
@@ -111,8 +107,11 @@ export default class LoginPage extends VueWithRouter {
     )
   }
 
-  goToDashboard() {
+  goToDashboard(res) {
     if (this.isLoggedIn) {
+      const _id = res.data.credential.type + '-' + res.data.credential.id
+      this.$appcuesIdentify(_id, {})
+      this.$userPilotIdentify(_id, {})
       this.$router.push('/dashboard')
     }
   }
