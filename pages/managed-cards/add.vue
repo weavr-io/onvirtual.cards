@@ -11,42 +11,26 @@
               <b-form @submit="doAdd">
                 <b-form-row>
                   <b-col>
-                    <b-form-group
-                      label="Friendly Name:"
-                      :state="isInvalid($v.request.friendlyName)"
-                    >
+                    <b-form-group :state="isInvalid($v.request.friendlyName)" label="Friendly Name:">
                       <b-form-input v-model="request.friendlyName" />
                     </b-form-group>
                   </b-col>
                 </b-form-row>
                 <b-form-row>
                   <b-col>
-                    <b-form-group
-                      label="Currency:"
-                      :state="isInvalid($v.request.currency)"
-                    >
-                      <b-form-select
-                        v-model="request.currency"
-                        :options="currencyOptions"
-                      />
+                    <b-form-group :state="isInvalid($v.request.currency)" label="Currency:">
+                      <b-form-select v-model="request.currency" :options="currencyOptions" />
                     </b-form-group>
                   </b-col>
                 </b-form-row>
                 <b-form-row>
                   <b-col>
-                    <b-form-group
-                      label="Name on Card:"
-                      :state="isInvalid($v.request.nameOnCard)"
-                    >
+                    <b-form-group :state="isInvalid($v.request.nameOnCard)" label="Name on Card:">
                       <b-form-input v-model="request.nameOnCard" />
                     </b-form-group>
                   </b-col>
                 </b-form-row>
-                <loader-button
-                  :is-loading="isLoading"
-                  button-text="Add"
-                  class="mt-5 text-center"
-                />
+                <loader-button :is-loading="isLoading" button-text="Add" class="mt-5 text-center" />
               </b-form>
             </b-card-body>
           </b-card>
@@ -126,6 +110,9 @@ export default class AddCardPage extends VueWithRouter {
     }
 
     this.addCard(this.request).then(() => {
+      this.$segment.track('Card Added', this.request)
+      this.$appcues().track('Card Added', this.request)
+      this.$userpilot().track('Card Added', this.request)
       this.$router.push('/managed-cards')
     })
   }
@@ -134,6 +121,10 @@ export default class AddCardPage extends VueWithRouter {
     super.mounted()
     this.request.owner.id = this.corporateId
     this.request.profileId = config.profileId.managed_cards
+
+    this.$segment.track('Initiated Add Card', {})
+    this.$appcues().track('Initiated Add Card', {})
+    this.$userpilot().track('Initiated Add Card', {})
   }
 }
 </script>

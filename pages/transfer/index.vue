@@ -7,10 +7,7 @@
             <account-selection @submit-form="accountSelected" />
           </div>
           <div v-if="screen === 1" class="topup-screen">
-            <top-up
-              :selected-account="request.source"
-              @submit-form="topUpSelected"
-            />
+            <top-up :selected-account="request.source" @submit-form="topUpSelected" />
           </div>
           <div v-if="screen === 2" class="topup-screen">
             <top-up-success />
@@ -38,8 +35,7 @@ const Transfers = namespace(TransfersStore.name)
 @Component({
   components: {
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    AccountSelection: () =>
-      import('~/components/transfer/AccountSelection.vue'),
+    AccountSelection: () => import('~/components/transfer/AccountSelection.vue'),
     TopUp: () => import('~/components/transfer/TopUp.vue'),
     TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue')
   }
@@ -116,6 +112,10 @@ export default class CardsPage extends VueWithRouter {
     if (typeof this.$route.query.destination === 'string') {
       this.request.destination.id = this.$route.query.destination
     }
+
+    this.$segment.track('Initiated Transfer', {})
+    this.$appcues().track('Initiated Transfer', {})
+    this.$userpilot().track('Initiated Transfer', {})
   }
 
   async asyncData({ store }) {
@@ -143,6 +143,10 @@ export default class CardsPage extends VueWithRouter {
           }
         }
         this.screen = 2
+
+        this.$segment.track('Transfer Success', this.request)
+        this.$appcues().track('Transfer Success', this.request)
+        this.$userpilot().track('Transfer Success', this.request)
       })
       .catch((err) => {
         this.screen = 0

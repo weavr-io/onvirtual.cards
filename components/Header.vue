@@ -25,9 +25,6 @@ import { namespace } from 'vuex-class'
 import * as AuthStore from '~/store/modules/Auth'
 const Auth = namespace(AuthStore.name)
 
-import * as CorporatesStore from '~/store/modules/Corporates'
-const Corporates = namespace(CorporatesStore.name)
-
 @Component
 export default class Header extends Vue {
   @Auth.Action logout
@@ -37,7 +34,6 @@ export default class Header extends Vue {
   }
 
   redirectToLogin() {
-    // @ts-ignore
     this.$segment.reset()
     this.$router.push('/login')
   }
