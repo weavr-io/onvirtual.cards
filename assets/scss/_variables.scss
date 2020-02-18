@@ -1,18 +1,21 @@
-$primary: #7F28D9;
-$secondary: #6D7490;
+$primary: #742B66;
+$secondary: #62F7C9;
 $text-muted: #B6B9C7;
 $card: #F6F7FC;
-$body-color:#232A47;
+$body-color: #232A47;
+$link-color: $body-color;
 
 $card-purple: #C3B5FF;
 $card-red: #FFAA8B;
 $card-yellow: #FFDF8B;
-$card-disabled: #fafafa;
+$card-disabled: #FAFAFA;
 
 $shadow-color: #5768FF4D;
 
-$theme-colors: ("card": $card, "card-purple": $card-purple, "card-red": $card-red, "card-yellow": $card-yellow, "card-disabled": $card-disabled);
+$body-bg: #FFFFFF;
+$body-bg-colored: #F0EDDE;
 
+$theme-colors: ("card": $card, "card-purple": $card-purple, "card-red": $card-red, "card-yellow": $card-yellow, "card-disabled": $card-disabled, 'bg-colored': $body-bg-colored);
 
 
 $btn-padding-y-sm: .5rem;
@@ -47,9 +50,19 @@ $custom-select-border-color: $primary;
 $custom-select-border-radius: 0;
 $custom-select-border-width: 2px;
 
-$link-color: $secondary;
-
 
 $box-shadow-sm: 0 .125rem .25rem $shadow-color;
 $box-shadow: 0 .5rem 1rem $shadow-color;
 $box-shadow-lg: 0 1rem 3rem $shadow-color;
+
+
+$spacer: 1rem;
+
+$spacers: (
+        6: ($spacer * 6),
+        7: ($spacer * 12),
+        8: ($spacer * 18)
+);
+
+$card-border-width: 0;
+$card-border-radius: 2rem;

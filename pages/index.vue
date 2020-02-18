@@ -13,8 +13,14 @@ import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component({})
 export default class IndexPage extends Vue {
-  created() {
-    this.$router.push('/login')
+  asyncData({ store, redirect }) {
+    const isLoggedIn = store.getters['auth/isLoggedIn']
+
+    if (isLoggedIn) {
+      redirect('/dashboard')
+    } else {
+      redirect('/login')
+    }
   }
 }
 </script>

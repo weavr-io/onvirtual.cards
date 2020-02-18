@@ -79,7 +79,10 @@ export module ManagedCardsSchemas {
     }
     block?: boolean | null
     destroy?: boolean
-    processedTimestamp?: number
+    processedTimestamp: string
+    additionalFields?: {
+      [k: string]: string
+    }
   }
 
   export interface CreateManagedCardRequest {

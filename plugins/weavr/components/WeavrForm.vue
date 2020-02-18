@@ -28,7 +28,7 @@ class WeavrForm extends Vue {
   }
 
   tokenize(resolve, reject) {
-    this.form.tokenize(resolve, reject)
+    return this.form.tokenize(resolve, reject)
   }
 }
 

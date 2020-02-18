@@ -1,30 +1,27 @@
 <template>
   <section>
     <b-container>
-      <b-row class="full-height-vh py-5" align-v="center">
-        <b-col id="login-box" lg="6" offset-lg="3">
+      <b-row class="full-height-vh" align-v="center">
+        <b-col lg="6" offset-lg="3">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay">
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" />
           </div>
-          <div class="mx-md-3 px-md-5">
-            <h2 class="text-center font-weight-lighter" style="margin-bottom: 100px">
+          <b-card body-class="px-6 py-5">
+            <h2 class="text-center font-weight-lighter mb-6">
               Login
             </h2>
 
-            <form id="contact-form" class="mt-5" @submit="login">
+            <form id="contact-form" @submit="login" class="mt-5">
               <error-alert
                 message="Incorrect email and password combination.  If you do not have an account please click on Register."
               />
               <b-form-group id="ig-code" label="Username:" label-for="form-code">
                 <b-form-input id="from-code" v-model="loginRequest.code" class="form-control" name="setCode" />
               </b-form-group>
-              <no-ssr placeholder="Loading...">
+              <client-only placeholder="Loading...">
                 <weavr-form ref="passwordForm">
                   <label class="d-block">Password:</label>
                   <weavr-input
-                    class-name="sign-in-password"
-                    name="password"
-                    field="password"
                     :options="{ placeholder: 'Password' }"
                     :base-style="{
                       color: '#000',
@@ -41,22 +38,24 @@
                       }
                     }"
                     @onKeyUp="checkOnKeyUp"
+                    class-name="sign-in-password"
+                    name="password"
+                    field="password"
                   />
                 </weavr-form>
-              </no-ssr>
+              </client-only>
               <loader-button
-                style="margin-top: 100px"
                 :is-loading="isLoading"
                 button-text="sign in"
-                class="text-center"
+                class="text-center mt-6"
               />
-              <div class="text-center mb-5 mt-3">
+              <div class="text-center mt-3">
                 <b-button to="/password/reset" variant="link" size="sm">
                   Forgot password?
                 </b-button>
               </div>
             </form>
-          </div>
+          </b-card>
         </b-col>
       </b-row>
     </b-container>
@@ -92,6 +91,10 @@ export default class LoginPage extends VueWithRouter {
     programmeId: config.api.programmeId,
     code: '',
     password: ''
+  }
+
+  $refs!: {
+    passwordForm: WeavrForm
   }
 
   login(evt) {

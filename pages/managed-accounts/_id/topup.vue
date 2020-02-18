@@ -2,7 +2,34 @@
   <section>
     <b-container>
       <b-row>
-        <b-col md="6" offset-md="3">
+        <b-col v-if="!kybApproved" md="6" offset-md="3" class="py-5 font-weight-lighter">
+          <p>
+            We must verify certain information relating to your company before you can access funds from your account.
+            Please send us the following documents in PDF to
+            <a href="mailto:kyb@weavr.io">kyb@weavr.io</a>:
+          </p>
+
+          <ul>
+            <li>Copy of the Certificate of Incorporation</li>
+            <li>Copy of the Articles of Association last amendment</li>
+            <li>
+              Proof of Business Address such as a copy of a bank statement or lease agreement in the name of the
+              business
+            </li>
+            <li>List of Directors: name, date of birth, address, copy of ID document</li>
+            <li>
+              List of Ultimate Beneficiary Owners (UBOs) holding a stake of 10% or more of the equity: name, date of
+              birth, address, nationality
+            </li>
+            <li>UBO declaration form <a href="/ubo-declaration.docx" target="_blank">(download link)</a></li>
+          </ul>
+
+          <p>
+            Each document must be signed by your CEO. For 1-3 above, include the wording “Certified true copy of the
+            original" above the CEO’s signature.
+          </p>
+        </b-col>
+        <b-col v-if="kybApproved" md="6" offset-md="3">
           <b-row>
             <b-col>
               <h2 class="text-center font-weight-lighter">
@@ -39,7 +66,9 @@
                   </b-tr>
                   <b-tr>
                     <b-th>Address</b-th>
-                    <b-td style="white-space: pre">{{ account.bankAccountDetails.address | weavr_coma_to_newline }}</b-td>
+                    <b-td style="white-space: pre">{{
+                      account.bankAccountDetails.address | weavr_coma_to_newline
+                    }}</b-td>
                   </b-tr>
                   <b-tr>
                     <b-th>Payment Reference</b-th>
@@ -53,7 +82,7 @@
           </b-row>
           <b-row>
             <b-col class="text-center">
-              <b-button variant="primary" class="px-5" :to="'/managed-accounts/' + accountId">
+              <b-button :to="'/managed-accounts/' + accountId" variant="primary" class="px-5">
                 close
               </b-button>
             </b-col>
@@ -70,7 +99,9 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
 import * as AccountsStore from '~/store/modules/Accounts'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
+import config from '~/config'
 import ManagedAccount = ManagedAccountsSchemas.ManagedAccount
+
 const Accounts = namespace(AccountsStore.name)
 
 @Component({
@@ -79,12 +110,30 @@ const Accounts = namespace(AccountsStore.name)
 export default class AccountTopupPage extends VueWithRouter {
   @Accounts.Getter account!: ManagedAccount | null
 
+  kybApproved!: boolean
+
   async asyncData({ store, route }) {
     const accountId = route.params.id
+    let kybApproved = false
 
-    await store.dispatch('accounts/get', accountId)
+    if (config.app.kyb_required === true) {
+      await store.dispatch('corporates/checkKYB').then(
+        () => {
+          kybApproved = true
+        },
+        () => {
+          kybApproved = false
+        }
+      )
+    } else {
+      kybApproved = true
+    }
 
-    return { accountId: accountId }
+    if (kybApproved) {
+      await store.dispatch('accounts/get', accountId)
+    }
+
+    return { accountId: accountId, kybApproved: kybApproved }
   }
 }
 </script>

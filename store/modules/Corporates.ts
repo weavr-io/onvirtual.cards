@@ -1,9 +1,10 @@
-import { State, Actions, types } from '~/store/modules/Contracts/Corporates'
+import { Actions, State, types } from '~/store/modules/Contracts/Corporates'
 import { GetterTree, MutationTree } from '~/node_modules/vuex'
 import { RootState } from '~/store'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import * as Loader from '~/store/modules/Loader'
 import { api } from '~/api/Axios'
+import { KYBState } from '~/api/Enums/KYBState'
 
 export const name = 'corporates'
 
@@ -57,17 +58,11 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
-  createCorporatePasswordIdentity(
-    { commit },
-    request: CorporatesSchemas.CreateCorporatePasswordIdentity
-  ) {
+  createCorporatePasswordIdentity({ commit }, request: CorporatesSchemas.CreateCorporatePasswordIdentity) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post(
-      '/app/api/passwords/identities/' + request.corporateId + '/create',
-      request.request
-    )
+    const req = api.post('/app/api/passwords/identities/' + request.corporateId + '/create', request.request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
@@ -76,17 +71,11 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
-  createCorporatePassword(
-    { commit },
-    request: CorporatesSchemas.CreateCorporatePassword
-  ) {
+  createCorporatePassword({ commit }, request: CorporatesSchemas.CreateCorporatePassword) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post(
-      '/app/api/passwords/' + request.corporateId + '/create',
-      request.request
-    )
+    const req = api.post('/app/api/passwords/' + request.corporateId + '/create', request.request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
@@ -115,10 +104,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post(
-      '/app/api/corporates/' + corporateId + '/users/get',
-      {}
-    )
+    const req = api.post('/app/api/corporates/' + corporateId + '/users/get', {})
 
     req.then((res) => {
       commit(types.SET_USERS, res.data)
@@ -130,17 +116,11 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
-  addUser(
-    { commit },
-    request: CorporatesSchemas.CreateCorporateUserFullRequest
-  ) {
+  addUser({ commit }, request: CorporatesSchemas.CreateCorporateUserFullRequest) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post(
-      '/app/api/corporates/' + request.corporateId + '/users/_/create',
-      request.request
-    )
+    const req = api.post('/app/api/corporates/' + request.corporateId + '/users/_/create', request.request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
@@ -150,11 +130,21 @@ export const actions: Actions<State, RootState> = {
     return req
   },
   sendVerificationCodeEmail(ctxt, request) {
-    return api.post(
-      '/app/api/corporates/' +
-        request.corporateId +
-        '/users/email/send_verification_code',
-      request.body
-    )
+    return api.post('/app/api/corporates/' + request.corporateId + '/users/email/send_verification_code', request.body)
+  },
+  async checkKYB({ dispatch, getters, rootGetters }) {
+    if (getters.corporate === null) {
+      const _corpId = rootGetters['auth/auth'].identity.id
+      await dispatch('getCorporateDetails', _corpId)
+    }
+
+    const _res =
+      getters.corporate.kyb.directorsVerified === KYBState.APPROVED &&
+      getters.corporate.kyb.UBOsVerified === KYBState.APPROVED &&
+      getters.corporate.kyb.basicCompanyChecksVerified === KYBState.APPROVED
+
+    if (!_res) {
+      return Promise.reject(new Error('KYB not approved'))
+    }
   }
 }

@@ -4,6 +4,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
+import { SecureInputOptions } from '~/plugins/weavr/components/api'
 
 @Component
 class WeavrInput extends Vue {
@@ -17,7 +18,7 @@ class WeavrInput extends Vue {
 
   @Prop() readonly field!: 'password' | 'cardNumber' | 'cvv'
 
-  @Prop() readonly options!: object
+  @Prop() readonly options!: SecureInputOptions
 
   @Prop() readonly className!: string
 

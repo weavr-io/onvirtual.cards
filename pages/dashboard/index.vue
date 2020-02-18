@@ -16,7 +16,9 @@ const Corporates = namespace(CorporatesStore.name)
   layout: 'dashboard'
 })
 export default class DashboardPage extends VueWithRouter {
-  asyncData({ redirect }) {
+  async asyncData({ redirect, store }) {
+    const _corpId = store.getters['auth/auth'].identity.id
+    await store.dispatch('corporates/getCorporateDetails', _corpId)
     redirect('/managed-accounts')
   }
 }

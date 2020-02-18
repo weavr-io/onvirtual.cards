@@ -50,10 +50,25 @@ export const getters: GetterTree<State, RootState> = {
       return []
     }
 
-    return state.statement.entry.filter((element) => {
-      // @ts-ignore
+    const _entries = state.statement.entry.filter((element) => {
       return element.adjustment != 0
     })
+
+    const _out = {}
+
+    _entries.forEach((_entry) => {
+      const _processedTimestamp = parseInt(_entry.processedTimestamp)
+      // @ts-ignore
+      const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
+
+      if (!_out[_date]) {
+        _out[_date] = []
+      }
+
+      _out[_date].push(_entry)
+    })
+
+    return _out
   },
   managedCard: (state) => {
     return state.managedCard

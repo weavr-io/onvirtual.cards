@@ -1,3 +1,5 @@
+import { KYBState } from '~/api/Enums/KYBState'
+
 export module CorporatesSchemas {
   export enum CompanyType {
     NO_TYPE = 'NO_TYPE', SOLE_TRADER = 'SOLE_TRADER', LLC = 'LLC'
@@ -51,6 +53,16 @@ export module CorporatesSchemas {
     registrationCountry: string
     companyRegistrationDate: number
     acceptedTerms: boolean
+    kyb: {
+      rootEmailVerified: boolean
+      rootMobileVerified: boolean
+      directorsVerified: KYBState
+      UBOsVerified: KYBState
+      basicCompanyChecksVerified: KYBState
+      fullCompanyChecksVerified: KYBState
+      allowedLimit: number
+      remainingLimit: number
+    }
   }
 
   export interface CreateCorporatePasswordIdentity {

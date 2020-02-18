@@ -24,6 +24,14 @@
   border-bottom: 2px solid $primary;
 }
 
+.is-dirty {
+  .weavr-input {
+    &.is-invalid {
+      border-color: $danger;
+    }
+  }
+}
+
 .weavr-account-radio {
   .custom-radio {
     padding: ($spacer*2) 0;

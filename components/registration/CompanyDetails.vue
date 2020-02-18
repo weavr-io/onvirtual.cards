@@ -25,11 +25,18 @@
     <b-form-row>
       <b-col>
         <b-form-checkbox v-model="form.acceptedTerms" :state="isInvalid($v.form.acceptedTerms)">
-          I accept the terms and use
+          I accept the <a href="https://docs.weavr.io/docs/legal/onvirtual.cards/" target="_blank">terms and use</a>
         </b-form-checkbox>
       </b-col>
     </b-form-row>
-    <loader-button :is-loading="isLoading" button-text="Finish" class="my-5 text-center" />
+    <b-form-row class="mt-5">
+      <b-col md="4">
+        <b-button variant="outline" @click="goBack"><-</b-button>
+      </b-col>
+      <b-col>
+        <loader-button :is-loading="isLoading" button-text="Finish" class="text-right" />
+      </b-col>
+    </b-form-row>
   </b-form>
 </template>
 <script lang="ts">
@@ -122,6 +129,11 @@ export default class CompanyDetailsForm extends VueWithRouter {
     companyRegistrationDate: null,
     supportEmail: '',
     acceptedTerms: false
+  }
+
+  @Emit()
+  goBack(e) {
+    e.preventDefault()
   }
 
   @Emit()

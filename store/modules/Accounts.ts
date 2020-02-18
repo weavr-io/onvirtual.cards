@@ -1,13 +1,11 @@
-import { State, Actions, types } from '~/store/modules/Contracts/Accounts'
+import { State, Actions, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Accounts'
 import { GetterTree, MutationTree } from '~/node_modules/vuex'
 import { RootState } from '~/store'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import * as Loader from '~/store/modules/Loader'
 import { api } from '~/api/Axios'
 
-export const name = 'accounts'
-
-export const namespaced = true
+export { name, namespaced, Helpers }
 
 export const state = (): State => ({
   isLoading: false,
@@ -33,17 +31,15 @@ export const getters: GetterTree<State, RootState> = {
 
     let total = 0
 
-    state.accounts.account.forEach(
-      (account: ManagedAccountsSchemas.ManagedAccount) => {
-        if (account.balances.availableBalance) {
-          if (account.currency === 'GBP') {
-            total = total + parseInt(account.balances.availableBalance) * 1.16
-          } else {
-            total += parseInt(account.balances.availableBalance)
-          }
+    state.accounts.account.forEach((account: ManagedAccountsSchemas.ManagedAccount) => {
+      if (account.balances.availableBalance) {
+        if (account.currency === 'GBP') {
+          total = total + parseInt(account.balances.availableBalance) * 1.16
+        } else {
+          total += parseInt(account.balances.availableBalance)
         }
       }
-    )
+    })
 
     return total
   },
@@ -52,9 +48,25 @@ export const getters: GetterTree<State, RootState> = {
       return []
     }
 
-    return state.statement.entry.filter((element) => {
+    const _entries = state.statement.entry.filter((element) => {
       return element.adjustment != 0
     })
+
+    const _out = {}
+
+    _entries.forEach((_entry) => {
+      const _processedTimestamp = parseInt(_entry.processedTimestamp)
+      // @ts-ignore
+      const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
+
+      if (!_out[_date]) {
+        _out[_date] = []
+      }
+
+      _out[_date].push(_entry)
+    })
+
+    return _out
   },
   isLoading: (state) => {
     return state.isLoading
@@ -62,19 +74,13 @@ export const getters: GetterTree<State, RootState> = {
 }
 
 export const mutations: MutationTree<State> = {
-  [types.SET_ACCOUNTS](
-    state,
-    accounts: ManagedAccountsSchemas.ManagedAccounts
-  ) {
+  [types.SET_ACCOUNTS](state, accounts: ManagedAccountsSchemas.ManagedAccounts) {
     state.accounts = accounts
   },
   [types.SET_ACCOUNT](state, account: ManagedAccountsSchemas.ManagedAccount) {
     state.account = account
   },
-  [types.SET_STATEMENT](
-    state,
-    statement: ManagedAccountsSchemas.ManagedAccountStatement
-  ) {
+  [types.SET_STATEMENT](state, statement: ManagedAccountsSchemas.ManagedAccountStatement) {
     state.statement = statement
   },
   [types.SET_IS_LOADING](state, isLoading: boolean) {
@@ -128,10 +134,7 @@ export const actions: Actions<State, RootState> = {
     return req
   },
   getStatement({ commit }, request) {
-    const req = api.post(
-      '/app/api/managed_accounts/' + request.id + '/statement/get',
-      request.body
-    )
+    const req = api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
 
     req.then((res) => {
       commit(types.SET_STATEMENT, res.data)

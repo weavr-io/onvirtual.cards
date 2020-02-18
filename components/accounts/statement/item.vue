@@ -1,17 +1,8 @@
 <template>
   <div>
-    <b-row class="mt-4 mb-3">
-      <b-col class="text-muted">
-        {{
-          transaction.processedTimestamp
-            | milli_to_moment
-            | moment('from', 'now')
-        }}
-      </b-col>
-    </b-row>
-    <b-row class="mb-3" align-v="center">
+    <b-row class="my-3" align-v="center">
       <b-col cols="1">
-        <div class="transaction-type-icon">
+        <div class="transaction-type-icon" v-if="isIncrease || isDecrease">
           <div v-if="isIncrease" class="transaction increase">
             :up:
           </div>
@@ -24,25 +15,26 @@
         <div class="transaction-type">
           <div class="transaction text-capitalize">
             <template v-if="transaction.txId.type === 'TRANSFER'">
-              <template v-if="isIncrease">
-                Account Load
-              </template>
-              <template v-if="isDecrease">
-                Account Unload
-              </template>
+              <transfer :transaction="transaction" />
             </template>
             <template v-else-if="transaction.txId.type === 'SETTLEMENT'">
               Deposit
+            </template>
+            <template v-else-if="transaction.txId.type === 'AUTHORISATION'">
+              Purchase (Pending)
             </template>
             <template v-else>
               {{ transaction.txId.type }}
             </template>
           </div>
         </div>
-        <!-- <div class="transaction-from text-muted">From:</div> -->
+        <div class="text-muted">
+          <span>{{ transaction.processedTimestamp | milli_to_moment | moment('HH:mm') }}</span>
+          <additional-field :value="transaction.additionalFields" />
+        </div>
       </b-col>
       <b-col class="text-right">
-        {{ transaction.adjustment | weavr_currency(transaction.currency) }}
+        <span v-if="isIncrease">+</span>{{ transaction.adjustment | weavr_currency(transaction.currency) }}
       </b-col>
     </b-row>
   </div>
@@ -52,7 +44,12 @@ import { Vue, Component, Prop } from 'nuxt-property-decorator'
 
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 
-@Component({})
+@Component({
+  components: {
+    AdditionalField: () => import('~/components/accounts/statement/additionalField.vue'),
+    Transfer: () => import('~/components/accounts/statement/transfer.vue')
+  }
+})
 export default class StatementItem extends Vue {
   @Prop({ default: '' })
   readonly transaction!: ManagedAccountsSchemas.ManagedAccountStatementEntry

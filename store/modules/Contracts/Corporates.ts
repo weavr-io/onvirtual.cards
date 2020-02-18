@@ -15,34 +15,24 @@ export interface State {
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
-  register(
-    context: ActionContext<S, R>,
-    request: CorporatesSchemas.CreateCorporateRequest
-  )
+  register(context: ActionContext<S, R>, request: CorporatesSchemas.CreateCorporateRequest)
 
   createCorporatePasswordIdentity(
     context: ActionContext<S, R>,
     request: CorporatesSchemas.CreateCorporatePasswordIdentity
   )
 
-  createCorporatePassword(
-    context: ActionContext<S, R>,
-    request: CorporatesSchemas.CreateCorporatePassword
-  )
+  createCorporatePassword(context: ActionContext<S, R>, request: CorporatesSchemas.CreateCorporatePassword)
 
   getCorporateDetails(context: ActionContext<S, R>, corporateId: number)
 
   getUsers(context: ActionContext<S, R>, corporateId: number)
 
-  addUser(
-    context: ActionContext<S, R>,
-    request: CorporatesSchemas.CreateCorporateUserFullRequest
-  )
+  addUser(context: ActionContext<S, R>, request: CorporatesSchemas.CreateCorporateUserFullRequest)
 
-  sendVerificationCodeEmail(
-    context: ActionContext<S, R>,
-    request: _Requests.sendVerificationEmailFull
-  )
+  checkKYB(context: ActionContext<S, R>)
+
+  sendVerificationCodeEmail(context: ActionContext<S, R>, request: _Requests.sendVerificationEmailFull)
 }
 
 export module _Functions {

@@ -89,6 +89,6 @@ export module ManagedAccountsSchemas {
     }
     block: null | boolean
     destroy: boolean
-    processedTimestamp: number
+    processedTimestamp: string
   }
 }

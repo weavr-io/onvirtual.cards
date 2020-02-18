@@ -1,25 +1,25 @@
 <template>
-  <section class="h-100 bg-pattern">
-    <b-container class="d-flex h-100">
-      <b-row class="w-100 align-self-center">
-        <b-col id="login-box" class="my-5 bg-white" md="6" offset-md="3">
-          <div class="mt-5 text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay">
+  <section>
+    <b-container>
+      <b-row class="full-height-vh" align-v="center">
+        <b-col md="6" offset-md="3">
+          <div class="text-center pb-5">
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" >
           </div>
-          <div class="my-4 mx-3">
+          <b-card body-class="px-6 py-5">
             <div class="form-screens">
               <error-alert />
               <div v-if="screen === 0" class="form-screen">
                 <register-form :request="registrationRequest" @submit-form="form1Submit" />
               </div>
               <div v-if="screen === 1" class="form-screen">
-                <personal-details-form :request="registrationRequest" @submit-form="form2Submit" />
+                <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
               </div>
               <div v-if="screen === 2" class="form-screen">
-                <company-details-form :request="registrationRequest" @submit-form="form3Submit" />
+                <company-details-form :request="registrationRequest" @submit-form="form3Submit" @go-back="goBack" />
               </div>
             </div>
-          </div>
+          </b-card>
         </b-col>
       </b-row>
     </b-container>
@@ -71,6 +71,10 @@ export default class RegistrationPage extends VueWithRouter {
 
   nextScreen() {
     this.screen++
+  }
+
+  goBack() {
+    this.screen--
   }
 
   public registrationRequest: CorporatesSchemas.CreateCorporateRequest = {
@@ -145,9 +149,9 @@ export default class RegistrationPage extends VueWithRouter {
 
     if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
       this.screen = 0
+    } else {
+      this.$weavrToastError(_errCode)
     }
-
-    this.$weavrToastError(err.response.data.errorCode)
   }
 
   doCreateCorporatePasswordIdentity() {
@@ -185,7 +189,10 @@ export default class RegistrationPage extends VueWithRouter {
   }
 
   goToVerifyEmail() {
-    this.$router.push('/register/verify/corporates/' + this.corporate.id.id)
+    this.$router.push({
+      path: '/register/verify',
+      query: { corp: this.corporate.id.id, email: this.registrationRequest.rootEmail }
+    })
   }
 
   checkOnKeyUp(e) {

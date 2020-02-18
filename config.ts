@@ -11,5 +11,9 @@ export default {
     managed_accounts: process.env.MANAGED_ACCOUNTS_PROFILE_ID,
     transfers: process.env.TRANSFERS_PROFILE_ID,
     managed_cards: process.env.MANAGED_CARDS_PROFILE_ID
+  },
+  app: {
+    kyb_required: process.env.KYB_REQUIRED ? JSON.parse(process.env.KYB_REQUIRED) : true,
+    view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true
   }
 }
