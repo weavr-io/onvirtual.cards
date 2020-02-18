@@ -110,9 +110,8 @@ export default class LoginPage extends VueWithRouter {
   goToDashboard(res) {
     if (this.isLoggedIn) {
       const _id = res.data.credential.type + '-' + res.data.credential.id
-      this.$appcuesIdentify(_id, {})
-      this.$userPilotIdentify(_id, {})
-      // @ts-ignore
+      this.$appcues().identify(_id, {})
+      this.$userpilot().identify(_id, {})
       this.$segment.identify(_id, {
         email: this.loginRequest.code
       })

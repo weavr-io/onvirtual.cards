@@ -1,3 +1,3 @@
 export default function (ctxt) {
-  ctxt.app.$userPilotPage()
+  ctxt.app.$userpilot().reload()
 }

@@ -1,27 +1,20 @@
 export default ({}, inject) => {
-  inject('appcuesIdentify', (userId: string, options: any) => {
+  inject('appcues', () => {
     // @ts-ignore
-    window.Appcues.identify(userId, options)
-  })
-
-  inject('appcuesPage', () => {
-    // @ts-ignore
-    window.Appcues.page()
-    console.log('here')
+    return window.Appcues
   })
 }
 
-export interface AppcuesIdentify {
-  (userId: string, options: any): void
-}
-
-export interface AppcuesPage {
-  (): void
+export interface Appcues {
+  (): {
+    page(): void
+    identify(userId?: string, traits?: any): void
+    track(event: string, properties: any): void
+  }
 }
 
 declare module 'vue/types/vue' {
   interface Vue {
-    readonly $appcuesIdentify: AppcuesIdentify
-    readonly $appcuesPage: AppcuesPage
+    readonly $appcues: Appcues
   }
 }

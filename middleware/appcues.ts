@@ -1,3 +1,3 @@
 export default function (ctxt) {
-  ctxt.app.$appcuesPage()
+  ctxt.app.$appcues().page()
 }

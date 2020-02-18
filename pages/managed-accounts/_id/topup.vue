@@ -66,9 +66,9 @@
                   </b-tr>
                   <b-tr>
                     <b-th>Address</b-th>
-                    <b-td style="white-space: pre">{{
-                      account.bankAccountDetails.address | weavr_coma_to_newline
-                    }}</b-td>
+                    <b-td style="white-space: pre">
+                      {{ account.bankAccountDetails.address | weavr_coma_to_newline }}
+                    </b-td>
                   </b-tr>
                   <b-tr>
                     <b-th>Payment Reference</b-th>
@@ -112,7 +112,7 @@ export default class AccountTopupPage extends VueWithRouter {
 
   kybApproved!: boolean
 
-  async asyncData({ store, route }) {
+  async asyncData({ store, route, app }) {
     const accountId = route.params.id
     let kybApproved = false
 
@@ -134,6 +134,13 @@ export default class AccountTopupPage extends VueWithRouter {
     }
 
     return { accountId: accountId, kybApproved: kybApproved }
+  }
+
+  mounted() {
+    super.mounted()
+    this.$segment.track('Account Top Up', {})
+    this.$appcues().track('Account Top Up', {})
+    this.$userpilot().track('Account Top Up', {})
   }
 }
 </script>

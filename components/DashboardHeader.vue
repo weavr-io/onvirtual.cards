@@ -78,7 +78,6 @@ export default class DashboardHeader extends Vue {
 
   get isManagedAccounts(): boolean {
     if (this.$route.matched[0].name) {
-      console.log(this.$route.matched[0].name)
       return ['managed-accounts', 'managed-accounts-id'].indexOf(this.$route.matched[0].name) !== -1
     } else {
       return false

@@ -1,26 +1,20 @@
 export default ({}, inject) => {
-  inject('userPilotIdentify', (userId: string, options: any) => {
+  inject('userpilot', () => {
     // @ts-ignore
-    window.userpilot.identify(userId, options)
-  })
-
-  inject('userPilotPage', () => {
-    // @ts-ignore
-    window.userpilot.reload()
+    return window.userpilot
   })
 }
 
-export interface UserPilotIdentify {
-  (userId: string, options: any): void
-}
-
-export interface UserPilotPage {
-  (): void
+export interface UserPilot{
+  (): {
+    track(event: string, properties: any): void
+    reload(): void
+    identify(userId?: string, traits?: any): void
+  }
 }
 
 declare module 'vue/types/vue' {
   interface Vue {
-    readonly $userPilotIdentify: UserPilotIdentify
-    readonly $userPilotPage: UserPilotPage
+    readonly $userpilot: UserPilot
   }
 }
