@@ -65,7 +65,13 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post('/app/api/corporates/' + request.corporateId + '/users/email/verify', request.request)
+    let req
+
+    if (request.consumerId) {
+      req = api.post('/app/api/consumers/' + request.consumerId + '/email/verify', request.request)
+    } else {
+      req = api.post('/app/api/corporates/' + request.corporateId + '/users/email/verify', request.request)
+    }
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })

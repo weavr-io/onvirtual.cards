@@ -53,6 +53,7 @@ export default class EmailVerificationPage extends VueWithRouter {
   @Auth.Getter isLoading
 
   public request: Schemas.verifyEmailRequest = {
+    consumerId: null,
     corporateId: null,
     request: {
       emailAddress: '',
