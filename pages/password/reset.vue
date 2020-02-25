@@ -52,8 +52,6 @@ import { BaseVue } from '~/base/classes/BaseVue'
 
 import * as AuthStore from '~/store/modules/Auth'
 import { LostPasswordStartRequest } from '~/api/Requests/Auth/LostPasswordStartRequest'
-import { _Functions } from '~/store/modules/Contracts/Auth'
-import { Helpers } from '~/store/modules/Auth'
 
 const Auth = namespace(AuthStore.name)
 
@@ -83,7 +81,7 @@ export default class ResetPasswordPage extends BaseVue {
     evt.preventDefault()
     this.$v.$touch()
     if (!this.$v.$invalid) {
-      Helpers.lostPasswordStart(this.$store, this.form).then(() => {
+      AuthStore.Helpers.lostPasswordStart(this.$store, this.form).then(() => {
         this.$router.push('/password/sent')
       })
     }

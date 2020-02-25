@@ -48,6 +48,8 @@ import * as CardsStore from '~/store/modules/Cards'
 import * as AuthStore from '~/store/modules/Auth'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
+import { Schemas } from '~/api/Schemas'
+import LoginResult = Schemas.LoginResult
 
 const Cards = namespace(CardsStore.name)
 const Auth = namespace(AuthStore.name)
@@ -78,7 +80,7 @@ export default class AddCardPage extends VueWithRouter {
 
   @Cards.Getter isLoading
 
-  @Auth.Getter corporateId
+  @Auth.Getter auth!: LoginResult
 
   currencyOptions = [
     { value: 'EUR', text: 'EUR' },
@@ -88,7 +90,7 @@ export default class AddCardPage extends VueWithRouter {
   public request: ManagedCardsSchemas.CreateManagedCardRequest = {
     profileId: 0,
     owner: {
-      type: 'corporates',
+      type: '',
       id: 0
     },
     friendlyName: '',
@@ -119,7 +121,9 @@ export default class AddCardPage extends VueWithRouter {
 
   mounted() {
     super.mounted()
-    this.request.owner.id = this.corporateId
+    if (this.auth.identity) {
+      this.request.owner = this.auth.identity
+    }
     this.request.profileId = config.profileId.managed_cards
 
     this.$segment.track('Initiated Add Card', {})
