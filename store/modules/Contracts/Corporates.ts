@@ -17,13 +17,6 @@ export interface State {
 export interface Actions<S, R> extends ActionTree<S, R> {
   register(context: ActionContext<S, R>, request: CorporatesSchemas.CreateCorporateRequest)
 
-  createCorporatePasswordIdentity(
-    context: ActionContext<S, R>,
-    request: CorporatesSchemas.CreateCorporatePasswordIdentity
-  )
-
-  createCorporatePassword(context: ActionContext<S, R>, request: CorporatesSchemas.CreateCorporatePassword)
-
   getCorporateDetails(context: ActionContext<S, R>, corporateId: number)
 
   getUsers(context: ActionContext<S, R>, corporateId: number)

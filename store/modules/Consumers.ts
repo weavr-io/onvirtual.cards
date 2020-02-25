@@ -47,19 +47,6 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
-  createPasswordIdentity({ commit }, request) {
-    commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
-
-    const req = api.post('/app/api/passwords/identities/' + request.consumerId + '/create', request.request)
-
-    req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
-      commit(types.SET_IS_LOADING, false)
-    })
-
-    return req
-  },
   sendVerificationCodeEmail({}, request) {
     return api.post('/app/api/consumers/' + request.consumerId + '/email/send_verification_code', request.request)
   }

@@ -4,7 +4,7 @@
       <b-row class="full-height-vh" align-v="center">
         <b-col md="6" offset-md="3">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
           </div>
           <b-card no-body class="overflow-hidden">
             <registration-nav />
@@ -36,7 +36,8 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
 import config from '~/config'
 import { CreateConsumerRequest } from '~/api/Requests/Consumers/CreateConsumerRequest'
-import { _Requests, Helpers } from '~/store/modules/Contracts/Consumers'
+import { _Requests, Helpers } from '~/store/modules/Contracts/Auth'
+import { Helpers as ConsumerHelpers } from '~/store/modules/Contracts/Consumers'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 
@@ -107,13 +108,12 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
   }
 
   doRegister() {
-    Helpers.create(this.$store, this.registrationRequest)
+    ConsumerHelpers.create(this.$store, this.registrationRequest)
       .then(this.doCreatePasswordIdentity.bind(this))
       .catch(this.registrationFailed.bind(this))
   }
 
   registrationFailed(err) {
-
     const _errCode = err.response.data.errorCode
 
     if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
@@ -125,16 +125,31 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
   doCreatePasswordIdentity() {
     const _req: _Requests.CreatePasswordIdentity = {
-      consumerId: this.consumer.id.id,
+      id: this.consumer.id.id,
       request: {
         profileId: this.registrationRequest.profileId
       }
     }
-    Helpers.createPasswordIdentity(this.$store, _req).then(this.sendVerifyEmail.bind(this))
+    Helpers.createPasswordIdentity(this.$store, _req).then(this.doCreatePassword.bind(this))
+  }
+
+  doCreatePassword() {
+    const _req: _Requests.CreatePassword = {
+      id: this.consumer.id.id,
+      request: {
+        credentialType: 'ROOT',
+        identityId: this.consumer.id.id,
+        password: {
+          value: this.password
+        }
+      }
+    }
+
+    Helpers.createPassword(this.$store, _req).then(this.sendVerifyEmail.bind(this))
   }
 
   sendVerifyEmail() {
-    Helpers.sendVerificationCodeEmail(this.$store, {
+    ConsumerHelpers.sendVerificationCodeEmail(this.$store, {
       consumerId: this.consumer.id.id,
       request: {
         emailAddress: this.registrationRequest.email
@@ -145,7 +160,10 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
   goToVerifyEmail() {
     this.$router.push({
       path: '/register/verify',
-      query: { cons: this.consumer.id.id, email: this.registrationRequest.email }
+      query: {
+        cons: this.consumer.id.id + '',
+        email: this.registrationRequest.email
+      }
     })
   }
 }

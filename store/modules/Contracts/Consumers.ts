@@ -20,17 +20,11 @@ export interface State {
 
 export enum _Actions {
   create = 'create',
-  createPasswordIdentity = 'createPasswordIdentity',
   sendVerificationCodeEmail = 'sendVerificationCodeEmail'
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
   [_Actions.create](context: ActionContext<S, R>, request: CreateConsumerRequest): AxiosPromise<Consumer>
-
-  [_Actions.createPasswordIdentity](
-    context: ActionContext<S, R>,
-    request: _Requests.CreatePasswordIdentity
-  ): AxiosPromise
 
   [_Actions.sendVerificationCodeEmail](
     context: ActionContext<S, R>,
@@ -39,13 +33,6 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 }
 
 export module _Requests {
-  export interface CreatePasswordIdentity {
-    consumerId: number
-    request: {
-      profileId: string
-    }
-  }
-
   export interface SendVerificationEmail {
     consumerId: number
     request: {
@@ -57,12 +44,6 @@ export module _Requests {
 export module Helpers {
   export const create = (store: Store<any>, request: CreateConsumerRequest): AxiosPromise<Consumer> => {
     return StoreHelpers.dispatch(store, name, _Actions.create, request)
-  }
-  export const createPasswordIdentity = (
-    store: Store<any>,
-    request: _Requests.CreatePasswordIdentity
-  ): AxiosPromise => {
-    return StoreHelpers.dispatch(store, name, _Actions.createPasswordIdentity, request)
   }
   export const sendVerificationCodeEmail = (
     store: Store<any>,

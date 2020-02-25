@@ -12,13 +12,13 @@
             <error-alert
               message="The reset password link is invalid or has expired.  Please restart the password restart process."
             />
-            <b-form id="contact-form" class="mt-5" @submit="setPassword">
+            <b-form id="contact-form" @submit="setPassword" class="mt-5">
               <b-form-group
                 id="ig-email"
-                label="E-mail"
-                label-for="setEmail"
                 :state="isInvalid($v.form.email)"
                 :invalid-feedback="invalidFeedback($v.form.email, 'email')"
+                label="E-mail"
+                label-for="setEmail"
               >
                 <b-form-input
                   id="setEmail"
@@ -62,7 +62,6 @@ import LoaderButton from '~/components/LoaderButton.vue'
 
 import passwordComplexity from '~/plugins/customValidators/passwordComplexity.ts'
 import * as AuthStore from '~/store/modules/Auth'
-import { _Functions } from '~/store/modules/Contracts/Auth'
 import { LostPasswordValidateRequest } from '~/api/Requests/Auth/LostPasswordValidateRequest'
 import { LostPasswordContinueRequest } from '~/api/Requests/Auth/LostPasswordContinueRequest'
 
@@ -92,10 +91,6 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class PasswordSentPage extends BaseVue {
-  @Auth.Action lostPasswordValidate!: _Functions.lostPasswordValidate
-
-  @Auth.Action lostPasswordResume!: _Functions.lostPasswordResume
-
   @Auth.Getter isLoading!: boolean
 
   protected form: LostPasswordContinueRequest = {
@@ -119,14 +114,14 @@ export default class PasswordSentPage extends BaseVue {
     this.validateNonce.nonce = this.$route.params.nonce
     this.validateNonce.email = this.$route.params.email
 
-    this.lostPasswordValidate(this.validateNonce)
+    AuthStore.Helpers.lostPasswordValidate(this.$store, this.validateNonce)
   }
 
   setPassword(evt) {
     evt.preventDefault()
     this.$v.$touch()
     if (!this.$v.$invalid) {
-      this.lostPasswordResume(this.form).then(() => {
+      AuthStore.Helpers.lostPasswordResume(this.$store, this.form).then(() => {
         this.$router.push('/login')
       })
     }

@@ -38,6 +38,8 @@ import * as AuthStore from '~/store/modules/Auth'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import config from '~/config'
 import { _Functions } from '~/store/modules/Contracts/Corporates'
+import { Helpers } from '~/store/modules/Auth'
+import { _Requests } from '~/store/modules/Contracts/Auth'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -55,10 +57,6 @@ const Auth = namespace(AuthStore.name)
 })
 export default class RegistrationPage extends VueWithRouter {
   @Corporates.Action register
-
-  @Corporates.Action createCorporatePasswordIdentity
-
-  @Corporates.Action createCorporatePassword
 
   @Corporates.Action
   sendVerificationCodeEmail!: _Functions.sendVerificationCodeEmail
@@ -144,8 +142,8 @@ export default class RegistrationPage extends VueWithRouter {
     this.registrationRequest.companyBusinessAddress = this.registrationRequest.companyRegistrationAddress
 
     this.register(this.registrationRequest)
-      .then(this.doCreateCorporatePasswordIdentity.bind(this))
-      .catch(this.registrationFailed.bind(this))
+            .then(this.doCreateCorporatePasswordIdentity.bind(this))
+            .catch(this.registrationFailed.bind(this))
   }
 
   registrationFailed(err) {
@@ -159,18 +157,18 @@ export default class RegistrationPage extends VueWithRouter {
   }
 
   doCreateCorporatePasswordIdentity() {
-    const _req: CorporatesSchemas.CreateCorporatePasswordIdentity = {
-      corporateId: this.corporate.id.id,
+    const _req: _Requests.CreatePasswordIdentity = {
+      id: this.corporate.id.id,
       request: {
         profileId: this.registrationRequest.profileId
       }
     }
-    this.createCorporatePasswordIdentity(_req).then(this.doCreateCorporatePassword.bind(this))
+    Helpers.createPasswordIdentity(this.$store, _req).then(this.doCreateCorporatePassword.bind(this))
   }
 
   doCreateCorporatePassword() {
-    const _req: CorporatesSchemas.CreateCorporatePassword = {
-      corporateId: this.corporate.id.id,
+    const _req: _Requests.CreatePassword = {
+      id: this.corporate.id.id,
       request: {
         credentialType: 'ROOT',
         identityId: this.corporate.id.id,
@@ -180,7 +178,7 @@ export default class RegistrationPage extends VueWithRouter {
       }
     }
 
-    this.createCorporatePassword(_req).then(this.sendVerifyEmail.bind(this))
+    Helpers.createPassword(this.$store, _req).then(this.sendVerifyEmail.bind(this))
   }
 
   sendVerifyEmail() {

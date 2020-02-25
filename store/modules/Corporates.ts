@@ -58,32 +58,6 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
-  createCorporatePasswordIdentity({ commit }, request: CorporatesSchemas.CreateCorporatePasswordIdentity) {
-    commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
-
-    const req = api.post('/app/api/passwords/identities/' + request.corporateId + '/create', request.request)
-
-    req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
-      commit(types.SET_IS_LOADING, false)
-    })
-
-    return req
-  },
-  createCorporatePassword({ commit }, request: CorporatesSchemas.CreateCorporatePassword) {
-    commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
-
-    const req = api.post('/app/api/passwords/' + request.corporateId + '/create', request.request)
-
-    req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
-      commit(types.SET_IS_LOADING, false)
-    })
-
-    return req
-  },
   getCorporateDetails({ commit }, corporateId) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })

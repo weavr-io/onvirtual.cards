@@ -2,16 +2,15 @@ import { GetterTree, MutationTree } from 'vuex'
 import { RootState } from 'store'
 import * as Loader from './Loader'
 import { api } from '~/api/Axios'
-import { Actions, State, types } from '~/store/modules/Contracts/Auth'
+import { Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Auth'
 import { Schemas } from '~/api/Schemas'
 import LoginRequest = Schemas.LoginRequest
 import LoginResult = Schemas.LoginResult
+import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
-export const name = 'auth'
-
-export const namespaced = true
+export { name, namespaced, Helpers }
 
 export const state = (): State => ({
   auth: {},
@@ -111,6 +110,32 @@ export const actions: Actions<State, RootState> = {
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
     const req = api.post('/app/api/auth/lost_password/resume', request)
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
+  createPasswordIdentity({ commit }, request) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/passwords/identities/' + request.id + '/create', request.request)
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
+  createPassword({ commit }, request) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/passwords/' + request.id + '/create', request.request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
