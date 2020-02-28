@@ -7,7 +7,7 @@
             <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
           </div>
           <b-card no-body class="overflow-hidden">
-            <registration-nav />
+<!--            <registration-nav />-->
             <b-card-body class="px-6 py-5">
               <div class="form-screens">
                 <error-alert />
