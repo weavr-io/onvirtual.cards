@@ -30,6 +30,12 @@ export const getters: GetterTree<State, RootState> = {
   corporateId: (state) => {
     return state.auth.identity ? state.auth.identity.id : null
   },
+  isConsumer: (state) => {
+    return state.auth.identity ? state.auth.identity.type === 'consumers' : null
+  },
+  isCorporate: (state) => {
+    return state.auth.identity ? state.auth.identity.type === 'corporates' : null
+  },
   isLoading: (state) => {
     return state.isLoading
   }

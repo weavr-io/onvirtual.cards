@@ -1,4 +1,4 @@
-import { Actions, State, types } from '~/store/modules/Contracts/Corporates'
+import { Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Corporates'
 import { GetterTree, MutationTree } from '~/node_modules/vuex'
 import { RootState } from '~/store'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
@@ -6,9 +6,7 @@ import * as Loader from '~/store/modules/Loader'
 import { api } from '~/api/Axios'
 import { KYBState } from '~/api/Enums/KYBState'
 
-export const name = 'corporates'
-
-export const namespaced = true
+export { name, namespaced, Helpers }
 
 export const state = (): State => ({
   corporate: null,

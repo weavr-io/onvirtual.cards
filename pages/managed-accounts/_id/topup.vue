@@ -2,7 +2,7 @@
   <section>
     <b-container>
       <b-row>
-        <b-col v-if="!kybApproved" md="6" offset-md="3" class="py-5 font-weight-lighter">
+        <b-col v-if="!approved" md="6" offset-md="3" class="py-5 font-weight-lighter">
           <p>
             We must verify certain information relating to your company before you can access funds from your account.
             Please send us the following documents in PDF to
@@ -29,7 +29,7 @@
             original" above the CEO’s signature.
           </p>
         </b-col>
-        <b-col v-if="kybApproved" md="6" offset-md="3">
+        <b-col v-if="approved" md="6" offset-md="3">
           <b-row>
             <b-col>
               <h2 class="text-center font-weight-lighter">
@@ -98,6 +98,8 @@ import { namespace } from 'vuex-class'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
 import * as AccountsStore from '~/store/modules/Accounts'
+import * as CorporatesStore from '~/store/modules/Corporates'
+import * as ConsumersStore from '~/store/modules/Consumers'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import config from '~/config'
 import ManagedAccount = ManagedAccountsSchemas.ManagedAccount
@@ -110,30 +112,42 @@ const Accounts = namespace(AccountsStore.name)
 export default class AccountTopupPage extends VueWithRouter {
   @Accounts.Getter account!: ManagedAccount | null
 
-  kybApproved!: boolean
+  approved!: boolean
 
-  async asyncData({ store, route, app }) {
+  async asyncData({ store, route }) {
     const accountId = route.params.id
-    let kybApproved = false
+    let approved = false
 
     if (config.app.kyb_required === true) {
-      await store.dispatch('corporates/checkKYB').then(
-        () => {
-          kybApproved = true
-        },
-        () => {
-          kybApproved = false
-        }
-      )
+      if (store.getters['auth/isConsumer']) {
+        await ConsumersStore.Helpers.checkKYC(store).then(
+          () => {
+            approved = true
+          },
+          () => {
+            approved = false
+          }
+        )
+      }
+      if (store.getters['auth/isCorporate']) {
+        await CorporatesStore.Helpers.checkKYB(store).then(
+          () => {
+            approved = true
+          },
+          () => {
+            approved = false
+          }
+        )
+      }
     } else {
-      kybApproved = true
+      approved = true
     }
 
-    if (kybApproved) {
-      await store.dispatch('accounts/get', accountId)
+    if (approved) {
+      await AccountsStore.Helpers.get(store, accountId)
     }
 
-    return { accountId: accountId, kybApproved: kybApproved }
+    return { accountId: accountId, approved: approved }
   }
 
   mounted() {

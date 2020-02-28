@@ -1,9 +1,11 @@
-import { State, Actions, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Consumers'
+import { Actions, Helpers, name, namespaced, State, types } from '~/store/modules/Contracts/Consumers'
 import { GetterTree, MutationTree } from '~/node_modules/vuex'
 import { RootState } from '~/store'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import * as Loader from '~/store/modules/Loader'
 import { api } from '~/api/Axios'
+import { IsPep } from '~/api/Enums/Consumers/IsPep'
+import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 
 export { name, namespaced, Helpers }
 
@@ -47,7 +49,44 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
+  get({ commit }, id) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/consumers/' + id + '/get', {})
+
+    req.then((res) => {
+      commit(types.SET_CONSUMER, res.data)
+    })
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
   sendVerificationCodeEmail({}, request) {
     return api.post('/app/api/consumers/' + request.consumerId + '/email/send_verification_code', request.request)
+  },
+  sendVerificationCodeMobile({}, request) {
+    return api.post('/app/api/consumers/' + request.consumerId + '/mobile/send_verification_code', request.request)
+  },
+  verifyMobile({}, request) {
+    return api.post('/app/api/consumers/' + request.consumerId + '/mobile/verify', request.request)
+  },
+  async checkKYC({ dispatch, getters, rootGetters }) {
+    if (getters.consumer === null) {
+      const _id = rootGetters['auth/auth'].identity.id
+      await dispatch('get', _id)
+    }
+
+    const _res = getters.consumer.kyc.emailVerified === true &&
+      getters.consumer.kyc.mobileVerified === true &&
+      getters.consumer.kyc.isPep === IsPep.NO &&
+      getters.consumer.kyc.fullDueDiligence === FullDueDiligence.APPROVED
+
+    if (!_res) {
+      return Promise.reject(new Error('KYC not approved'))
+    }
   }
 }

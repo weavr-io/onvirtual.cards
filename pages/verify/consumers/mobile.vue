@@ -7,7 +7,7 @@
             <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
           </div>
           <div class="mx-md-3 px-md-5">
-            <b-card class="mt-5" bg-variant="secondary" text-variant="dark">
+            <b-card class="mt-5" bg-variant="secondary" text-variant="white">
               <b-card-text>
                 We sent you a verification code by email. Please enter that
                 code to verify your email address.

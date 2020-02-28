@@ -15,4 +15,5 @@ export interface Consumer {
   mobileCountryCode: string
   mobileNumber: string
   kyc?: ConsumerKycStatus
+  defaultCurrency?: string
 }

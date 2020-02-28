@@ -4,10 +4,10 @@
       <b-row class="full-height-vh" align-v="center">
         <b-col md="6" offset-md="3" class="my-6">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
           </div>
           <b-card no-body class="overflow-hidden">
-<!--            <registration-nav />-->
+            <!--            <registration-nav />-->
             <b-card-body class="px-6 py-5">
               <div class="form-screens">
                 <error-alert />
@@ -37,7 +37,6 @@ import * as AuthStore from '~/store/modules/Auth'
 
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import config from '~/config'
-import { _Functions } from '~/store/modules/Contracts/Corporates'
 import { Helpers } from '~/store/modules/Auth'
 import { _Requests } from '~/store/modules/Contracts/Auth'
 
@@ -57,9 +56,6 @@ const Auth = namespace(AuthStore.name)
 })
 export default class RegistrationPage extends VueWithRouter {
   @Corporates.Action register
-
-  @Corporates.Action
-  sendVerificationCodeEmail!: _Functions.sendVerificationCodeEmail
 
   @Corporates.Getter isLoading
 
@@ -142,8 +138,8 @@ export default class RegistrationPage extends VueWithRouter {
     this.registrationRequest.companyBusinessAddress = this.registrationRequest.companyRegistrationAddress
 
     this.register(this.registrationRequest)
-            .then(this.doCreateCorporatePasswordIdentity.bind(this))
-            .catch(this.registrationFailed.bind(this))
+      .then(this.doCreateCorporatePasswordIdentity.bind(this))
+      .catch(this.registrationFailed.bind(this))
   }
 
   registrationFailed(err) {
@@ -182,7 +178,7 @@ export default class RegistrationPage extends VueWithRouter {
   }
 
   sendVerifyEmail() {
-    this.sendVerificationCodeEmail({
+    CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, {
       corporateId: this.corporate.id.id,
       body: {
         emailAddress: this.registrationRequest.rootEmail

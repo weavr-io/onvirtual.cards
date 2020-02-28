@@ -81,7 +81,7 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as AuthStore from '~/store/modules/Auth'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
-import { _Functions, _Requests } from '~/store/modules/Contracts/Corporates'
+import { _Requests } from '~/store/modules/Contracts/Corporates'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -93,11 +93,6 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class AddCardPage extends VueWithRouter {
-  @Corporates.Action addUser!: _Functions.addUser
-
-  @Corporates.Action
-  sendVerificationCodeEmail!: _Functions.sendVerificationCodeEmail
-
   @Corporates.Getter isLoading
 
   @Auth.Getter corporateId
@@ -125,7 +120,7 @@ export default class AddCardPage extends VueWithRouter {
 
   doAdd(evt) {
     evt.preventDefault()
-    this.addUser(this.request).then(this.userAdded.bind(this))
+    CorporatesStore.Helpers.addUser(this.$store, this.request).then(this.userAdded.bind(this))
   }
 
   userAdded() {
@@ -135,7 +130,7 @@ export default class AddCardPage extends VueWithRouter {
       },
       corporateId: this.request.corporateId
     }
-    this.sendVerificationCodeEmail(_request).then(() => {
+    CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, _request).then(() => {
       this.$router.push('/users')
     })
   }
