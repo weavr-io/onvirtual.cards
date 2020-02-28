@@ -93,7 +93,8 @@ const config = {
     extend(config, ctx) {}
   },
   router: {
-    middleware: ['authCookie', 'appcues', 'userpilot']
+    middleware: ['authCookie', 'appcues', 'userpilot'],
+    linkActiveClass: 'active'
   },
   buildModules: ['@nuxt/typescript-build'],
   typescript: {

@@ -15,26 +15,26 @@
             <error-alert />
             <b-form id="contact-form" class="mt-5" @submit="resetPassword">
               <b-form-group
-                id="ig-email"
-                label="Email:"
-                label-for="from-email"
-                :state="isInvalid($v.form.email)"
-                :invalid-feedback="invalidFeedback($v.form.email, 'email')"
+                      id="ig-email"
+                      label="Email:"
+                      label-for="from-email"
+                      :state="isInvalid($v.form.email)"
+                      :invalid-feedback="invalidFeedback($v.form.email, 'email')"
               >
                 <b-form-input
-                  id="from-email"
-                  v-model="form.email"
-                  :state="isInvalid($v.form.email)"
-                  class="form-control"
-                  type="email"
-                  name="setEmail"
+                        id="from-email"
+                        v-model="form.email"
+                        :state="isInvalid($v.form.email)"
+                        class="form-control"
+                        type="email"
+                        name="setEmail"
                 />
               </b-form-group>
               <div class="form-group mt-5 pt-1">
                 <loader-button
-                  :is-loading="isLoading"
-                  button-text="send reset link"
-                  class="text-center"
+                        :is-loading="isLoading"
+                        button-text="send reset link"
+                        class="text-center"
                 />
               </div>
             </b-form>
@@ -52,7 +52,7 @@ import { BaseVue } from '~/base/classes/BaseVue'
 
 import * as AuthStore from '~/store/modules/Auth'
 import { LostPasswordStartRequest } from '~/api/Requests/Auth/LostPasswordStartRequest'
-import { _Functions } from '~/store/modules/Contracts/Auth'
+
 const Auth = namespace(AuthStore.name)
 
 @Component({
@@ -71,8 +71,6 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class ResetPasswordPage extends BaseVue {
-  @Auth.Action lostPasswordStart!: _Functions.lostPasswordStart
-
   @Auth.Getter isLoading!: boolean
 
   protected form: LostPasswordStartRequest = {
@@ -83,7 +81,7 @@ export default class ResetPasswordPage extends BaseVue {
     evt.preventDefault()
     this.$v.$touch()
     if (!this.$v.$invalid) {
-      this.lostPasswordStart(this.form).then(() => {
+      AuthStore.Helpers.lostPasswordStart(this.$store, this.form).then(() => {
         this.$router.push('/password/sent')
       })
     }

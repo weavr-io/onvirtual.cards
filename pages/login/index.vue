@@ -4,7 +4,7 @@
       <b-row class="full-height-vh" align-v="center">
         <b-col lg="6" offset-lg="3">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" >
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
           </div>
           <b-card body-class="px-6 py-5">
             <h2 class="text-center font-weight-lighter mb-6">

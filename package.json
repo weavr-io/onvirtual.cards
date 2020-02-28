@@ -1,7 +1,7 @@
 {
   "name": "onvirtual-cards",
   "version": "1.0.0",
-  "description": "DevPay for weavr",
+  "description": "onvirtual.cards for weavr",
   "author": "Threls Ltd.",
   "private": true,
   "scripts": {

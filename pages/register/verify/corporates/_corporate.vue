@@ -4,7 +4,7 @@
       <b-row class="w-100 align-self-center">
         <b-col lg="6" offset-lg="3">
           <div class="mt-5 text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay" />
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
           </div>
           <div class="mx-md-3 px-md-5">
             <b-card class="mt-5" bg-variant="secondary" text-variant="white">
@@ -53,6 +53,7 @@ export default class EmailVerificationPage extends VueWithRouter {
   @Auth.Getter isLoading
 
   public request: Schemas.verifyEmailRequest = {
+    consumerId: null,
     corporateId: null,
     request: {
       emailAddress: '',

@@ -24,6 +24,7 @@ export module Schemas {
 
   export interface verifyEmailRequest {
     corporateId: any
+    consumerId: any
     request: {
       emailAddress: string
       nonce: string
