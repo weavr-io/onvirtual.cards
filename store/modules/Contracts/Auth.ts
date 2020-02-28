@@ -4,7 +4,7 @@ import { LostPasswordStartRequest } from '~/api/Requests/Auth/LostPasswordStartR
 import { LostPasswordValidateRequest } from '~/api/Requests/Auth/LostPasswordValidateRequest'
 import { LostPasswordContinueRequest } from '~/api/Requests/Auth/LostPasswordContinueRequest'
 import { AxiosPromise } from '~/node_modules/axios'
-import { Store } from '~/node_modules/vuex'
+import { GetterTree, Store } from '~/node_modules/vuex'
 import { StoreHelpers } from '~/helpers/StoreHelpers'
 import LoginResult = Schemas.LoginResult
 
@@ -21,6 +21,13 @@ export const types = {
 export interface State {
   auth: LoginResult
   isLoading: boolean
+}
+
+export enum _Getters {
+  isLoggedIn = 'isLoggedIn',
+  isConsumer = 'isConsumer',
+  isCorporate = 'isCorporate',
+  identityId = 'identityId'
 }
 
 export enum _Actions {
@@ -53,6 +60,16 @@ export module _Requests {
       }
     }
   }
+}
+
+export interface Getters<S, R> extends GetterTree<S, R> {
+  [_Getters.isLoggedIn](sate: S): boolean
+
+  [_Getters.isConsumer](sate: S): boolean
+
+  [_Getters.isCorporate](sate: S): boolean
+
+  [_Getters.identityId](sate: S): number | null
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
@@ -108,5 +125,14 @@ export module Helpers {
   }
   export const createPassword = (store: Store<any>, request: _Requests.CreatePassword): AxiosPromise => {
     return StoreHelpers.dispatch(store, name, _Actions.createPassword, request)
+  }
+  export const isConsumer = (store: Store<any>): boolean => {
+    return StoreHelpers.get(store, name, _Getters.isConsumer)
+  }
+  export const isCorporate = (store: Store<any>): boolean => {
+    return StoreHelpers.get(store, name, _Getters.isCorporate)
+  }
+  export const identityId = (store: Store<any>): number | null => {
+    return StoreHelpers.get(store, name, _Getters.identityId)
   }
 }

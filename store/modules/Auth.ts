@@ -2,7 +2,7 @@ import { GetterTree, MutationTree } from 'vuex'
 import { RootState } from 'store'
 import * as Loader from './Loader'
 import { api } from '~/api/Axios'
-import { Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Auth'
+import { Getters, Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Auth'
 import { Schemas } from '~/api/Schemas'
 import LoginRequest = Schemas.LoginRequest
 import LoginResult = Schemas.LoginResult
@@ -17,7 +17,7 @@ export const state = (): State => ({
   isLoading: false
 })
 
-export const getters: GetterTree<State, RootState> = {
+export const getters: Getters<State, RootState> = {
   isLoggedIn: (state) => {
     return state.auth != null && state.auth.token != null
   },
@@ -27,14 +27,14 @@ export const getters: GetterTree<State, RootState> = {
   auth: (state) => {
     return state.auth
   },
-  corporateId: (state) => {
+  identityId: (state) => {
     return state.auth.identity ? state.auth.identity.id : null
   },
   isConsumer: (state) => {
-    return state.auth.identity ? state.auth.identity.type === 'consumers' : null
+    return state.auth.identity ? state.auth.identity.type === 'consumers' : false
   },
   isCorporate: (state) => {
-    return state.auth.identity ? state.auth.identity.type === 'corporates' : null
+    return state.auth.identity ? state.auth.identity.type === 'corporates' : false
   },
   isLoading: (state) => {
     return state.isLoading

@@ -1,27 +1,29 @@
 <template>
-  <section class="full-height bg-pattern">
-    <b-container class="d-flex h-100">
-      <b-row class="w-100 align-self-center">
+  <section>
+    <b-container>
+      <b-row class="full-height-vh" align-v="center">
         <b-col lg="6" offset-lg="3">
-          <div class="mt-5 text-center pb-5">
+          <div class="text-center pb-5">
             <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
           </div>
           <div class="mx-md-3 px-md-5">
-            <b-card class="mt-5" bg-variant="secondary" text-variant="white">
+            <b-card bg-variant="secondary" text-variant="dark">
               <b-card-text>
-                We sent you a verification code by email. Please enter that
-                code to verify your email address.
+                We sent you a verification code by email. Please enter that code to verify your email address.
               </b-card-text>
             </b-card>
-            <form id="contact-form" class="mt-5" @submit="doVerify">
-              <b-form-group label="Email:">
-                <b-form-input v-model="request.request.emailAddress" type="email" />
-              </b-form-group>
-              <b-form-group label="Validation Code:">
-                <b-form-input v-model="request.request.nonce" />
-              </b-form-group>
-              <loader-button :is-loading="isLoading" button-text="Verify" class="my-5 text-right" />
-            </form>
+            <pre>{{ request }}</pre>
+            <b-card class="px-6 py-5 mt-4">
+              <form id="contact-form" @submit="doVerify">
+                <!--                <b-form-group label="Email:">-->
+                <!--                  <b-form-input v-model="request.request.mobileNumber" type="email" />-->
+                <!--                </b-form-group>-->
+                <!--                <b-form-group label="Validation Code:">-->
+                <!--                  <b-form-input v-model="request.request.nonce" />-->
+                <!--                </b-form-group>-->
+                <loader-button :is-loading="isLoading" button-text="Verify" class="mt-5 text-right mb-0" />
+              </form>
+            </b-card>
           </div>
         </b-col>
       </b-row>
@@ -35,8 +37,11 @@ import { Component } from 'nuxt-property-decorator'
 import { Schemas } from '~/api/Schemas'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
+import * as ConsumersStore from '~/store/modules/Consumers'
+import { VerifyMobileRequest } from '~/api/Requests/Consumers/VerifyMobileRequest'
 
 const Auth = namespace(AuthStore.name)
+const Consumers = namespace(ConsumersStore.name)
 
 @Component({
   layout: 'auth',
@@ -46,32 +51,34 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class EmailVerificationPage extends VueWithRouter {
-  @Auth.Getter isLoggedIn
+  @Consumers.Getter isLoading
 
-  @Auth.Action verifyEmail
+  public request!: VerifyMobileRequest
 
-  @Auth.Getter isLoading
-
-  public request: Schemas.verifyEmailRequest = {
-    consumerId: null,
-    corporateId: null,
-    request: {
-      emailAddress: '',
-      nonce: ''
+  asyncData({ store }) {
+    const request: VerifyMobileRequest = {
+      consumerId: 0,
+      request: {
+        mobileNumber: '',
+        mobileCountryCode: '',
+        nonce: ''
+      }
     }
-  }
 
-  mounted() {
-    this.request.corporateId = this.$route.params.corporate
+    if (AuthStore.Helpers.isConsumer(store)) {
+      const _consumerId = AuthStore.Helpers.identityId(store)
+      if (_consumerId != null) {
+        request.consumerId = _consumerId
+      }
+    }
+
+    return {
+      request: request
+    }
   }
 
   doVerify(evt) {
     evt.preventDefault()
-    this.verifyEmail(this.request).then(this.goToLogin.bind(this))
-  }
-
-  goToLogin() {
-    this.$router.push('/login')
   }
 }
 </script>

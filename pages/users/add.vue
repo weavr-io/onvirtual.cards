@@ -95,7 +95,7 @@ const Auth = namespace(AuthStore.name)
 export default class AddCardPage extends VueWithRouter {
   @Corporates.Getter isLoading
 
-  @Auth.Getter corporateId
+  @Auth.Getter identityId
 
   titleOptions = [{ value: 'MR', text: 'Mr.' }, { value: 'MRS', text: 'Mrs.' }, { value: 'MS', text: 'Ms.' }]
 
@@ -137,7 +137,7 @@ export default class AddCardPage extends VueWithRouter {
 
   mounted() {
     super.mounted()
-    this.request.corporateId = this.corporateId
+    this.request.corporateId = this.identityId
   }
 }
 </script>
