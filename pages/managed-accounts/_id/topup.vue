@@ -3,13 +3,16 @@
     <b-container>
       <b-row>
         <b-col v-if="!approved" md="6" offset-md="3" class="py-5 font-weight-lighter">
+          <h3 class="text-center font-weight-lighter mb-4">
+            We need some documents
+          </h3>
+          <p>Please send us the following documents in PDF to <a href="mailto:kyb@weavr.io" class="link font-weight-normal">kyb@weavr.io</a></p>
           <p>
-            We must verify certain information relating to your company before you can access funds from your account.
-            Please send us the following documents in PDF to
-            <a href="mailto:kyb@weavr.io">kyb@weavr.io</a>:
+            Each document must be signed by your CEO. For 1-3 include the wording “Certified true copy of the original”
+            above the CEO’s signature.
           </p>
 
-          <ul>
+          <ol class="my-5 font-weight-normal">
             <li>Copy of the Certificate of Incorporation</li>
             <li>Copy of the Articles of Association last amendment</li>
             <li>
@@ -21,13 +24,11 @@
               List of Ultimate Beneficiary Owners (UBOs) holding a stake of 10% or more of the equity: name, date of
               birth, address, nationality
             </li>
-            <li>UBO declaration form <a href="/ubo-declaration.docx" target="_blank">(download link)</a></li>
-          </ul>
-
-          <p>
-            Each document must be signed by your CEO. For 1-3 above, include the wording “Certified true copy of the
-            original" above the CEO’s signature.
-          </p>
+            <li><a href="/ubo-declaration.docx" target="_blank" class="link">UBO declaration form <b-icon icon="box-arrow-up-right"></b-icon></a></li>
+          </ol>
+          <div class="text-center">
+            <b-button to="/">ok, take me to dashboard</b-button>
+          </div>
         </b-col>
         <b-col v-if="approved" md="6" offset-md="3">
           <b-row>
@@ -104,10 +105,15 @@ import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import config from '~/config'
 import ManagedAccount = ManagedAccountsSchemas.ManagedAccount
 
+import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
+
 const Accounts = namespace(AccountsStore.name)
 
 @Component({
-  components: {}
+  components: {
+    BIcon,
+    BIconBoxArrowUpRight
+  }
 })
 export default class AccountTopupPage extends VueWithRouter {
   @Accounts.Getter account!: ManagedAccount | null
@@ -121,22 +127,22 @@ export default class AccountTopupPage extends VueWithRouter {
     if (config.app.kyb_required === true) {
       if (store.getters['auth/isConsumer']) {
         await ConsumersStore.Helpers.checkKYC(store).then(
-          () => {
-            approved = true
-          },
-          () => {
-            approved = false
-          }
+                () => {
+                  approved = true
+                },
+                () => {
+                  approved = false
+                }
         )
       }
       if (store.getters['auth/isCorporate']) {
         await CorporatesStore.Helpers.checkKYB(store).then(
-          () => {
-            approved = true
-          },
-          () => {
-            approved = false
-          }
+                () => {
+                  approved = true
+                },
+                () => {
+                  approved = false
+                }
         )
       }
     } else {
@@ -154,7 +160,25 @@ export default class AccountTopupPage extends VueWithRouter {
     super.mounted()
     try {
       this.$segment.track('Account Top Up', {})
-    } catch (e) {}
+    } catch (e) {
+    }
   }
 }
 </script>
+<style lang="scss" scoped>
+ol {
+  margin: 0;
+  padding: 0;
+  list-style-position: inside;
+
+  li {
+    margin: 0;
+    padding: 16px 0;
+    border-top: 1px solid #eaedf6;
+
+    &:last-child {
+      border-bottom: 1px solid #eaedf6;
+    }
+  }
+}
+</style>

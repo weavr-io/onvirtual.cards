@@ -21,21 +21,7 @@ export default class IndexPage extends Vue {
     const isLoggedIn = store.getters['auth/isLoggedIn']
 
     if (isLoggedIn) {
-      if (AuthStore.Helpers.isConsumer(store)) {
-        const _consumerId = AuthStore.Helpers.identityId(store)
-        if (_consumerId) {
-          const res = await ConsumersStore.Helpers.get(store, _consumerId)
-          if (res.data.kyc && res.data.kyc.mobileVerified === false) {
-            redirect('/verify/consumers/mobile')
-          } else {
-            redirect('/dashboard')
-          }
-        } else {
-          redirect('/dashboard')
-        }
-      } else {
-        redirect('/dashboard')
-      }
+      redirect('/dashboard')
     } else {
       redirect('/login')
     }

@@ -5,16 +5,9 @@
         <b-col md="6" offset-md="3">
           <b-card class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
-              Account Name and Currency
+              Currency
             </b-card-title>
             <b-form @submit="doAdd">
-              <b-form-row>
-                <b-col>
-                  <b-form-group :state="isInvalid($v.request.friendlyName)" label="Friendly Name:">
-                    <b-form-input v-model="request.friendlyName" />
-                  </b-form-group>
-                </b-col>
-              </b-form-row>
               <b-form-row>
                 <b-col>
                   <b-form-group :state="isInvalid($v.request.currency)" label="Currency:">
@@ -81,7 +74,7 @@ export default class AddCardPage extends VueWithRouter {
       type: '',
       id: 0
     },
-    friendlyName: '',
+    friendlyName: 'Main Account',
     currency: 'EUR',
     fiProvider: 'paynetics',
     createNow: true,

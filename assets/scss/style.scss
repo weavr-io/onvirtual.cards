@@ -61,7 +61,7 @@
     vertical-align: middle;
     padding: 14px 54px 14px 20px;
     margin: 0;
-    color: #ffffff;
+    color: #FFFFFF;
   }
 
   button {
@@ -91,6 +91,19 @@
   }
 }
 
-.full-height-vh{
+.full-height-vh {
   height: 100vh;
+}
+
+a {
+  &.link {
+    color: $primary;
+    border-bottom: 3px solid $secondary;
+    transition: 0.3s border;
+
+    &:hover {
+      text-decoration: none;
+      border-color: $primary;
+    }
+  }
 }

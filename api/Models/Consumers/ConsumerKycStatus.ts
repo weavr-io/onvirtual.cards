@@ -1,6 +1,8 @@
 import { IsPep } from '~/api/Enums/Consumers/IsPep'
 import { IsSanctioned } from '~/api/Enums/Consumers/IsSanctioned'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+import { Schemas } from '~/api/Schemas'
+import CurrencyAmount = Schemas.CurrencyAmount
 
 export interface ConsumerKycStatus {
   emailVerified?: boolean
@@ -8,6 +10,6 @@ export interface ConsumerKycStatus {
   isPep?: IsPep
   isSanctioned?: IsSanctioned
   fullDueDiligence?: FullDueDiligence
-  allowedLimit?: number
-  remainingLimit?: number
+  allowedLimit?: CurrencyAmount
+  remainingLimit?: CurrencyAmount
 }

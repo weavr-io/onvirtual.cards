@@ -11,7 +11,7 @@ export const state = (): State => ({
 })
 
 export const getters: GetterTree<State, RootState> = {
-  errors: state => {
+  errors: (state) => {
     return state.errors
   }
 }
