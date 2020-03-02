@@ -4,7 +4,7 @@
       <b-row class="full-height-vh" align-v="center">
         <b-col lg="6" offset-lg="3">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
           </div>
           <b-card body-class="px-6 py-5">
             <h2 class="text-center font-weight-lighter mb-6">
@@ -108,15 +108,15 @@ export default class LoginPage extends VueWithRouter {
   }
 
   goToDashboard(res) {
-    if (this.isLoggedIn) {
-      const _id = res.data.credential.type + '-' + res.data.credential.id
+    const _id = res.data.credential.type + '-' + res.data.credential.id
+    try {
       this.$appcues().identify(_id, {})
       this.$userpilot().identify(_id, {})
       this.$segment.identify(_id, {
         email: this.loginRequest.code
       })
-      this.$router.push('/dashboard')
-    }
+    } catch (e) {}
+    this.$router.push('/dashboard')
   }
 
   checkOnKeyUp(e) {

@@ -10,7 +10,7 @@
             <b-nav-item-dropdown right toggle-class="border-bottom">
               <template slot="button-content">User</template>
               <b-dropdown-item to="/users">Users</b-dropdown-item>
-              <b-dropdown-item @click="doLogout">Sign out</b-dropdown-item>
+              <b-dropdown-item @click="doLogout">Sign outsss</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
@@ -34,7 +34,10 @@ export default class Header extends Vue {
   }
 
   redirectToLogin() {
-    this.$segment.reset()
+    try {
+      this.$segment.reset()
+    } catch (e) {
+    }
     this.$router.push('/login')
   }
 }

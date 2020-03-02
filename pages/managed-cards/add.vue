@@ -112,9 +112,12 @@ export default class AddCardPage extends VueWithRouter {
     }
 
     this.addCard(this.request).then(() => {
-      this.$segment.track('Card Added', this.request)
-      this.$appcues().track('Card Added', this.request)
-      this.$userpilot().track('Card Added', this.request)
+      try {
+        this.$segment.track('Card Added', this.request)
+        this.$appcues().track('Card Added', this.request)
+        this.$userpilot().track('Card Added', this.request)
+      } catch (e) {
+      }
       this.$router.push('/managed-cards')
     })
   }
@@ -126,9 +129,12 @@ export default class AddCardPage extends VueWithRouter {
     }
     this.request.profileId = config.profileId.managed_cards
 
-    this.$segment.track('Initiated Add Card', {})
-    this.$appcues().track('Initiated Add Card', {})
-    this.$userpilot().track('Initiated Add Card', {})
+    try {
+      this.$segment.track('Initiated Add Card', {})
+      this.$appcues().track('Initiated Add Card', {})
+      this.$userpilot().track('Initiated Add Card', {})
+    } catch (e) {
+    }
   }
 }
 </script>
