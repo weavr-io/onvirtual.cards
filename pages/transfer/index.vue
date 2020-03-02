@@ -115,8 +115,6 @@ export default class CardsPage extends VueWithRouter {
 
     try {
       this.$segment.track('Initiated Transfer', {})
-      this.$appcues().track('Initiated Transfer', {})
-      this.$userpilot().track('Initiated Transfer', {})
     } catch (e) {}
   }
 
@@ -148,8 +146,6 @@ export default class CardsPage extends VueWithRouter {
 
         try {
           this.$segment.track('Transfer Success', this.request)
-          this.$appcues().track('Transfer Success', this.request)
-          this.$userpilot().track('Transfer Success', this.request)
         } catch (e) {}
       })
       .catch((err) => {

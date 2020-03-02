@@ -114,10 +114,7 @@ export default class AddCardPage extends VueWithRouter {
     this.addCard(this.request).then(() => {
       try {
         this.$segment.track('Card Added', this.request)
-        this.$appcues().track('Card Added', this.request)
-        this.$userpilot().track('Card Added', this.request)
-      } catch (e) {
-      }
+      } catch (e) {}
       this.$router.push('/managed-cards')
     })
   }
@@ -131,10 +128,7 @@ export default class AddCardPage extends VueWithRouter {
 
     try {
       this.$segment.track('Initiated Add Card', {})
-      this.$appcues().track('Initiated Add Card', {})
-      this.$userpilot().track('Initiated Add Card', {})
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 }
 </script>

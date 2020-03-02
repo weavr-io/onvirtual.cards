@@ -26,14 +26,6 @@ const config = {
       {
         src: process.env.BASE_URL_SCRIPT + '/app/secure/static/client.1.js',
         type: 'application/javascript'
-      },
-      {
-        src: '//fast.appcues.com/66365.js',
-        type: 'application/javascript'
-      },
-      {
-        src: 'https://deploy.userpilot.io/49wr57v8.js',
-        type: 'application/javascript'
       }
     ],
     link: [
@@ -63,9 +55,7 @@ const config = {
   plugins: [
     { src: '~/plugins/vuelidate' },
     { src: '~/plugins/weavr/security.client.ts' },
-    { src: '~/plugins/WeavrVueFilters.ts', ssr: false },
-    { src: '~/plugins/appcues.ts', ssr: false },
-    { src: '~/plugins/userpilot.ts', ssr: false }
+    { src: '~/plugins/WeavrVueFilters.ts', ssr: false }
   ],
   /*
    ** Nuxt.js modules
@@ -97,7 +87,7 @@ const config = {
     extend(config, ctx) {}
   },
   router: {
-    middleware: ['authCookie', 'appcues', 'userpilot'],
+    middleware: ['authCookie'],
     linkActiveClass: 'active'
   },
   buildModules: ['@nuxt/typescript-build'],
