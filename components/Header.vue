@@ -3,14 +3,20 @@
     <b-navbar type="light" fixed="top" variant="white" class="navbar-padding-adjust">
       <b-container>
         <b-navbar-brand to="/">
-          <img src="/img/logo.svg" width="160" class="d-inline-block align-center" alt="WEAVR" />
+          <img src="/img/logo.svg" width="160" class="d-inline-block align-center" alt="WEAVR" >
         </b-navbar-brand>
         <b-collapse id="nav_collapse" is-nav>
           <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right toggle-class="border-bottom">
-              <template slot="button-content">User</template>
-              <b-dropdown-item to="/users">Users</b-dropdown-item>
-              <b-dropdown-item @click="doLogout">Sign out</b-dropdown-item>
+              <template slot="button-content">
+                User
+              </template>
+              <b-dropdown-item to="/users">
+                Users
+              </b-dropdown-item>
+              <b-dropdown-item @click="doLogout">
+                Sign out
+              </b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
@@ -36,8 +42,7 @@ export default class Header extends Vue {
   redirectToLogin() {
     try {
       this.$segment.reset()
-    } catch (e) {
-    }
+    } catch (e) {}
     this.$router.push('/login')
   }
 }
@@ -47,4 +52,3 @@ export default class Header extends Vue {
   border-bottom: 2px solid;
 }
 </style>
-

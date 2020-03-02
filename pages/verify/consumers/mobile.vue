@@ -12,7 +12,8 @@
                 We sent you a verification code by email. Please enter that code to verify your email address.
               </b-card-text>
             </b-card>
-            <pre>{{ request }}</pre>
+<!--            <pre>{{ request }}</pre>-->
+<!--            <pre>{{ consumer }}</pre>-->
             <b-card class="px-6 py-5 mt-4">
               <form id="contact-form" @submit="doVerify">
                 <!--                <b-form-group label="Email:">-->
@@ -39,12 +40,12 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { VerifyMobileRequest } from '~/api/Requests/Consumers/VerifyMobileRequest'
+import { Consumer } from '~/api/Models/Consumers/Consumer'
 
 const Auth = namespace(AuthStore.name)
 const Consumers = namespace(ConsumersStore.name)
 
 @Component({
-  layout: 'auth',
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue')
@@ -53,9 +54,11 @@ const Consumers = namespace(ConsumersStore.name)
 export default class EmailVerificationPage extends VueWithRouter {
   @Consumers.Getter isLoading
 
+  @Consumers.Getter consumer!: Consumer | null
+
   public request!: VerifyMobileRequest
 
-  asyncData({ store }) {
+  async asyncData({ store }) {
     const request: VerifyMobileRequest = {
       consumerId: 0,
       request: {
@@ -69,6 +72,7 @@ export default class EmailVerificationPage extends VueWithRouter {
       const _consumerId = AuthStore.Helpers.identityId(store)
       if (_consumerId != null) {
         request.consumerId = _consumerId
+        await ConsumersStore.Helpers.get(store, _consumerId)
       }
     }
 
