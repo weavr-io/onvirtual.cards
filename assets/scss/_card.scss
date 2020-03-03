@@ -36,4 +36,25 @@
     }
 
   }
+
+  &.card-frozen {
+    a {
+      color: $input-placeholder-color;
+    }
+  }
+}
+
+
+#managedCard {
+  .card-options {
+    opacity: 0;
+    transition: 0.3s opacity;
+
+  }
+
+  &:hover {
+    .card-options {
+      opacity: 1;
+    }
+  }
 }

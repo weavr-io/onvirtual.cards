@@ -1,18 +1,50 @@
+import { KYBState } from '~/api/Enums/KYBState'
 <template>
   <div>
-    <section>
+    <section v-if="showKybAlert">
+      <b-container>
+        <b-row>
+          <b-col class="py-5 text-center">
+            <div v-if="corporate.kyb.fullCompanyChecksVerified === 'NOT_STARTED'">
+              <h4 class="font-weight-light">
+                Your account is currently restricted.
+              </h4>
+              <h5 class="font-weight-lighter">
+                You can lift your restriction
+                <b-link to="/managed-accounts/kyb" class="link">
+                  here
+                </b-link>.
+              </h5>
+            </div>
+            <div v-if="corporate.kyb.fullCompanyChecksVerified === 'INITIATED'">
+              <h4 class="font-weight-light">
+                Your account is currently under review.
+              </h4>
+              <h5 class="font-weight-lighter">
+                Contact us on <b-link href="mailto:kyb@weavr.io" class="link">kyb@weavr.io</b-link> for additional information.
+              </h5>
+            </div>
+            <div v-if="corporate.kyb.fullCompanyChecksVerified === 'REJECTED'">
+              <h4 class="font-weight-light">
+                We're sorry but we are unable to offer you a service at this time
+              </h4>
+            </div>
+          </b-col>
+        </b-row>
+      </b-container>
+    </section>
+    <section v-if="!showKybAlert">
       <statement />
     </section>
-    <b-alert
-            id="account-limit"
-            :show="consumer.kyc.allowedLimit.amount == 0"
-            class="fixed-bottom m-4 p-4"
-            variant="bg-colored"
-    >
-      Your account is currently restricted to {{ consumer.kyc.allowedLimit | weavr_currency }}. You can lift this
-      restriction
-      <b-link :to="restrictionLink" class="link">here</b-link>
-      .
+    <b-alert id="account-limit" v-if="showKycAlert" show class="fixed-bottom m-4 p-4" variant="bg-colored">
+      <template v-if="showKycAlert">
+        Your account is currently restricted to {{ consumer.kyc.allowedLimit | weavr_currency }}. You can lift this
+        restriction
+        <b-link :to="restrictionLink" class="link">
+          here
+        </b-link>
+        .
+      </template>
     </b-alert>
   </div>
 </template>
@@ -27,10 +59,14 @@ import { OrderType } from '~/api/Enums/OrderType'
 import { _Requests } from '~/store/modules/Contracts/Accounts'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
+import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
+import { CorporatesSchemas } from '~/api/CorporatesSchemas'
+import { KYBState } from '~/api/Enums/KYBState'
 
 const Accounts = namespace(AccountsStore.name)
 const Consumers = namespace(ConsumersStore.name)
+const Corporates = namespace(CorporatesStore.name)
 
 @Component({
   layout: 'dashboard',
@@ -44,6 +80,8 @@ export default class AccountPage extends VueWithRouter {
   @Accounts.Getter filteredStatement: ManagedAccountsSchemas.ManagedAccountStatementEntry[] | undefined
 
   @Consumers.Getter consumer!: Consumer | null
+
+  @Corporates.Getter corporate!: CorporatesSchemas.Corporate | null
 
   accountId!: number
 
@@ -67,9 +105,30 @@ export default class AccountPage extends VueWithRouter {
       if (_consumerId) {
         await ConsumersStore.Helpers.get(store, _consumerId)
       }
+    } else {
+      const _corporateId = AuthStore.Helpers.identityId(store)
+      if (_corporateId) {
+        await CorporatesStore.Helpers.getCorporateDetails(store, _corporateId)
+      }
     }
 
     return { accountId: _accountId }
+  }
+
+  get showKybAlert(): boolean {
+    if (this.corporate && this.corporate.kyb) {
+      return this.corporate.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
+    } else {
+      return false
+    }
+  }
+
+  get showKycAlert(): boolean {
+    if (this.consumer && this.consumer.kyc && this.consumer.kyc.allowedLimit) {
+      return parseInt(this.consumer.kyc.allowedLimit.amount + '') === 0
+    } else {
+      return false
+    }
   }
 
   get restrictionLink() {

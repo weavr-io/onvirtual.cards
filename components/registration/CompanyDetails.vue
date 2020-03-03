@@ -1,26 +1,23 @@
 <template>
-  <b-form novalidate @submit="submitForm">
+  <b-form @submit="submitForm" novalidate>
     <h2 class="text-center font-weight-lighter mb-5">
       Company Details
     </h2>
 
-    <b-form-group label="Company Name:" :state="isInvalid($v.form.companyName)">
+    <b-form-group :state="isInvalid($v.form.companyName)" label="Company Name:">
       <b-form-input v-model="form.companyName" />
     </b-form-group>
-    <b-form-group label="Company Registration Number:" :state="isInvalid($v.form.companyRegistrationNumber)">
+    <b-form-group :state="isInvalid($v.form.companyRegistrationNumber)" label="Company Registration Number:">
       <b-form-input v-model="form.companyRegistrationNumber" />
     </b-form-group>
-    <b-form-group label="Company Registration Address:" :state="isInvalid($v.form.companyRegistrationAddress)">
+    <b-form-group :state="isInvalid($v.form.companyRegistrationAddress)" label="Company Registration Address:">
       <b-form-input v-model="form.companyRegistrationAddress" />
     </b-form-group>
-    <b-form-group label="Registration Country:" :state="isInvalid($v.form.registrationCountry)">
+    <b-form-group :state="isInvalid($v.form.registrationCountry)" label="Registration Country:">
       <b-form-select v-model="form.registrationCountry" :options="countiesOptions" />
     </b-form-group>
-    <b-form-group label="Company Registration Date:" :state="isInvalid($v.form.companyRegistrationDate)">
-      <b-form-input v-model="companyRegistrationDate" type="date" @update="updatedCompanyRegistrationDate" />
-    </b-form-group>
-    <b-form-group label="Company Email:" :state="isInvalid($v.form.supportEmail)">
-      <b-form-input v-model="form.supportEmail" type="email" />
+    <b-form-group :state="isInvalid($v.form.companyRegistrationDate)" label="Company Registration Date:">
+      <b-form-input v-model="companyRegistrationDate" @update="updatedCompanyRegistrationDate" type="date" />
     </b-form-group>
     <b-form-row>
       <b-col>
@@ -31,7 +28,9 @@
     </b-form-row>
     <b-form-row class="mt-5">
       <b-col md="4">
-        <b-button variant="outline" @click="goBack"><-</b-button>
+        <b-button @click="goBack" variant="outline">
+          <-
+        </b-button>
       </b-col>
       <b-col>
         <loader-button :is-loading="isLoading" button-text="Finish" class="text-right" />
@@ -96,7 +95,7 @@ export default class CompanyDetailsForm extends VueWithRouter {
     this.form.companyRegistrationAddress = this.request.companyRegistrationAddress
     this.form.registrationCountry = this.request.registrationCountry
     this.form.companyRegistrationDate = this.request.companyRegistrationDate
-    this.form.supportEmail = this.request.supportEmail
+    this.form.supportEmail = this.request.rootEmail
     this.form.acceptedTerms = this.request.acceptedTerms
   }
 

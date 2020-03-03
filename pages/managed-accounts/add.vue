@@ -5,7 +5,7 @@
         <b-col md="6" offset-md="3">
           <b-card class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
-              Currency
+              Please choose the currency of your account
             </b-card-title>
             <b-form @submit="doAdd">
               <b-form-row>
@@ -15,7 +15,7 @@
                   </b-form-group>
                 </b-col>
               </b-form-row>
-              <loader-button :is-loading="isLoading" button-text="add account" class="mt-5 text-center" />
+              <loader-button :is-loading="isLoading" button-text="submit" class="mt-5 text-center" />
             </b-form>
           </b-card>
         </b-col>

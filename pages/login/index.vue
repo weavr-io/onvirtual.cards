@@ -124,6 +124,10 @@ export default class LoginPage extends VueWithRouter {
     }
   }
 
+  mounted() {
+    super.mounted()
+  }
+
   asyncData({ store, redirect }) {
     const isLoggedIn = store.getters['auth/isLoggedIn']
 

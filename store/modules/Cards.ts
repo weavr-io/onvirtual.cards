@@ -2,12 +2,10 @@ import { GetterTree, MutationTree } from 'vuex'
 import { RootState } from 'store'
 import * as Loader from './Loader'
 import { api } from '~/api/Axios'
-import { Actions, State, types } from '~/store/modules/Contracts/Cards'
+import { Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Cards'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 
-export const name = 'cards'
-
-export const namespaced = true
+export { name, namespaced, Helpers }
 
 export const state = (): State => ({
   isLoading: false,
@@ -140,18 +138,35 @@ export const actions: Actions<State, RootState> = {
     return api.post('/app/api/managed_cards/' + request.id + '/destroy', request.body)
   },
   freeze({ commit }, id) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
     const req = api.post('/app/api/managed_cards/' + id + '/freeze', {})
 
     req.then((res) => {
       commit(types.SET_MANAGED_CARD, res.data)
     })
 
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
     return req
   },
   unfreeze({ commit }, id) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
     const req = api.post('/app/api/managed_cards/' + id + '/unfreeze', {})
+
     req.then((res) => {
       commit(types.SET_MANAGED_CARD, res.data)
+    })
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
     })
 
     return req

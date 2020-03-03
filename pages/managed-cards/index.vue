@@ -11,14 +11,15 @@
       <b-row v-if="!hasCards">
         <b-col class="py-5 text-center">
           <h4 class="font-weight-light">You have no cards.</h4>
-          <h5 class="font-weight-lighter">Click <b-link to="/managed-cards/add">add new card</b-link> to create your first card.</h5>
+          <h5 class="font-weight-lighter">Click
+            <b-link to="/managed-cards/add">add new card</b-link>
+            to create your first card.
+          </h5>
         </b-col>
       </b-row>
-      <b-row v-if="hasCards">
-        <b-col>
-          <b-card-group columns>
-            <weavr-card v-for="(card, key) in cards" :key="key" no-body class="mb-3" :card="card"></weavr-card>
-          </b-card-group>
+      <b-row v-if="hasCards" cols="3">
+        <b-col v-for="(card, key) in cards" :key="key">
+          <weavr-card no-body class="mb-3" :card="card"></weavr-card>
         </b-col>
       </b-row>
     </b-container>

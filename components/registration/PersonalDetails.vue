@@ -1,31 +1,31 @@
 <template>
-  <b-form novalidate @submit="submitForm">
+  <b-form @submit="submitForm" novalidate>
     <h2 class="text-center font-weight-lighter mb-5">
       Personal Details
     </h2>
-    <b-form-group label="First Name:" :state="isInvalid($v.form.rootName)">
-      <b-form-input v-model="form.rootName" />
+    <b-form-group :state="isInvalid($v.form.rootName)" label="First Name:">
+      <b-form-input v-model="form.rootName" placeholder="Name" />
     </b-form-group>
-    <b-form-group label="Last Name:" :state="isInvalid($v.form.rootSurname)">
-      <b-form-input v-model="form.rootSurname" />
+    <b-form-group :state="isInvalid($v.form.rootSurname)" label="Last Name:">
+      <b-form-input v-model="form.rootSurname" placeholder="Last Name" />
     </b-form-group>
-    <b-form-group label="Title:" :state="isInvalid($v.form.rootTitle)">
+    <b-form-group :state="isInvalid($v.form.rootTitle)" label="Title:">
       <b-form-select v-model="form.rootTitle" :options="titleOptions" />
     </b-form-group>
-    <b-form-group label="Company Position:" :state="isInvalid($v.form.rootCompanyPosition)">
-      <b-form-input v-model="form.rootCompanyPosition" />
+    <b-form-group :state="isInvalid($v.form.rootCompanyPosition)" label="Company Position:">
+      <b-form-input v-model="form.rootCompanyPosition" placeholder="CFO" />
     </b-form-group>
-    <b-form-group label="Mobile Country Code:" :state="isInvalid($v.form.rootMobileCountryCode)">
+    <b-form-group :state="isInvalid($v.form.rootMobileNumber)" label="Mobile Number:">
       <b-input-group prepend="+">
-        <b-form-input v-model="form.rootMobileCountryCode" />
+        <b-form-input id="input-mobile-country-code" v-model="form.rootMobileCountryCode" placeholder="0044" />
+        <b-form-input v-model="form.rootMobileNumber" placeholder="7799487899" />
       </b-input-group>
-    </b-form-group>
-    <b-form-group label="Mobile Number:" :state="isInvalid($v.form.rootMobileNumber)">
-      <b-form-input v-model="form.rootMobileNumber" />
     </b-form-group>
     <b-form-row class="mt-5">
       <b-col md="4">
-        <b-button variant="outline" @click="goBack"><-</b-button>
+        <b-button @click="goBack" variant="outline">
+          <-
+        </b-button>
       </b-col>
       <b-col class="text-right">
         <b-button variant="secondary" type="submit">
@@ -77,18 +77,22 @@ export default class PersonalDetailsForm extends VueWithRouter {
   mounted() {
     this.form.rootName = this.request.rootName
     this.form.rootSurname = this.request.rootSurname
-    this.form.rootTitle = this.request.rootTitle
     this.form.rootCompanyPosition = this.request.rootCompanyPosition
     this.form.rootMobileCountryCode = this.request.rootMobileCountryCode
     this.form.rootMobileNumber = this.request.rootMobileNumber
   }
 
-  titleOptions = [{ value: 'Mr', text: 'Mr' }, { value: 'Mrs', text: 'Mrs' }, { value: 'Ms', text: 'Ms' }]
+  titleOptions = [
+    { value: null, text: 'Mr / Ms / Mrs', disabled: true },
+    { value: 'Mr', text: 'Mr' },
+    { value: 'Mrs', text: 'Mrs' },
+    { value: 'Ms', text: 'Ms' }
+  ]
 
   public form = {
     rootName: '',
     rootSurname: '',
-    rootTitle: '',
+    rootTitle: null,
     rootCompanyPosition: '',
     rootMobileCountryCode: '',
     rootMobileNumber: ''
@@ -114,3 +118,9 @@ export default class PersonalDetailsForm extends VueWithRouter {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+#input-mobile-country-code {
+  max-width: 100px;
+}
+</style>

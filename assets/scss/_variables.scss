@@ -8,7 +8,7 @@ $link-color: $body-color;
 $card-purple: #C3B5FF;
 $card-red: #FFAA8B;
 $card-yellow: #FFDF8B;
-$card-disabled: #FAFAFA;
+$card-disabled: #E9EDF6;
 
 $shadow-color: #5768FF4D;
 
@@ -31,6 +31,7 @@ $btn-padding-x-lg: 1.9rem !default;
 $btn-border-radius: 100px;
 
 
+
 $font-family-sans-serif: 'Be Vietnam',
 sans-serif;
 
@@ -38,17 +39,18 @@ sans-serif;
 $btn-box-shadow: 0px 7px 14px $shadow-color;
 
 
+$input-placeholder-color: #B6B9C7;
 $input-border-color: transparent;
 $input-focus-box-shadow: none;
 $input-border-color: $primary;
 $input-border-radius: 0;
-$input-border-width: 2px;
+$input-border-width: 1px;
 
 $custom-select-border-color: transparent;
 $custom-select-focus-box-shadow: none;
 $custom-select-border-color: $primary;
 $custom-select-border-radius: 0;
-$custom-select-border-width: 2px;
+$custom-select-border-width: 1px;
 
 
 $box-shadow-sm: 0 .125rem .25rem $shadow-color;

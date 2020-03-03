@@ -14,14 +14,14 @@
 .input-group {
   .input-group-text {
     border: none;
-    border-bottom: 2px solid $primary;
+    border-bottom: 1px solid $primary;
     background: transparent;
     color: $text-muted;
   }
 }
 
 .weavr-input {
-  border-bottom: 2px solid $primary;
+  border-bottom: 1px solid $primary;
 }
 
 .is-dirty {

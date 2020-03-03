@@ -12,7 +12,7 @@
 
     <client-only placeholder="Loading...">
       <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
-        <label class="d-block">Password:</label>
+        <label class="d-block">PASSWORD:</label>
         <weavr-input
           :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
           :base-style="{

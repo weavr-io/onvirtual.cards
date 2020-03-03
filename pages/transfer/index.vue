@@ -47,7 +47,7 @@ export default class CardsPage extends VueWithRouter {
 
   @Transfers.Action execute
 
-  screen: number = 0
+  screen: number = 1
 
   nextScreen() {
     this.screen++
@@ -68,21 +68,7 @@ export default class CardsPage extends VueWithRouter {
     }
   }
 
-  public request: TransfersSchemas.CreateTransferRequest = {
-    profileId: null,
-    source: {
-      type: 'managed_accounts',
-      id: null
-    },
-    destination: {
-      type: 'managed_cards',
-      id: null
-    },
-    destinationAmount: {
-      currency: 'EUR',
-      amount: 0
-    }
-  }
+  public request!: TransfersSchemas.CreateTransferRequest
 
   get formattedCards(): { value: string; text: string }[] {
     return this.cards.map((val) => {
@@ -120,8 +106,24 @@ export default class CardsPage extends VueWithRouter {
 
   async asyncData({ store }) {
     await store.dispatch('cards/getCards')
-    await store.dispatch('accounts/index')
-    return {}
+    const _accounts = await store.dispatch('accounts/index')
+
+    const request: TransfersSchemas.CreateTransferRequest = {
+      profileId: null,
+      source: _accounts.data.account[0].id,
+      destination: {
+        type: 'managed_cards',
+        id: null
+      },
+      destinationAmount: {
+        currency: 'EUR',
+        amount: 0
+      }
+    }
+
+    return {
+      request: request
+    }
   }
 
   doTransfer() {
