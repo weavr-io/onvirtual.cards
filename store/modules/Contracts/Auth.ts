@@ -6,6 +6,9 @@ import { LostPasswordContinueRequest } from '~/api/Requests/Auth/LostPasswordCon
 import { AxiosPromise } from '~/node_modules/axios'
 import { GetterTree, Store } from '~/node_modules/vuex'
 import { StoreHelpers } from '~/helpers/StoreHelpers'
+import { UpdatePassword } from '~/api/Requests/Auth/UpdatePassword'
+import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
+import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
 import LoginResult = Schemas.LoginResult
 
 export const name = 'auth'
@@ -39,27 +42,8 @@ export enum _Actions {
   lostPasswordValidate = 'lostPasswordValidate',
   lostPasswordResume = 'lostPasswordResume',
   createPasswordIdentity = 'createPasswordIdentity',
-  createPassword = 'createPassword'
-}
-
-export module _Requests {
-  export interface CreatePasswordIdentity {
-    id: number
-    request: {
-      profileId: string
-    }
-  }
-
-  export interface CreatePassword {
-    id: number
-    request: {
-      credentialType: string
-      identityId: number
-      password: {
-        value: string
-      }
-    }
-  }
+  createPassword = 'createPassword',
+  updatePassword = 'updatePassword'
 }
 
 export interface Getters<S, R> extends GetterTree<S, R> {
@@ -87,12 +71,11 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 
   [_Actions.lostPasswordResume](context: ActionContext<S, R>, request: LostPasswordContinueRequest)
 
-  [_Actions.createPasswordIdentity](
-    context: ActionContext<S, R>,
-    request: _Requests.CreatePasswordIdentity
-  ): AxiosPromise
+  [_Actions.createPasswordIdentity](context: ActionContext<S, R>, request: CreatePasswordIdentity): AxiosPromise
 
-  [_Actions.createPassword](context: ActionContext<S, R>, request: _Requests.CreatePassword): AxiosPromise
+  [_Actions.createPassword](context: ActionContext<S, R>, request: CreatePassword): AxiosPromise
+
+  [_Actions.updatePassword](context: ActionContext<S, R>, request: UpdatePassword): AxiosPromise
 }
 
 export module Helpers {
@@ -117,14 +100,14 @@ export module Helpers {
   export const lostPasswordResume = (store: Store<any>, request: LostPasswordContinueRequest): AxiosPromise => {
     return StoreHelpers.dispatch(store, name, _Actions.lostPasswordResume, request)
   }
-  export const createPasswordIdentity = (
-    store: Store<any>,
-    request: _Requests.CreatePasswordIdentity
-  ): AxiosPromise => {
+  export const createPasswordIdentity = (store: Store<any>, request: CreatePasswordIdentity): AxiosPromise => {
     return StoreHelpers.dispatch(store, name, _Actions.createPasswordIdentity, request)
   }
-  export const createPassword = (store: Store<any>, request: _Requests.CreatePassword): AxiosPromise => {
+  export const createPassword = (store: Store<any>, request: CreatePassword): AxiosPromise => {
     return StoreHelpers.dispatch(store, name, _Actions.createPassword, request)
+  }
+  export const updatePassword = (store: Store<any>, request: UpdatePassword): AxiosPromise => {
+    return StoreHelpers.dispatch(store, name, _Actions.updatePassword, request)
   }
   export const isConsumer = (store: Store<any>): boolean => {
     return StoreHelpers.get(store, name, _Getters.isConsumer)

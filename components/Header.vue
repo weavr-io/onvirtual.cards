@@ -14,6 +14,9 @@
                   {{ corporate.name }}
                 </template>
               </template>
+              <b-dropdown-item to="/profile">
+                Profile
+              </b-dropdown-item>
               <b-dropdown-item to="/users">
                 Users
               </b-dropdown-item>

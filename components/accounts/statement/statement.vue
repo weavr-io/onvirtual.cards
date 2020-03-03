@@ -43,6 +43,7 @@ import { namespace } from 'vuex-class'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import * as AccountsStore from '~/store/modules/Accounts'
+
 const Accounts = namespace(AccountsStore.name)
 
 @Component({
@@ -52,5 +53,13 @@ const Accounts = namespace(AccountsStore.name)
 })
 export default class AccountStatement extends VueWithRouter {
   @Accounts.Getter filteredStatement: ManagedAccountsSchemas.ManagedAccountStatementEntry[] | undefined
+
+  accountId!: number
+
+  asyncData({ route }) {
+    const _accountId = route.params.id
+
+    return { accountId: _accountId }
+  }
 }
 </script>

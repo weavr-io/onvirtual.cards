@@ -37,7 +37,8 @@ import * as AuthStore from '~/store/modules/Auth'
 
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import config from '~/config'
-import { _Requests } from '~/store/modules/Contracts/Auth'
+import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
+import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -152,7 +153,7 @@ export default class RegistrationPage extends VueWithRouter {
   }
 
   doCreateCorporatePasswordIdentity() {
-    const _req: _Requests.CreatePasswordIdentity = {
+    const _req: CreatePasswordIdentity = {
       id: this.corporate.id.id,
       request: {
         profileId: this.registrationRequest.profileId
@@ -162,7 +163,7 @@ export default class RegistrationPage extends VueWithRouter {
   }
 
   doCreateCorporatePassword() {
-    const _req: _Requests.CreatePassword = {
+    const _req: CreatePassword = {
       id: this.corporate.id.id,
       request: {
         credentialType: 'ROOT',

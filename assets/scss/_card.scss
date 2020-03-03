@@ -58,3 +58,13 @@
     }
   }
 }
+
+.card {
+  &.card-sm-border-radius {
+    border-radius: 1rem;
+
+    .card-header:first-child {
+      border-radius: 1rem 1rem 0 0;
+    }
+  }
+}

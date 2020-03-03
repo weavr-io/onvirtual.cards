@@ -36,10 +36,12 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
 import config from '~/config'
 import { CreateConsumerRequest } from '~/api/Requests/Consumers/CreateConsumerRequest'
-import { _Requests, Helpers } from '~/store/modules/Contracts/Auth'
+import { Helpers } from '~/store/modules/Contracts/Auth'
 import { Helpers as ConsumerHelpers } from '~/store/modules/Contracts/Consumers'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
+import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
+import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
 
 const Consumers = namespace(ConsumersStore.name)
 
@@ -124,7 +126,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
   }
 
   doCreatePasswordIdentity() {
-    const _req: _Requests.CreatePasswordIdentity = {
+    const _req: CreatePasswordIdentity = {
       id: this.consumer.id.id,
       request: {
         profileId: this.registrationRequest.profileId
@@ -134,7 +136,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
   }
 
   doCreatePassword() {
-    const _req: _Requests.CreatePassword = {
+    const _req: CreatePassword = {
       id: this.consumer.id.id,
       request: {
         credentialType: 'ROOT',
