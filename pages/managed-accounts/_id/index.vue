@@ -1,4 +1,3 @@
-import { KYBState } from '~/api/Enums/KYBState'
 <template>
   <div>
     <section v-if="showKybAlert">

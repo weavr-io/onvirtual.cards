@@ -50,19 +50,6 @@
                 </div>
               </div>
             </b-col>
-            <b-col class="text-right" col cols="auto" >
-              <b-dropdown variant="link" toggle-class="text-decoration-none p-2 py-3" no-caret>
-                <template v-slot:button-content>
-                  <b-icon icon="three-dots-vertical" />
-                </template>
-                <b-dropdown-item v-if="!isFrozen" @click="freezeCard">
-                  Freeze Card
-                </b-dropdown-item>
-                <b-dropdown-item v-if="isFrozen" @click="unfreezeCard">
-                  Unfreeze Card
-                </b-dropdown-item>
-              </b-dropdown>
-            </b-col>
           </b-row>
         </b-col>
       </b-row>
@@ -224,10 +211,6 @@ export default class ManagedCardsTable extends Vue {
 
   @ManagedCards.Action destroyManagedCard
 
-  @ManagedCards.Action freeze
-
-  @ManagedCards.Action unfreeze
-
   public fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
 
   async asyncData({ store, route }) {
@@ -249,32 +232,6 @@ export default class ManagedCardsTable extends Vue {
 
   toggleModal() {
     this.$refs['card-modal'].toggle()
-  }
-
-  freezeCard() {
-    this.freeze(this.cardId).then(
-      () => {
-        this.$weavrToast('Card Frozen')
-      },
-      (err) => {
-        const data = err.response.data
-        const error = data.message ? data.message : data.errorCode
-        this.$weavrToastError(error)
-      }
-    )
-  }
-
-  unfreezeCard() {
-    this.unfreeze(this.cardId).then(
-      () => {
-        this.$weavrToast('Card Unfrozen')
-      },
-      (err) => {
-        const data = err.response.data
-        const error = data.message ? data.message : data.errorCode
-        this.$weavrToastError(error)
-      }
-    )
   }
 
   get isFrozen() {

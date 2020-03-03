@@ -15,12 +15,8 @@
     <b-form-group :state="isInvalid($v.form.rootCompanyPosition)" label="Company Position:">
       <b-form-input v-model="form.rootCompanyPosition" placeholder="CFO" />
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootMobileNumber)" label="Mobile Number:">
-      <b-input-group prepend="+">
-        <b-form-input id="input-mobile-country-code" v-model="form.rootMobileCountryCode" placeholder="0044" />
-        <b-form-input v-model="form.rootMobileNumber" placeholder="7799487899" />
-      </b-input-group>
-    </b-form-group>
+    <label class="d-block">MOBILE NUMBER:</label>
+    <vue-phone-number-input v-model="form.rootMobileNumber" @update="phoneUpdate" />
     <b-form-row class="mt-5">
       <b-col md="4">
         <b-button @click="goBack" variant="outline">
@@ -115,6 +111,12 @@ export default class PersonalDetailsForm extends VueWithRouter {
   @Emit()
   goBack(e) {
     e.preventDefault()
+  }
+
+  phoneUpdate(number){
+    this.form.rootMobileCountryCode = number.countryCallingCode
+    this.form.rootMobileNumber = number.formatNational
+    console.log(number.isValid)
   }
 }
 </script>

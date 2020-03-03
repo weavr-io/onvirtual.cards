@@ -37,7 +37,6 @@ import * as AuthStore from '~/store/modules/Auth'
 
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import config from '~/config'
-import { Helpers } from '~/store/modules/Auth'
 import { _Requests } from '~/store/modules/Contracts/Auth'
 
 const Corporates = namespace(CorporatesStore.name)
@@ -63,7 +62,7 @@ export default class RegistrationPage extends VueWithRouter {
 
   @Corporates.Getter corporate
 
-  screen = 0
+  screen = 1
 
   public password: string = ''
 
@@ -159,7 +158,7 @@ export default class RegistrationPage extends VueWithRouter {
         profileId: this.registrationRequest.profileId
       }
     }
-    Helpers.createPasswordIdentity(this.$store, _req).then(this.doCreateCorporatePassword.bind(this))
+    AuthStore.Helpers.createPasswordIdentity(this.$store, _req).then(this.doCreateCorporatePassword.bind(this))
   }
 
   doCreateCorporatePassword() {
@@ -174,7 +173,7 @@ export default class RegistrationPage extends VueWithRouter {
       }
     }
 
-    Helpers.createPassword(this.$store, _req).then(this.sendVerifyEmail.bind(this))
+    AuthStore.Helpers.createPassword(this.$store, _req).then(this.sendVerifyEmail.bind(this))
   }
 
   sendVerifyEmail() {

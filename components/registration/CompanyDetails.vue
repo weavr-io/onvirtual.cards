@@ -17,7 +17,8 @@
       <b-form-select v-model="form.registrationCountry" :options="countiesOptions" />
     </b-form-group>
     <b-form-group :state="isInvalid($v.form.companyRegistrationDate)" label="Company Registration Date:">
-      <b-form-input v-model="companyRegistrationDate" @update="updatedCompanyRegistrationDate" type="date" />
+      <b-form-datepicker v-model="companyRegistrationDate" @update="updatedCompanyRegistrationDate" :max="maxDate"
+                         :dropup="true" />
     </b-form-group>
     <b-form-row>
       <b-col>
@@ -87,6 +88,8 @@ const Corporates = namespace(CorporatesStore.name)
 export default class CompanyDetailsForm extends VueWithRouter {
   $v
 
+  public maxDate = new Date()
+
   @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
 
   mounted() {
@@ -155,3 +158,10 @@ export default class CompanyDetailsForm extends VueWithRouter {
   }
 }
 </script>
+<style lang="scss" scope>
+.b-form-datepicker.form-control {
+  > .btn {
+    /*display: none;*/
+  }
+}
+</style>
