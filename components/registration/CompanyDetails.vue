@@ -17,13 +17,14 @@
       <b-form-select v-model="form.registrationCountry" :options="countiesOptions" />
     </b-form-group>
     <b-form-group :state="isInvalid($v.form.companyRegistrationDate)" label="Company Registration Date:">
-      <b-form-datepicker v-model="companyRegistrationDate" @update="updatedCompanyRegistrationDate" :max="maxDate"
-                         :dropup="true" />
+      <b-form-input v-model="companyRegistrationDate" @update="updatedCompanyRegistrationDate" type="date" />
+<!--      <b-form-datepicker v-model="companyRegistrationDate" @update="updatedCompanyRegistrationDate" :max="maxDate"-->
+<!--                         :dropup="true" />-->
     </b-form-group>
     <b-form-row>
       <b-col>
         <b-form-checkbox v-model="form.acceptedTerms" :state="isInvalid($v.form.acceptedTerms)">
-          I accept the <a href="https://docs.weavr.io/docs/legal/onvirtual.cards/" target="_blank">terms and use</a>
+          I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank" class="link">terms and use</a>
         </b-form-checkbox>
       </b-col>
     </b-form-row>
