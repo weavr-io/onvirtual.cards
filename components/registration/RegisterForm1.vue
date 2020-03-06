@@ -4,14 +4,13 @@
       Register
     </h3>
     <b-form-group label="Username:">
-      <b-form-input v-model="form.rootUsername" :state="isInvalid($v.form.rootUsername)" placeholder="Username" />
+      <b-form-input v-model="$v.form.rootUsername.$model" :state="isInvalid($v.form.rootUsername)" placeholder="Username" />
       <b-form-invalid-feedback>Only numbers and latin letters are accepted.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group :state="isInvalid($v.form.rootEmail)" label="Email:">
-      <b-form-input v-model="form.rootEmail" :state="isInvalid($v.form.rootEmail)" placeholder="name@email.com" />
+      <b-form-input v-model="$v.form.rootEmail.$model" :state="isInvalid($v.form.rootEmail)" placeholder="name@email.com" />
       <b-form-invalid-feedback>An email address must contain a single @.</b-form-invalid-feedback>
     </b-form-group>
-
     <client-only placeholder="Loading...">
       <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
         <label class="d-block">PASSWORD:</label>
@@ -76,11 +75,6 @@ import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 })
 export default class RegisterForm1 extends VueWithRouter {
   @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
-
-  mounted() {
-    this.form.rootUsername = this.request.rootUsername
-    this.form.rootEmail = this.request.rootEmail
-  }
 
   $refs!: {
     passwordForm: WeavrForm

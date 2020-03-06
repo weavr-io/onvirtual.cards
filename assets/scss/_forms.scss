@@ -14,14 +14,14 @@
 .input-group {
   .input-group-text {
     border: none;
-    border-bottom: 1px solid $primary;
+    border-bottom: 1px solid $input-border-color;
     background: transparent;
     color: $text-muted;
   }
 }
 
 .weavr-input {
-  border-bottom: 1px solid $primary;
+  border-bottom: 1px solid $input-border-color;
 }
 
 .is-dirty {
@@ -61,7 +61,7 @@
   }
 
   &.has-value {
-    .input-tel__input, .country-selector__input {
+    .input-tel__input {
       border-bottom: 1px solid $danger !important;
     }
   }

@@ -4,28 +4,42 @@
       Personal Details
     </h3>
     <b-form-group label="First Name:">
-      <b-form-input v-model="form.rootName" :state="isInvalid($v.form.rootName)" placeholder="Name" />
+      <b-form-input v-model="$v.form.rootName.$model" :state="isInvalid($v.form.rootName)" placeholder="Name" />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Last Name:">
-      <b-form-input :state="isInvalid($v.form.rootSurname)" v-model="form.rootSurname" placeholder="Last Name" />
+      <b-form-input
+        :state="isInvalid($v.form.rootSurname)"
+        v-model="$v.form.rootSurname.$model"
+        placeholder="Last Name"
+      />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Title:">
-      <b-form-select :state="isInvalid($v.form.rootTitle)" v-model="form.rootTitle" :options="titleOptions" required />
+      <b-form-select
+        :state="isInvalid($v.form.rootTitle)"
+        v-model="$v.form.rootTitle.$model"
+        :options="titleOptions"
+        required
+      />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Company Position:">
       <b-form-input
         :state="isInvalid($v.form.rootCompanyPosition)"
-        v-model="form.rootCompanyPosition"
+        v-model="$v.form.rootCompanyPosition.$model"
         placeholder="CFO"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
 
     <b-form-group label="MOBILE NUMBER:">
-      <vue-phone-number-input v-model="rootMobileNumber" @update="phoneUpdate" :only-countries="mobileCountries" default-country-code="MT"  />
+      <vue-phone-number-input
+        v-model="rootMobileNumber"
+        @update="phoneUpdate"
+        :only-countries="mobileCountries"
+        default-country-code="MT"
+      />
       <b-form-invalid-feedback v-if="numberIsValid === false">
         This field must be a valid mobile number.
       </b-form-invalid-feedback>
@@ -85,14 +99,6 @@ export default class PersonalDetailsForm extends VueWithRouter {
 
   @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
 
-  mounted() {
-    this.form.rootName = this.request.rootName
-    this.form.rootSurname = this.request.rootSurname
-    this.form.rootCompanyPosition = this.request.rootCompanyPosition
-    this.form.rootMobileCountryCode = this.request.rootMobileCountryCode
-    this.rootMobileNumber = this.request.rootMobileNumber
-  }
-
   rootMobileNumber = ''
   numberIsValid: boolean | null = null
 
@@ -109,7 +115,14 @@ export default class PersonalDetailsForm extends VueWithRouter {
     { value: 'Ms', text: 'Ms' }
   ]
 
-  public form = {
+  public form: {
+    rootName: string
+    rootSurname: string
+    rootTitle: string | null
+    rootCompanyPosition: string
+    rootMobileCountryCode: string
+    rootMobileNumber: string
+  } = {
     rootName: '',
     rootSurname: '',
     rootTitle: null,

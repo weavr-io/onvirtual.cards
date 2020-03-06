@@ -4,20 +4,20 @@
       <b-row class="full-height-vh" align-v="center">
         <b-col md="6" offset-md="3" class="my-6">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
           </div>
           <b-card no-body class="overflow-hidden">
             <!--            <registration-nav />-->
             <b-card-body class="p-6">
               <div class="form-screens">
                 <error-alert />
-                <div v-if="screen === 0" class="form-screen">
+                <div :class="{ 'd-none': screen !== 0 }" class="form-screen">
                   <register-form :request="registrationRequest" @submit-form="form1Submit" />
                 </div>
-                <div v-if="screen === 1" class="form-screen">
+                <div :class="{ 'd-none': screen !== 1 }" class="form-screen">
                   <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
                 </div>
-                <div v-if="screen === 2" class="form-screen">
+                <div :class="{ 'd-none': screen !== 2 }" class="form-screen">
                   <company-details-form :request="registrationRequest" @submit-form="form3Submit" @go-back="goBack" />
                 </div>
               </div>
@@ -103,6 +103,7 @@ export default class RegistrationPage extends VueWithRouter {
     if (_data != null) {
       this.registrationRequest.rootUsername = _data.rootUsername
       this.registrationRequest.rootEmail = _data.rootEmail
+      this.registrationRequest.supportEmail = _data.rootEmail
       this.password = _data.password
       this.nextScreen()
     }
@@ -121,13 +122,13 @@ export default class RegistrationPage extends VueWithRouter {
   }
 
   form3Submit(_data) {
+    console.log(_data)
     if (_data != null) {
       this.registrationRequest.companyName = _data.companyName
       this.registrationRequest.companyRegistrationNumber = _data.companyRegistrationNumber
       this.registrationRequest.companyRegistrationAddress = _data.companyRegistrationAddress
       this.registrationRequest.registrationCountry = _data.registrationCountry
       this.registrationRequest.companyRegistrationDate = _data.companyRegistrationDate
-      this.registrationRequest.supportEmail = _data.supportEmail
       this.registrationRequest.acceptedTerms = _data.acceptedTerms
 
       this.doRegister()

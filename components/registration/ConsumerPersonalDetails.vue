@@ -69,15 +69,6 @@ export default class PersonalDetailsForm extends VueWithRouter {
 
   @Consumers.Getter isLoading!: boolean
 
-  mounted() {
-    this.form.rootName = this.request.rootName
-    this.form.rootSurname = this.request.rootSurname
-    this.form.rootTitle = this.request.rootTitle
-    this.form.rootCompanyPosition = this.request.rootCompanyPosition
-    this.form.rootMobileCountryCode = this.request.rootMobileCountryCode
-    this.form.rootMobileNumber = this.request.rootMobileNumber
-  }
-
   titleOptions = [
     { value: 'Mr', text: 'Mr' },
     { value: 'Mrs', text: 'Mrs' },
