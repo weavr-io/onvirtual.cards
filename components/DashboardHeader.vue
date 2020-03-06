@@ -19,7 +19,7 @@
                 +
               </b-button>
             </b-col>
-            <b-col cols="2" lg="2">
+            <b-col cols="auto">
               <div class="account-balance">
                 <p class="mb-0 text-muted font-size-small account-balance-label">
                   balance

@@ -92,6 +92,7 @@ export default class AccountTopupPage extends VueWithRouter {
     const accountId = route.params.id
     let approved = false
 
+    debugger
     if (config.app.kyb_required === true) {
       if (store.getters['auth/isConsumer']) {
         await ConsumersStore.Helpers.checkKYC(store).then(

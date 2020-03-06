@@ -8,6 +8,8 @@
               All Transactions
             </h6>
           </b-col>
+        </b-row>
+        <b-row>
           <b-col>
             <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
               <b-col>
