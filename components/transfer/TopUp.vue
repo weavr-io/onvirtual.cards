@@ -35,7 +35,7 @@
           <b-col>
             <b-form-group :state="isInvalid($v.request.amount)" :invalid-feedback="invalidMessage" label="Amount:">
               <b-input-group prepend="EUR">
-                <b-form-input v-model="request.amount" type="number" step="0.01" />
+                <b-form-input v-model="$v.request.amount.$model" type="number" step="0.01" />
               </b-input-group>
             </b-form-group>
           </b-col>
@@ -68,10 +68,9 @@ const Accounts = namespace(AccountsStore.name)
     request: {
       amount: {
         required,
-        minValue: minValue(10),
         between(value) {
           // @ts-ignore
-          return between(10, this.accountBalance)(value)
+          return between(1, this.accountBalance)(value)
         }
       }
     }
@@ -87,7 +86,7 @@ export default class TopUpForm extends VueWithRouter {
   get invalidMessage() {
     const _min = this.$v.request.amount.$params.between.min
     const _max = this.$v.request.amount.$params.between.max
-    return 'Should be between ' + _min + ' and ' + _max
+    return 'Should be between EUR ' + _min + ' and EUR ' + _max
   }
 
   public request: {

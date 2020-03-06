@@ -32,7 +32,7 @@
     <b-row v-else class="py-5">
       <b-col class="text-center">
         <p>Your transactions will appear here.</p>
-        <b-button :to="'/managed-accounts/' + accountId + '/topup'" variant="border-primary">
+        <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="border-primary">
           Start by topping up your account.
         </b-button>
       </b-col>
@@ -56,13 +56,7 @@ const Accounts = namespace(AccountsStore.name)
 export default class AccountStatement extends VueWithRouter {
   @Accounts.Getter filteredStatement: ManagedAccountsSchemas.ManagedAccountStatementEntry[] | undefined
 
-  accountId!: number
-
-  asyncData({ route }) {
-    const _accountId = route.params.id
-
-    return { accountId: _accountId }
-  }
+  @Accounts.Getter account!: ManagedAccountsSchemas.ManagedAccount | null
 
   get filteredStatementLength(): number {
     if (this.filteredStatement) {

@@ -17,7 +17,7 @@
         :state="isInvalid($v.form.companyRegistrationAddress)"
         v-model="$v.form.companyRegistrationAddress.$model"
         rows="4"
-        placeholder="Street Name"
+        placeholder="Street Name, City"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>

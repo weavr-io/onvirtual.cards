@@ -1,37 +1,6 @@
 <template>
   <div>
-    <section v-if="showKybAlert">
-      <b-container>
-        <b-row>
-          <b-col class="py-5 text-center">
-            <div v-if="corporate.kyb.fullCompanyChecksVerified === 'NOT_STARTED'">
-              <h4 class="font-weight-light">
-                Your account is currently restricted.
-              </h4>
-              <h5 class="font-weight-lighter">
-                You can lift your restriction
-                <b-link to="/managed-accounts/kyb" class="link">
-                  here
-                </b-link>.
-              </h5>
-            </div>
-            <div v-if="corporate.kyb.fullCompanyChecksVerified === 'INITIATED'">
-              <h4 class="font-weight-light">
-                Your account is currently under review.
-              </h4>
-              <h5 class="font-weight-lighter">
-                Contact us on <b-link href="mailto:kyb@weavr.io" class="link">kyb@weavr.io</b-link> for additional information.
-              </h5>
-            </div>
-            <div v-if="corporate.kyb.fullCompanyChecksVerified === 'REJECTED'">
-              <h4 class="font-weight-light">
-                We're sorry but we are unable to offer you a service at this time
-              </h4>
-            </div>
-          </b-col>
-        </b-row>
-      </b-container>
-    </section>
+    <kyb-alert />
     <section v-if="!showKybAlert">
       <statement />
     </section>
@@ -70,7 +39,8 @@ const Corporates = namespace(CorporatesStore.name)
 @Component({
   layout: 'dashboard',
   components: {
-    Statement: () => import('~/components/accounts/statement/statement.vue')
+    Statement: () => import('~/components/accounts/statement/statement.vue'),
+    KybAlert: () => import('~/components/corporates/KYBAlert.vue')
   }
 })
 export default class AccountPage extends VueWithRouter {
