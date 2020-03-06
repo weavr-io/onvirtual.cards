@@ -34,11 +34,7 @@ export const getters: GetterTree<State, RootState> = {
 
     state.cards.forEach((card: ManagedCardsSchemas.ManagedCard) => {
       if (card.balances.availableBalance) {
-        if (card.currency === 'GBP') {
-          total = total + parseInt(card.balances.availableBalance) * 1.16
-        } else {
-          total += parseInt(card.balances.availableBalance)
-        }
+        total += parseInt(card.balances.availableBalance)
       }
     })
 
