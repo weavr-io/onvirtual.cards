@@ -3,49 +3,51 @@
     <b-container>
       <b-row class="full-height-vh py-5" align-v="center">
         <b-col lg="6" offset-lg="3">
-          <div class="mx-md-3 px-md-5">
-            <div class="text-center">
-              <h2 class="font-weight-lighter">
-                Set password
-              </h2>
-            </div>
-            <error-alert
-              message="The reset password link is invalid or has expired.  Please restart the password restart process."
-            />
-            <b-form id="contact-form" @submit="setPassword" class="mt-5">
-              <b-form-group
-                id="ig-email"
-                :state="isInvalid($v.form.email)"
-                :invalid-feedback="invalidFeedback($v.form.email, 'email')"
-                label="E-mail"
-                label-for="setEmail"
-              >
-                <b-form-input
-                  id="setEmail"
-                  v-model="form.email"
-                  :state="isInvalid($v.form.email)"
-                  class="form-control"
-                  type="text"
-                  name="setEmail"
-                  autocomplete="email"
-                />
-              </b-form-group>
-              <b-form-group id="ig-password" label="Password" label-for="setPassword">
-                <b-form-input
-                  id="from-password"
-                  v-model="form.password.value"
-                  :state="isInvalid($v.form.password.value)"
-                  class="form-control"
-                  type="password"
-                  name="setPassword"
-                  autocomplete="new-password"
-                />
-              </b-form-group>
+          <b-card no-body class="overflow-hidden">
+            <b-card-body class="p-6">
               <div class="text-center">
-                <loader-button :is-loading="isLoading" button-text="Set Password" class="mt-5" />
+                <h2 class="font-weight-lighter">
+                  Set password
+                </h2>
               </div>
-            </b-form>
-          </div>
+              <error-alert
+                message="The reset password link is invalid or has expired.  Please restart the password restart process."
+              />
+              <b-form id="contact-form" @submit="setPassword" class="mt-5">
+                <b-form-group
+                  id="ig-email"
+                  :state="isInvalid($v.form.email)"
+                  :invalid-feedback="invalidFeedback($v.form.email, 'email')"
+                  label="E-mail"
+                  label-for="setEmail"
+                >
+                  <b-form-input
+                    id="setEmail"
+                    v-model="form.email"
+                    :state="isInvalid($v.form.email)"
+                    class="form-control"
+                    type="text"
+                    name="setEmail"
+                    autocomplete="email"
+                  />
+                </b-form-group>
+                <b-form-group id="ig-password" label="Password" label-for="setPassword">
+                  <b-form-input
+                    id="from-password"
+                    v-model="form.password.value"
+                    :state="isInvalid($v.form.password.value)"
+                    class="form-control"
+                    type="password"
+                    name="setPassword"
+                    autocomplete="new-password"
+                  />
+                </b-form-group>
+                <div class="text-center">
+                  <loader-button :is-loading="isLoading" button-text="Set Password" class="mt-5" />
+                </div>
+              </b-form>
+            </b-card-body>
+          </b-card>
         </b-col>
       </b-row>
     </b-container>

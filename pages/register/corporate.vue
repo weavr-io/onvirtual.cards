@@ -2,7 +2,7 @@
   <section>
     <b-container>
       <b-row class="full-height-vh" align-v="center">
-        <b-col md="6" offset-md="3" class="my-6">
+        <b-col lg="6" offset-lg="3" class="my-6">
           <div class="text-center pb-5">
             <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
           </div>
