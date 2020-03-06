@@ -16,7 +16,7 @@
                 <img src="/img/success.svg" alt="" style="max-width: 100px" />
               </div>
               <div>
-                <b-button variant="primary" @click="goToResetPassword" class="mt-5">
+                <b-button variant="secondary" @click="goToResetPassword" class="mt-5">
                   resend
                   <span class="pl-5">-></span>
                 </b-button>

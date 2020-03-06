@@ -10,14 +10,14 @@
               </h2>
             </b-col>
           </b-row>
-          <b-row class="py-4">
+          <b-row class="pt-4" v-if="account.bankAccountDetails.paymentReference">
             <b-col>
               <b-alert show variant="warning">
                 Please remember to include payment reference.
               </b-alert>
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="pt-4">
             <b-col>
               <b-table-simple>
                 <b-tbody>
@@ -41,7 +41,7 @@
                     <b-th>Address</b-th>
                     <b-td style="white-space: pre">{{ account.bankAccountDetails.address | weavr_coma_to_newline }}</b-td>
                   </b-tr>
-                  <b-tr>
+                  <b-tr v-if="account.bankAccountDetails.paymentReference">
                     <b-th>Payment Reference</b-th>
                     <b-td>
                       {{ account.bankAccountDetails.paymentReference }}
@@ -53,7 +53,7 @@
           </b-row>
           <b-row>
             <b-col class="text-center">
-              <b-button :to="'/managed-accounts/' + accountId" variant="primary" class="px-5">
+              <b-button :to="'/managed-accounts/' + accountId" variant="secondary" class="px-5">
                 close
               </b-button>
             </b-col>
@@ -92,7 +92,6 @@ export default class AccountTopupPage extends VueWithRouter {
     const accountId = route.params.id
     let approved = false
 
-    debugger
     if (config.app.kyb_required === true) {
       if (store.getters['auth/isConsumer']) {
         await ConsumersStore.Helpers.checkKYC(store).then(

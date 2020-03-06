@@ -21,7 +21,7 @@
         </b-row>
         <b-row class="mt-5">
           <b-col class="text-center">
-            <b-button to="/" variant="primary">
+            <b-button to="/" variant="secondary">
               back
               <span class="pl-5">-></span>
             </b-button>
@@ -42,7 +42,7 @@
         </b-row>
         <b-row class="mt-5">
           <b-col class="text-center">
-            <b-button type="submit" variant="primary">
+            <b-button type="submit" variant="secondary">
               next
               <span class="pl-5">-></span>
             </b-button>

@@ -110,10 +110,12 @@ export const actions: Actions<State, RootState> = {
       await dispatch('getCorporateDetails', _corpId)
     }
 
-    const _res = getters.corporate.kyb.fullCompanyChecks === KYBState.APPROVED
+    const _res = getters.corporate.kyb.fullCompanyChecksVerified === KYBState.APPROVED
 
     if (!_res) {
       return Promise.reject(new Error('KYB not approved'))
+    } else {
+      return Promise.resolve()
     }
   }
 }

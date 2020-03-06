@@ -14,7 +14,7 @@
     </b-row>
     <b-row>
       <b-col class="text-center">
-        <b-button type="submit" variant="primary" @click="goToCards">
+        <b-button type="submit" variant="secondary" @click="goToCards">
           continue
           <span class="pl-5">-></span>
         </b-button>
