@@ -6,21 +6,28 @@
           <div class="text-center pb-5">
             <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
           </div>
-          <div class="mx-md-3 px-md-5">
-            <b-card class="mt-5" bg-variant="secondary" text-variant="dark">
-              <b-card-text>
-                We sent you a verification code by email. Please enter that code to verify your email address.
-              </b-card-text>
-            </b-card>
-            <b-card class="px-5 py-3 mt-5">
+          <div>
+            <b-card class="py-6 px-5 mt-5">
+              <h3 class="font-weight-light text-center">Check your inbox!</h3>
+              <b-row>
+                <b-col md="6" offset-md="3">
+                  <b-img fluid src="/img/email.svg" class="mt-5 mb-2" />
+                </b-col>
+              </b-row>
               <form id="contact-form" class="mt-5" @submit="doVerify">
+                <p class="text-center mb-5">We’ve just sent you a verification code by email. Enter code below to verify
+                  your email address.</p>
                 <!--              <b-form-group label="Email:">-->
                 <!--                <b-form-input v-model="request.request.emailAddress" type="email" />-->
                 <!--              </b-form-group>-->
-                <b-form-group label="Validation Code:">
-                  <b-form-input v-model="request.request.nonce" />
-                </b-form-group>
-                <loader-button :is-loading="isLoading" button-text="Verify" class="my-5 text-right" />
+                <b-row>
+                  <b-col md="8" offset-md="2">
+                    <b-form-group label="">
+                      <b-form-input v-model="request.request.nonce" placeholder="0000" class="text-center" />
+                    </b-form-group>
+                  </b-col>
+                </b-row>
+                <loader-button :is-loading="isLoading" button-text="verify" class="mt-5 text-center" />
               </form>
             </b-card>
           </div>

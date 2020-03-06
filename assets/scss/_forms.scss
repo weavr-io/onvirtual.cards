@@ -54,22 +54,10 @@
 
 .country-selector, .input-phone-number {
   .input-tel__input, .country-selector__input {
-    border: 0 !important;
-    border-radius: 0 !important;
     box-shadow: none !important;
-    border-bottom: 1px solid $input-border-color !important;
-  }
-
-  &.has-value {
-    .input-tel__input {
-      border-bottom: 1px solid $danger !important;
-    }
-  }
-
-  &.is-valid {
-    .input-tel__input, .country-selector__input {
-      border-bottom: 1px solid $input-border-color !important;
-    }
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-top: 0 !important;
   }
 
   .input-tel__label, .country-selector__label{

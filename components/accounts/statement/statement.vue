@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-row v-if="filteredStatement && filteredStatement.length > 0" class="mb-2" align-v="center">
+    <b-row v-if="filteredStatement && filteredStatementLength > 0" class="mb-2" align-v="center">
       <b-col>
         <b-row>
           <b-col>
@@ -60,6 +60,14 @@ export default class AccountStatement extends VueWithRouter {
     const _accountId = route.params.id
 
     return { accountId: _accountId }
+  }
+
+  get filteredStatementLength(): number {
+    if (this.filteredStatement) {
+      return Object.keys(this.filteredStatement).length
+    } else {
+      return 0
+    }
   }
 }
 </script>

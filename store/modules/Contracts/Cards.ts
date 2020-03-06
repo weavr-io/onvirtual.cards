@@ -3,6 +3,7 @@ import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import { AxiosPromise } from '~/node_modules/axios'
 import { Store } from '~/node_modules/vuex'
 import { StoreHelpers } from '~/helpers/StoreHelpers'
+import { UpdateManagedCardRequest } from '~/api/Requests/ManagedCards/UpdateManagedCardRequest'
 
 export const name = 'cards'
 
@@ -25,7 +26,9 @@ export interface State {
 export enum _Actions {
   freeze = 'freeze',
   unfreeze = 'unfreeze',
-  getCards = 'getCards'
+  getCards = 'getCards',
+  getManagedCard = 'getManagedCard',
+  update = 'update'
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
@@ -33,7 +36,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 
   addCard(context: ActionContext<S, R>, request: ManagedCardsSchemas.CreateManagedCardRequest)
 
-  getManagedCard(context: ActionContext<S, R>, id: number): AxiosPromise<R>
+  [_Actions.getManagedCard](context: ActionContext<S, R>, id: number): AxiosPromise<ManagedCardsSchemas.ManagedCard>
 
   destroyManagedCard(context: ActionContext<S, R>, request: ManagedCardsSchemas.DestroyRequest): AxiosPromise<R>
 
@@ -45,6 +48,8 @@ export interface Actions<S, R> extends ActionTree<S, R> {
   [_Actions.freeze](context: ActionContext<S, R>, id): AxiosPromise<R>
 
   [_Actions.unfreeze](context: ActionContext<S, R>, id): AxiosPromise<R>
+
+  [_Actions.update](context: ActionContext<S, R>, request: UpdateManagedCardRequest): AxiosPromise<R>
 }
 
 export module Helpers {
@@ -56,5 +61,11 @@ export module Helpers {
   }
   export const getCards = (store: Store<any>): AxiosPromise => {
     return StoreHelpers.dispatch(store, name, _Actions.getCards)
+  }
+  export const getManagedCard = (store: Store<any>, id: number): AxiosPromise<ManagedCardsSchemas.ManagedCard> => {
+    return StoreHelpers.dispatch(store, name, _Actions.getManagedCard, id)
+  }
+  export const update = (store: Store<any>, request: UpdateManagedCardRequest): AxiosPromise => {
+    return StoreHelpers.dispatch(store, name, _Actions.update, request)
   }
 }

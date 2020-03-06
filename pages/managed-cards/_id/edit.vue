@@ -5,7 +5,7 @@
         <b-col md="6" offset-md="3">
           <b-card class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
-              Create Card
+              Update Card
             </b-card-title>
             <b-card-body>
               <b-form @submit="doAdd">
@@ -13,9 +13,10 @@
                   <b-col>
                     <b-form-group label="Name of Person using Card:">
                       <b-form-input
-                        :state="isInvalid($v.request.nameOnCard)"
-                        v-model="$v.request.nameOnCard.$model"
+                        :state="isInvalid($v.request.body.nameOnCard)"
+                        v-model="$v.request.body.nameOnCard.$model"
                         placeholder="eg. Elon Musk"
+                        disabled
                       />
                       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                     </b-form-group>
@@ -25,16 +26,15 @@
                   <b-col>
                     <b-form-group label="CARDHOLDER MOBILE NUMBER:">
                       <vue-phone-number-input
-                        v-model="$v.request.formattedMobileNumber.$model"
+                        v-model="$v.request.body.formattedMobileNumber.$model"
                         @update="phoneUpdate"
                         :error="mobileNumberState()"
                         :border-radius="0"
                         error-color="#F50E4C"
                         color="#6D7490"
                         valid-color="#6D7490"
-                        default-country-code="MT"
                       />
-                      <b-form-invalid-feedback force-show v-if="mobileNumberState()">
+                      <b-form-invalid-feedback v-if="mobileNumberState()" force-show>
                         This field must be a valid mobile number.
                       </b-form-invalid-feedback>
                     </b-form-group>
@@ -42,22 +42,10 @@
                 </b-form-row>
                 <b-form-row>
                   <b-col>
-                    <b-form-group label="Currency:">
-                      <b-form-select
-                        :state="isInvalid($v.request.currency)"
-                        v-model="$v.request.currency.$model"
-                        :options="currencyOptions"
-                      />
-                      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-                    </b-form-group>
-                  </b-col>
-                </b-form-row>
-                <b-form-row>
-                  <b-col>
                     <b-form-group label="ADD A CUSTOM CARD NAME:">
                       <b-form-input
-                        :state="isInvalid($v.request.friendlyName)"
-                        v-model="$v.request.friendlyName.$model"
+                        :state="isInvalid($v.request.body.friendlyName)"
+                        v-model="$v.request.body.friendlyName.$model"
                         placeholder="eg. travel expenses"
                       />
                       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -83,6 +71,7 @@ import * as AuthStore from '~/store/modules/Auth'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
+import { UpdateManagedCardRequest } from '~/api/Requests/ManagedCards/UpdateManagedCardRequest'
 import LoginResult = Schemas.LoginResult
 
 const Cards = namespace(CardsStore.name)
@@ -95,23 +84,22 @@ const Auth = namespace(AuthStore.name)
   },
   validations: {
     request: {
-      friendlyName: {
-        required,
-        maxLength: maxLength(50)
-      },
-      currency: {
-        required
-      },
-      cardholderMobileNumber: {
-        required,
-        cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
-      },
-      nameOnCard: {
-        required,
-        maxLength: maxLength(30)
-      },
-      formattedMobileNumber: {
-        required
+      body: {
+        friendlyName: {
+          required,
+          maxLength: maxLength(50)
+        },
+        cardholderMobileNumber: {
+          required,
+          cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
+        },
+        nameOnCard: {
+          required,
+          maxLength: maxLength(30)
+        },
+        formattedMobileNumber: {
+          required
+        }
       }
     }
   }
@@ -123,34 +111,15 @@ export default class AddCardPage extends VueWithRouter {
 
   @Auth.Getter auth!: LoginResult
 
-  currencyOptions = [
-    { value: 'EUR', text: 'EUR' },
-    { value: 'GBP', text: 'GBP' }
-  ]
-
   numberIsValid: boolean = false
   cardholderMobileNumber = ''
 
   mobileNumberState(): boolean {
     // @ts-ignore
-    return !this.isInvalid(this.$v.request.formattedMobileNumber) || !this.numberIsValid
+    return !this.isInvalid(this.$v.request.body.formattedMobileNumber) || !this.numberIsValid
   }
 
-  public request: ManagedCardsSchemas.CreateManagedCardRequest = {
-    profileId: 0,
-    owner: {
-      type: '',
-      id: 0
-    },
-    friendlyName: '',
-    currency: 'EUR',
-    fiProvider: 'paynetics',
-    channelProvider: 'gps',
-    nameOnCard: '',
-    createNow: true,
-    cardholderMobileNumber: '',
-    formattedMobileNumber: ''
-  }
+  public request!: UpdateManagedCardRequest
 
   doAdd(evt) {
     evt.preventDefault()
@@ -162,29 +131,33 @@ export default class AddCardPage extends VueWithRouter {
       }
     }
 
-    this.addCard(this.request).then(() => {
+    CardsStore.Helpers.update(this.$store, this.request).then(() => {
       try {
-        this.$segment.track('Card Added', this.request)
+        this.$segment.track('Card Updated', this.request)
       } catch (e) {}
       this.$router.push('/managed-cards')
     })
   }
 
-  mounted() {
-    super.mounted()
-    if (this.auth.identity) {
-      this.request.owner = this.auth.identity
-    }
-    this.request.profileId = config.profileId.managed_cards
-
-    try {
-      this.$segment.track('Initiated Add Card', {})
-    } catch (e) {}
+  phoneUpdate(number) {
+    this.request.body.cardholderMobileNumber = '+' + number.countryCallingCode + number.nationalNumber
+    this.numberIsValid = number.isValid
   }
 
-  phoneUpdate(number) {
-    this.request.cardholderMobileNumber = '+' + number.countryCallingCode + number.nationalNumber
-    this.numberIsValid = number.isValid
+  async asyncData({ store, route }) {
+    const _cardId = route.params.id
+
+    const _card = await CardsStore.Helpers.getManagedCard(store, _cardId)
+
+    const request: UpdateManagedCardRequest = {
+      id: _cardId,
+      body: {
+        ..._card.data,
+        formattedMobileNumber: ''
+      }
+    }
+
+    return { cardId: _cardId, request: request }
   }
 }
 </script>

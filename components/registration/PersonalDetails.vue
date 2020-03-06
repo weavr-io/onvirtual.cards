@@ -38,9 +38,13 @@
         v-model="rootMobileNumber"
         @update="phoneUpdate"
         :only-countries="mobileCountries"
+        :border-radius="0"
+        color="#F50E4C"
+        error-color="#F50E4C"
+        valid-color="#6D7490"
         default-country-code="MT"
       />
-      <b-form-invalid-feedback v-if="numberIsValid === false">
+      <b-form-invalid-feedback force-show v-if="numberIsValid === false">
         This field must be a valid mobile number.
       </b-form-invalid-feedback>
     </b-form-group>

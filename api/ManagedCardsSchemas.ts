@@ -43,6 +43,7 @@ export module ManagedCardsSchemas {
     renewalType: string
     creationTimestamp: string
     action: any[]
+    cardholderMobileNumber?: string
   }
 
   export interface ManagedCardStatementRequest {
@@ -98,6 +99,8 @@ export module ManagedCardsSchemas {
     channelProvider: string
     nameOnCard?: string
     createNow?: boolean
+    cardholderMobileNumber?: string
+    formattedMobileNumber?: string
   }
 
   export interface DestroyRequest {

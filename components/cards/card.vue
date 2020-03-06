@@ -1,6 +1,11 @@
 <template>
   <div id="managedCard">
-    <b-card :bg-variant="bgVariant" no-body class="border-0 cards-card shadow-hover-sm" :class="{'card-frozen': isFrozen}">
+    <b-card
+      :bg-variant="bgVariant"
+      :class="{ 'card-frozen': isFrozen }"
+      no-body
+      class="border-0 cards-card shadow-hover-sm"
+    >
       <b-card-body class="card-body">
         <b-link :to="'/managed-cards/' + card.id.id + '/statement'">
           <b-container fluid class="p-0">
@@ -20,7 +25,7 @@
                   </b-col>
                 </b-row>
               </b-col>
-              <b-col class="text-right" cols="auto" v-if="!isFrozen">
+              <b-col v-if="!isFrozen" class="text-right" cols="auto">
                 <b-img src="/img/mc_symbol.svg" width="50px" />
               </b-col>
             </b-row>
@@ -46,20 +51,40 @@
     </b-card>
     <b-row class="card-options">
       <b-col>
-        <b-link @click="toggleFreeze" class="py-3 d-block text-decoration-none">
-          <tempalte v-if="!isFrozen">
-            <h6 class="m-0 small">
-              Freeze card
-            </h6>
-            <p class="text-muted m-0 small">
-              Tap again to unfreeze
-            </p>
-          </tempalte>
-          <template v-else>
-            <h6 class="m-0 small">
-              Unfreeze card
-            </h6>
-          </template>
+        <b-link @click="toggleFreeze" class="mt-3 py-2 d-block text-decoration-none">
+          <b-row align-v="center">
+            <b-col cols="auto">
+              <b-img fluid src="/img/freeze-icon.svg" />
+            </b-col>
+            <b-col>
+              <h6 class="m-0 small">
+                <template v-if="!isFrozen">
+                  Freeze card
+                </template>
+                <template v-else>
+                  Unfreeze card
+                </template>
+              </h6>
+              <p class="text-muted m-0 small" v-if="!isFrozen">
+                Tap again to unfreeze
+              </p>
+            </b-col>
+          </b-row>
+        </b-link>
+        <b-link class="py-2 d-block text-decoration-none" :to="'/managed-cards/' + card.id.id + '/edit'">
+          <b-row align-v="center">
+            <b-col cols="auto">
+              <b-img fluid src="/img/edit-icon.svg" />
+            </b-col>
+            <b-col>
+              <h6 class="m-0 small">
+                Edit card
+              </h6>
+              <p class="text-muted m-0 small">
+                Change name and other details
+              </p>
+            </b-col>
+          </b-row>
         </b-link>
       </b-col>
     </b-row>

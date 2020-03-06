@@ -3,11 +3,11 @@
     <b-row class="px-0 mb-5 border-bottom" align-v="end" align-h="between">
       <b-col>
         <b-nav class="dashboard-header">
-          <b-nav-item to="/managed-accounts" active-class="active">
-            Account
-          </b-nav-item>
           <b-nav-item to="/managed-cards" active-class="active">
             Cards
+          </b-nav-item>
+          <b-nav-item to="/managed-accounts" active-class="active">
+            Account
           </b-nav-item>
         </b-nav>
       </b-col>

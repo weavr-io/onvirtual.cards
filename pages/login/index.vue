@@ -6,10 +6,10 @@
           <div class="text-center pb-5">
             <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
           </div>
-          <b-card body-class="px-6 py-5">
-            <h2 class="text-center font-weight-lighter mb-6">
+          <b-card body-class="p-6">
+            <h3 class="text-center font-weight-light mb-6">
               Login
-            </h2>
+            </h3>
 
             <form id="contact-form" @submit="login" class="mt-5">
               <error-alert
