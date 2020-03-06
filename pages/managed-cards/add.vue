@@ -34,21 +34,9 @@
                         valid-color="#6D7490"
                         default-country-code="MT"
                       />
-                      <b-form-invalid-feedback force-show v-if="mobileNumberState()">
+                      <b-form-invalid-feedback v-if="mobileNumberState()" force-show>
                         This field must be a valid mobile number.
                       </b-form-invalid-feedback>
-                    </b-form-group>
-                  </b-col>
-                </b-form-row>
-                <b-form-row>
-                  <b-col>
-                    <b-form-group label="Currency:">
-                      <b-form-select
-                        :state="isInvalid($v.request.currency)"
-                        v-model="$v.request.currency.$model"
-                        :options="currencyOptions"
-                      />
-                      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                     </b-form-group>
                   </b-col>
                 </b-form-row>
@@ -83,6 +71,7 @@ import * as AuthStore from '~/store/modules/Auth'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
+import * as AccountsStore from '~/store/modules/Accounts'
 import LoginResult = Schemas.LoginResult
 
 const Cards = namespace(CardsStore.name)
@@ -98,9 +87,6 @@ const Auth = namespace(AuthStore.name)
       friendlyName: {
         required,
         maxLength: maxLength(50)
-      },
-      currency: {
-        required
       },
       cardholderMobileNumber: {
         required,
@@ -136,21 +122,7 @@ export default class AddCardPage extends VueWithRouter {
     return !this.isInvalid(this.$v.request.formattedMobileNumber) || !this.numberIsValid
   }
 
-  public request: ManagedCardsSchemas.CreateManagedCardRequest = {
-    profileId: 0,
-    owner: {
-      type: '',
-      id: 0
-    },
-    friendlyName: '',
-    currency: 'EUR',
-    fiProvider: 'paynetics',
-    channelProvider: 'gps',
-    nameOnCard: '',
-    createNow: true,
-    cardholderMobileNumber: '',
-    formattedMobileNumber: ''
-  }
+  public request!: ManagedCardsSchemas.CreateManagedCardRequest
 
   doAdd(evt) {
     evt.preventDefault()
@@ -180,6 +152,29 @@ export default class AddCardPage extends VueWithRouter {
     try {
       this.$segment.track('Initiated Add Card', {})
     } catch (e) {}
+  }
+
+  async asyncData({ store }) {
+    const _accounts = await AccountsStore.Helpers.index(store)
+
+    const request: ManagedCardsSchemas.CreateManagedCardRequest = {
+      profileId: config.profileId.managed_cards,
+      owner: AuthStore.Helpers.identity(store),
+      friendlyName: '',
+      currency: 'EUR',
+      fiProvider: 'paynetics',
+      channelProvider: 'gps',
+      nameOnCard: '',
+      createNow: true,
+      cardholderMobileNumber: '',
+      formattedMobileNumber: ''
+    }
+
+    if (_accounts.data.count === 1) {
+      request.currency = _accounts.data.account[0].currency
+    }
+
+    return { request: request }
   }
 
   phoneUpdate(number) {

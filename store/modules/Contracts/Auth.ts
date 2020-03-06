@@ -10,6 +10,7 @@ import { UpdatePassword } from '~/api/Requests/Auth/UpdatePassword'
 import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
 import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
 import LoginResult = Schemas.LoginResult
+import TypeId = Schemas.TypeId
 
 export const name = 'auth'
 
@@ -30,7 +31,8 @@ export enum _Getters {
   isLoggedIn = 'isLoggedIn',
   isConsumer = 'isConsumer',
   isCorporate = 'isCorporate',
-  identityId = 'identityId'
+  identityId = 'identityId',
+  identity = 'identity'
 }
 
 export enum _Actions {
@@ -54,6 +56,8 @@ export interface Getters<S, R> extends GetterTree<S, R> {
   [_Getters.isCorporate](sate: S): boolean
 
   [_Getters.identityId](sate: S): number | null
+
+  [_Getters.identity](sate: S): TypeId | undefined
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
@@ -117,5 +121,8 @@ export module Helpers {
   }
   export const identityId = (store: Store<any>): number | null => {
     return StoreHelpers.get(store, name, _Getters.identityId)
+  }
+  export const identity = (store: Store<any>): TypeId => {
+    return StoreHelpers.get(store, name, _Getters.identity)
   }
 }

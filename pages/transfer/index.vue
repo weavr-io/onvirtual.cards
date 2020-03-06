@@ -93,30 +93,24 @@ export default class CardsPage extends VueWithRouter {
   mounted() {
     super.mounted()
 
-    this.request.profileId = config.profileId.transfers
-
-    if (typeof this.$route.query.destination === 'string') {
-      this.request.destination.id = this.$route.query.destination
-    }
-
     try {
       this.$segment.track('Initiated Transfer', {})
     } catch (e) {}
   }
 
-  async asyncData({ store }) {
+  async asyncData({ store, route }) {
     await store.dispatch('cards/getCards')
     const _accounts = await store.dispatch('accounts/index')
 
     const request: TransfersSchemas.CreateTransferRequest = {
-      profileId: null,
+      profileId: config.profileId.transfers,
       source: _accounts.data.account[0].id,
       destination: {
         type: 'managed_cards',
-        id: null
+        id: route.query.destination
       },
       destinationAmount: {
-        currency: 'EUR',
+        currency: _accounts.data.account[0].currency,
         amount: 0
       }
     }

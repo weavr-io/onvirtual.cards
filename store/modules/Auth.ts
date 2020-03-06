@@ -1,12 +1,10 @@
-import { GetterTree, MutationTree } from 'vuex'
+import { MutationTree } from 'vuex'
 import { RootState } from 'store'
 import * as Loader from './Loader'
 import { api } from '~/api/Axios'
 import { Getters, Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Auth'
 import { Schemas } from '~/api/Schemas'
-import LoginRequest = Schemas.LoginRequest
 import LoginResult = Schemas.LoginResult
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -35,6 +33,9 @@ export const getters: Getters<State, RootState> = {
   },
   isCorporate: (state) => {
     return state.auth.identity ? state.auth.identity.type === 'corporates' : false
+  },
+  identity: (state) => {
+    return state.auth.identity
   },
   isLoading: (state) => {
     return state.isLoading

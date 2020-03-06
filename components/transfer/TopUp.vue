@@ -34,7 +34,7 @@
         <b-row>
           <b-col>
             <b-form-group :state="isInvalid($v.request.amount)" :invalid-feedback="invalidMessage" label="Amount:">
-              <b-input-group prepend="EUR">
+              <b-input-group :prepend="accountDetails.currency">
                 <b-form-input v-model="$v.request.amount.$model" type="number" step="0.01" />
               </b-input-group>
             </b-form-group>
@@ -86,7 +86,9 @@ export default class TopUpForm extends VueWithRouter {
   get invalidMessage() {
     const _min = this.$v.request.amount.$params.between.min
     const _max = this.$v.request.amount.$params.between.max
-    return 'Should be between EUR ' + _min + ' and EUR ' + _max
+
+    const _currency = this.accountDetails ? this.accountDetails.currency : 'EUR'
+    return 'Should be between ' + _currency + ' ' + _min + ' and ' + _currency + ' ' + _max
   }
 
   public request: {

@@ -25,7 +25,7 @@
                   balance
                 </p>
                 <p class="mb-0 account-balance-value">
-                  {{ account.balances.availableBalance | weavr_currency('EUR') }}
+                  {{ account.balances.availableBalance | weavr_currency(account.currency) }}
                 </p>
               </div>
             </b-col>
@@ -40,7 +40,7 @@
                 total balance
               </p>
               <p class="mb-0 account-balance-value">
-                {{ cardsBalance | weavr_currency('EUR') }}
+                {{ cardsBalance | weavr_currency(cardCurrency) }}
               </p>
             </div>
           </b-row>
@@ -67,6 +67,8 @@ export default class DashboardHeader extends Vue {
   @Accounts.Getter('totalAvailableBalance') accountsBalance
 
   @Cards.Getter('totalAvailableBalance') cardsBalance
+
+  @Cards.Getter('currency') cardCurrency
 
   get isManagedCards(): boolean {
     if (this.$route.matched[0].name) {
