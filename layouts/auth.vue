@@ -1,5 +1,5 @@
 <template>
-  <div class>
+  <div id="main-header">
     <div v-if="showHeader" class="container-fluid">
       <b-navbar type="light" fixed="top" variant="bg-colored" class="">
         <b-container>
@@ -9,7 +9,7 @@
                 Register
               </b-nav-item>
               <b-nav-item v-if="showLogin" to="/login">
-                Login
+                Sign In
               </b-nav-item>
             </b-navbar-nav>
           </b-collapse>

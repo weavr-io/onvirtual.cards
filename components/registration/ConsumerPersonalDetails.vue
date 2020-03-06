@@ -1,8 +1,8 @@
 <template>
   <b-form @submit="submitForm" novalidate>
-    <h2 class="text-center font-weight-lighter mb-5">
+    <h3 class="text-center font-weight-light mb-5">
       Personal Details
-    </h2>
+    </h3>
     <b-form-group :state="isInvalid($v.form.rootName)" label="First Name:">
       <b-form-input v-model="form.rootName" />
     </b-form-group>
@@ -17,7 +17,7 @@
     <b-form-group :state="isInvalid($v.form.rootMobileNumber)" label="Mobile Number:">
       <b-form-input v-model="form.rootMobileNumber" />
     </b-form-group>
-    <b-form-row class="mt-5">
+    <b-form-row class="mt-6">
       <b-col md="4">
         <b-button @click="goBack" variant="outline">
           <-

@@ -1,34 +1,61 @@
 <template>
   <b-form @submit="submitForm" novalidate>
-    <h2 class="text-center font-weight-lighter mb-5">
+    <h3 class="text-center font-weight-light mb-5">
       Company Details
-    </h2>
+    </h3>
 
-    <b-form-group :state="isInvalid($v.form.companyName)" label="Company Name:">
-      <b-form-input v-model="form.companyName" />
+    <b-form-group label="Company Name:">
+      <b-form-input :state="isInvalid($v.form.companyName)" v-model="form.companyName" placeholder="Company Name" />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.companyRegistrationNumber)" label="Company Registration Number:">
-      <b-form-input v-model="form.companyRegistrationNumber" />
+    <b-form-group label="Company Registration Number:">
+      <b-form-input :state="isInvalid($v.form.companyRegistrationNumber)" v-model="form.companyRegistrationNumber" />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.companyRegistrationAddress)" label="Company Registration Address:">
-      <b-form-input v-model="form.companyRegistrationAddress" />
+    <b-form-group label="Company Registration Address:">
+      <b-form-textarea
+        :state="isInvalid($v.form.companyRegistrationAddress)"
+        v-model="form.companyRegistrationAddress"
+        rows="4"
+        placeholder="Street Name"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.registrationCountry)" label="Registration Country:">
-      <b-form-select v-model="form.registrationCountry" :options="countiesOptions" />
+    <b-form-group label="Registration Country:">
+      <b-form-select
+        :state="isInvalid($v.form.registrationCountry)"
+        v-model="form.registrationCountry"
+        :options="countiesOptions"
+        placeholder="Registration Country"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.companyRegistrationDate)" label="Company Registration Date:">
-      <b-form-input v-model="companyRegistrationDate" @update="updatedCompanyRegistrationDate" type="date" />
-<!--      <b-form-datepicker v-model="companyRegistrationDate" @update="updatedCompanyRegistrationDate" :max="maxDate"-->
-<!--                         :dropup="true" />-->
+    <b-form-group label="Company Registration Date:">
+      <b-form-input
+        :state="isInvalid($v.form.companyRegistrationDate)"
+        v-model="companyRegistrationDate"
+        @update="updatedCompanyRegistrationDate"
+        type="date"
+      />
+<!--      <b-form-datepicker-->
+<!--        v-model="companyRegistrationDate"-->
+<!--        @update="updatedCompanyRegistrationDate"-->
+<!--        :max="maxDate"-->
+<!--        :dropup="true"-->
+<!--      />-->
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-row>
       <b-col>
-        <b-form-checkbox v-model="form.acceptedTerms" :state="isInvalid($v.form.acceptedTerms)">
-          I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank" class="link">terms and use</a>
-        </b-form-checkbox>
+        <b-form-group>
+          <b-form-checkbox v-model="form.acceptedTerms" :state="isInvalid($v.form.acceptedTerms)">
+            I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank" class="link">terms and use</a>
+          </b-form-checkbox>
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        </b-form-group>
       </b-col>
     </b-form-row>
-    <b-form-row class="mt-5">
+    <b-form-row class="mt-6">
       <b-col md="4">
         <b-button @click="goBack" variant="outline">
           <-

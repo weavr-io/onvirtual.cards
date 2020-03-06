@@ -1,13 +1,15 @@
 <template>
-  <b-form @submit="tryToSubmitForm" novalidate>
-    <h2 class="text-center font-weight-lighter mb-5">
+  <b-form @submit="tryToSubmitForm">
+    <h3 class="text-center font-weight-light mb-5">
       Register
-    </h2>
-    <b-form-group :state="isInvalid($v.form.rootUsername)" label="Username:">
-      <b-form-input v-model="form.rootUsername" placeholder="Username" />
+    </h3>
+    <b-form-group label="Username:">
+      <b-form-input v-model="form.rootUsername" :state="isInvalid($v.form.rootUsername)" placeholder="Username" />
+      <b-form-invalid-feedback>Only numbers and latin letters are accepted.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group :state="isInvalid($v.form.rootEmail)" label="Email:">
-      <b-form-input v-model="form.rootEmail" />
+      <b-form-input v-model="form.rootEmail" :state="isInvalid($v.form.rootEmail)" placeholder="name@email.com" />
+      <b-form-invalid-feedback>An email address must contain a single @.</b-form-invalid-feedback>
     </b-form-group>
 
     <client-only placeholder="Loading...">
@@ -37,7 +39,7 @@
         />
       </weavr-form>
     </client-only>
-    <b-form-row class="mt-5">
+    <b-form-row class="mt-6">
       <b-col class="text-center">
         <b-button variant="secondary" type="submit">
           continue

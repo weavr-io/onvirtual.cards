@@ -1,23 +1,37 @@
 <template>
   <b-form @submit="submitForm" novalidate>
-    <h2 class="text-center font-weight-lighter mb-5">
+    <h3 class="text-center font-weight-light mb-5">
       Personal Details
-    </h2>
-    <b-form-group :state="isInvalid($v.form.rootName)" label="First Name:">
-      <b-form-input v-model="form.rootName" placeholder="Name" />
+    </h3>
+    <b-form-group label="First Name:">
+      <b-form-input v-model="form.rootName" :state="isInvalid($v.form.rootName)" placeholder="Name" />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootSurname)" label="Last Name:">
-      <b-form-input v-model="form.rootSurname" placeholder="Last Name" />
+    <b-form-group label="Last Name:">
+      <b-form-input :state="isInvalid($v.form.rootSurname)" v-model="form.rootSurname" placeholder="Last Name" />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootTitle)" label="Title:">
-      <b-form-select v-model="form.rootTitle" :options="titleOptions" />
+    <b-form-group label="Title:">
+      <b-form-select :state="isInvalid($v.form.rootTitle)" v-model="form.rootTitle" :options="titleOptions" required />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootCompanyPosition)" label="Company Position:">
-      <b-form-input v-model="form.rootCompanyPosition" placeholder="CFO" />
+    <b-form-group label="Company Position:">
+      <b-form-input
+        :state="isInvalid($v.form.rootCompanyPosition)"
+        v-model="form.rootCompanyPosition"
+        placeholder="CFO"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <label class="d-block">MOBILE NUMBER:</label>
-    <vue-phone-number-input v-model="form.rootMobileNumber" @update="phoneUpdate" />
-    <b-form-row class="mt-5">
+
+    <b-form-group label="MOBILE NUMBER:">
+      <vue-phone-number-input v-model="rootMobileNumber" @update="phoneUpdate" :only-countries="mobileCountries" default-country-code="MT"  />
+      <b-form-invalid-feedback v-if="numberIsValid === false">
+        This field must be a valid mobile number.
+      </b-form-invalid-feedback>
+    </b-form-group>
+
+    <b-form-row class="mt-6">
       <b-col md="4">
         <b-button @click="goBack" variant="outline">
           <-
@@ -38,6 +52,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
+const Countries = require('~/static/json/countries.json')
 
 @Component({
   validations: {
@@ -75,7 +90,16 @@ export default class PersonalDetailsForm extends VueWithRouter {
     this.form.rootSurname = this.request.rootSurname
     this.form.rootCompanyPosition = this.request.rootCompanyPosition
     this.form.rootMobileCountryCode = this.request.rootMobileCountryCode
-    this.form.rootMobileNumber = this.request.rootMobileNumber
+    this.rootMobileNumber = this.request.rootMobileNumber
+  }
+
+  rootMobileNumber = ''
+  numberIsValid: boolean | null = null
+
+  get mobileCountries(): string[] {
+    return Countries.map((_c) => {
+      return _c['alpha-2']
+    })
   }
 
   titleOptions = [
@@ -113,10 +137,10 @@ export default class PersonalDetailsForm extends VueWithRouter {
     e.preventDefault()
   }
 
-  phoneUpdate(number){
-    this.form.rootMobileCountryCode = number.countryCallingCode
-    this.form.rootMobileNumber = number.formatNational
-    console.log(number.isValid)
+  phoneUpdate(number) {
+    this.form.rootMobileCountryCode = '+' + number.countryCallingCode
+    this.form.rootMobileNumber = number.nationalNumber
+    this.numberIsValid = number.isValid
   }
 }
 </script>

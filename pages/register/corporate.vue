@@ -8,7 +8,7 @@
           </div>
           <b-card no-body class="overflow-hidden">
             <!--            <registration-nav />-->
-            <b-card-body class="px-6 py-5">
+            <b-card-body class="p-6">
               <div class="form-screens">
                 <error-alert />
                 <div v-if="screen === 0" class="form-screen">
@@ -114,7 +114,7 @@ export default class RegistrationPage extends VueWithRouter {
       this.registrationRequest.rootSurname = _data.rootSurname
       this.registrationRequest.rootTitle = _data.rootTitle
       this.registrationRequest.rootCompanyPosition = _data.rootCompanyPosition
-      this.registrationRequest.rootMobileCountryCode = '+' + _data.rootMobileCountryCode
+      this.registrationRequest.rootMobileCountryCode = _data.rootMobileCountryCode
       this.registrationRequest.rootMobileNumber = _data.rootMobileNumber
       this.nextScreen()
     }

@@ -57,7 +57,7 @@
     border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    border-bottom: 1px solid $primary !important;
+    border-bottom: 1px solid $input-border-color !important;
   }
 
   &.has-value {
@@ -68,12 +68,18 @@
 
   &.is-valid {
     .input-tel__input, .country-selector__input {
-      border-bottom: 1px solid $primary !important;
+      border-bottom: 1px solid $input-border-color !important;
     }
   }
 
   .input-tel__label, .country-selector__label{
     color: $body-color !important;
+  }
+}
+
+select {
+  &:invalid {
+    color: $input-placeholder-color;
   }
 }
 
