@@ -14,56 +14,57 @@
         <div class="col-lg-6 offset-lg-3 h-100 modal-div">
           <div class="mx-md-3 px-md-5">
             <b-form id="contact-form" @submit="submitChangePassword">
-              <b-form-group
-                id="ig-current-password"
-                :state="isInvalid($v.changePasswordRequest.request.oldPassword.value)"
-                :invalid-feedback="invalidFeedback($v.changePasswordRequest.request.oldPassword.value, 'required')"
-                label="Current Password"
-                label-for="current-password"
-              >
-                <b-form-input
-                  id="current-pass"
-                  v-model="changePasswordRequest.request.oldPassword.value"
-                  :state="isInvalid($v.changePasswordRequest.request.oldPassword.value)"
-                  class="form-control"
-                  type="password"
-                  name="current-password"
-                />
-              </b-form-group>
-              <b-form-group
-                id="ig-new-password"
-                :state="isInvalid($v.changePasswordRequest.request.password.value)"
-                :invalid-feedback="invalidFeedback($v.changePasswordRequest.request.password.value, 'password')"
-                label="New Password"
-                label-for="new-password"
-              >
-                <b-form-input
-                  id="new-pass"
-                  v-model="changePasswordRequest.request.password.value"
-                  :state="isInvalid($v.changePasswordRequest.request.password.value)"
-                  class="form-control"
-                  type="password"
-                  name="new-pass"
-                />
-              </b-form-group>
-              <b-form-group
-                id="ig-conf-new-password"
-                :state="isInvalid($v.changePasswordRequest.request.confirmPassword.value)"
-                :invalid-feedback="
-                  invalidFeedback($v.changePasswordRequest.request.confirmPassword.value, 'confirmPassword')
-                "
-                label="Confirm New Password"
-                label-for="conf-new-pass"
-              >
-                <b-form-input
-                  id="conf-new-pass"
-                  v-model="changePasswordRequest.request.confirmPassword.value"
-                  :state="isInvalid($v.changePasswordRequest.request.confirmPassword.value)"
-                  class="form-control"
-                  type="password"
-                  name="conf-new-pass"
-                />
-              </b-form-group>
+              <client-only placeholder="Loading...">
+                <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
+                  <label class="d-block">OLD PASSWORD:</label>
+                  <weavr-input
+                    :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
+                    :base-style="{
+                      color: '#000',
+                      fontSize: '13px',
+                      fontSmoothing: 'antialiased',
+                      fontFamily: '\'Be Vietnam\', sans-serif',
+                      fontWeight: '300',
+                      margin: '0',
+                      padding: '0.375rem 0.75rem',
+                      textIndent: '0px',
+                      '::placeholder': {
+                        color: '#bbc0c8',
+                        fontWeight: '200'
+                      }
+                    }"
+                    @onKeyUp="checkOnKeyUp"
+                    class-name="sign-in-password"
+                    name="old-password"
+                    field="password"
+                    required="true"
+                  />
+                  <label class="d-block mt-3">NEW PASSWORD:</label>
+                  <weavr-input
+                    :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
+                    :base-style="{
+                      color: '#000',
+                      fontSize: '13px',
+                      fontSmoothing: 'antialiased',
+                      fontFamily: '\'Be Vietnam\', sans-serif',
+                      fontWeight: '300',
+                      margin: '0',
+                      padding: '0.375rem 0.75rem',
+                      textIndent: '0px',
+                      '::placeholder': {
+                        color: '#bbc0c8',
+                        fontWeight: '200'
+                      }
+                    }"
+                    @onKeyUp="checkOnKeyUp"
+                    class-name="sign-in-password"
+                    name="new-password"
+                    field="password"
+                    required="true"
+                  />
+                </weavr-form>
+              </client-only>
+
               <div class="text-center">
                 <loader-button :is-loading="isLoading" button-text="Change Password" class="mt-5" />
               </div>
@@ -83,47 +84,21 @@ import passwordComplexity from '~/plugins/customValidators/passwordComplexity'
 import LoaderButton from '~/components/LoaderButton.vue'
 import * as AuthStore from '~/store/modules/Auth'
 import { UpdatePassword } from '~/api/Requests/Auth/UpdatePassword'
+import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 
 @Component({
   components: {
-    LoaderButton,
+    LoaderButton
   },
   validations: {
-    changePasswordRequest: {
-      request: {
-        oldPassword: {
-          value: {
-            required,
-            minLength: minLength(8),
-            maxLength: maxLength(30),
-            passwordComplexity
-          }
-        },
-        password: {
-          value: {
-            required,
-            minLength: minLength(8),
-            maxLength: maxLength(30),
-            passwordComplexity
-          }
-        },
-        confirmPassword: {
-          value: {
-            required,
-            minLength: minLength(8),
-            maxLength: maxLength(30),
-            passwordComplexity,
-            sameAsPassword: sameAs(function() {
-              // @ts-ignore
-              return this.changePasswordRequest.request.password.value
-            })
-          }
-        }
-      }
-    }
+    form: {}
   }
 })
 export default class BundlesPage extends BaseVue {
+  $refs!: {
+    passwordForm: WeavrForm
+  }
+
   public changePasswordRequest: UpdatePassword = {
     id: 0,
     request: {
@@ -146,14 +121,39 @@ export default class BundlesPage extends BaseVue {
     }
   }
 
+  checkOnKeyUp(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      this.submitChangePassword(e)
+    }
+  }
+
   submitChangePassword(evt) {
     evt.preventDefault()
-    this.$v.$touch()
-    if (!this.$v.$invalid) {
-      AuthStore.Helpers.updatePassword(this.$store, this.changePasswordRequest).then(() => {
-        this.$router.push('/profile')
-      })
+
+    if (this.$v.form) {
+      this.$v.form.$touch()
+      if (this.$v.form.$anyError) {
+        return null
+      }
     }
+
+    const form: WeavrForm = this.$refs.passwordForm as WeavrForm
+    form.tokenize(
+      (tokens) => {
+        if (tokens.password !== '') {
+          // AuthStore.Helpers.updatePassword(this.$store, this.changePasswordRequest).then(() => {
+          //   this.$router.push('/profile')
+          // })
+        } else {
+          return null
+        }
+      },
+      (e) => {
+        console.error(e)
+        return null
+      }
+    )
   }
 }
 </script>
