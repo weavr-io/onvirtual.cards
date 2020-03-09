@@ -1,15 +1,12 @@
 $primary: #6C1C5C;
 $secondary: #3CF7CA;
 $text-muted: #B6B9C7;
-$card: #F6F7FC;
+$card: #F0EDDE;
 $body-color: #232A47;
 $link-color: $body-color;
 
 $danger: #F50E4C;
 
-$card-purple: #C3B5FF;
-$card-red: #FFAA8B;
-$card-yellow: #FFDF8B;
 $card-disabled: #E9EDF6;
 
 $shadow-color: #5768FF4D;
@@ -17,7 +14,7 @@ $shadow-color: #5768FF4D;
 $body-bg: #FFFFFF;
 $body-bg-colored: #F0EDDE;
 
-$theme-colors: ("card": $card, "card-purple": $card-purple, "card-red": $card-red, "card-yellow": $card-yellow, "card-disabled": $card-disabled, 'bg-colored': $body-bg-colored);
+$theme-colors: ("card": $card, "card-disabled": $card-disabled, 'bg-colored': $body-bg-colored);
 
 
 $btn-padding-y-sm: .5rem;

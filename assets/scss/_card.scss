@@ -14,7 +14,7 @@
 
   .card {
     &-name {
-      margin: 30px 0;
+      margin: 30px 0 0;
       font-size: 1.5rem;
       font-weight: 300;
     }
@@ -46,16 +46,23 @@
 
 
 #managedCard {
-  .card-options {
-    opacity: 0;
-    transition: 0.3s opacity;
-
+  .card-options-button {
+    background: $white;
+    border-radius: 100px;
+    padding: 9px 11px;
+    border: 0;
+    box-shadow: 0 3px 6px #232a472b;
+    position: absolute;
+    right: 15px;
+    bottom: -21px;
+    z-index: 9;
+    color: $primary;
   }
 
-  &:hover {
-    .card-options {
-      opacity: 1;
-    }
+  .onvirtual-card{
+    background: url("/img/card-background.svg") no-repeat no-repeat;
+    background-size: cover;
+    border-radius: 20px;
   }
 }
 
