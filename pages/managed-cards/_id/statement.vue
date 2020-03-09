@@ -139,7 +139,7 @@
               </b-row>
               <b-row align-v="end">
                 <b-col cols="6">
-                  <div class="card-name-on-card text-nowrap">
+                  <div class="card-name-on-card text-truncate">
                     {{ managedCard.nameOnCard }}
                   </div>
                 </b-col>

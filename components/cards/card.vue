@@ -18,7 +18,7 @@
               <b-col>
                 <b-row>
                   <b-col>
-                    <div class="card-name text-nowrap">
+                    <div class="card-name text-truncate">
                       {{ card.friendlyName }}
                     </div>
                   </b-col>
@@ -32,7 +32,7 @@
             </b-row>
             <b-row align-v="end">
               <b-col cols="6">
-                <div class="card-name-on-card text-nowrap ">
+                <div class="card-name-on-card text-truncate ">
                   {{ card.nameOnCard }}
                 </div>
               </b-col>

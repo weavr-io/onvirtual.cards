@@ -16,39 +16,33 @@
   .card {
 
     &-name {
-      line-height: 1.3rem;
       font-weight: 300;
       font-size: 1.3rem;
     }
 
     &-name-on-card {
-      line-height: 1rem;
       font-weight: 300;
       font-size: 1rem;
     }
 
     &-number {
-      line-height: 1rem;
       font-weight: 300;
     }
 
     &-balance {
       font-size: 1.3rem;
-      line-height: 1.3rem;
     }
 
     &-cvv,
     &-expiry {
       &-label {
         font-size: 0.7rem;
-        line-height: 0.7rem;
         color: #6D7490;
       }
 
       &-value {
         margin-top: 4px;
         font-size: 0.9rem;
-        line-height: 0.9rem;
       }
     }
 
