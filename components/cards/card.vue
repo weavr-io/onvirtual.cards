@@ -14,16 +14,16 @@
                 {{ card.balances.availableBalance | weavr_currency(card.currency) }}
               </b-col>
             </b-row>
-            <b-row>
-              <b-col>
-                <div class="card-name">
-                  {{ card.friendlyName }}
-                </div>
-              </b-col>
-            </b-row>
-            <b-row>
+            <b-row class="mt-5 mb-4">
               <b-col>
                 <b-row>
+                  <b-col>
+                    <div class="card-name text-nowrap">
+                      {{ card.friendlyName }}
+                    </div>
+                  </b-col>
+                </b-row>
+                <b-row class="mt-2">
                   <b-col>
                     <div class="card-number">•••• {{ card.cardNumberLastFour }}</div>
                   </b-col>
@@ -31,15 +31,12 @@
               </b-col>
             </b-row>
             <b-row align-v="end">
-              <b-col cols="6" class="card-balance">
-                {{ card.balances.availableBalance | weavr_currency(card.currency) }}
-              </b-col>
-              <b-col>
-                <div class="card-name">
+              <b-col cols="6">
+                <div class="card-name-on-card text-nowrap ">
                   {{ card.nameOnCard }}
                 </div>
               </b-col>
-              <b-col cols="4">
+              <b-col cols="3">
                 <div class="card-expiry">
                   <div class="card-expiry-label">
                     EXP
@@ -48,6 +45,9 @@
                     {{ card.expiryMmyy | expiryMmyy }}
                   </div>
                 </div>
+              </b-col>
+              <b-col cols="2" class="text-right">
+                <b-img src="/img/mc_symbol.svg" width="50px" />
               </b-col>
             </b-row>
           </b-container>

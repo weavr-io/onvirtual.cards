@@ -30,7 +30,7 @@
         </b-col>
         <b-col>
           <b-row align-h="end" align-v="end">
-            <b-col class="text-right" col cols="auto" >
+            <b-col class="text-right" col cols="auto">
               <b-button
                 v-if="managedCard.active && !isFrozen"
                 :to="'/transfer?destination=' + managedCard.id.id"
@@ -40,7 +40,7 @@
                 +
               </b-button>
             </b-col>
-            <b-col col cols="auto" >
+            <b-col col cols="auto">
               <div class="card-balance">
                 <div class="card-balance-label text-muted">
                   balance
@@ -101,19 +101,31 @@
       size="md"
     >
       <b-card v-if="managedCard" no-body class="border-0 cards-card" bg-variant="card-purple">
-        <b-card-body class="card-body-modal">
-          <b-link :to="'/managed-cards/' + managedCard.id.id + '/statement'">
+        <b-card-body class="card-body-modal card-body onvirtual-card">
+          <b-link :to="'/managed-cards/' + managedCard.id.id + '/statement'" class="p-5">
             <b-container fluid class="p-0">
-              <b-row>
-                <b-col cols="10">
+              <b-row align-h="end">
+                <b-col cols="2" class="text-right">
+                  <b-img src="/img/mc_symbol.svg" width="50px" />
+                </b-col>
+              </b-row>
+              <b-row class="mt-5 mb-5">
+                <b-col>
                   <b-row>
+                    <b-col>
+                      <div class="card-name">
+                        {{ managedCard.friendlyName }}
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row class="mt-2">
                     <b-col>
                       <div class="card-number">
                         <weavr-span
                           :token="managedCard.cardNumber"
                           :base-style="{
                             fontFamily: '\'Be Vietnam\', sans-serif',
-                            color: '#000',
+                            color: '#6C1C5C',
                             lineHeight: '1',
                             fontSize: '20px'
                           }"
@@ -123,20 +135,14 @@
                       </div>
                     </b-col>
                   </b-row>
-                  <b-row>
-                    <b-col>
-                      <div class="card-name">
-                        {{ managedCard.nameOnCard }}
-                      </div>
-                    </b-col>
-                  </b-row>
-                </b-col>
-                <b-col class="text-right" cols="2">
-                  <b-img src="/img/mc_symbol.svg" width="50px" />
                 </b-col>
               </b-row>
               <b-row align-v="end">
-                <b-col cols="6" />
+                <b-col cols="6">
+                  <div class="card-name-on-card text-nowrap">
+                    {{ managedCard.nameOnCard }}
+                  </div>
+                </b-col>
                 <b-col cols="3">
                   <div class="card-expiry">
                     <div class="card-expiry-label">
@@ -157,9 +163,10 @@
                         :token="managedCard.cvv"
                         :base-style="{
                           fontFamily: '\'Be Vietnam\', sans-serif',
-                          color: '#000',
-                          lineHeight: '25px',
-                          fontSize: '25px'
+                          color: '#6C1C5C',
+                          lineHeight: '14.4px',
+                          fontSize: '14.4px',
+                          fontWeight: 300
                         }"
                         class="card-select-number"
                         field="cvv"
@@ -298,21 +305,5 @@ export default class ManagedCardsTable extends Vue {
   text-align: center;
   display: block;
   font-size: 0.6rem;
-}
-
-.card-body-modal {
-  .card {
-    &-name {
-      font-size: 2rem;
-      padding: 40px 0;
-    }
-
-    &-balance,
-    &-expiry-value,
-    &-cvv-value {
-      font-size: 25px;
-      line-height: 25px;
-    }
-  }
 }
 </style>

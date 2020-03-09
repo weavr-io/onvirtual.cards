@@ -8,30 +8,47 @@
       padding: 27px 33px;
       display: block;
       text-decoration: none;
-      color: $body-color;
+      color: $primary;
+      font-weight: 300;
     }
   }
 
   .card {
+
     &-name {
-      margin: 30px 0 0;
-      font-size: 1.5rem;
+      line-height: 1.3rem;
+      font-weight: 300;
+      font-size: 1.3rem;
+    }
+
+    &-name-on-card {
+      line-height: 1rem;
+      font-weight: 300;
+      font-size: 1rem;
+    }
+
+    &-number {
+      line-height: 1rem;
       font-weight: 300;
     }
 
     &-balance {
       font-size: 1.3rem;
+      line-height: 1.3rem;
     }
 
     &-cvv,
     &-expiry {
       &-label {
         font-size: 0.7rem;
-        color: $body-color;
+        line-height: 0.7rem;
+        color: #6D7490;
       }
 
       &-value {
+        margin-top: 4px;
         font-size: 0.9rem;
+        line-height: 0.9rem;
       }
     }
 
@@ -51,7 +68,7 @@
     border-radius: 100px;
     padding: 9px 11px;
     border: 0;
-    box-shadow: 0 3px 6px #232a472b;
+    box-shadow: 0 3px 6px #232A472B;
     position: absolute;
     right: 15px;
     bottom: -21px;
@@ -59,11 +76,12 @@
     color: $primary;
   }
 
-  .onvirtual-card{
-    background: url("/img/card-background.svg") no-repeat no-repeat;
-    background-size: cover;
-    border-radius: 20px;
-  }
+}
+
+.onvirtual-card {
+  background: url("/img/card-background.svg") no-repeat no-repeat;
+  background-size: cover;
+  border-radius: 20px;
 }
 
 .card {
