@@ -21,8 +21,10 @@ export const getters: GetterTree<State, RootState> = {
   currency: (state) => {
     if (state.cards == null) {
       return null
-    } else {
+    } else if (state.cards.length > 0) {
       return state.cards[0].currency
+    } else {
+      return null
     }
   },
   totalAvailableBalance: (state) => {

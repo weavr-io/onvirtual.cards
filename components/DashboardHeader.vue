@@ -13,7 +13,7 @@
       </b-col>
       <template v-if="isManagedAccounts">
         <b-col class="pb-2">
-          <b-row align-h="end" align-v="end" v-if="account">
+          <b-row v-if="account" align-h="end" align-v="end">
             <b-col cols="2" lg="1" class="text-right">
               <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="secondary" class="add-funds">
                 +
@@ -35,7 +35,7 @@
       <b-col v-if="isManagedCards">
         <b-col class="pb-2">
           <b-row align-h="end" align-v="end">
-            <div class="account-balance">
+            <div v-if="cardCurrency" class="account-balance">
               <p class="mb-0 text-muted account-balance-label">
                 total balance
               </p>
