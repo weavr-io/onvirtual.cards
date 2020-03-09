@@ -1,32 +1,63 @@
 <template>
-  <b-form novalidate @submit="submitForm">
-    <h2 class="text-center font-weight-lighter mb-5">
+  <b-form @submit="submitForm" novalidate>
+    <h3 class="text-center font-weight-light mb-5">
       Personal Details
-    </h2>
-    <b-form-group label="First Name:" :state="isInvalid($v.form.rootName)">
-      <b-form-input v-model="form.rootName" />
+    </h3>
+    <b-form-group label="First Name:">
+      <b-form-input v-model="$v.form.rootName.$model" :state="isInvalid($v.form.rootName)" placeholder="Name" />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Last Name:" :state="isInvalid($v.form.rootSurname)">
-      <b-form-input v-model="form.rootSurname" />
+    <b-form-group label="Last Name:">
+      <b-form-input
+        :state="isInvalid($v.form.rootSurname)"
+        v-model="$v.form.rootSurname.$model"
+        placeholder="Last Name"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Title:" :state="isInvalid($v.form.rootTitle)">
-      <b-form-select v-model="form.rootTitle" :options="titleOptions" />
+    <b-form-group label="Title:">
+      <b-form-select
+        :state="isInvalid($v.form.rootTitle)"
+        v-model="$v.form.rootTitle.$model"
+        :options="titleOptions"
+        required
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Position:" :state="isInvalid($v.form.rootCompanyPosition)">
-      <b-form-input v-model="form.rootCompanyPosition" />
+    <b-form-group label="Company Position:">
+      <b-form-input
+        :state="isInvalid($v.form.rootCompanyPosition)"
+        v-model="$v.form.rootCompanyPosition.$model"
+        placeholder="CFO"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Mobile Country Code:" :state="isInvalid($v.form.rootMobileCountryCode)">
-      <b-input-group prepend="+">
-        <b-form-input v-model="form.rootMobileCountryCode" />
-      </b-input-group>
+
+    <b-form-group label="MOBILE NUMBER:">
+      <vue-phone-number-input
+        v-model="rootMobileNumber"
+        @update="phoneUpdate"
+        :only-countries="mobileCountries"
+        :border-radius="0"
+        color="#F50E4C"
+        error-color="#F50E4C"
+        valid-color="#6D7490"
+        default-country-code="MT"
+      />
+      <b-form-invalid-feedback force-show v-if="numberIsValid === false">
+        This field must be a valid mobile number.
+      </b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Mobile Number:" :state="isInvalid($v.form.rootMobileNumber)">
-      <b-form-input v-model="form.rootMobileNumber" />
-    </b-form-group>
-    <b-form-row class="mt-5">
-      <b-col class="text-center">
-        <b-button variant="primary" type="submit">
-          Continue
+
+    <b-form-row class="mt-6">
+      <b-col md="4">
+        <b-button @click="goBack" variant="outline">
+          <-
+        </b-button>
+      </b-col>
+      <b-col class="text-right">
+        <b-button variant="secondary" type="submit">
+          continue
           <span class="pl-5">-></span>
         </b-button>
       </b-col>
@@ -39,6 +70,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
+const Countries = require('~/static/json/countries.json')
 
 @Component({
   validations: {
@@ -71,21 +103,33 @@ export default class PersonalDetailsForm extends VueWithRouter {
 
   @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
 
-  mounted() {
-    this.form.rootName = this.request.rootName
-    this.form.rootSurname = this.request.rootSurname
-    this.form.rootTitle = this.request.rootTitle
-    this.form.rootCompanyPosition = this.request.rootCompanyPosition
-    this.form.rootMobileCountryCode = this.request.rootMobileCountryCode
-    this.form.rootMobileNumber = this.request.rootMobileNumber
+  rootMobileNumber = ''
+  numberIsValid: boolean | null = null
+
+  get mobileCountries(): string[] {
+    return Countries.map((_c) => {
+      return _c['alpha-2']
+    })
   }
 
-  titleOptions = [{ value: 'Mr', text: 'Mr' }, { value: 'Mrs', text: 'Mrs' }, { value: 'Ms', text: 'Ms' }]
+  titleOptions = [
+    { value: null, text: 'Mr / Ms / Mrs', disabled: true },
+    { value: 'Mr', text: 'Mr' },
+    { value: 'Mrs', text: 'Mrs' },
+    { value: 'Ms', text: 'Ms' }
+  ]
 
-  public form = {
+  public form: {
+    rootName: string
+    rootSurname: string
+    rootTitle: string | null
+    rootCompanyPosition: string
+    rootMobileCountryCode: string
+    rootMobileNumber: string
+  } = {
     rootName: '',
     rootSurname: '',
-    rootTitle: '',
+    rootTitle: null,
     rootCompanyPosition: '',
     rootMobileCountryCode: '',
     rootMobileNumber: ''
@@ -104,5 +148,22 @@ export default class PersonalDetailsForm extends VueWithRouter {
 
     return this.form
   }
+
+  @Emit()
+  goBack(e) {
+    e.preventDefault()
+  }
+
+  phoneUpdate(number) {
+    this.form.rootMobileCountryCode = '+' + number.countryCallingCode
+    this.form.rootMobileNumber = number.nationalNumber
+    this.numberIsValid = number.isValid
+  }
 }
 </script>
+
+<style lang="scss" scoped>
+#input-mobile-country-code {
+  max-width: 100px;
+}
+</style>

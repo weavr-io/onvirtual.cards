@@ -1,13 +1,12 @@
 import { Schemas } from './Schemas'
 
 export module ManagedAccountsSchemas {
+  import TypeId = Schemas.TypeId
+
   export interface CreateManagedAccountRequest {
     profileId: any
     tag?: string
-    owner: {
-      type: string
-      id: number
-    }
+    owner: TypeId
     friendlyName: string
     currency: string
     fiProvider: string
@@ -89,6 +88,6 @@ export module ManagedAccountsSchemas {
     }
     block: null | boolean
     destroy: boolean
-    processedTimestamp: number
+    processedTimestamp: string
   }
 }

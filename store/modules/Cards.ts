@@ -2,12 +2,10 @@ import { GetterTree, MutationTree } from 'vuex'
 import { RootState } from 'store'
 import * as Loader from './Loader'
 import { api } from '~/api/Axios'
-import { Actions, State, types } from '~/store/modules/Contracts/Cards'
+import { Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Cards'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 
-export const name = 'cards'
-
-export const namespaced = true
+export { name, namespaced, Helpers }
 
 export const state = (): State => ({
   isLoading: false,
@@ -20,6 +18,15 @@ export const getters: GetterTree<State, RootState> = {
   cards: (state) => {
     return state.cards
   },
+  currency: (state) => {
+    if (state.cards == null) {
+      return null
+    } else if (state.cards.length > 0) {
+      return state.cards[0].currency
+    } else {
+      return null
+    }
+  },
   totalAvailableBalance: (state) => {
     if (state.cards == null) {
       return 0
@@ -29,11 +36,7 @@ export const getters: GetterTree<State, RootState> = {
 
     state.cards.forEach((card: ManagedCardsSchemas.ManagedCard) => {
       if (card.balances.availableBalance) {
-        if (card.currency === 'GBP') {
-          total = total + parseInt(card.balances.availableBalance) * 1.16
-        } else {
-          total += parseInt(card.balances.availableBalance)
-        }
+        total += parseInt(card.balances.availableBalance)
       }
     })
 
@@ -50,10 +53,25 @@ export const getters: GetterTree<State, RootState> = {
       return []
     }
 
-    return state.statement.entry.filter((element) => {
-      // @ts-ignore
+    const _entries = state.statement.entry.filter((element) => {
       return element.adjustment != 0
     })
+
+    const _out = {}
+
+    _entries.forEach((_entry) => {
+      const _processedTimestamp = parseInt(_entry.processedTimestamp)
+      // @ts-ignore
+      const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
+
+      if (!_out[_date]) {
+        _out[_date] = []
+      }
+
+      _out[_date].push(_entry)
+    })
+
+    return _out
   },
   managedCard: (state) => {
     return state.managedCard
@@ -95,6 +113,18 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
+  update({ commit }, request) {
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/managed_cards/' + request.id + '/update', request.body)
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
   getCardStatement({ commit }, request) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
@@ -125,18 +155,35 @@ export const actions: Actions<State, RootState> = {
     return api.post('/app/api/managed_cards/' + request.id + '/destroy', request.body)
   },
   freeze({ commit }, id) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
     const req = api.post('/app/api/managed_cards/' + id + '/freeze', {})
 
     req.then((res) => {
       commit(types.SET_MANAGED_CARD, res.data)
     })
 
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
     return req
   },
   unfreeze({ commit }, id) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
     const req = api.post('/app/api/managed_cards/' + id + '/unfreeze', {})
+
     req.then((res) => {
       commit(types.SET_MANAGED_CARD, res.data)
+    })
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
     })
 
     return req

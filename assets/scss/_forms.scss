@@ -14,14 +14,22 @@
 .input-group {
   .input-group-text {
     border: none;
-    border-bottom: 2px solid $primary;
+    border-bottom: 1px solid $input-border-color;
     background: transparent;
     color: $text-muted;
   }
 }
 
 .weavr-input {
-  border-bottom: 2px solid $primary;
+  border-bottom: 1px solid $input-border-color;
+}
+
+.is-dirty {
+  .weavr-input {
+    &.is-invalid {
+      border-color: $danger;
+    }
+  }
 }
 
 .weavr-account-radio {
@@ -43,3 +51,24 @@
     }
   }
 }
+
+.country-selector, .input-phone-number {
+  .input-tel__input, .country-selector__input {
+    box-shadow: none !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-top: 0 !important;
+  }
+
+  .input-tel__label, .country-selector__label{
+    color: $body-color !important;
+  }
+}
+
+select {
+  &:invalid {
+    color: $input-placeholder-color;
+  }
+}
+
+

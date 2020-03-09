@@ -2,7 +2,9 @@
   <section>
     <b-container>
       <b-row>
-        <b-col class="text-center">Loading</b-col>
+        <b-col class="text-center">
+          Loading
+        </b-col>
       </b-row>
     </b-container>
   </section>
@@ -13,8 +15,14 @@ import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component({})
 export default class IndexPage extends Vue {
-  created() {
-    this.$router.push('/login')
+  asyncData({ store, redirect }) {
+    const isLoggedIn = store.getters['auth/isLoggedIn']
+
+    if (isLoggedIn) {
+      redirect('/dashboard')
+    } else {
+      redirect('/login')
+    }
   }
 }
 </script>

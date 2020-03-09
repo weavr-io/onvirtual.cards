@@ -1,35 +1,65 @@
 <template>
-  <b-form novalidate @submit="submitForm">
-    <h2 class="text-center font-weight-lighter mb-5">
+  <b-form @submit="submitForm" novalidate>
+    <h3 class="text-center font-weight-light mb-5">
       Company Details
-    </h2>
+    </h3>
 
-    <b-form-group label="Company Name:" :state="isInvalid($v.form.companyName)">
-      <b-form-input v-model="form.companyName" />
+    <b-form-group label="Company Name:">
+      <b-form-input :state="isInvalid($v.form.companyName)" v-model="$v.form.companyName.$model" placeholder="Company Name" />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Registration Number:" :state="isInvalid($v.form.companyRegistrationNumber)">
-      <b-form-input v-model="form.companyRegistrationNumber" />
+    <b-form-group label="Company Registration Number:">
+      <b-form-input :state="isInvalid($v.form.companyRegistrationNumber)" v-model="$v.form.companyRegistrationNumber.$model" />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Registration Address:" :state="isInvalid($v.form.companyRegistrationAddress)">
-      <b-form-input v-model="form.companyRegistrationAddress" />
+    <b-form-group label="Company Registration Address:">
+      <b-form-textarea
+        :state="isInvalid($v.form.companyRegistrationAddress)"
+        v-model="$v.form.companyRegistrationAddress.$model"
+        rows="4"
+        placeholder="Street Name, City"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Registration Country:" :state="isInvalid($v.form.registrationCountry)">
-      <b-form-select v-model="form.registrationCountry" :options="countiesOptions" />
+    <b-form-group label="Registration Country:">
+      <b-form-select
+        :state="isInvalid($v.form.registrationCountry)"
+        v-model="$v.form.registrationCountry.$model"
+        :options="countiesOptions"
+        placeholder="Registration Country"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Registration Date:" :state="isInvalid($v.form.companyRegistrationDate)">
-      <b-form-input v-model="companyRegistrationDate" type="date" @update="updatedCompanyRegistrationDate" />
+    <b-form-group label="Company Registration Date:">
+      <b-form-input
+        :state="isInvalid($v.form.companyRegistrationDate)"
+        v-model="companyRegistrationDate"
+        @update="updatedCompanyRegistrationDate"
+        type="date"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Email:" :state="isInvalid($v.form.supportEmail)">
-      <b-form-input v-model="form.supportEmail" type="email" />
-    </b-form-group>
+    <pre>{{ $v.form.companyRegistrationDate.$model }}</pre>
     <b-form-row>
       <b-col>
-        <b-form-checkbox v-model="form.acceptedTerms" :state="isInvalid($v.form.acceptedTerms)">
-          I accept the terms and use
-        </b-form-checkbox>
+        <b-form-group>
+          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
+            I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank" class="link">terms and use</a>
+          </b-form-checkbox>
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        </b-form-group>
       </b-col>
     </b-form-row>
-    <loader-button :is-loading="isLoading" button-text="Finish" class="my-5 text-center" />
+    <b-form-row class="mt-6">
+      <b-col md="4">
+        <b-button @click="goBack" variant="outline">
+          <-
+        </b-button>
+      </b-col>
+      <b-col>
+        <loader-button :is-loading="isLoading" button-text="Finish" class="text-right" />
+      </b-col>
+    </b-form-row>
   </b-form>
 </template>
 <script lang="ts">
@@ -64,10 +94,6 @@ const Corporates = namespace(CorporatesStore.name)
       companyRegistrationDate: {
         required
       },
-      supportEmail: {
-        required,
-        email
-      },
       acceptedTerms: {
         required,
         sameAs: sameAs(() => true)
@@ -81,17 +107,9 @@ const Corporates = namespace(CorporatesStore.name)
 export default class CompanyDetailsForm extends VueWithRouter {
   $v
 
-  @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
+  public maxDate = new Date()
 
-  mounted() {
-    this.form.companyName = this.request.companyName
-    this.form.companyRegistrationNumber = this.request.companyRegistrationNumber
-    this.form.companyRegistrationAddress = this.request.companyRegistrationAddress
-    this.form.registrationCountry = this.request.registrationCountry
-    this.form.companyRegistrationDate = this.request.companyRegistrationDate
-    this.form.supportEmail = this.request.supportEmail
-    this.form.acceptedTerms = this.request.acceptedTerms
-  }
+  @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
 
   @Corporates.Getter isLoading
 
@@ -112,7 +130,6 @@ export default class CompanyDetailsForm extends VueWithRouter {
     companyRegistrationAddress: string
     registrationCountry: string
     companyRegistrationDate: null | number
-    supportEmail: string
     acceptedTerms: boolean
   } = {
     companyName: '',
@@ -120,8 +137,12 @@ export default class CompanyDetailsForm extends VueWithRouter {
     companyRegistrationAddress: '',
     registrationCountry: '',
     companyRegistrationDate: null,
-    supportEmail: '',
     acceptedTerms: false
+  }
+
+  @Emit()
+  goBack(e) {
+    e.preventDefault()
   }
 
   @Emit()

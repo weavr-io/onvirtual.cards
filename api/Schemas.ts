@@ -15,8 +15,16 @@ export module Schemas {
     password: string
   }
 
+  export interface LoginResult {
+    token?: string
+    programmeId?: number
+    credential?: TypeId
+    identity?: TypeId
+  }
+
   export interface verifyEmailRequest {
     corporateId: any
+    consumerId: any
     request: {
       emailAddress: string
       nonce: string

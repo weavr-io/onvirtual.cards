@@ -1,18 +1,23 @@
-$primary: #7F28D9;
-$secondary: #6D7490;
+$primary: #6C1C5C;
+$secondary: #3CF7CA;
 $text-muted: #B6B9C7;
 $card: #F6F7FC;
-$body-color:#232A47;
+$body-color: #232A47;
+$link-color: $body-color;
+
+$danger: #F50E4C;
 
 $card-purple: #C3B5FF;
 $card-red: #FFAA8B;
 $card-yellow: #FFDF8B;
-$card-disabled: #fafafa;
+$card-disabled: #E9EDF6;
 
 $shadow-color: #5768FF4D;
 
-$theme-colors: ("card": $card, "card-purple": $card-purple, "card-red": $card-red, "card-yellow": $card-yellow, "card-disabled": $card-disabled);
+$body-bg: #FFFFFF;
+$body-bg-colored: #F0EDDE;
 
+$theme-colors: ("card": $card, "card-purple": $card-purple, "card-red": $card-red, "card-yellow": $card-yellow, "card-disabled": $card-disabled, 'bg-colored': $body-bg-colored);
 
 
 $btn-padding-y-sm: .5rem;
@@ -34,22 +39,35 @@ sans-serif;
 
 $btn-box-shadow: 0px 7px 14px $shadow-color;
 
+$enable-validation-icons: false;
 
-$input-border-color: transparent;
+$input-placeholder-color: #B6B9C7;
 $input-focus-box-shadow: none;
-$input-border-color: $primary;
+$input-border-color: #6D7490;
 $input-border-radius: 0;
-$input-border-width: 2px;
+$input-border-width: 1px;
+$input-focus-width: 0;
+$form-feedback-valid-color: $input-border-color;
 
-$custom-select-border-color: transparent;
 $custom-select-focus-box-shadow: none;
-$custom-select-border-color: $primary;
+$custom-select-border-color: $input-border-color;
 $custom-select-border-radius: 0;
-$custom-select-border-width: 2px;
-
-$link-color: $secondary;
+$custom-select-border-width: 1px;
 
 
 $box-shadow-sm: 0 .125rem .25rem $shadow-color;
 $box-shadow: 0 .5rem 1rem $shadow-color;
 $box-shadow-lg: 0 1rem 3rem $shadow-color;
+
+
+$spacer: 1rem;
+
+$spacers: (
+        6: ($spacer * 6),
+        7: ($spacer * 12),
+        8: ($spacer * 18)
+);
+
+$card-border-width: 0;
+$card-border-radius: 2rem;
+

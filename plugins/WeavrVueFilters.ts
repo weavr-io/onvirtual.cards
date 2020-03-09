@@ -10,6 +10,16 @@ Vue.filter('milli_to_moment', function(value) {
   return window.$nuxt.$moment(parseInt(value))
 })
 
+Vue.filter('moment_statement', function(value) {
+  // @ts-ignore
+  const _m = window.$nuxt.$moment(value)
+  if (_m.isSame(new Date(), 'year')) {
+    return _m.format('D MMMM')
+  } else {
+    return _m.format('D MMMM YYYY')
+  }
+})
+
 Vue.filter('milli_to_moment_dt', function(value) {
   // @ts-ignore
   const _m = window.$nuxt.$moment(parseInt(value))
@@ -92,7 +102,7 @@ export default ({}, inject) => {
 
     const _options: BvToastOptions = {
       toaster: 'b-toaster-bottom-right',
-      variant: 'success',
+      variant: 'success'
     }
 
     Object.assign(_options, options)

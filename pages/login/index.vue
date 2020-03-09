@@ -1,30 +1,27 @@
 <template>
   <section>
     <b-container>
-      <b-row class="full-height-vh py-5" align-v="center">
-        <b-col id="login-box" lg="6" offset-lg="3">
+      <b-row class="full-height-vh" align-v="center">
+        <b-col lg="6" offset-lg="3" class="my-6">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="DevPay">
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
           </div>
-          <div class="mx-md-3 px-md-5">
-            <h2 class="text-center font-weight-lighter" style="margin-bottom: 100px">
+          <b-card body-class="p-6">
+            <h3 class="text-center font-weight-light mb-6">
               Login
-            </h2>
+            </h3>
 
-            <form id="contact-form" class="mt-5" @submit="login">
+            <form id="contact-form" @submit="login" class="mt-5">
               <error-alert
                 message="Incorrect email and password combination.  If you do not have an account please click on Register."
               />
-              <b-form-group id="ig-code" label="Username:" label-for="form-code">
-                <b-form-input id="from-code" v-model="loginRequest.code" class="form-control" name="setCode" />
+              <b-form-group id="ig-code" label="USERNAME:" label-for="form-code">
+                <b-form-input id="from-code" v-model="loginRequest.code" class="form-control" name="setCode" placeholder="Username" />
               </b-form-group>
-              <no-ssr placeholder="Loading...">
+              <client-only placeholder="Loading...">
                 <weavr-form ref="passwordForm">
-                  <label class="d-block">Password:</label>
+                  <label class="d-block">PASSWORD:</label>
                   <weavr-input
-                    class-name="sign-in-password"
-                    name="password"
-                    field="password"
                     :options="{ placeholder: 'Password' }"
                     :base-style="{
                       color: '#000',
@@ -41,22 +38,20 @@
                       }
                     }"
                     @onKeyUp="checkOnKeyUp"
+                    class-name="sign-in-password"
+                    name="password"
+                    field="password"
                   />
                 </weavr-form>
-              </no-ssr>
-              <loader-button
-                style="margin-top: 100px"
-                :is-loading="isLoading"
-                button-text="sign in"
-                class="text-center"
-              />
-              <div class="text-center mb-5 mt-3">
+              </client-only>
+              <loader-button :is-loading="isLoading" button-text="sign in" class="text-center mt-6" />
+              <div class="text-center mt-3">
                 <b-button to="/password/reset" variant="link" size="sm">
                   Forgot password?
                 </b-button>
               </div>
             </form>
-          </div>
+          </b-card>
         </b-col>
       </b-row>
     </b-container>
@@ -94,6 +89,10 @@ export default class LoginPage extends VueWithRouter {
     password: ''
   }
 
+  $refs!: {
+    passwordForm: WeavrForm
+  }
+
   login(evt) {
     evt.preventDefault()
     const form: WeavrForm = this.$refs.passwordForm as WeavrForm
@@ -108,10 +107,14 @@ export default class LoginPage extends VueWithRouter {
     )
   }
 
-  goToDashboard() {
-    if (this.isLoggedIn) {
-      this.$router.push('/dashboard')
-    }
+  goToDashboard(res) {
+    const _id = res.data.credential.type + '-' + res.data.credential.id
+    try {
+      this.$segment.identify(_id, {
+        email: this.loginRequest.code
+      })
+    } catch (e) {}
+    this.$router.push('/dashboard')
   }
 
   checkOnKeyUp(e) {
@@ -119,6 +122,10 @@ export default class LoginPage extends VueWithRouter {
       e.preventDefault()
       this.login(e)
     }
+  }
+
+  mounted() {
+    super.mounted()
   }
 
   asyncData({ store, redirect }) {

@@ -1,68 +1,20 @@
 <template>
-  <section>
-    <b-container>
-      <b-row v-if="account" align-v="end" class="mb-5 border-bottom pb-3">
-        <b-col>
-          <b-row>
-            <b-col>
-              <p class="account-name m-0">
-                {{ account.friendlyName }}
-              </p>
-            </b-col>
-          </b-row>
-        </b-col>
-        <b-col cols="2" lg="1" class="text-right">
-          <b-button
-            variant="primary"
-            class="add-funds"
-            :to="'/managed-accounts/' + accountId + '/topup'"
-          >
-            +
-          </b-button>
-        </b-col>
-        <b-col cols="2" lg="2">
-          <div class="account-balance">
-            <div class="account-balance-label text-muted">
-              balance
-            </div>
-            <div class="account-balance-value">
-              {{
-                account.balances.availableBalance
-                  | weavr_currency(account.currency)
-              }}
-            </div>
-          </div>
-        </b-col>
-      </b-row>
-      <b-row v-if="filteredStatement.length > 0" class="mb-2" align-v="center">
-        <b-col>
-          <h6 class="font-weight-lighter">
-            All Transactions
-          </h6>
-        </b-col>
-      </b-row>
-      <b-row v-if="filteredStatement.length > 0">
-        <b-col>
-          <b-row v-for="(item, key) in filteredStatement.reverse()" :key="key">
-            <b-col>
-              <statement-item :transaction="item" />
-            </b-col>
-          </b-row>
-        </b-col>
-      </b-row>
-      <b-row v-if="filteredStatement.length === 0" class="py-5">
-        <b-col class="text-center">
-          <p>Your transactions will appear here.</p>
-          <b-button
-            variant="border-primary"
-            :to="'/managed-accounts/' + accountId + '/topup'"
-          >
-            Start by topping up your account.
-          </b-button>
-        </b-col>
-      </b-row>
-    </b-container>
-  </section>
+  <div>
+    <kyb-alert />
+    <section v-if="!showKybAlert">
+      <statement />
+    </section>
+    <b-alert id="account-limit" v-if="showKycAlert" show class="fixed-bottom m-4 p-4" variant="bg-colored">
+      <template v-if="showKycAlert">
+        Your account is currently restricted to {{ consumer.kyc.allowedLimit | weavr_currency }}. You can lift this
+        restriction
+        <b-link :to="restrictionLink" class="link">
+          here
+        </b-link>
+        .
+      </template>
+    </b-alert>
+  </div>
 </template>
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
@@ -73,39 +25,87 @@ import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import * as AccountsStore from '~/store/modules/Accounts'
 import { OrderType } from '~/api/Enums/OrderType'
 import { _Requests } from '~/store/modules/Contracts/Accounts'
+import * as AuthStore from '~/store/modules/Auth'
+import * as ConsumersStore from '~/store/modules/Consumers'
+import * as CorporatesStore from '~/store/modules/Corporates'
+import { Consumer } from '~/api/Models/Consumers/Consumer'
+import { CorporatesSchemas } from '~/api/CorporatesSchemas'
+import { KYBState } from '~/api/Enums/KYBState'
+
 const Accounts = namespace(AccountsStore.name)
+const Consumers = namespace(ConsumersStore.name)
+const Corporates = namespace(CorporatesStore.name)
 
 @Component({
+  layout: 'dashboard',
   components: {
-    StatementItem: () => import('~/components/accounts/statement/item.vue')
+    Statement: () => import('~/components/accounts/statement/statement.vue'),
+    KybAlert: () => import('~/components/corporates/KYBAlert.vue')
   }
 })
 export default class AccountPage extends VueWithRouter {
-  @Accounts.Getter account:
-    | ManagedAccountsSchemas.ManagedAccount
-    | null
-    | undefined
+  @Accounts.Getter account!: ManagedAccountsSchemas.ManagedAccount | null
 
-  @Accounts.Getter filteredStatement:
-    | ManagedAccountsSchemas.ManagedAccountStatementEntry[]
-    | undefined
+  @Accounts.Getter filteredStatement: ManagedAccountsSchemas.ManagedAccountStatementEntry[] | undefined
+
+  @Consumers.Getter consumer!: Consumer | null
+
+  @Corporates.Getter corporate!: CorporatesSchemas.Corporate | null
+
+  accountId!: number
 
   async asyncData({ store, route }) {
-    const accountId = route.params.id
+    const _accountId = route.params.id
 
-    await store.dispatch('accounts/get', accountId)
+    await AccountsStore.Helpers.get(store, _accountId)
 
     const _req: _Requests.ManagedAccountStatementFullRequest = {
-      id: accountId,
+      id: _accountId,
       body: {
         showFundMovementsOnly: true,
-        orderByTimestamp: OrderType.ASC
+        orderByTimestamp: OrderType.DESC
       }
     }
 
-    await store.dispatch('accounts/getStatement', _req)
+    await AccountsStore.Helpers.getStatement(store, _req)
 
-    return { accountId: accountId }
+    if (AuthStore.Helpers.isConsumer(store)) {
+      const _consumerId = AuthStore.Helpers.identityId(store)
+      if (_consumerId) {
+        await ConsumersStore.Helpers.get(store, _consumerId)
+      }
+    } else {
+      const _corporateId = AuthStore.Helpers.identityId(store)
+      if (_corporateId) {
+        await CorporatesStore.Helpers.getCorporateDetails(store, _corporateId)
+      }
+    }
+
+    return { accountId: _accountId }
+  }
+
+  get showKybAlert(): boolean {
+    if (this.corporate && this.corporate.kyb) {
+      return this.corporate.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
+    } else {
+      return false
+    }
+  }
+
+  get showKycAlert(): boolean {
+    if (this.consumer && this.consumer.kyc && this.consumer.kyc.allowedLimit) {
+      return parseInt(this.consumer.kyc.allowedLimit.amount + '') === 0
+    } else {
+      return false
+    }
+  }
+
+  get restrictionLink() {
+    if (this.consumer && this.consumer.kyc && this.consumer.kyc.mobileVerified === true) {
+      return '/managed-accounts/' + this.accountId + '/topup'
+    } else {
+      return '/verify/consumers/mobile'
+    }
   }
 }
 </script>
@@ -115,6 +115,7 @@ export default class AccountPage extends VueWithRouter {
   .account-balance-label {
     font-size: 0.8rem;
   }
+
   .account-balance-value {
     font-size: 1.5rem;
   }
@@ -131,6 +132,7 @@ export default class AccountPage extends VueWithRouter {
   &-name {
     font-size: 1.2rem;
   }
+
   &-expiry {
     &-label {
       font-size: 0.8rem;
@@ -145,5 +147,9 @@ export default class AccountPage extends VueWithRouter {
   text-align: center;
   display: block;
   font-size: 0.6rem;
+}
+
+#account-limit {
+  max-width: 350px;
 }
 </style>

@@ -1,32 +1,41 @@
-import { GetterTree, MutationTree } from 'vuex'
+import { MutationTree } from 'vuex'
 import { RootState } from 'store'
 import * as Loader from './Loader'
 import { api } from '~/api/Axios'
-import { Actions, State, types } from '~/store/modules/Contracts/Auth'
+import { Getters, Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Auth'
 import { Schemas } from '~/api/Schemas'
+import LoginResult = Schemas.LoginResult
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
-export const name = 'auth'
-
-export const namespaced = true
+export { name, namespaced, Helpers }
 
 export const state = (): State => ({
-  auth: {
-    token: null
-  },
+  auth: {},
   isLoading: false
 })
 
-export const getters: GetterTree<State, RootState> = {
+export const getters: Getters<State, RootState> = {
   isLoggedIn: (state) => {
     return state.auth != null && state.auth.token != null
   },
   token: (state) => {
     return state.auth.token
   },
-  corporateId: (state) => {
+  auth: (state) => {
+    return state.auth
+  },
+  identityId: (state) => {
     return state.auth.identity ? state.auth.identity.id : null
+  },
+  isConsumer: (state) => {
+    return state.auth.identity ? state.auth.identity.type === 'consumers' : false
+  },
+  isCorporate: (state) => {
+    return state.auth.identity ? state.auth.identity.type === 'corporates' : false
+  },
+  identity: (state) => {
+    return state.auth.identity
   },
   isLoading: (state) => {
     return state.isLoading
@@ -41,7 +50,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post('/app/api/auth/login_with_password', loginRequest)
+    const req = api.post<LoginResult>('/app/api/auth/login_with_password', loginRequest)
 
     req.then((res) => {
       commit(types.AUTHENTICATE, res.data)
@@ -62,7 +71,13 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post('/app/api/corporates/' + request.corporateId + '/users/email/verify', request.request)
+    let req
+
+    if (request.consumerId) {
+      req = api.post('/app/api/consumers/' + request.consumerId + '/email/verify', request.request)
+    } else {
+      req = api.post('/app/api/corporates/' + request.corporateId + '/users/email/verify', request.request)
+    }
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
@@ -109,20 +124,56 @@ export const actions: Actions<State, RootState> = {
     })
 
     return req
+  },
+  createPasswordIdentity({ commit }, request) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/passwords/identities/' + request.id + '/create', request.request)
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
+  createPassword({ commit }, request) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/passwords/' + request.id + '/create', request.request)
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
+  updatePassword({ commit }, request) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/passwords/' + request.id + '/update', request.request)
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
   }
 }
 
 export const mutations: MutationTree<State> = {
-  [types.AUTHENTICATE](state, { token, identity }) {
-    state.auth = {
-      token: token,
-      identity: identity
-    }
+  [types.AUTHENTICATE](state, _res: LoginResult) {
+    state.auth = _res
     Cookie.set('auth-onvirtual', state.auth)
     api.defaults.headers.Authorization = 'X-TOKEN ' + state.auth.token
   },
   [types.LOGOUT](state) {
-    state.auth.token = null
+    state.auth = {}
 
     Cookie.remove('auth-onvirtual')
 

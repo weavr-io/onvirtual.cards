@@ -7,25 +7,47 @@
         </h2>
       </b-col>
     </b-row>
-    <b-row class="py-5 my-5">
+    <b-row v-if="accountBalance < 10" class="py-5 my-5 text-center">
       <b-col>
-        <b-form-group
-          label="Amount:"
-          :state="isInvalid($v.request.amount)"
-          :invalid-feedback="invalidMessage"
-        >
-          <b-input-group prepend="EUR">
-            <b-form-input v-model="request.amount" type="number" step="0.01" />
-          </b-input-group>
-        </b-form-group>
+        <b-row>
+          <b-col>
+            <h4 class="font-weight-light">
+              You do not have enough funds in your account.
+            </h4>
+            <h5 class="font-weight-lighter">
+              Start by topping up.
+            </h5>
+          </b-col>
+        </b-row>
+        <b-row class="mt-5">
+          <b-col class="text-center">
+            <b-button to="/" variant="secondary">
+              back
+              <span class="pl-5">-></span>
+            </b-button>
+          </b-col>
+        </b-row>
       </b-col>
     </b-row>
-    <b-row>
-      <b-col class="text-center">
-        <b-button type="submit" variant="primary">
-          next
-          <span class="pl-5">-></span>
-        </b-button>
+    <b-row v-else class="py-5 my-5">
+      <b-col>
+        <b-row>
+          <b-col>
+            <b-form-group :state="isInvalid($v.request.amount)" :invalid-feedback="invalidMessage" label="Amount:">
+              <b-input-group :prepend="accountDetails.currency">
+                <b-form-input v-model="$v.request.amount.$model" type="number" step="0.01" />
+              </b-input-group>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row class="mt-5">
+          <b-col class="text-center">
+            <b-button type="submit" variant="secondary">
+              next
+              <span class="pl-5">-></span>
+            </b-button>
+          </b-col>
+        </b-row>
       </b-col>
     </b-row>
   </b-form>
@@ -46,10 +68,9 @@ const Accounts = namespace(AccountsStore.name)
     request: {
       amount: {
         required,
-        minValue: minValue(10),
         between(value) {
           // @ts-ignore
-          return between(10, this.accountBalance)(value)
+          return between(1, this.accountBalance)(value)
         }
       }
     }
@@ -65,7 +86,9 @@ export default class TopUpForm extends VueWithRouter {
   get invalidMessage() {
     const _min = this.$v.request.amount.$params.between.min
     const _max = this.$v.request.amount.$params.between.max
-    return 'Should be between ' + _min + ' and ' + _max
+
+    const _currency = this.accountDetails ? this.accountDetails.currency : 'EUR'
+    return 'Should be between ' + _currency + ' ' + _min + ' and ' + _currency + ' ' + _max
   }
 
   public request: {

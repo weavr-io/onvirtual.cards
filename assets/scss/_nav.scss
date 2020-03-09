@@ -13,3 +13,14 @@
     }
   }
 }
+
+#main-header {
+  .navbar-light {
+    .navbar-nav {
+      .nav-link {
+        font-weight: bold;
+        color: $primary;
+      }
+    }
+  }
+}

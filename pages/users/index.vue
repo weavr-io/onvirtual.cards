@@ -45,10 +45,8 @@ export default class CardsPage extends VueWithRouter {
 
   @Corporates.Getter users
 
-  @Auth.Getter corporateId
-
   asyncData({ store }) {
-    let _corporateId = store.getters['auth/corporateId']
+    let _corporateId = store.getters['auth/identityId']
     return store.dispatch('corporates/getUsers', _corporateId)
   }
 }

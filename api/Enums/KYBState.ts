@@ -1,0 +1,6 @@
+export enum KYBState {
+  'NOT_STARTED' = 'NOT_STARTED',
+  'INITIATED' = 'INITIATED',
+  'APPROVED' = 'APPROVED',
+  'REJECTED' = 'REJECTED'
+}

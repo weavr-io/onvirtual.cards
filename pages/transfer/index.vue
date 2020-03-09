@@ -7,10 +7,7 @@
             <account-selection @submit-form="accountSelected" />
           </div>
           <div v-if="screen === 1" class="topup-screen">
-            <top-up
-              :selected-account="request.source"
-              @submit-form="topUpSelected"
-            />
+            <top-up :selected-account="request.source" @submit-form="topUpSelected" />
           </div>
           <div v-if="screen === 2" class="topup-screen">
             <top-up-success />
@@ -38,8 +35,7 @@ const Transfers = namespace(TransfersStore.name)
 @Component({
   components: {
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    AccountSelection: () =>
-      import('~/components/transfer/AccountSelection.vue'),
+    AccountSelection: () => import('~/components/transfer/AccountSelection.vue'),
     TopUp: () => import('~/components/transfer/TopUp.vue'),
     TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue')
   }
@@ -51,7 +47,7 @@ export default class CardsPage extends VueWithRouter {
 
   @Transfers.Action execute
 
-  screen: number = 0
+  screen: number = 1
 
   nextScreen() {
     this.screen++
@@ -72,21 +68,7 @@ export default class CardsPage extends VueWithRouter {
     }
   }
 
-  public request: TransfersSchemas.CreateTransferRequest = {
-    profileId: null,
-    source: {
-      type: 'managed_accounts',
-      id: null
-    },
-    destination: {
-      type: 'managed_cards',
-      id: null
-    },
-    destinationAmount: {
-      currency: 'EUR',
-      amount: 0
-    }
-  }
+  public request!: TransfersSchemas.CreateTransferRequest
 
   get formattedCards(): { value: string; text: string }[] {
     return this.cards.map((val) => {
@@ -111,17 +93,31 @@ export default class CardsPage extends VueWithRouter {
   mounted() {
     super.mounted()
 
-    this.request.profileId = config.profileId.transfers
-
-    if (typeof this.$route.query.destination === 'string') {
-      this.request.destination.id = this.$route.query.destination
-    }
+    try {
+      this.$segment.track('Initiated Transfer', {})
+    } catch (e) {}
   }
 
-  async asyncData({ store }) {
+  async asyncData({ store, route }) {
     await store.dispatch('cards/getCards')
-    await store.dispatch('accounts/index')
-    return {}
+    const _accounts = await store.dispatch('accounts/index')
+
+    const request: TransfersSchemas.CreateTransferRequest = {
+      profileId: config.profileId.transfers,
+      source: _accounts.data.account[0].id,
+      destination: {
+        type: 'managed_cards',
+        id: route.query.destination
+      },
+      destinationAmount: {
+        currency: _accounts.data.account[0].currency,
+        amount: 0
+      }
+    }
+
+    return {
+      request: request
+    }
   }
 
   doTransfer() {
@@ -143,6 +139,10 @@ export default class CardsPage extends VueWithRouter {
           }
         }
         this.screen = 2
+
+        try {
+          this.$segment.track('Transfer Success', this.request)
+        } catch (e) {}
       })
       .catch((err) => {
         this.screen = 0

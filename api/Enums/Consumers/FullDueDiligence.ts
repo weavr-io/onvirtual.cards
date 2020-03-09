@@ -1,0 +1,6 @@
+export enum FullDueDiligence {
+  NOT_STARTED = 'NOT_STARTED',
+  INITIATED = 'INITIATED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED'
+}

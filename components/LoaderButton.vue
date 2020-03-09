@@ -1,10 +1,10 @@
 <template>
   <b-form-group>
-    <b-button v-if="!isLoading" type="submit" variant="primary">
+    <b-button v-if="!isLoading" type="submit" variant="secondary">
       {{ buttonText }}
       <span v-if="showArrow" class="pl-5">-></span>
     </b-button>
-    <b-button v-if="isLoading" disabled variant="primary">
+    <b-button v-if="isLoading" disabled variant="secondary">
       <b-spinner small type="grow" />
     </b-button>
   </b-form-group>

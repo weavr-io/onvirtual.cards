@@ -27,7 +27,7 @@
     &-expiry {
       &-label {
         font-size: 0.7rem;
-        color: $secondary;
+        color: $body-color;
       }
 
       &-value {
@@ -35,5 +35,36 @@
       }
     }
 
+  }
+
+  &.card-frozen {
+    a {
+      color: $input-placeholder-color;
+    }
+  }
+}
+
+
+#managedCard {
+  .card-options {
+    opacity: 0;
+    transition: 0.3s opacity;
+
+  }
+
+  &:hover {
+    .card-options {
+      opacity: 1;
+    }
+  }
+}
+
+.card {
+  &.card-sm-border-radius {
+    border-radius: 1rem;
+
+    .card-header:first-child {
+      border-radius: 1rem 1rem 0 0;
+    }
   }
 }

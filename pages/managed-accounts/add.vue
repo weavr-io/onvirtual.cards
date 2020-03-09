@@ -5,37 +5,17 @@
         <b-col md="6" offset-md="3">
           <b-card class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
-              Account Name and Currency
+              Please choose the currency of your account
             </b-card-title>
             <b-form @submit="doAdd">
               <b-form-row>
                 <b-col>
-                  <b-form-group
-                    label="Friendly Name:"
-                    :state="isInvalid($v.request.friendlyName)"
-                  >
-                    <b-form-input v-model="request.friendlyName" />
+                  <b-form-group :state="isInvalid($v.request.currency)" label="Currency:">
+                    <b-form-select v-model="request.currency" :options="currencyOptions" />
                   </b-form-group>
                 </b-col>
               </b-form-row>
-              <b-form-row>
-                <b-col>
-                  <b-form-group
-                    label="Currency:"
-                    :state="isInvalid($v.request.currency)"
-                  >
-                    <b-form-select
-                      v-model="request.currency"
-                      :options="currencyOptions"
-                    />
-                  </b-form-group>
-                </b-col>
-              </b-form-row>
-              <loader-button
-                :is-loading="isLoading"
-                button-text="add account"
-                class="mt-5 text-center"
-              />
+              <loader-button :is-loading="isLoading" button-text="submit" class="mt-5 text-center" />
             </b-form>
           </b-card>
         </b-col>
@@ -53,6 +33,9 @@ import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import * as AccountsStore from '~/store/modules/Accounts'
 import * as AuthStore from '~/store/modules/Auth'
 import config from '~/config'
+import { Schemas } from '~/api/Schemas'
+import LoginResult = Schemas.LoginResult
+
 const Auth = namespace(AuthStore.name)
 const Accounts = namespace(AccountsStore.name)
 
@@ -78,7 +61,7 @@ export default class AddCardPage extends VueWithRouter {
 
   @Accounts.Getter isLoading
 
-  @Auth.Getter corporateId
+  @Auth.Getter auth!: LoginResult
 
   currencyOptions = [
     { value: 'EUR', text: 'EUR' },
@@ -88,10 +71,10 @@ export default class AddCardPage extends VueWithRouter {
   public request: ManagedAccountsSchemas.CreateManagedAccountRequest = {
     profileId: null,
     owner: {
-      type: 'corporates',
+      type: '',
       id: 0
     },
-    friendlyName: '',
+    friendlyName: 'Main Account',
     currency: 'EUR',
     fiProvider: 'paynetics',
     createNow: true,
@@ -123,7 +106,9 @@ export default class AddCardPage extends VueWithRouter {
 
   mounted() {
     super.mounted()
-    this.request.owner.id = this.corporateId
+    if (this.auth.identity) {
+      this.request.owner = this.auth.identity
+    }
     this.request.profileId = config.profileId.managed_accounts
   }
 }

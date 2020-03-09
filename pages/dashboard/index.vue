@@ -4,20 +4,21 @@
 
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import * as CorporatesStore from '~/store/modules/Corporates'
-import * as AuthStore from '~/store/modules/Auth'
-
-const Auth = namespace(AuthStore.name)
-const Corporates = namespace(CorporatesStore.name)
+import * as AccountsStore from '~/store/modules/Accounts'
 
 @Component({
   layout: 'dashboard'
 })
 export default class DashboardPage extends VueWithRouter {
-  asyncData({ redirect }) {
-    redirect('/managed-accounts')
+  async asyncData({ redirect, store }) {
+    const _accounts = await AccountsStore.Helpers.index(store)
+
+    if (_accounts.data.count === 1) {
+      redirect('/managed-cards')
+    } else {
+      redirect('/managed-accounts/add')
+    }
   }
 }
 </script>

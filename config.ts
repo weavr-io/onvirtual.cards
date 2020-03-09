@@ -7,9 +7,15 @@ export default {
     sharedKey: process.env.SHARED_KEY
   },
   profileId: {
+    consumers: process.env.CONSUMERS_PROFILE_ID,
     corporates: process.env.CORPORATES_PROFILE_ID,
+    managed_cards: process.env.MANAGED_CARDS_PROFILE_ID,
     managed_accounts: process.env.MANAGED_ACCOUNTS_PROFILE_ID,
     transfers: process.env.TRANSFERS_PROFILE_ID,
-    managed_cards: process.env.MANAGED_CARDS_PROFILE_ID
+    send: process.env.SEND_PROFILE_ID
+  },
+  app: {
+    kyb_required: process.env.KYB_REQUIRED ? JSON.parse(process.env.KYB_REQUIRED) : true,
+    view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true
   }
 }

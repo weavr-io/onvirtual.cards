@@ -3,7 +3,7 @@
     <b-container>
       <b-row v-if="managedCard" align-v="end" class="mb-5 border-bottom pb-3">
         <b-col cols="1">
-          <b-link class="card-view-details" @click="toggleModal">
+          <b-link @click="toggleModal" class="card-view-details">
             view details
           </b-link>
         </b-col>
@@ -28,41 +28,32 @@
             </b-col>
           </b-row>
         </b-col>
-        <b-col cols="2" lg="1" class="text-right">
-          <b-button
-            v-if="managedCard.active && !isFrozen"
-            variant="primary"
-            class="add-funds"
-            :to="'/transfer?destination=' + managedCard.id.id"
-          >
-            +
-          </b-button>
-        </b-col>
-        <b-col cols="2" lg="2">
-          <div class="card-balance">
-            <div class="card-balance-label text-muted">
-              balance
-            </div>
-            <div class="card-balance-value">
-              {{ managedCard.balances.availableBalance | weavr_currency(managedCard.currency) }}
-            </div>
-          </div>
-        </b-col>
-        <b-col cols="1" lg="1" class="text-right">
-          <b-dropdown variant="link" toggle-class="text-decoration-none" no-caret>
-            <template v-slot:button-content>
-              <b-icon icon="three-dots-vertical" />
-            </template>
-            <b-dropdown-item v-if="!isFrozen" @click="freezeCard">
-              Freeze Card
-            </b-dropdown-item>
-            <b-dropdown-item v-if="isFrozen" @click="unfreezeCard">
-              Unfreeze Card
-            </b-dropdown-item>
-          </b-dropdown>
+        <b-col>
+          <b-row align-h="end" align-v="end">
+            <b-col class="text-right" col cols="auto" >
+              <b-button
+                v-if="managedCard.active && !isFrozen"
+                :to="'/transfer?destination=' + managedCard.id.id"
+                variant="secondary"
+                class="add-funds"
+              >
+                +
+              </b-button>
+            </b-col>
+            <b-col col cols="auto" >
+              <div class="card-balance">
+                <div class="card-balance-label text-muted">
+                  balance
+                </div>
+                <div class="card-balance-value">
+                  {{ managedCard.balances.availableBalance | weavr_currency(managedCard.currency) }}
+                </div>
+              </div>
+            </b-col>
+          </b-row>
         </b-col>
       </b-row>
-      <b-row class="mb-5" align-v="center">
+      <b-row class="mb-3" align-v="center">
         <b-col>
           <h6 class="font-weight-lighter">
             All Transactions
@@ -82,9 +73,18 @@
 
       <b-row v-if="filteredStatement">
         <b-col>
-          <b-row v-for="(item, key) in filteredStatement" :key="key">
+          <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
             <b-col>
-              <statement-item :transaction="item" />
+              <b-row class="mt-4">
+                <b-col class="text-muted">
+                  {{ date | moment_statement }}
+                </b-col>
+              </b-row>
+              <b-row v-for="(statement, key) in statementEntries" :key="key">
+                <b-col>
+                  <statement-item :transaction="statement" />
+                </b-col>
+              </b-row>
             </b-col>
           </b-row>
         </b-col>
@@ -105,13 +105,11 @@
           <b-link :to="'/managed-cards/' + managedCard.id.id + '/statement'">
             <b-container fluid class="p-0">
               <b-row>
-                <b-col>
+                <b-col cols="10">
                   <b-row>
                     <b-col>
                       <div class="card-number">
                         <weavr-span
-                          class="card-select-number"
-                          field="cardNumber"
                           :token="managedCard.cardNumber"
                           :base-style="{
                             fontFamily: '\'Be Vietnam\', sans-serif',
@@ -119,6 +117,8 @@
                             lineHeight: '1',
                             fontSize: '20px'
                           }"
+                          class="card-select-number"
+                          field="cardNumber"
                         />
                       </div>
                     </b-col>
@@ -131,7 +131,7 @@
                     </b-col>
                   </b-row>
                 </b-col>
-                <b-col class="text-right">
+                <b-col class="text-right" cols="2">
                   <b-img src="/img/mc_symbol.svg" width="50px" />
                 </b-col>
               </b-row>
@@ -154,8 +154,6 @@
                     </div>
                     <div class="card-cvv-value">
                       <weavr-span
-                        class="card-select-number"
-                        field="cvv"
                         :token="managedCard.cvv"
                         :base-style="{
                           fontFamily: '\'Be Vietnam\', sans-serif',
@@ -163,6 +161,8 @@
                           lineHeight: '25px',
                           fontSize: '25px'
                         }"
+                        class="card-select-number"
+                        field="cvv"
                       />
                     </div>
                   </div>
@@ -211,10 +211,6 @@ export default class ManagedCardsTable extends Vue {
 
   @ManagedCards.Action destroyManagedCard
 
-  @ManagedCards.Action freeze
-
-  @ManagedCards.Action unfreeze
-
   public fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
 
   async asyncData({ store, route }) {
@@ -236,32 +232,6 @@ export default class ManagedCardsTable extends Vue {
 
   toggleModal() {
     this.$refs['card-modal'].toggle()
-  }
-
-  freezeCard() {
-    this.freeze(this.cardId).then(
-      () => {
-        this.$weavrToast('Card Frozen')
-      },
-      (err) => {
-        const data = err.response.data
-        const error = data.message ? data.message : data.errorCode
-        this.$weavrToastError(error)
-      }
-    )
-  }
-
-  unfreezeCard() {
-    this.unfreeze(this.cardId).then(
-      () => {
-        this.$weavrToast('Card Unfrozen')
-      },
-      (err) => {
-        const data = err.response.data
-        const error = data.message ? data.message : data.errorCode
-        this.$weavrToastError(error)
-      }
-    )
   }
 
   get isFrozen() {
