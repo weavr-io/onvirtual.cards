@@ -39,6 +39,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
+    <pre>{{ $v.form.companyRegistrationDate.$model }}</pre>
     <b-form-row>
       <b-col>
         <b-form-group>

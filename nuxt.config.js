@@ -56,7 +56,8 @@ const config = {
     { src: '~/plugins/vuelidate' },
     { src: '~/plugins/weavr/security.client.ts' },
     { src: '~/plugins/WeavrVueFilters.ts', ssr: false },
-    { src: '~/plugins/PhoneNumberInput.ts', ssr: false }
+    { src: '~/plugins/PhoneNumberInput.ts', ssr: false },
+    { src: '~/plugins/flatpickr.ts', ssr: false }
   ],
   /*
    ** Nuxt.js modules

@@ -31,17 +31,33 @@
                     autocomplete="email"
                   />
                 </b-form-group>
-                <b-form-group id="ig-password" label="Password" label-for="setPassword">
-                  <b-form-input
-                    id="from-password"
-                    v-model="form.password.value"
-                    :state="isInvalid($v.form.password.value)"
-                    class="form-control"
-                    type="password"
-                    name="setPassword"
-                    autocomplete="new-password"
-                  />
-                </b-form-group>
+                <client-only placeholder="Loading...">
+                  <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
+                    <label class="d-block">PASSWORD:</label>
+                    <weavr-input
+                      :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                      :base-style="{
+                        color: '#000',
+                        fontSize: '13px',
+                        fontSmoothing: 'antialiased',
+                        fontFamily: '\'Be Vietnam\', sans-serif',
+                        fontWeight: '300',
+                        margin: '0',
+                        padding: '0.375rem 0.75rem',
+                        textIndent: '0px',
+                        '::placeholder': {
+                          color: '#bbc0c8',
+                          fontWeight: '200'
+                        }
+                      }"
+                      @onKeyUp="checkOnKeyUp"
+                      class-name="sign-in-password"
+                      name="password"
+                      field="password"
+                      required="true"
+                    />
+                  </weavr-form>
+                </client-only>
                 <div class="text-center">
                   <loader-button :is-loading="isLoading" button-text="Set Password" class="mt-5" />
                 </div>
@@ -57,15 +73,15 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { required, email, maxLength, minLength } from 'vuelidate/lib/validators'
+import { required, email } from 'vuelidate/lib/validators'
 import { BaseVue } from '~/base/classes/BaseVue'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/LoaderButton.vue'
 
-import passwordComplexity from '~/plugins/customValidators/passwordComplexity.ts'
 import * as AuthStore from '~/store/modules/Auth'
 import { LostPasswordValidateRequest } from '~/api/Requests/Auth/LostPasswordValidateRequest'
 import { LostPasswordContinueRequest } from '~/api/Requests/Auth/LostPasswordContinueRequest'
+import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 
 const Auth = namespace(AuthStore.name)
 
@@ -80,19 +96,15 @@ const Auth = namespace(AuthStore.name)
       email: {
         required,
         email
-      },
-      password: {
-        value: {
-          required,
-          minLength: minLength(8),
-          maxLength: maxLength(30),
-          passwordComplexity
-        }
       }
     }
   }
 })
 export default class PasswordSentPage extends BaseVue {
+  $refs!: {
+    passwordForm: WeavrForm
+  }
+
   @Auth.Getter isLoading!: boolean
 
   protected form: LostPasswordContinueRequest = {
@@ -121,12 +133,32 @@ export default class PasswordSentPage extends BaseVue {
 
   setPassword(evt) {
     evt.preventDefault()
-    this.$v.$touch()
-    if (!this.$v.$invalid) {
-      AuthStore.Helpers.lostPasswordResume(this.$store, this.form).then(() => {
-        this.$router.push('/login')
-      })
+
+    if (this.$v.form) {
+      this.$v.form.$touch()
+      if (this.$v.form.$anyError) {
+        return null
+      }
     }
+
+    const form: WeavrForm = this.$refs.passwordForm as WeavrForm
+    form.tokenize(
+      (tokens) => {
+        if (tokens.password !== '') {
+          this.form.password.value = tokens.password
+
+          AuthStore.Helpers.lostPasswordResume(this.$store, this.form).then(() => {
+            this.$router.push('/login')
+          })
+        } else {
+          return null
+        }
+      },
+      (e) => {
+        console.error(e)
+        return null
+      }
+    )
   }
 }
 </script>
