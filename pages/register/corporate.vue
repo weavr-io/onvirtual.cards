@@ -63,7 +63,7 @@ export default class RegistrationPage extends VueWithRouter {
 
   @Corporates.Getter corporate
 
-  screen = 2
+  screen = 0
 
   public password: string = ''
 
