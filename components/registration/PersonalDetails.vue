@@ -39,12 +39,13 @@
         @update="phoneUpdate"
         :only-countries="mobileCountries"
         :border-radius="0"
+        :error="numberIsValid === false"
         color="#F50E4C"
         error-color="#F50E4C"
         valid-color="#6D7490"
-        default-country-code="MT"
+        default-country-code="GB"
       />
-      <b-form-invalid-feedback force-show v-if="numberIsValid === false">
+      <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
         This field must be a valid mobile number.
       </b-form-invalid-feedback>
     </b-form-group>
@@ -139,9 +140,13 @@ export default class PersonalDetailsForm extends VueWithRouter {
   submitForm(e) {
     e.preventDefault()
 
+    if (this.numberIsValid === null) {
+      this.numberIsValid = false
+    }
+
     if (this.$v.form) {
       this.$v.form.$touch()
-      if (this.$v.form.$anyError) {
+      if (this.$v.form.$anyError || !this.numberIsValid) {
         return null
       }
     }

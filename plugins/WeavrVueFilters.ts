@@ -78,6 +78,10 @@ Vue.filter('weavr_convert_camelcase', function(value) {
   return result.charAt(0).toUpperCase() + result.slice(1)
 })
 
+Vue.filter('weavr_lowercase', function(value) {
+  return value.toLowerCase()
+})
+
 Vue.filter('card', function(value, _first6, _last4) {
   if (typeof _first6 === 'undefined' && typeof _last4 === 'undefined') {
     return value.replace(/(\+?\d{6})(\d+)(\d{4})/g, function(match, start, middle, end) {
