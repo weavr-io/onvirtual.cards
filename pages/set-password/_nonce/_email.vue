@@ -166,7 +166,7 @@ export default class PasswordSentPage extends BaseVue {
       identityProfileId: config.profileId.corporates ?? '',
       credentialType: 'ROOT',
       password: {
-        value: this.form.password.value
+        value: this.form.password.value ?? ''
       }
     }
 
