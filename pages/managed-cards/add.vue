@@ -17,7 +17,12 @@
                         v-model="$v.request.nameOnCard.$model"
                         placeholder="eg. Elon Musk"
                       />
-                      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                      <b-form-invalid-feedback v-if="!$v.request.nameOnCard.required">
+                        Name on Card is required.
+                      </b-form-invalid-feedback>
+                      <b-form-invalid-feedback v-if="!$v.request.nameOnCard.maxLength">
+                        Name on Card too long.
+                      </b-form-invalid-feedback>
                     </b-form-group>
                   </b-col>
                 </b-form-row>
@@ -25,16 +30,16 @@
                   <b-col>
                     <b-form-group label="CARDHOLDER MOBILE NUMBER:">
                       <vue-phone-number-input
-                        v-model="$v.request.formattedMobileNumber.$model"
+                        v-model="request.formattedMobileNumber"
                         @update="phoneUpdate"
-                        :error="mobileNumberState()"
+                        :error="numberIsValid === false"
                         :border-radius="0"
                         error-color="#F50E4C"
                         color="#6D7490"
                         valid-color="#6D7490"
-                        default-country-code="MT"
+                        default-country-code="GB"
                       />
-                      <b-form-invalid-feedback v-if="mobileNumberState()" force-show>
+                      <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                         This field must be a valid mobile number.
                       </b-form-invalid-feedback>
                     </b-form-group>
@@ -48,7 +53,12 @@
                         v-model="$v.request.friendlyName.$model"
                         placeholder="eg. travel expenses"
                       />
-                      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                      <b-form-invalid-feedback v-if="!$v.request.friendlyName.required">
+                        Friendly Name is required.
+                      </b-form-invalid-feedback>
+                      <b-form-invalid-feedback v-if="!$v.request.friendlyName.maxLength">
+                        Friendly Name too long.
+                      </b-form-invalid-feedback>
                     </b-form-group>
                   </b-col>
                 </b-form-row>
@@ -96,9 +106,6 @@ const Auth = namespace(AuthStore.name)
         required,
         maxLength: maxLength(30)
       },
-      formattedMobileNumber: {
-        required
-      }
     }
   }
 })
@@ -114,22 +121,21 @@ export default class AddCardPage extends VueWithRouter {
     { value: 'GBP', text: 'GBP' }
   ]
 
-  numberIsValid: boolean = false
+  numberIsValid: boolean | null = null
   cardholderMobileNumber = ''
-
-  mobileNumberState(): boolean {
-    // @ts-ignore
-    return !this.isInvalid(this.$v.request.formattedMobileNumber) || !this.numberIsValid
-  }
 
   public request!: ManagedCardsSchemas.CreateManagedCardRequest
 
   doAdd(evt) {
     evt.preventDefault()
 
+    if (this.numberIsValid === null) {
+      this.numberIsValid = false
+    }
+
     if (this.$v.request) {
       this.$v.request.$touch()
-      if (this.$v.request.$anyError || this.mobileNumberState()) {
+      if (this.$v.request.$anyError || !this.numberIsValid) {
         return
       }
     }
