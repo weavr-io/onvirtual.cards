@@ -13,6 +13,7 @@
         </div>
         <div class="col-lg-6 offset-lg-3 h-100 modal-div">
           <div class="mx-md-3 px-md-5">
+            <error-alert />
             <b-form id="contact-form" @submit="submitChangePassword">
               <client-only placeholder="Loading...">
                 <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
@@ -88,7 +89,8 @@ import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 
 @Component({
   components: {
-    LoaderButton
+    LoaderButton,
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
   },
   validations: {
     form: {}
@@ -106,9 +108,6 @@ export default class BundlesPage extends BaseVue {
         value: ''
       },
       password: {
-        value: ''
-      },
-      confirmPassword: {
         value: ''
       }
     }
@@ -141,10 +140,12 @@ export default class BundlesPage extends BaseVue {
     const form: WeavrForm = this.$refs.passwordForm as WeavrForm
     form.tokenize(
       (tokens) => {
-        if (tokens.password !== '') {
-          // AuthStore.Helpers.updatePassword(this.$store, this.changePasswordRequest).then(() => {
-          //   this.$router.push('/profile')
-          // })
+        if (tokens['old-password'] !== '' && tokens['new-password']) {
+          this.changePasswordRequest.request.oldPassword.value = tokens['old-password']
+          this.changePasswordRequest.request.password.value = tokens['new-password']
+          AuthStore.Helpers.updatePassword(this.$store, this.changePasswordRequest).then(() => {
+            this.$router.push('/profile')
+          })
         } else {
           return null
         }

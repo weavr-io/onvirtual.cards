@@ -4,6 +4,8 @@ import { AxiosError } from 'axios'
 import { Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Error'
 import { ValidatePasswordConflictErrorCode } from '~/api/Conflicts/Codes/Password/ValidatePasswordConflictErrorCode'
 import { VerifyEmailRequestConflictErrorCode } from '~/api/Conflicts/Codes/Corporates/Emails/VerifyEmailRequestConflictErrorCode'
+import { ConflictResponse } from '~/api/Conflicts/Responses/ConflictResponse'
+import { LoginWithPasswordConflict } from '~/api/Conflicts/Responses/Password/LoginWithPasswordConflict'
 
 export { name, namespaced, Helpers }
 
@@ -25,7 +27,11 @@ export const getters: GetterTree<State, RootState> = {
   },
   conflictMessage: (state) => {
     if (state.conflict) {
-      switch (state.conflict.errorCode) {
+      const _errCode = (state.conflict as ConflictResponse).errorCode
+        ? (state.conflict as ConflictResponse).errorCode
+        : (state.conflict as LoginWithPasswordConflict).code
+
+      switch (_errCode) {
         case 'ROOT_EMAIL_NOT_UNIQUE':
         case 'EMAIL_NOT_UNIQUE':
           return 'This email address already exists in the system.  Do you want to log in instead?'
@@ -35,6 +41,8 @@ export const getters: GetterTree<State, RootState> = {
           return 'Username already exists in the system. Please try a different username.'
         case 'INVALID_NONCE_OR_MOBILE':
           return 'There is something wrong with your nonce or mobile.'
+        case 'FAILED_LOGIN':
+          return 'Incorrect username and password combination. If you do not have an account please click on Register.'
         case ValidatePasswordConflictErrorCode.PASSWORD_PROFILE_NOT_CONFIGURED_FOR_CREDENTIAL_TYPE:
           return 'PASSWORD_PROFILE_NOT_CONFIGURED_FOR_CREDENTIAL_TYPE'
         case ValidatePasswordConflictErrorCode.PASSWORD_TOO_LONG:
@@ -48,6 +56,7 @@ export const getters: GetterTree<State, RootState> = {
         case VerifyEmailRequestConflictErrorCode.INVALID_NONCE_OR_EMAIL:
           return 'The verification code entered is invalid.'
         default:
+          console.log(state.conflict)
           return 'An error occurred. Please try again.'
       }
     } else {

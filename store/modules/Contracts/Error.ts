@@ -4,6 +4,7 @@ import { StoreHelpers } from '~/helpers/StoreHelpers'
 import { ValidatePasswordConflict } from '~/api/Conflicts/Responses/Password/ValidatePasswordConflict'
 import { ConflictResponse } from '~/api/Conflicts/Responses/ConflictResponse'
 import { VerifyEmailRequestConflict } from '~/api/Conflicts/Responses/Corporates/Emails/VerifyEmailRequestConflict'
+import { LoginWithPasswordConflict } from '~/api/Conflicts/Responses/Password/LoginWithPasswordConflict'
 
 export const name = 'error'
 
@@ -17,7 +18,7 @@ export const types = {
 
 export interface State {
   errors: any
-  conflict: null | ValidatePasswordConflict | ConflictResponse | VerifyEmailRequestConflict
+  conflict: null | ValidatePasswordConflict | ConflictResponse | VerifyEmailRequestConflict | LoginWithPasswordConflict
 }
 
 export enum _Actions {
