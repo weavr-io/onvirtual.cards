@@ -25,8 +25,17 @@
                 <b-form-row>
                   <b-col>
                     <b-form-group label="CARDHOLDER MOBILE NUMBER:">
-                      <b-form-input v-model="$v.request.body.cardholderMobileNumber.$model" :state="isInvalid($v.request.body.cardholderMobileNumber)" />
-                      <b-form-invalid-feedback>
+                      <vue-phone-number-input
+                        :value="mobile.cardholderMobileNumber"
+                        @update="phoneUpdate"
+                        :error="numberIsValid === false"
+                        :border-radius="0"
+                        :defaultCountryCode="mobile.countryCode"
+                        error-color="#F50E4C"
+                        color="#6D7490"
+                        valid-color="#6D7490"
+                      />
+                      <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                         This field must be a valid mobile number.
                       </b-form-invalid-feedback>
                     </b-form-group>
@@ -57,6 +66,7 @@
 import { namespace } from 'vuex-class'
 import { Component } from 'nuxt-property-decorator'
 import { helpers, maxLength, required } from 'vuelidate/lib/validators'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CardsStore from '~/store/modules/Cards'
 import * as AuthStore from '~/store/modules/Auth'
@@ -98,17 +108,24 @@ export default class AddCardPage extends VueWithRouter {
 
   @Auth.Getter auth!: LoginResult
 
-  numberIsValid: boolean = false
-  cardholderMobileNumber = ''
+  numberIsValid: boolean | null = null
+  mobile = {
+    countryCode: 'GB',
+    cardholderMobileNumber: ''
+  }
 
   public request!: UpdateManagedCardRequest
 
   doAdd(evt) {
     evt.preventDefault()
 
+    if (this.numberIsValid === null) {
+      this.numberIsValid = false
+    }
+
     if (this.$v.request) {
       this.$v.request.$touch()
-      if (this.$v.request.$anyError) {
+      if (this.$v.request.$anyError || !this.numberIsValid) {
         return
       }
     }
@@ -121,12 +138,12 @@ export default class AddCardPage extends VueWithRouter {
     })
   }
 
-
-
   async asyncData({ store, route }) {
     const _cardId = route.params.id
 
     const _card = await CardsStore.Helpers.getManagedCard(store, _cardId)
+
+    const _parsedNumber = parsePhoneNumberFromString(_card.data.cardholderMobileNumber)
 
     const request: UpdateManagedCardRequest = {
       id: _cardId,
@@ -135,7 +152,20 @@ export default class AddCardPage extends VueWithRouter {
       }
     }
 
-    return { cardId: _cardId, request: request }
+    return {
+      cardId: _cardId,
+      request: request,
+      mobile: {
+        countryCode: _parsedNumber?.country,
+        cardholderMobileNumber: _parsedNumber?.nationalNumber
+      }
+    }
+  }
+
+  phoneUpdate(number) {
+    this.$set(this.mobile, 'cardholderMobileNumber', number.formatNational ? number.formatNational : number.phoneNumber)
+    this.request.body.cardholderMobileNumber = number.formattedNumber
+    this.numberIsValid = number.isValid
   }
 }
 </script>
