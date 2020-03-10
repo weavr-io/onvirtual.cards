@@ -11,6 +11,7 @@ import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
 import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
 import LoginResult = Schemas.LoginResult
 import TypeId = Schemas.TypeId
+import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 
 export const name = 'auth'
 
@@ -45,7 +46,8 @@ export enum _Actions {
   lostPasswordResume = 'lostPasswordResume',
   createPasswordIdentity = 'createPasswordIdentity',
   createPassword = 'createPassword',
-  updatePassword = 'updatePassword'
+  updatePassword = 'updatePassword',
+  validatePassword = 'validatePassword'
 }
 
 export interface Getters<S, R> extends GetterTree<S, R> {
@@ -80,6 +82,8 @@ export interface Actions<S, R> extends ActionTree<S, R> {
   [_Actions.createPassword](context: ActionContext<S, R>, request: CreatePassword): AxiosPromise
 
   [_Actions.updatePassword](context: ActionContext<S, R>, request: UpdatePassword): AxiosPromise
+
+  [_Actions.validatePassword](context: ActionContext<S, R>, request: ValidatePasswordRequest): AxiosPromise
 }
 
 export module Helpers {
@@ -112,6 +116,9 @@ export module Helpers {
   }
   export const updatePassword = (store: Store<any>, request: UpdatePassword): AxiosPromise => {
     return StoreHelpers.dispatch(store, name, _Actions.updatePassword, request)
+  }
+  export const validatePassword = (store: Store<any>, request: ValidatePasswordRequest): AxiosPromise => {
+    return StoreHelpers.dispatch(store, name, _Actions.validatePassword, request)
   }
   export const isConsumer = (store: Store<any>): boolean => {
     return StoreHelpers.get(store, name, _Getters.isConsumer)

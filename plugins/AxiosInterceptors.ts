@@ -1,4 +1,5 @@
 import { api } from '~/api/Axios'
+import * as Error from '~/store/modules/Error'
 
 export default function createInterceptors() {
   return (store) => {
@@ -14,8 +15,11 @@ export default function createInterceptors() {
             // @ts-ignore
             window.$nuxt.$router.replace('/forbidden')
             break
+          case 409:
+            Error.Helpers.setConflict(store, error)
+            return Promise.reject(error)
           default:
-            store.commit('error/SET_ERROR', error.response, { root: true })
+            Error.Helpers.setError(store, error)
             return Promise.reject(error)
         }
       }

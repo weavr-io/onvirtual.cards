@@ -1,5 +1,13 @@
 <template>
   <div>
+    <div v-if="hasConflict">
+      <div class="error-alert" role="alert">
+        <p>{{ conflictMessage }}</p>
+        <button @click="onClose">
+          <img src="/img/close.svg" width="16" alt="" />
+        </button>
+      </div>
+    </div>
     <div v-if="hasError">
       <div class="error-alert" role="alert">
         <p>
@@ -30,7 +38,11 @@ export interface ErrorLink {
 
 @Component
 class ErrorAlert extends Vue {
-  @Error.Getter errors
+  @Error.Getter errors: any
+
+  @Error.Getter conflict: any
+
+  @Error.Getter conflictMessage?: string
 
   @Error.Action resetErrors
 
@@ -44,6 +56,10 @@ class ErrorAlert extends Vue {
 
   get hasError(): boolean {
     return this.errors != null
+  }
+
+  get hasConflict(): boolean {
+    return this.conflict != null
   }
 
   get errorMessage(): string {
