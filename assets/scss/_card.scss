@@ -85,5 +85,9 @@
     .card-header:first-child {
       border-radius: 1rem 1rem 0 0;
     }
+
+    .card-footer:last-child {
+      border-radius: 0 0 1rem 1rem;
+    }
   }
 }
