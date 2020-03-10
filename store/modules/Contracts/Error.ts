@@ -3,6 +3,7 @@ import { Store } from '~/node_modules/vuex'
 import { StoreHelpers } from '~/helpers/StoreHelpers'
 import { ValidatePasswordConflict } from '~/api/Conflicts/Responses/Password/ValidatePasswordConflict'
 import { ConflictResponse } from '~/api/Conflicts/Responses/ConflictResponse'
+import { VerifyEmailRequestConflict } from '~/api/Conflicts/Responses/Corporates/Emails/VerifyEmailRequestConflict'
 
 export const name = 'error'
 
@@ -16,7 +17,7 @@ export const types = {
 
 export interface State {
   errors: any
-  conflict: null | ValidatePasswordConflict | ConflictResponse
+  conflict: null | ValidatePasswordConflict | ConflictResponse | VerifyEmailRequestConflict
 }
 
 export enum _Actions {

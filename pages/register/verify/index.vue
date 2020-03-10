@@ -20,6 +20,7 @@
                 <!--              <b-form-group label="Email:">-->
                 <!--                <b-form-input v-model="request.request.emailAddress" type="email" />-->
                 <!--              </b-form-group>-->
+                <error-alert class="mt-3" />
                 <b-row>
                   <b-col md="8" offset-md="2">
                     <b-form-group label="">

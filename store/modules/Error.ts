@@ -3,6 +3,7 @@ import { RootState } from 'store'
 import { AxiosError } from 'axios'
 import { Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Error'
 import { ValidatePasswordConflictErrorCode } from '~/api/Conflicts/Codes/Password/ValidatePasswordConflictErrorCode'
+import { VerifyEmailRequestConflictErrorCode } from '~/api/Conflicts/Codes/Corporates/Emails/VerifyEmailRequestConflictErrorCode'
 
 export { name, namespaced, Helpers }
 
@@ -44,6 +45,8 @@ export const getters: GetterTree<State, RootState> = {
           return 'Password is too simple.'
         case ValidatePasswordConflictErrorCode.UNRESOLVED_IDENTITY:
           return 'UNRESOLVED_IDENTITY'
+        case VerifyEmailRequestConflictErrorCode.INVALID_NONCE_OR_EMAIL:
+          return 'The verification code entered is invalid.'
         default:
           return 'An error occurred. Please try again.'
       }
