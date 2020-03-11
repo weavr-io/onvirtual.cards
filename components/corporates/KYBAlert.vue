@@ -8,7 +8,7 @@
               Your account is currently restricted.
             </h4>
             <h5 class="font-weight-lighter">
-              You can lift your restriction
+              We are required by financial services regulations to verify some details about your company before allowing you to transact with your account.  For a list of the information we need, please click
               <b-link to="/managed-accounts/kyb" class="link"> here </b-link>.
             </h5>
           </div>

@@ -5,11 +5,18 @@
     </h3>
 
     <b-form-group label="Company Name:">
-      <b-form-input :state="isInvalid($v.form.companyName)" v-model="$v.form.companyName.$model" placeholder="Company Name" />
+      <b-form-input
+        :state="isInvalid($v.form.companyName)"
+        v-model="$v.form.companyName.$model"
+        placeholder="Company Name"
+      />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Company Registration Number:">
-      <b-form-input :state="isInvalid($v.form.companyRegistrationNumber)" v-model="$v.form.companyRegistrationNumber.$model" />
+      <b-form-input
+        :state="isInvalid($v.form.companyRegistrationNumber)"
+        v-model="$v.form.companyRegistrationNumber.$model"
+      />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Company Registration Address:">
@@ -31,15 +38,16 @@
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Company Registration Date:">
-      <b-form-input
-        :state="isInvalid($v.form.companyRegistrationDate)"
+      <flat-pickr
         v-model="companyRegistrationDate"
-        @update="updatedCompanyRegistrationDate"
-        type="date"
+        :config="config"
+        @on-close="updatedCompanyRegistrationDate"
+        class="form-control bg-transparent"
       />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+      <b-form-invalid-feedback :state="isInvalid($v.form.companyRegistrationDate)">
+        This field is required.
+      </b-form-invalid-feedback>
     </b-form-group>
-    <pre>{{ $v.form.companyRegistrationDate.$model }}</pre>
     <b-form-row>
       <b-col>
         <b-form-group>
@@ -64,7 +72,7 @@
 </template>
 <script lang="ts">
 import { Component, Emit, namespace } from 'nuxt-property-decorator'
-import { required, maxLength, email, sameAs } from 'vuelidate/lib/validators'
+import { required, maxLength, email, sameAs, maxValue } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
@@ -92,7 +100,8 @@ const Corporates = namespace(CorporatesStore.name)
         maxLength: maxLength(2)
       },
       companyRegistrationDate: {
-        required
+        required,
+        maxValue: maxValue(new Date())
       },
       acceptedTerms: {
         required,
@@ -114,6 +123,19 @@ export default class CompanyDetailsForm extends VueWithRouter {
   @Corporates.Getter isLoading
 
   public companyRegistrationDate = ''
+
+  get config() {
+    return {
+      wrap: false,
+      enableTime: false,
+      altInput: true,
+      altFormat: 'd/m/Y',
+      maxDate: new Date(),
+      locale: {
+        firstDayOfWeek: 1
+      }
+    }
+  }
 
   get countiesOptions() {
     return Countries.map((_c) => {

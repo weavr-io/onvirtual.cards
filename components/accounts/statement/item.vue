@@ -24,7 +24,7 @@
               Purchase (Pending)
             </template>
             <template v-else>
-              {{ transaction.txId.type }}
+              {{ transaction.txId.type | weavr_lowercase }}
             </template>
           </div>
         </div>

@@ -43,7 +43,7 @@ export module ManagedCardsSchemas {
     renewalType: string
     creationTimestamp: string
     action: any[]
-    cardholderMobileNumber?: string
+    cardholderMobileNumber: string
   }
 
   export interface ManagedCardStatementRequest {

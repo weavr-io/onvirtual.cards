@@ -145,7 +145,7 @@ export default class CardsPage extends VueWithRouter {
         } catch (e) {}
       })
       .catch((err) => {
-        this.screen = 0
+        this.screen = 1
 
         const data = err.response.data
 

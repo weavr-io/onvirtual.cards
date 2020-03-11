@@ -58,6 +58,7 @@
     border-left: 0 !important;
     border-right: 0 !important;
     border-top: 0 !important;
+    //border-color: $input-border-color !important;
   }
 
   .input-tel__label, .country-selector__label{
@@ -68,6 +69,16 @@
 select {
   &:invalid {
     color: $input-placeholder-color;
+  }
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }
 

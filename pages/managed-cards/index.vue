@@ -28,7 +28,7 @@
         </b-row>
         <b-row v-if="hasCards" cols="1" cols-md="3">
           <b-col v-for="(card, key) in cards" :key="key">
-            <weavr-card :card="card" no-body class="mb-3" />
+            <weavr-card :card="card" no-body class="mb-5" />
           </b-col>
         </b-row>
       </b-container>

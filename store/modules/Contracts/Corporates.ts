@@ -2,8 +2,6 @@ import { ActionTree, ActionContext } from 'vuex'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import { SendEmailRequest } from '~/api/Requests/SendEmailRequest'
 import { Store } from '~/node_modules/vuex'
-import { CreateConsumerRequest } from '~/api/Requests/Consumers/CreateConsumerRequest'
-import { AxiosPromise } from '~/node_modules/axios'
 import { StoreHelpers } from '~/helpers/StoreHelpers'
 
 export const name = 'corporates'

@@ -35,7 +35,7 @@
           <b-col>
             <b-form-group :state="isInvalid($v.request.amount)" :invalid-feedback="invalidMessage" label="Amount:">
               <b-input-group :prepend="accountDetails.currency">
-                <b-form-input v-model="$v.request.amount.$model" type="number" step="0.01" />
+                <b-form-input v-model="$v.request.amount.$model" type="number" step="0.01" min="1" />
               </b-input-group>
             </b-form-group>
           </b-col>
@@ -94,7 +94,7 @@ export default class TopUpForm extends VueWithRouter {
   public request: {
     amount: number | null
   } = {
-    amount: null
+    amount: 1
   }
 
   get accountDetails() {

@@ -4,19 +4,27 @@
       Register
     </h3>
     <b-form-group label="Username:">
-      <b-form-input v-model="$v.form.rootUsername.$model" :state="isInvalid($v.form.rootUsername)" placeholder="Username" />
+      <b-form-input
+              v-model="$v.form.rootUsername.$model"
+              :state="isInvalid($v.form.rootUsername)"
+              placeholder="Username"
+      />
       <b-form-invalid-feedback>Only numbers and latin letters are accepted.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group :state="isInvalid($v.form.rootEmail)" label="Email:">
-      <b-form-input v-model="$v.form.rootEmail.$model" :state="isInvalid($v.form.rootEmail)" placeholder="name@email.com" />
+      <b-form-input
+              v-model="$v.form.rootEmail.$model"
+              :state="isInvalid($v.form.rootEmail)"
+              placeholder="name@email.com"
+      />
       <b-form-invalid-feedback>An email address must contain a single @.</b-form-invalid-feedback>
     </b-form-group>
     <client-only placeholder="Loading...">
       <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
         <label class="d-block">PASSWORD:</label>
         <weavr-input
-          :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-          :base-style="{
+                :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                :base-style="{
             color: '#000',
             fontSize: '13px',
             fontSmoothing: 'antialiased',
@@ -30,12 +38,13 @@
               fontWeight: '200'
             }
           }"
-          @onKeyUp="checkOnKeyUp"
-          class-name="sign-in-password"
-          name="password"
-          field="password"
-          required="true"
+                @onKeyUp="checkOnKeyUp"
+                class-name="sign-in-password"
+                name="password"
+                field="password"
+                required="true"
         />
+        <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
       </weavr-form>
     </client-only>
     <b-form-row class="mt-6">
@@ -51,9 +60,14 @@
 <script lang="ts">
 import { Component, Emit, Prop } from 'nuxt-property-decorator'
 import { required, helpers, email, maxLength } from 'vuelidate/lib/validators'
+import { namespace } from 'vuex-class'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
+import * as AuthStore from '~/store/modules/Auth'
+import * as ErrorStore from '~/store/modules/Error'
+import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
+import config from '~/config'
 
 @Component({
   validations: {
@@ -61,8 +75,8 @@ import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
       rootUsername: {
         required,
         rootUsername: helpers.regex(
-          'rootUsername',
-          /^[a-zA-Z0-9_.*@-]*$|^[a-zA-Z0-9.!#$%&*+\/=?^_|~-]+@[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*$/
+                'rootUsername',
+                /^[a-zA-Z0-9_.*@-]*$|^[a-zA-Z0-9.!#$%&*+\/=?^_|~-]+@[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*$/
         ),
         maxLength: maxLength(20)
       },
@@ -98,24 +112,37 @@ export default class RegisterForm1 extends VueWithRouter {
 
     const form: WeavrForm = this.$refs.passwordForm as WeavrForm
     form.tokenize(
-      (tokens) => {
-        if (tokens.password !== '') {
-          this.form.password = tokens.password
+            (tokens) => {
+              if (tokens.password !== '') {
+                this.form.password = tokens.password
 
-          this.submitForm(e)
-        } else {
-          return null
-        }
-      },
-      (e) => {
-        console.error(e)
-        return null
-      }
+                this.validatePassword()
+              } else {
+                return null
+              }
+            },
+            (e) => {
+              console.error(e)
+              return null
+            }
     )
   }
 
+  validatePassword() {
+    const _request: ValidatePasswordRequest = {
+      identityProfileId: config.profileId.corporates ?? '',
+      credentialType: 'ROOT',
+      password: {
+        value: this.form.password
+      }
+    }
+
+    AuthStore.Helpers.validatePassword(this.$store, _request).then(this.submitForm.bind(this))
+  }
+
   @Emit()
-  submitForm(e) {
+  submitForm() {
+    ErrorStore.Helpers.resetErrors(this.$store)
     return this.form
   }
 

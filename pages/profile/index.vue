@@ -11,33 +11,35 @@
               <template v-slot:header>
                 <h4 class="mb-0">{{ corporate.name }}</h4>
               </template>
-              <b-list-group flush>
-                <b-list-group-item class="flex-column align-items-start">
-                  <div class="d-flex w-100 justify-content-between">
-                    <p class="m-0">
-                      Name
-                    </p>
-                    <p class="m-0">
-                      {{ corporate.name }}
-                    </p>
-                  </div>
-                </b-list-group-item>
-                <b-list-group-item class="flex-column align-items-start">
-                  <div class="d-flex w-100 justify-content-between">
-                    <p class="m-0">
-                      Email
-                    </p>
-                    <p class="m-0">
-                      {{ corporate.supportEmail }}
-                    </p>
-                  </div>
-                </b-list-group-item>
-              </b-list-group>
-              <b-card-body>
+              <b-card-body class="p-1">
+                <b-list-group flush>
+                  <b-list-group-item class="flex-column align-items-start ">
+                    <div class="d-flex w-100 justify-content-between">
+                      <p class="m-0">
+                        Name
+                      </p>
+                      <p class="m-0">
+                        {{ corporate.name }}
+                      </p>
+                    </div>
+                  </b-list-group-item>
+                  <b-list-group-item class="flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <p class="m-0">
+                        Email
+                      </p>
+                      <p class="m-0">
+                        {{ corporate.supportEmail }}
+                      </p>
+                    </div>
+                  </b-list-group-item>
+                </b-list-group>
+              </b-card-body>
+              <b-card-footer class="py-4">
                 <b-link to="/profile/password/change" class="link">
                   Change Password
                 </b-link>
-              </b-card-body>
+              </b-card-footer>
             </b-card>
           </template>
         </b-col>

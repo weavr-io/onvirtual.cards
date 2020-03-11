@@ -7,8 +7,5 @@ export interface UpdatePassword {
     oldPassword: {
       value: string
     }
-    confirmPassword?: {
-      value: string
-    }
   }
 }

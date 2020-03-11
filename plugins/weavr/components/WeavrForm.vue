@@ -5,10 +5,11 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
+import { SecureForm } from '~/plugins/weavr/components/api'
 
 @Component
 class WeavrForm extends Vue {
-  public form
+  public form!: SecureForm
 
   protected _inputs
 

@@ -57,6 +57,7 @@
                       required="true"
                     />
                   </weavr-form>
+                  <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </client-only>
                 <div class="text-center">
                   <loader-button :is-loading="isLoading" button-text="Set Password" class="mt-5" />
@@ -82,6 +83,8 @@ import * as AuthStore from '~/store/modules/Auth'
 import { LostPasswordValidateRequest } from '~/api/Requests/Auth/LostPasswordValidateRequest'
 import { LostPasswordContinueRequest } from '~/api/Requests/Auth/LostPasswordContinueRequest'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
+import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
+import config from '~/config'
 
 const Auth = namespace(AuthStore.name)
 
@@ -146,10 +149,7 @@ export default class PasswordSentPage extends BaseVue {
       (tokens) => {
         if (tokens.password !== '') {
           this.form.password.value = tokens.password
-
-          AuthStore.Helpers.lostPasswordResume(this.$store, this.form).then(() => {
-            this.$router.push('/login')
-          })
+          this.validatePassword()
         } else {
           return null
         }
@@ -159,6 +159,31 @@ export default class PasswordSentPage extends BaseVue {
         return null
       }
     )
+  }
+
+  validatePassword() {
+    const _request: ValidatePasswordRequest = {
+      identityProfileId: config.profileId.corporates ?? '',
+      credentialType: 'ROOT',
+      password: {
+        value: this.form.password.value ?? ''
+      }
+    }
+
+    AuthStore.Helpers.validatePassword(this.$store, _request).then(this.submitForm.bind(this))
+  }
+
+  submitForm(){
+    AuthStore.Helpers.lostPasswordResume(this.$store, this.form).then(() => {
+      this.$router.push('/login')
+    })
+  }
+
+  checkOnKeyUp(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      this.setPassword(e)
+    }
   }
 }
 </script>
