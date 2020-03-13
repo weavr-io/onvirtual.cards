@@ -10,11 +10,11 @@ export default function createInterceptors() {
             store.commit('auth/LOGOUT', error.response, { root: true })
             // @ts-ignore
             window.$nuxt.$router.push('/login')
-            break
+            return Promise.resolve()
           case 403:
             // @ts-ignore
             window.$nuxt.$router.replace('/forbidden')
-            break
+            return Promise.resolve()
           case 409:
             Error.Helpers.setConflict(store, error)
             return Promise.reject(error)

@@ -3,22 +3,28 @@
     <b-container>
       <b-row class="border-bottom mb-3">
         <b-col>
-          <h3 class="font-weight-light">Users</h3>
+          <h3 class="font-weight-light">
+            Users
+          </h3>
         </b-col>
       </b-row>
       <b-row class="mb-5">
         <b-col class="text-right">
-<!--          <b-button to="/users/add" variant="border-primary">+ invite user</b-button>-->
+          <b-button to="/users/add" variant="border-primary">
+            + invite user
+          </b-button>
         </b-col>
       </b-row>
     </b-container>
     <b-container v-if="users">
       <b-row v-for="(user, key) in users.user" :key="key" class="mt-3" align-v="center">
         <b-col cols="1">
-          <b-img v-bind="mainProps" rounded :alt="user.name + ' ' + user.surname"></b-img>
+          <b-img v-bind="mainProps" :alt="user.name + ' ' + user.surname" rounded />
         </b-col>
         <b-col>{{ user.name }} {{ user.surname }}</b-col>
-        <b-col class="text-muted font-weight-light">{{user.email}}</b-col>
+        <b-col class="text-muted font-weight-light">
+          {{ user.email }}
+        </b-col>
         <!-- <b-col class="text-muted font-weight-light">{{user.type}}</b-col> -->
       </b-row>
     </b-container>
@@ -46,7 +52,7 @@ export default class CardsPage extends VueWithRouter {
   @Corporates.Getter users
 
   asyncData({ store }) {
-    let _corporateId = store.getters['auth/identityId']
+    const _corporateId = store.getters['auth/identityId']
     return store.dispatch('corporates/getUsers', _corporateId)
   }
 }
