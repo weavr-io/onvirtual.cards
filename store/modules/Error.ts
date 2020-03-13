@@ -41,6 +41,8 @@ export const getters: GetterTree<State, RootState> = {
           return 'Username already exists in the system. Please try a different username.'
         case 'INVALID_NONCE_OR_MOBILE':
           return 'There is something wrong with your nonce or mobile.'
+        case 'PASSWORD_INCORRECT':
+          return 'Password is incorrect.'
         case 'FAILED_LOGIN':
           return 'Incorrect username and password combination. If you do not have an account please click on Register.'
         case ValidatePasswordConflictErrorCode.PASSWORD_PROFILE_NOT_CONFIGURED_FOR_CREDENTIAL_TYPE:

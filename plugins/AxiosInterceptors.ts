@@ -7,7 +7,7 @@ export default function createInterceptors() {
       if (error.response) {
         switch (error.response.status) {
           case 401:
-            store.commit('auth/LOGOUT', error.resxponse, { root: true })
+            store.commit('auth/LOGOUT', error.response, { root: true })
             // @ts-ignore
             window.$nuxt.$router.push('/login')
             break
