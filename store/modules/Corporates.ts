@@ -117,5 +117,11 @@ export const actions: Actions<State, RootState> = {
     } else {
       return Promise.resolve()
     }
+  },
+  validateInvite(ctxt, request) {
+    return api.post('/app/api/corporates/' + request.id + '/invites/validate', request.body)
+  },
+  consumeInvite(ctxt, request) {
+    return api.post('/app/api/corporates/' + request.id + '/invites/consume', request.body)
   }
 }

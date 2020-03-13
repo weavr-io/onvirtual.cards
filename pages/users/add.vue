@@ -111,7 +111,7 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as AuthStore from '~/store/modules/Auth'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
-import { _Requests } from '~/store/modules/Contracts/Corporates'
+import { SendVerificationEmailRequest } from '~/api/Requests/Corporates/SendVerificationEmailRequest'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -209,7 +209,7 @@ export default class AddCardPage extends VueWithRouter {
   }
 
   userAdded() {
-    const _request: _Requests.sendVerificationEmailFull = {
+    const _request: SendVerificationEmailRequest = {
       body: {
         emailAddress: this.request.request.email
       },
