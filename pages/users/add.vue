@@ -10,6 +10,7 @@
       </b-row>
       <b-row>
         <b-col md="6" offset-md="3">
+          <error-alert />
           <b-form @submit="doAdd">
             <b-form-row>
               <b-col>
@@ -67,7 +68,7 @@
             </b-form-row>
             <b-form-row>
               <b-col>
-                <b-form-group label="Company Positions:">
+                <b-form-group label="Company Position:">
                   <b-form-input
                     v-model="$v.request.request.companyPosition.$model"
                     :state="isInvalid($v.request.request.companyPosition)"

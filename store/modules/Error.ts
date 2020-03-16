@@ -34,7 +34,9 @@ export const getters: GetterTree<State, RootState> = {
       switch (_errCode) {
         case 'ROOT_EMAIL_NOT_UNIQUE':
         case 'EMAIL_NOT_UNIQUE':
-          return 'This email address already exists in the system.  Do you want to log in instead?'
+          return 'This email address already exists in the system.'
+        case 'USERNAME_NOT_UNIQUE':
+          return 'This username already exists in the system.'
         case 'INVALID_CREDENTIALS':
           return 'Invalid Credentials'
         case 'ROOT_USERNAME_NOT_UNIQUE':
