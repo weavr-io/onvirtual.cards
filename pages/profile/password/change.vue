@@ -63,6 +63,7 @@
                     field="password"
                     required="true"
                   />
+                  <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </weavr-form>
               </client-only>
 
