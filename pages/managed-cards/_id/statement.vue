@@ -299,7 +299,7 @@ export default class ManagedCardsTable extends Vue {
 }
 
 .card-view-details {
-  background: #c3b5ff;
+  background: #F0EDDE;
   border-radius: 10px;
   padding: 10px;
   text-align: center;
