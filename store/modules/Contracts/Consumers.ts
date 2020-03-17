@@ -6,6 +6,7 @@ import { StoreHelpers } from '~/helpers/StoreHelpers'
 import { SendVerificationEmail } from '~/api/Requests/Consumers/SendVerificationEmail'
 import { SendVerificationMobile } from '~/api/Requests/Consumers/SendVerificationMobile'
 import { VerifyMobileRequest } from '~/api/Requests/Consumers/VerifyMobileRequest'
+import { InitFullKycProcessResponse } from '~/api/Responses/Consumers/InitFullKycProcessResponse'
 
 export const name = 'consumers'
 
@@ -27,7 +28,8 @@ export enum _Actions {
   sendVerificationCodeEmail = 'sendVerificationCodeEmail',
   sendVerificationCodeMobile = 'sendVerificationCodeMobile',
   verifyMobile = 'verifyMobile',
-  checkKYC = 'checkKYC'
+  checkKYC = 'checkKYC',
+  startKYC = 'startKYC'
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
@@ -37,6 +39,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
   [_Actions.sendVerificationCodeMobile](context: ActionContext<S, R>, request: SendVerificationMobile): AxiosPromise
   [_Actions.verifyMobile](context: ActionContext<S, R>, request: VerifyMobileRequest): AxiosPromise
   [_Actions.checkKYC](context: ActionContext<S, R>): Promise<any>
+  [_Actions.startKYC](context: ActionContext<S, R>, consumerId): AxiosPromise<InitFullKycProcessResponse>
 }
 
 export module Helpers {
@@ -57,5 +60,8 @@ export module Helpers {
   }
   export const checkKYC = (store: Store<any>): Promise<any> => {
     return StoreHelpers.dispatch(store, name, _Actions.checkKYC)
+  }
+  export const startKYC = (store: Store<any>, consumerId): AxiosPromise<InitFullKycProcessResponse> => {
+    return StoreHelpers.dispatch(store, name, _Actions.startKYC, consumerId)
   }
 }

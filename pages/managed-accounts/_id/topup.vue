@@ -10,7 +10,7 @@
               </h2>
             </b-col>
           </b-row>
-          <b-row class="pt-4" v-if="account.bankAccountDetails.paymentReference">
+          <b-row v-if="account.bankAccountDetails.paymentReference" class="pt-4">
             <b-col>
               <b-alert show variant="warning">
                 Please remember to include payment reference.
@@ -92,8 +92,11 @@ export default class AccountTopupPage extends VueWithRouter {
     const accountId = route.params.id
     let approved = false
 
+    const _isConsumer = store.getters['auth/isConsumer']
+    const _isCorporate = store.getters['auth/isCorporate']
+
     if (config.app.kyb_required === true) {
-      if (store.getters['auth/isConsumer']) {
+      if (_isConsumer) {
         await ConsumersStore.Helpers.checkKYC(store).then(
           () => {
             approved = true
@@ -103,7 +106,7 @@ export default class AccountTopupPage extends VueWithRouter {
           }
         )
       }
-      if (store.getters['auth/isCorporate']) {
+      if (_isCorporate) {
         await CorporatesStore.Helpers.checkKYB(store).then(
           () => {
             approved = true
@@ -120,7 +123,12 @@ export default class AccountTopupPage extends VueWithRouter {
     if (approved) {
       await AccountsStore.Helpers.get(store, accountId)
     } else {
-      redirect('/managed-accounts/kyb')
+      if (_isConsumer) {
+        redirect('/managed-accounts/kyc')
+      }
+      if (_isCorporate) {
+        redirect('/managed-accounts/kyb')
+      }
     }
 
     return { accountId: accountId, approved: approved }

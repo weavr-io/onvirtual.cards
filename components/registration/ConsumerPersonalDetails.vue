@@ -3,19 +3,29 @@
     <h3 class="text-center font-weight-light mb-5">
       Personal Details
     </h3>
-    <b-form-group :state="isInvalid($v.form.rootName)" label="First Name:">
-      <b-form-input v-model="form.rootName" />
+    <b-form-group label="First Name:">
+      <b-form-input v-model="form.rootName" :state="isInvalid($v.form.rootName)" />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootSurname)" label="Last Name:">
-      <b-form-input v-model="form.rootSurname" />
+    <b-form-group label="Last Name:">
+      <b-form-input :state="isInvalid($v.form.rootSurname)" v-model="form.rootSurname" />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootMobileCountryCode)" label="Mobile Country Code:">
-      <b-input-group prepend="+">
-        <b-form-input v-model="form.rootMobileCountryCode" />
-      </b-input-group>
-    </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootMobileNumber)" label="Mobile Number:">
-      <b-form-input v-model="form.rootMobileNumber" />
+    <b-form-group label="MOBILE NUMBER:">
+      <vue-phone-number-input
+        v-model="rootMobileNumber"
+        @update="phoneUpdate"
+        :only-countries="mobileCountries"
+        :border-radius="0"
+        :error="numberIsValid === false"
+        color="#F50E4C"
+        error-color="#F50E4C"
+        valid-color="#6D7490"
+        default-country-code="GB"
+      />
+      <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
+        This field must be a valid mobile number.
+      </b-form-invalid-feedback>
     </b-form-group>
     <b-form-row class="mt-6">
       <b-col md="4">
@@ -36,6 +46,8 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import * as ConsumersStore from '~/store/modules/Consumers'
+
+const Countries = require('~/static/json/countries.json')
 
 const Consumers = namespace(ConsumersStore.name)
 
@@ -65,6 +77,9 @@ const Consumers = namespace(ConsumersStore.name)
 export default class PersonalDetailsForm extends VueWithRouter {
   $v
 
+  rootMobileNumber = ''
+  numberIsValid: boolean | null = null
+
   @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
 
   @Consumers.Getter isLoading!: boolean
@@ -74,6 +89,12 @@ export default class PersonalDetailsForm extends VueWithRouter {
     { value: 'Mrs', text: 'Mrs' },
     { value: 'Ms', text: 'Ms' }
   ]
+
+  get mobileCountries(): string[] {
+    return Countries.map((_c) => {
+      return _c['alpha-2']
+    })
+  }
 
   public form = {
     rootName: '',
@@ -88,9 +109,13 @@ export default class PersonalDetailsForm extends VueWithRouter {
   submitForm(e) {
     e.preventDefault()
 
+    if (this.numberIsValid === null) {
+      this.numberIsValid = false
+    }
+
     if (this.$v.form) {
       this.$v.form.$touch()
-      if (this.$v.form.$anyError) {
+      if (this.$v.form.$anyError || !this.numberIsValid) {
         return null
       }
     }
@@ -101,6 +126,12 @@ export default class PersonalDetailsForm extends VueWithRouter {
   @Emit()
   goBack(e) {
     e.preventDefault()
+  }
+
+  phoneUpdate(number) {
+    this.form.rootMobileCountryCode = '+' + number.countryCallingCode
+    this.form.rootMobileNumber = number.nationalNumber
+    this.numberIsValid = number.isValid
   }
 }
 </script>

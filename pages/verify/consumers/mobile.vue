@@ -15,20 +15,43 @@
             <b-card class="py-5">
               <error-alert />
               <form id="form-send-verification" @submit="sendVerificationCodeMobile" v-if="!sent">
-                <b-form-group label="Mobile Country Code:">
-                  <b-form-input v-model="request.request.mobileCountryCode" />
-                </b-form-group>
-                <b-form-group label="Mobile Number:">
-                  <b-form-input v-model="request.request.mobileNumber" />
+                <b-form-group label="MOBILE NUMBER:">
+                  <vue-phone-number-input
+                    :value="mobile.number"
+                    @update="phoneUpdate"
+                    :only-countries="mobileCountries"
+                    :defaultCountryCode="mobile.countryCode"
+                    :border-radius="0"
+                    :error="numberIsValid === false"
+                    color="#F50E4C"
+                    error-color="#F50E4C"
+                    valid-color="#6D7490"
+                    default-country-code="GB"
+                  />
+                  <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
+                    This field must be a valid mobile number.
+                  </b-form-invalid-feedback>
                 </b-form-group>
                 <loader-button :is-loading="isLoading" button-text="Send" class="mt-5 text-right mb-0" />
               </form>
               <form id="form-verify" @submit="doVerify" v-if="sent">
-                <b-form-group label="Mobile Country Code:">
-                  <b-form-input v-model="request.request.mobileCountryCode" disabled />
-                </b-form-group>
-                <b-form-group label="Mobile Number:">
-                  <b-form-input v-model="request.request.mobileNumber" disabled />
+                <b-form-group label="MOBILE NUMBER:">
+                  <vue-phone-number-input
+                    :value="mobile.number"
+                    @update="phoneUpdate"
+                    :only-countries="mobileCountries"
+                    :defaultCountryCode="mobile.countryCode"
+                    :border-radius="0"
+                    :error="numberIsValid === false"
+                    color="#F50E4C"
+                    error-color="#F50E4C"
+                    valid-color="#6D7490"
+                    default-country-code="GB"
+                    disabled
+                  />
+                  <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
+                    This field must be a valid mobile number.
+                  </b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label="Validation Code:">
                   <b-form-input v-model="request.request.nonce" />
@@ -46,14 +69,15 @@
 <script lang="ts">
 import { namespace } from 'vuex-class'
 import { Component } from 'nuxt-property-decorator'
-import { Schemas } from '~/api/Schemas'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { VerifyMobileRequest } from '~/api/Requests/Consumers/VerifyMobileRequest'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 
-const Auth = namespace(AuthStore.name)
+const Countries = require('~/static/json/countries.json')
+
 const Consumers = namespace(ConsumersStore.name)
 
 @Component({
@@ -70,6 +94,19 @@ export default class EmailVerificationPage extends VueWithRouter {
   public request!: VerifyMobileRequest
 
   sent: boolean = false
+
+  mobile = {
+    countryCode: 'GB',
+    number: ''
+  }
+
+  numberIsValid: boolean | null = null
+
+  get mobileCountries(): string[] {
+    return Countries.map((_c) => {
+      return _c['alpha-2']
+    })
+  }
 
   async asyncData({ store }) {
     const request: VerifyMobileRequest = {
@@ -91,8 +128,16 @@ export default class EmailVerificationPage extends VueWithRouter {
       }
     }
 
+    const _mobileNumber = request.request.mobileCountryCode + request.request.mobileNumber
+    const _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
+
+    console.log(request)
     return {
-      request: request
+      request: request,
+      mobile: {
+        countryCode: _parsedNumber?.country,
+        number: request.request.mobileNumber
+      }
     }
   }
 
@@ -115,6 +160,13 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   goToDashboard() {
     this.$router.push('/')
+  }
+
+  phoneUpdate(number) {
+    this.$set(this.mobile, 'number', number.formatNational ? number.formatNational : number.phoneNumber)
+    this.request.request.mobileCountryCode = number.countryCallingCode
+    this.request.request.mobileNumber = number.nationalNumber
+    this.numberIsValid = number.isValid
   }
 }
 </script>

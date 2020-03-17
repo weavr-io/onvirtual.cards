@@ -7,7 +7,7 @@
             <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
           </div>
           <b-card no-body class="overflow-hidden">
-            <!--            <registration-nav />-->
+            <registration-nav />
             <b-card-body class="p-6">
               <div class="form-screens">
                 <error-alert />
@@ -139,8 +139,8 @@ export default class RegistrationPage extends VueWithRouter {
     this.registrationRequest.companyBusinessAddress = this.registrationRequest.companyRegistrationAddress
 
     this.register(this.registrationRequest)
-      .then(this.doCreateCorporatePasswordIdentity.bind(this))
-      .catch(this.registrationFailed.bind(this))
+            .then(this.doCreateCorporatePasswordIdentity.bind(this))
+            .catch(this.registrationFailed.bind(this))
   }
 
   registrationFailed(err) {

@@ -88,5 +88,8 @@ export const actions: Actions<State, RootState> = {
     if (!_res) {
       return Promise.reject(new Error('KYC not approved'))
     }
+  },
+  startKYC({}, consumerId) {
+    return api.post('/app/api/consumers/' + consumerId + '/kyc/start', {})
   }
 }
