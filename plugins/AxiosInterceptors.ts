@@ -22,10 +22,8 @@ export default function createInterceptors() {
             Error.Helpers.setError(store, error)
             break
         }
-        return Promise.reject(error)
-      } else {
-        return Promise.reject(error)
       }
+      return Promise.reject(error)
     }
 
     api.interceptors.request.use(undefined, onError)
