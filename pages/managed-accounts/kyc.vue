@@ -32,10 +32,10 @@ export default class KycPage extends VueWithRouter {
   mounted() {
     super.mounted()
 
-    // window.addEventListener('message', receiveMessage, false)
-    // function receiveMessage(event) {
-    //   console.log(event)
-    // }
+    window.addEventListener('message', receiveMessage, false)
+    function receiveMessage(event) {
+      console.log(event)
+    }
   }
 }
 </script>

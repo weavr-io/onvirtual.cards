@@ -14,6 +14,9 @@
                   {{ corporate.name }}
                 </template>
               </template>
+              <b-dropdown-item to="/managed-accounts/kyc" v-if="isConsumer">
+                Start KYC
+              </b-dropdown-item>
               <b-dropdown-item to="/profile">
                 Profile
               </b-dropdown-item>
