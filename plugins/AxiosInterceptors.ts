@@ -3,11 +3,11 @@ import * as Error from '~/store/modules/Error'
 
 export default function createInterceptors() {
   return (store) => {
-    function onError(error) {
+    function onError(error): Promise<any> {
       if (error.response) {
         switch (error.response.status) {
           case 401:
-            store.commit('auth/LOGOUT', error.resxponse, { root: true })
+            store.commit('auth/LOGOUT', error.response, { root: true })
             // @ts-ignore
             window.$nuxt.$router.push('/login')
             break
@@ -17,12 +17,13 @@ export default function createInterceptors() {
             break
           case 409:
             Error.Helpers.setConflict(store, error)
-            return Promise.reject(error)
+            break
           default:
             Error.Helpers.setError(store, error)
-            return Promise.reject(error)
+            break
         }
       }
+      return Promise.reject(error)
     }
 
     api.interceptors.request.use(undefined, onError)

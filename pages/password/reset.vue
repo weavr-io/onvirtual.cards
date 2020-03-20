@@ -10,7 +10,7 @@
                   Reset Password
                 </h2>
                 <h5 class="font-weight-lighter mt-4">
-                  Insert the email you created the account with and we’ll send you a reset link.
+                  Insert the email you created the account with and we’ll send instructions to reset your password.
                 </h5>
               </div>
               <error-alert />
@@ -29,10 +29,11 @@
                     class="form-control"
                     type="email"
                     name="setEmail"
+                    placeholder="name@email.com"
                   />
                 </b-form-group>
                 <div class="form-group mt-5 pt-1">
-                  <loader-button :is-loading="isLoading" button-text="send reset link" class="text-center" />
+                  <loader-button :is-loading="isLoading" button-text="reset password" class="text-center" />
                 </div>
               </b-form>
             </b-card-body>

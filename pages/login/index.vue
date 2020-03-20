@@ -44,11 +44,17 @@
                   />
                 </weavr-form>
               </client-only>
-              <loader-button :is-loading="isLoading" button-text="sign in" class="text-center mt-6" />
-              <div class="text-center mt-3">
-                <b-button to="/password/reset" variant="link" size="sm">
+              <div class="mt-2">
+                <b-link to="/password/reset" class="small text-decoration-underline text-grey">
                   Forgot password?
-                </b-button>
+                </b-link>
+              </div>
+              <loader-button :is-loading="isLoading" button-text="sign in" class="text-center mt-6" />
+              <div class="mt-4 text-center">
+                <small class="text-grey">
+                  Not yet registered? Register
+                  <b-link to="/register" class="text-decoration-underline text-grey">here</b-link>.
+                </small>
               </div>
             </form>
           </b-card>

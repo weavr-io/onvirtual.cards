@@ -1,8 +1,10 @@
 import { ActionTree, ActionContext } from 'vuex'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
-import { SendEmailRequest } from '~/api/Requests/SendEmailRequest'
 import { Store } from '~/node_modules/vuex'
 import { StoreHelpers } from '~/helpers/StoreHelpers'
+import { SendVerificationEmailRequest } from '~/api/Requests/Corporates/SendVerificationEmailRequest'
+import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
+import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
 
 export const name = 'corporates'
 
@@ -26,7 +28,9 @@ export enum _Actions {
   getUsers = 'getUsers',
   addUser = 'addUser',
   checkKYB = 'checkKYB',
-  sendVerificationCodeEmail = 'sendVerificationCodeEmail'
+  sendVerificationCodeEmail = 'sendVerificationCodeEmail',
+  validateInvite = 'validateInvite',
+  consumeInvite = 'consumeInvite'
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
@@ -40,24 +44,11 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 
   [_Actions.checkKYB](context: ActionContext<S, R>)
 
-  [_Actions.sendVerificationCodeEmail](context: ActionContext<S, R>, request: _Requests.sendVerificationEmailFull)
-}
+  [_Actions.sendVerificationCodeEmail](context: ActionContext<S, R>, request: SendVerificationEmailRequest)
 
-export module _Functions {
-  export interface sendVerificationCodeEmail {
-    (request: _Requests.sendVerificationEmailFull)
-  }
+  [_Actions.validateInvite](context: ActionContext<S, R>, request: ValidateCorporateUserInviteRequest)
 
-  export interface addUser {
-    (request: CorporatesSchemas.CreateCorporateUserFullRequest)
-  }
-}
-
-export module _Requests {
-  export interface sendVerificationEmailFull {
-    body: SendEmailRequest
-    corporateId: string
-  }
+  [_Actions.consumeInvite](context: ActionContext<S, R>, request: ConsumeCorporateUserInviteRequest)
 }
 
 export module Helpers {
@@ -76,7 +67,13 @@ export module Helpers {
   export const checkKYB = (store: Store<any>) => {
     return StoreHelpers.dispatch(store, name, _Actions.checkKYB)
   }
-  export const sendVerificationCodeEmail = (store: Store<any>, request: _Requests.sendVerificationEmailFull) => {
+  export const sendVerificationCodeEmail = (store: Store<any>, request: SendVerificationEmailRequest) => {
     return StoreHelpers.dispatch(store, name, _Actions.sendVerificationCodeEmail, request)
+  }
+  export const validateInvite = (store: Store<any>, request: ValidateCorporateUserInviteRequest) => {
+    return StoreHelpers.dispatch(store, name, _Actions.validateInvite, request)
+  }
+  export const consumeInvite = (store: Store<any>, request: ConsumeCorporateUserInviteRequest) => {
+    return StoreHelpers.dispatch(store, name, _Actions.consumeInvite, request)
   }
 }

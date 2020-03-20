@@ -1,0 +1,136 @@
+<template>
+  <section>
+    <b-container>
+      <b-row class="full-height-vh" align-v="center">
+        <b-col lg="6" offset-lg="3" class="my-6">
+          <div class="text-center pb-5">
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+          </div>
+          <b-card body-class="p-6">
+            <h3 class="text-center font-weight-light mb-6">
+              Accept Invite
+            </h3>
+            <error-alert />
+            <b-form @submit="tryToSubmitForm">
+              <client-only placeholder="Loading...">
+                <weavr-form ref="passwordForm">
+                  <label class="d-block">PASSWORD:</label>
+                  <weavr-input
+                    :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                    :base-style="{
+                      color: '#000',
+                      fontSize: '13px',
+                      fontSmoothing: 'antialiased',
+                      fontFamily: '\'Be Vietnam\', sans-serif',
+                      fontWeight: '300',
+                      margin: '0',
+                      padding: '0.375rem 0.75rem',
+                      textIndent: '0px',
+                      '::placeholder': {
+                        color: '#bbc0c8',
+                        fontWeight: '200'
+                      }
+                    }"
+                    @onKeyUp="checkOnKeyUp"
+                    class-name="sign-in-password"
+                    name="password"
+                    field="password"
+                    required="true"
+                  />
+                  <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
+                </weavr-form>
+              </client-only>
+              <b-form-row class="mt-6">
+                <b-col class="text-center">
+                  <b-button variant="secondary" type="submit">
+                    submit
+                    <span class="pl-5">-></span>
+                  </b-button>
+                </b-col>
+              </b-form-row>
+            </b-form>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
+  </section>
+</template>
+<script lang="ts">
+import { Component } from 'nuxt-property-decorator'
+import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
+import * as ErrorStore from '~/store/modules/Error'
+import * as CorporatesStore from '~/store/modules/Corporates'
+import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
+import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
+
+@Component({
+  layout: 'auth',
+  components: {
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+    LoaderButton: () => import('~/components/LoaderButton.vue')
+  }
+})
+export default class IniteConsume extends VueWithRouter {
+  protected form!: ConsumeCorporateUserInviteRequest
+
+  async asyncData(context) {
+    const _validateRequest: ValidateCorporateUserInviteRequest = {
+      id: context.route.query.corp.toString(),
+      body: {
+        nonce: context.route.query.nonce.toString(),
+        emailAddress: context.route.query.email.toString()
+      }
+    }
+
+    try {
+      await CorporatesStore.Helpers.validateInvite(context.store, _validateRequest)
+    } catch (e) {
+      ErrorStore.Helpers.setError(context.store, e.response)
+    }
+
+    const _consumeInviteRequest: ConsumeCorporateUserInviteRequest = {
+      id: _validateRequest.id,
+      body: {
+        ..._validateRequest.body,
+        password: {
+          value: ''
+        }
+      }
+    }
+
+    return {
+      form: _consumeInviteRequest
+    }
+  }
+
+  tryToSubmitForm(e) {
+    e.preventDefault()
+
+    const form: WeavrForm = this.$refs.passwordForm as WeavrForm
+    form.tokenize(
+      (tokens) => {
+        if (tokens.password !== '') {
+          this.form.body.password.value = tokens.password
+          CorporatesStore.Helpers.consumeInvite(this.$store, this.form).then(() => {
+            this.$router.push('/login')
+          })
+        } else {
+          return null
+        }
+      },
+      (e) => {
+        console.error(e)
+        return null
+      }
+    )
+  }
+
+  checkOnKeyUp(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      this.tryToSubmitForm(e)
+    }
+  }
+}
+</script>
