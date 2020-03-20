@@ -54,7 +54,7 @@
                   </b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label="Validation Code:">
-                  <b-form-input v-model="request.request.nonce" />
+                  <b-form-input v-model="verifyMobileRequest.request.nonce" />
                 </b-form-group>
                 <loader-button :is-loading="isLoading" button-text="Verify" class="mt-5 text-right mb-0" />
               </form>
@@ -91,7 +91,7 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   @Consumers.Getter consumer!: Consumer | null
 
-  public request!: VerifyMobileRequest
+  public verifyMobileRequest!: VerifyMobileRequest
 
   sent: boolean = false
 
@@ -131,9 +131,8 @@ export default class EmailVerificationPage extends VueWithRouter {
     const _mobileNumber = request.request.mobileCountryCode + request.request.mobileNumber
     const _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
 
-    console.log(request)
     return {
-      request: request,
+      verifyMobileRequest: request,
       mobile: {
         countryCode: _parsedNumber?.country,
         number: request.request.mobileNumber
@@ -143,14 +142,14 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   sendVerificationCodeMobile(evt) {
     evt.preventDefault()
-    ConsumersStore.Helpers.sendVerificationCodeMobile(this.$store, this.request).then(() => {
+    ConsumersStore.Helpers.sendVerificationCodeMobile(this.$store, this.verifyMobileRequest).then(() => {
       this.sent = true
     })
   }
 
   doVerify(evt) {
     evt.preventDefault()
-    ConsumersStore.Helpers.verifyMobile(this.$store, this.request).then(
+    ConsumersStore.Helpers.verifyMobile(this.$store, this.verifyMobileRequest).then(
       this.goToDashboard.bind(this),
       this.errorOccurred.bind(this)
     )
@@ -164,8 +163,8 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   phoneUpdate(number) {
     this.$set(this.mobile, 'number', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.request.request.mobileCountryCode = number.countryCallingCode
-    this.request.request.mobileNumber = number.nationalNumber
+    this.verifyMobileRequest.request.mobileCountryCode = number.countryCallingCode
+    this.verifyMobileRequest.request.mobileNumber = number.nationalNumber
     this.numberIsValid = number.isValid
   }
 }
