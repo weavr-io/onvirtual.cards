@@ -210,15 +210,7 @@ export default class AddCardPage extends VueWithRouter {
   }
 
   userAdded() {
-    const _request: SendVerificationEmailRequest = {
-      body: {
-        emailAddress: this.request.request.email
-      },
-      corporateId: this.request.corporateId
-    }
-    CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, _request).then(() => {
-      this.$router.push('/users')
-    })
+    this.$router.push('/users')
   }
 
   mounted() {

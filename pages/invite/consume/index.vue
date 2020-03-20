@@ -112,7 +112,9 @@ export default class IniteConsume extends VueWithRouter {
       (tokens) => {
         if (tokens.password !== '') {
           this.form.body.password.value = tokens.password
-          CorporatesStore.Helpers.consumeInvite(this.$store, this.form)
+          CorporatesStore.Helpers.consumeInvite(this.$store, this.form).then(() => {
+            this.$router.push('/login')
+          })
         } else {
           return null
         }
