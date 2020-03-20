@@ -27,7 +27,7 @@
                 <b-row>
                   <b-col md="6" offset-md="3">
                     <b-form-group label="">
-                      <b-form-input v-model="request.request.nonce" placeholder="0000" class="text-center" />
+                      <b-form-input v-model="verifyEmailRequest.request.nonce" placeholder="0000" class="text-center" />
                     </b-form-group>
                   </b-col>
                 </b-row>
@@ -74,7 +74,7 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   showEmailResentSuccess: boolean = false
 
-  public request!: Schemas.verifyEmailRequest
+  public verifyEmailRequest!: Schemas.verifyEmailRequest
 
   asyncData({ route, redirect }) {
     const request: Schemas.verifyEmailRequest = {
@@ -93,15 +93,15 @@ export default class EmailVerificationPage extends VueWithRouter {
     }
 
     return {
-      request: request
+      verifyEmailRequest: request
     }
   }
 
   sendVerifyEmail() {
     CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, {
-      corporateId: this.request.corporateId,
+      corporateId: this.verifyEmailRequest.corporateId,
       body: {
-        emailAddress: this.request.request.emailAddress
+        emailAddress: this.verifyEmailRequest.request.emailAddress
       }
     }).then(() => {
       this.showEmailResentSuccess = true
@@ -110,7 +110,7 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   doVerify(evt) {
     evt.preventDefault()
-    this.verifyEmail(this.request).then(this.goToLogin.bind(this))
+    this.verifyEmail(this.verifyEmailRequest).then(this.goToLogin.bind(this))
   }
 
   goToLogin() {

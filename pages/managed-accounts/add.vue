@@ -10,8 +10,8 @@
             <b-form @submit="doAdd">
               <b-form-row>
                 <b-col>
-                  <b-form-group :state="isInvalid($v.request.currency)" label="Currency:">
-                    <b-form-select v-model="request.currency" :options="currencyOptions" />
+                  <b-form-group :state="isInvalid($v.createManagedAccountRequest.currency)" label="Currency:">
+                    <b-form-select v-model="createManagedAccountRequest.currency" :options="currencyOptions" />
                   </b-form-group>
                 </b-col>
               </b-form-row>
@@ -45,7 +45,7 @@ const Accounts = namespace(AccountsStore.name)
     LoaderButton: () => import('~/components/LoaderButton.vue')
   },
   validations: {
-    request: {
+    createManagedAccountRequest: {
       friendlyName: {
         required,
         maxLength: maxLength(50)
@@ -68,19 +68,19 @@ export default class AddCardPage extends VueWithRouter {
     { value: 'GBP', text: 'GBP' }
   ]
 
-  public request!: ManagedAccountsSchemas.CreateManagedAccountRequest
+  public createManagedAccountRequest!: ManagedAccountsSchemas.CreateManagedAccountRequest
 
   doAdd(evt) {
     evt.preventDefault()
 
-    if (this.$v.request) {
-      this.$v.request.$touch()
-      if (this.$v.request.$anyError) {
+    if (this.$v.createManagedAccountRequest) {
+      this.$v.createManagedAccountRequest.$touch()
+      if (this.$v.createManagedAccountRequest.$anyError) {
         return
       }
     }
 
-    this.add(this.request)
+    this.add(this.createManagedAccountRequest)
       .then(() => {
         this.$router.push('/managed-accounts')
       })
@@ -94,7 +94,7 @@ export default class AddCardPage extends VueWithRouter {
   }
 
   asyncData({ store }) {
-    const request: ManagedAccountsSchemas.CreateManagedAccountRequest = {
+    const createManagedAccountRequest: ManagedAccountsSchemas.CreateManagedAccountRequest = {
       profileId: config.profileId.managed_accounts,
       owner: AuthStore.Helpers.identity(store),
       friendlyName: 'Main Account',
@@ -105,7 +105,7 @@ export default class AddCardPage extends VueWithRouter {
     }
 
     return {
-      request: request
+      createManagedAccountRequest: createManagedAccountRequest
     }
   }
 
