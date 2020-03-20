@@ -68,18 +68,7 @@ export default class AddCardPage extends VueWithRouter {
     { value: 'GBP', text: 'GBP' }
   ]
 
-  public request: ManagedAccountsSchemas.CreateManagedAccountRequest = {
-    profileId: null,
-    owner: {
-      type: '',
-      id: 0
-    },
-    friendlyName: 'Main Account',
-    currency: 'EUR',
-    fiProvider: 'paynetics',
-    createNow: true,
-    channelProvider: 'gps'
-  }
+  public request!: ManagedAccountsSchemas.CreateManagedAccountRequest
 
   doAdd(evt) {
     evt.preventDefault()
@@ -104,12 +93,24 @@ export default class AddCardPage extends VueWithRouter {
       })
   }
 
+  asyncData({ store }) {
+    const request: ManagedAccountsSchemas.CreateManagedAccountRequest = {
+      profileId: config.profileId.managed_accounts,
+      owner: AuthStore.Helpers.identity(store),
+      friendlyName: 'Main Account',
+      currency: 'EUR',
+      fiProvider: 'paynetics',
+      createNow: true,
+      channelProvider: 'gps'
+    }
+
+    return {
+      request: request
+    }
+  }
+
   mounted() {
     super.mounted()
-    if (this.auth.identity) {
-      this.request.owner = this.auth.identity
-    }
-    this.request.profileId = config.profileId.managed_accounts
   }
 }
 </script>

@@ -9,7 +9,7 @@
           <div class="mx-md-3 px-md-5">
             <b-card bg-variant="secondary" text-variant="dark">
               <b-card-text>
-                We sent you a verification code by email. Please enter that code to verify your email address.
+                We sent you a verification code by SMS.  Please enter that code to verify your mobile number.
               </b-card-text>
             </b-card>
             <b-card class="py-5">

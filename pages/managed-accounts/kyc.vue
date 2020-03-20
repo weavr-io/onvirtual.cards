@@ -14,6 +14,7 @@ import { Component } from 'nuxt-property-decorator'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
+import * as AccountsStore from '~/store/modules/Accounts'
 
 @Component({
   components: {}
@@ -31,11 +32,31 @@ export default class KycPage extends VueWithRouter {
 
   mounted() {
     super.mounted()
+  }
 
-    window.addEventListener('message', receiveMessage, false)
-    function receiveMessage(event) {
-      console.log(event)
+  receiveMessage(event) {
+    if (event.origin === 'https://ui.idenfy.com') {
+      switch (event.data.status) {
+        case 'failed':
+          break
+        case 'success':
+          AccountsStore.Helpers.index(this.$store).then((_accounts) => {
+            if (_accounts.data.count === 1) {
+              const _accountId = _accounts.data.account[0].id.id
+              this.$router.push('/managed-accounts/' + _accountId)
+            }
+          })
+          break
+      }
     }
+  }
+
+  beforeMount() {
+    window.addEventListener('message', this.receiveMessage, false)
+  }
+
+  beforeDestroy() {
+    window.removeEventListener('message', this.receiveMessage, false)
   }
 }
 </script>

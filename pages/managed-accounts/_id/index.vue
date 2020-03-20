@@ -1,18 +1,22 @@
+import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 <template>
   <div>
     <kyb-alert />
     <section v-if="!showKybAlert">
       <statement />
     </section>
-    <b-alert id="account-limit" v-if="showKycAlert" show class="fixed-bottom m-4 p-4" variant="bg-colored">
-      <template v-if="showKycAlert">
-        Your account is currently restricted to {{ consumer.kyc.allowedLimit | weavr_currency }}. You can lift this
-        restriction
-        <b-link :to="restrictionLink" class="link">
-          here
-        </b-link>
-        .
-      </template>
+    <b-alert id="account-limit" :show="showVerifyMobileAlert" class="fixed-bottom m-4 p-4" variant="bg-colored">
+      We need to verify your mobile number. Please click
+      <b-link :to="restrictionLink" class="link">
+        here.
+      </b-link>
+    </b-alert>
+    <b-alert id="account-kyc" :show="showKycAlert" class="fixed-bottom m-4 p-4" variant="bg-colored">
+      Your account is currently restricted to {{ consumer.kyc.allowedLimit | weavr_currency }}. You can lift this
+      restriction
+      <b-link to="/managed-accounts/kyc" class="link">
+        here.
+      </b-link>
     </b-alert>
   </div>
 </template>
@@ -31,6 +35,7 @@ import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import { KYBState } from '~/api/Enums/KYBState'
+import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 
 const Accounts = namespace(AccountsStore.name)
 const Consumers = namespace(ConsumersStore.name)
@@ -92,9 +97,21 @@ export default class AccountPage extends VueWithRouter {
     }
   }
 
+  get showVerifyMobileAlert(): boolean {
+    if (this.consumer && this.consumer.kyc) {
+      return this.consumer.kyc.mobileVerified ? !this.consumer.kyc.mobileVerified : true
+    } else {
+      return false
+    }
+  }
+
   get showKycAlert(): boolean {
-    if (this.consumer && this.consumer.kyc && this.consumer.kyc.allowedLimit) {
-      return parseInt(this.consumer.kyc.allowedLimit.amount + '') === 0
+    if (this.showVerifyMobileAlert) {
+      return false
+    } else if (this.consumer && this.consumer.kyc) {
+      return this.consumer.kyc.fullDueDiligence
+        ? this.consumer.kyc.fullDueDiligence !== FullDueDiligence.APPROVED
+        : true
     } else {
       return false
     }
@@ -141,7 +158,7 @@ export default class AccountPage extends VueWithRouter {
 }
 
 .account-view-details {
-  background: #F0EDDE;
+  background: #f0edde;
   border-radius: 10px;
   padding: 10px;
   text-align: center;
@@ -149,7 +166,10 @@ export default class AccountPage extends VueWithRouter {
   font-size: 0.6rem;
 }
 
-#account-limit {
-  max-width: 350px;
+#account {
+  &-limit,
+  &-kyc {
+    max-width: 350px;
+  }
 }
 </style>

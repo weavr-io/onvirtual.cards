@@ -4,7 +4,7 @@
       <b-row class="full-height-vh" align-v="center">
         <b-col md="6" offset-md="3">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
           </div>
           <div>
             <b-card class="py-6 px-5 mt-5">
@@ -74,23 +74,26 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   showEmailResentSuccess: boolean = false
 
-  public request: Schemas.verifyEmailRequest = {
-    consumerId: null,
-    corporateId: null,
-    request: {
-      emailAddress: '',
-      nonce: ''
+  public request!: Schemas.verifyEmailRequest
+
+  asyncData({ route, redirect }) {
+    const request: Schemas.verifyEmailRequest = {
+      consumerId: route.query.cons,
+      corporateId: route.query.corp,
+      request: {
+        emailAddress: route.query.email + '',
+        nonce: route.query.nonce ? route.query.nonce + '' : ''
+      }
     }
-  }
 
-  mounted() {
-    this.request.corporateId = this.$route.query.corp
-    this.request.consumerId = this.$route.query.cons
-    this.request.request.emailAddress = this.$route.query.email + ''
-    this.request.request.nonce = this.$route.query.nonce ? this.$route.query.nonce + '' : ''
+    if (request.request.nonce !== '') {
+      this.verifyEmail(request).then(() => {
+        redirect('/login')
+      })
+    }
 
-    if (this.request.request.nonce !== '') {
-      this.verifyEmail(this.request).then(this.goToLogin.bind(this))
+    return {
+      request: request
     }
   }
 
