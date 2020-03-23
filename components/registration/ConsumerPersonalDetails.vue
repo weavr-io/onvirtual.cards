@@ -3,22 +3,22 @@
     <h3 class="text-center font-weight-light mb-5">
       Personal Details
     </h3>
-    <b-form-group label="First Name:">
-      <b-form-input v-model="form.rootName" :state="isInvalid($v.form.rootName)" />
+    <b-form-group label="First Name">
+      <b-form-input v-model="form.rootName" :state="isInvalid($v.form.rootName)" placeholder="First Name" />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Last Name:">
-      <b-form-input :state="isInvalid($v.form.rootSurname)" v-model="form.rootSurname" />
+    <b-form-group label="Last Name">
+      <b-form-input :state="isInvalid($v.form.rootSurname)" v-model="form.rootSurname" placeholder="Last Name" />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="MOBILE NUMBER:">
+    <b-form-group label="MOBILE NUMBER">
       <vue-phone-number-input
         v-model="rootMobileNumber"
         @update="phoneUpdate"
         :only-countries="mobileCountries"
         :border-radius="0"
         :error="numberIsValid === false"
-        color="#F50E4C"
+        color="#6C1C5C"
         error-color="#F50E4C"
         valid-color="#6D7490"
         default-country-code="GB"
@@ -27,16 +27,16 @@
         This field must be a valid mobile number.
       </b-form-invalid-feedback>
     </b-form-group>
-    <b-form-row class="mt-6">
+    <b-row class="mt-6" align-v="center">
       <b-col md="4">
-        <b-button @click="goBack" variant="outline">
+        <b-button @click="goBack" variant="outline" class="pl-0">
           <-
         </b-button>
       </b-col>
       <b-col class="text-right">
-        <loader-button :is-loading="isLoading" button-text="Finish" class="text-right" />
+        <loader-button :is-loading="isLoading" button-text="finish" class="text-right" />
       </b-col>
-    </b-form-row>
+    </b-row>
   </b-form>
 </template>
 <script lang="ts">

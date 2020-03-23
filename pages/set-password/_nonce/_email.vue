@@ -36,20 +36,7 @@
                     <label class="d-block">PASSWORD:</label>
                     <weavr-input
                       :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                      :base-style="{
-                        color: '#000',
-                        fontSize: '13px',
-                        fontSmoothing: 'antialiased',
-                        fontFamily: '\'Be Vietnam\', sans-serif',
-                        fontWeight: '300',
-                        margin: '0',
-                        padding: '0.375rem 0.75rem',
-                        textIndent: '0px',
-                        '::placeholder': {
-                          color: '#bbc0c8',
-                          fontWeight: '200'
-                        }
-                      }"
+                      :base-style="passwordBaseStyle"
                       @onKeyUp="checkOnKeyUp"
                       class-name="sign-in-password"
                       name="password"
@@ -85,6 +72,7 @@ import { LostPasswordContinueRequest } from '~/api/Requests/Auth/LostPasswordCon
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 
 const Auth = namespace(AuthStore.name)
 
@@ -183,6 +171,24 @@ export default class PasswordSentPage extends BaseVue {
     if (e.key === 'Enter') {
       e.preventDefault()
       this.setPassword(e)
+    }
+  }
+
+  get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
+    return {
+      color: '#495057',
+      fontSize: '16px',
+      fontSmoothing: 'antialiased',
+      fontFamily: "'Be Vietnam', sans-serif",
+      fontWeight: '400',
+      lineHeight: '24px',
+      margin: '0',
+      padding: '6px 12px',
+      textIndent: '0px',
+      '::placeholder': {
+        color: '#B6B9C7',
+        fontWeight: '400'
+      }
     }
   }
 }

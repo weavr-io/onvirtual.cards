@@ -7,7 +7,7 @@
             <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
           </div>
           <div>
-            <b-card class="py-6 px-5 mt-5">
+            <b-card class="py-5 px-5 mt-5">
               <h3 class="font-weight-light text-center">
                 Check your inbox!
               </h3>
@@ -20,12 +20,12 @@
                 <b-alert :show="showEmailResentSuccess" variant="success">
                   The verification code was resent by email.
                 </b-alert>
-                <p class="text-center mb-5">
+                <p class="text-center mb-5 text-grey">
                   We’ve just sent you a verification code by email. Enter code below to verify your email address.
                 </p>
                 <error-alert class="mt-3" />
                 <b-row>
-                  <b-col md="6" offset-md="3">
+                  <b-col md="4" offset-md="4">
                     <b-form-group label="">
                       <b-form-input v-model="verifyEmailRequest.request.nonce" placeholder="0000" class="text-center" />
                     </b-form-group>

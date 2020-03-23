@@ -34,8 +34,8 @@
                         @update="phoneUpdate"
                         :error="numberIsValid === false"
                         :border-radius="0"
+                        color="#6C1C5C"
                         error-color="#F50E4C"
-                        color="#6D7490"
                         valid-color="#6D7490"
                         default-country-code="GB"
                       />

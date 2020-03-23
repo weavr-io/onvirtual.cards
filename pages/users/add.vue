@@ -16,8 +16,8 @@
               <b-col>
                 <b-form-group label="Username:">
                   <b-form-input
-                          v-model="$v.request.request.username.$model"
-                          :state="isInvalid($v.request.request.username)"
+                    v-model="$v.request.request.username.$model"
+                    :state="isInvalid($v.request.request.username)"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
@@ -27,9 +27,9 @@
               <b-col>
                 <b-form-group label="Title:">
                   <b-form-select
-                          v-model="$v.request.request.title.$model"
-                          :state="isInvalid($v.request.request.title)"
-                          :options="titleOptions"
+                    v-model="$v.request.request.title.$model"
+                    :state="isInvalid($v.request.request.title)"
+                    :options="titleOptions"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
@@ -47,8 +47,8 @@
               <b-col>
                 <b-form-group label="Surname:">
                   <b-form-input
-                          v-model="$v.request.request.surname.$model"
-                          :state="isInvalid($v.request.request.surname)"
+                    v-model="$v.request.request.surname.$model"
+                    :state="isInvalid($v.request.request.surname)"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
@@ -58,9 +58,9 @@
               <b-col>
                 <b-form-group label="Email:">
                   <b-form-input
-                          v-model="$v.request.request.email.$model"
-                          :state="isInvalid($v.request.request.email)"
-                          type="email"
+                    v-model="$v.request.request.email.$model"
+                    :state="isInvalid($v.request.request.email)"
+                    type="email"
                   />
                   <b-form-invalid-feedback>This field is required and must be a valid email.</b-form-invalid-feedback>
                 </b-form-group>
@@ -70,8 +70,8 @@
               <b-col>
                 <b-form-group label="Company Position:">
                   <b-form-input
-                          v-model="$v.request.request.companyPosition.$model"
-                          :state="isInvalid($v.request.request.companyPosition)"
+                    v-model="$v.request.request.companyPosition.$model"
+                    :state="isInvalid($v.request.request.companyPosition)"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
@@ -81,15 +81,15 @@
               <b-col>
                 <b-form-group label="MOBILE NUMBER:">
                   <vue-phone-number-input
-                          v-model="rootMobileNumber"
-                          @update="phoneUpdate"
-                          :only-countries="mobileCountries"
-                          :border-radius="0"
-                          :error="numberIsValid === false"
-                          color="#F50E4C"
-                          error-color="#F50E4C"
-                          valid-color="#6D7490"
-                          default-country-code="GB"
+                    v-model="rootMobileNumber"
+                    @update="phoneUpdate"
+                    :only-countries="mobileCountries"
+                    :border-radius="0"
+                    :error="numberIsValid === false"
+                    color="#6C1C5C"
+                    error-color="#F50E4C"
+                    valid-color="#6D7490"
+                    default-country-code="GB"
                   />
                   <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                     This field must be a valid mobile number.

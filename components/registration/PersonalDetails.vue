@@ -3,11 +3,11 @@
     <h3 class="text-center font-weight-light mb-5">
       Personal Details
     </h3>
-    <b-form-group label="First Name:">
+    <b-form-group label="First Name">
       <b-form-input v-model="$v.form.rootName.$model" :state="isInvalid($v.form.rootName)" placeholder="Name" />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Last Name:">
+    <b-form-group label="Last Name">
       <b-form-input
         :state="isInvalid($v.form.rootSurname)"
         v-model="$v.form.rootSurname.$model"
@@ -15,7 +15,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Title:">
+    <b-form-group label="Title">
       <b-form-select
         :state="isInvalid($v.form.rootTitle)"
         v-model="$v.form.rootTitle.$model"
@@ -24,7 +24,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Position:">
+    <b-form-group label="Company Position">
       <b-form-input
         :state="isInvalid($v.form.rootCompanyPosition)"
         v-model="$v.form.rootCompanyPosition.$model"
@@ -33,14 +33,14 @@
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
 
-    <b-form-group label="MOBILE NUMBER:">
+    <b-form-group label="MOBILE NUMBER">
       <vue-phone-number-input
         v-model="rootMobileNumber"
         @update="phoneUpdate"
         :only-countries="mobileCountries"
         :border-radius="0"
         :error="numberIsValid === false"
-        color="#F50E4C"
+        color="#6C1C5C"
         error-color="#F50E4C"
         valid-color="#6D7490"
         default-country-code="GB"

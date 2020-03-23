@@ -20,20 +20,7 @@
                   <label class="d-block">OLD PASSWORD:</label>
                   <weavr-input
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
-                    :base-style="{
-                      color: '#000',
-                      fontSize: '13px',
-                      fontSmoothing: 'antialiased',
-                      fontFamily: '\'Be Vietnam\', sans-serif',
-                      fontWeight: '300',
-                      margin: '0',
-                      padding: '0.375rem 0.75rem',
-                      textIndent: '0px',
-                      '::placeholder': {
-                        color: '#bbc0c8',
-                        fontWeight: '200'
-                      }
-                    }"
+                    :base-style="passwordBaseStyle"
                     @onKeyUp="checkOnKeyUp"
                     class-name="sign-in-password"
                     name="old-password"
@@ -43,20 +30,7 @@
                   <label class="d-block mt-3">NEW PASSWORD:</label>
                   <weavr-input
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
-                    :base-style="{
-                      color: '#000',
-                      fontSize: '13px',
-                      fontSmoothing: 'antialiased',
-                      fontFamily: '\'Be Vietnam\', sans-serif',
-                      fontWeight: '300',
-                      margin: '0',
-                      padding: '0.375rem 0.75rem',
-                      textIndent: '0px',
-                      '::placeholder': {
-                        color: '#bbc0c8',
-                        fontWeight: '200'
-                      }
-                    }"
+                    :base-style="passwordBaseStyle"
                     @onKeyUp="checkOnKeyUp"
                     class-name="sign-in-password"
                     name="new-password"
@@ -87,6 +61,7 @@ import LoaderButton from '~/components/LoaderButton.vue'
 import * as AuthStore from '~/store/modules/Auth'
 import { UpdatePassword } from '~/api/Requests/Auth/UpdatePassword'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 
 @Component({
   components: {
@@ -156,6 +131,24 @@ export default class BundlesPage extends BaseVue {
         return null
       }
     )
+  }
+
+  get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
+    return {
+      color: '#495057',
+      fontSize: '16px',
+      fontSmoothing: 'antialiased',
+      fontFamily: "'Be Vietnam', sans-serif",
+      fontWeight: '400',
+      lineHeight: '24px',
+      margin: '0',
+      padding: '6px 12px',
+      textIndent: '0px',
+      '::placeholder': {
+        color: '#B6B9C7',
+        fontWeight: '400'
+      }
+    }
   }
 }
 </script>
