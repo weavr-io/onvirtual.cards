@@ -7,7 +7,7 @@
         </h2>
       </b-col>
     </b-row>
-    <b-row v-if="accountBalance < 1" class="py-5 my-5 text-center">
+    <b-row v-if="accountBalance < 0.01" class="py-5 my-5 text-center">
       <b-col>
         <b-row>
           <b-col>
@@ -35,7 +35,7 @@
           <b-col>
             <b-form-group :state="isInvalid($v.request.amount)" :invalid-feedback="invalidMessage" label="Amount:">
               <b-input-group :prepend="accountDetails.currency">
-                <b-form-input v-model="$v.request.amount.$model" type="number" step="0.01" min="1" />
+                <b-form-input v-model="$v.request.amount.$model" type="number" step="0.01" min="0.01" />
               </b-input-group>
             </b-form-group>
           </b-col>
@@ -70,7 +70,7 @@ const Accounts = namespace(AccountsStore.name)
         required,
         between(value) {
           // @ts-ignore
-          return between(1, this.accountBalance)(value)
+          return between(0.01, this.accountBalance)(value)
         }
       }
     }
