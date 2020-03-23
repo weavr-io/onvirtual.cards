@@ -7,7 +7,7 @@
         </h2>
       </b-col>
     </b-row>
-    <b-row v-if="accountBalance < 10" class="py-5 my-5 text-center">
+    <b-row v-if="accountBalance < 1" class="py-5 my-5 text-center">
       <b-col>
         <b-row>
           <b-col>
