@@ -35,19 +35,19 @@ export default class KycPage extends VueWithRouter {
   }
 
   receiveMessage(event) {
-    if (event.origin === 'https://ui.idenfy.com') {
-      switch (event.data.status) {
-        case 'failed':
-          break
-        case 'success':
-          AccountsStore.Helpers.index(this.$store).then((_accounts) => {
-            if (_accounts.data.count === 1) {
-              const _accountId = _accounts.data.account[0].id.id
-              this.$router.push('/managed-accounts/' + _accountId)
-            }
-          })
-          break
-      }
+    console.log(event)
+    switch (event.data.status) {
+      case 'failed':
+        alert('KYC Failed')
+        break
+      case 'approved':
+        AccountsStore.Helpers.index(this.$store).then((_accounts) => {
+          if (_accounts.data.count === 1) {
+            const _accountId = _accounts.data.account[0].id.id
+            this.$router.push('/managed-accounts/' + _accountId)
+          }
+        })
+        break
     }
   }
 
