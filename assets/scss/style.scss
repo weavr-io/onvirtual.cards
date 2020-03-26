@@ -114,3 +114,9 @@ a {
     text-decoration: underline;
   }
 }
+
+.line-height {
+  &-lg {
+    line-height: 2.8rem;
+  }
+}

@@ -88,7 +88,7 @@ export default class EmailVerificationPage extends VueWithRouter {
 
     if (request.request.nonce !== '') {
       this.verifyEmail(request).then(() => {
-        redirect('/login')
+        redirect('/verify/consumers/mobile')
       })
     }
 

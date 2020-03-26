@@ -43,6 +43,9 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 }
 
 export module Helpers {
+  export const consumer = (store: Store<any>): Consumer | null => {
+    return StoreHelpers.get(store, name, 'consumer')
+  }
   export const create = (store: Store<any>, request: CreateConsumerRequest): AxiosPromise<Consumer> => {
     return StoreHelpers.dispatch(store, name, _Actions.create, request)
   }
