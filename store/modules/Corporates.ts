@@ -123,5 +123,8 @@ export const actions: Actions<State, RootState> = {
   },
   consumeInvite(ctxt, request) {
     return api.post('/app/api/corporates/' + request.id + '/invites/consume', request.body)
+  },
+  startKYB({}, corporateId) {
+    return api.post('/app/api/supplier/' + corporateId + '/kyb/start', {})
   }
 }

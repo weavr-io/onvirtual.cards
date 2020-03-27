@@ -5,6 +5,7 @@ import { StoreHelpers } from '~/helpers/StoreHelpers'
 import { SendVerificationEmailRequest } from '~/api/Requests/Corporates/SendVerificationEmailRequest'
 import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
 import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
+import { AxiosPromise } from '~/node_modules/axios'
 
 export const name = 'corporates'
 
@@ -30,7 +31,8 @@ export enum _Actions {
   checkKYB = 'checkKYB',
   sendVerificationCodeEmail = 'sendVerificationCodeEmail',
   validateInvite = 'validateInvite',
-  consumeInvite = 'consumeInvite'
+  consumeInvite = 'consumeInvite',
+  startKYB = 'startKYB'
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
@@ -49,6 +51,8 @@ export interface Actions<S, R> extends ActionTree<S, R> {
   [_Actions.validateInvite](context: ActionContext<S, R>, request: ValidateCorporateUserInviteRequest)
 
   [_Actions.consumeInvite](context: ActionContext<S, R>, request: ConsumeCorporateUserInviteRequest)
+
+  [_Actions.startKYB](context: ActionContext<S, R>, corporateId): AxiosPromise
 }
 
 export module Helpers {
@@ -75,5 +79,8 @@ export module Helpers {
   }
   export const consumeInvite = (store: Store<any>, request: ConsumeCorporateUserInviteRequest) => {
     return StoreHelpers.dispatch(store, name, _Actions.consumeInvite, request)
+  }
+  export const startKYB = (store: Store<any>, corporateId): AxiosPromise => {
+    return StoreHelpers.dispatch(store, name, _Actions.startKYB, corporateId)
   }
 }
