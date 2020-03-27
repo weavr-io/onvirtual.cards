@@ -183,7 +183,7 @@ export const mutations: MutationTree<State> = {
   [types.AUTHENTICATE](state, _res: LoginResult) {
     state.auth = _res
     Cookie.set('auth-onvirtual', state.auth)
-    api.defaults.headers.Authorization = 'X-TOKEN ' + state.auth.token
+    api.defaults.headers.Authorization = 'Bearer ' + state.auth.token
   },
   [types.LOGOUT](state) {
     state.auth = {}

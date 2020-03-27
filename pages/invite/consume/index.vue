@@ -17,20 +17,7 @@
                   <label class="d-block">PASSWORD:</label>
                   <weavr-input
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                    :base-style="{
-                      color: '#000',
-                      fontSize: '13px',
-                      fontSmoothing: 'antialiased',
-                      fontFamily: '\'Be Vietnam\', sans-serif',
-                      fontWeight: '300',
-                      margin: '0',
-                      padding: '0.375rem 0.75rem',
-                      textIndent: '0px',
-                      '::placeholder': {
-                        color: '#bbc0c8',
-                        fontWeight: '200'
-                      }
-                    }"
+                    :base-style="passwordBaseStyle"
                     @onKeyUp="checkOnKeyUp"
                     class-name="sign-in-password"
                     name="password"
@@ -63,6 +50,7 @@ import * as ErrorStore from '~/store/modules/Error'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 
 @Component({
   layout: 'auth',
@@ -130,6 +118,24 @@ export default class IniteConsume extends VueWithRouter {
     if (e.key === 'Enter') {
       e.preventDefault()
       this.tryToSubmitForm(e)
+    }
+  }
+
+  get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
+    return {
+      color: '#495057',
+      fontSize: '16px',
+      fontSmoothing: 'antialiased',
+      fontFamily: "'Be Vietnam', sans-serif",
+      fontWeight: '400',
+      lineHeight: '24px',
+      margin: '0',
+      padding: '6px 12px',
+      textIndent: '0px',
+      '::placeholder': {
+        color: '#B6B9C7',
+        fontWeight: '400'
+      }
     }
   }
 }

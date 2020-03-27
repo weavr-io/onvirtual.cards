@@ -86,7 +86,7 @@
                     :only-countries="mobileCountries"
                     :border-radius="0"
                     :error="numberIsValid === false"
-                    color="#F50E4C"
+                    color="#6C1C5C"
                     error-color="#F50E4C"
                     valid-color="#6D7490"
                     default-country-code="GB"

@@ -3,7 +3,7 @@
     <h3 class="text-center font-weight-light mb-5">
       Register
     </h3>
-    <b-form-group label="Username:">
+    <b-form-group label="Username">
       <b-form-input
               v-model="$v.form.rootUsername.$model"
               :state="isInvalid($v.form.rootUsername)"
@@ -11,33 +11,20 @@
       />
       <b-form-invalid-feedback>Only numbers and latin letters are accepted.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootEmail)" label="Email:">
+    <b-form-group :state="isInvalid($v.form.rootEmail)" label="Email">
       <b-form-input
               v-model="$v.form.rootEmail.$model"
               :state="isInvalid($v.form.rootEmail)"
               placeholder="name@email.com"
       />
-      <b-form-invalid-feedback>An email address must contain a single @.</b-form-invalid-feedback>
+      <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
     </b-form-group>
     <client-only placeholder="Loading...">
       <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
-        <label class="d-block">PASSWORD:</label>
+        <label class="d-block">PASSWORD</label>
         <weavr-input
                 :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                :base-style="{
-            color: '#000',
-            fontSize: '13px',
-            fontSmoothing: 'antialiased',
-            fontFamily: '\'Be Vietnam\', sans-serif',
-            fontWeight: '300',
-            margin: '0',
-            padding: '0.375rem 0.75rem',
-            textIndent: '0px',
-            '::placeholder': {
-              color: '#bbc0c8',
-              fontWeight: '200'
-            }
-          }"
+                :base-style="passwordBaseStyle"
                 @onKeyUp="checkOnKeyUp"
                 class-name="sign-in-password"
                 name="password"
@@ -68,6 +55,7 @@ import * as AuthStore from '~/store/modules/Auth'
 import * as ErrorStore from '~/store/modules/Error'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 
 @Component({
   validations: {
@@ -150,6 +138,24 @@ export default class RegisterForm1 extends VueWithRouter {
     if (e.key === 'Enter') {
       e.preventDefault()
       this.tryToSubmitForm(e)
+    }
+  }
+
+  get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
+    return {
+      color: '#495057',
+      fontSize: '16px',
+      fontSmoothing: 'antialiased',
+      fontFamily: "'Be Vietnam', sans-serif",
+      fontWeight: '400',
+      lineHeight: '24px',
+      margin: '0',
+      padding: '6px 12px',
+      textIndent: '0px',
+      '::placeholder': {
+        color: '#B6B9C7',
+        fontWeight: '400'
+      }
     }
   }
 }

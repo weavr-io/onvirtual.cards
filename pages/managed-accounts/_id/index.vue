@@ -1,20 +1,8 @@
+import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 <template>
-  <div>
-    <kyb-alert />
-    <section v-if="!showKybAlert">
-      <statement />
-    </section>
-    <b-alert id="account-limit" v-if="showKycAlert" show class="fixed-bottom m-4 p-4" variant="bg-colored">
-      <template v-if="showKycAlert">
-        Your account is currently restricted to {{ consumer.kyc.allowedLimit | weavr_currency }}. You can lift this
-        restriction
-        <b-link :to="restrictionLink" class="link">
-          here
-        </b-link>
-        .
-      </template>
-    </b-alert>
-  </div>
+  <section>
+    <statement />
+  </section>
 </template>
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
@@ -30,7 +18,6 @@ import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
-import { KYBState } from '~/api/Enums/KYBState'
 
 const Accounts = namespace(AccountsStore.name)
 const Consumers = namespace(ConsumersStore.name)
@@ -39,8 +26,7 @@ const Corporates = namespace(CorporatesStore.name)
 @Component({
   layout: 'dashboard',
   components: {
-    Statement: () => import('~/components/accounts/statement/statement.vue'),
-    KybAlert: () => import('~/components/corporates/KYBAlert.vue')
+    Statement: () => import('~/components/accounts/statement/statement.vue')
   }
 })
 export default class AccountPage extends VueWithRouter {
@@ -83,73 +69,5 @@ export default class AccountPage extends VueWithRouter {
 
     return { accountId: _accountId }
   }
-
-  get showKybAlert(): boolean {
-    if (this.corporate && this.corporate.kyb) {
-      return this.corporate.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
-    } else {
-      return false
-    }
-  }
-
-  get showKycAlert(): boolean {
-    if (this.consumer && this.consumer.kyc && this.consumer.kyc.allowedLimit) {
-      return parseInt(this.consumer.kyc.allowedLimit.amount + '') === 0
-    } else {
-      return false
-    }
-  }
-
-  get restrictionLink() {
-    if (this.consumer && this.consumer.kyc && this.consumer.kyc.mobileVerified === true) {
-      return '/managed-accounts/' + this.accountId + '/topup'
-    } else {
-      return '/verify/consumers/mobile'
-    }
-  }
 }
 </script>
-
-<style lang="scss" scoped>
-.account-balance {
-  .account-balance-label {
-    font-size: 0.8rem;
-  }
-
-  .account-balance-value {
-    font-size: 1.5rem;
-  }
-}
-
-.add-funds {
-  border-radius: 100%;
-  padding: 13px 10px 18px;
-  line-height: 0;
-  font-size: 20px;
-}
-
-.account {
-  &-name {
-    font-size: 1.2rem;
-  }
-
-  &-expiry {
-    &-label {
-      font-size: 0.8rem;
-    }
-  }
-}
-
-.account-view-details {
-  background: #F0EDDE;
-  border-radius: 10px;
-  padding: 10px;
-  text-align: center;
-  display: block;
-  font-size: 0.6rem;
-}
-
-#account-limit {
-  max-width: 350px;
-}
-</style>

@@ -13,13 +13,25 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 
+import * as AuthStore from '~/store/modules/Auth'
+import * as ConsumersStore from '~/store/modules/Consumers'
+
 @Component({})
 export default class IndexPage extends Vue {
   asyncData({ store, redirect }) {
     const isLoggedIn = store.getters['auth/isLoggedIn']
 
     if (isLoggedIn) {
-      redirect('/dashboard')
+      if (AuthStore.Helpers.isConsumer(store)) {
+        const _cons = ConsumersStore.Helpers.consumer(store)
+        if (_cons && _cons.kyc && !_cons.kyc.mobileVerified) {
+          redirect('/register/verify/mobile')
+        } else {
+          redirect('/dashboard')
+        }
+      } else {
+        redirect('/dashboard')
+      }
     } else {
       redirect('/login')
     }
