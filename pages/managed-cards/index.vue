@@ -1,6 +1,5 @@
 <template>
   <div>
-    <kyb-alert />
     <section v-if="!showKybAlert">
       <b-container class="mb-5">
         <b-row>

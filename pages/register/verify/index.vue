@@ -12,7 +12,7 @@
                 Check your inbox!
               </h3>
               <b-row>
-                <b-col md="6" offset-md="3">
+                <b-col md="6" offset-md="3" class="text-center">
                   <b-img fluid src="/img/email.svg" class="mt-5 mb-2" />
                 </b-col>
               </b-row>
@@ -88,7 +88,12 @@ export default class EmailVerificationPage extends VueWithRouter {
 
     if (request.request.nonce !== '') {
       this.verifyEmail(request).then(() => {
-        redirect('/verify/consumers/mobile')
+        redirect('/login')
+        // if (route.query.cons) {
+        //   redirect('/register/verify/mobile')
+        // } else {
+        //   redirect('/login')
+        // }
       })
     }
 
@@ -110,7 +115,27 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   doVerify(evt) {
     evt.preventDefault()
-    this.verifyEmail(this.verifyEmailRequest).then(this.goToLogin.bind(this))
+    this.verifyEmail(this.verifyEmailRequest).then(this.nextPage.bind(this))
+  }
+
+  nextPage() {
+    if (this.$route.query.cons) {
+      this.$router.push('/login')
+      // this.goToVerifyMobile()
+    } else {
+      this.$router.push('/login')
+    }
+  }
+
+  goToVerifyMobile() {
+    this.$router.push({
+      path: '/register/verify/mobile',
+      query: {
+        cons: this.$route.query.cons,
+        mobileNumber: this.$route.query.mobileNumber,
+        mobileCountryCode: this.$route.query.mobileCountryCode
+      }
+    })
   }
 
   goToLogin() {

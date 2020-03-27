@@ -4,7 +4,7 @@
       <b-row class="full-height-vh" align-v="center">
         <b-col lg="6" offset-lg="3" class="my-6">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
           </div>
           <b-card body-class="p-6">
             <h3 class="text-center font-weight-light mb-5">
@@ -42,7 +42,7 @@
                   Forgot password?
                 </b-link>
               </div>
-              <loader-button :is-loading="isLoading" button-text="sign in" class="text-center mt-6" />
+              <loader-button :is-loading="isLoading" button-text="sign in" class="text-center mt-5" />
               <div class="mt-4 text-center">
                 <small class="text-grey">
                   Not yet registered? Register
@@ -64,6 +64,7 @@ import { Component } from 'nuxt-property-decorator'
 import { Schemas } from '~/api/Schemas'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
+import * as ConsumersStore from '~/store/modules/Consumers'
 import config from '~/config'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
@@ -108,14 +109,19 @@ export default class LoginPage extends VueWithRouter {
     )
   }
 
-  goToDashboard(res) {
+  async goToDashboard(res) {
     const _id = res.data.credential.type + '-' + res.data.credential.id
     try {
       this.$segment.identify(_id, {
         email: this.loginRequest.code
       })
     } catch (e) {}
-    this.$router.push('/dashboard')
+
+    if (AuthStore.Helpers.isConsumer(this.$store)) {
+      await ConsumersStore.Helpers.get(this.$store, AuthStore.Helpers.identity(this.$store).id)
+    }
+
+    this.$router.push('/')
   }
 
   checkOnKeyUp(e) {
@@ -151,7 +157,7 @@ export default class LoginPage extends VueWithRouter {
     const isLoggedIn = store.getters['auth/isLoggedIn']
 
     if (isLoggedIn) {
-      redirect('/dashboard')
+      redirect('/')
     }
   }
 }

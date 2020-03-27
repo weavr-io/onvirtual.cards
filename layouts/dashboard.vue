@@ -2,7 +2,7 @@
   <div>
     <app-header />
     <dashboard-header />
-    <div v-if="!showKybAlert && !showKycAlert">
+    <div v-if="!showKybAlert && !showKycAlert && !showVerifyMobileAlert">
       <Nuxt />
     </div>
     <kyb-alert />
