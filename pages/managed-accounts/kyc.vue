@@ -22,12 +22,22 @@ import * as AccountsStore from '~/store/modules/Accounts'
 export default class KycPage extends VueWithRouter {
   redirectUrl!: string
 
-  async asyncData({ store }) {
+  async asyncData({ store, redirect }) {
     const _consumerId = AuthStore.Helpers.identityId(store)
 
-    const _res = await ConsumersStore.Helpers.startKYC(store, _consumerId)
+    try {
+      const _res = await ConsumersStore.Helpers.startKYC(store, _consumerId)
+      return { redirectUrl: _res.data.redirectUrl }
+    } catch (e) {
+      if (e.response.data.errorCode === 'KYC_ALREADY_APPROVED') {
+        const _accounts = await AccountsStore.Helpers.index(store)
 
-    return { redirectUrl: _res.data.redirectUrl }
+        if (_accounts.data.count === 1) {
+          const _accountId = _accounts.data.account[0].id.id
+          redirect('/managed-accounts/' + _accountId + '/topup')
+        }
+      }
+    }
   }
 
   mounted() {
