@@ -4,7 +4,7 @@
       <b-navbar type="light" fixed="top" variant="bg-colored" class="">
         <b-container>
           <b-collapse id="nav_collapse" is-nav>
-            <b-navbar-nav class="ml-auto">
+            <b-navbar-nav class="ml-auto" v-if="showLinks">
               <b-nav-item v-if="showRegister" to="/register">
                 Register
               </b-nav-item>
@@ -25,6 +25,10 @@
 import { Component } from 'nuxt-property-decorator'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import config from '~/config'
+import { namespace } from 'vuex-class'
+import * as AuthStore from '~/store/modules/Auth'
+
+const Auth = namespace(AuthStore.name)
 
 @Component({
   components: {
@@ -37,6 +41,8 @@ import config from '~/config'
   }
 })
 class AuthLayout extends VueWithRouter {
+  @Auth.Getter isLoggedIn!: boolean
+
   get isLogin(): boolean {
     return this.$route.path === '/login'
   }
@@ -47,6 +53,10 @@ class AuthLayout extends VueWithRouter {
 
   get showRegister(): boolean {
     return !this.showLogin
+  }
+
+  get showLinks(): boolean {
+    return !this.isLoggedIn
   }
 
   get showLogin(): boolean {

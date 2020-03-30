@@ -120,8 +120,7 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   nextPage() {
     if (this.$route.query.cons) {
-      this.$router.push('/login')
-      // this.goToVerifyMobile()
+      this.goToVerifyMobile()
     } else {
       this.$router.push('/login')
     }

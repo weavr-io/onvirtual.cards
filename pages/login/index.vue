@@ -86,7 +86,6 @@ export default class LoginPage extends VueWithRouter {
   @Auth.Getter isLoading!: boolean
 
   public loginRequest: Schemas.LoginRequest = {
-    programmeId: config.api.programmeId,
     code: '',
     password: ''
   }
