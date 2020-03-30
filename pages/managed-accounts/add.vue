@@ -2,7 +2,7 @@
   <section>
     <b-container>
       <b-row>
-        <b-col md="6" offset-md="3">
+        <b-col md="4" offset-md="4">
           <b-card class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
               Select Account Currency
@@ -10,7 +10,7 @@
             <b-form @submit="doAdd">
               <b-form-row>
                 <b-col>
-                  <b-form-group :state="isInvalid($v.createManagedAccountRequest.currency)" label="Currency:">
+                  <b-form-group :state="isInvalid($v.createManagedAccountRequest.currency)" label="Currency">
                     <b-form-select v-model="createManagedAccountRequest.currency" :options="currencyOptions" />
                   </b-form-group>
                 </b-col>
@@ -64,8 +64,8 @@ export default class AddCardPage extends VueWithRouter {
   @Auth.Getter auth!: LoginResult
 
   currencyOptions = [
-    { value: 'EUR', text: 'EUR' },
-    { value: 'GBP', text: 'GBP' }
+    { value: 'EUR', text: 'Euro - EUR' },
+    { value: 'GBP', text: 'Great Britain Pound - GBP' }
   ]
 
   public createManagedAccountRequest!: ManagedAccountsSchemas.CreateManagedAccountRequest

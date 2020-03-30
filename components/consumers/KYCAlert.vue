@@ -5,11 +5,11 @@ import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
       <b-row>
         <b-col class="py-5 text-center">
           <div>
-            <h4 class="font-weight-light">
+            <h5 class="font-weight-light">
               Your account is currently restricted.
-            </h4>
+            </h5>
             <h5 class="mt-4">
-              <b-link to="/managed-accounts/kyc" class="link">
+              <b-link to="/managed-accounts/kyc" class="link pb-2">
                 Remove restriction
               </b-link>
             </h5>

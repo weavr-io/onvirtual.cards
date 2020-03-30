@@ -1,7 +1,7 @@
 <template>
   <div>
     <section v-if="!showKybAlert">
-      <b-container class="mb-5">
+      <b-container class="mb-5 mt-n4">
         <b-row>
           <b-col class="text-right">
             <b-button to="/managed-cards/add" variant="border-primary">

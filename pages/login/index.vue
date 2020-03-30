@@ -6,7 +6,7 @@
           <div class="text-center pb-5">
             <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
           </div>
-          <b-card body-class="p-6">
+          <b-card body-class="p-card">
             <h3 class="text-center font-weight-light mb-5">
               Login
             </h3>

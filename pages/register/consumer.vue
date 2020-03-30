@@ -4,10 +4,10 @@
       <b-row class="full-height-vh" align-v="center">
         <b-col md="6" offset-md="3">
           <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
           </div>
           <b-card no-body class="overflow-hidden">
-            <b-card-body class="px-6 py-5">
+            <b-card-body class="p-card">
               <div class="form-screens">
                 <error-alert />
                 <div class="form-screen">
@@ -39,6 +39,14 @@
                       />
                       <b-form-invalid-feedback>Only numbers and latin letters are accepted.</b-form-invalid-feedback>
                     </b-form-group>
+                    <b-form-group :state="isInvalid($v.registrationRequest.email)" label="Email">
+                      <b-form-input
+                              v-model="$v.registrationRequest.email.$model"
+                              :state="isInvalid($v.registrationRequest.email)"
+                              placeholder="name@email.com"
+                      />
+                      <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
+                    </b-form-group>
                     <b-form-group label="MOBILE NUMBER">
                       <vue-phone-number-input
                         v-model="rootMobileNumber"
@@ -54,14 +62,6 @@
                       <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                         This field must be a valid mobile number.
                       </b-form-invalid-feedback>
-                    </b-form-group>
-                    <b-form-group :state="isInvalid($v.registrationRequest.email)" label="Email">
-                      <b-form-input
-                        v-model="$v.registrationRequest.email.$model"
-                        :state="isInvalid($v.registrationRequest.email)"
-                        placeholder="name@email.com"
-                      />
-                      <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
                     </b-form-group>
                     <client-only placeholder="Loading...">
                       <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.registrationRequest.$dirty }">
@@ -313,6 +313,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
   }
 
   checkOnKeyUp(e) {
+    console.log('checkOnKeyUp')
     if (e.key === 'Enter') {
       e.preventDefault()
       this.submitForm(e)
@@ -323,6 +324,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     this.registrationRequest.mobileCountryCode = '+' + number.countryCallingCode
     this.registrationRequest.mobileNumber = number.nationalNumber
     this.numberIsValid = number.isValid
+    console.log(number)
   }
 
   get mobileCountries(): string[] {

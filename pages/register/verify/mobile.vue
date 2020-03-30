@@ -13,11 +13,11 @@
               </h3>
               <b-row>
                 <b-col md="6" offset-md="3" class="text-center">
-                  <b-img fluid src="/img/mobile.svg" class="mt-3 mb-2" />
+                  <b-img fluid src="/img/mobile.svg" class="mt-5 mb-2" />
                 </b-col>
               </b-row>
               <error-alert />
-              <p class="text-center mb-5 mt-3 text-grey h5 line-height-md">
+              <p class="text-center my-5 text-grey">
                 We’ve just sent you a verification code by SMS. Enter code below to verify your phone number.
               </p>
               <form id="form-verify" @submit="doVerify">
