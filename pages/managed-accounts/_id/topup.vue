@@ -135,7 +135,6 @@ export default class AccountTopupPage extends VueWithRouter {
   }
 
   mounted() {
-    super.mounted()
     try {
       this.$segment.track('Account Top Up', {})
     } catch (e) {}

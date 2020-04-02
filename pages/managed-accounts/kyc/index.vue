@@ -40,10 +40,6 @@ export default class KycPage extends VueWithRouter {
     }
   }
 
-  mounted() {
-    super.mounted()
-  }
-
   receiveMessage(event) {
     console.log(event)
     switch (event.data.status) {

@@ -123,10 +123,6 @@ export default class LoginPage extends VueWithRouter {
     }
   }
 
-  mounted() {
-    super.mounted()
-  }
-
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
     return {
       color: '#495057',

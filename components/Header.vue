@@ -17,7 +17,7 @@
               <b-dropdown-item to="/profile">
                 Profile
               </b-dropdown-item>
-              <b-dropdown-item to="/users">
+              <b-dropdown-item to="/users" v-if="isCorporate">
                 Users
               </b-dropdown-item>
               <b-dropdown-item @click="doLogout">

@@ -214,7 +214,6 @@ export default class AddCardPage extends VueWithRouter {
   }
 
   mounted() {
-    super.mounted()
     this.request.corporateId = this.identityId
   }
 

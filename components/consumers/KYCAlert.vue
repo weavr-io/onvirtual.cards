@@ -1,6 +1,5 @@
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 <template>
-  <section v-if="showKybAlert">
+  <section v-if="showKycAlert">
     <b-container>
       <b-row>
         <b-col class="py-5 text-center">
@@ -21,20 +20,13 @@ import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 </template>
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
+import { namespace } from 'vuex-class'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
-
-import * as ConsumersStore from '~/store/modules/Consumers'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+import * as ViewStore from '~/store/modules/View'
+const View = namespace(ViewStore.name)
 
 @Component({})
 export default class KYCAlert extends VueWithRouter {
-  get showKybAlert(): boolean {
-    const _consumer = ConsumersStore.Helpers.consumer(this.$store)
-    if (_consumer && _consumer.kyc) {
-      return _consumer.kyc.fullDueDiligence !== FullDueDiligence.APPROVED
-    } else {
-      return false
-    }
-  }
+  @View.Getter showKycAlert!: boolean
 }
 </script>

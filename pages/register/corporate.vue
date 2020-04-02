@@ -195,8 +195,6 @@ export default class RegistrationPage extends VueWithRouter {
   }
 
   mounted() {
-    super.mounted()
-
     this.registrationRequest.profileId = config.profileId.corporates
   }
 

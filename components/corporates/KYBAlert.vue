@@ -8,8 +8,10 @@
               Your account is currently restricted.
             </h5>
             <h5 class="font-weight-lighter">
-              We are required by financial services regulations to verify some details about your company before allowing you to transact with your account.  For a list of the information we need, please click
-              <b-link to="/managed-accounts/kyb" class="link"> here </b-link>.
+              We are required by financial services regulations to verify some details about your company before
+              allowing you to transact with your account. For a list of the information we need, please click
+              <b-link to="/managed-accounts/kyb" class="link"> here</b-link>
+              .
             </h5>
           </div>
           <div v-if="corporate.kyb.fullCompanyChecksVerified === 'INITIATED'">
@@ -42,8 +44,10 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import { KYBState } from '~/api/Enums/KYBState'
+import * as ViewStore from '~/store/modules/View'
 
 const Corporates = namespace(CorporatesStore.name)
+const View = namespace(ViewStore.name)
 
 @Component({})
 export default class KYBAlert extends VueWithRouter {
@@ -51,12 +55,6 @@ export default class KYBAlert extends VueWithRouter {
 
   accountId!: number
 
-  get showKybAlert(): boolean {
-    if (this.corporate && this.corporate.kyb) {
-      return this.corporate.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
-    } else {
-      return false
-    }
-  }
+  @View.Getter showKybAlert!: boolean
 }
 </script>

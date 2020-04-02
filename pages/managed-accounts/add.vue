@@ -108,9 +108,5 @@ export default class AddCardPage extends VueWithRouter {
       createManagedAccountRequest: createManagedAccountRequest
     }
   }
-
-  mounted() {
-    super.mounted()
-  }
 }
 </script>

@@ -8,6 +8,7 @@ import * as Corporates from './modules/Corporates'
 import * as Accounts from './modules/Accounts'
 import * as Transfers from './modules/Transfers'
 import * as Consumers from './modules/Consumers'
+import * as View from './modules/View'
 import createInterceptors from '~/plugins/AxiosInterceptors'
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
@@ -38,7 +39,8 @@ const createStore = () => {
       [Corporates.name]: Corporates,
       [Accounts.name]: Accounts,
       [Transfers.name]: Transfers,
-      [Consumers.name]: Consumers
+      [Consumers.name]: Consumers,
+      [View.name]: View
     }
   })
 }
