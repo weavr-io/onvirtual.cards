@@ -125,6 +125,6 @@ export const actions: Actions<State, RootState> = {
     return api.post('/app/api/corporates/' + request.id + '/invites/consume', request.body)
   },
   startKYB({}, corporateId) {
-    return api.post('/app/api/supplier/' + corporateId + '/kyb/start', {})
+    return api.post('/app/api/corporates/' + corporateId + '/kyb/start', {})
   }
 }

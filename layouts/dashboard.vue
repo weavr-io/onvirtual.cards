@@ -13,7 +13,7 @@
         here.
       </b-link>
     </b-alert>
-    <b-alert id="account-kyc" :show="showKycAlert" class="fixed-bottom m-4 p-4" variant="bg-colored">
+    <b-alert id="account-kyc" :show="showKycAlert" v-if="showKycAlert" class="fixed-bottom m-4 p-4" variant="bg-colored">
       Your account is currently restricted to {{ consumer.kyc.allowedLimit | weavr_currency }}. You can lift this
       restriction
       <b-link to="/managed-accounts/kyc" class="link">
