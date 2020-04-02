@@ -31,8 +31,10 @@
     </b-row>
     <b-row v-else class="py-5">
       <b-col class="text-center">
-        <p>Your transactions will appear here.</p>
-        <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="border-primary">
+        <h5 class="font-weight-light">
+          Your transactions will appear here.
+        </h5>
+        <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="link">
           Start by topping up your account.
         </b-button>
       </b-col>

@@ -10,7 +10,7 @@ export module Schemas {
   }
 
   export interface LoginRequest {
-    programmeId: string
+    programmeId?: string
     code: string
     password: string
   }

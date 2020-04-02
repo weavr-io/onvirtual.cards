@@ -7,57 +7,59 @@
       class="border-0 cards-card shadow-hover-sm"
     >
       <b-card-body class="card-body onvirtual-card">
-        <b-link :to="'/managed-cards/' + card.id.id + '/statement'">
-          <b-container fluid class="p-0">
-            <b-row>
-              <b-col class="card-balance text-right">
-                {{ card.balances.availableBalance | weavr_currency(card.currency) }}
-              </b-col>
-            </b-row>
-            <b-row class="mt-5 mb-4">
-              <b-col>
-                <b-row>
-                  <b-col>
-                    <div class="card-name text-truncate">
-                      {{ card.friendlyName }}
+        <b-aspect :aspect="'1.6:1'" class="overflow-hidden">
+          <b-link :to="'/managed-cards/' + card.id.id + '/statement'">
+            <b-container fluid class="p-0">
+              <b-row>
+                <b-col class="card-balance text-right">
+                  {{ card.balances.availableBalance | weavr_currency(card.currency) }}
+                </b-col>
+              </b-row>
+              <b-row class="mt-3 mb-3">
+                <b-col>
+                  <b-row>
+                    <b-col>
+                      <div class="card-name text-truncate">
+                        {{ card.friendlyName }}
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row class="mt-2">
+                    <b-col>
+                      <div class="card-number">•••• {{ card.cardNumberLastFour }}</div>
+                    </b-col>
+                  </b-row>
+                </b-col>
+              </b-row>
+              <b-row align-v="end">
+                <b-col cols="6">
+                  <div class="card-name-on-card text-truncate ">
+                    {{ card.nameOnCard }}
+                  </div>
+                </b-col>
+                <b-col cols="3">
+                  <div class="card-expiry">
+                    <div class="card-expiry-label">
+                      EXP
                     </div>
-                  </b-col>
-                </b-row>
-                <b-row class="mt-2">
-                  <b-col>
-                    <div class="card-number">•••• {{ card.cardNumberLastFour }}</div>
-                  </b-col>
-                </b-row>
-              </b-col>
-            </b-row>
-            <b-row align-v="end">
-              <b-col cols="6">
-                <div class="card-name-on-card text-truncate ">
-                  {{ card.nameOnCard }}
-                </div>
-              </b-col>
-              <b-col cols="3">
-                <div class="card-expiry">
-                  <div class="card-expiry-label">
-                    EXP
+                    <div class="card-expiry-value">
+                      {{ card.expiryMmyy | expiryMmyy }}
+                    </div>
                   </div>
-                  <div class="card-expiry-value">
-                    {{ card.expiryMmyy | expiryMmyy }}
-                  </div>
-                </div>
-              </b-col>
-              <b-col cols="2" class="text-right">
-                <b-img src="/img/mc_symbol.svg" width="50px" />
-              </b-col>
-            </b-row>
-          </b-container>
-        </b-link>
-        <b-button class="card-options-button" @click="toggleShowOptions">
-          <b-icon icon="three-dots-vertical"/>
-        </b-button>
+                </b-col>
+                <b-col cols="2" class="text-right">
+                  <b-img src="/img/mc_symbol.svg" width="50px" />
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-link>
+          <b-button @click="toggleShowOptions" class="card-options-button">
+            <b-icon icon="three-dots-vertical" />
+          </b-button>
+        </b-aspect>
       </b-card-body>
     </b-card>
-    <b-row class="card-options" v-if="showOptions">
+    <b-row v-if="showOptions" class="card-options">
       <b-col>
         <b-link @click="toggleFreeze" class="mt-3 py-2 d-block text-decoration-none">
           <b-row align-v="center">
@@ -73,13 +75,13 @@
                   Unfreeze card
                 </template>
               </h6>
-              <p class="text-muted m-0 small" v-if="!isFrozen">
+              <p v-if="!isFrozen" class="text-muted m-0 small">
                 Tap again to unfreeze
               </p>
             </b-col>
           </b-row>
         </b-link>
-        <b-link class="py-2 d-block text-decoration-none" :to="'/managed-cards/' + card.id.id + '/edit'">
+        <b-link :to="'/managed-cards/' + card.id.id + '/edit'" class="py-2 d-block text-decoration-none">
           <b-row align-v="center">
             <b-col cols="auto">
               <b-img fluid src="/img/edit-icon.svg" />
@@ -100,9 +102,9 @@
 </template>
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
+import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
-import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 import * as CardsStore from '~/store/modules/Cards'
 
 @Component({
@@ -162,7 +164,7 @@ export default class WeavrCard extends VueWithRouter {
     )
   }
 
-  toggleShowOptions(){
+  toggleShowOptions() {
     this.showOptions = !this.showOptions
   }
 }

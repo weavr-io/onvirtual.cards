@@ -9,7 +9,7 @@
             </b-card-title>
             <b-card-body>
               <b-form @submit="doAdd">
-                <b-form-row>
+                <b-form-row v-if="!isConsumer">
                   <b-col>
                     <b-form-group label="Name of Person using Card:">
                       <b-form-input
@@ -26,7 +26,7 @@
                     </b-form-group>
                   </b-col>
                 </b-form-row>
-                <b-form-row>
+                <b-form-row v-if="!isConsumer">
                   <b-col>
                     <b-form-group label="CARDHOLDER MOBILE NUMBER:">
                       <vue-phone-number-input
@@ -74,10 +74,11 @@
 <script lang="ts">
 import { namespace } from 'vuex-class'
 import { Component } from 'nuxt-property-decorator'
-import { helpers, maxLength, required } from 'vuelidate/lib/validators'
+import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CardsStore from '~/store/modules/Cards'
 import * as AuthStore from '~/store/modules/Auth'
+import * as ConsumersStore from '~/store/modules/Consumers'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
@@ -99,13 +100,19 @@ const Auth = namespace(AuthStore.name)
         maxLength: maxLength(50)
       },
       cardholderMobileNumber: {
-        required,
-        cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
+        cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/),
+        requiredIf: requiredIf(function() {
+          // @ts-ignore
+          return !this.isConsumer
+        })
       },
       nameOnCard: {
-        required,
+        requiredIf: requiredIf(function() {
+          // @ts-ignore
+          return !this.isConsumer
+        }),
         maxLength: maxLength(30)
-      },
+      }
     }
   }
 })
@@ -115,6 +122,8 @@ export default class AddCardPage extends VueWithRouter {
   @Cards.Getter isLoading
 
   @Auth.Getter auth!: LoginResult
+
+  @Auth.Getter isConsumer!: boolean
 
   currencyOptions = [
     { value: 'EUR', text: 'EUR' },
@@ -128,6 +137,10 @@ export default class AddCardPage extends VueWithRouter {
 
   doAdd(evt) {
     evt.preventDefault()
+
+    if (this.isConsumer) {
+      this.numberIsValid = true
+    }
 
     if (this.numberIsValid === null) {
       this.numberIsValid = false
@@ -178,6 +191,12 @@ export default class AddCardPage extends VueWithRouter {
 
     if (_accounts.data.count === 1) {
       createManagedCardRequest.currency = _accounts.data.account[0].currency
+    }
+
+    if (AuthStore.Helpers.isConsumer(store)) {
+      const _consumer = await ConsumersStore.Helpers.get(store, AuthStore.Helpers.identity(store).id)
+      createManagedCardRequest.nameOnCard = _consumer.data.name + ' ' + _consumer.data.surname
+      createManagedCardRequest.cardholderMobileNumber = _consumer.data.mobileCountryCode + _consumer.data.mobileNumber
     }
 
     return { createManagedCardRequest: createManagedCardRequest }

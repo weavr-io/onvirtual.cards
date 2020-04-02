@@ -1,46 +1,40 @@
 <template>
-  <section>
-    <b-container>
-      <b-row class="full-height-vh" align-v="center">
-        <b-col lg="6" offset-lg="3" class="my-6">
-          <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
-          </div>
-          <b-card body-class="p-6">
-            <h3 class="text-center font-weight-light mb-6">
-              Accept Invite
-            </h3>
-            <error-alert />
-            <b-form @submit="tryToSubmitForm">
-              <client-only placeholder="Loading...">
-                <weavr-form ref="passwordForm">
-                  <label class="d-block">PASSWORD:</label>
-                  <weavr-input
-                    :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                    :base-style="passwordBaseStyle"
-                    @onKeyUp="checkOnKeyUp"
-                    class-name="sign-in-password"
-                    name="password"
-                    field="password"
-                    required="true"
-                  />
-                  <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
-                </weavr-form>
-              </client-only>
-              <b-form-row class="mt-6">
-                <b-col class="text-center">
-                  <b-button variant="secondary" type="submit">
-                    submit
-                    <span class="pl-5">-></span>
-                  </b-button>
-                </b-col>
-              </b-form-row>
-            </b-form>
-          </b-card>
-        </b-col>
-      </b-row>
-    </b-container>
-  </section>
+  <b-col lg="6" offset-lg="3">
+    <div class="text-center pb-5">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+    </div>
+    <b-card body-class="p-6">
+      <h3 class="text-center font-weight-light mb-6">
+        Accept Invite
+      </h3>
+      <error-alert />
+      <b-form @submit="tryToSubmitForm">
+        <client-only placeholder="Loading...">
+          <weavr-form ref="passwordForm">
+            <label class="d-block">PASSWORD:</label>
+            <weavr-input
+              :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+              :base-style="passwordBaseStyle"
+              @onKeyUp="checkOnKeyUp"
+              class-name="sign-in-password"
+              name="password"
+              field="password"
+              required="true"
+            />
+            <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
+          </weavr-form>
+        </client-only>
+        <b-form-row class="mt-6">
+          <b-col class="text-center">
+            <b-button variant="secondary" type="submit">
+              submit
+              <span class="pl-5">-></span>
+            </b-button>
+          </b-col>
+        </b-form-row>
+      </b-form>
+    </b-card>
+  </b-col>
 </template>
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
