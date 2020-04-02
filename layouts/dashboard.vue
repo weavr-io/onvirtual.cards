@@ -2,9 +2,7 @@
   <div>
     <app-header />
     <dashboard-header />
-    <div v-if="!showKybAlert && !showKycAlert && !showVerifyMobileAlert">
-      <Nuxt />
-    </div>
+    <Nuxt />
     <kyb-alert />
     <kyc-alert />
     <b-alert id="account-limit" :show="showVerifyMobileAlert" class="fixed-bottom m-4 p-4" variant="bg-colored">
@@ -13,8 +11,8 @@
         here.
       </b-link>
     </b-alert>
-    <b-alert id="account-kyc" :show="showKycAlert" v-if="showKycAlert" class="fixed-bottom m-4 p-4" variant="bg-colored">
-      Your account is currently restricted to {{ consumer.kyc.allowedLimit | weavr_currency }}. You can lift this
+    <b-alert id="account-kyc" v-if="showKycAlert" :show="true" class="fixed-bottom m-4 p-4" variant="bg-colored">
+      Your account is currently restricted to {{ allowedLimit | weavr_currency }}. You can lift this
       restriction
       <b-link to="/managed-accounts/kyc" class="link">
         here.
@@ -35,16 +33,21 @@ import { namespace } from 'vuex-class'
 import { BaseVue } from '~/base/classes/BaseVue'
 
 import * as LoaderStore from '~/store/modules/Loader'
-import { KYBState } from '~/api/Enums/KYBState'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
+import * as ViewStore from '~/store/modules/View'
+import * as AccountsStore from '~/store/modules/Accounts'
+import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
+import { Schemas } from '~/api/Schemas'
+import CurrencyAmount = Schemas.CurrencyAmount
 
 const Loader = namespace(LoaderStore.name)
 const Consumers = namespace(ConsumersStore.name)
 const Corporates = namespace(CorporatesStore.name)
+const View = namespace(ViewStore.name)
+const Accounts = namespace(AccountsStore.name)
 
 @Component({
   components: {
@@ -58,36 +61,34 @@ const Corporates = namespace(CorporatesStore.name)
 export default class DefaultLayout extends BaseVue {
   @Loader.Getter isLoading
 
+  @View.Getter showKybAlert!: boolean
+
+  @View.Getter showKycAlert!: boolean
+
+  @View.Getter showVerifyMobileAlert!: boolean
+
+  @Accounts.Getter accounts!: ManagedAccountsSchemas.ManagedAccounts | null
+
   @Consumers.Getter consumer!: Consumer | null
 
   @Corporates.Getter corporate!: CorporatesSchemas.Corporate | null
 
-  get showKybAlert(): boolean {
-    if (this.corporate && this.corporate.kyb) {
-      return this.corporate.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
-    } else {
-      return false
+  get allowedLimit(): CurrencyAmount {
+    const _out: CurrencyAmount = {
+      amount: 10000,
+      currency: 'EUR'
     }
-  }
 
-  get showKycAlert(): boolean {
-    if (this.showVerifyMobileAlert) {
-      return false
-    } else if (this.consumer && this.consumer.kyc) {
-      return this.consumer.kyc.fullDueDiligence
-        ? this.consumer.kyc.fullDueDiligence !== FullDueDiligence.APPROVED
-        : true
-    } else {
-      return false
+    if (this.accounts) {
+      if (this.accounts.account.length > 0) {
+        if (this.accounts.account[0].currency === 'GBP') {
+          _out.amount = 8000
+          _out.currency = 'GBP'
+        }
+      }
     }
-  }
 
-  get showVerifyMobileAlert(): boolean {
-    if (this.consumer && this.consumer.kyc) {
-      return this.consumer.kyc.mobileVerified ? !this.consumer.kyc.mobileVerified : true
-    } else {
-      return false
-    }
+    return _out
   }
 
   get restrictionLink() {

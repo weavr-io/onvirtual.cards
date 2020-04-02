@@ -162,7 +162,6 @@ export default class AddCardPage extends VueWithRouter {
   }
 
   mounted() {
-    super.mounted()
     if (this.auth.identity) {
       this.createManagedCardRequest.owner = this.auth.identity
     }

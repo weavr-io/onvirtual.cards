@@ -43,8 +43,10 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import { KYBState } from '~/api/Enums/KYBState'
+import * as ViewStore from '~/store/modules/View'
 
 const Corporates = namespace(CorporatesStore.name)
+const View = namespace(ViewStore.name)
 
 @Component({})
 export default class KYBAlert extends VueWithRouter {
@@ -52,12 +54,6 @@ export default class KYBAlert extends VueWithRouter {
 
   accountId!: number
 
-  get showKybAlert(): boolean {
-    if (this.corporate && this.corporate.kyb) {
-      return this.corporate.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
-    } else {
-      return false
-    }
-  }
+  @View.Getter showKybAlert!: boolean
 }
 </script>

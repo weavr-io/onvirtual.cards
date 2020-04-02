@@ -24,7 +24,7 @@
           <b-row>
             <b-col md="4" offset-md="4">
               <b-form-group label="">
-                <b-form-input v-model="verifyEmailRequest.request.nonce" placeholder="0000" class="text-center" />
+                <b-form-input v-model="verifyEmailRequest.request.nonce" placeholder="000000" class="text-center" />
               </b-form-group>
             </b-col>
           </b-row>

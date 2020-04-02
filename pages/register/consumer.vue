@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-card">
@@ -183,8 +183,6 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
   public password: string = ''
 
   mounted() {
-    super.mounted()
-
     this.registrationRequest.profileId = config.profileId.consumers
   }
 
@@ -203,6 +201,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     } else {
       this.$weavrToastError(_errCode)
     }
+
+    window.scrollTo(0, 0)
   }
 
   doCreatePasswordIdentity() {

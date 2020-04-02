@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <b-card no-body class="overflow-hidden">
-      <b-card-body class="p-6">
+      <b-card-body v-if="!passwordSent" class="p-card">
         <div class="text-center">
           <h2 class="font-weight-lighter">
             Reset Password
@@ -34,6 +34,29 @@
           </div>
         </b-form>
       </b-card-body>
+      <b-card v-else no-body class="overflow-hidden">
+        <b-card-body class="p-card">
+          <div class="text-center">
+            <h2 class="font-weight-lighter">
+              Email sent
+            </h2>
+            <h5 class="font-weight-lighter mt-4">
+              Check your email for a reset link. If you don’t receive this within 5 minutes, click the link below to
+              resend.
+            </h5>
+          </div>
+          <div class="mt-5 text-center">
+            <div>
+              <img src="/img/success.svg" alt="" style="max-width: 100px" />
+            </div>
+            <div>
+              <b-form id="contact-form" @submit="resetPassword" class="mt-5">
+                <loader-button :is-loading="isLoading" button-text="resend" class="text-center" />
+              </b-form>
+            </div>
+          </div>
+        </b-card-body>
+      </b-card>
     </b-card>
   </b-col>
 </template>
@@ -66,6 +89,8 @@ const Auth = namespace(AuthStore.name)
 export default class ResetPasswordPage extends BaseVue {
   @Auth.Getter isLoading!: boolean
 
+  passwordSent: boolean = false
+
   protected form: LostPasswordStartRequest = {
     email: ''
   }
@@ -75,13 +100,9 @@ export default class ResetPasswordPage extends BaseVue {
     this.$v.$touch()
     if (!this.$v.$invalid) {
       AuthStore.Helpers.lostPasswordStart(this.$store, this.form).then(() => {
-        this.$router.push('/password/sent')
+        this.passwordSent = true
       })
     }
-  }
-
-  mounted() {
-    super.mounted()
   }
 }
 </script>

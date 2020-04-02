@@ -1,6 +1,5 @@
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 <template>
-  <section>
+  <section v-if="!hasAlert">
     <statement />
   </section>
 </template>
@@ -18,10 +17,12 @@ import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
+import * as ViewStore from '~/store/modules/View'
 
 const Accounts = namespace(AccountsStore.name)
 const Consumers = namespace(ConsumersStore.name)
 const Corporates = namespace(CorporatesStore.name)
+const View = namespace(ViewStore.name)
 
 @Component({
   layout: 'dashboard',
@@ -37,6 +38,8 @@ export default class AccountPage extends VueWithRouter {
   @Consumers.Getter consumer!: Consumer | null
 
   @Corporates.Getter corporate!: CorporatesSchemas.Corporate | null
+
+  @View.Getter hasAlert!: boolean
 
   accountId!: number
 

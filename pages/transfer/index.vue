@@ -91,8 +91,6 @@ export default class CardsPage extends VueWithRouter {
   ]
 
   mounted() {
-    super.mounted()
-
     try {
       this.$segment.track('Initiated Transfer', {})
     } catch (e) {}

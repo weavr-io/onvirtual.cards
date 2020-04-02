@@ -106,7 +106,6 @@ export default class PasswordSentPage extends BaseVue {
   }
 
   mounted() {
-    super.mounted()
     this.form.nonce = this.$route.params.nonce
     this.form.email = this.$route.params.email
 
