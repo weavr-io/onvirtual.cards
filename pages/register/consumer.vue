@@ -1,97 +1,92 @@
 <template>
-  <section>
-    <b-container>
-      <b-row class="full-height-vh" align-v="center">
-        <b-col md="6" offset-md="3">
-          <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+  <b-col md="6" offset-md="3">
+    <div class="text-center pb-5">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+    </div>
+    <b-card no-body class="overflow-hidden">
+      <b-card-body class="p-card">
+        <div class="form-screens">
+          <error-alert />
+          <div class="form-screen">
+            <b-form @submit="submitForm" novalidate>
+              <h3 class="text-center font-weight-light mb-5">
+                Register
+              </h3>
+              <b-form-group label="First Name">
+                <b-form-input
+                  v-model="registrationRequest.name"
+                  :state="isInvalid($v.registrationRequest.name)"
+                  placeholder="First Name"
+                />
+                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+              </b-form-group>
+              <b-form-group label="Last Name">
+                <b-form-input
+                  :state="isInvalid($v.registrationRequest.surname)"
+                  v-model="registrationRequest.surname"
+                  placeholder="Last Name"
+                />
+                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+              </b-form-group>
+              <b-form-group label="Username">
+                <b-form-input
+                  v-model="$v.registrationRequest.credentialCode.$model"
+                  :state="isInvalid($v.registrationRequest.credentialCode)"
+                  placeholder="Username"
+                />
+                <b-form-invalid-feedback>Only numbers and latin letters are accepted.</b-form-invalid-feedback>
+              </b-form-group>
+              <b-form-group :state="isInvalid($v.registrationRequest.email)" label="Email">
+                <b-form-input
+                  v-model="$v.registrationRequest.email.$model"
+                  :state="isInvalid($v.registrationRequest.email)"
+                  @input="delayTouch($v.registrationRequest.email)"
+                  placeholder="name@email.com"
+                />
+                <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
+              </b-form-group>
+              <b-form-group label="MOBILE NUMBER">
+                <vue-phone-number-input
+                  v-model="rootMobileNumber"
+                  @update="phoneUpdate"
+                  :only-countries="mobileCountries"
+                  :border-radius="0"
+                  :error="numberIsValid === false"
+                  color="#6C1C5C"
+                  error-color="#F50E4C"
+                  valid-color="#6D7490"
+                  default-country-code="GB"
+                />
+                <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
+                  This field must be a valid mobile number.
+                </b-form-invalid-feedback>
+              </b-form-group>
+              <client-only placeholder="Loading...">
+                <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.registrationRequest.$dirty }">
+                  <label class="d-block">PASSWORD</label>
+                  <weavr-input
+                    :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                    :base-style="passwordBaseStyle"
+                    @onKeyUp="checkOnKeyUp"
+                    class-name="sign-in-password"
+                    name="password"
+                    field="password"
+                    required="true"
+                  />
+                  <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
+                </weavr-form>
+              </client-only>
+              <b-row class="mt-4" align-v="center">
+                <b-col class="text-center">
+                  <loader-button :is-loading="isLoadingRegistration" button-text="continue" />
+                </b-col>
+              </b-row>
+            </b-form>
           </div>
-          <b-card no-body class="overflow-hidden">
-            <b-card-body class="p-card">
-              <div class="form-screens">
-                <error-alert />
-                <div class="form-screen">
-                  <b-form @submit="submitForm" novalidate>
-                    <h3 class="text-center font-weight-light mb-5">
-                      Register
-                    </h3>
-                    <b-form-group label="First Name">
-                      <b-form-input
-                              v-model="registrationRequest.name"
-                              :state="isInvalid($v.registrationRequest.name)"
-                              placeholder="First Name"
-                      />
-                      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-                    </b-form-group>
-                    <b-form-group label="Last Name">
-                      <b-form-input
-                              :state="isInvalid($v.registrationRequest.surname)"
-                              v-model="registrationRequest.surname"
-                              placeholder="Last Name"
-                      />
-                      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-                    </b-form-group>
-                    <b-form-group label="Username">
-                      <b-form-input
-                              v-model="$v.registrationRequest.credentialCode.$model"
-                              :state="isInvalid($v.registrationRequest.credentialCode)"
-                              placeholder="Username"
-                      />
-                      <b-form-invalid-feedback>Only numbers and latin letters are accepted.</b-form-invalid-feedback>
-                    </b-form-group>
-                    <b-form-group :state="isInvalid($v.registrationRequest.email)" label="Email">
-                      <b-form-input
-                              v-model="$v.registrationRequest.email.$model"
-                              :state="isInvalid($v.registrationRequest.email)"
-                              placeholder="name@email.com"
-                      />
-                      <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
-                    </b-form-group>
-                    <b-form-group label="MOBILE NUMBER">
-                      <vue-phone-number-input
-                              v-model="rootMobileNumber"
-                              @update="phoneUpdate"
-                              :only-countries="mobileCountries"
-                              :border-radius="0"
-                              :error="numberIsValid === false"
-                              color="#6C1C5C"
-                              error-color="#F50E4C"
-                              valid-color="#6D7490"
-                              default-country-code="GB"
-                      />
-                      <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
-                        This field must be a valid mobile number.
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                    <client-only placeholder="Loading...">
-                      <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.registrationRequest.$dirty }">
-                        <label class="d-block">PASSWORD</label>
-                        <weavr-input
-                                :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                                :base-style="passwordBaseStyle"
-                                @onKeyUp="checkOnKeyUp"
-                                class-name="sign-in-password"
-                                name="password"
-                                field="password"
-                                required="true"
-                        />
-                        <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
-                      </weavr-form>
-                    </client-only>
-                    <b-row class="mt-4" align-v="center">
-                      <b-col class="text-center">
-                        <loader-button :is-loading="isLoading" button-text="continue" />
-                      </b-col>
-                    </b-row>
-                  </b-form>
-                </div>
-              </div>
-            </b-card-body>
-          </b-card>
-        </b-col>
-      </b-row>
-    </b-container>
-  </section>
+        </div>
+      </b-card-body>
+    </b-card>
+  </b-col>
 </template>
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
@@ -117,6 +112,8 @@ import LoginRequest = Schemas.LoginRequest
 const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')
 
+const touchMap = new WeakMap()
+
 @Component({
   layout: 'auth',
   validations: {
@@ -124,8 +121,8 @@ const Countries = require('~/static/json/countries.json')
       credentialCode: {
         required,
         credentialCode: helpers.regex(
-                'credentialCode',
-                /^[a-zA-Z0-9_.*@-]*$|^[a-zA-Z0-9.!#$%&*+\/=?^_|~-]+@[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*$/
+          'credentialCode',
+          /^[a-zA-Z0-9_.*@-]*$|^[a-zA-Z0-9.!#$%&*+\/=?^_|~-]+@[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*$/
         ),
         maxLength: maxLength(20)
       },
@@ -168,6 +165,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
   rootMobileNumber = ''
   numberIsValid: boolean | null = null
 
+  isLoadingRegistration: boolean = false
+
   public registrationRequest: CreateConsumerRequest = {
     profileId: 0,
     name: '',
@@ -190,12 +189,14 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
   }
 
   doRegister() {
+    this.isLoadingRegistration = true
     ConsumerHelpers.create(this.$store, this.registrationRequest)
-            .then(this.doCreatePasswordIdentity.bind(this))
-            .catch(this.registrationFailed.bind(this))
+      .then(this.doCreatePasswordIdentity.bind(this))
+      .catch(this.registrationFailed.bind(this))
   }
 
   registrationFailed(err) {
+    this.isLoadingRegistration = false
     const _errCode = err.response.data.errorCode
 
     if (_errCode === 'USERNAME_NOT_UNIQUE' || _errCode === 'EMAIL_NOT_UNIQUE') {
@@ -211,7 +212,10 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
         profileId: this.registrationRequest.profileId
       }
     }
-    Helpers.createPasswordIdentity(this.$store, _req).then(this.doCreatePassword.bind(this))
+    Helpers.createPasswordIdentity(this.$store, _req).then(
+      this.doCreatePassword.bind(this),
+      this.registrationFailed.bind(this)
+    )
   }
 
   doCreatePassword() {
@@ -226,7 +230,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       }
     }
 
-    Helpers.createPassword(this.$store, _req).then(this.waitAndDoLogin.bind(this))
+    Helpers.createPassword(this.$store, _req).then(this.waitAndDoLogin.bind(this), this.registrationFailed.bind(this))
   }
 
   sleep(ms) {
@@ -252,10 +256,11 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       request: {
         emailAddress: this.registrationRequest.email
       }
-    }).then(this.goToVerifyEmail.bind(this))
+    }).then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
   }
 
   goToVerifyEmail() {
+    this.isLoadingRegistration = false
     this.$router.push({
       path: '/register/verify',
       query: {
@@ -272,7 +277,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       color: '#495057',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
-      fontFamily: '\'Be Vietnam\', sans-serif',
+      fontFamily: "'Be Vietnam', sans-serif",
       fontWeight: '400',
       lineHeight: '24px',
       margin: '0',
@@ -301,19 +306,19 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
     const form: WeavrForm = this.$refs.passwordForm as WeavrForm
     form.tokenize(
-            (tokens) => {
-              if (tokens.password !== '') {
-                this.password = tokens.password
+      (tokens) => {
+        if (tokens.password !== '') {
+          this.password = tokens.password
 
-                this.validatePassword()
-              } else {
-                return null
-              }
-            },
-            (e) => {
-              console.error(e)
-              return null
-            }
+          this.validatePassword()
+        } else {
+          return null
+        }
+      },
+      (e) => {
+        console.error(e)
+        return null
+      }
     )
   }
 
@@ -348,6 +353,14 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     return Countries.map((_c) => {
       return _c['alpha-2']
     })
+  }
+
+  delayTouch($v) {
+    $v.$reset()
+    if (touchMap.has($v)) {
+      clearTimeout(touchMap.get($v))
+    }
+    touchMap.set($v, setTimeout($v.$touch, 1000))
   }
 }
 </script>

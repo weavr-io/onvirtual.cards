@@ -1,31 +1,25 @@
 <template>
-  <section>
-    <b-container>
-      <b-row class="full-height-vh" align-v="center">
-        <b-col lg="6" offset-lg="3" class="my-6">
-          <div class="text-center pb-5">
-            <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+  <b-col lg="6" offset-lg="3">
+    <div class="text-center pb-5">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+    </div>
+    <b-card no-body class="overflow-hidden">
+      <b-card-body class="p-6">
+        <div class="form-screens">
+          <error-alert />
+          <div :class="{ 'd-none': screen !== 0 }" class="form-screen">
+            <register-form :request="registrationRequest" @submit-form="form1Submit" />
           </div>
-          <b-card no-body class="overflow-hidden">
-            <b-card-body class="p-6">
-              <div class="form-screens">
-                <error-alert />
-                <div :class="{ 'd-none': screen !== 0 }" class="form-screen">
-                  <register-form :request="registrationRequest" @submit-form="form1Submit" />
-                </div>
-                <div :class="{ 'd-none': screen !== 1 }" class="form-screen">
-                  <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
-                </div>
-                <div :class="{ 'd-none': screen !== 2 }" class="form-screen">
-                  <company-details-form :request="registrationRequest" @submit-form="form3Submit" @go-back="goBack" />
-                </div>
-              </div>
-            </b-card-body>
-          </b-card>
-        </b-col>
-      </b-row>
-    </b-container>
-  </section>
+          <div :class="{ 'd-none': screen !== 1 }" class="form-screen">
+            <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
+          </div>
+          <div :class="{ 'd-none': screen !== 2 }" class="form-screen">
+            <company-details-form :request="registrationRequest" @submit-form="form3Submit" @go-back="goBack" />
+          </div>
+        </div>
+      </b-card-body>
+    </b-card>
+  </b-col>
 </template>
 <script lang="ts">
 import { namespace } from 'vuex-class'
@@ -138,8 +132,8 @@ export default class RegistrationPage extends VueWithRouter {
     this.registrationRequest.companyBusinessAddress = this.registrationRequest.companyRegistrationAddress
 
     this.register(this.registrationRequest)
-            .then(this.doCreateCorporatePasswordIdentity.bind(this))
-            .catch(this.registrationFailed.bind(this))
+      .then(this.doCreateCorporatePasswordIdentity.bind(this))
+      .catch(this.registrationFailed.bind(this))
   }
 
   registrationFailed(err) {

@@ -1,7 +1,7 @@
 <template>
   <div id="main-header">
     <div v-if="showHeader" class="container-fluid">
-      <b-navbar type="light" fixed="top" variant="bg-colored" class="">
+      <b-navbar type="light" fixed="top" variant="transparent" class="">
         <b-container>
           <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav class="ml-auto" v-if="showLinks">
@@ -16,7 +16,11 @@
         </b-container>
       </b-navbar>
     </div>
-    <nuxt />
+    <b-container>
+      <b-row class="full-height-vh" align-v="center">
+          <nuxt class="my-6"/>
+      </b-row>
+    </b-container>
     <!-- <app-footer /> -->
   </div>
 </template>

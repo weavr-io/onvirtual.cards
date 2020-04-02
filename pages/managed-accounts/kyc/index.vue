@@ -48,7 +48,7 @@ export default class KycPage extends VueWithRouter {
     console.log(event)
     switch (event.data.status) {
       case 'failed':
-        alert('KYC Failed')
+        this.$router.push('/managed-accounts/kyc/failed')
         break
       case 'approved':
         AccountsStore.Helpers.index(this.$store).then((_accounts) => {
