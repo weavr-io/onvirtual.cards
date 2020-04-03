@@ -11,7 +11,7 @@
               <b-form @submit="doAdd">
                 <b-form-row v-if="!isConsumer">
                   <b-col>
-                    <b-form-group label="Name of Person using Card:">
+                    <b-form-group label="Name of Person using Card">
                       <b-form-input
                         :state="isInvalid($v.createManagedCardRequest.nameOnCard)"
                         v-model="$v.createManagedCardRequest.nameOnCard.$model"
@@ -28,7 +28,7 @@
                 </b-form-row>
                 <b-form-row v-if="!isConsumer">
                   <b-col>
-                    <b-form-group label="CARDHOLDER MOBILE NUMBER:">
+                    <b-form-group label="CARDHOLDER MOBILE NUMBER">
                       <vue-phone-number-input
                         v-model="createManagedCardRequest.formattedMobileNumber"
                         @update="phoneUpdate"
@@ -47,7 +47,7 @@
                 </b-form-row>
                 <b-form-row>
                   <b-col>
-                    <b-form-group label="ADD A CUSTOM CARD NAME:">
+                    <b-form-group label="ADD A CUSTOM CARD NAME">
                       <b-form-input
                         :state="isInvalid($v.createManagedCardRequest.friendlyName)"
                         v-model="$v.createManagedCardRequest.friendlyName.$model"

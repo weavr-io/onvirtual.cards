@@ -49,6 +49,7 @@ import { Schemas } from '~/api/Schemas'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as CorporatesStore from '~/store/modules/Corporates'
+import * as ConsumersStore from '~/store/modules/Consumers'
 
 const Auth = namespace(AuthStore.name)
 
@@ -83,11 +84,6 @@ export default class EmailVerificationPage extends VueWithRouter {
     if (request.request.nonce !== '') {
       this.verifyEmail(request).then(() => {
         redirect('/login')
-        // if (route.query.cons) {
-        //   redirect('/register/verify/mobile')
-        // } else {
-        //   redirect('/login')
-        // }
       })
     }
 
@@ -97,6 +93,25 @@ export default class EmailVerificationPage extends VueWithRouter {
   }
 
   sendVerifyEmail() {
+    if (this.$route.query.cons) {
+      this.sendVerifyEmailConsumers()
+    } else {
+      this.sendVerifyEmailCorporates()
+    }
+  }
+
+  sendVerifyEmailConsumers() {
+    ConsumersStore.Helpers.sendVerificationCodeEmail(this.$store, {
+      consumerId: this.verifyEmailRequest.consumerId,
+      request: {
+        emailAddress: this.verifyEmailRequest.request.emailAddress
+      }
+    }).then(() => {
+      this.showEmailResentSuccess = true
+    })
+  }
+
+  sendVerifyEmailCorporates() {
     CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, {
       corporateId: this.verifyEmailRequest.corporateId,
       body: {

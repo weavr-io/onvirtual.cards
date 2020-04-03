@@ -9,9 +9,9 @@
             </b-card-title>
             <b-card-body>
               <b-form @submit="doAdd">
-                <b-form-row>
+                <b-form-row v-if="!isConsumer">
                   <b-col>
-                    <b-form-group label="Name of Person using Card:">
+                    <b-form-group label="Name of Person using Card">
                       <b-form-input
                         :state="isInvalid($v.updateManagedCardRequest.body.nameOnCard)"
                         v-model="$v.updateManagedCardRequest.body.nameOnCard.$model"
@@ -22,9 +22,9 @@
                     </b-form-group>
                   </b-col>
                 </b-form-row>
-                <b-form-row>
+                <b-form-row v-if="!isConsumer">
                   <b-col>
-                    <b-form-group label="CARDHOLDER MOBILE NUMBER:">
+                    <b-form-group label="CARDHOLDER MOBILE NUMBER">
                       <vue-phone-number-input
                         :value="mobile.cardholderMobileNumber"
                         @update="phoneUpdate"
@@ -43,7 +43,7 @@
                 </b-form-row>
                 <b-form-row>
                   <b-col>
-                    <b-form-group label="ADD A CUSTOM CARD NAME:">
+                    <b-form-group label="CUSTOM CARD NAME">
                       <b-form-input
                         :state="isInvalid($v.updateManagedCardRequest.body.friendlyName)"
                         v-model="$v.updateManagedCardRequest.body.friendlyName.$model"
@@ -65,7 +65,7 @@
 <script lang="ts">
 import { namespace } from 'vuex-class'
 import { Component } from 'nuxt-property-decorator'
-import { helpers, maxLength, required } from 'vuelidate/lib/validators'
+import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CardsStore from '~/store/modules/Cards'
@@ -90,11 +90,17 @@ const Auth = namespace(AuthStore.name)
           maxLength: maxLength(50)
         },
         cardholderMobileNumber: {
-          required,
+          requiredIf: requiredIf(function() {
+            // @ts-ignore
+            return !this.isConsumer
+          }),
           cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
         },
         nameOnCard: {
-          required,
+          requiredIf: requiredIf(function() {
+            // @ts-ignore
+            return !this.isConsumer
+          }),
           maxLength: maxLength(30)
         }
       }
@@ -108,6 +114,8 @@ export default class AddCardPage extends VueWithRouter {
 
   @Auth.Getter auth!: LoginResult
 
+  @Auth.Getter isConsumer!: boolean
+
   numberIsValid: boolean | null = null
   mobile = {
     countryCode: 'GB',
@@ -118,6 +126,10 @@ export default class AddCardPage extends VueWithRouter {
 
   doAdd(evt) {
     evt.preventDefault()
+
+    if (this.isConsumer) {
+      this.numberIsValid = true
+    }
 
     if (this.numberIsValid === null) {
       this.numberIsValid = false

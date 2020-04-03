@@ -25,10 +25,14 @@ export default class IndexPage extends Vue {
     if (isLoggedIn) {
       if (AuthStore.Helpers.isConsumer(store)) {
         const _cons = ConsumersStore.Helpers.consumer(store)
-        const _corp = CorporatesStore.Helpers.corporate(store)
         if (_cons && _cons.kyc && !_cons.kyc.mobileVerified) {
           redirect('/register/verify/mobile')
-        } else if (_corp && _corp.kyb && !_corp.kyb.rootMobileVerified) {
+        } else {
+          redirect('/dashboard')
+        }
+      } else if (AuthStore.Helpers.isConsumer(store)) {
+        const _corp = CorporatesStore.Helpers.corporate(store)
+        if (_corp && _corp.kyb && !_corp.kyb.rootMobileVerified) {
           redirect('/register/verify/mobile')
         } else {
           redirect('/dashboard')

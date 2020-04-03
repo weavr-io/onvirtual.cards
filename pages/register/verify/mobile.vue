@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -130,29 +130,9 @@ export default class EmailVerificationPage extends VueWithRouter {
 
     let _mobileNumber, _parsedNumber, _number
 
-    if (route.query.cons) {
-      consumerVerifyMobileRequest.consumerId = route.query.cons
-      consumerVerifyMobileRequest.request.mobileCountryCode = route.query.mobileCountryCode
-      consumerVerifyMobileRequest.request.mobileNumber = route.query.mobileNumber
+    if (AuthStore.Helpers.isConsumer(store)) {
+      await ConsumersStore.Helpers.get(store, AuthStore.Helpers.identity(store).id)
 
-      _mobileNumber =
-              consumerVerifyMobileRequest.request.mobileCountryCode + consumerVerifyMobileRequest.request.mobileNumber
-      _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
-      _number = consumerVerifyMobileRequest.request.mobileNumber
-
-      await ConsumersStore.Helpers.sendVerificationCodeMobile(store, consumerVerifyMobileRequest)
-    } else if (route.query.corp) {
-      corporateVerifyMobileRequest.corporateId = route.query.corp
-      corporateVerifyMobileRequest.request.mobileCountryCode = route.query.mobileCountryCode
-      corporateVerifyMobileRequest.request.mobileNumber = route.query.mobileNumber
-
-      _mobileNumber =
-              corporateVerifyMobileRequest.request.mobileCountryCode + corporateVerifyMobileRequest.request.mobileNumber
-      _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
-      _number = corporateVerifyMobileRequest.request.mobileNumber
-
-      await CorporatesStore.Helpers.sendVerificationCodeMobile(store, corporateVerifyMobileRequest)
-    } else if (AuthStore.Helpers.isConsumer(store)) {
       const _consumerId = AuthStore.Helpers.identityId(store)
       if (_consumerId != null) {
         consumerVerifyMobileRequest.consumerId = _consumerId
@@ -162,12 +142,14 @@ export default class EmailVerificationPage extends VueWithRouter {
       }
 
       _mobileNumber =
-              consumerVerifyMobileRequest.request.mobileCountryCode + consumerVerifyMobileRequest.request.mobileNumber
+        consumerVerifyMobileRequest.request.mobileCountryCode + consumerVerifyMobileRequest.request.mobileNumber
       _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
       _number = consumerVerifyMobileRequest.request.mobileNumber
 
       await ConsumersStore.Helpers.sendVerificationCodeMobile(store, consumerVerifyMobileRequest)
     } else if (AuthStore.Helpers.isCorporate(store)) {
+      await CorporatesStore.Helpers.getCorporateDetails(store, AuthStore.Helpers.identity(store).id)
+
       const _corporateId = AuthStore.Helpers.identityId(store)
       if (_corporateId != null) {
         corporateVerifyMobileRequest.corporateId = _corporateId
@@ -177,7 +159,7 @@ export default class EmailVerificationPage extends VueWithRouter {
       }
 
       _mobileNumber =
-              corporateVerifyMobileRequest.request.mobileCountryCode + corporateVerifyMobileRequest.request.mobileNumber
+        corporateVerifyMobileRequest.request.mobileCountryCode + corporateVerifyMobileRequest.request.mobileNumber
       _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
       _number = corporateVerifyMobileRequest.request.mobileNumber
 
@@ -198,6 +180,7 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   doVerify(evt) {
     evt.preventDefault()
+
     if (this.consumerVerifyMobileRequest.consumerId !== 0) {
       this.doVerifyConsumer()
     } else {
@@ -207,15 +190,15 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   doVerifyCorporate() {
     CorporatesStore.Helpers.verifyMobile(this.$store, this.corporateVerifyMobileRequest).then(
-            this.goToDashboard.bind(this),
-            this.errorOccurred.bind(this)
+      this.goToDashboard.bind(this),
+      this.errorOccurred.bind(this)
     )
   }
 
   doVerifyConsumer() {
     ConsumersStore.Helpers.verifyMobile(this.$store, this.consumerVerifyMobileRequest).then(
-            this.goToDashboard.bind(this),
-            this.errorOccurred.bind(this)
+      this.goToDashboard.bind(this),
+      this.errorOccurred.bind(this)
     )
   }
 
@@ -224,10 +207,6 @@ export default class EmailVerificationPage extends VueWithRouter {
   }
 
   async goToDashboard() {
-    if (AuthStore.Helpers.isConsumer(this.$store)) {
-      await ConsumersStore.Helpers.get(this.$store, AuthStore.Helpers.identity(this.$store).id)
-    }
-
     this.$router.push('/')
   }
 

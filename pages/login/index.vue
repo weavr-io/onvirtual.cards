@@ -78,6 +78,7 @@ export default class LoginPage extends VueWithRouter {
 
   @Auth.Getter isLoading!: boolean
 
+
   public loginRequest: Schemas.LoginRequest = {
     code: '',
     password: ''
