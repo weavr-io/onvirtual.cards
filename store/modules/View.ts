@@ -30,8 +30,12 @@ export const getters: GetterTree<State, RootState> = {
   },
   showVerifyMobileAlert: (state, getters, rootState, rootGetters) => {
     const _consumer = rootGetters['consumers/consumer']
+    const _corporate = rootGetters['corporates/corporate']
+
     if (_consumer && _consumer.kyc) {
       return _consumer.kyc.mobileVerified ? !_consumer.kyc.mobileVerified : true
+    } else if (_corporate && _corporate.kyb) {
+      return _corporate.kyb.rootMobileVerified ? !_corporate.kyb.rootMobileVerified : true
     } else {
       return false
     }

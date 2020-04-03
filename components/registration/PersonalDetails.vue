@@ -3,6 +3,7 @@
     <h3 class="text-center font-weight-light mb-5">
       Personal Details
     </h3>
+    <error-alert />
     <b-form-group label="First Name">
       <b-form-input v-model="$v.form.rootName.$model" :state="isInvalid($v.form.rootName)" placeholder="Name" />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -50,7 +51,7 @@
       </b-form-invalid-feedback>
     </b-form-group>
 
-    <b-form-row class="mt-6">
+    <b-form-row class="mt-5">
       <b-col md="4">
         <b-button @click="goBack" variant="outline">
           <-
@@ -71,6 +72,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
+
 const Countries = require('~/static/json/countries.json')
 
 @Component({
@@ -97,6 +99,9 @@ const Countries = require('~/static/json/countries.json')
         required
       }
     }
+  },
+  components: {
+    ErrorAlert: () => import('~/components/ErrorAlert.vue')
   }
 })
 export default class PersonalDetailsForm extends VueWithRouter {

@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -113,11 +113,7 @@ export default class EmailVerificationPage extends VueWithRouter {
   }
 
   nextPage() {
-    if (this.$route.query.cons) {
-      this.goToVerifyMobile()
-    } else {
-      this.$router.push('/login')
-    }
+    this.goToVerifyMobile()
   }
 
   goToVerifyMobile() {
@@ -125,6 +121,7 @@ export default class EmailVerificationPage extends VueWithRouter {
       path: '/register/verify/mobile',
       query: {
         cons: this.$route.query.cons,
+        corp: this.$route.query.corp,
         mobileNumber: this.$route.query.mobileNumber,
         mobileCountryCode: this.$route.query.mobileCountryCode
       }

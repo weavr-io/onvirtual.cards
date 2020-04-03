@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -39,7 +39,7 @@
           <b-row>
             <b-col md="4" offset-md="4">
               <b-form-group label="">
-                <b-form-input v-model="verifyMobileRequest.request.nonce" placeholder="000000" class="text-center" />
+                <b-form-input v-model="nonce" @update="nonceChanged" placeholder="000000" class="text-center" />
               </b-form-group>
             </b-col>
           </b-row>
@@ -64,7 +64,9 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
-import { VerifyMobileRequest } from '~/api/Requests/Consumers/VerifyMobileRequest'
+import * as CorporatesStore from '~/store/modules/Corporates'
+import { VerifyMobileRequest as ConsumersVerifyMobileRequest } from '~/api/Requests/Consumers/VerifyMobileRequest'
+import { VerifyMobileRequest as CorporatesVerifyMobileRequest } from '~/api/Requests/Corporates/VerifyMobileRequest'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 
 const Countries = require('~/static/json/countries.json')
@@ -83,7 +85,11 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   @Consumers.Getter consumer!: Consumer | null
 
-  public verifyMobileRequest!: VerifyMobileRequest
+  public consumerVerifyMobileRequest!: ConsumersVerifyMobileRequest
+
+  public corporateVerifyMobileRequest!: CorporatesVerifyMobileRequest
+
+  nonce: string = ''
 
   mobile = {
     countryCode: 'GB',
@@ -92,6 +98,11 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   numberIsValid: boolean | null = null
 
+  nonceChanged(val) {
+    this.consumerVerifyMobileRequest.request.nonce = val
+    this.corporateVerifyMobileRequest.request.nonce = val
+  }
+
   get mobileCountries(): string[] {
     return Countries.map((_c) => {
       return _c['alpha-2']
@@ -99,7 +110,7 @@ export default class EmailVerificationPage extends VueWithRouter {
   }
 
   async asyncData({ store, route, redirect }) {
-    const request: VerifyMobileRequest = {
+    const consumerVerifyMobileRequest: ConsumersVerifyMobileRequest = {
       consumerId: 0,
       request: {
         mobileNumber: '',
@@ -108,45 +119,109 @@ export default class EmailVerificationPage extends VueWithRouter {
       }
     }
 
+    const corporateVerifyMobileRequest: CorporatesVerifyMobileRequest = {
+      corporateId: 0,
+      request: {
+        mobileNumber: '',
+        mobileCountryCode: '',
+        nonce: ''
+      }
+    }
+
+    let _mobileNumber, _parsedNumber, _number
+
     if (route.query.cons) {
-      request.consumerId = route.query.cons
-      request.request.mobileCountryCode = route.query.mobileCountryCode
-      request.request.mobileNumber = route.query.mobileNumber
+      consumerVerifyMobileRequest.consumerId = route.query.cons
+      consumerVerifyMobileRequest.request.mobileCountryCode = route.query.mobileCountryCode
+      consumerVerifyMobileRequest.request.mobileNumber = route.query.mobileNumber
+
+      _mobileNumber =
+              consumerVerifyMobileRequest.request.mobileCountryCode + consumerVerifyMobileRequest.request.mobileNumber
+      _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
+      _number = consumerVerifyMobileRequest.request.mobileNumber
+
+      await ConsumersStore.Helpers.sendVerificationCodeMobile(store, consumerVerifyMobileRequest)
+    } else if (route.query.corp) {
+      corporateVerifyMobileRequest.corporateId = route.query.corp
+      corporateVerifyMobileRequest.request.mobileCountryCode = route.query.mobileCountryCode
+      corporateVerifyMobileRequest.request.mobileNumber = route.query.mobileNumber
+
+      _mobileNumber =
+              corporateVerifyMobileRequest.request.mobileCountryCode + corporateVerifyMobileRequest.request.mobileNumber
+      _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
+      _number = corporateVerifyMobileRequest.request.mobileNumber
+
+      await CorporatesStore.Helpers.sendVerificationCodeMobile(store, corporateVerifyMobileRequest)
     } else if (AuthStore.Helpers.isConsumer(store)) {
       const _consumerId = AuthStore.Helpers.identityId(store)
       if (_consumerId != null) {
-        request.consumerId = _consumerId
+        consumerVerifyMobileRequest.consumerId = _consumerId
         const res = await ConsumersStore.Helpers.get(store, _consumerId)
-        request.request.mobileCountryCode = res.data.mobileCountryCode
-        request.request.mobileNumber = res.data.mobileNumber
+        consumerVerifyMobileRequest.request.mobileCountryCode = res.data.mobileCountryCode
+        consumerVerifyMobileRequest.request.mobileNumber = res.data.mobileNumber
       }
+
+      _mobileNumber =
+              consumerVerifyMobileRequest.request.mobileCountryCode + consumerVerifyMobileRequest.request.mobileNumber
+      _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
+      _number = consumerVerifyMobileRequest.request.mobileNumber
+
+      await ConsumersStore.Helpers.sendVerificationCodeMobile(store, consumerVerifyMobileRequest)
+    } else if (AuthStore.Helpers.isCorporate(store)) {
+      const _corporateId = AuthStore.Helpers.identityId(store)
+      if (_corporateId != null) {
+        corporateVerifyMobileRequest.corporateId = _corporateId
+        const res = await ConsumersStore.Helpers.get(store, _corporateId)
+        corporateVerifyMobileRequest.request.mobileCountryCode = res.data.mobileCountryCode
+        corporateVerifyMobileRequest.request.mobileNumber = res.data.mobileNumber
+      }
+
+      _mobileNumber =
+              corporateVerifyMobileRequest.request.mobileCountryCode + corporateVerifyMobileRequest.request.mobileNumber
+      _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
+      _number = corporateVerifyMobileRequest.request.mobileNumber
+
+      await CorporatesStore.Helpers.sendVerificationCodeMobile(store, corporateVerifyMobileRequest)
     } else {
       redirect('/')
     }
 
-    const _mobileNumber = request.request.mobileCountryCode + request.request.mobileNumber
-    const _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
-
-    await ConsumersStore.Helpers.sendVerificationCodeMobile(store, request)
-
     return {
-      verifyMobileRequest: request,
+      consumerVerifyMobileRequest: consumerVerifyMobileRequest,
+      corporateVerifyMobileRequest: corporateVerifyMobileRequest,
       mobile: {
         countryCode: _parsedNumber?.country,
-        number: request.request.mobileNumber
+        number: _number
       }
     }
   }
 
   doVerify(evt) {
     evt.preventDefault()
-    ConsumersStore.Helpers.verifyMobile(this.$store, this.verifyMobileRequest).then(
-      this.goToDashboard.bind(this),
-      this.errorOccurred.bind(this)
+    if (this.consumerVerifyMobileRequest.consumerId !== 0) {
+      this.doVerifyConsumer()
+    } else {
+      this.doVerifyCorporate()
+    }
+  }
+
+  doVerifyCorporate() {
+    CorporatesStore.Helpers.verifyMobile(this.$store, this.corporateVerifyMobileRequest).then(
+            this.goToDashboard.bind(this),
+            this.errorOccurred.bind(this)
     )
   }
 
-  errorOccurred(err) {}
+  doVerifyConsumer() {
+    ConsumersStore.Helpers.verifyMobile(this.$store, this.consumerVerifyMobileRequest).then(
+            this.goToDashboard.bind(this),
+            this.errorOccurred.bind(this)
+    )
+  }
+
+  errorOccurred(err) {
+    console.log(err)
+  }
 
   async goToDashboard() {
     if (AuthStore.Helpers.isConsumer(this.$store)) {
@@ -157,13 +232,30 @@ export default class EmailVerificationPage extends VueWithRouter {
   }
 
   sendVerifyPhone() {
-    return ConsumersStore.Helpers.sendVerificationCodeMobile(this.$store, this.verifyMobileRequest)
+    if (this.consumerVerifyMobileRequest.consumerId !== 0) {
+      this.sendVerifyPhoneConsumer()
+    } else {
+      this.sendVerifyPhoneCorporate()
+    }
+  }
+
+  sendVerifyPhoneCorporate() {
+    return CorporatesStore.Helpers.sendVerificationCodeMobile(this.$store, this.corporateVerifyMobileRequest)
+  }
+
+  sendVerifyPhoneConsumer() {
+    return ConsumersStore.Helpers.sendVerificationCodeMobile(this.$store, this.consumerVerifyMobileRequest)
   }
 
   phoneUpdate(number) {
     this.$set(this.mobile, 'number', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.verifyMobileRequest.request.mobileCountryCode = number.countryCallingCode
-    this.verifyMobileRequest.request.mobileNumber = number.nationalNumber
+
+    this.consumerVerifyMobileRequest.request.mobileCountryCode = number.countryCallingCode
+    this.consumerVerifyMobileRequest.request.mobileNumber = number.nationalNumber
+
+    this.corporateVerifyMobileRequest.request.mobileCountryCode = number.countryCallingCode
+    this.corporateVerifyMobileRequest.request.mobileNumber = number.nationalNumber
+
     this.numberIsValid = number.isValid
   }
 }

@@ -94,8 +94,10 @@ export default class DefaultLayout extends BaseVue {
   get restrictionLink() {
     if (this.consumer && this.consumer.kyc && this.consumer.kyc.mobileVerified === true) {
       return '/managed-accounts/' + this.$route.params.id + '/topup'
+    } else if (this.corporate && this.corporate.kyb && this.corporate.kyb.rootMobileVerified) {
+      return '/managed-accounts/' + this.$route.params.id + '/topup'
     } else {
-      return '/verify/consumers/mobile'
+      return '/register/verify/mobile'
     }
   }
 }

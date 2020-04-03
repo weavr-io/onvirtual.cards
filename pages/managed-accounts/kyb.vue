@@ -278,7 +278,7 @@ export default class KybPage extends VueWithRouter {
             }
           },
           APPLICANT_REQUEST: {
-            title: 'Start Verification for Moneyport',
+            title: 'Start Verification',
             button: 'Upload New Documents'
           }
         },

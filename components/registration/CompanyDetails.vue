@@ -3,7 +3,7 @@
     <h3 class="text-center font-weight-light mb-5">
       Company Details
     </h3>
-
+    <error-alert/>
     <b-form-group label="Company Name">
       <b-form-input
         :state="isInvalid($v.form.companyName)"
@@ -58,14 +58,14 @@
         </b-form-group>
       </b-col>
     </b-form-row>
-    <b-form-row class="mt-6">
+    <b-form-row class="mt-5">
       <b-col md="4">
         <b-button @click="goBack" variant="outline">
           <-
         </b-button>
       </b-col>
       <b-col>
-        <loader-button :is-loading="isLoading" button-text="Finish" class="text-right" />
+        <loader-button :is-loading="isLoadingRegistration" button-text="Finish" class="text-right" />
       </b-col>
     </b-form-row>
   </b-form>
@@ -110,7 +110,9 @@ const Corporates = namespace(CorporatesStore.name)
     }
   },
   components: {
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+
   }
 })
 export default class CompanyDetailsForm extends VueWithRouter {
@@ -120,7 +122,7 @@ export default class CompanyDetailsForm extends VueWithRouter {
 
   @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
 
-  @Corporates.Getter isLoading
+  @Corporates.Getter isLoadingRegistration
 
   public companyRegistrationDate = ''
 
