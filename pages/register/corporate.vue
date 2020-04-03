@@ -98,7 +98,7 @@ export default class RegistrationPage extends VueWithRouter {
       this.registrationRequest.rootEmail = _data.rootEmail
       this.registrationRequest.supportEmail = _data.rootEmail
       this.password = _data.password
-      this.nextScreen()
+      this.screen = 1
     }
   }
 
@@ -110,12 +110,11 @@ export default class RegistrationPage extends VueWithRouter {
       this.registrationRequest.rootCompanyPosition = _data.rootCompanyPosition
       this.registrationRequest.rootMobileCountryCode = _data.rootMobileCountryCode
       this.registrationRequest.rootMobileNumber = _data.rootMobileNumber
-      this.nextScreen()
+      this.screen = 2
     }
   }
 
   form3Submit(_data) {
-    console.log(_data)
     if (_data != null) {
       this.registrationRequest.companyName = _data.companyName
       this.registrationRequest.companyRegistrationNumber = _data.companyRegistrationNumber

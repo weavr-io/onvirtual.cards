@@ -74,7 +74,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_ERROR, errors)
   },
   resetErrors({ commit }): void {
-    commit(types.RESET_ERRORS)
+    return commit(types.RESET_ERRORS)
   },
   setConflict({ commit }, conflict): void {
     commit(types.SET_CONFLICT, conflict)
