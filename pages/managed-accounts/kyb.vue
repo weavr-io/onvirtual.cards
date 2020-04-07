@@ -273,6 +273,15 @@ export default class KybPage extends VueWithRouter {
               ]
             }
           },
+          REVIEW: {
+            instructions: "Step Review: Instructions"
+          },
+          STATUS: {
+            pending: {
+              title: "We are reviewing your documents. This process usually takes up to 3 business days.",
+              instructions: "Your documents are under review. The status of your account will change automatically once the review is completed. If you experience any difficulties, please contact customer support."
+            }
+          },
           APPLICANT_REQUEST: {
             title: 'Start Verification for your business',
             button: 'Upload Documents'
