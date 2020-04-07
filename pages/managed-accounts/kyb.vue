@@ -105,8 +105,10 @@ export default class KybPage extends VueWithRouter {
                     'Step 2: Please name the individuals who are considered to be ultimate beneficial owners and own at least 25% of the company',
             instructionsUbo:
                     'After submitting the form all the individuals will be followed up via emails with a request to go through a standard KYC/AML procedure.',
-            subTitleRepresentative: '',
-            instructionsRepresentative: '',
+            subTitleRepresentative: 
+                    "Step 3: Please name representatives of the company",
+            instructionsRepresentative: 
+                    "You can add several individuals with representative powers. Please fill out the following information.",
             individualBeneficiaryFields: {
               ubo: [
                 {
@@ -126,41 +128,7 @@ export default class KybPage extends VueWithRouter {
                   required: true
                 },
                 {
-                  name: 'phone',
-                  required: true
-                },
-                {
-                  name: 'email',
-                  required: true
-                },
-                {
                   name: 'nationality',
-                  required: true
-                }
-              ],
-              shareholder: [
-                {
-                  name: 'firstName',
-                  required: true
-                },
-                {
-                  name: 'lastName',
-                  required: true
-                },
-                {
-                  name: 'middleName',
-                  required: false
-                },
-                {
-                  name: 'dob',
-                  required: true
-                },
-                {
-                  name: 'phone',
-                  required: true
-                },
-                {
-                  name: 'email',
                   required: true
                 }
               ],
