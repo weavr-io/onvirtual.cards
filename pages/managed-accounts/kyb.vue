@@ -150,10 +150,6 @@ export default class KybPage extends VueWithRouter {
                   required: true
                 },
                 {
-                  name: 'phone',
-                  required: true
-                },
-                {
                   name: 'email',
                   required: true
                 },
