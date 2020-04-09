@@ -15,8 +15,7 @@ class WeavrForm extends Vue {
 
   constructor() {
     super(...arguments)
-    // @ts-ignore
-    this.form = window.OpcUxSecureClient.form()
+    this.form = this.$OpcUxSecureClient.form()
   }
 
   input(name, field, options) {
