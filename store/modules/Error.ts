@@ -42,7 +42,7 @@ export const getters: GetterTree<State, RootState> = {
         case 'ROOT_USERNAME_NOT_UNIQUE':
           return 'Username already exists in the system. Please try a different username.'
         case 'INVALID_NONCE_OR_MOBILE':
-          return 'There is something wrong with your nonce or mobile.'
+          return 'There is something wrong with your verification code.'
         case 'PASSWORD_INCORRECT':
           return 'Password is incorrect.'
         case 'FAILED_LOGIN':

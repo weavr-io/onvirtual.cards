@@ -87,30 +87,28 @@ export default class KybPage extends VueWithRouter {
         showWarningScreen: false,
         skipWelcomeScreen: false,
         skipReviewScreen: false,
-        skipAgreementsScreen: false,
+        skipAgreementsScreen: true,
         registration: 'disabled'
       },
       uiConf: {
         lang: 'en',
         steps: {
-          CREATE_APPLICANT: {
-            title: 'Please, follow the steps after agreeing to our conditions.',
-            instructions:
-                    'To get your business account verified please prepare your company documents – Certificate of Incorporation, Articles of Association, List of Directors and UBOs. ',
-            agreements: [
-              'I agree to the processing of my company data in accordance with [Consent to Data Processing]() '
-            ]
-          },
           APPLICANT_DATA: {
             customFields: null
           },
           COMPANY: {
+            // stepName: "This is the step name",
+            title: "Company Verification",
+            subTitle: "Step 1: Please fill in details about your business",
+            instructions: "Kindly upload the following documents\n* Copy of  the Certificate of Incorporation\n* Copy of the Articles of Association (last amendment)\n* Proof of Business Address such as a copy of a bank statement or lease agreement in the name of the business",
             subTitleUbo:
-                    'Please name the individuals who are considered to be ultimate beneficial owners and own at least 25% of the company',
+                    'Step 2: Please name the individuals who are considered to be ultimate beneficial owners and own at least 25% of the company',
             instructionsUbo:
                     'After submitting the form all the individuals will be followed up via emails with a request to go through a standard KYC/AML procedure.',
-            subTitleRepresentative: '',
-            instructionsRepresentative: '',
+            subTitleRepresentative: 
+                    "Step 3: Please name representatives of the company",
+            instructionsRepresentative: 
+                    "You can add several individuals with representative powers. Please fill out the following information.",
             individualBeneficiaryFields: {
               ubo: [
                 {
@@ -130,41 +128,7 @@ export default class KybPage extends VueWithRouter {
                   required: true
                 },
                 {
-                  name: 'phone',
-                  required: true
-                },
-                {
-                  name: 'email',
-                  required: true
-                },
-                {
                   name: 'nationality',
-                  required: true
-                }
-              ],
-              shareholder: [
-                {
-                  name: 'firstName',
-                  required: true
-                },
-                {
-                  name: 'lastName',
-                  required: true
-                },
-                {
-                  name: 'middleName',
-                  required: false
-                },
-                {
-                  name: 'dob',
-                  required: true
-                },
-                {
-                  name: 'phone',
-                  required: true
-                },
-                {
-                  name: 'email',
                   required: true
                 }
               ],
@@ -183,10 +147,6 @@ export default class KybPage extends VueWithRouter {
                 },
                 {
                   name: 'dob',
-                  required: true
-                },
-                {
-                  name: 'phone',
                   required: true
                 },
                 {
@@ -254,7 +214,7 @@ export default class KybPage extends VueWithRouter {
               }
             ],
             skipEmailsToIndividuals: {
-              ubo: false,
+              ubo: true,
               shareholder: true,
               representative: false
             },
@@ -277,12 +237,23 @@ export default class KybPage extends VueWithRouter {
               ]
             }
           },
+          REVIEW: {
+            instructions: "Step Review: Instructions"
+          },
+          STATUS: {
+            pending: {
+              title: "We are reviewing your documents. This process usually takes up to 3 business days.",
+              instructions: "Your documents are under review. The status of your account will change automatically once the review is completed. If you experience any difficulties, please contact customer support."
+            }
+          },
           APPLICANT_REQUEST: {
-            title: 'Start Verification',
-            button: 'Upload New Documents'
+            title: 'Start Verification for your business',
+            button: 'Upload Documents'
           }
         },
-        customCssStr: '\n'
+        // customCssStr: '\n'
+        customCssStr: "ul { column-count: 1; }"
+           
       },
       documentsByCountries: {}
     }
