@@ -85,7 +85,7 @@ export default class KybPage extends VueWithRouter {
       excludedCountries: null,
       navConf: {
         showWarningScreen: false,
-        skipWelcomeScreen: false,
+        skipWelcomeScreen: true,
         skipReviewScreen: false,
         skipAgreementsScreen: true,
         registration: 'disabled'
