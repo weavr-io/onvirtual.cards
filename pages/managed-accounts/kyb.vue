@@ -100,16 +100,18 @@ export default class KybPage extends VueWithRouter {
           COMPANY: {
             // stepName: "This is the step name",
             title: "Company Verification",
-            subTitle: "Step 1: Please fill in details about your business",
-            instructions: "Kindly upload the following documents\n* Copy of  the Certificate of Incorporation\n* Copy of the Articles of Association (last amendment)\n* Proof of Business Address such as a copy of a bank statement or lease agreement in the name of the business",
+            subTitle: 
+                    "Step 1: Business Details",
+            instructions: 
+                    "Kindly upload the following documents\n* Copy of  the Certificate of Incorporation\n* Copy of the Articles of Association (last amendment)\n* Proof of Business Address such as a copy of a bank statement or lease agreement in the name of the business",
             subTitleUbo:
-                    'Step 2: Please name the individuals who are considered to be ultimate beneficial owners and own at least 25% of the company',
+                    "Step 2: Ultimate Beneficial Owners (UBOs)",
             instructionsUbo:
-                    'After submitting the form all the individuals will be followed up via emails with a request to go through a standard KYC/AML procedure.',
+                    "Please name the individuals who are considered to be ultimate beneficial owners and own at least 25% of the company",
             subTitleRepresentative: 
-                    "Step 3: Please name representatives of the company",
+                    "Step 3: Directors and Representatives",
             instructionsRepresentative: 
-                    "You can add several individuals with representative powers. Please fill out the following information.",
+                    "After submitting the form all the individuals will be followed up via emails with a request to go through a standard KYC/AML procedure.",
             individualBeneficiaryFields: {
               ubo: [
                 {
@@ -239,7 +241,7 @@ export default class KybPage extends VueWithRouter {
             }
           },
           REVIEW: {
-            instructions: "Step Review: Instructions"
+            instructions: "Please check and review all the provided information and make sure that all the data is valid and belongs to you."
           },
           STATUS: {
             pending: {
