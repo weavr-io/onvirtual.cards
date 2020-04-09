@@ -52,10 +52,9 @@ export module CorporatesSchemas {
     kyb: {
       rootEmailVerified: boolean
       rootMobileVerified: boolean
-      directorsVerified: KYBState
-      UBOsVerified: KYBState
       basicCompanyChecksVerified: KYBState
       fullCompanyChecksVerified: KYBState
+      enhancedCompanyChecksVerified: KYBState
       allowedLimit: number
       remainingLimit: number
     }
