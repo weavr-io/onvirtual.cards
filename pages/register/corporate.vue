@@ -85,7 +85,6 @@ export default class RegistrationPage extends VueWithRouter {
     rootMobileCountryCode: '',
     rootMobileNumber: '',
     rootName: '',
-    rootSecretType: { firstSecretType: 'passwords' },
     rootSurname: '',
     rootTitle: '',
     rootUsername: '',

@@ -38,8 +38,6 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 
   [_Actions.getManagedCard](context: ActionContext<S, R>, id: number): AxiosPromise<ManagedCardsSchemas.ManagedCard>
 
-  destroyManagedCard(context: ActionContext<S, R>, request: ManagedCardsSchemas.DestroyRequest): AxiosPromise<R>
-
   getCardStatement(
     context: ActionContext<S, R>,
     request: ManagedCardsSchemas.GetManagedCardStatementRequest
