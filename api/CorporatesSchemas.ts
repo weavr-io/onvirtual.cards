@@ -12,7 +12,7 @@ export module CorporatesSchemas {
     companyType: CompanyType
     supportEmail: string
     active?: boolean
-    rootUsername: string
+    rootUsername?: string
     rootTitle: string
     rootName: string
     rootSurname: string

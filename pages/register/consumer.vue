@@ -28,14 +28,6 @@
                 />
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
-              <b-form-group label="Username">
-                <b-form-input
-                  v-model="$v.registrationRequest.credentialCode.$model"
-                  :state="isInvalid($v.registrationRequest.credentialCode)"
-                  placeholder="Username"
-                />
-                <b-form-invalid-feedback>Only numbers and latin letters are accepted.</b-form-invalid-feedback>
-              </b-form-group>
               <b-form-group :state="isInvalid($v.registrationRequest.email)" label="Email">
                 <b-form-input
                   v-model="$v.registrationRequest.email.$model"
@@ -118,14 +110,6 @@ const touchMap = new WeakMap()
   layout: 'auth',
   validations: {
     registrationRequest: {
-      credentialCode: {
-        required,
-        credentialCode: helpers.regex(
-          'credentialCode',
-          /^[a-zA-Z0-9_.*@-]*$|^[a-zA-Z0-9.!#$%&*+\/=?^_|~-]+@[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*$/
-        ),
-        maxLength: maxLength(20)
-      },
       email: {
         required,
         email
@@ -172,7 +156,6 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     name: '',
     surname: '',
     email: '',
-    credentialCode: '',
     mobileCountryCode: '',
     mobileNumber: ''
   }
@@ -240,7 +223,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
   doLogin() {
     const _loginRequest: Schemas.LoginRequest = {
-      code: this.registrationRequest.credentialCode,
+      code: this.registrationRequest.email,
       password: this.password
     }
 

@@ -12,7 +12,7 @@
         <error-alert
           message="Incorrect username and password combination. If you do not have an account please click on Register."
         />
-        <b-form-group id="ig-code" label="USERNAME" label-for="form-code">
+        <b-form-group id="ig-code" label="E-MAIL" label-for="form-code">
           <b-form-input
             id="from-code"
             v-model="loginRequest.code"

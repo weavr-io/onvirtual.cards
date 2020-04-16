@@ -87,13 +87,11 @@ export default class RegistrationPage extends VueWithRouter {
     rootName: '',
     rootSurname: '',
     rootTitle: '',
-    rootUsername: '',
     supportEmail: ''
   }
 
   form1Submit(_data) {
     if (_data != null) {
-      this.registrationRequest.rootUsername = _data.rootUsername
       this.registrationRequest.rootEmail = _data.rootEmail
       this.registrationRequest.supportEmail = _data.rootEmail
       this.password = _data.password
@@ -187,7 +185,7 @@ export default class RegistrationPage extends VueWithRouter {
 
   doLogin() {
     const _loginRequest: Schemas.LoginRequest = {
-      code: this.registrationRequest.rootUsername,
+      code: this.registrationRequest.rootEmail,
       password: this.password
     }
 

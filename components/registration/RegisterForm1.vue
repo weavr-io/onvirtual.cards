@@ -4,14 +4,6 @@
       Register
     </h3>
     <error-alert/>
-    <b-form-group label="Username">
-      <b-form-input
-              v-model="$v.form.rootUsername.$model"
-              :state="isInvalid($v.form.rootUsername)"
-              placeholder="Username"
-      />
-      <b-form-invalid-feedback>Only numbers and latin letters are accepted.</b-form-invalid-feedback>
-    </b-form-group>
     <b-form-group :state="isInvalid($v.form.rootEmail)" label="Email">
       <b-form-input
               v-model="$v.form.rootEmail.$model"
@@ -61,14 +53,6 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
 @Component({
   validations: {
     form: {
-      rootUsername: {
-        required,
-        rootUsername: helpers.regex(
-                'rootUsername',
-                /^[a-zA-Z0-9_.*@-]*$|^[a-zA-Z0-9.!#$%&*+\/=?^_|~-]+@[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*$/
-        ),
-        maxLength: maxLength(20)
-      },
       rootEmail: {
         required,
         email
@@ -87,7 +71,6 @@ export default class RegisterForm1 extends VueWithRouter {
   }
 
   public form = {
-    rootUsername: '',
     rootEmail: '',
     password: ''
   }
