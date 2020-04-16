@@ -1,12 +1,11 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <b-card no-body class="overflow-hidden">
-      <b-card-body class="p-6">
+      <b-card-body class="p-card">
         <div class="form-screens">
-          <error-alert />
           <div :class="{ 'd-none': screen !== 0 }" class="form-screen">
             <register-form :request="registrationRequest" @submit-form="form1Submit" />
           </div>
@@ -32,6 +31,8 @@ import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import config from '~/config'
 import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
 import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
+import { Schemas } from '~/api/Schemas'
+import { Helpers } from '~/store/modules/Auth'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -39,7 +40,6 @@ const Auth = namespace(AuthStore.name)
 @Component({
   layout: 'auth',
   components: {
-    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
     PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
@@ -85,7 +85,6 @@ export default class RegistrationPage extends VueWithRouter {
     rootMobileCountryCode: '',
     rootMobileNumber: '',
     rootName: '',
-    rootSecretType: { firstSecretType: 'passwords' },
     rootSurname: '',
     rootTitle: '',
     rootUsername: '',
@@ -98,7 +97,7 @@ export default class RegistrationPage extends VueWithRouter {
       this.registrationRequest.rootEmail = _data.rootEmail
       this.registrationRequest.supportEmail = _data.rootEmail
       this.password = _data.password
-      this.nextScreen()
+      this.screen = 1
     }
   }
 
@@ -110,12 +109,11 @@ export default class RegistrationPage extends VueWithRouter {
       this.registrationRequest.rootCompanyPosition = _data.rootCompanyPosition
       this.registrationRequest.rootMobileCountryCode = _data.rootMobileCountryCode
       this.registrationRequest.rootMobileNumber = _data.rootMobileNumber
-      this.nextScreen()
+      this.screen = 2
     }
   }
 
   form3Submit(_data) {
-    console.log(_data)
     if (_data != null) {
       this.registrationRequest.companyName = _data.companyName
       this.registrationRequest.companyRegistrationNumber = _data.companyRegistrationNumber
@@ -129,6 +127,7 @@ export default class RegistrationPage extends VueWithRouter {
   }
 
   doRegister() {
+    CorporatesStore.Helpers.setIsLoadingRegistration(this.$store, true)
     this.registrationRequest.companyBusinessAddress = this.registrationRequest.companyRegistrationAddress
 
     this.register(this.registrationRequest)
@@ -137,6 +136,7 @@ export default class RegistrationPage extends VueWithRouter {
   }
 
   registrationFailed(err) {
+    CorporatesStore.Helpers.setIsLoadingRegistration(this.$store, false)
     const _errCode = err.response.data.errorCode
 
     if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
@@ -153,7 +153,10 @@ export default class RegistrationPage extends VueWithRouter {
         profileId: this.registrationRequest.profileId
       }
     }
-    AuthStore.Helpers.createPasswordIdentity(this.$store, _req).then(this.doCreateCorporatePassword.bind(this))
+    AuthStore.Helpers.createPasswordIdentity(this.$store, _req).then(
+      this.doCreateCorporatePassword.bind(this),
+      this.registrationFailed.bind(this)
+    )
   }
 
   doCreateCorporatePassword() {
@@ -168,7 +171,30 @@ export default class RegistrationPage extends VueWithRouter {
       }
     }
 
-    AuthStore.Helpers.createPassword(this.$store, _req).then(this.sendVerifyEmail.bind(this))
+    AuthStore.Helpers.createPassword(this.$store, _req).then(
+      this.waitAndDoLogin.bind(this),
+      this.registrationFailed.bind(this)
+    )
+  }
+
+  sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  waitAndDoLogin() {
+    this.sleep(2000).then(this.doLogin.bind(this))
+  }
+
+  doLogin() {
+    const _loginRequest: Schemas.LoginRequest = {
+      code: this.registrationRequest.rootUsername,
+      password: this.password
+    }
+
+    Helpers.authenticate(this.$store, _loginRequest).then(
+      this.sendVerifyEmail.bind(this),
+      this.registrationFailed.bind(this)
+    )
   }
 
   sendVerifyEmail() {
@@ -177,13 +203,19 @@ export default class RegistrationPage extends VueWithRouter {
       body: {
         emailAddress: this.registrationRequest.rootEmail
       }
-    }).then(this.goToVerifyEmail.bind(this))
+    }).then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
   }
 
   goToVerifyEmail() {
+    CorporatesStore.Helpers.setIsLoadingRegistration(this.$store, false)
     this.$router.push({
       path: '/register/verify',
-      query: { corp: this.corporate.id.id, email: this.registrationRequest.rootEmail }
+      query: {
+        corp: this.corporate.id.id,
+        email: this.registrationRequest.rootEmail,
+        mobileNumber: this.registrationRequest.rootMobileNumber,
+        mobileCountryCode: this.registrationRequest.rootMobileCountryCode
+      }
     })
   }
 

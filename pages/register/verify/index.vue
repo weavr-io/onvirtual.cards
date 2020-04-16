@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -49,6 +49,7 @@ import { Schemas } from '~/api/Schemas'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as CorporatesStore from '~/store/modules/Corporates'
+import * as ConsumersStore from '~/store/modules/Consumers'
 
 const Auth = namespace(AuthStore.name)
 
@@ -83,11 +84,6 @@ export default class EmailVerificationPage extends VueWithRouter {
     if (request.request.nonce !== '') {
       this.verifyEmail(request).then(() => {
         redirect('/login')
-        // if (route.query.cons) {
-        //   redirect('/register/verify/mobile')
-        // } else {
-        //   redirect('/login')
-        // }
       })
     }
 
@@ -97,6 +93,25 @@ export default class EmailVerificationPage extends VueWithRouter {
   }
 
   sendVerifyEmail() {
+    if (this.$route.query.cons) {
+      this.sendVerifyEmailConsumers()
+    } else {
+      this.sendVerifyEmailCorporates()
+    }
+  }
+
+  sendVerifyEmailConsumers() {
+    ConsumersStore.Helpers.sendVerificationCodeEmail(this.$store, {
+      consumerId: this.verifyEmailRequest.consumerId,
+      request: {
+        emailAddress: this.verifyEmailRequest.request.emailAddress
+      }
+    }).then(() => {
+      this.showEmailResentSuccess = true
+    })
+  }
+
+  sendVerifyEmailCorporates() {
     CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, {
       corporateId: this.verifyEmailRequest.corporateId,
       body: {
@@ -113,11 +128,7 @@ export default class EmailVerificationPage extends VueWithRouter {
   }
 
   nextPage() {
-    if (this.$route.query.cons) {
-      this.goToVerifyMobile()
-    } else {
-      this.$router.push('/login')
-    }
+    this.goToVerifyMobile()
   }
 
   goToVerifyMobile() {
@@ -125,6 +136,7 @@ export default class EmailVerificationPage extends VueWithRouter {
       path: '/register/verify/mobile',
       query: {
         cons: this.$route.query.cons,
+        corp: this.$route.query.corp,
         mobileNumber: this.$route.query.mobileNumber,
         mobileCountryCode: this.$route.query.mobileCountryCode
       }

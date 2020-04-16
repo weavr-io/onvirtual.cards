@@ -24,6 +24,7 @@
       </div>
     </div>
     <!-- <app-footer /> -->
+    <cookie-policy />
   </div>
 </template>
 
@@ -55,7 +56,8 @@ const Accounts = namespace(AccountsStore.name)
     AppHeader: () => import('~/components/Header.vue'),
     DashboardHeader: () => import('~/components/DashboardHeader.vue'),
     KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
-    KycAlert: () => import('~/components/consumers/KYCAlert.vue')
+    KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
+    cookiePolicy: () => import('~/components/cookie.vue')
   }
 })
 export default class DefaultLayout extends BaseVue {
@@ -94,8 +96,10 @@ export default class DefaultLayout extends BaseVue {
   get restrictionLink() {
     if (this.consumer && this.consumer.kyc && this.consumer.kyc.mobileVerified === true) {
       return '/managed-accounts/' + this.$route.params.id + '/topup'
+    } else if (this.corporate && this.corporate.kyb && this.corporate.kyb.rootMobileVerified) {
+      return '/managed-accounts/' + this.$route.params.id + '/topup'
     } else {
-      return '/verify/consumers/mobile'
+      return '/register/verify/mobile'
     }
   }
 }

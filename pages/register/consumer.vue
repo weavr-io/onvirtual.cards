@@ -173,9 +173,6 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     surname: '',
     email: '',
     credentialCode: '',
-    secretType: {
-      firstSecretType: 'passwords'
-    },
     mobileCountryCode: '',
     mobileNumber: ''
   }

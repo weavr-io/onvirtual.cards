@@ -3,6 +3,7 @@
     <h3 class="text-center font-weight-light mb-5">
       Register
     </h3>
+    <error-alert/>
     <b-form-group label="Username">
       <b-form-input
               v-model="$v.form.rootUsername.$model"
@@ -34,7 +35,7 @@
         <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
       </weavr-form>
     </client-only>
-    <b-form-row class="mt-6">
+    <b-form-row class="mt-5">
       <b-col class="text-center">
         <b-button variant="secondary" type="submit">
           continue
@@ -73,6 +74,9 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
         email
       }
     }
+  },
+  components: {
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
   }
 })
 export default class RegisterForm1 extends VueWithRouter {

@@ -15,6 +15,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
+import * as CorporatesStore from '~/store/modules/Corporates'
 
 @Component({})
 export default class IndexPage extends Vue {
@@ -25,6 +26,13 @@ export default class IndexPage extends Vue {
       if (AuthStore.Helpers.isConsumer(store)) {
         const _cons = ConsumersStore.Helpers.consumer(store)
         if (_cons && _cons.kyc && !_cons.kyc.mobileVerified) {
+          redirect('/register/verify/mobile')
+        } else {
+          redirect('/dashboard')
+        }
+      } else if (AuthStore.Helpers.isConsumer(store)) {
+        const _corp = CorporatesStore.Helpers.corporate(store)
+        if (_corp && _corp.kyb && !_corp.kyb.rootMobileVerified) {
           redirect('/register/verify/mobile')
         } else {
           redirect('/dashboard')

@@ -43,7 +43,7 @@
         <div class="mt-4 text-center">
           <small class="text-grey">
             Not yet registered? Register
-            <b-link to="/register" class="text-decoration-underline text-grey">here</b-link>
+            <b-link to="/register/corporate" class="text-decoration-underline text-grey">here</b-link>
             .
           </small>
         </div>
@@ -77,6 +77,7 @@ export default class LoginPage extends VueWithRouter {
   @Auth.Action authenticate
 
   @Auth.Getter isLoading!: boolean
+
 
   public loginRequest: Schemas.LoginRequest = {
     code: '',

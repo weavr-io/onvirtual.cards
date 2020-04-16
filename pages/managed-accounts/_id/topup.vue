@@ -97,14 +97,14 @@ export default class AccountTopupPage extends VueWithRouter {
 
     if (config.app.kyb_required === true) {
       if (_isConsumer) {
-        await ConsumersStore.Helpers.checkKYC(store).then(
-          () => {
-            approved = true
-          },
-          () => {
-            approved = false
-          }
-        )
+        // await ConsumersStore.Helpers.checkKYC(store).then(
+        //   () => {
+        //     approved = true
+        //   },
+        //   () => {
+        //     approved = false
+        //   }
+        // )
       }
       if (_isCorporate) {
         await CorporatesStore.Helpers.checkKYB(store).then(
@@ -123,9 +123,9 @@ export default class AccountTopupPage extends VueWithRouter {
     if (approved) {
       await AccountsStore.Helpers.get(store, accountId)
     } else {
-      if (_isConsumer) {
-        redirect('/managed-accounts/kyc')
-      }
+      // if (_isConsumer) {
+      //   redirect('/managed-accounts/kyc')
+      // }
       if (_isCorporate) {
         redirect('/managed-accounts/kyb')
       }

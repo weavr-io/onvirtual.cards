@@ -182,9 +182,6 @@ export default class AddCardPage extends VueWithRouter {
       name: '',
       surname: '',
       email: '',
-      secretType: {
-        firstSecretType: 'passwords'
-      },
       active: true,
       companyPosition: '',
       mobileCountryCode: '',

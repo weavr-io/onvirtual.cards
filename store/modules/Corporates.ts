@@ -11,6 +11,7 @@ export { name, namespaced, Helpers }
 export const state = (): State => ({
   corporate: null,
   isLoading: false,
+  isLoadingRegistration: false,
   users: null
 })
 
@@ -23,6 +24,9 @@ export const getters: GetterTree<State, RootState> = {
   },
   isLoading: (state) => {
     return state.isLoading
+  },
+  isLoadingRegistration: (state) => {
+    return state.isLoadingRegistration
   }
 }
 
@@ -35,6 +39,9 @@ export const mutations: MutationTree<State> = {
   },
   [types.SET_USERS](state, users) {
     state.users = users
+  },
+  [types.SET_IS_LOADING_REGISTRATION](state, isLoading) {
+    state.isLoadingRegistration = isLoading
   }
 }
 
@@ -126,5 +133,14 @@ export const actions: Actions<State, RootState> = {
   },
   startKYB({}, corporateId) {
     return api.post('/app/api/corporates/' + corporateId + '/kyb/start', {})
+  },
+  sendVerificationCodeMobile({}, request) {
+    return api.post(
+      '/app/api/corporates/' + request.corporateId + '/users/mobile/send_verification_code',
+      request.request
+    )
+  },
+  verifyMobile({}, request) {
+    return api.post('/app/api/corporates/' + request.corporateId + '/users/mobile/verify', request.request)
   }
 }

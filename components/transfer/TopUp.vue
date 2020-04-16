@@ -99,7 +99,7 @@ export default class TopUpForm extends VueWithRouter {
   public request: {
     amount: number | null
   } = {
-    amount: 1
+    amount: null
   }
 
   get accountDetails() {
