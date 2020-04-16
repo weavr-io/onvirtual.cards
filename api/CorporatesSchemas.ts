@@ -80,7 +80,7 @@ export module CorporatesSchemas {
 
   export interface CreateCorporateUserRequest {
     type: string
-    username: string
+    username?: string
     title: string | null
     name: string
     surname: string

@@ -14,17 +14,6 @@
           <b-form @submit="doAdd">
             <b-form-row>
               <b-col>
-                <b-form-group label="Username:">
-                  <b-form-input
-                    v-model="$v.request.request.username.$model"
-                    :state="isInvalid($v.request.request.username)"
-                  />
-                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-                </b-form-group>
-              </b-col>
-            </b-form-row>
-            <b-form-row>
-              <b-col>
                 <b-form-group label="Title:">
                   <b-form-select
                     v-model="$v.request.request.title.$model"
@@ -137,9 +126,6 @@ const Countries = require('~/static/json/countries.json')
         title: {
           required
         },
-        username: {
-          required
-        },
         email: {
           required,
           email
@@ -177,7 +163,6 @@ export default class AddCardPage extends VueWithRouter {
     corporateId: '0',
     request: {
       type: 'USER',
-      username: '',
       title: null,
       name: '',
       surname: '',
