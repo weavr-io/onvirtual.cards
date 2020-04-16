@@ -5,7 +5,7 @@
         <b-container>
           <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav v-if="showLinks" class="ml-auto">
-              <b-nav-item v-if="showRegister" to="/register">
+              <b-nav-item v-if="showRegister" to="/register/corporate">
                 Register
               </b-nav-item>
               <b-nav-item v-if="showLogin" to="/login">
