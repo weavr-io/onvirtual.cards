@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -148,12 +148,18 @@ export default class EmailVerificationPage extends VueWithRouter {
       await ConsumersStore.Helpers.sendVerificationCodeMobile(store, consumerVerifyMobileRequest)
     } else if (AuthStore.Helpers.isCorporate(store)) {
       const _corporateId = AuthStore.Helpers.identityId(store)
+      const _corporate = AuthStore.Helpers.auth(store)
 
-      if (_corporateId != null) {
-        await CorporatesStore.Helpers.getCorporateDetails(store, _corporateId)
+      if (_corporateId != null && _corporate.credential) {
+        const res = await CorporatesStore.Helpers.getUser(store, {
+          corporateId: _corporateId,
+          userId: _corporate.credential.id
+        })
+
         corporateVerifyMobileRequest.corporateId = _corporateId
-        corporateVerifyMobileRequest.request.mobileCountryCode = route.query.mobileCountryCode
-        corporateVerifyMobileRequest.request.mobileNumber = route.query.mobileNumber
+
+        corporateVerifyMobileRequest.request.mobileCountryCode = res.data.mobileCountryCode
+        corporateVerifyMobileRequest.request.mobileNumber = res.data.mobileNumber
       }
 
       _mobileNumber =

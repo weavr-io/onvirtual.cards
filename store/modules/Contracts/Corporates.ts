@@ -31,6 +31,7 @@ export enum _Actions {
   register = 'register',
   getCorporateDetails = 'getCorporateDetails',
   getUsers = 'getUsers',
+  getUser = 'getUser',
   addUser = 'addUser',
   checkKYB = 'checkKYB',
   sendVerificationCodeEmail = 'sendVerificationCodeEmail',
@@ -38,15 +39,17 @@ export enum _Actions {
   consumeInvite = 'consumeInvite',
   startKYB = 'startKYB',
   sendVerificationCodeMobile = 'sendVerificationCodeMobile',
-  verifyMobile = 'verifyMobile',
+  verifyMobile = 'verifyMobile'
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
   [_Actions.register](context: ActionContext<S, R>, request: CorporatesSchemas.CreateCorporateRequest)
 
-  [_Actions.getCorporateDetails](context: ActionContext<S, R>, corporateId: number)
+  [_Actions.getCorporateDetails](context: ActionContext<S, R>, corporateId: number): AxiosPromise
 
   [_Actions.getUsers](context: ActionContext<S, R>, corporateId: number)
+
+  [_Actions.getUser](context: ActionContext<S, R>, params: { corporateId: number; userId: number })
 
   [_Actions.addUser](context: ActionContext<S, R>, request: CorporatesSchemas.CreateCorporateUserFullRequest)
 
@@ -77,6 +80,9 @@ export module Helpers {
   }
   export const getUsers = (store: Store<any>, id: number) => {
     return StoreHelpers.dispatch(store, name, _Actions.getUsers, id)
+  }
+  export const getUser = (store: Store<any>, params: { corporateId: number; userId: number }) => {
+    return StoreHelpers.dispatch(store, name, _Actions.getUser, params)
   }
   export const addUser = (store: Store<any>, request: CorporatesSchemas.CreateCorporateUserFullRequest) => {
     return StoreHelpers.dispatch(store, name, _Actions.addUser, request)
