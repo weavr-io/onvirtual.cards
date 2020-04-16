@@ -1,17 +1,17 @@
 <template>
   <section v-if="showKybAlert">
-<b-container>
+    <b-container>
       <b-row>
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter">
           <h3 class="text-center font-weight-lighter mb-4">
             We need some documents
           </h3>
           <p>
-              We are required by financial services regulations to perform due diligence on your company before
-              allowing you to transact with your account. 
+            We are required by financial services regulations to perform due diligence on your company before allowing
+            you to transact with your account.
           </p>
           <p>
-              Kindly prepare to submit and upload the following information:
+            Kindly prepare to submit and upload the following information:
           </p>
           <ul class="my-3 font-weight-normal">
             <li>Copy of the Certificate of Incorporation</li>
@@ -22,8 +22,8 @@
             </li>
             <li>Directors: name, date of birth, address, email address</li>
             <li>
-              Ultimate Beneficiary Owners (UBOs) holding a stake of 25% or more of the equity: name, date of
-              birth, nationality
+              Ultimate Beneficiary Owners (UBOs) holding a stake of 25% or more of the equity: name, date of birth,
+              nationality
             </li>
           </ul>
           <div class="text-center">

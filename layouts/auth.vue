@@ -4,7 +4,7 @@
       <b-navbar type="light" fixed="top" variant="transparent" class="">
         <b-container>
           <b-collapse id="nav_collapse" is-nav>
-            <b-navbar-nav class="ml-auto" v-if="showLinks">
+            <b-navbar-nav v-if="showLinks" class="ml-auto">
               <b-nav-item v-if="showRegister" to="/register">
                 Register
               </b-nav-item>
@@ -18,25 +18,27 @@
     </div>
     <b-container>
       <b-row class="full-height-vh" align-v="center">
-          <nuxt class="my-6"/>
+        <nuxt class="my-6" />
       </b-row>
     </b-container>
+    <cookie-policy />
     <!-- <app-footer /> -->
   </div>
 </template>
 
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
+import { namespace } from 'vuex-class'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import config from '~/config'
-import { namespace } from 'vuex-class'
 import * as AuthStore from '~/store/modules/Auth'
 
 const Auth = namespace(AuthStore.name)
 
 @Component({
   components: {
-    AppFooter: () => import('~/components/Footer.vue')
+    AppFooter: () => import('~/components/Footer.vue'),
+    cookiePolicy: () => import('~/components/cookie.vue')
   },
   head: {
     bodyAttrs: {
