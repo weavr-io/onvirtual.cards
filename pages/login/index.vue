@@ -10,15 +10,15 @@
 
       <form id="contact-form" @submit="login" class="mt-5">
         <error-alert
-          message="Incorrect e-mail and password combination. If you do not have an account please click on Register."
+          message="Incorrect email and password combination. If you do not have an account please click on Register."
         />
-        <b-form-group id="ig-code" label="E-MAIL" label-for="form-code">
+        <b-form-group id="ig-code" label="EMAIL" label-for="form-code">
           <b-form-input
             id="from-code"
             v-model="loginRequest.code"
             class="form-control"
             name="setCode"
-            placeholder="E-mail"
+            placeholder="Email"
           />
         </b-form-group>
         <client-only placeholder="Loading...">

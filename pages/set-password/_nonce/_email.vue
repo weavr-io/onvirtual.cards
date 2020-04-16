@@ -15,7 +15,7 @@
             id="ig-email"
             :state="isInvalid($v.form.email)"
             :invalid-feedback="invalidFeedback($v.form.email, 'email')"
-            label="E-mail"
+            label="Email"
             label-for="setEmail"
           >
             <b-form-input
