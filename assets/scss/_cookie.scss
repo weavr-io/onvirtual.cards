@@ -1,0 +1,17 @@
+#cookie-alert {
+  background: $primary;
+  color: $body-bg-colored;
+  border-radius: 0;
+  display: inline-flex;
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  font-size: small;
+
+  border: none;
+  margin: 0;
+
+  a {
+    color: $body-bg-colored;
+  }
+}

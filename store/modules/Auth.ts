@@ -90,7 +90,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post('/app/api/auth/lost_password/start', request)
+    const req = api.post('/app/api/passwords/lost_password/start', request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
@@ -103,7 +103,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post('/app/api/auth/lost_password/validate', request)
+    const req = api.post('/app/api/passwords/lost_password/validate', request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
@@ -116,7 +116,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post('/app/api/auth/lost_password/resume', request)
+    const req = api.post('/app/api/passwords/lost_password/resume', request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
@@ -183,7 +183,7 @@ export const mutations: MutationTree<State> = {
   [types.AUTHENTICATE](state, _res: LoginResult) {
     state.auth = _res
     Cookie.set('auth-onvirtual', state.auth)
-    api.defaults.headers.Authorization = 'X-TOKEN ' + state.auth.token
+    api.defaults.headers.Authorization = 'Bearer ' + state.auth.token
   },
   [types.LOGOUT](state) {
     state.auth = {}

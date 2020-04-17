@@ -1,10 +1,10 @@
 <template>
-  <div :class="className" :style="baseStyle" class="weavr-input" />
+  <div :class="className" class="weavr-input" />
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
-import { SecureForm, SecureInputOptions } from '~/plugins/weavr/components/api'
+import { SecureElementStyleWithPseudoClasses, SecureForm, SecureInputOptions } from '~/plugins/weavr/components/api'
 
 @Component
 class WeavrInput extends Vue {
@@ -24,13 +24,13 @@ class WeavrInput extends Vue {
 
   @Prop() readonly customStyle!: object
 
-  @Prop() readonly baseStyle!: object
+  @Prop() readonly baseStyle!: SecureElementStyleWithPseudoClasses
 
-  @Prop() readonly emptyStyle!: object
+  @Prop() readonly emptyStyle!: SecureElementStyleWithPseudoClasses
 
-  @Prop() readonly validStyle!: object
+  @Prop() readonly validStyle!: SecureElementStyleWithPseudoClasses
 
-  @Prop() readonly invalidStyle!: object
+  @Prop() readonly invalidStyle!: SecureElementStyleWithPseudoClasses
 
   @Emit('onReady') onReady() {}
 

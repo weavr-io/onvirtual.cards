@@ -9,33 +9,33 @@
             </b-card-title>
             <b-card-body>
               <b-form @submit="doAdd">
-                <b-form-row>
+                <b-form-row v-if="!isConsumer">
                   <b-col>
-                    <b-form-group label="Name of Person using Card:">
+                    <b-form-group label="Name of Person using Card">
                       <b-form-input
-                        :state="isInvalid($v.request.nameOnCard)"
-                        v-model="$v.request.nameOnCard.$model"
+                        :state="isInvalid($v.createManagedCardRequest.nameOnCard)"
+                        v-model="$v.createManagedCardRequest.nameOnCard.$model"
                         placeholder="eg. Elon Musk"
                       />
-                      <b-form-invalid-feedback v-if="!$v.request.nameOnCard.required">
+                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.nameOnCard.required">
                         Name on Card is required.
                       </b-form-invalid-feedback>
-                      <b-form-invalid-feedback v-if="!$v.request.nameOnCard.maxLength">
+                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.nameOnCard.maxLength">
                         Name on Card too long.
                       </b-form-invalid-feedback>
                     </b-form-group>
                   </b-col>
                 </b-form-row>
-                <b-form-row>
+                <b-form-row v-if="!isConsumer">
                   <b-col>
-                    <b-form-group label="CARDHOLDER MOBILE NUMBER:">
+                    <b-form-group label="CARDHOLDER MOBILE NUMBER">
                       <vue-phone-number-input
-                        v-model="request.formattedMobileNumber"
+                        v-model="createManagedCardRequest.formattedMobileNumber"
                         @update="phoneUpdate"
                         :error="numberIsValid === false"
                         :border-radius="0"
+                        color="#6C1C5C"
                         error-color="#F50E4C"
-                        color="#6D7490"
                         valid-color="#6D7490"
                         default-country-code="GB"
                       />
@@ -47,16 +47,16 @@
                 </b-form-row>
                 <b-form-row>
                   <b-col>
-                    <b-form-group label="ADD A CUSTOM CARD NAME:">
+                    <b-form-group label="ADD A CUSTOM CARD NAME">
                       <b-form-input
-                        :state="isInvalid($v.request.friendlyName)"
-                        v-model="$v.request.friendlyName.$model"
+                        :state="isInvalid($v.createManagedCardRequest.friendlyName)"
+                        v-model="$v.createManagedCardRequest.friendlyName.$model"
                         placeholder="eg. travel expenses"
                       />
-                      <b-form-invalid-feedback v-if="!$v.request.friendlyName.required">
+                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.friendlyName.required">
                         Friendly Name is required.
                       </b-form-invalid-feedback>
-                      <b-form-invalid-feedback v-if="!$v.request.friendlyName.maxLength">
+                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.friendlyName.maxLength">
                         Friendly Name too long.
                       </b-form-invalid-feedback>
                     </b-form-group>
@@ -74,10 +74,11 @@
 <script lang="ts">
 import { namespace } from 'vuex-class'
 import { Component } from 'nuxt-property-decorator'
-import { helpers, maxLength, required } from 'vuelidate/lib/validators'
+import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CardsStore from '~/store/modules/Cards'
 import * as AuthStore from '~/store/modules/Auth'
+import * as ConsumersStore from '~/store/modules/Consumers'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
@@ -93,19 +94,25 @@ const Auth = namespace(AuthStore.name)
     LoaderButton: () => import('~/components/LoaderButton.vue')
   },
   validations: {
-    request: {
+    createManagedCardRequest: {
       friendlyName: {
         required,
         maxLength: maxLength(50)
       },
       cardholderMobileNumber: {
-        required,
-        cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
+        cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/),
+        requiredIf: requiredIf(function() {
+          // @ts-ignore
+          return !this.isConsumer
+        })
       },
       nameOnCard: {
-        required,
+        requiredIf: requiredIf(function() {
+          // @ts-ignore
+          return !this.isConsumer
+        }),
         maxLength: maxLength(30)
-      },
+      }
     }
   }
 })
@@ -116,6 +123,8 @@ export default class AddCardPage extends VueWithRouter {
 
   @Auth.Getter auth!: LoginResult
 
+  @Auth.Getter isConsumer!: boolean
+
   currencyOptions = [
     { value: 'EUR', text: 'EUR' },
     { value: 'GBP', text: 'GBP' }
@@ -124,36 +133,39 @@ export default class AddCardPage extends VueWithRouter {
   numberIsValid: boolean | null = null
   cardholderMobileNumber = ''
 
-  public request!: ManagedCardsSchemas.CreateManagedCardRequest
+  public createManagedCardRequest!: ManagedCardsSchemas.CreateManagedCardRequest
 
   doAdd(evt) {
     evt.preventDefault()
+
+    if (this.isConsumer) {
+      this.numberIsValid = true
+    }
 
     if (this.numberIsValid === null) {
       this.numberIsValid = false
     }
 
-    if (this.$v.request) {
-      this.$v.request.$touch()
-      if (this.$v.request.$anyError || !this.numberIsValid) {
+    if (this.$v.createManagedCardRequest) {
+      this.$v.createManagedCardRequest.$touch()
+      if (this.$v.createManagedCardRequest.$anyError || !this.numberIsValid) {
         return
       }
     }
 
-    this.addCard(this.request).then(() => {
+    this.addCard(this.createManagedCardRequest).then(() => {
       try {
-        this.$segment.track('Card Added', this.request)
+        this.$segment.track('Card Added', this.createManagedCardRequest)
       } catch (e) {}
       this.$router.push('/managed-cards')
     })
   }
 
   mounted() {
-    super.mounted()
     if (this.auth.identity) {
-      this.request.owner = this.auth.identity
+      this.createManagedCardRequest.owner = this.auth.identity
     }
-    this.request.profileId = config.profileId.managed_cards
+    // this.createManagedCardRequest.profileId = config.profileId.managed_cards
 
     try {
       this.$segment.track('Initiated Add Card', {})
@@ -163,8 +175,8 @@ export default class AddCardPage extends VueWithRouter {
   async asyncData({ store }) {
     const _accounts = await AccountsStore.Helpers.index(store)
 
-    const request: ManagedCardsSchemas.CreateManagedCardRequest = {
-      profileId: config.profileId.managed_cards,
+    const createManagedCardRequest: ManagedCardsSchemas.CreateManagedCardRequest = {
+      profileId: config.profileId.managed_cards_corporates,
       owner: AuthStore.Helpers.identity(store),
       friendlyName: '',
       currency: 'EUR',
@@ -177,14 +189,21 @@ export default class AddCardPage extends VueWithRouter {
     }
 
     if (_accounts.data.count === 1) {
-      request.currency = _accounts.data.account[0].currency
+      createManagedCardRequest.currency = _accounts.data.account[0].currency
     }
 
-    return { request: request }
+    if (AuthStore.Helpers.isConsumer(store)) {
+      const _consumer = await ConsumersStore.Helpers.get(store, AuthStore.Helpers.identity(store).id)
+      createManagedCardRequest.nameOnCard = _consumer.data.name + ' ' + _consumer.data.surname
+      createManagedCardRequest.cardholderMobileNumber = _consumer.data.mobileCountryCode + _consumer.data.mobileNumber
+      createManagedCardRequest.profileId = config.profileId.managed_cards_consumers
+    }
+
+    return { createManagedCardRequest: createManagedCardRequest }
   }
 
   phoneUpdate(number) {
-    this.request.cardholderMobileNumber = '+' + number.countryCallingCode + number.nationalNumber
+    this.createManagedCardRequest.cardholderMobileNumber = '+' + number.countryCallingCode + number.nationalNumber
     this.numberIsValid = number.isValid
   }
 }

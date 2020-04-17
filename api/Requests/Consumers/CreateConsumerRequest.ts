@@ -4,11 +4,8 @@ export interface CreateConsumerRequest {
   name: string
   surname: string
   email: string
-  credentialCode: string
-  secretType: {
-    firstSecretType: string
-    secondSecretType?: string
-  }
+  credentialCode?: string
   mobileCountryCode: string
   mobileNumber: string
+  baseCurrency?: string
 }

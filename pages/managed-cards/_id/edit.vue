@@ -9,12 +9,12 @@
             </b-card-title>
             <b-card-body>
               <b-form @submit="doAdd">
-                <b-form-row>
+                <b-form-row v-if="!isConsumer">
                   <b-col>
-                    <b-form-group label="Name of Person using Card:">
+                    <b-form-group label="Name of Person using Card">
                       <b-form-input
-                        :state="isInvalid($v.request.body.nameOnCard)"
-                        v-model="$v.request.body.nameOnCard.$model"
+                        :state="isInvalid($v.updateManagedCardRequest.body.nameOnCard)"
+                        v-model="$v.updateManagedCardRequest.body.nameOnCard.$model"
                         placeholder="eg. Elon Musk"
                         disabled
                       />
@@ -22,17 +22,17 @@
                     </b-form-group>
                   </b-col>
                 </b-form-row>
-                <b-form-row>
+                <b-form-row v-if="!isConsumer">
                   <b-col>
-                    <b-form-group label="CARDHOLDER MOBILE NUMBER:">
+                    <b-form-group label="CARDHOLDER MOBILE NUMBER">
                       <vue-phone-number-input
                         :value="mobile.cardholderMobileNumber"
                         @update="phoneUpdate"
                         :error="numberIsValid === false"
                         :border-radius="0"
                         :defaultCountryCode="mobile.countryCode"
+                        color="#6C1C5C"
                         error-color="#F50E4C"
-                        color="#6D7490"
                         valid-color="#6D7490"
                       />
                       <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
@@ -43,10 +43,10 @@
                 </b-form-row>
                 <b-form-row>
                   <b-col>
-                    <b-form-group label="ADD A CUSTOM CARD NAME:">
+                    <b-form-group label="CUSTOM CARD NAME">
                       <b-form-input
-                        :state="isInvalid($v.request.body.friendlyName)"
-                        v-model="$v.request.body.friendlyName.$model"
+                        :state="isInvalid($v.updateManagedCardRequest.body.friendlyName)"
+                        v-model="$v.updateManagedCardRequest.body.friendlyName.$model"
                         placeholder="eg. travel expenses"
                       />
                       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -65,7 +65,7 @@
 <script lang="ts">
 import { namespace } from 'vuex-class'
 import { Component } from 'nuxt-property-decorator'
-import { helpers, maxLength, required } from 'vuelidate/lib/validators'
+import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CardsStore from '~/store/modules/Cards'
@@ -83,18 +83,24 @@ const Auth = namespace(AuthStore.name)
     LoaderButton: () => import('~/components/LoaderButton.vue')
   },
   validations: {
-    request: {
+    updateManagedCardRequest: {
       body: {
         friendlyName: {
           required,
           maxLength: maxLength(50)
         },
         cardholderMobileNumber: {
-          required,
+          requiredIf: requiredIf(function() {
+            // @ts-ignore
+            return !this.isConsumer
+          }),
           cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
         },
         nameOnCard: {
-          required,
+          requiredIf: requiredIf(function() {
+            // @ts-ignore
+            return !this.isConsumer
+          }),
           maxLength: maxLength(30)
         }
       }
@@ -108,31 +114,37 @@ export default class AddCardPage extends VueWithRouter {
 
   @Auth.Getter auth!: LoginResult
 
+  @Auth.Getter isConsumer!: boolean
+
   numberIsValid: boolean | null = null
   mobile = {
     countryCode: 'GB',
     cardholderMobileNumber: ''
   }
 
-  public request!: UpdateManagedCardRequest
+  public updateManagedCardRequest!: UpdateManagedCardRequest
 
   doAdd(evt) {
     evt.preventDefault()
+
+    if (this.isConsumer) {
+      this.numberIsValid = true
+    }
 
     if (this.numberIsValid === null) {
       this.numberIsValid = false
     }
 
-    if (this.$v.request) {
-      this.$v.request.$touch()
-      if (this.$v.request.$anyError || !this.numberIsValid) {
+    if (this.$v.updateManagedCardRequest) {
+      this.$v.updateManagedCardRequest.$touch()
+      if (this.$v.updateManagedCardRequest.$anyError || !this.numberIsValid) {
         return
       }
     }
 
-    CardsStore.Helpers.update(this.$store, this.request).then(() => {
+    CardsStore.Helpers.update(this.$store, this.updateManagedCardRequest).then(() => {
       try {
-        this.$segment.track('Card Updated', this.request)
+        this.$segment.track('Card Updated', this.updateManagedCardRequest)
       } catch (e) {}
       this.$router.push('/managed-cards')
     })
@@ -145,7 +157,7 @@ export default class AddCardPage extends VueWithRouter {
 
     const _parsedNumber = parsePhoneNumberFromString(_card.data.cardholderMobileNumber)
 
-    const request: UpdateManagedCardRequest = {
+    const updateManagedCardRequest: UpdateManagedCardRequest = {
       id: _cardId,
       body: {
         ..._card.data
@@ -154,7 +166,7 @@ export default class AddCardPage extends VueWithRouter {
 
     return {
       cardId: _cardId,
-      request: request,
+      updateManagedCardRequest: updateManagedCardRequest,
       mobile: {
         countryCode: _parsedNumber?.country,
         cardholderMobileNumber: _parsedNumber?.nationalNumber
@@ -164,7 +176,7 @@ export default class AddCardPage extends VueWithRouter {
 
   phoneUpdate(number) {
     this.$set(this.mobile, 'cardholderMobileNumber', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.request.body.cardholderMobileNumber = number.formattedNumber
+    this.updateManagedCardRequest.body.cardholderMobileNumber = number.formattedNumber
     this.numberIsValid = number.isValid
   }
 }

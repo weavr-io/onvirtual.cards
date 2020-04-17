@@ -4,7 +4,50 @@
       <b-row>
         <b-col md="6" offset-md="3">
           <template v-if="isConsumer">
-            {{ consumer }}
+            <b-card class="border card-sm-border-radius" no-body>
+              <template v-slot:header>
+                <h4 class="mb-0">{{ consumer.name }} {{ consumer.surname }}</h4>
+              </template>
+              <b-card-body class="p-1">
+                <b-list-group flush>
+                  <b-list-group-item class="flex-column align-items-start ">
+                    <div class="d-flex w-100 justify-content-between">
+                      <p class="m-0">
+                        Name
+                      </p>
+                      <p class="m-0">
+                        {{ consumer.name }} {{ consumer.surname }}
+                      </p>
+                    </div>
+                  </b-list-group-item>
+                  <b-list-group-item class="flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <p class="m-0">
+                        Email
+                      </p>
+                      <p class="m-0">
+                        {{ consumer.email }}
+                      </p>
+                    </div>
+                  </b-list-group-item>
+                  <b-list-group-item class="flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <p class="m-0">
+                        Mobile
+                      </p>
+                      <p class="m-0">
+                        {{ consumer.mobileCountryCode }} {{ consumer.mobileNumber }}
+                      </p>
+                    </div>
+                  </b-list-group-item>
+                </b-list-group>
+              </b-card-body>
+              <b-card-footer class="py-4">
+                <b-link to="/profile/password/change" class="link">
+                  Change Password
+                </b-link>
+              </b-card-footer>
+            </b-card>
           </template>
           <template v-if="isCorporate">
             <b-card class="border card-sm-border-radius" no-body>

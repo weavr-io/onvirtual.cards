@@ -7,7 +7,7 @@
             <account-selection @submit-form="accountSelected" />
           </div>
           <div v-if="screen === 1" class="topup-screen">
-            <top-up :selected-account="request.source" @submit-form="topUpSelected" />
+            <top-up :selected-account="createTransferRequest.source" @submit-form="topUpSelected" />
           </div>
           <div v-if="screen === 2" class="topup-screen">
             <top-up-success />
@@ -55,20 +55,20 @@ export default class CardsPage extends VueWithRouter {
 
   accountSelected(_data) {
     if (_data != null) {
-      this.request.source.type = _data.source.type
-      this.request.source.id = _data.source.id
+      this.createTransferRequest.source.type = _data.source.type
+      this.createTransferRequest.source.id = _data.source.id
       this.nextScreen()
     }
   }
 
   topUpSelected(_data) {
     if (_data != null) {
-      this.request.destinationAmount.amount = _data.amount * 100
+      this.createTransferRequest.destinationAmount.amount = _data.amount * 100
       this.doTransfer()
     }
   }
 
-  public request!: TransfersSchemas.CreateTransferRequest
+  public createTransferRequest!: TransfersSchemas.CreateTransferRequest
 
   get formattedCards(): { value: string; text: string }[] {
     return this.cards.map((val) => {
@@ -91,8 +91,6 @@ export default class CardsPage extends VueWithRouter {
   ]
 
   mounted() {
-    super.mounted()
-
     try {
       this.$segment.track('Initiated Transfer', {})
     } catch (e) {}
@@ -116,14 +114,14 @@ export default class CardsPage extends VueWithRouter {
     }
 
     return {
-      request: request
+      createTransferRequest: request
     }
   }
 
   doTransfer() {
-    this.execute(this.request)
+    this.execute(this.createTransferRequest)
       .then(() => {
-        this.request = {
+        this.createTransferRequest = {
           profileId: null,
           source: {
             type: 'managed_accounts',
@@ -141,7 +139,7 @@ export default class CardsPage extends VueWithRouter {
         this.screen = 2
 
         try {
-          this.$segment.track('Transfer Success', this.request)
+          this.$segment.track('Transfer Success', this.createTransferRequest)
         } catch (e) {}
       })
       .catch((err) => {

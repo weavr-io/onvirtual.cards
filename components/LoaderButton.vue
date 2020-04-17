@@ -1,5 +1,5 @@
 <template>
-  <b-form-group>
+  <b-form-group class="mb-0">
     <b-button v-if="!isLoading" type="submit" variant="secondary">
       {{ buttonText }}
       <span v-if="showArrow" class="pl-5">-></span>

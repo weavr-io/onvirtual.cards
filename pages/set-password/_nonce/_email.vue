@@ -1,74 +1,55 @@
 <template>
-  <section>
-    <b-container>
-      <b-row class="full-height-vh py-5" align-v="center">
-        <b-col lg="6" offset-lg="3">
-          <b-card no-body class="overflow-hidden">
-            <b-card-body class="p-6">
-              <div class="text-center">
-                <h2 class="font-weight-lighter">
-                  Set password
-                </h2>
-              </div>
-              <error-alert
-                message="The reset password link is invalid or has expired.  Please restart the password restart process."
+  <b-col lg="6" offset-lg="3">
+    <b-card no-body class="overflow-hidden">
+      <b-card-body class="p-6">
+        <div class="text-center">
+          <h2 class="font-weight-lighter">
+            Set password
+          </h2>
+        </div>
+        <error-alert
+          message="The reset password link is invalid or has expired.  Please restart the password restart process."
+        />
+        <b-form id="contact-form" @submit="setPassword" class="mt-5">
+          <b-form-group
+            id="ig-email"
+            :state="isInvalid($v.form.email)"
+            :invalid-feedback="invalidFeedback($v.form.email, 'email')"
+            label="Email"
+            label-for="setEmail"
+          >
+            <b-form-input
+              id="setEmail"
+              v-model="form.email"
+              :state="isInvalid($v.form.email)"
+              class="form-control"
+              type="text"
+              name="setEmail"
+              autocomplete="email"
+            />
+          </b-form-group>
+          <client-only placeholder="Loading...">
+            <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
+              <label class="d-block">PASSWORD:</label>
+              <weavr-input
+                :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                :base-style="passwordBaseStyle"
+                @onKeyUp="checkOnKeyUp"
+                class-name="sign-in-password"
+                name="password"
+                field="password"
+                required="true"
               />
-              <b-form id="contact-form" @submit="setPassword" class="mt-5">
-                <b-form-group
-                  id="ig-email"
-                  :state="isInvalid($v.form.email)"
-                  :invalid-feedback="invalidFeedback($v.form.email, 'email')"
-                  label="E-mail"
-                  label-for="setEmail"
-                >
-                  <b-form-input
-                    id="setEmail"
-                    v-model="form.email"
-                    :state="isInvalid($v.form.email)"
-                    class="form-control"
-                    type="text"
-                    name="setEmail"
-                    autocomplete="email"
-                  />
-                </b-form-group>
-                <client-only placeholder="Loading...">
-                  <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
-                    <label class="d-block">PASSWORD:</label>
-                    <weavr-input
-                      :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                      :base-style="{
-                        color: '#000',
-                        fontSize: '13px',
-                        fontSmoothing: 'antialiased',
-                        fontFamily: '\'Be Vietnam\', sans-serif',
-                        fontWeight: '300',
-                        margin: '0',
-                        padding: '0.375rem 0.75rem',
-                        textIndent: '0px',
-                        '::placeholder': {
-                          color: '#bbc0c8',
-                          fontWeight: '200'
-                        }
-                      }"
-                      @onKeyUp="checkOnKeyUp"
-                      class-name="sign-in-password"
-                      name="password"
-                      field="password"
-                      required="true"
-                    />
-                  </weavr-form>
-                  <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
-                </client-only>
-                <div class="text-center">
-                  <loader-button :is-loading="isLoading" button-text="Set Password" class="mt-5" />
-                </div>
-              </b-form>
-            </b-card-body>
-          </b-card>
-        </b-col>
-      </b-row>
-    </b-container>
-  </section>
+            </weavr-form>
+            <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
+          </client-only>
+          <div class="text-center">
+            <loader-button :is-loading="isLoading" button-text="Set Password" class="mt-5" />
+          </div>
+        </b-form>
+      </b-card-body>
+    </b-card>
+  </b-col>
 </template>
 
 <script lang="ts">
@@ -85,6 +66,7 @@ import { LostPasswordContinueRequest } from '~/api/Requests/Auth/LostPasswordCon
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 
 const Auth = namespace(AuthStore.name)
 
@@ -124,7 +106,6 @@ export default class PasswordSentPage extends BaseVue {
   }
 
   mounted() {
-    super.mounted()
     this.form.nonce = this.$route.params.nonce
     this.form.email = this.$route.params.email
 
@@ -163,17 +144,17 @@ export default class PasswordSentPage extends BaseVue {
 
   validatePassword() {
     const _request: ValidatePasswordRequest = {
-      identityProfileId: config.profileId.corporates ?? '',
+      identityProfileId: config.profileId.corporates ? config.profileId.corporates : '',
       credentialType: 'ROOT',
       password: {
-        value: this.form.password.value ?? ''
+        value: this.form.password.value ? this.form.password.value : ''
       }
     }
 
     AuthStore.Helpers.validatePassword(this.$store, _request).then(this.submitForm.bind(this))
   }
 
-  submitForm(){
+  submitForm() {
     AuthStore.Helpers.lostPasswordResume(this.$store, this.form).then(() => {
       this.$router.push('/login')
     })
@@ -183,6 +164,24 @@ export default class PasswordSentPage extends BaseVue {
     if (e.key === 'Enter') {
       e.preventDefault()
       this.setPassword(e)
+    }
+  }
+
+  get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
+    return {
+      color: '#495057',
+      fontSize: '16px',
+      fontSmoothing: 'antialiased',
+      fontFamily: "'Be Vietnam', sans-serif",
+      fontWeight: '400',
+      lineHeight: '24px',
+      margin: '0',
+      padding: '6px 12px',
+      textIndent: '0px',
+      '::placeholder': {
+        color: '#B6B9C7',
+        fontWeight: '400'
+      }
     }
   }
 }

@@ -1,12 +1,6 @@
 import { Vue } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import * as ErrorStore from '~/store/modules/Error'
-
-const Error = namespace(ErrorStore.name)
 
 export class BaseVue extends Vue {
-  @Error.Action resetErrors
-
   isInvalid(item) {
     return item.$dirty ? !item.$error : null
   }
@@ -34,9 +28,5 @@ export class BaseVue extends Vue {
           return 'Not Handled'
       }
     }
-  }
-
-  mounted() {
-    this.resetErrors()
   }
 }

@@ -14,7 +14,7 @@ export default function(ctxt) {
       auth = JSON.parse(authCookie)
       ctxt.store.commit('auth/AUTHENTICATE', auth, { root: true })
       if (auth != null) {
-        return ctxt.app.$weavrSecurityAssociate('X-TOKEN ' + auth.token).then(
+        return ctxt.app.$weavrSecurityAssociate('Bearer ' + auth.token).then(
           () => {},
           (err) => {
             console.log(err)

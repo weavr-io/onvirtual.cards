@@ -14,10 +14,10 @@ import * as AccountsStore from '~/store/modules/Accounts'
 export default class CardsPage extends VueWithRouter {
   async asyncData({ store, redirect }) {
     let _accountId
-      const _accounts = await AccountsStore.Helpers.index(store)
+    const _accounts = await AccountsStore.Helpers.index(store)
 
-      if (_accounts.data.count === 1) {
-        _accountId = _accounts.data.account[0].id.id
+    if (_accounts.data.count === 1) {
+      _accountId = _accounts.data.account[0].id.id
 
       redirect('/managed-accounts/' + _accountId)
     } else {

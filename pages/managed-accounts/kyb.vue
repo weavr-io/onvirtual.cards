@@ -28,9 +28,7 @@
               birth, address, nationality
             </li>
             <li>
-              <a href="/ubo-declaration.docx" target="_blank" class="link"
-                >UBO declaration form <b-icon icon="box-arrow-up-right"
-              /></a>
+              <a href="/ubo-declaration.docx" target="_blank" class="link">UBO declaration form <b-icon icon="box-arrow-up-right" /></a>
             </li>
           </ol>
           <div class="text-center">

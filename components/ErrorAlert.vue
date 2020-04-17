@@ -4,7 +4,7 @@
       <div class="error-alert" role="alert">
         <p>{{ conflictMessage }}</p>
         <button @click="onClose">
-          <img src="/img/close.svg" width="16" alt="" />
+          <img src="/img/close.svg" width="16" alt="">
         </button>
       </div>
     </div>
@@ -17,7 +17,7 @@
           </b-link>
         </p>
         <button @click="onClose">
-          <img src="/img/close.svg" width="16" alt >
+          <img src="/img/close.svg" width="16" alt>
         </button>
       </div>
     </div>
@@ -67,7 +67,7 @@ class ErrorAlert extends Vue {
       return ''
     } else if (this.message !== '') {
       return this.message
-    } else {
+    } else if (this.errors && this.errors.data && this.errors.data.errorCode) {
       console.log(this.errors.data)
       switch (this.errors.data.errorCode) {
         case 'ROOT_EMAIL_NOT_UNIQUE':
@@ -78,10 +78,12 @@ class ErrorAlert extends Vue {
         case 'ROOT_USERNAME_NOT_UNIQUE':
           return 'Username already exists in the system. Please try a different username.'
         case 'INVALID_NONCE_OR_MOBILE':
-          return 'There is something wrong with your nonce or mobile.'
+          return 'There is something wrong with your verification code.'
         default:
           return 'An error occurred. Please try again.'
       }
+    } else {
+      return 'An error occurred. Please try again.'
     }
   }
 }

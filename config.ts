@@ -9,8 +9,10 @@ export default {
   profileId: {
     consumers: process.env.CONSUMERS_PROFILE_ID,
     corporates: process.env.CORPORATES_PROFILE_ID,
-    managed_cards: process.env.MANAGED_CARDS_PROFILE_ID,
-    managed_accounts: process.env.MANAGED_ACCOUNTS_PROFILE_ID,
+    managed_cards_consumers: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID,
+    managed_cards_corporates: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID,
+    managed_accounts_consumers: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID,
+    managed_accounts_corporates: process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID,
     transfers: process.env.TRANSFERS_PROFILE_ID,
     send: process.env.SEND_PROFILE_ID
   },

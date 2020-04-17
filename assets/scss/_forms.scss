@@ -58,11 +58,24 @@
     border-left: 0 !important;
     border-right: 0 !important;
     border-top: 0 !important;
-    //border-color: $input-border-color !important;
+    border-color: $input-border-color;
+
+    &::placeholder {
+      color: $input-placeholder-color !important;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+    }
   }
 
-  .input-tel__label, .country-selector__label{
+  .input-tel__label, .country-selector__label {
     color: $body-color !important;
+  }
+
+  &:not(.has-error) {
+    .input-tel__input, .country-selector__input {
+      border-color: $input-border-color !important;
+    }
   }
 }
 
@@ -75,6 +88,7 @@ select {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;

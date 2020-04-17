@@ -1,8 +1,7 @@
 <template>
   <div>
-    <kyb-alert />
-    <section v-if="!showKybAlert">
-      <b-container class="mb-5">
+    <section>
+      <b-container class="mb-5 mt-n4">
         <b-row>
           <b-col class="text-right">
             <b-button to="/managed-cards/add" variant="border-primary">
@@ -11,7 +10,7 @@
           </b-col>
         </b-row>
       </b-container>
-      <b-container class="mt-5">
+      <b-container v-if="!hasAlert" class="mt-5">
         <b-row v-if="!hasCards">
           <b-col class="py-5 text-center">
             <h4 class="font-weight-light">
@@ -46,9 +45,11 @@ import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { KYBState } from '~/api/Enums/KYBState'
 import { CorporatesSchemas } from '~/api/CorporatesSchemas'
+import * as ViewStore from '~/store/modules/View'
 
 const Cards = namespace(CardsStore.name)
 const Corporates = namespace(CorporatesStore.name)
+const View = namespace(ViewStore.name)
 
 @Component({
   layout: 'dashboard',
@@ -61,6 +62,8 @@ export default class CardsPage extends VueWithRouter {
   @Corporates.Getter corporate!: CorporatesSchemas.Corporate | null
 
   @Cards.Getter cards
+
+  @View.Getter hasAlert!: boolean
 
   async asyncData({ store }) {
     if (AuthStore.Helpers.isConsumer(store)) {

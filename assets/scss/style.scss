@@ -11,6 +11,7 @@
 @import 'account';
 @import 'card';
 @import 'shadow';
+@import "cookie";
 
 .transparent-modal {
   background: transparent !important;
@@ -112,5 +113,14 @@ a {
 .text-decoration {
   &-underline {
     text-decoration: underline;
+  }
+}
+
+.line-height {
+  &-md {
+    line-height: 2rem;
+  }
+  &-lg {
+    line-height: 2.8rem;
   }
 }

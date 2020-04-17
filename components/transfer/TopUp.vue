@@ -3,7 +3,12 @@
     <b-row>
       <b-col>
         <h2 class="text-center font-weight-lighter">
-          Top up amount
+          <template v-if="accountBalance < 0.01">
+            Not enough funds
+          </template>
+          <template v-else>
+            Top up amount
+          </template>
         </h2>
       </b-col>
     </b-row>
@@ -22,7 +27,7 @@
         <b-row class="mt-5">
           <b-col class="text-center">
             <b-button to="/" variant="secondary">
-              back
+              go to cards
               <span class="pl-5">-></span>
             </b-button>
           </b-col>
@@ -94,7 +99,7 @@ export default class TopUpForm extends VueWithRouter {
   public request: {
     amount: number | null
   } = {
-    amount: 1
+    amount: null
   }
 
   get accountDetails() {

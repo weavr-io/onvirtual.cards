@@ -12,26 +12,22 @@ export module CorporatesSchemas {
     companyType: CompanyType
     supportEmail: string
     active?: boolean
-    rootUsername: string
+    rootUsername?: string
     rootTitle: string
     rootName: string
     rootSurname: string
     rootEmail: string
-    rootSecretType: {
-      firstSecretType: string
-      secondSecretType?: string
-      secondSecretTypeRequired?: boolean
-    }
     companyRegistrationNumber: string
     companyRegistrationAddress: string
     companyBusinessAddress: string
     registrationCountry: string
-    companyRegistrationDate: number
+    companyRegistrationDate?: number
     acceptedTerms: boolean
     ipAddress: string
     rootCompanyPosition: string
     rootMobileCountryCode: string
     rootMobileNumber: string
+    baseCurrency?: string
   }
 
   export interface Corporate {
@@ -56,10 +52,9 @@ export module CorporatesSchemas {
     kyb: {
       rootEmailVerified: boolean
       rootMobileVerified: boolean
-      directorsVerified: KYBState
-      UBOsVerified: KYBState
       basicCompanyChecksVerified: KYBState
       fullCompanyChecksVerified: KYBState
+      enhancedCompanyChecksVerified: KYBState
       allowedLimit: number
       remainingLimit: number
     }
@@ -85,16 +80,11 @@ export module CorporatesSchemas {
 
   export interface CreateCorporateUserRequest {
     type: string
-    username: string
+    username?: string
     title: string | null
     name: string
     surname: string
     email: string
-    secretType: {
-      firstSecretType: string
-      secondSecretType?: string
-      secondSecretTypeRequired?: boolean
-    }
     active?: boolean
     companyPosition: string
     mobileCountryCode: string

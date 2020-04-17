@@ -3,8 +3,8 @@
     <h3 class="text-center font-weight-light mb-5">
       Company Details
     </h3>
-
-    <b-form-group label="Company Name:">
+    <error-alert/>
+    <b-form-group label="Company Name">
       <b-form-input
         :state="isInvalid($v.form.companyName)"
         v-model="$v.form.companyName.$model"
@@ -12,14 +12,14 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Registration Number:">
+    <b-form-group label="Company Registration Number">
       <b-form-input
         :state="isInvalid($v.form.companyRegistrationNumber)"
         v-model="$v.form.companyRegistrationNumber.$model"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Registration Address:">
+    <b-form-group label="Company Registration Address">
       <b-form-textarea
         :state="isInvalid($v.form.companyRegistrationAddress)"
         v-model="$v.form.companyRegistrationAddress.$model"
@@ -28,7 +28,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Registration Country:">
+    <b-form-group label="Registration Country">
       <b-form-select
         :state="isInvalid($v.form.registrationCountry)"
         v-model="$v.form.registrationCountry.$model"
@@ -37,7 +37,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Registration Date:">
+    <b-form-group label="Company Registration Date">
       <flat-pickr
         v-model="companyRegistrationDate"
         :config="config"
@@ -58,14 +58,14 @@
         </b-form-group>
       </b-col>
     </b-form-row>
-    <b-form-row class="mt-6">
+    <b-form-row class="mt-5">
       <b-col md="4">
         <b-button @click="goBack" variant="outline">
           <-
         </b-button>
       </b-col>
       <b-col>
-        <loader-button :is-loading="isLoading" button-text="Finish" class="text-right" />
+        <loader-button :is-loading="isLoadingRegistration" button-text="Finish" class="text-right" />
       </b-col>
     </b-form-row>
   </b-form>
@@ -110,7 +110,9 @@ const Corporates = namespace(CorporatesStore.name)
     }
   },
   components: {
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+
   }
 })
 export default class CompanyDetailsForm extends VueWithRouter {
@@ -120,7 +122,7 @@ export default class CompanyDetailsForm extends VueWithRouter {
 
   @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
 
-  @Corporates.Getter isLoading
+  @Corporates.Getter isLoadingRegistration
 
   public companyRegistrationDate = ''
 

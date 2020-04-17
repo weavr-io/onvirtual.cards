@@ -59,16 +59,7 @@
             All Transactions
           </h6>
         </b-col>
-        <b-col class="text-right">
-          <!--          <b-button-->
-          <!--            v-if="managedCard && managedCard.active"-->
-          <!--            variant="link"-->
-          <!--            class="px-0"-->
-          <!--            @click="deleteCard"-->
-          <!--          >-->
-          <!--            delete card-->
-          <!--          </b-button>-->
-        </b-col>
+        <b-col class="text-right"></b-col>
       </b-row>
 
       <b-row v-if="filteredStatement">
@@ -216,8 +207,6 @@ export default class ManagedCardsTable extends Vue {
 
   @ManagedCards.Getter managedCard
 
-  @ManagedCards.Action destroyManagedCard
-
   public fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
 
   async asyncData({ store, route }) {
@@ -243,26 +232,6 @@ export default class ManagedCardsTable extends Vue {
 
   get isFrozen() {
     return Object.entries(this.managedCard.state.blockTypes).length > 0 || this.managedCard.state.destroyType !== ''
-  }
-
-  deleteCard() {
-    const _req: ManagedCardsSchemas.DestroyRequest = {
-      id: this.cardId,
-      body: {
-        destroyType: 'Final'
-      }
-    }
-
-    this.destroyManagedCard(_req).then(
-      () => {
-        this.$router.push('/managed-cards')
-      },
-      (err) => {
-        const data = err.response.data
-        const error = data.message ? data.message : data.errorCode
-        this.$weavrToastError(error)
-      }
-    )
   }
 }
 </script>

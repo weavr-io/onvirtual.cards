@@ -151,9 +151,6 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
-  destroyManagedCard({}, request) {
-    return api.post('/app/api/managed_cards/' + request.id + '/destroy', request.body)
-  },
   freeze({ commit }, id) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })

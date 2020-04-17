@@ -3,6 +3,7 @@ import config from '~/config'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import WeavrInput from '~/plugins/weavr/components/WeavrInput.vue'
 import WeavrSpan from '~/plugins/weavr/components/WeavrSpan.vue'
+import { SecureClient } from '~/plugins/weavr/components/api'
 
 // @ts-ignore
 window.OpcUxSecureClient.init(config.api.sharedKey, {
@@ -46,12 +47,7 @@ Vue.component('weavr-span', WeavrSpan)
 
 declare module 'vue/types/vue' {
   interface Vue {
-    $OpcUxSecureClient: {
-      associate: (token, resolve, reject) => {}
-      form: () => {}
-      init: (apiKey, options) => {}
-      span: (field, token, options) => {}
-    }
+    $OpcUxSecureClient: SecureClient
     $weavrSecurityAssociate: (token) => {}
   }
 }

@@ -11,6 +11,7 @@ export { name, namespaced, Helpers }
 export const state = (): State => ({
   corporate: null,
   isLoading: false,
+  isLoadingRegistration: false,
   users: null
 })
 
@@ -23,6 +24,9 @@ export const getters: GetterTree<State, RootState> = {
   },
   isLoading: (state) => {
     return state.isLoading
+  },
+  isLoadingRegistration: (state) => {
+    return state.isLoadingRegistration
   }
 }
 
@@ -35,6 +39,9 @@ export const mutations: MutationTree<State> = {
   },
   [types.SET_USERS](state, users) {
     state.users = users
+  },
+  [types.SET_IS_LOADING_REGISTRATION](state, isLoading) {
+    state.isLoadingRegistration = isLoading
   }
 }
 
@@ -88,6 +95,19 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
+  getUser({ commit }, params) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/corporates/' + params.corporateId + '/users/' + params.userId + '/get', {})
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
   addUser({ commit }, request: CorporatesSchemas.CreateCorporateUserFullRequest) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
@@ -123,5 +143,17 @@ export const actions: Actions<State, RootState> = {
   },
   consumeInvite(ctxt, request) {
     return api.post('/app/api/corporates/' + request.id + '/invites/consume', request.body)
+  },
+  startKYB({}, corporateId) {
+    return api.post('/app/api/corporates/' + corporateId + '/kyb/start', {})
+  },
+  sendVerificationCodeMobile({}, request) {
+    return api.post(
+      '/app/api/corporates/' + request.corporateId + '/users/mobile/send_verification_code',
+      request.request
+    )
+  },
+  verifyMobile({}, request) {
+    return api.post('/app/api/corporates/' + request.corporateId + '/users/mobile/verify', request.request)
   }
 }

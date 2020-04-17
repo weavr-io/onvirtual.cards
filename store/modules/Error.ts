@@ -42,7 +42,7 @@ export const getters: GetterTree<State, RootState> = {
         case 'ROOT_USERNAME_NOT_UNIQUE':
           return 'Username already exists in the system. Please try a different username.'
         case 'INVALID_NONCE_OR_MOBILE':
-          return 'There is something wrong with your nonce or mobile.'
+          return 'There is something wrong with your verification code.'
         case 'PASSWORD_INCORRECT':
           return 'Password is incorrect.'
         case 'FAILED_LOGIN':
@@ -74,7 +74,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_ERROR, errors)
   },
   resetErrors({ commit }): void {
-    commit(types.RESET_ERRORS)
+    return commit(types.RESET_ERRORS)
   },
   setConflict({ commit }, conflict): void {
     commit(types.SET_CONFLICT, conflict)
