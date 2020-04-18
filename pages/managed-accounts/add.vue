@@ -95,7 +95,9 @@ export default class AddCardPage extends VueWithRouter {
 
   asyncData({ store }) {
     const createManagedAccountRequest: ManagedAccountsSchemas.CreateManagedAccountRequest = {
-      profileId: config.profileId.managed_accounts_corporates,
+      profileId: AuthStore.Helpers.isConsumer(store)
+        ? config.profileId.managed_accounts_consumers
+        : config.profileId.managed_accounts_corporates,
       owner: AuthStore.Helpers.identity(store),
       friendlyName: 'Main Account',
       currency: 'EUR',
@@ -108,7 +110,7 @@ export default class AddCardPage extends VueWithRouter {
       createManagedAccountRequest.profileId = config.profileId.managed_accounts_consumers
     }
 
-return {
+    return {
       createManagedAccountRequest: createManagedAccountRequest
     }
   }

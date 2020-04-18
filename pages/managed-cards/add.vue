@@ -165,7 +165,10 @@ export default class AddCardPage extends VueWithRouter {
     if (this.auth.identity) {
       this.createManagedCardRequest.owner = this.auth.identity
     }
-    // this.createManagedCardRequest.profileId = config.profileId.managed_cards
+
+    this.createManagedCardRequest.profileId = AuthStore.Helpers.isConsumer(this.$store)
+      ? config.profileId.managed_cards_consumers
+      : config.profileId.managed_cards_corporates
 
     try {
       this.$segment.track('Initiated Add Card', {})
@@ -176,7 +179,9 @@ export default class AddCardPage extends VueWithRouter {
     const _accounts = await AccountsStore.Helpers.index(store)
 
     const createManagedCardRequest: ManagedCardsSchemas.CreateManagedCardRequest = {
-      profileId: config.profileId.managed_cards_corporates,
+      profileId: AuthStore.Helpers.isConsumer(store)
+        ? config.profileId.managed_cards_consumers
+        : config.profileId.managed_cards_corporates,
       owner: AuthStore.Helpers.identity(store),
       friendlyName: '',
       currency: 'EUR',
@@ -196,7 +201,6 @@ export default class AddCardPage extends VueWithRouter {
       const _consumer = await ConsumersStore.Helpers.get(store, AuthStore.Helpers.identity(store).id)
       createManagedCardRequest.nameOnCard = _consumer.data.name + ' ' + _consumer.data.surname
       createManagedCardRequest.cardholderMobileNumber = _consumer.data.mobileCountryCode + _consumer.data.mobileNumber
-      createManagedCardRequest.profileId = config.profileId.managed_cards_consumers
     }
 
     return { createManagedCardRequest: createManagedCardRequest }
