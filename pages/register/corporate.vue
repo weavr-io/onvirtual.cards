@@ -79,7 +79,7 @@ export default class RegistrationPage extends VueWithRouter {
     companyRegistrationDate: 0,
     companyType: CompanyType.LLC,
     ipAddress: '111.222.333.444',
-    profileId: 0,
+    profileId: '0',
     registrationCountry: 'MT',
     rootCompanyPosition: '',
     rootEmail: '',
