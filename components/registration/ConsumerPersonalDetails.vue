@@ -43,8 +43,6 @@
 import { Component, Emit, namespace } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import { Prop } from '~/node_modules/nuxt-property-decorator'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import * as ConsumersStore from '~/store/modules/Consumers'
 
 const Countries = require('~/static/json/countries.json')
@@ -79,8 +77,6 @@ export default class PersonalDetailsForm extends VueWithRouter {
 
   rootMobileNumber = ''
   numberIsValid: boolean | null = null
-
-  @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
 
   @Consumers.Getter isLoading!: boolean
 

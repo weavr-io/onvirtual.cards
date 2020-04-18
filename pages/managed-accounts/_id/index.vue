@@ -16,8 +16,8 @@ import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import * as ViewStore from '~/store/modules/View'
+import { Corporate } from '~/api/Models/Corporates/Corporate'
 
 const Accounts = namespace(AccountsStore.name)
 const Consumers = namespace(ConsumersStore.name)
@@ -37,7 +37,7 @@ export default class AccountPage extends VueWithRouter {
 
   @Consumers.Getter consumer!: Consumer | null
 
-  @Corporates.Getter corporate!: CorporatesSchemas.Corporate | null
+  @Corporates.Getter corporate!: Corporate | null
 
   @View.Getter hasAlert!: boolean
 

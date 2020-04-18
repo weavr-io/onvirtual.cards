@@ -38,7 +38,7 @@ import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
+import { Corporate } from '~/api/Models/Corporates/Corporate'
 
 const Auth = namespace(AuthStore.name)
 const Consumers = namespace(ConsumersStore.name)
@@ -56,7 +56,7 @@ export default class Header extends Vue {
 
   @Consumers.Getter consumer!: Consumer | null
 
-  @Corporates.Getter corporate!: CorporatesSchemas.Corporate | null
+  @Corporates.Getter corporate!: Corporate | null
 
   doLogout() {
     this.logout().then(this.redirectToLogin.bind(this))

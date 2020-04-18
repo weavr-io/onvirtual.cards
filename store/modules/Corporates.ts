@@ -1,10 +1,12 @@
 import { Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Corporates'
 import { GetterTree, MutationTree } from '~/node_modules/vuex'
 import { RootState } from '~/store'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import * as Loader from '~/store/modules/Loader'
 import { api } from '~/api/Axios'
 import { KYBState } from '~/api/Enums/KYBState'
+import { Corporate } from '~/api/Models/Corporates/Corporate'
+import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
+import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/CreateCorporateUserFullRequest'
 
 export { name, namespaced, Helpers }
 
@@ -34,7 +36,7 @@ export const mutations: MutationTree<State> = {
   [types.SET_IS_LOADING](state, isLoading: boolean) {
     state.isLoading = isLoading
   },
-  [types.SET_CORPORATE](state, corporate: CorporatesSchemas.Corporate) {
+  [types.SET_CORPORATE](state, corporate: Corporate) {
     state.corporate = corporate
   },
   [types.SET_USERS](state, users) {
@@ -46,7 +48,7 @@ export const mutations: MutationTree<State> = {
 }
 
 export const actions: Actions<State, RootState> = {
-  register({ commit }, request: CorporatesSchemas.CreateCorporateRequest) {
+  register({ commit }, request: CreateCorporateRequest) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
@@ -108,7 +110,7 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
-  addUser({ commit }, request: CorporatesSchemas.CreateCorporateUserFullRequest) {
+  addUser({ commit }, request: CreateCorporateUserFullRequest) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 

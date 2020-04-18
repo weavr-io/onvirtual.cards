@@ -106,10 +106,6 @@ export default class AddCardPage extends VueWithRouter {
       channelProvider: 'gps'
     }
 
-    if (AuthStore.Helpers.isConsumer(store)) {
-      createManagedAccountRequest.profileId = config.profileId.managed_accounts_consumers
-    }
-
     return {
       createManagedAccountRequest: createManagedAccountRequest
     }

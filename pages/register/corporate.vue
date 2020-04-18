@@ -27,12 +27,13 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as AuthStore from '~/store/modules/Auth'
 
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import config from '~/config'
 import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
 import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
 import { Schemas } from '~/api/Schemas'
 import { Helpers } from '~/store/modules/Auth'
+import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
+import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -68,7 +69,7 @@ export default class RegistrationPage extends VueWithRouter {
     this.screen--
   }
 
-  public registrationRequest: CorporatesSchemas.CreateCorporateRequest = {
+  public registrationRequest: CreateCorporateRequest = {
     active: true,
     acceptedTerms: false,
     companyBusinessAddress: '',
@@ -76,7 +77,7 @@ export default class RegistrationPage extends VueWithRouter {
     companyRegistrationAddress: '',
     companyRegistrationNumber: '',
     companyRegistrationDate: 0,
-    companyType: CorporatesSchemas.CompanyType.LLC,
+    companyType: CompanyType.LLC,
     ipAddress: '111.222.333.444',
     profileId: 0,
     registrationCountry: 'MT',
@@ -148,7 +149,7 @@ export default class RegistrationPage extends VueWithRouter {
     const _req: CreatePasswordIdentity = {
       id: this.corporate.id.id,
       request: {
-        profileId: this.registrationRequest.profileId
+        profileId: this.registrationRequest.profileId!
       }
     }
     AuthStore.Helpers.createPasswordIdentity(this.$store, _req).then(
