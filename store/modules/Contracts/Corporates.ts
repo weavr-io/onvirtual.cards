@@ -1,5 +1,4 @@
 import { ActionTree, ActionContext } from 'vuex'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import { Store } from '~/node_modules/vuex'
 import { StoreHelpers } from '~/helpers/StoreHelpers'
 import { SendVerificationEmailRequest } from '~/api/Requests/Corporates/SendVerificationEmailRequest'
@@ -8,6 +7,11 @@ import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/Con
 import { AxiosPromise } from '~/node_modules/axios'
 import { SendVerificationMobile } from '~/api/Requests/Corporates/SendVerificationMobile'
 import { VerifyMobileRequest } from '~/api/Requests/Corporates/VerifyMobileRequest'
+import { CorporateUser } from '~/api/Models/Corporates/CorporateUser'
+import { CorporateUsers } from '~/api/Responses/Corporates/CorporateUsers'
+import { Corporate } from '~/api/Models/Corporates/Corporate'
+import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
+import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/CreateCorporateUserFullRequest'
 
 export const name = 'corporates'
 
@@ -23,7 +27,7 @@ export const types = {
 export interface State {
   isLoading: boolean
   isLoadingRegistration: boolean
-  corporate: CorporatesSchemas.Corporate | null
+  corporate: Corporate | null
   users: any
 }
 
@@ -43,15 +47,18 @@ export enum _Actions {
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
-  [_Actions.register](context: ActionContext<S, R>, request: CorporatesSchemas.CreateCorporateRequest)
+  [_Actions.register](context: ActionContext<S, R>, request: CreateCorporateRequest)
 
   [_Actions.getCorporateDetails](context: ActionContext<S, R>, corporateId: number): AxiosPromise
 
-  [_Actions.getUsers](context: ActionContext<S, R>, corporateId: number)
+  [_Actions.getUsers](context: ActionContext<S, R>, corporateId: number): AxiosPromise<CorporateUsers>
 
-  [_Actions.getUser](context: ActionContext<S, R>, params: { corporateId: number; userId: number })
+  [_Actions.getUser](
+    context: ActionContext<S, R>,
+    params: { corporateId: number; userId: number }
+  ): AxiosPromise<CorporateUser>
 
-  [_Actions.addUser](context: ActionContext<S, R>, request: CorporatesSchemas.CreateCorporateUserFullRequest)
+  [_Actions.addUser](context: ActionContext<S, R>, request: CreateCorporateUserFullRequest)
 
   [_Actions.checkKYB](context: ActionContext<S, R>)
 
@@ -69,22 +76,25 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 }
 
 export module Helpers {
-  export const corporate = (store: Store<any>): CorporatesSchemas.Corporate | null => {
+  export const corporate = (store: Store<any>): Corporate | null => {
     return StoreHelpers.get(store, name, 'corporate')
   }
-  export const register = (store: Store<any>, request: CorporatesSchemas.CreateCorporateRequest) => {
+  export const register = (store: Store<any>, request: CreateCorporateRequest) => {
     return StoreHelpers.dispatch(store, name, _Actions.register, request)
   }
   export const getCorporateDetails = (store: Store<any>, id: number) => {
     return StoreHelpers.dispatch(store, name, _Actions.getCorporateDetails, id)
   }
-  export const getUsers = (store: Store<any>, id: number) => {
+  export const getUsers = (store: Store<any>, id: number): AxiosPromise<CorporateUsers> => {
     return StoreHelpers.dispatch(store, name, _Actions.getUsers, id)
   }
-  export const getUser = (store: Store<any>, params: { corporateId: number; userId: number }) => {
+  export const getUser = (
+    store: Store<any>,
+    params: { corporateId: number; userId: number }
+  ): AxiosPromise<CorporateUser> => {
     return StoreHelpers.dispatch(store, name, _Actions.getUser, params)
   }
-  export const addUser = (store: Store<any>, request: CorporatesSchemas.CreateCorporateUserFullRequest) => {
+  export const addUser = (store: Store<any>, request: CreateCorporateUserFullRequest) => {
     return StoreHelpers.dispatch(store, name, _Actions.addUser, request)
   }
   export const checkKYB = (store: Store<any>) => {

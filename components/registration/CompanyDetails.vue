@@ -72,11 +72,9 @@
 </template>
 <script lang="ts">
 import { Component, Emit, namespace } from 'nuxt-property-decorator'
-import { required, maxLength, email, sameAs, maxValue } from 'vuelidate/lib/validators'
+import { required, maxLength, sameAs, maxValue } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
-import { Prop } from '~/node_modules/nuxt-property-decorator'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 
 const Countries = require('~/static/json/countries.json')
 const Corporates = namespace(CorporatesStore.name)
@@ -119,8 +117,6 @@ export default class CompanyDetailsForm extends VueWithRouter {
   $v
 
   public maxDate = new Date()
-
-  @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
 
   @Corporates.Getter isLoadingRegistration
 

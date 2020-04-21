@@ -96,12 +96,12 @@
 <script lang="ts">
 import { namespace } from 'vuex-class'
 import { Component } from 'nuxt-property-decorator'
-import { maxLength, required, email } from 'vuelidate/lib/validators'
+import { email, maxLength, required } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as AuthStore from '~/store/modules/Auth'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
-import { SendVerificationEmailRequest } from '~/api/Requests/Corporates/SendVerificationEmailRequest'
+import { CorporateUserType } from '~/api/Enums/Corporates/CorporateUserType'
+import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/CreateCorporateUserFullRequest'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -159,10 +159,10 @@ export default class AddCardPage extends VueWithRouter {
     { value: 'Ms', text: 'Ms' }
   ]
 
-  public request: CorporatesSchemas.CreateCorporateUserFullRequest = {
+  public request: CreateCorporateUserFullRequest = {
     corporateId: '0',
     request: {
-      type: 'USER',
+      type: CorporateUserType.USER,
       title: null,
       name: '',
       surname: '',

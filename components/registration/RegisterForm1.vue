@@ -38,11 +38,9 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, Prop } from 'nuxt-property-decorator'
-import { required, helpers, email, maxLength } from 'vuelidate/lib/validators'
-import { namespace } from 'vuex-class'
+import { Component, Emit } from 'nuxt-property-decorator'
+import { required, email } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ErrorStore from '~/store/modules/Error'
@@ -64,8 +62,6 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
   }
 })
 export default class RegisterForm1 extends VueWithRouter {
-  @Prop() readonly request!: CorporatesSchemas.CreateCorporateRequest
-
   $refs!: {
     passwordForm: WeavrForm
   }

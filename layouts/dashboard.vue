@@ -35,13 +35,13 @@ import { BaseVue } from '~/base/classes/BaseVue'
 
 import * as LoaderStore from '~/store/modules/Loader'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as ViewStore from '~/store/modules/View'
 import * as AccountsStore from '~/store/modules/Accounts'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { Schemas } from '~/api/Schemas'
+import { Corporate } from '~/api/Models/Corporates/Corporate'
 import CurrencyAmount = Schemas.CurrencyAmount
 
 const Loader = namespace(LoaderStore.name)
@@ -73,7 +73,7 @@ export default class DefaultLayout extends BaseVue {
 
   @Consumers.Getter consumer!: Consumer | null
 
-  @Corporates.Getter corporate!: CorporatesSchemas.Corporate | null
+  @Corporates.Getter corporate!: Corporate | null
 
   get allowedLimit(): CurrencyAmount {
     const _out: CurrencyAmount = {

@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -158,8 +158,12 @@ export default class EmailVerificationPage extends VueWithRouter {
 
         corporateVerifyMobileRequest.corporateId = _corporateId
 
-        corporateVerifyMobileRequest.request.mobileCountryCode = res.data.mobileCountryCode
-        corporateVerifyMobileRequest.request.mobileNumber = res.data.mobileNumber
+        if (res.data.mobileCountryCode != null) {
+          corporateVerifyMobileRequest.request.mobileCountryCode = res.data.mobileCountryCode
+        }
+        if (res.data.mobileNumber != null) {
+          corporateVerifyMobileRequest.request.mobileNumber = res.data.mobileNumber
+        }
       }
 
       _mobileNumber =

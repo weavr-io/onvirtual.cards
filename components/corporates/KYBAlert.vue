@@ -42,16 +42,15 @@ import { namespace } from 'vuex-class'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
 import * as CorporatesStore from '~/store/modules/Corporates'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
-import { KYBState } from '~/api/Enums/KYBState'
 import * as ViewStore from '~/store/modules/View'
+import { Corporate } from '~/api/Models/Corporates/Corporate'
 
 const Corporates = namespace(CorporatesStore.name)
 const View = namespace(ViewStore.name)
 
 @Component({})
 export default class KYBAlert extends VueWithRouter {
-  @Corporates.Getter corporate!: CorporatesSchemas.Corporate | null
+  @Corporates.Getter corporate!: Corporate | null
 
   accountId!: number
 

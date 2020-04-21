@@ -44,8 +44,8 @@ import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { KYBState } from '~/api/Enums/KYBState'
-import { CorporatesSchemas } from '~/api/CorporatesSchemas'
 import * as ViewStore from '~/store/modules/View'
+import { Corporate } from '~/api/Models/Corporates/Corporate'
 
 const Cards = namespace(CardsStore.name)
 const Corporates = namespace(CorporatesStore.name)
@@ -59,7 +59,7 @@ const View = namespace(ViewStore.name)
   }
 })
 export default class CardsPage extends VueWithRouter {
-  @Corporates.Getter corporate!: CorporatesSchemas.Corporate | null
+  @Corporates.Getter corporate!: Corporate | null
 
   @Cards.Getter cards
 
