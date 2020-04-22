@@ -93,7 +93,7 @@ export default class AddCardPage extends VueWithRouter {
       })
   }
 
-  asyncData({ store }) {
+  async asyncData({ store, redirect }) {
     const createManagedAccountRequest: ManagedAccountsSchemas.CreateManagedAccountRequest = {
       profileId: AuthStore.Helpers.isConsumer(store)
         ? config.profileId.managed_accounts_consumers
@@ -105,6 +105,10 @@ export default class AddCardPage extends VueWithRouter {
       createNow: true,
       channelProvider: 'gps'
     }
+
+    await AccountsStore.Helpers.add(store, createManagedAccountRequest)
+
+    redirect('/managed-accounts')
 
     return {
       createManagedAccountRequest: createManagedAccountRequest

@@ -1,8 +1,9 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
+    <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-card">
         <div class="form-screens">
@@ -136,7 +137,8 @@ const touchMap = new WeakMap()
     RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
     ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),
     CompanyDetailsForm: () => import('~/components/registration/CompanyDetails.vue'),
-    RegistrationNav: () => import('~/components/registration/Nav.vue')
+    RegistrationNav: () => import('~/components/registration/Nav.vue'),
+    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
   }
 })
 export default class ConsumerRegistrationPage extends VueWithRouter {
@@ -157,7 +159,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     surname: '',
     email: '',
     mobileCountryCode: '',
-    mobileNumber: ''
+    mobileNumber: '',
+    baseCurrency: 'EUR'
   }
 
   public password: string = ''

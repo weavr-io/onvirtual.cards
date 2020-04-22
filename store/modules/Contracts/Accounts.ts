@@ -56,6 +56,12 @@ export module Helpers {
   export const index = (store: Store<any>): AxiosPromise<ManagedAccountsSchemas.ManagedAccounts> => {
     return StoreHelpers.dispatch(store, name, _Actions.index)
   }
+  export const add = (
+    store: Store<any>,
+    request: ManagedAccountsSchemas.CreateManagedAccountRequest
+  ): AxiosPromise<ManagedAccountsSchemas.ManagedAccount> => {
+    return StoreHelpers.dispatch(store, name, _Actions.add, request)
+  }
   export const get = (store: Store<any>, id: string): AxiosPromise<ManagedAccountsSchemas.ManagedAccount> => {
     return StoreHelpers.dispatch(store, name, _Actions.get, id)
   }
