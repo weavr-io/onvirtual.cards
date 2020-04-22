@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
     </div>
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-card">
@@ -45,7 +45,8 @@ const Auth = namespace(AuthStore.name)
     RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
     PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
     CompanyDetailsForm: () => import('~/components/registration/CompanyDetails.vue'),
-    RegistrationNav: () => import('~/components/registration/Nav.vue')
+    RegistrationNav: () => import('~/components/registration/Nav.vue'),
+    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
   }
 })
 export default class RegistrationPage extends VueWithRouter {
@@ -130,8 +131,8 @@ export default class RegistrationPage extends VueWithRouter {
     this.registrationRequest.companyBusinessAddress = this.registrationRequest.companyRegistrationAddress
 
     this.register(this.registrationRequest)
-      .then(this.doCreateCorporatePasswordIdentity.bind(this))
-      .catch(this.registrationFailed.bind(this))
+            .then(this.doCreateCorporatePasswordIdentity.bind(this))
+            .catch(this.registrationFailed.bind(this))
   }
 
   registrationFailed(err) {
@@ -153,8 +154,8 @@ export default class RegistrationPage extends VueWithRouter {
       }
     }
     AuthStore.Helpers.createPasswordIdentity(this.$store, _req).then(
-      this.doCreateCorporatePassword.bind(this),
-      this.registrationFailed.bind(this)
+            this.doCreateCorporatePassword.bind(this),
+            this.registrationFailed.bind(this)
     )
   }
 
@@ -171,8 +172,8 @@ export default class RegistrationPage extends VueWithRouter {
     }
 
     AuthStore.Helpers.createPassword(this.$store, _req).then(
-      this.waitAndDoLogin.bind(this),
-      this.registrationFailed.bind(this)
+            this.waitAndDoLogin.bind(this),
+            this.registrationFailed.bind(this)
     )
   }
 
@@ -191,8 +192,8 @@ export default class RegistrationPage extends VueWithRouter {
     }
 
     Helpers.authenticate(this.$store, _loginRequest).then(
-      this.sendVerifyEmail.bind(this),
-      this.registrationFailed.bind(this)
+            this.sendVerifyEmail.bind(this),
+            this.registrationFailed.bind(this)
     )
   }
 
