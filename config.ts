@@ -18,6 +18,7 @@ export default {
   },
   app: {
     kyb_required: process.env.KYB_REQUIRED ? JSON.parse(process.env.KYB_REQUIRED) : true,
-    view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true
+    view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true,
+    sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : false
   }
 }

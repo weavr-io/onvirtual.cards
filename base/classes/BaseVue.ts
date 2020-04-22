@@ -29,4 +29,8 @@ export class BaseVue extends Vue {
       }
     }
   }
+
+  sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
 }

@@ -15,6 +15,7 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as AccountsStore from '~/store/modules/Accounts'
+import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 
 @Component({
   components: {}
@@ -47,12 +48,7 @@ export default class KycPage extends VueWithRouter {
         this.$router.push('/managed-accounts/kyc/failed')
         break
       case 'approved':
-        AccountsStore.Helpers.index(this.$store).then((_accounts) => {
-          if (_accounts.data.count === 1) {
-            const _accountId = _accounts.data.account[0].id.id
-            this.$router.push('/managed-accounts/' + _accountId)
-          }
-        })
+        this.$router.push('/managed-accounts/kyc/check')
         break
     }
   }
