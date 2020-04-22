@@ -65,7 +65,8 @@ export default class AddCardPage extends VueWithRouter {
 
   currencyOptions = [
     { value: 'EUR', text: 'Euro - EUR' },
-    { value: 'GBP', text: 'Great Britain Pound - GBP' }
+    { value: 'GBP', text: 'Great Britain Pound - GBP' },
+    { value: 'USD', text: 'US Dollars - USD' }
   ]
 
   public createManagedAccountRequest!: ManagedAccountsSchemas.CreateManagedAccountRequest
@@ -106,9 +107,11 @@ export default class AddCardPage extends VueWithRouter {
       channelProvider: 'gps'
     }
 
-    await AccountsStore.Helpers.add(store, createManagedAccountRequest)
+    if (AuthStore.Helpers.isConsumer(store)) {
+      await AccountsStore.Helpers.add(store, createManagedAccountRequest)
 
-    redirect('/managed-accounts')
+      redirect('/managed-accounts')
+    }
 
     return {
       createManagedAccountRequest: createManagedAccountRequest
