@@ -27,6 +27,10 @@ const config = {
         src: process.env.BASE_URL_SCRIPT + '/app/secure/static/client.1.js',
         // src: 'https://6393d6e6.ngrok.io/client.1.js',
         type: 'application/javascript'
+      },
+      {
+        src: 'https://test-api.sumsub.com/idensic/static/sumsub-kyc.js',
+        type: 'application/javascript'
       }
     ],
 
