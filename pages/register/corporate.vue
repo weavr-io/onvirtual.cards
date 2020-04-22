@@ -3,7 +3,6 @@
     <div class="text-center pb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
     </div>
-    <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-card">
         <div class="form-screens">
