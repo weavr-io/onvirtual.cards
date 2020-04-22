@@ -216,10 +216,6 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     Helpers.createPassword(this.$store, _req).then(this.waitAndDoLogin.bind(this), this.registrationFailed.bind(this))
   }
 
-  sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms))
-  }
-
   waitAndDoLogin() {
     this.sleep(2000).then(this.doLogin.bind(this))
   }

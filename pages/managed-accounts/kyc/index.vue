@@ -15,6 +15,7 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as AccountsStore from '~/store/modules/Accounts'
+import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 
 @Component({
   components: {}
@@ -47,13 +48,46 @@ export default class KycPage extends VueWithRouter {
         this.$router.push('/managed-accounts/kyc/failed')
         break
       case 'approved':
-        AccountsStore.Helpers.index(this.$store).then((_accounts) => {
-          if (_accounts.data.count === 1) {
-            const _accountId = _accounts.data.account[0].id.id
-            this.$router.push('/managed-accounts/' + _accountId)
-          }
-        })
+        this.KycApproved()
         break
+    }
+  }
+
+  private tries: number = 0
+
+  async KycApproved() {
+    const _id = AuthStore.Helpers.identityId(this.$store)
+    if (_id != null) {
+      const _consumer = await ConsumersStore.Helpers.get(this.$store, _id)
+
+      if (_consumer.data.kyc?.fullDueDiligence === FullDueDiligence.APPROVED) {
+        this.redirectToAccountPage()
+      } else {
+        this.tries++
+
+        if (this.tries > 3) {
+          this.$bvModal
+            .msgBoxOk('It seems to be taking more than usual. Please refresh the page in a few minutes.', {
+              title: 'Something is wrong.',
+              centered: true
+            })
+            .then(() => {
+              this.redirectToAccountPage()
+            })
+        } else {
+          await this.sleep(5000)
+          this.KycApproved()
+        }
+      }
+    }
+  }
+
+  async redirectToAccountPage() {
+    const _accounts = await AccountsStore.Helpers.index(this.$store)
+
+    if (_accounts.data.count === 1) {
+      const _accountId = _accounts.data.account[0].id.id
+      this.$router.push('/managed-accounts/' + _accountId)
     }
   }
 
