@@ -120,7 +120,19 @@ a {
   &-md {
     line-height: 2rem;
   }
+
   &-lg {
     line-height: 2.8rem;
   }
+}
+
+.transaction-type-icon {
+  background: #EAEDF6;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 30px;
+  color: #6D7490;
+  font-weight: 100;
+  padding: 16px 0px;
+  line-height: 0;
 }

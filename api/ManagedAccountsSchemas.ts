@@ -79,15 +79,13 @@ export module ManagedAccountsSchemas {
     }
     originalAmount?: Schemas.CurrencyAmount
     forexRate?: Schemas.ScaledAmount
-
-    currency: string
-    adjustment: number
-    balanceAfter: number
-    fee: {
-      [k: string]: number
+    transactionAmount: Schemas.CurrencyAmount
+    balanceAfter?: Schemas.CurrencyAmount
+    cardholderFee?: Schemas.CurrencyAmount
+    processedTimestamp?: string
+    sourceAmount?: Schemas.CurrencyAmount
+    additionalFields?: {
+      [k: string]: string
     }
-    block: null | boolean
-    destroy: boolean
-    processedTimestamp: string
   }
 }
