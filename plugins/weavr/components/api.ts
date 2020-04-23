@@ -1,13 +1,16 @@
+'use strict'
+
 export interface SecureClient {
   init(publicApiKey: string, options: SecureClientOptions): void
   associate(authToken: string, resolve?: () => void, reject?: (e?: any) => void): void
+  kybSumSub(): KYBSumSub
   form(): SecureForm
   span(field: string, token: string, options?: SecureSpanOptions): SecureSpan
 }
 
 export interface SecureForm {
   input(name: string, field: string, options?: SecureInputOptions): SecureInput
-  tokenize(resolve?: (tokens: any) => void, reject?: (e?: any) => void): void
+  tokenize(resolve?: (tokens: { [key: string]: string }) => void, reject?: (e?: any) => void): void
   destroy(): this
 }
 
@@ -59,6 +62,7 @@ export interface SecureElementStyleFont {
 export interface SecureInputOptions {
   classNames?: SecureInputOptionsClasses
   placeholder?: string
+  maxlength?: number
   autocorrect?: string
   style?: SecureElementStyles
 }
@@ -111,4 +115,22 @@ export interface SecureElementStyleWithPseudoClasses extends SecureElementStyle 
   '::placeholder'?: SecureElementStyle
   '::selection'?: SecureElementStyle
   ':-webkit-autofill'?: SecureElementStyle
+}
+
+export interface KYBSumSubAuthObject {
+  externalUserId: string
+  accessToken: string
+}
+
+export interface KYBSumSubOptions {
+  customCss?: string
+}
+
+export interface KYBSumSub {
+  init(
+    selector: string,
+    auth: KYBSumSubAuthObject,
+    listener: (messageType: any, payload: any) => void,
+    options?: KYBSumSubOptions
+  ): void
 }
