@@ -34,7 +34,7 @@
         </div>
       </b-col>
       <b-col class="text-right">
-        <span v-if="isIncrease">+</span>{{ transaction.adjustment | weavr_currency(transaction.currency) }}
+        <span v-if="isIncrease">+</span>{{ transaction.adjustment  }}
       </b-col>
     </b-row>
   </div>
