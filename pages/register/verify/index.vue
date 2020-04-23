@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -63,15 +63,13 @@ const Auth = namespace(AuthStore.name)
 export default class EmailVerificationPage extends VueWithRouter {
   @Auth.Getter isLoggedIn
 
-  @Auth.Action verifyEmail
-
   @Auth.Getter isLoading
 
   showEmailResentSuccess: boolean = false
 
   public verifyEmailRequest!: Schemas.verifyEmailRequest
 
-  asyncData({ route, redirect }) {
+  asyncData({ route, redirect, store }) {
     const request: Schemas.verifyEmailRequest = {
       consumerId: route.query.cons,
       corporateId: route.query.corp,
@@ -82,7 +80,7 @@ export default class EmailVerificationPage extends VueWithRouter {
     }
 
     if (request.request.nonce !== '') {
-      this.verifyEmail(request).then(() => {
+      AuthStore.Helpers.verifyEmail(store, request).then(() => {
         redirect('/login')
       })
     }
@@ -92,8 +90,46 @@ export default class EmailVerificationPage extends VueWithRouter {
     }
   }
 
+  async mounted() {
+    if (this.verifyEmailRequest.corporateId === undefined && this.verifyEmailRequest.consumerId === undefined) {
+      if (AuthStore.Helpers.isConsumer(this.$store)) {
+        await this.getConsumerUser()
+      } else {
+        await this.getCorporateUser()
+      }
+    }
+
+    if (this.$route.query.send === 'true') {
+      this.sendVerifyEmail()
+    }
+  }
+
+  async getConsumerUser() {
+    const _consumerId = AuthStore.Helpers.identityId(this.$store)
+    if (_consumerId != null) {
+      const res = await ConsumersStore.Helpers.get(this.$store, _consumerId)
+      this.verifyEmailRequest.consumerId = _consumerId
+      this.verifyEmailRequest.request.emailAddress = res.data.email
+    }
+  }
+
+  async getCorporateUser() {
+    const _corporateId = AuthStore.Helpers.identityId(this.$store)
+    const _corporate = AuthStore.Helpers.auth(this.$store)
+
+    if (_corporateId != null && _corporate.credential) {
+      const res = await CorporatesStore.Helpers.getUser(this.$store, {
+        corporateId: _corporateId,
+        userId: _corporate.credential.id
+      })
+
+      this.verifyEmailRequest.corporateId = _corporateId
+      this.verifyEmailRequest.request.emailAddress = res.data.email
+    }
+  }
+
   sendVerifyEmail() {
-    if (this.$route.query.cons) {
+    if (this.$route.query.cons || AuthStore.Helpers.isConsumer(this.$store)) {
       this.sendVerifyEmailConsumers()
     } else {
       this.sendVerifyEmailCorporates()
@@ -124,7 +160,7 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   doVerify(evt) {
     evt.preventDefault()
-    this.verifyEmail(this.verifyEmailRequest).then(this.nextPage.bind(this))
+    AuthStore.Helpers.verifyEmail(this.$store, this.verifyEmailRequest).then(this.nextPage.bind(this))
   }
 
   nextPage() {
