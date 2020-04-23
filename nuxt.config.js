@@ -25,7 +25,7 @@ const config = {
     script: [
       {
         // src: process.env.BASE_URL_SCRIPT + '/app/secure/static/client.1.js',
-        src: 'https://7c40f2be.ngrok.io/client.1.js',
+        src: 'http://localhost/client.1.js',
         type: 'application/javascript'
       },
       {
