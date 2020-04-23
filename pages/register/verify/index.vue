@@ -63,15 +63,13 @@ const Auth = namespace(AuthStore.name)
 export default class EmailVerificationPage extends VueWithRouter {
   @Auth.Getter isLoggedIn
 
-  @Auth.Action verifyEmail
-
   @Auth.Getter isLoading
 
   showEmailResentSuccess: boolean = false
 
   public verifyEmailRequest!: Schemas.verifyEmailRequest
 
-  asyncData({ route, redirect }) {
+  asyncData({ route, redirect, store }) {
     const request: Schemas.verifyEmailRequest = {
       consumerId: route.query.cons,
       corporateId: route.query.corp,
@@ -82,7 +80,7 @@ export default class EmailVerificationPage extends VueWithRouter {
     }
 
     if (request.request.nonce !== '') {
-      this.verifyEmail(request).then(() => {
+      AuthStore.Helpers.verifyEmail(store, request).then(() => {
         redirect('/login')
       })
     }
@@ -124,7 +122,7 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   doVerify(evt) {
     evt.preventDefault()
-    this.verifyEmail(this.verifyEmailRequest).then(this.nextPage.bind(this))
+    AuthStore.Helpers.verifyEmail(this.$store, this.verifyEmailRequest).then(this.nextPage.bind(this))
   }
 
   nextPage() {
