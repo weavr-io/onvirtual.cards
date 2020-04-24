@@ -4,6 +4,7 @@ import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import WeavrInput from '~/plugins/weavr/components/WeavrInput.vue'
 import WeavrSpan from '~/plugins/weavr/components/WeavrSpan.vue'
 import { SecureClient } from '~/plugins/weavr/components/api'
+import WeavrKyb from '~/plugins/weavr/components/WeavrKyb.vue'
 
 // @ts-ignore
 window.OpcUxSecureClient.init(config.api.sharedKey, {
@@ -44,6 +45,7 @@ function asyncAssociate(token) {
 Vue.component('weavr-form', WeavrForm)
 Vue.component('weavr-input', WeavrInput)
 Vue.component('weavr-span', WeavrSpan)
+Vue.component('weavr-kyb', WeavrKyb)
 
 declare module 'vue/types/vue' {
   interface Vue {
