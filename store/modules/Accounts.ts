@@ -4,6 +4,7 @@ import { RootState } from '~/store'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import * as Loader from '~/store/modules/Loader'
 import { api } from '~/api/Axios'
+import { Statement } from '~/api/Models/Statements/Statement'
 
 export { name, namespaced, Helpers }
 
@@ -44,22 +45,22 @@ export const getters: GetterTree<State, RootState> = {
       return []
     }
 
-    const _entries = state.statement.entry.filter((element) => {
-      return element.adjustment != 0
-    })
+    const _entries = state.statement.entry
 
     const _out = {}
 
     _entries.forEach((_entry) => {
-      const _processedTimestamp = parseInt(_entry.processedTimestamp)
-      // @ts-ignore
-      const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
+      if (_entry.processedTimestamp) {
+        const _processedTimestamp = parseInt(_entry.processedTimestamp)
+        // @ts-ignore
+        const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
 
-      if (!_out[_date]) {
-        _out[_date] = []
+        if (!_out[_date]) {
+          _out[_date] = []
+        }
+
+        _out[_date].push(_entry)
       }
-
-      _out[_date].push(_entry)
     })
 
     return _out
@@ -76,7 +77,7 @@ export const mutations: MutationTree<State> = {
   [types.SET_ACCOUNT](state, account: ManagedAccountsSchemas.ManagedAccount) {
     state.account = account
   },
-  [types.SET_STATEMENT](state, statement: ManagedAccountsSchemas.ManagedAccountStatement) {
+  [types.SET_STATEMENT](state, statement: Statement) {
     state.statement = statement
   },
   [types.SET_IS_LOADING](state, isLoading: boolean) {

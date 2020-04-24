@@ -4,6 +4,7 @@ import * as Loader from './Loader'
 import { api } from '~/api/Axios'
 import { Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Cards'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
+import { Statement } from '~/api/Models/Statements/Statement'
 
 export { name, namespaced, Helpers }
 
@@ -53,22 +54,22 @@ export const getters: GetterTree<State, RootState> = {
       return []
     }
 
-    const _entries = state.statement.entry.filter((element) => {
-      return element.adjustment != 0
-    })
+    const _entries = state.statement.entry
 
     const _out = {}
 
     _entries.forEach((_entry) => {
-      const _processedTimestamp = parseInt(_entry.processedTimestamp)
-      // @ts-ignore
-      const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
+      if (_entry.processedTimestamp) {
+        const _processedTimestamp = parseInt(_entry.processedTimestamp)
+        // @ts-ignore
+        const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
 
-      if (!_out[_date]) {
-        _out[_date] = []
+        if (!_out[_date]) {
+          _out[_date] = []
+        }
+
+        _out[_date].push(_entry)
       }
-
-      _out[_date].push(_entry)
     })
 
     return _out
@@ -194,7 +195,7 @@ export const mutations: MutationTree<State> = {
   [types.SET_IS_LOADING](state, isLoading: boolean) {
     state.isLoading = isLoading
   },
-  [types.SET_STATEMENT](state, r: ManagedCardsSchemas.ManagedCardStatement) {
+  [types.SET_STATEMENT](state, r: Statement) {
     state.statement = r
   },
   [types.SET_MANAGED_CARD](state, r: ManagedCardsSchemas.ManagedCard) {

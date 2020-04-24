@@ -51,6 +51,18 @@ export const getters: GetterTree<State, RootState> = {
       return false
     }
   },
+  showVerifyEmailAlert: (state, getters, rootState, rootGetters) => {
+    const _consumer = rootGetters['consumers/consumer']
+    const _corporate = rootGetters['corporates/corporate']
+
+    if (_consumer && _consumer.kyc) {
+      return _consumer.kyc.emailVerified ? !_consumer.kyc.emailVerified : true
+    } else if (_corporate && _corporate.kyb) {
+      return _corporate.kyb.rootEmailVerified ? !_corporate.kyb.rootEmailVerified : true
+    } else {
+      return false
+    }
+  },
   hasAlert: (state, getters) => {
     return getters.showKybAlert || getters.showKycAlert
   }

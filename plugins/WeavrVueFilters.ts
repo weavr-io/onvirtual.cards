@@ -26,10 +26,47 @@ Vue.filter('milli_to_moment_dt', function(value) {
   return _m.format('YYYY-MM-DD h:mm')
 })
 
-Vue.filter('weavr_currency', function(value, _currency) {
+Vue.filter('weavr_currency_symbol', function(_currency) {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: _currency,
+    currencyDisplay: 'symbol'
+  })
+
+  return formatter.format(0)[0]
+})
+
+Vue.filter('weavr_currency', function(value, _currency, _fraction) {
   let _amount = ''
   try {
     if (value.hasOwnProperty('currency') && value.hasOwnProperty('amount')) {
+      _currency = value.currency
+      _amount = value.amount
+    } else {
+      _amount = value
+    }
+  } catch (e) {
+    // debugger
+  }
+
+  if (typeof _fraction === 'undefined') {
+    _fraction = 2
+  }
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: _currency,
+    minimumFractionDigits: _fraction,
+    currencyDisplay: 'symbol'
+  })
+
+  return formatter.format(parseInt(_amount) / 100)
+})
+
+Vue.filter('weavr_currency_with_operator', function(value, _currency) {
+  let _amount = ''
+  try {
+    if (value.currency && value.amount) {
       _currency = value.currency
       _amount = value.amount
     } else {
@@ -46,7 +83,13 @@ Vue.filter('weavr_currency', function(value, _currency) {
     currencyDisplay: 'symbol'
   })
 
-  return formatter.format(parseInt(_amount) / 100)
+  const _formatted = formatter.format(parseInt(_amount) / 100)
+
+  if (parseInt(_amount) > 0) {
+    return '+' + _formatted
+  } else {
+    return _formatted
+  }
 })
 
 Vue.filter('weavr_currency_gbp', function(value: number) {

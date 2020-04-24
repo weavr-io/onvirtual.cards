@@ -5,15 +5,30 @@
     <Nuxt />
     <kyb-alert />
     <kyc-alert />
-    <b-alert id="account-limit" :show="showVerifyMobileAlert" class="fixed-bottom m-4 p-4" variant="bg-colored">
+    <b-alert
+      id="verify-mobile"
+      :show="showVerifyMobileAlert && !showVerifyEmailAlert"
+      class="fixed-bottom bottom-left-alert m-4 p-4"
+      variant="bg-colored"
+    >
       We need to verify your mobile number. Please click
-      <b-link :to="restrictionLink" class="link">
+      <b-link to="/register/verify/mobile" class="link">
+        here.
+      </b-link>
+    </b-alert>
+    <b-alert
+      id="verify-email"
+      :show="showVerifyEmailAlert"
+      class="fixed-bottom bottom-left-alert m-4 p-4"
+      variant="bg-colored"
+    >
+      We need to verify your email address. Please click
+      <b-link to="/register/verify" class="link">
         here.
       </b-link>
     </b-alert>
     <b-alert id="account-kyc" v-if="showKycAlert" :show="true" class="fixed-bottom m-4 p-4" variant="bg-colored">
-      Your account is currently restricted to {{ allowedLimit | weavr_currency }}. You can lift this
-      restriction
+      Your account is currently restricted to {{ allowedLimit | weavr_currency }}. You can lift this restriction
       <b-link to="/managed-accounts/kyc" class="link">
         here.
       </b-link>
@@ -69,6 +84,8 @@ export default class DefaultLayout extends BaseVue {
 
   @View.Getter showVerifyMobileAlert!: boolean
 
+  @View.Getter showVerifyEmailAlert!: boolean
+
   @Accounts.Getter accounts!: ManagedAccountsSchemas.ManagedAccounts | null
 
   @Consumers.Getter consumer!: Consumer | null
@@ -92,19 +109,13 @@ export default class DefaultLayout extends BaseVue {
 
     return _out
   }
-
-  get restrictionLink() {
-    if (this.consumer && this.consumer.kyc && this.consumer.kyc.mobileVerified === true) {
-      return '/managed-accounts/' + this.$route.params.id + '/topup'
-    } else if (this.corporate && this.corporate.kyb && this.corporate.kyb.rootMobileVerified) {
-      return '/managed-accounts/' + this.$route.params.id + '/topup'
-    } else {
-      return '/register/verify/mobile'
-    }
-  }
 }
 </script>
 <style lang="scss" scoped>
+.bottom-left-alert {
+  max-width: 350px;
+}
+
 #account {
   &-limit,
   &-kyc {

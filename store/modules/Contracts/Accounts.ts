@@ -3,6 +3,7 @@ import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import { AxiosPromise } from '~/node_modules/axios'
 import { StoreHelpers } from '~/helpers/StoreHelpers'
+import { Statement } from '~/api/Models/Statements/Statement'
 
 export const name = 'accounts'
 
@@ -26,7 +27,7 @@ export interface State {
   isLoading: boolean
   accounts: ManagedAccountsSchemas.ManagedAccounts | null
   account: ManagedAccountsSchemas.ManagedAccount | null
-  statement: ManagedAccountsSchemas.ManagedAccountStatement | null
+  statement: Statement | null
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
@@ -42,7 +43,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
   [_Actions.getStatement](
     context: ActionContext<S, R>,
     request: _Requests.ManagedAccountStatementFullRequest
-  ): AxiosPromise<ManagedAccountsSchemas.ManagedAccountStatement>
+  ): AxiosPromise<Statement>
 }
 
 export module _Requests {
@@ -68,7 +69,7 @@ export module Helpers {
   export const getStatement = (
     store: Store<any>,
     request: _Requests.ManagedAccountStatementFullRequest
-  ): AxiosPromise<ManagedAccountsSchemas.ManagedAccountStatement> => {
+  ): AxiosPromise<Statement> => {
     return StoreHelpers.dispatch(store, name, _Actions.getStatement, request)
   }
 }

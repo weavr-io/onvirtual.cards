@@ -47,16 +47,17 @@ import { namespace } from 'vuex-class'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import * as AccountsStore from '~/store/modules/Accounts'
+import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 
 const Accounts = namespace(AccountsStore.name)
 
 @Component({
   components: {
-    StatementItem: () => import('~/components/accounts/statement/item.vue')
+    StatementItem: () => import('~/components/statement/item.vue')
   }
 })
 export default class AccountStatement extends VueWithRouter {
-  @Accounts.Getter filteredStatement: ManagedAccountsSchemas.ManagedAccountStatementEntry[] | undefined
+  @Accounts.Getter filteredStatement: StatementEntry[] | undefined
 
   @Accounts.Getter account!: ManagedAccountsSchemas.ManagedAccount | null
 

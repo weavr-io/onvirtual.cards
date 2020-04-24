@@ -74,7 +74,8 @@ const config = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     // '@nuxtjs/eslint-module'
-    '@dansmaculotte/nuxt-segment'
+    '@dansmaculotte/nuxt-segment',
+    '@nuxtjs/svg'
   ],
   bootstrapVue: {
     bootstrapCSS: false, // Or `css: false`
@@ -85,15 +86,6 @@ const config = {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {},
-  /*
-   ** Build configuration
-   */
-  build: {
-    /*
-     ** You can extend webpack config here
-     */
-    extend(config, ctx) {}
-  },
   router: {
     middleware: ['authCookie', 'errorReset'],
     linkActiveClass: 'active'
