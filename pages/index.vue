@@ -24,7 +24,11 @@ export default class IndexPage extends Vue {
     const isLoggedIn = store.getters['auth/isLoggedIn']
 
     if (isLoggedIn) {
+      const _id = AuthStore.Helpers.identityId(store)
       if (AuthStore.Helpers.isConsumer(store)) {
+        if (_id) {
+          await ConsumersStore.Helpers.get(store, _id)
+        }
         const _cons = ConsumersStore.Helpers.consumer(store)
         if (_cons && _cons.kyc && !_cons.kyc.emailVerified) {
           redirect('/register/verify?send=true')
@@ -35,6 +39,9 @@ export default class IndexPage extends Vue {
         }
       } else if (AuthStore.Helpers.isCorporate(store)) {
         const _corp = CorporatesStore.Helpers.corporate(store)
+        if (_id) {
+          await CorporatesStore.Helpers.getCorporateDetails(store, _id)
+        }
         if (_corp && _corp.kyb && !_corp.kyb.rootEmailVerified) {
           redirect('/register/verify?send=true')
         } else if (_corp && _corp.kyb && !_corp.kyb.rootMobileVerified) {
