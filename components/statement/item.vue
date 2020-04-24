@@ -4,7 +4,10 @@
       <authorisation :transaction="transaction" class="my-3" />
     </template>
     <template v-else-if="transaction.txId.type === 'AUTHORISATION_REVERSAL'">
-<!--      <authorisation-reversal :transaction="transaction" class="my-3" />-->
+      <!--      <authorisation-reversal :transaction="transaction" class="my-3" />-->
+    </template>
+    <template v-else-if="transaction.txId.type === 'CHARGE_FEE'">
+      <charge-fee :transaction="transaction" class="my-3" />
     </template>
     <template v-else-if="transaction.txId.type === 'DEPOSIT'">
       <deposit :transaction="transaction" class="my-3" />
@@ -60,7 +63,8 @@ import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
     AuthorisationReversal: () => import('~/components/statement/item/authorisation_reversal.vue'),
     Deposit: () => import('~/components/statement/item/deposit.vue'),
     Withdrawal: () => import('~/components/statement/item/withdrawal.vue'),
-    Amount: () => import('~/components/statement/item/common/amount.vue')
+    Amount: () => import('~/components/statement/item/common/amount.vue'),
+    ChargeFee: () => import('~/components/statement/item/charge_fee.vue')
   }
 })
 export default class StatementItem extends Vue {

@@ -47,6 +47,29 @@ export const getters: GetterTree<State, RootState> = {
 
     const _entries = state.statement.entry
 
+    _entries.push({
+      txId: {
+        type: 'CHARGE_FEE',
+        id: '104052750643888137'
+      },
+      transactionAmount: {
+        currency: 'EUR',
+        amount: '100'
+      },
+      balanceAfter: {
+        currency: 'EUR',
+        amount: '9289'
+      },
+      cardholderFee: {
+        currency: 'EUR',
+        amount: '0'
+      },
+      processedTimestamp: '1587718977582',
+      additionalFields: {
+        chargeFeeType: 'PRINTED_CARD_ACCOUNT_STATEMENT'
+      }
+    })
+
     const _out = {}
 
     _entries.forEach((_entry) => {
