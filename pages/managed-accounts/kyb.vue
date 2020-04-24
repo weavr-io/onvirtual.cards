@@ -43,7 +43,12 @@
       </b-row>
       <b-row v-else>
         <b-col>
-          <weavr-kyb :corporate-id="corporateId" :access-token="accessToken" />
+          <weavr-kyb
+            :corporate-id="corporateId"
+            :access-token="accessToken"
+            :options="kybOptions"
+            @message="handleSumSubMessage"
+          />
         </b-col>
       </b-row>
     </b-container>
@@ -56,6 +61,7 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import config from '~/config'
+import { KYBSumSubOptions } from '~/plugins/weavr/components/api'
 
 @Component({
   components: {
@@ -66,6 +72,13 @@ import config from '~/config'
 export default class KybPage extends VueWithRouter {
   accessToken!: string
   corporateId!: string
+
+  get kybOptions(): KYBSumSubOptions {
+    return {
+      customCss:
+        'ul { column-count: 1; } h4 {text-align: left; font: Light 30px/44px Be Vietnam;letter-spacing: -0.3px;color: #232A47 !important; opacity: 1;}'
+    }
+  }
 
   get sumsSubEnabled() {
     return config.app.sumsub_enabled
@@ -83,6 +96,10 @@ export default class KybPage extends VueWithRouter {
         console.log(e)
       }
     }
+  }
+
+  handleSumSubMessage(message) {
+    console.log(message)
   }
 }
 </script>
