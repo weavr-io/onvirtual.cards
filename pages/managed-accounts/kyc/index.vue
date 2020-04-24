@@ -15,7 +15,6 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as AccountsStore from '~/store/modules/Accounts'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 
 @Component({
   components: {}
