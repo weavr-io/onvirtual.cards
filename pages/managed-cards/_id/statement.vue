@@ -59,7 +59,7 @@
             All Transactions
           </h6>
         </b-col>
-        <b-col class="text-right"></b-col>
+        <b-col class="text-right" />
       </b-row>
 
       <b-row v-if="filteredStatement">
@@ -180,15 +180,15 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { BModal, BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 
 import * as ManagedCardsStore from '~/store/modules/Cards'
-import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import { Schemas } from '~/api/Schemas'
+import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
 import OrderType = Schemas.OrderType
 
 const ManagedCards = namespace(ManagedCardsStore.name)
 
 @Component({
   components: {
-    StatementItem: () => import('~/components/cards/statement/item.vue'),
+    StatementItem: () => import('~/components/statement/item.vue'),
     BIcon,
     BIconThreeDotsVertical
   }
@@ -212,7 +212,7 @@ export default class ManagedCardsTable extends Vue {
   async asyncData({ store, route }) {
     const _cardId = route.params.id
 
-    const _req: ManagedCardsSchemas.GetManagedCardStatementRequest = {
+    const _req: ManagedCardStatementRequest = {
       id: _cardId,
       request: {
         showFundMovementsOnly: true,
@@ -268,7 +268,7 @@ export default class ManagedCardsTable extends Vue {
 }
 
 .card-view-details {
-  background: #F0EDDE;
+  background: #f0edde;
   border-radius: 10px;
   padding: 10px;
   text-align: center;

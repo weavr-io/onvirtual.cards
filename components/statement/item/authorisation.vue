@@ -1,8 +1,8 @@
 <template>
-  <b-row align-v="center" v-if="shouldDisplay">
+  <b-row align-v="center" v-if="shouldDisplay" class="text-muted">
     <b-col cols="1">
       <div class="transaction-type-icon">
-        <div class="transaction increase">
+        <div class="transaction">
           <img src="~/assets/svg/statement/authorisation.svg" alt="">
         </div>
       </div>
@@ -10,10 +10,11 @@
     <b-col>
       <div class="transaction-type">
         <div class="transaction">
-          {{ transaction.additionalFields.merchantName }} (Pending)
+          {{ transaction.additionalFields.merchantName }}
         </div>
       </div>
       <div class="text-muted">
+        <b-badge variant="grey-light" class="text-muted mr-2" v-if="isPending">Pending</b-badge>
         <span class="mr-2">Purchase</span>
         <span v-if="transaction.additionalFields.merchantTerminalCountry" class="mr-2">{{ transaction.additionalFields.merchantTerminalCountry }}</span>
         <span v-if="transaction.sourceAmount">
@@ -23,25 +24,28 @@
       </div>
     </b-col>
     <b-col class="text-right">
-      {{ transaction.transactionAmount | weavr_currency_with_operator }}
-      <div class="text-muted" v-if="transaction.sourceAmount">
-        {{ transaction.sourceAmount | weavr_currency_with_operator }}
-      </div>
+      <amount :transaction="transaction" />
     </b-col>
   </b-row>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
+import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 
 @Component({
-  components: {}
+  components: {
+    Amount: () => import('~/components/statement/item/common/amount.vue')
+  }
 })
 export default class StatementItemAdditionalField extends Vue {
   @Prop()
-  readonly transaction!: ManagedAccountsSchemas.ManagedAccountStatementEntry
+  readonly transaction!: StatementEntry
 
   get shouldDisplay(): boolean {
+    return this.isPending
+  }
+
+  get isPending(): boolean {
     return this.transaction.additionalFields?.authorisationState !== 'COMPLETED';
   }
 }

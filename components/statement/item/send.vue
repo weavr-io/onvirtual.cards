@@ -22,26 +22,24 @@
       <div class="text-muted">Transfer</div>
     </b-col>
     <b-col class="text-right">
-      {{ transaction.transactionAmount | weavr_currency_with_operator }}
-      <div class="text-muted" v-if="transaction.sourceAmount">
-        {{ transaction.sourceAmount | weavr_currency_with_operator }}
-      </div>
+      <amount :transaction="transaction" />
     </b-col>
   </b-row>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
+import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 
 @Component({
   components: {
     ReceiveIcon: () => import('~/assets/svg/statement/receive.svg?inline'),
-    SendIcon: () => import('~/assets/svg/statement/send.svg?inline')
+    SendIcon: () => import('~/assets/svg/statement/send.svg?inline'),
+    Amount: () => import('~/components/statement/item/common/amount.vue')
   }
 })
 export default class StatementItemAdditionalField extends Vue {
   @Prop()
-  readonly transaction!: ManagedAccountsSchemas.ManagedAccountStatementEntry
+  readonly transaction!: StatementEntry
 
   get source() {
     return this.transaction.additionalFields?.sourceIdentityName

@@ -1,6 +1,5 @@
 import { Currencies } from '~/api/Constants/CurrencyOptions'
 import { CardBrand, CardType } from '~/api/Constants/Card'
-import { Schemas as CommonSchemas, Schemas } from '~/api/Schemas'
 
 export module ManagedCardsSchemas {
   export interface ManagedInstrumentBalances {
@@ -44,46 +43,6 @@ export module ManagedCardsSchemas {
     creationTimestamp: string
     action: any[]
     cardholderMobileNumber: string
-  }
-
-  export interface ManagedCardStatementRequest {
-    paging?: CommonSchemas.PagingRequest
-    orderByTimestamp?: CommonSchemas.OrderType
-    fromTimestamp?: number
-    toTimestamp?: number
-    showFundMovementsOnly?: boolean
-  }
-
-  export interface GetManagedCardStatementRequest {
-    request: ManagedCardStatementRequest
-    id: number
-  }
-
-  export interface ManagedCardStatement {
-    entry: ManagedCardStatementEntry[]
-    count?: number
-    responseCount?: number
-  }
-
-  export interface ManagedCardStatementEntry {
-    txId: {
-      type: string
-      id: number
-    }
-    originalAmount?: Schemas.CurrencyAmount
-    forexRate?: Schemas.ScaledAmount
-    currency: string
-    adjustment?: number
-    balanceAfter?: number
-    fee?: {
-      [k: string]: number
-    }
-    block?: boolean | null
-    destroy?: boolean
-    processedTimestamp: string
-    additionalFields?: {
-      [k: string]: string
-    }
   }
 
   export interface CreateManagedCardRequest {
