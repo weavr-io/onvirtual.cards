@@ -18,6 +18,7 @@ import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import * as ViewStore from '~/store/modules/View'
 import { Corporate } from '~/api/Models/Corporates/Corporate'
+import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 
 const Accounts = namespace(AccountsStore.name)
 const Consumers = namespace(ConsumersStore.name)
@@ -33,7 +34,7 @@ const View = namespace(ViewStore.name)
 export default class AccountPage extends VueWithRouter {
   @Accounts.Getter account!: ManagedAccountsSchemas.ManagedAccount | null
 
-  @Accounts.Getter filteredStatement: ManagedAccountsSchemas.ManagedAccountStatementEntry[] | undefined
+  @Accounts.Getter filteredStatement: StatementEntry[] | undefined
 
   @Consumers.Getter consumer!: Consumer | null
 

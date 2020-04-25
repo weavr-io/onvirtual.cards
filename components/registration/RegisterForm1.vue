@@ -3,12 +3,12 @@
     <h3 class="text-center font-weight-light mb-5">
       Register
     </h3>
-    <error-alert/>
+    <error-alert />
     <b-form-group :state="isInvalid($v.form.rootEmail)" label="Email">
       <b-form-input
-              v-model="$v.form.rootEmail.$model"
-              :state="isInvalid($v.form.rootEmail)"
-              placeholder="name@email.com"
+        v-model="$v.form.rootEmail.$model"
+        :state="isInvalid($v.form.rootEmail)"
+        placeholder="name@email.com"
       />
       <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
     </b-form-group>
@@ -16,13 +16,13 @@
       <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
         <label class="d-block">PASSWORD</label>
         <weavr-input
-                :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                :base-style="passwordBaseStyle"
-                @onKeyUp="checkOnKeyUp"
-                class-name="sign-in-password"
-                name="password"
-                field="password"
-                required="true"
+          :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+          :base-style="passwordBaseStyle"
+          @onKeyUp="checkOnKeyUp"
+          class-name="sign-in-password"
+          name="password"
+          field="password"
+          required="true"
         />
         <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
       </weavr-form>
@@ -38,7 +38,7 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit } from 'nuxt-property-decorator'
+import { Component, Emit, Ref } from 'nuxt-property-decorator'
 import { required, email } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
@@ -58,13 +58,11 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
     }
   },
   components: {
-    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+    ErrorAlert: () => import('~/components/ErrorAlert.vue')
   }
 })
 export default class RegisterForm1 extends VueWithRouter {
-  $refs!: {
-    passwordForm: WeavrForm
-  }
+  @Ref() readonly passwordForm!: WeavrForm
 
   public form = {
     rootEmail: '',
@@ -81,27 +79,26 @@ export default class RegisterForm1 extends VueWithRouter {
       }
     }
 
-    const form: WeavrForm = this.$refs.passwordForm as WeavrForm
-    form.tokenize(
-            (tokens) => {
-              if (tokens.password !== '') {
-                this.form.password = tokens.password
+    this.passwordForm.tokenize(
+      (tokens) => {
+        if (tokens.password !== '') {
+          this.form.password = tokens.password
 
-                this.validatePassword()
-              } else {
-                return null
-              }
-            },
-            (e) => {
-              console.error(e)
-              return null
-            }
+          this.validatePassword()
+        } else {
+          return null
+        }
+      },
+      (e) => {
+        console.error(e)
+        return null
+      }
     )
   }
 
   validatePassword() {
     const _request: ValidatePasswordRequest = {
-      identityProfileId: config.profileId.corporates ?? '',
+      identityProfileId: config.profileId.corporates ? config.profileId.corporates : '',
       credentialType: 'ROOT',
       password: {
         value: this.form.password

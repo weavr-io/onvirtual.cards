@@ -4,6 +4,8 @@ import { AxiosPromise } from '~/node_modules/axios'
 import { Store } from '~/node_modules/vuex'
 import { StoreHelpers } from '~/helpers/StoreHelpers'
 import { UpdateManagedCardRequest } from '~/api/Requests/ManagedCards/UpdateManagedCardRequest'
+import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
+import { Statement } from '~/api/Models/Statements/Statement'
 
 export const name = 'cards'
 
@@ -20,7 +22,7 @@ export interface State {
   isLoading: boolean
   cards: ManagedCardsSchemas.ManagedCard[]
   managedCard: ManagedCardsSchemas.ManagedCard | null
-  statement: ManagedCardsSchemas.ManagedCardStatement | null
+  statement: Statement | null
 }
 
 export enum _Actions {
@@ -40,7 +42,7 @@ export interface Actions<S, R> extends ActionTree<S, R> {
 
   getCardStatement(
     context: ActionContext<S, R>,
-    request: ManagedCardsSchemas.GetManagedCardStatementRequest
+    request: ManagedCardStatementRequest
   ): AxiosPromise<R>
 
   [_Actions.freeze](context: ActionContext<S, R>, id): AxiosPromise<R>

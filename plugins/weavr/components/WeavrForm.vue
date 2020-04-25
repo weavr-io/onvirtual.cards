@@ -7,7 +7,7 @@
 import { Vue, Component } from 'nuxt-property-decorator'
 import { SecureForm } from '~/plugins/weavr/components/api'
 
-@Component
+@Component({})
 class WeavrForm extends Vue {
   public form!: SecureForm
 

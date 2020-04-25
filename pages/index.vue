@@ -16,11 +16,10 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
-import { Helpers as ConsumerHelpers } from '~/store/modules/Consumers'
 
 @Component({})
 export default class IndexPage extends Vue {
-  async asyncData({ store, redirect }) {
+  asyncData({ store, redirect }) {
     const isLoggedIn = store.getters['auth/isLoggedIn']
 
     if (isLoggedIn) {

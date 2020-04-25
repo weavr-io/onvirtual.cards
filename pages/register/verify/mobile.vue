@@ -198,7 +198,7 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   doVerifyCorporate() {
     CorporatesStore.Helpers.verifyMobile(this.$store, this.corporateVerifyMobileRequest).then(
-      this.goToDashboard.bind(this),
+      this.getCorporate.bind(this),
       this.errorOccurred.bind(this)
     )
   }
@@ -228,7 +228,7 @@ export default class EmailVerificationPage extends VueWithRouter {
     )
   }
 
-  goToDashboard() {
+  goToDashboard(res) {
     this.$router.push('/')
   }
 

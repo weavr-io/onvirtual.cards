@@ -65,29 +65,4 @@ export module ManagedAccountsSchemas {
     UNBLOCK = 'UNBLOCK',
     DESTROY = 'DESTROY'
   }
-
-  export interface ManagedAccountStatement {
-    count: number
-    responseCount: number
-    entry: ManagedAccountStatementEntry[]
-  }
-
-  export interface ManagedAccountStatementEntry {
-    txId: {
-      type: string
-      id: number
-    }
-    originalAmount?: Schemas.CurrencyAmount
-    forexRate?: Schemas.ScaledAmount
-
-    currency: string
-    adjustment: number
-    balanceAfter: number
-    fee: {
-      [k: string]: number
-    }
-    block: null | boolean
-    destroy: boolean
-    processedTimestamp: string
-  }
 }

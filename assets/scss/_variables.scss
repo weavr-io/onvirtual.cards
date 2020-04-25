@@ -17,7 +17,9 @@ $shadow-color: #5768FF4D;
 $body-bg: #FFFFFF;
 $body-bg-colored: #F0EDDE;
 
-$theme-colors: ("card": $card, "grey": $grey, "card-disabled": $card-disabled, 'bg-colored': $body-bg-colored);
+$grey-light: #EAEDF6;
+
+$theme-colors: ("card": $card, "grey": $grey, "grey-light": $grey-light, "card-disabled": $card-disabled, 'bg-colored': $body-bg-colored);
 
 
 $btn-padding-y-sm: .5rem;
