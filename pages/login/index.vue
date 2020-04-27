@@ -90,9 +90,11 @@ export default class LoginPage extends VueWithRouter {
 
   login(evt) {
     evt.preventDefault()
+    console.log('Login Function')
     const form: WeavrForm = this.$refs.passwordForm as WeavrForm
     form.tokenize(
       (tokens) => {
+        console.log('Password tokenisation success')
         this.loginRequest.password = tokens.password
         this.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
       },
@@ -103,6 +105,7 @@ export default class LoginPage extends VueWithRouter {
   }
 
   async goToDashboard(res) {
+    console.log('auth success')
     const _id = res.data.credential.type + '-' + res.data.credential.id
     try {
       this.$segment.identify(_id, {
@@ -120,6 +123,7 @@ export default class LoginPage extends VueWithRouter {
   checkOnKeyUp(e) {
     if (e.key === 'Enter') {
       e.preventDefault()
+      console.log('Submit form throught password enter')
       this.login(e)
     }
   }

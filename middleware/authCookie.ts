@@ -17,7 +17,7 @@ export default function(ctxt) {
         return ctxt.app.$weavrSecurityAssociate('Bearer ' + auth.token).then(
           () => {},
           (err) => {
-            console.log(err)
+            ctxt.store.commit('auth/LOGOUT', err.response, { root: true })
           }
         )
       } else {

@@ -72,15 +72,20 @@ export default class RegisterForm1 extends VueWithRouter {
   tryToSubmitForm(e) {
     e.preventDefault()
 
+    console.log('submit form checking validation')
     if (this.$v.form) {
       this.$v.form.$touch()
       if (this.$v.form.$anyError) {
+        console.log(this.$v.form)
         return null
       }
     }
 
+    console.log('submit form validation success')
+
     this.passwordForm.tokenize(
       (tokens) => {
+        console.log('password tokenisation')
         if (tokens.password !== '') {
           this.form.password = tokens.password
 
@@ -97,6 +102,7 @@ export default class RegisterForm1 extends VueWithRouter {
   }
 
   validatePassword() {
+    console.log('password  validation')
     const _request: ValidatePasswordRequest = {
       identityProfileId: config.profileId.corporates ? config.profileId.corporates : '',
       credentialType: 'ROOT',
@@ -110,6 +116,7 @@ export default class RegisterForm1 extends VueWithRouter {
 
   @Emit()
   submitForm() {
+    console.log('form success')
     ErrorStore.Helpers.resetErrors(this.$store)
     return this.form
   }
