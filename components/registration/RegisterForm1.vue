@@ -27,6 +27,16 @@
         <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
       </weavr-form>
     </client-only>
+    <b-form-row class="small mt-3 text-muted">
+      <b-col>
+        <b-form-group>
+          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
+            I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank" class="text-decoration-underline text-muted">terms and use</a>
+          </b-form-checkbox>
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        </b-form-group>
+      </b-col>
+    </b-form-row>
     <b-form-row class="mt-5">
       <b-col class="text-center">
         <b-button variant="secondary" type="submit">
@@ -39,7 +49,7 @@
 </template>
 <script lang="ts">
 import { Component, Emit, Ref } from 'nuxt-property-decorator'
-import { required, email } from 'vuelidate/lib/validators'
+import { required, email, sameAs } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import * as AuthStore from '~/store/modules/Auth'
@@ -55,6 +65,10 @@ import * as SecureClientStore from '~/store/modules/SecureClient'
       rootEmail: {
         required,
         email
+      },
+      acceptedTerms: {
+        required,
+        sameAs: sameAs(() => true)
       }
     }
   },
@@ -63,9 +77,14 @@ import * as SecureClientStore from '~/store/modules/SecureClient'
   }
 })
 export default class RegisterForm1 extends VueWithRouter {
-  public form = {
+  public form: {
+    rootEmail: string
+    password: string
+    acceptedTerms: boolean
+  } = {
     rootEmail: '',
-    password: ''
+    password: '',
+    acceptedTerms: false
   }
 
   tryToSubmitForm(e) {

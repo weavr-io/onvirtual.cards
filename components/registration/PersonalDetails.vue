@@ -1,7 +1,7 @@
 <template>
   <b-form @submit="submitForm" novalidate>
     <h3 class="text-center font-weight-light mb-5">
-      Personal Details
+      A few more steps
     </h3>
     <error-alert />
     <b-form-group label="First Name">
@@ -25,31 +25,58 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Position">
-      <b-form-input
-        :state="isInvalid($v.form.rootCompanyPosition)"
-        v-model="$v.form.rootCompanyPosition.$model"
-        placeholder="CFO"
-      />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-    </b-form-group>
-
     <b-form-group label="MOBILE NUMBER">
       <vue-phone-number-input
-        v-model="rootMobileNumber"
-        @update="phoneUpdate"
-        :only-countries="mobileCountries"
-        :border-radius="0"
-        :error="numberIsValid === false"
-        color="#6C1C5C"
-        error-color="#F50E4C"
-        valid-color="#6D7490"
-        default-country-code="GB"
+              v-model="rootMobileNumber"
+              @update="phoneUpdate"
+              :only-countries="mobileCountries"
+              :border-radius="0"
+              :error="numberIsValid === false"
+              color="#6C1C5C"
+              error-color="#F50E4C"
+              valid-color="#6D7490"
+              default-country-code="GB"
       />
       <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
         This field must be a valid mobile number.
       </b-form-invalid-feedback>
     </b-form-group>
+    <b-form-group label="Company Name">
+      <b-form-input
+        :state="isInvalid($v.form.companyName)"
+        v-model="$v.form.companyName.$model"
+        placeholder="Company Name"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+    </b-form-group>
+    <b-form-group label="Company Registration Number">
+      <b-form-input
+        :state="isInvalid($v.form.companyRegistrationNumber)"
+        v-model="$v.form.companyRegistrationNumber.$model"
+        placeholder="C00000"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+    </b-form-group>
+    <b-form-group label="Registration Country">
+      <b-form-select
+        :state="isInvalid($v.form.registrationCountry)"
+        v-model="$v.form.registrationCountry.$model"
+        :options="countiesOptions"
+        placeholder="Registration Country"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+    </b-form-group>
+    <b-form-group label="My position within the company is">
+      <b-form-radio v-model="$v.form.rootCompanyPosition.$model" name="company-position" value="Representative">
+        I am a representative (with the relevant power of attorney)
+      </b-form-radio>
+      <b-form-radio v-model="$v.form.rootCompanyPosition.$model" name="company-position" value="Director">
+        I am a director
+      </b-form-radio>
+    </b-form-group>
+    <p class="smaller text-muted">
+      To open account on behalf of the company you need to be a director or authorised representative. To enable us to verify your identity, role and authorisation as part of our customer due diligence process, we will later ask you to upload the relevant ID and power of attorney documents.
+    </p>
 
     <b-form-row class="mt-5">
       <b-col md="4">
@@ -95,6 +122,18 @@ const Countries = require('~/static/json/countries.json')
       },
       rootMobileNumber: {
         required
+      },
+      companyName: {
+        required,
+        maxLength: maxLength(100)
+      },
+      companyRegistrationNumber: {
+        required,
+        maxLength: maxLength(20)
+      },
+      registrationCountry: {
+        required,
+        maxLength: maxLength(2)
       }
     }
   },
@@ -122,6 +161,9 @@ export default class PersonalDetailsForm extends VueWithRouter {
   ]
 
   public form: {
+    companyName: string
+    companyRegistrationNumber: string
+    registrationCountry: string
     rootName: string
     rootSurname: string
     rootTitle: string | null
@@ -134,7 +176,19 @@ export default class PersonalDetailsForm extends VueWithRouter {
     rootTitle: null,
     rootCompanyPosition: '',
     rootMobileCountryCode: '',
-    rootMobileNumber: ''
+    rootMobileNumber: '',
+    companyName: '',
+    companyRegistrationNumber: '',
+    registrationCountry: ''
+  }
+
+  get countiesOptions() {
+    return Countries.map((_c) => {
+      return {
+        text: _c.name,
+        value: _c['alpha-2']
+      }
+    })
   }
 
   @Emit()
