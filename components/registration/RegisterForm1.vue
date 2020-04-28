@@ -47,6 +47,7 @@ import * as ErrorStore from '~/store/modules/Error'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import * as SecureClientStore from '~/store/modules/SecureClient'
 
 @Component({
   validations: {
@@ -62,8 +63,6 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
   }
 })
 export default class RegisterForm1 extends VueWithRouter {
-  @Ref() readonly passwordForm!: WeavrForm
-
   public form = {
     rootEmail: '',
     password: ''
@@ -83,7 +82,7 @@ export default class RegisterForm1 extends VueWithRouter {
 
     console.log('submit form validation success')
 
-    this.passwordForm.tokenize(
+    SecureClientStore.Helpers.tokenize(this.$store).then(
       (tokens) => {
         console.log('password tokenisation')
         if (tokens.password !== '') {
@@ -95,8 +94,7 @@ export default class RegisterForm1 extends VueWithRouter {
         }
       },
       (e) => {
-        console.error(e)
-        return null
+        console.log('tokenisation failed', e)
       }
     )
   }

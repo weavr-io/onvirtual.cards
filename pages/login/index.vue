@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card body-class="p-card">
       <h3 class="text-center font-weight-light mb-5">
@@ -61,6 +61,7 @@ import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import * as SecureClientStore from '~/store/modules/SecureClient'
 
 const Auth = namespace(AuthStore.name)
 
@@ -78,7 +79,6 @@ export default class LoginPage extends VueWithRouter {
 
   @Auth.Getter isLoading!: boolean
 
-
   public loginRequest: Schemas.LoginRequest = {
     code: '',
     password: ''
@@ -91,15 +91,16 @@ export default class LoginPage extends VueWithRouter {
   login(evt) {
     evt.preventDefault()
     console.log('Login Function')
-    const form: WeavrForm = this.$refs.passwordForm as WeavrForm
-    form.tokenize(
+
+    // const form: WeavrForm = this.$refs.passwordForm as WeavrForm
+    SecureClientStore.Helpers.tokenize(this.$store).then(
       (tokens) => {
         console.log('Password tokenisation success')
         this.loginRequest.password = tokens.password
         this.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
       },
       (e) => {
-        console.error(e)
+        console.log('tokenisation failed', e)
       }
     )
   }
@@ -155,7 +156,7 @@ export default class LoginPage extends VueWithRouter {
   }
 
   receiveMessage(event) {
-    console.log('MESSAGE', event)
+    console.log('MESSAGE', event.data)
   }
 
   beforeMount() {

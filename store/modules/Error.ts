@@ -46,7 +46,7 @@ export const getters: GetterTree<State, RootState> = {
         case 'PASSWORD_INCORRECT':
           return 'Password is incorrect.'
         case 'FAILED_LOGIN':
-          return 'Incorrect username and password combination. If you do not have an account please click on Register.'
+          return 'Incorrect email and password combination. If you do not have an account please click on Register.'
         case ValidatePasswordConflictErrorCode.PASSWORD_PROFILE_NOT_CONFIGURED_FOR_CREDENTIAL_TYPE:
           return 'PASSWORD_PROFILE_NOT_CONFIGURED_FOR_CREDENTIAL_TYPE'
         case ValidatePasswordConflictErrorCode.PASSWORD_TOO_LONG:

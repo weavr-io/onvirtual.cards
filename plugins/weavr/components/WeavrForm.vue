@@ -5,30 +5,21 @@
 </template>
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
+import * as SecureClientStore from '~/store/modules/SecureClient'
 import { SecureForm } from '~/plugins/weavr/components/api'
 
 @Component({})
 class WeavrForm extends Vue {
   public form!: SecureForm
 
-  protected _inputs
-
   constructor() {
     super(...arguments)
     this.form = this.$OpcUxSecureClient.form()
-  }
-
-  input(name, field, options) {
-    this._inputs = this._inputs || {}
-    if (!this._inputs[name] && field) {
-      this._inputs[name] = this.form.input(name, field, options)
-    }
-
-    return this._inputs[name]
+    SecureClientStore.Helpers.form(this.$store, this.form)
   }
 
   tokenize(resolve, reject) {
-    return this.form.tokenize(resolve, reject)
+    return SecureClientStore.Helpers.getForm(this.$store)?.tokenize(resolve, reject)
   }
 }
 
