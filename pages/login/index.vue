@@ -153,5 +153,17 @@ export default class LoginPage extends VueWithRouter {
       redirect('/')
     }
   }
+
+  receiveMessage(event) {
+    console.log('MESSAGE', event)
+  }
+
+  beforeMount() {
+    window.addEventListener('message', this.receiveMessage, false)
+  }
+
+  beforeDestroy() {
+    window.removeEventListener('message', this.receiveMessage, false)
+  }
 }
 </script>
