@@ -45,7 +45,11 @@ export const getters: GetterTree<State, RootState> = {
       return []
     }
 
-    const _entries = state.statement.entry
+    const _entries = state.statement.entry.filter((transaction) => {
+      return !['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE'].includes(
+        transaction.txId.type
+      )
+    })
 
     const _out = {}
 

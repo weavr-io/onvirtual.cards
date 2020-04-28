@@ -14,9 +14,16 @@
           <template v-if="isIn">From {{ source }}</template>
         </div>
       </div>
-      <div class="text-muted">Personal Transfer</div>
+      <b-row class="text-muted">
+        <b-col>
+          Personal Transfer
+        </b-col>
+        <b-col class="text-right">
+          <card-fee :transaction="transaction" />
+        </b-col>
+      </b-row>
     </b-col>
-    <b-col class="text-right">
+    <b-col class="text-right" cols="3" xl="2">
       <amount :transaction="transaction" />
     </b-col>
   </b-row>
@@ -28,7 +35,8 @@ import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 @Component({
   components: {
     TransferIcon: () => import('~/assets/svg/statement/transfer.svg?inline'),
-    Amount: () => import('~/components/statement/item/common/amount.vue')
+    Amount: () => import('~/components/statement/item/common/amount.vue'),
+    CardFee: () => import('~/components/statement/item/common/cardFee.vue')
   }
 })
 export default class StatementItemAdditionalField extends Vue {
