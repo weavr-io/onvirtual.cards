@@ -88,7 +88,7 @@ export default class RegistrationPage extends VueWithRouter {
     rootMobileNumber: '',
     rootName: '',
     rootSurname: '',
-    rootTitle: '',
+    rootTitle: 'Mr',
     supportEmail: ''
   }
 
@@ -108,7 +108,6 @@ export default class RegistrationPage extends VueWithRouter {
     if (_data != null) {
       this.registrationRequest.rootName = _data.rootName
       this.registrationRequest.rootSurname = _data.rootSurname
-      this.registrationRequest.rootTitle = _data.rootTitle
       this.registrationRequest.rootCompanyPosition = _data.rootCompanyPosition
       this.registrationRequest.rootMobileCountryCode = _data.rootMobileCountryCode
       this.registrationRequest.rootMobileNumber = _data.rootMobileNumber

@@ -16,26 +16,17 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Title">
-      <b-form-select
-        :state="isInvalid($v.form.rootTitle)"
-        v-model="$v.form.rootTitle.$model"
-        :options="titleOptions"
-        required
-      />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-    </b-form-group>
     <b-form-group label="MOBILE NUMBER">
       <vue-phone-number-input
-              v-model="rootMobileNumber"
-              @update="phoneUpdate"
-              :only-countries="mobileCountries"
-              :border-radius="0"
-              :error="numberIsValid === false"
-              color="#6C1C5C"
-              error-color="#F50E4C"
-              valid-color="#6D7490"
-              default-country-code="GB"
+        v-model="rootMobileNumber"
+        @update="phoneUpdate"
+        :only-countries="mobileCountries"
+        :border-radius="0"
+        :error="numberIsValid === false"
+        color="#6C1C5C"
+        error-color="#F50E4C"
+        valid-color="#6D7490"
+        default-country-code="GB"
       />
       <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
         This field must be a valid mobile number.
@@ -75,7 +66,9 @@
       </b-form-radio>
     </b-form-group>
     <p class="smaller text-muted">
-      To open account on behalf of the company you need to be a director or authorised representative. To enable us to verify your identity, role and authorisation as part of our customer due diligence process, we will later ask you to upload the relevant ID and power of attorney documents.
+      To open account on behalf of the company you need to be a director or authorised representative. To enable us to
+      verify your identity, role and authorisation as part of our customer due diligence process, we will later ask you
+      to upload the relevant ID and power of attorney documents.
     </p>
 
     <b-form-row class="mt-5">
@@ -85,18 +78,17 @@
         </b-button>
       </b-col>
       <b-col class="text-right">
-        <b-button variant="secondary" type="submit">
-          continue
-          <span class="pl-5">-></span>
-        </b-button>
+        <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-right" />
       </b-col>
     </b-form-row>
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit } from 'nuxt-property-decorator'
+import { Component, Emit, namespace } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import * as CorporatesStore from '~/store/modules/Corporates'
+const Corporates = namespace(CorporatesStore.name)
 
 const Countries = require('~/static/json/countries.json')
 
@@ -110,9 +102,6 @@ const Countries = require('~/static/json/countries.json')
       rootSurname: {
         required,
         maxLength: maxLength(100)
-      },
-      rootTitle: {
-        required
       },
       rootCompanyPosition: {
         required
@@ -138,11 +127,14 @@ const Countries = require('~/static/json/countries.json')
     }
   },
   components: {
-    ErrorAlert: () => import('~/components/ErrorAlert.vue')
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+    LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
 export default class PersonalDetailsForm extends VueWithRouter {
   $v
+
+  @Corporates.Getter isLoadingRegistration
 
   rootMobileNumber = ''
   numberIsValid: boolean | null = null
@@ -166,14 +158,12 @@ export default class PersonalDetailsForm extends VueWithRouter {
     registrationCountry: string
     rootName: string
     rootSurname: string
-    rootTitle: string | null
     rootCompanyPosition: string
     rootMobileCountryCode: string
     rootMobileNumber: string
   } = {
     rootName: '',
     rootSurname: '',
-    rootTitle: null,
     rootCompanyPosition: '',
     rootMobileCountryCode: '',
     rootMobileNumber: '',
