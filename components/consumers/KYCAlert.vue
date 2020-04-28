@@ -1,7 +1,17 @@
 <template>
   <section v-if="showKycAlert">
     <b-container>
-      <b-row>
+      <b-row v-if="isPendingReview">
+        <b-col md="6" offset-md="3" class="py-3 font-weight-lighter text-center">
+          <h3 class="font-weight-lighter mb-4">
+            Your account is currently under review.
+          </h3>
+          <p>
+            This process normally takes up to 24 hours.
+          </p>
+        </b-col>
+      </b-row>
+      <b-row v-else>
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter">
           <!-- <b-col class="py-5 text-center"> -->
           <div>
@@ -37,10 +47,21 @@ import { Component } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as ViewStore from '~/store/modules/View'
+import * as ConsumersStore from '~/store/modules/Consumers'
+import { Consumer } from '~/api/Models/Consumers/Consumer'
+import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+
 const View = namespace(ViewStore.name)
+const Consumers = namespace(ConsumersStore.name)
 
 @Component({})
 export default class KYCAlert extends VueWithRouter {
   @View.Getter showKycAlert!: boolean
+
+  @Consumers.Getter consumer!: Consumer | null
+
+  get isPendingReview(): boolean {
+    return this.consumer?.kyc?.fullDueDiligence === FullDueDiligence.PENDING_REVIEW
+  }
 }
 </script>

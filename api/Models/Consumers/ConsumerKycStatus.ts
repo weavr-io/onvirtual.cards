@@ -10,6 +10,7 @@ export interface ConsumerKycStatus {
   isPep?: IsPep
   isSanctioned?: IsSanctioned
   fullDueDiligence?: FullDueDiligence
+  enhancedDueDiligence?: FullDueDiligence
   allowedLimit?: CurrencyAmount
   remainingLimit?: CurrencyAmount
 }
