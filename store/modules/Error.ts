@@ -6,6 +6,7 @@ import { ValidatePasswordConflictErrorCode } from '~/api/Conflicts/Codes/Passwor
 import { VerifyEmailRequestConflictErrorCode } from '~/api/Conflicts/Codes/Corporates/Emails/VerifyEmailRequestConflictErrorCode'
 import { ConflictResponse } from '~/api/Conflicts/Responses/ConflictResponse'
 import { LoginWithPasswordConflict } from '~/api/Conflicts/Responses/Password/LoginWithPasswordConflict'
+import { SendMobileRequestConflictErrorCode } from '~/api/Conflicts/Codes/Mobile/SendMobileRequestConflictErrorCode'
 
 export { name, namespaced, Helpers }
 
@@ -59,6 +60,8 @@ export const getters: GetterTree<State, RootState> = {
           return 'UNRESOLVED_IDENTITY'
         case VerifyEmailRequestConflictErrorCode.INVALID_NONCE_OR_EMAIL:
           return 'The verification code entered is invalid.'
+        case SendMobileRequestConflictErrorCode.RETRIES_EXCEEDED:
+          return 'You have exceeded the maximum number of attempts.  Please contact support@onvirtual.cards for assistance.'
         default:
           console.log(state.conflict)
           return 'An error occurred. Please try again.'
