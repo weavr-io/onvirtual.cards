@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -24,7 +24,13 @@
           <b-row>
             <b-col md="4" offset-md="4">
               <b-form-group label="">
-                <b-form-input v-model="verifyEmailRequest.request.nonce" placeholder="000000" class="text-center" />
+                <b-form-input
+                  v-model="verifyEmailRequest.request.nonce"
+                  :state="isInvalid($v.verifyEmailRequest.request.nonce)"
+                  placeholder="000000"
+                  class="text-center"
+                />
+                <b-form-invalid-feedback>This field is required and must be 6 characters.</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
           </b-row>
@@ -45,6 +51,7 @@
 <script lang="ts">
 import { namespace } from 'vuex-class'
 import { Component } from 'nuxt-property-decorator'
+import { maxLength, minLength, required } from 'vuelidate/lib/validators'
 import { Schemas } from '~/api/Schemas'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
@@ -58,6 +65,17 @@ const Auth = namespace(AuthStore.name)
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue')
+  },
+  validations: {
+    verifyEmailRequest: {
+      request: {
+        nonce: {
+          required,
+          minLength: minLength(6),
+          maxLength: maxLength(6)
+        }
+      }
+    }
   }
 })
 export default class EmailVerificationPage extends VueWithRouter {
@@ -160,6 +178,14 @@ export default class EmailVerificationPage extends VueWithRouter {
 
   doVerify(evt) {
     evt.preventDefault()
+
+    if (this.$v.verifyEmailRequest) {
+      this.$v.verifyEmailRequest.$touch()
+      if (this.$v.verifyEmailRequest.$anyError) {
+        return null
+      }
+    }
+
     AuthStore.Helpers.verifyEmail(this.$store, this.verifyEmailRequest).then(this.nextPage.bind(this))
   }
 

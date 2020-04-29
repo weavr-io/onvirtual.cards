@@ -27,6 +27,16 @@
         <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
       </weavr-form>
     </client-only>
+    <b-form-row class="small mt-3 text-muted">
+      <b-col>
+        <b-form-group>
+          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
+            I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank" class="text-decoration-underline text-muted">terms and use</a>
+          </b-form-checkbox>
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        </b-form-group>
+      </b-col>
+    </b-form-row>
     <b-form-row class="mt-5">
       <b-col class="text-center">
         <b-button variant="secondary" type="submit">
@@ -39,7 +49,7 @@
 </template>
 <script lang="ts">
 import { Component, Emit, Ref } from 'nuxt-property-decorator'
-import { required, email } from 'vuelidate/lib/validators'
+import { required, email, sameAs } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import * as AuthStore from '~/store/modules/Auth'
@@ -47,6 +57,7 @@ import * as ErrorStore from '~/store/modules/Error'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import * as SecureClientStore from '~/store/modules/SecureClient'
 
 @Component({
   validations: {
@@ -54,6 +65,10 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
       rootEmail: {
         required,
         email
+      },
+      acceptedTerms: {
+        required,
+        sameAs: sameAs(() => true)
       }
     }
   },
@@ -62,25 +77,33 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
   }
 })
 export default class RegisterForm1 extends VueWithRouter {
-  @Ref() readonly passwordForm!: WeavrForm
-
-  public form = {
+  public form: {
+    rootEmail: string
+    password: string
+    acceptedTerms: boolean
+  } = {
     rootEmail: '',
-    password: ''
+    password: '',
+    acceptedTerms: false
   }
 
   tryToSubmitForm(e) {
     e.preventDefault()
 
+    console.log('submit form checking validation')
     if (this.$v.form) {
       this.$v.form.$touch()
       if (this.$v.form.$anyError) {
+        console.log(this.$v.form)
         return null
       }
     }
 
-    this.passwordForm.tokenize(
+    console.log('submit form validation success')
+
+    SecureClientStore.Helpers.tokenize(this.$store).then(
       (tokens) => {
+        console.log('password tokenisation')
         if (tokens.password !== '') {
           this.form.password = tokens.password
 
@@ -90,13 +113,13 @@ export default class RegisterForm1 extends VueWithRouter {
         }
       },
       (e) => {
-        console.error(e)
-        return null
+        console.log('tokenisation failed', e)
       }
     )
   }
 
   validatePassword() {
+    console.log('password  validation')
     const _request: ValidatePasswordRequest = {
       identityProfileId: config.profileId.corporates ? config.profileId.corporates : '',
       credentialType: 'ROOT',
@@ -110,6 +133,7 @@ export default class RegisterForm1 extends VueWithRouter {
 
   @Emit()
   submitForm() {
+    console.log('form success')
     ErrorStore.Helpers.resetErrors(this.$store)
     return this.form
   }

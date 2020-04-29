@@ -8,7 +8,7 @@
         </button>
       </div>
     </div>
-    <div v-if="hasError">
+    <div v-else-if="hasError">
       <div class="error-alert" role="alert">
         <p>
           {{ errorMessage }}

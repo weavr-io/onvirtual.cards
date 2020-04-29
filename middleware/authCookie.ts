@@ -12,16 +12,21 @@ export default function(ctxt) {
 
     if (authCookie) {
       auth = JSON.parse(authCookie)
-      ctxt.store.commit('auth/AUTHENTICATE', auth, { root: true })
-      if (auth != null) {
-        return ctxt.app.$weavrSecurityAssociate('Bearer ' + auth.token).then(
-          () => {},
-          (err) => {
-            console.log(err)
-          }
-        )
-      } else {
-        return ctxt.app.$weavrSecurityAssociate(null)
+      const _storeAuth = ctxt.store.getters['auth/auth']
+
+      if (_storeAuth?.token !== auth?.token) {
+        ctxt.store.commit('auth/AUTHENTICATE', auth, { root: true })
+        if (auth != null) {
+          return ctxt.app.$weavrSecurityAssociate('Bearer ' + auth.token).then(
+            () => {
+            },
+            (err) => {
+              ctxt.store.commit('auth/LOGOUT', err.response, { root: true })
+            }
+          )
+        } else {
+          return ctxt.app.$weavrSecurityAssociate(null)
+        }
       }
     }
   } catch (err) {

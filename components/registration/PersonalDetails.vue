@@ -1,7 +1,7 @@
 <template>
   <b-form @submit="submitForm" novalidate>
     <h3 class="text-center font-weight-light mb-5">
-      Personal Details
+      A few more steps
     </h3>
     <error-alert />
     <b-form-group label="First Name">
@@ -16,24 +16,6 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Title">
-      <b-form-select
-        :state="isInvalid($v.form.rootTitle)"
-        v-model="$v.form.rootTitle.$model"
-        :options="titleOptions"
-        required
-      />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-    </b-form-group>
-    <b-form-group label="Company Position">
-      <b-form-input
-        :state="isInvalid($v.form.rootCompanyPosition)"
-        v-model="$v.form.rootCompanyPosition.$model"
-        placeholder="CFO"
-      />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-    </b-form-group>
-
     <b-form-group label="MOBILE NUMBER">
       <vue-phone-number-input
         v-model="rootMobileNumber"
@@ -50,6 +32,44 @@
         This field must be a valid mobile number.
       </b-form-invalid-feedback>
     </b-form-group>
+    <b-form-group label="Company Name">
+      <b-form-input
+        :state="isInvalid($v.form.companyName)"
+        v-model="$v.form.companyName.$model"
+        placeholder="Company Name"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+    </b-form-group>
+    <b-form-group label="Company Registration Number">
+      <b-form-input
+        :state="isInvalid($v.form.companyRegistrationNumber)"
+        v-model="$v.form.companyRegistrationNumber.$model"
+        placeholder="C00000"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+    </b-form-group>
+    <b-form-group label="Registration Country">
+      <b-form-select
+        :state="isInvalid($v.form.registrationCountry)"
+        v-model="$v.form.registrationCountry.$model"
+        :options="countiesOptions"
+        placeholder="Registration Country"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+    </b-form-group>
+    <b-form-group label="My position within the company is">
+      <b-form-radio v-model="$v.form.rootCompanyPosition.$model" name="company-position" value="Representative">
+        I am a representative (with the relevant power of attorney)
+      </b-form-radio>
+      <b-form-radio v-model="$v.form.rootCompanyPosition.$model" name="company-position" value="Director">
+        I am a director
+      </b-form-radio>
+    </b-form-group>
+    <p class="smaller text-muted">
+      To open account on behalf of the company you need to be a director or authorised representative. To enable us to
+      verify your identity, role and authorisation as part of our customer due diligence process, we will later ask you
+      to upload the relevant ID and power of attorney documents.
+    </p>
 
     <b-form-row class="mt-5">
       <b-col md="4">
@@ -58,18 +78,17 @@
         </b-button>
       </b-col>
       <b-col class="text-right">
-        <b-button variant="secondary" type="submit">
-          continue
-          <span class="pl-5">-></span>
-        </b-button>
+        <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-right" />
       </b-col>
     </b-form-row>
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit } from 'nuxt-property-decorator'
+import { Component, Emit, namespace } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import * as CorporatesStore from '~/store/modules/Corporates'
+const Corporates = namespace(CorporatesStore.name)
 
 const Countries = require('~/static/json/countries.json')
 
@@ -84,9 +103,6 @@ const Countries = require('~/static/json/countries.json')
         required,
         maxLength: maxLength(100)
       },
-      rootTitle: {
-        required
-      },
       rootCompanyPosition: {
         required
       },
@@ -95,15 +111,30 @@ const Countries = require('~/static/json/countries.json')
       },
       rootMobileNumber: {
         required
+      },
+      companyName: {
+        required,
+        maxLength: maxLength(100)
+      },
+      companyRegistrationNumber: {
+        required,
+        maxLength: maxLength(20)
+      },
+      registrationCountry: {
+        required,
+        maxLength: maxLength(2)
       }
     }
   },
   components: {
-    ErrorAlert: () => import('~/components/ErrorAlert.vue')
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+    LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
 export default class PersonalDetailsForm extends VueWithRouter {
   $v
+
+  @Corporates.Getter isLoadingRegistration
 
   rootMobileNumber = ''
   numberIsValid: boolean | null = null
@@ -122,19 +153,32 @@ export default class PersonalDetailsForm extends VueWithRouter {
   ]
 
   public form: {
+    companyName: string
+    companyRegistrationNumber: string
+    registrationCountry: string
     rootName: string
     rootSurname: string
-    rootTitle: string | null
     rootCompanyPosition: string
     rootMobileCountryCode: string
     rootMobileNumber: string
   } = {
     rootName: '',
     rootSurname: '',
-    rootTitle: null,
     rootCompanyPosition: '',
     rootMobileCountryCode: '',
-    rootMobileNumber: ''
+    rootMobileNumber: '',
+    companyName: '',
+    companyRegistrationNumber: '',
+    registrationCountry: ''
+  }
+
+  get countiesOptions() {
+    return Countries.map((_c) => {
+      return {
+        text: _c.name,
+        value: _c['alpha-2']
+      }
+    })
   }
 
   @Emit()

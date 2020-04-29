@@ -9,6 +9,7 @@ import * as Accounts from './modules/Accounts'
 import * as Transfers from './modules/Transfers'
 import * as Consumers from './modules/Consumers'
 import * as View from './modules/View'
+import * as SecureClient from './modules/SecureClient'
 import createInterceptors from '~/plugins/AxiosInterceptors'
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
@@ -40,7 +41,8 @@ const createStore = () => {
       [Accounts.name]: Accounts,
       [Transfers.name]: Transfers,
       [Consumers.name]: Consumers,
-      [View.name]: View
+      [View.name]: View,
+      [SecureClient.name]: SecureClient
     }
   })
 }

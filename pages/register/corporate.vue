@@ -12,9 +12,9 @@
           <div :class="{ 'd-none': screen !== 1 }" class="form-screen">
             <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
           </div>
-          <div :class="{ 'd-none': screen !== 2 }" class="form-screen">
-            <company-details-form :request="registrationRequest" @submit-form="form3Submit" @go-back="goBack" />
-          </div>
+<!--          <div :class="{ 'd-none': screen !== 2 }" class="form-screen">-->
+<!--            <company-details-form :request="registrationRequest" @submit-form="form3Submit" @go-back="goBack" />-->
+<!--          </div>-->
         </div>
       </b-card-body>
     </b-card>
@@ -73,11 +73,11 @@ export default class RegistrationPage extends VueWithRouter {
   public registrationRequest: CreateCorporateRequest = {
     active: true,
     acceptedTerms: false,
-    companyBusinessAddress: '',
     companyName: '',
-    companyRegistrationAddress: '',
+    companyBusinessAddress: 'Company Business Address',
+    companyRegistrationAddress: 'Company Registration Address',
+    companyRegistrationDate: 1588084363,
     companyRegistrationNumber: '',
-    companyRegistrationDate: 0,
     companyType: CompanyType.LLC,
     ipAddress: '111.222.333.444',
     profileId: '0',
@@ -88,7 +88,7 @@ export default class RegistrationPage extends VueWithRouter {
     rootMobileNumber: '',
     rootName: '',
     rootSurname: '',
-    rootTitle: '',
+    rootTitle: 'Mr',
     supportEmail: ''
   }
 
@@ -97,6 +97,9 @@ export default class RegistrationPage extends VueWithRouter {
       this.registrationRequest.rootEmail = _data.rootEmail
       this.registrationRequest.supportEmail = _data.rootEmail
       this.password = _data.password
+
+      this.registrationRequest.acceptedTerms = _data.acceptedTerms
+
       this.screen = 1
     }
   }
@@ -105,22 +108,13 @@ export default class RegistrationPage extends VueWithRouter {
     if (_data != null) {
       this.registrationRequest.rootName = _data.rootName
       this.registrationRequest.rootSurname = _data.rootSurname
-      this.registrationRequest.rootTitle = _data.rootTitle
       this.registrationRequest.rootCompanyPosition = _data.rootCompanyPosition
       this.registrationRequest.rootMobileCountryCode = _data.rootMobileCountryCode
       this.registrationRequest.rootMobileNumber = _data.rootMobileNumber
-      this.screen = 2
-    }
-  }
 
-  form3Submit(_data) {
-    if (_data != null) {
       this.registrationRequest.companyName = _data.companyName
       this.registrationRequest.companyRegistrationNumber = _data.companyRegistrationNumber
-      this.registrationRequest.companyRegistrationAddress = _data.companyRegistrationAddress
       this.registrationRequest.registrationCountry = _data.registrationCountry
-      this.registrationRequest.companyRegistrationDate = _data.companyRegistrationDate
-      this.registrationRequest.acceptedTerms = _data.acceptedTerms
 
       this.doRegister()
     }

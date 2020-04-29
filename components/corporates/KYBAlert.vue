@@ -1,7 +1,17 @@
 <template>
   <section v-if="showKybAlert">
     <b-container>
-      <b-row>
+      <b-row v-if="isPendingReview">
+        <b-col md="6" offset-md="3" class="py-3 font-weight-lighter text-center">
+          <h3 class="font-weight-lighter mb-4">
+            Your account is currently under review.
+          </h3>
+          <p>
+            This process normally takes a few days.
+          </p>
+        </b-col>
+      </b-row>
+      <b-row v-else>
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter">
           <h3 class="text-center font-weight-lighter mb-4">
             We need some documents
@@ -44,6 +54,7 @@ import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as ViewStore from '~/store/modules/View'
 import { Corporate } from '~/api/Models/Corporates/Corporate'
+import { KYBState } from '~/api/Enums/KYBState'
 
 const Corporates = namespace(CorporatesStore.name)
 const View = namespace(ViewStore.name)
@@ -55,5 +66,9 @@ export default class KYBAlert extends VueWithRouter {
   accountId!: number
 
   @View.Getter showKybAlert!: boolean
+
+  get isPendingReview(): boolean {
+    return this.corporate?.kyb?.fullCompanyChecksVerified === KYBState.PENDING_REVIEW
+  }
 }
 </script>

@@ -3,8 +3,8 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
-import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses, SecureForm, SecureInputOptions } from '~/plugins/weavr/components/api'
+import * as SecureClientStore from '~/store/modules/SecureClient'
 
 @Component
 class WeavrInput extends Vue {
@@ -45,9 +45,7 @@ class WeavrInput extends Vue {
   protected _input
 
   mounted() {
-    // debugger
-    const form = this.$parent as WeavrForm
-    this._input = form.input(this.name, this.field, this.inputOptions)
+    this._input = SecureClientStore.Helpers.getForm(this.$store)?.input(this.name, this.field, this.inputOptions)
     this._input.mount(this.$el)
     this._addListeners(this._input)
   }
