@@ -1,5 +1,5 @@
 <template>
-  <b-row align-v="center" v-if="shouldDisplay" class="text-muted">
+  <b-row align-v="center"class="text-muted">
     <b-col cols="1">
       <div class="transaction-type-icon">
         <div class="transaction">
@@ -43,10 +43,6 @@ import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 export default class StatementItemAdditionalField extends Vue {
   @Prop()
   readonly transaction!: StatementEntry
-
-  get shouldDisplay(): boolean {
-    return this.isPending
-  }
 
   get isPending(): boolean {
     return this.transaction.additionalFields?.authorisationState !== 'COMPLETED'
