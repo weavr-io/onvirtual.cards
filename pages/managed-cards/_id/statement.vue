@@ -59,7 +59,11 @@
             All Transactions
           </h6>
         </b-col>
-        <b-col class="text-right" />
+        <b-col class="text-right" v-if="managedCard.active">
+          <b-button @click="confirmDeleteCard" variant="link" class="px-0 font-weight-lighter">
+            delete card
+          </b-button>
+        </b-col>
       </b-row>
 
       <b-row v-if="filteredStatement">
@@ -180,8 +184,13 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { BModal, BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 
 import * as ManagedCardsStore from '~/store/modules/Cards'
+import * as TransfersStore from '~/store/modules/Transfers'
 import { Schemas } from '~/api/Schemas'
 import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
+import { TransfersSchemas } from '~/api/TransfersSchemas'
+import config from '~/config'
+import * as AccountsStore from '~/store/modules/Accounts'
+import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import OrderType = Schemas.OrderType
 
 const ManagedCards = namespace(ManagedCardsStore.name)
@@ -205,7 +214,7 @@ export default class ManagedCardsTable extends Vue {
 
   @ManagedCards.Getter filteredStatement
 
-  @ManagedCards.Getter managedCard
+  @ManagedCards.Getter managedCard!: ManagedCardsSchemas.ManagedCard
 
   public fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
 
@@ -232,6 +241,48 @@ export default class ManagedCardsTable extends Vue {
 
   get isFrozen() {
     return Object.entries(this.managedCard.state.blockTypes).length > 0 || this.managedCard.state.destroyType !== ''
+  }
+
+  confirmDeleteCard() {
+    this.$bvModal
+      .msgBoxConfirm(
+        'Are you sure you want to delete this card? Any remaining balance will be returned to your account.',
+        {
+          buttonSize: 'sm',
+          centered: true,
+          cancelVariant: 'link'
+        }
+      )
+      .then((value) => {
+        if (value) {
+          this.doDeleteCard()
+        }
+      })
+  }
+
+  async doDeleteCard() {
+    const _accounts = await AccountsStore.Helpers.index(this.$store)
+
+    if (_accounts.data.count === 1 && this.managedCard) {
+      if (this.managedCard.balances.availableBalance && parseInt(this.managedCard.balances.availableBalance) > 0) {
+        const _request: TransfersSchemas.CreateTransferRequest = {
+          profileId: config.profileId.transfers,
+          source: {
+            type: 'managed_cards',
+            id: this.cardId
+          },
+          destination: _accounts.data.account[0].id,
+          destinationAmount: {
+            currency: this.managedCard.currency,
+            amount: this.managedCard.balances.availableBalance
+          }
+        }
+        await TransfersStore.Helpers.execute(this.$store, _request)
+      }
+      await ManagedCardsStore.Helpers.remove(this.$store, this.cardId)
+
+      this.$router.push('/managed-cards')
+    }
   }
 }
 </script>
