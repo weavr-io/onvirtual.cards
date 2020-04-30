@@ -60,6 +60,8 @@ export const getters: GetterTree<State, RootState> = {
           return 'UNRESOLVED_IDENTITY'
         case VerifyEmailRequestConflictErrorCode.INVALID_NONCE_OR_EMAIL:
           return 'The verification code entered is invalid.'
+        case SendMobileRequestConflictErrorCode.FREQUENCY_EXCEEDED:
+          return 'Your verification code has already been sent. Please wait a minute before resubmitting your request.'
         case SendMobileRequestConflictErrorCode.RETRIES_EXCEEDED:
           return 'You have exceeded the maximum number of attempts.  Please contact support@onvirtual.cards for assistance.'
         default:
