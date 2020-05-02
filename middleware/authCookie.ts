@@ -16,22 +16,10 @@ export default function(ctxt) {
 
       if (_storeAuth?.token !== auth?.token) {
         ctxt.store.commit('auth/AUTHENTICATE', auth, { root: true })
-        if (auth != null) {
-          return ctxt.app.$weavrSecurityAssociate('Bearer ' + auth.token).then(
-            () => {
-            },
-            (err) => {
-              ctxt.store.commit('auth/LOGOUT', err.response, { root: true })
-            }
-          )
-        } else {
-          return ctxt.app.$weavrSecurityAssociate(null)
-        }
       }
     }
   } catch (err) {
     console.error(err)
-    return ctxt.app.$weavrSecurityAssociate(null)
     // No valid cookie found
   }
 }
