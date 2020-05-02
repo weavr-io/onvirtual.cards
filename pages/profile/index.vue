@@ -4,12 +4,12 @@
       <b-row>
         <b-col md="6" offset-md="3">
           <template v-if="isConsumer">
-            <b-form>
-              <error-alert />
-              <b-form-group label="NAME">
-                <b-form-input v-model="consumer.name" class="form-control" placeholder="John" />
-              </b-form-group>
-            </b-form>
+<!--            <b-form>-->
+<!--              <error-alert />-->
+<!--              <b-form-group label="NAME">-->
+<!--                <b-form-input v-model="consumer.name" class="form-control" placeholder="John" />-->
+<!--              </b-form-group>-->
+<!--            </b-form>-->
             <b-card class="border card-sm-border-radius" no-body>
               <template v-slot:header>
                 <h4 class="mb-0">{{ consumer.name }} {{ consumer.surname }}</h4>
