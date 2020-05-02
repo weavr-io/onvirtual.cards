@@ -12,7 +12,7 @@ export module TransfersSchemas {
     }
     destinationAmount: {
       currency: string
-      amount?: number
+      amount?: number | string
     }
   }
 }

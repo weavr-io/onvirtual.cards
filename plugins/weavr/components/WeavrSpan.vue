@@ -16,25 +16,27 @@ class WeavrSpan extends Vue {
 
   @Prop() readonly baseStyle!: object
 
-  @Emit('onReady') onReady() {}
+  @Emit('onReady') onReady() {
+  }
 
-  @Emit('onChange') onChange() {}
+  @Emit('onChange') onChange() {
+  }
 
   protected _span
 
   mounted() {
     this._span = this.$OpcUxSecureClient.span(
-      this.field,
-      this.token,
-      this.spanOptions
+            this.field,
+            this.token,
+            this.spanOptions
     )
     this._span.mount(this.$el)
     this._addListeners(this._span)
   }
 
   beforeDestroy() {
-    // this._removeListeners(this._span)
-    // this._span.destroy()
+    this._removeListeners(this._span)
+    this._span.destroy()
   }
 
   _addListeners(input) {
@@ -42,10 +44,10 @@ class WeavrSpan extends Vue {
     this.onChange && input.on('change', this.onChange)
   }
 
-  // _removeListeners(input) {
-  // this.onReady && input.off('ready', this.onReady)
-  // this.onChange && input.off('change', this.onChange)
-  // }
+  _removeListeners(input) {
+    this.onReady && input.off('ready', this.onReady)
+    this.onChange && input.off('change', this.onChange)
+  }
 
   get spanOptions() {
     return {

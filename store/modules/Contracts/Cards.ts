@@ -26,28 +26,30 @@ export interface State {
 }
 
 export enum _Actions {
+  addCard = 'addCard',
   freeze = 'freeze',
   unfreeze = 'unfreeze',
+  remove = 'remove',
   getCards = 'getCards',
   getManagedCard = 'getManagedCard',
+  getCardStatement = 'getCardStatement',
   update = 'update'
 }
 
 export interface Actions<S, R> extends ActionTree<S, R> {
   [_Actions.getCards](context: ActionContext<S, R>)
 
-  addCard(context: ActionContext<S, R>, request: ManagedCardsSchemas.CreateManagedCardRequest)
+  [_Actions.addCard](context: ActionContext<S, R>, request: ManagedCardsSchemas.CreateManagedCardRequest)
 
   [_Actions.getManagedCard](context: ActionContext<S, R>, id: number): AxiosPromise<ManagedCardsSchemas.ManagedCard>
 
-  getCardStatement(
-    context: ActionContext<S, R>,
-    request: ManagedCardStatementRequest
-  ): AxiosPromise<R>
+  [_Actions.getCardStatement](context: ActionContext<S, R>, request: ManagedCardStatementRequest): AxiosPromise<R>
 
   [_Actions.freeze](context: ActionContext<S, R>, id): AxiosPromise<R>
 
   [_Actions.unfreeze](context: ActionContext<S, R>, id): AxiosPromise<R>
+
+  [_Actions.remove](context: ActionContext<S, R>, id): AxiosPromise<R>
 
   [_Actions.update](context: ActionContext<S, R>, request: UpdateManagedCardRequest): AxiosPromise<R>
 }
@@ -58,6 +60,9 @@ export module Helpers {
   }
   export const unfreeze = (store: Store<any>, id): AxiosPromise => {
     return StoreHelpers.dispatch(store, name, _Actions.unfreeze, id)
+  }
+  export const remove = (store: Store<any>, id): AxiosPromise => {
+    return StoreHelpers.dispatch(store, name, _Actions.remove, id)
   }
   export const getCards = (store: Store<any>): AxiosPromise => {
     return StoreHelpers.dispatch(store, name, _Actions.getCards)

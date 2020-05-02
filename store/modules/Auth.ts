@@ -184,6 +184,9 @@ export const mutations: MutationTree<State> = {
     state.auth = _res
     Cookie.set('auth-onvirtual', state.auth)
     api.defaults.headers.Authorization = 'Bearer ' + state.auth.token
+
+    // @ts-ignore
+    this.$weavrSecurityAssociate('Bearer ' + state.auth.token)
   },
   [types.LOGOUT](state) {
     state.auth = {}

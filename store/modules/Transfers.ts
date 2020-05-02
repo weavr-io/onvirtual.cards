@@ -1,14 +1,11 @@
-import { Actions, State, types } from "~/store/modules/Contracts/Transfers"
-import { RootState } from "~/store"
 import { GetterTree, MutationTree } from 'vuex'
-import * as Loader from "~/store/modules/Loader"
-import { api } from "~/api/Axios"
-import { TransfersSchemas } from "~/api/TransfersSchemas"
-import { ManagedCardsSchemas } from "~/api/ManagedCardsSchemas"
+import { Actions, State, _Mutations, name, namespaced, Helpers } from '~/store/modules/Contracts/Transfers'
+import { RootState } from '~/store'
+import * as Loader from '~/store/modules/Loader'
+import { api } from '~/api/Axios'
+import { TransfersSchemas } from '~/api/TransfersSchemas'
 
-export const name = 'transfers'
-
-export const namespaced = true
+export { name, namespaced, Helpers }
 
 export const state = (): State => ({
   isLoading: false
@@ -28,7 +25,7 @@ export const actions: Actions<State, RootState> = {
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
-      commit(types.SET_IS_LOADING, false)
+      commit(_Mutations.SET_IS_LOADING, false)
     })
 
     return req
@@ -36,7 +33,7 @@ export const actions: Actions<State, RootState> = {
 }
 
 export const mutations: MutationTree<State> = {
-  [types.SET_IS_LOADING](state, isLoading: boolean) {
+  [_Mutations.SET_IS_LOADING](state, isLoading: boolean) {
     state.isLoading = isLoading
   }
 }
