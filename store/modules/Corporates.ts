@@ -110,6 +110,22 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
+  updateUser({ commit }, request) {
+    commit(types.SET_IS_LOADING, true)
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post(
+      '/app/api/corporates/' + request.corporateId + '/users/' + request.userId + '/update',
+      request.body
+    )
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
   addUser({ commit }, request: CreateCorporateUserFullRequest) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
