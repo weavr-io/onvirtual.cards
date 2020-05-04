@@ -16,4 +16,18 @@ export interface Consumer {
   mobileNumber: string
   kyc?: ConsumerKycStatus
   defaultCurrency?: string
+  dateOfBirth?: {
+    year?: number
+    month?: number
+    day?: number
+  }
+  address?: {
+    addressLine1: string
+    addressLine2?: string
+    city: string
+    country: string
+    postCode: string
+    state?: string
+  }
+  feeGroup?: string
 }

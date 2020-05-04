@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
@@ -28,6 +28,17 @@
                   placeholder="Last Name"
                 />
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+              </b-form-group>
+              <b-form-group label="Date of Birth">
+                <flat-pickr
+                  v-model="dateOfBirth"
+                  :config="config"
+                  @on-close="updateDOB"
+                  class="form-control bg-transparent"
+                />
+                <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.dateOfBirth)">
+                  This field is required.
+                </b-form-invalid-feedback>
               </b-form-group>
               <b-form-group :state="isInvalid($v.registrationRequest.email)" label="Email">
                 <b-form-input
@@ -128,6 +139,9 @@ const touchMap = new WeakMap()
       },
       mobileNumber: {
         required
+      },
+      dateOfBirth: {
+        required
       }
     }
   },
@@ -153,6 +167,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
   isLoadingRegistration: boolean = false
 
+  public dateOfBirth = ''
+
   public registrationRequest: CreateConsumerRequest = {
     profileId: 0,
     name: '',
@@ -160,7 +176,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     email: '',
     mobileCountryCode: '',
     mobileNumber: '',
-    baseCurrency: 'EUR'
+    baseCurrency: 'EUR',
+    dateOfBirth: null
   }
 
   public password: string = ''
@@ -240,15 +257,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
   goToVerifyEmail() {
     this.isLoadingRegistration = false
-    this.$router.push({
-      path: '/register/verify',
-      query: {
-        cons: this.consumer.id.id + '',
-        email: this.registrationRequest.email,
-        mobileNumber: this.registrationRequest.mobileNumber,
-        mobileCountryCode: this.registrationRequest.mobileCountryCode
-      }
-    })
+    this.$router.push({ path: '/profile/address' })
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -340,6 +349,30 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       clearTimeout(touchMap.get($v))
     }
     touchMap.set($v, setTimeout($v.$touch, 1000))
+  }
+
+  get config() {
+    return {
+      wrap: false,
+      enableTime: false,
+      altInput: true,
+      altFormat: 'd/m/Y',
+      maxDate: new Date(),
+      locale: {
+        firstDayOfWeek: 1
+      }
+    }
+  }
+
+  updateDOB(val) {
+    console.log(val)
+    if (val.length === 1) {
+      this.registrationRequest.dateOfBirth = {
+        year: val[0].getFullYear(),
+        month: val[0].getMonth() + 1,
+        day: val[0].getDate()
+      }
+    }
   }
 }
 </script>

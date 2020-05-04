@@ -7,6 +7,7 @@ import { SendVerificationEmail } from '~/api/Requests/Consumers/SendVerification
 import { SendVerificationMobile } from '~/api/Requests/Consumers/SendVerificationMobile'
 import { VerifyMobileRequest } from '~/api/Requests/Consumers/VerifyMobileRequest'
 import { InitFullKycProcessResponse } from '~/api/Responses/Consumers/InitFullKycProcessResponse'
+import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
 
 export const name = 'consumers'
 
@@ -24,6 +25,7 @@ export interface State {
 
 export enum _Actions {
   create = 'create',
+  update = 'update',
   get = 'get',
   sendVerificationCodeEmail = 'sendVerificationCodeEmail',
   sendVerificationCodeMobile = 'sendVerificationCodeMobile',
@@ -34,6 +36,7 @@ export enum _Actions {
 
 export interface Actions<S, R> extends ActionTree<S, R> {
   [_Actions.create](context: ActionContext<S, R>, request: CreateConsumerRequest): AxiosPromise<Consumer>
+  [_Actions.update](context: ActionContext<S, R>, request: UpdateConsumerRequest): AxiosPromise<Consumer>
   [_Actions.get](context: ActionContext<S, R>, id: number): AxiosPromise<Consumer>
   [_Actions.sendVerificationCodeEmail](context: ActionContext<S, R>, request: SendVerificationEmail): AxiosPromise
   [_Actions.sendVerificationCodeMobile](context: ActionContext<S, R>, request: SendVerificationMobile): AxiosPromise
@@ -48,6 +51,9 @@ export module Helpers {
   }
   export const create = (store: Store<any>, request: CreateConsumerRequest): AxiosPromise<Consumer> => {
     return StoreHelpers.dispatch(store, name, _Actions.create, request)
+  }
+  export const update = (store: Store<any>, request: UpdateConsumerRequest): AxiosPromise<Consumer> => {
+    return StoreHelpers.dispatch(store, name, _Actions.update, request)
   }
   export const get = (store: Store<any>, id: number): AxiosPromise<Consumer> => {
     return StoreHelpers.dispatch(store, name, _Actions.get, id)
