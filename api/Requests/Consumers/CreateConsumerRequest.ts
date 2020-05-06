@@ -22,4 +22,5 @@ export interface CreateConsumerRequest {
     state?: string
   }
   feeGroup?: string
+  acceptedTerms?: boolean
 }

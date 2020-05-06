@@ -37,20 +37,16 @@ export default class KycPage extends VueWithRouter {
     if (_id != null) {
       const _consumer = await ConsumersStore.Helpers.get(this.$store, _id)
 
-      if (_consumer.data.kyc?.fullDueDiligence === FullDueDiligence.APPROVED) {
+      if (
+        _consumer.data.kyc?.fullDueDiligence === FullDueDiligence.APPROVED ||
+        _consumer.data.kyc?.fullDueDiligence === FullDueDiligence.PENDING_REVIEW
+      ) {
         this.redirectToAccountPage()
       } else {
         this.tries++
 
         if (this.tries > 3) {
-          this.$bvModal
-            .msgBoxOk('It seems to be taking more than usual. Please refresh the page in a few minutes.', {
-              title: 'Something is wrong.',
-              centered: true
-            })
-            .then(() => {
-              this.redirectToAccountPage()
-            })
+          this.redirectToAccountPage()
         } else {
           await this.sleep(5000)
           this.KycApproved()

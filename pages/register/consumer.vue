@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
@@ -13,6 +13,7 @@
               <h3 class="text-center font-weight-light mb-5">
                 Register
               </h3>
+
               <b-form-group label="First Name">
                 <b-form-input
                   v-model="registrationRequest.name"
@@ -30,12 +31,14 @@
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="Date of Birth">
-                <flat-pickr
+                <vue-dob-picker
                   v-model="dateOfBirth"
-                  :config="config"
-                  @on-close="updateDOB"
-                  class="form-control bg-transparent"
+                  @input="updateDOB"
+                  select-class="form-control"
+                  label-class="small flex-fill"
+                   class="d-flex"
                 />
+
                 <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.dateOfBirth)">
                   This field is required.
                 </b-form-invalid-feedback>
@@ -80,6 +83,16 @@
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </weavr-form>
               </client-only>
+              <b-form-row class="small mt-3 text-muted">
+                <b-col>
+                  <b-form-group>
+                    <b-form-checkbox v-model="$v.registrationRequest.acceptedTerms.$model" :state="isInvalid($v.registrationRequest.acceptedTerms)">
+                      I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank" class="text-decoration-underline text-muted">terms and use</a>
+                    </b-form-checkbox>
+                    <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                  </b-form-group>
+                </b-col>
+              </b-form-row>
               <b-row class="mt-4" align-v="center">
                 <b-col class="text-center">
                   <loader-button :is-loading="isLoadingRegistration" button-text="continue" />
@@ -95,7 +108,7 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { email, helpers, maxLength, required } from 'vuelidate/lib/validators'
+import { email, helpers, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
 import config from '~/config'
@@ -142,6 +155,10 @@ const touchMap = new WeakMap()
       },
       dateOfBirth: {
         required
+      },
+      acceptedTerms: {
+        required,
+        sameAs: sameAs(() => true)
       }
     }
   },
@@ -167,7 +184,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
   isLoadingRegistration: boolean = false
 
-  public dateOfBirth = ''
+  public dateOfBirth = new Date(1970, 0, 1, 0, 0, 0, 0)
 
   public registrationRequest: CreateConsumerRequest = {
     profileId: 0,
@@ -177,7 +194,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     mobileCountryCode: '',
     mobileNumber: '',
     baseCurrency: 'EUR',
-    dateOfBirth: null
+    dateOfBirth: null,
+    acceptedTerms: false
   }
 
   public password: string = ''
@@ -366,12 +384,10 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
   updateDOB(val) {
     console.log(val)
-    if (val.length === 1) {
-      this.registrationRequest.dateOfBirth = {
-        year: val[0].getFullYear(),
-        month: val[0].getMonth() + 1,
-        day: val[0].getDate()
-      }
+    this.registrationRequest.dateOfBirth = {
+      year: val.getFullYear(),
+      month: val.getMonth() + 1,
+      day: val.getDate()
     }
   }
 }

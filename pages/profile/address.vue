@@ -7,50 +7,50 @@
           <div class="form-screen">
             <b-form @submit="submitForm" novalidate>
               <h3 class="text-center font-weight-light mb-5">
-                Address
+                Your address details
               </h3>
-              <b-form-group label="Address Line 1">
+              <b-form-group label="Address Line 1*">
                 <b-form-input
-                  :state="isInvalid($v.form.request.address.addressLine1)"
-                  v-model="form.request.address.addressLine1"
-                  placeholder="Address Line 1"
+                        :state="isInvalid($v.form.request.address.addressLine1)"
+                        v-model="form.request.address.addressLine1"
+                        placeholder="Address Line 1"
                 />
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="Address Line 2">
                 <b-form-input
-                  :state="isInvalid($v.form.request.address.addressLine2)"
-                  v-model="form.request.address.addressLine2"
-                  placeholder="Address Line 2"
+                        :state="isInvalid($v.form.request.address.addressLine2)"
+                        v-model="form.request.address.addressLine2"
+                        placeholder="Address Line 2"
                 />
               </b-form-group>
-              <b-form-group label="City">
+              <b-form-group label="City*">
                 <b-form-input
-                  :state="isInvalid($v.form.request.address.city)"
-                  v-model="form.request.address.city"
-                  placeholder="City"
+                        :state="isInvalid($v.form.request.address.city)"
+                        v-model="form.request.address.city"
+                        placeholder="City"
                 />
               </b-form-group>
-              <b-form-group label="Country">
+              <b-form-group label="Country*">
                 <b-form-select
-                  :state="isInvalid($v.form.request.address.country)"
-                  v-model="form.request.address.country"
-                  :options="countiesOptions"
-                  placeholder="Registration Country"
+                        :state="isInvalid($v.form.request.address.country)"
+                        v-model="form.request.address.country"
+                        :options="countiesOptions"
+                        placeholder="Registration Country"
                 />
               </b-form-group>
-              <b-form-group label="Post Code">
+              <b-form-group label="Post Code*">
                 <b-form-input
-                  :state="isInvalid($v.form.request.address.postCode)"
-                  v-model="form.request.address.postCode"
-                  placeholder="Post Code"
+                        :state="isInvalid($v.form.request.address.postCode)"
+                        v-model="form.request.address.postCode"
+                        placeholder="Post Code"
                 />
               </b-form-group>
               <b-form-group label="State">
                 <b-form-input
-                  :state="isInvalid($v.form.request.address.state)"
-                  v-model="form.request.address.state"
-                  placeholder="State"
+                        :state="isInvalid($v.form.request.address.state)"
+                        v-model="form.request.address.state"
+                        placeholder="State"
                 />
               </b-form-group>
               <b-row class="mt-4" align-v="center">
@@ -143,10 +143,25 @@ export default class ConsunmerAddressPage extends VueWithRouter {
       }
     }
 
-    ConsumersStore.Helpers.update(this.$store, this.form).then(() => {
-      this.isLoading = false
+    ConsumersStore.Helpers.update(this.$store, this.form).then(this.addressUpdated.bind(this))
+  }
+
+  async addressUpdated() {
+    this.isLoading = false
+
+    const _auth = AuthStore.Helpers.auth(this.$store)
+    let _cons = ConsumersStore.Helpers.consumer(this.$store)
+
+    if (_cons === null) {
+      await ConsumersStore.Helpers.get(this.$store, _auth.identity!.id!)
+      _cons = ConsumersStore.Helpers.consumer(this.$store)
+    }
+
+    if (_cons && _cons.kyc && !_cons.kyc.emailVerified) {
+      this.$router.push('/register/verify')
+    } else {
       this.$router.push('/')
-    })
+    }
   }
 
   get countiesOptions() {

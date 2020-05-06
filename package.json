@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@dansmaculotte/nuxt-segment": "^0.2.11",
+    "@kanaqsasak/vue-dob-picker": "^1.0.14",
     "@nuxtjs/axios": "^5.10.1",
     "bootstrap": "^4.4.1",
     "bootstrap-vue": "^2.12.0",
