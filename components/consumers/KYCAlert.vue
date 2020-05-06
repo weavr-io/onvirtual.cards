@@ -63,11 +63,5 @@ export default class KYCAlert extends VueWithRouter {
   get isPendingReview(): boolean {
     return this.consumer?.kyc?.fullDueDiligence === FullDueDiligence.PENDING_REVIEW
   }
-
-  mounted() {
-    if (this.showKycAlert && !this.isPendingReview) {
-      this.$router.push('/managed-accounts/kyc')
-    }
-  }
 }
 </script>

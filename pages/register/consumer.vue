@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
     </div>
     <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
@@ -16,53 +16,57 @@
 
               <b-form-group label="First Name">
                 <b-form-input
-                  v-model="registrationRequest.name"
-                  :state="isInvalid($v.registrationRequest.name)"
-                  placeholder="First Name"
+                        v-model="registrationRequest.name"
+                        :state="isInvalid($v.registrationRequest.name)"
+                        placeholder="First Name"
                 />
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="Last Name">
                 <b-form-input
-                  :state="isInvalid($v.registrationRequest.surname)"
-                  v-model="registrationRequest.surname"
-                  placeholder="Last Name"
+                        :state="isInvalid($v.registrationRequest.surname)"
+                        v-model="registrationRequest.surname"
+                        placeholder="Last Name"
                 />
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
-              <b-form-group label="Date of Birth">
-                <vue-dob-picker
-                  v-model="dateOfBirth"
-                  @input="updateDOB"
-                  select-class="form-control"
-                  label-class="small flex-fill"
-                   class="d-flex"
-                />
 
+              <b-form-group label="Date of Birth">
+                <dob-picker
+                        :value="dateOfBirth"
+                        @input="updateDOB"
+                        @change="updateDOB"
+                        :placeholders="['Day', 'Month', 'Year']"
+                        month-format="long"
+                        show-labels="false"
+                        select-class="form-control"
+                        label-class="small flex-fill"
+                        class="d-flex"
+                />
                 <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.dateOfBirth)">
                   This field is required.
                 </b-form-invalid-feedback>
               </b-form-group>
               <b-form-group :state="isInvalid($v.registrationRequest.email)" label="Email">
                 <b-form-input
-                  v-model="$v.registrationRequest.email.$model"
-                  :state="isInvalid($v.registrationRequest.email)"
-                  @input="delayTouch($v.registrationRequest.email)"
-                  placeholder="name@email.com"
+                        v-model="$v.registrationRequest.email.$model"
+                        :state="isInvalid($v.registrationRequest.email)"
+                        @input="delayTouch($v.registrationRequest.email)"
+                        placeholder="name@email.com"
                 />
                 <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="MOBILE NUMBER">
                 <vue-phone-number-input
-                  v-model="rootMobileNumber"
-                  @update="phoneUpdate"
-                  :only-countries="mobileCountries"
-                  :border-radius="0"
-                  :error="numberIsValid === false"
-                  color="#6C1C5C"
-                  error-color="#F50E4C"
-                  valid-color="#6D7490"
-                  default-country-code="GB"
+                        v-model="rootMobileNumber"
+                        @update="phoneUpdate"
+                        :only-countries="mobileCountries"
+                        :border-radius="0"
+                        :error="numberIsValid === false"
+                        color="#6C1C5C"
+                        error-color="#F50E4C"
+                        valid-color="#6D7490"
+                        default-country-code="GB"
                 />
                 <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                   This field must be a valid mobile number.
@@ -72,13 +76,13 @@
                 <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.registrationRequest.$dirty }">
                   <label class="d-block">PASSWORD</label>
                   <weavr-input
-                    :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                    :base-style="passwordBaseStyle"
-                    @onKeyUp="checkOnKeyUp"
-                    class-name="sign-in-password"
-                    name="password"
-                    field="password"
-                    required="true"
+                          :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                          :base-style="passwordBaseStyle"
+                          @onKeyUp="checkOnKeyUp"
+                          class-name="sign-in-password"
+                          name="password"
+                          field="password"
+                          required="true"
                   />
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </weavr-form>
@@ -86,8 +90,10 @@
               <b-form-row class="small mt-3 text-muted">
                 <b-col>
                   <b-form-group>
-                    <b-form-checkbox v-model="$v.registrationRequest.acceptedTerms.$model" :state="isInvalid($v.registrationRequest.acceptedTerms)">
-                      I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank" class="text-decoration-underline text-muted">terms and use</a>
+                    <b-form-checkbox v-model="$v.registrationRequest.acceptedTerms.$model"
+                                     :state="isInvalid($v.registrationRequest.acceptedTerms)">
+                      I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank"
+                                      class="text-decoration-underline text-muted">terms and use</a>
                     </b-form-checkbox>
                     <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                   </b-form-group>
@@ -169,7 +175,8 @@ const touchMap = new WeakMap()
     ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),
     CompanyDetailsForm: () => import('~/components/registration/CompanyDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
-    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
+    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
+    DobPicker: () => import('~/components/fields/dob-picker.vue')
   }
 })
 export default class ConsumerRegistrationPage extends VueWithRouter {
@@ -184,7 +191,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
   isLoadingRegistration: boolean = false
 
-  public dateOfBirth = new Date(1970, 0, 1, 0, 0, 0, 0)
+  dateOfBirth = null
 
   public registrationRequest: CreateConsumerRequest = {
     profileId: 0,
@@ -207,8 +214,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
   doRegister() {
     this.isLoadingRegistration = true
     ConsumerHelpers.create(this.$store, this.registrationRequest)
-      .then(this.doCreatePasswordIdentity.bind(this))
-      .catch(this.registrationFailed.bind(this))
+            .then(this.doCreatePasswordIdentity.bind(this))
+            .catch(this.registrationFailed.bind(this))
   }
 
   registrationFailed(err) {
@@ -231,8 +238,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       }
     }
     Helpers.createPasswordIdentity(this.$store, _req).then(
-      this.doCreatePassword.bind(this),
-      this.registrationFailed.bind(this)
+            this.doCreatePassword.bind(this),
+            this.registrationFailed.bind(this)
     )
   }
 
@@ -283,7 +290,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       color: '#495057',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
-      fontFamily: "'Be Vietnam', sans-serif",
+      fontFamily: '\'Be Vietnam\', sans-serif',
       fontWeight: '400',
       lineHeight: '24px',
       margin: '0',
@@ -312,19 +319,19 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
     const form: WeavrForm = this.$refs.passwordForm as WeavrForm
     form.tokenize(
-      (tokens) => {
-        if (tokens.password !== '') {
-          this.password = tokens.password
+            (tokens) => {
+              if (tokens.password !== '') {
+                this.password = tokens.password
 
-          this.validatePassword()
-        } else {
-          return null
-        }
-      },
-      (e) => {
-        console.error(e)
-        return null
-      }
+                this.validatePassword()
+              } else {
+                return null
+              }
+            },
+            (e) => {
+              console.error(e)
+              return null
+            }
     )
   }
 
