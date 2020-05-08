@@ -93,7 +93,7 @@
                     <b-form-checkbox v-model="$v.registrationRequest.acceptedTerms.$model"
                                      :state="isInvalid($v.registrationRequest.acceptedTerms)">
                       I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank"
-                                      class="text-decoration-underline text-muted">terms and use</a>
+                                      class="text-decoration-underline text-muted">terms of use</a>
                     </b-form-checkbox>
                     <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                   </b-form-group>
