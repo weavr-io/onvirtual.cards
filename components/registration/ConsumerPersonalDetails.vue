@@ -80,12 +80,6 @@ export default class PersonalDetailsForm extends VueWithRouter {
 
   @Consumers.Getter isLoading!: boolean
 
-  titleOptions = [
-    { value: 'Mr', text: 'Mr' },
-    { value: 'Mrs', text: 'Mrs' },
-    { value: 'Ms', text: 'Ms' }
-  ]
-
   get mobileCountries(): string[] {
     return Countries.map((_c) => {
       return _c['alpha-2']
@@ -95,7 +89,6 @@ export default class PersonalDetailsForm extends VueWithRouter {
   public form = {
     rootName: '',
     rootSurname: '',
-    rootTitle: '',
     rootCompanyPosition: '',
     rootMobileCountryCode: '',
     rootMobileNumber: ''

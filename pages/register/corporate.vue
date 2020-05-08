@@ -74,9 +74,6 @@ export default class RegistrationPage extends VueWithRouter {
     active: true,
     acceptedTerms: false,
     companyName: '',
-    companyBusinessAddress: 'Company Business Address',
-    companyRegistrationAddress: 'Company Registration Address',
-    companyRegistrationDate: 1588084363,
     companyRegistrationNumber: '',
     companyType: CompanyType.LLC,
     ipAddress: '111.222.333.444',
@@ -88,7 +85,6 @@ export default class RegistrationPage extends VueWithRouter {
     rootMobileNumber: '',
     rootName: '',
     rootSurname: '',
-    rootTitle: 'Mr',
     supportEmail: ''
   }
 
@@ -122,7 +118,6 @@ export default class RegistrationPage extends VueWithRouter {
 
   doRegister() {
     CorporatesStore.Helpers.setIsLoadingRegistration(this.$store, true)
-    this.registrationRequest.companyBusinessAddress = this.registrationRequest.companyRegistrationAddress
 
     this.register(this.registrationRequest)
       .then(this.doCreateCorporatePasswordIdentity.bind(this))

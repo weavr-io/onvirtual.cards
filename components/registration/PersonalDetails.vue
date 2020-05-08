@@ -145,13 +145,6 @@ export default class PersonalDetailsForm extends VueWithRouter {
     })
   }
 
-  titleOptions = [
-    { value: null, text: 'Mr / Ms / Mrs', disabled: true },
-    { value: 'Mr', text: 'Mr' },
-    { value: 'Mrs', text: 'Mrs' },
-    { value: 'Ms', text: 'Ms' }
-  ]
-
   public form: {
     companyName: string
     companyRegistrationNumber: string

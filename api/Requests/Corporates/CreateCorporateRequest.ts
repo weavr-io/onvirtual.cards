@@ -9,5 +9,5 @@ export type CreateCorporateRequest = Partial<Corporate> & {
   rootMobileNumber: string
   rootName: string
   rootSurname: string
-  rootTitle: string
+  rootTitle?: string
 }
