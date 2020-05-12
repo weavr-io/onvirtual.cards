@@ -52,7 +52,7 @@
       <b-col>
         <b-form-group>
           <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
-            I accept the <a href="https://www.onvirtual.cards/terms/business" target="_blank" class="link">terms of use</a> and <a href="https://www.onvirtual.cards/policy/" target="_blank" class="link">privacy policy</a>
+            I accept the <a href="https://www.onvirtual.cards/terms/business" target="_blank" class="text-decoration-underline text-muted">terms of use</a> and <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted">privacy policy</a>
           </b-form-checkbox>
           <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
