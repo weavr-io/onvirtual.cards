@@ -16,32 +16,32 @@
 
               <b-form-group label="First Name">
                 <b-form-input
-                        v-model="registrationRequest.name"
-                        :state="isInvalid($v.registrationRequest.name)"
-                        placeholder="First Name"
+                  v-model="registrationRequest.name"
+                  :state="isInvalid($v.registrationRequest.name)"
+                  placeholder="First Name"
                 />
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="Last Name">
                 <b-form-input
-                        :state="isInvalid($v.registrationRequest.surname)"
-                        v-model="registrationRequest.surname"
-                        placeholder="Last Name"
+                  :state="isInvalid($v.registrationRequest.surname)"
+                  v-model="registrationRequest.surname"
+                  placeholder="Last Name"
                 />
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
 
               <b-form-group label="Date of Birth">
                 <dob-picker
-                        :value="dateOfBirth"
-                        @input="updateDOB"
-                        @change="updateDOB"
-                        :placeholders="['Day', 'Month', 'Year']"
-                        month-format="long"
-                        show-labels="false"
-                        select-class="form-control"
-                        label-class="small flex-fill"
-                        class="d-flex"
+                  :value="dateOfBirth"
+                  @input="updateDOB"
+                  @change="updateDOB"
+                  :placeholders="['Day', 'Month', 'Year']"
+                  month-format="long"
+                  show-labels="false"
+                  select-class="form-control"
+                  label-class="small flex-fill"
+                  class="d-flex"
                 />
                 <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.dateOfBirth)">
                   This field is required.
@@ -49,40 +49,62 @@
               </b-form-group>
               <b-form-group :state="isInvalid($v.registrationRequest.email)" label="Email">
                 <b-form-input
-                        v-model="$v.registrationRequest.email.$model"
-                        :state="isInvalid($v.registrationRequest.email)"
-                        @input="delayTouch($v.registrationRequest.email)"
-                        placeholder="name@email.com"
+                  v-model="$v.registrationRequest.email.$model"
+                  :state="isInvalid($v.registrationRequest.email)"
+                  @input="delayTouch($v.registrationRequest.email)"
+                  placeholder="name@email.com"
                 />
                 <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="MOBILE NUMBER">
                 <vue-phone-number-input
-                        v-model="rootMobileNumber"
-                        @update="phoneUpdate"
-                        :only-countries="mobileCountries"
-                        :border-radius="0"
-                        :error="numberIsValid === false"
-                        color="#6C1C5C"
-                        error-color="#F50E4C"
-                        valid-color="#6D7490"
-                        default-country-code="GB"
+                  v-model="rootMobileNumber"
+                  @update="phoneUpdate"
+                  :only-countries="mobileCountries"
+                  :border-radius="0"
+                  :error="numberIsValid === false"
+                  color="#6C1C5C"
+                  error-color="#F50E4C"
+                  valid-color="#6D7490"
+                  default-country-code="GB"
                 />
                 <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                   This field must be a valid mobile number.
                 </b-form-invalid-feedback>
               </b-form-group>
+              <b-form-group :state="isInvalid($v.registrationRequest.industryOccupation)" label="Industry / Occupation">
+                <b-form-select
+                  v-model="$v.registrationRequest.industryOccupation.$model"
+                  :state="isInvalid($v.registrationRequest.industryOccupation)"
+                  :options="industryOccupationOptions"
+                />
+                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+              </b-form-group>
+              <b-form-group :state="isInvalid($v.registrationRequest.sourceOfFunds)" label="Source of Funds">
+                <b-form-select
+                  v-model="$v.registrationRequest.sourceOfFunds.$model"
+                  :state="isInvalid($v.registrationRequest.sourceOfFunds)"
+                  :options="sourceOfFundsOptions"
+                />
+                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+              </b-form-group>
+              <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
+                <b-form-input
+                  :state="isInvalid($v.registrationRequest.sourceOfFundsOther)"
+                  v-model="registrationRequest.sourceOfFundsOther"
+                />
+              </b-form-group>
               <client-only placeholder="Loading...">
                 <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.registrationRequest.$dirty }">
                   <label class="d-block">PASSWORD</label>
                   <weavr-input
-                          :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                          :base-style="passwordBaseStyle"
-                          @onKeyUp="checkOnKeyUp"
-                          class-name="sign-in-password"
-                          name="password"
-                          field="password"
-                          required="true"
+                    :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                    :base-style="passwordBaseStyle"
+                    @onKeyUp="checkOnKeyUp"
+                    class-name="sign-in-password"
+                    name="password"
+                    field="password"
+                    required="true"
                   />
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </weavr-form>
@@ -90,10 +112,16 @@
               <b-form-row class="small mt-3 text-muted">
                 <b-col>
                   <b-form-group>
-                    <b-form-checkbox v-model="$v.registrationRequest.acceptedTerms.$model"
-                                     :state="isInvalid($v.registrationRequest.acceptedTerms)">
-                      I accept the <a href="https://www.onvirtual.cards/terms/" target="_blank"
-                                      class="text-decoration-underline text-muted">terms of use</a>
+                    <b-form-checkbox
+                      v-model="$v.registrationRequest.acceptedTerms.$model"
+                      :state="isInvalid($v.registrationRequest.acceptedTerms)"
+                    >
+                      I accept the
+                      <a
+                        href="https://www.onvirtual.cards/terms/"
+                        target="_blank"
+                        class="text-decoration-underline text-muted"
+                        >terms of use</a>
                     </b-form-checkbox>
                     <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                   </b-form-group>
@@ -130,6 +158,8 @@ import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import * as AuthStore from '~/store/modules/Auth'
 import { Schemas } from '~/api/Schemas'
+import { SourceOfFunds } from '~/api/Enums/Consumers/SourceOfFunds'
+import { IndustryOccupation } from '~/api/Enums/Consumers/IndustryOccupation'
 import LoginRequest = Schemas.LoginRequest
 
 const Consumers = namespace(ConsumersStore.name)
@@ -162,6 +192,13 @@ const touchMap = new WeakMap()
       dateOfBirth: {
         required
       },
+      industryOccupation: {
+        required
+      },
+      sourceOfFunds: {
+        required
+      },
+      sourceOfFundsOther: {},
       acceptedTerms: {
         required,
         sameAs: sameAs(() => true)
@@ -200,6 +237,9 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     email: '',
     mobileCountryCode: '',
     mobileNumber: '',
+    sourceOfFunds: null,
+    sourceOfFundsOther: '',
+    industryOccupation: '',
     baseCurrency: 'EUR',
     dateOfBirth: null,
     acceptedTerms: false
@@ -214,8 +254,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
   doRegister() {
     this.isLoadingRegistration = true
     ConsumerHelpers.create(this.$store, this.registrationRequest)
-            .then(this.doCreatePasswordIdentity.bind(this))
-            .catch(this.registrationFailed.bind(this))
+      .then(this.doCreatePasswordIdentity.bind(this))
+      .catch(this.registrationFailed.bind(this))
   }
 
   registrationFailed(err) {
@@ -238,8 +278,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       }
     }
     Helpers.createPasswordIdentity(this.$store, _req).then(
-            this.doCreatePassword.bind(this),
-            this.registrationFailed.bind(this)
+      this.doCreatePassword.bind(this),
+      this.registrationFailed.bind(this)
     )
   }
 
@@ -290,7 +330,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       color: '#495057',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
-      fontFamily: '\'Be Vietnam\', sans-serif',
+      fontFamily: "'Be Vietnam', sans-serif",
       fontWeight: '400',
       lineHeight: '24px',
       margin: '0',
@@ -319,19 +359,19 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
     const form: WeavrForm = this.$refs.passwordForm as WeavrForm
     form.tokenize(
-            (tokens) => {
-              if (tokens.password !== '') {
-                this.password = tokens.password
+      (tokens) => {
+        if (tokens.password !== '') {
+          this.password = tokens.password
 
-                this.validatePassword()
-              } else {
-                return null
-              }
-            },
-            (e) => {
-              console.error(e)
-              return null
-            }
+          this.validatePassword()
+        } else {
+          return null
+        }
+      },
+      (e) => {
+        console.error(e)
+        return null
+      }
     )
   }
 
@@ -396,6 +436,30 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       month: val.getMonth() + 1,
       day: val.getDate()
     }
+  }
+
+  get sourceOfFundsOptions(): { text: string; value: string }[] {
+    const _out: { text: string; value: string }[] = []
+
+    Object.keys(SourceOfFunds).forEach((_key: string) => {
+      _out.push({ value: SourceOfFunds[_key], text: _key })
+    })
+
+    return _out
+  }
+
+  get industryOccupationOptions(): { text: string; value: string }[] {
+    const _out: { text: string; value: string }[] = []
+
+    Object.keys(IndustryOccupation).forEach((_key: string) => {
+      _out.push({ value: IndustryOccupation[_key], text: _key })
+    })
+
+    return _out
+  }
+
+  get shouldShowOtherSourceOfFunds(): boolean {
+    return this.registrationRequest.sourceOfFunds === SourceOfFunds.Other
   }
 }
 </script>

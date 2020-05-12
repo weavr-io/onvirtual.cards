@@ -23,4 +23,7 @@ export interface CreateConsumerRequest {
   }
   feeGroup?: string
   acceptedTerms?: boolean
+  sourceOfFunds?: string | null
+  sourceOfFundsOther?: string
+  industryOccupation?: string
 }
