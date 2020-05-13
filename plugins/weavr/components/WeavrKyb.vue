@@ -3,16 +3,16 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
-import { KYBSumSubOptions } from '~/plugins/weavr/components/api'
+import { KYBOptions } from '~/plugins/weavr/components/api'
 
 @Component
 export default class WeavrKyb extends Vue {
   @Prop({}) corporateId!: string
   @Prop({}) accessToken!: string
-  @Prop({}) options!: KYBSumSubOptions
+  @Prop({}) options!: KYBOptions
 
   mounted() {
-    this.$OpcUxSecureClient.kybSumSub().init(
+    this.$OpcUxSecureClient.kyb().init(
       '#idensic',
       {
         accessToken: this.accessToken,
