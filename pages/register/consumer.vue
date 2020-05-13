@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
@@ -118,10 +118,18 @@
                     >
                       I accept the
                       <a
-                        href="https://www.onvirtual.cards/terms/"
+                        href="https://www.onvirtual.cards/terms/consumer"
                         target="_blank"
                         class="text-decoration-underline text-muted"
-                        >terms of use</a>
+                        >terms of use</a
+                      >
+                      and
+                      <a
+                        href="https://www.onvirtual.cards/policy/"
+                        target="_blank"
+                        class="text-decoration-underline text-muted"
+                        >privacy policy</a
+                      >
                     </b-form-checkbox>
                     <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                   </b-form-group>
