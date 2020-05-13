@@ -72,28 +72,6 @@
                   This field must be a valid mobile number.
                 </b-form-invalid-feedback>
               </b-form-group>
-              <b-form-group :state="isInvalid($v.registrationRequest.industryOccupation)" label="Industry / Occupation">
-                <b-form-select
-                  v-model="$v.registrationRequest.industryOccupation.$model"
-                  :state="isInvalid($v.registrationRequest.industryOccupation)"
-                  :options="industryOccupationOptions"
-                />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group :state="isInvalid($v.registrationRequest.sourceOfFunds)" label="Source of Funds">
-                <b-form-select
-                  v-model="$v.registrationRequest.sourceOfFunds.$model"
-                  :state="isInvalid($v.registrationRequest.sourceOfFunds)"
-                  :options="sourceOfFundsOptions"
-                />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
-                <b-form-input
-                  :state="isInvalid($v.registrationRequest.sourceOfFundsOther)"
-                  v-model="registrationRequest.sourceOfFundsOther"
-                />
-              </b-form-group>
               <client-only placeholder="Loading...">
                 <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.registrationRequest.$dirty }">
                   <label class="d-block">PASSWORD</label>
@@ -200,13 +178,6 @@ const touchMap = new WeakMap()
       dateOfBirth: {
         required
       },
-      industryOccupation: {
-        required
-      },
-      sourceOfFunds: {
-        required
-      },
-      sourceOfFundsOther: {},
       acceptedTerms: {
         required,
         sameAs: sameAs(() => true)
@@ -444,30 +415,6 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       month: val.getMonth() + 1,
       day: val.getDate()
     }
-  }
-
-  get sourceOfFundsOptions(): { text: string; value: string }[] {
-    const _out: { text: string; value: string }[] = []
-
-    Object.keys(SourceOfFunds).forEach((_key: string) => {
-      _out.push({ value: SourceOfFunds[_key], text: _key })
-    })
-
-    return _out
-  }
-
-  get industryOccupationOptions(): { text: string; value: string }[] {
-    const _out: { text: string; value: string }[] = []
-
-    Object.keys(IndustryOccupation).forEach((_key: string) => {
-      _out.push({ value: IndustryOccupation[_key], text: _key })
-    })
-
-    return _out
-  }
-
-  get shouldShowOtherSourceOfFunds(): boolean {
-    return this.registrationRequest.sourceOfFunds === SourceOfFunds.Other
   }
 }
 </script>
