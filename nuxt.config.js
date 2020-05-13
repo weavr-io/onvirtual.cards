@@ -29,7 +29,7 @@ const config = {
         type: 'application/javascript'
       },
       {
-        src: 'https://test-api.sumsub.com/idensic/static/sumsub-kyc.js',
+        src: process.env.SUM_SUB_URL || 'https://test-api.sumsub.com/idensic/static/sumsub-kyc.js',
         type: 'application/javascript'
       }
     ],
