@@ -73,6 +73,7 @@
                 <b-form-input
                   :state="isInvalid($v.form.request.sourceOfFundsOther)"
                   v-model="form.request.sourceOfFundsOther"
+                  placeholder="Specify Other Source of Funds"
                 />
               </b-form-group>
               <b-row class="mt-4" align-v="center">
