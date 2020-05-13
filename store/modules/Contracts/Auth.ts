@@ -138,4 +138,7 @@ export module Helpers {
   export const auth = (store: Store<any>): LoginResult => {
     return StoreHelpers.get(store, name, _Getters.auth)
   }
+  export const isLoggedIn = (store: Store<any>): boolean => {
+    return StoreHelpers.get(store, name, _Getters.isLoggedIn)
+  }
 }

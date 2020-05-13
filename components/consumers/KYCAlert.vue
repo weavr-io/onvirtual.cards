@@ -4,10 +4,10 @@
       <b-row v-if="isPendingReview">
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter text-center">
           <h3 class="font-weight-lighter mb-4">
-            Your account is currently under review.
+            Your documentation is currently under review.
           </h3>
           <p>
-            This process normally takes up to 24 hours.
+            This process normally takes a few minutes.  During busy times, review of documentation may take a bit longer up to 24 hours.
           </p>
         </b-col>
       </b-row>
@@ -26,9 +26,9 @@
               Kindly prepare to submit and upload the following information:
             </p>
             <ul class="my-3 font-weight-normal">
-              <li>An ID document (Passport, National ID Card, Residence Permit)</li>
+              <li>An ID document (Passport, National ID Card, Driving Licence)</li>
               <li>Take a selfie</li>
-              <li>A utility bill showing your residential address</li>
+              <li>Two (2) recent utility bills showing your residential address</li>
             </ul>
 
             <h5 class="mt-4 text-center">

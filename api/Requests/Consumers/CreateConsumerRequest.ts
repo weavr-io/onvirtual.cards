@@ -8,4 +8,22 @@ export interface CreateConsumerRequest {
   mobileCountryCode: string
   mobileNumber: string
   baseCurrency?: string
+  dateOfBirth?: {
+    year?: number
+    month?: number
+    day?: number
+  } | null
+  address?: {
+    addressLine1: string
+    addressLine2?: string
+    city: string
+    country: string
+    postCode: string
+    state?: string
+  }
+  feeGroup?: string
+  acceptedTerms?: boolean
+  sourceOfFunds?: string | null
+  sourceOfFundsOther?: string
+  industryOccupation?: string
 }

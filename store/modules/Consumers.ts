@@ -49,6 +49,22 @@ export const actions: Actions<State, RootState> = {
 
     return req
   },
+  update({ commit }, request) {
+    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+
+    const req = api.post('/app/api/consumers/' + request.consumerId + '/update', request.request)
+
+    req.then((_res) => {
+      commit(types.SET_CONSUMER, _res.data)
+    })
+
+    req.finally(() => {
+      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      commit(types.SET_IS_LOADING, false)
+    })
+
+    return req
+  },
   get({ commit }, id) {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })

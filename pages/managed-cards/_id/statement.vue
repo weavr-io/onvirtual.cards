@@ -32,10 +32,10 @@
           <b-row align-h="end" align-v="end">
             <b-col class="text-right" col cols="auto">
               <b-button
-                v-if="managedCard.active && !isFrozen"
-                :to="'/transfer?destination=' + managedCard.id.id"
-                variant="secondary"
-                class="add-funds"
+                      v-if="managedCard.active && !isFrozen"
+                      :to="'/transfer?destination=' + managedCard.id.id"
+                      variant="secondary"
+                      class="add-funds"
               >
                 +
               </b-button>
@@ -59,10 +59,13 @@
             All Transactions
           </h6>
         </b-col>
-        <b-col class="text-right" v-if="managedCard.active">
-          <b-button @click="confirmDeleteCard" variant="link" class="px-0 font-weight-lighter">
-            delete card
-          </b-button>
+        <b-col class="d-flex justify-content-end" v-if="managedCard.active">
+          <div>
+            <b-button @click="confirmDeleteCard" variant="link" class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none">
+              <delete-icon class="mr-2" />
+              delete card
+            </b-button>
+          </div>
         </b-col>
       </b-row>
 
@@ -87,13 +90,13 @@
     </b-container>
 
     <b-modal
-      ref="card-modal"
-      hide-footer
-      centered
-      header-class="border-0"
-      body-class="p-0 transparent"
-      content-class="transparent-modal"
-      size="md"
+            ref="card-modal"
+            hide-footer
+            centered
+            header-class="border-0"
+            body-class="p-0 transparent"
+            content-class="transparent-modal"
+            size="md"
     >
       <b-card v-if="managedCard" no-body class="border-0 cards-card" bg-variant="card-purple">
         <b-card-body class="card-body-modal card-body onvirtual-card">
@@ -117,15 +120,15 @@
                     <b-col>
                       <div class="card-number">
                         <weavr-span
-                          :token="managedCard.cardNumber"
-                          :base-style="{
+                                :token="managedCard.cardNumber"
+                                :base-style="{
                             fontFamily: '\'Be Vietnam\', sans-serif',
                             color: '#6C1C5C',
                             lineHeight: '1',
                             fontSize: '20px'
                           }"
-                          class="card-select-number"
-                          field="cardNumber"
+                                class="card-select-number"
+                                field="cardNumber"
                         />
                       </div>
                     </b-col>
@@ -155,16 +158,16 @@
                     </div>
                     <div class="card-cvv-value">
                       <weavr-span
-                        :token="managedCard.cvv"
-                        :base-style="{
+                              :token="managedCard.cvv"
+                              :base-style="{
                           fontFamily: '\'Be Vietnam\', sans-serif',
                           color: '#6C1C5C',
                           lineHeight: '14.4px',
                           fontSize: '14.4px',
                           fontWeight: 300
                         }"
-                        class="card-select-number"
-                        field="cvv"
+                              class="card-select-number"
+                              field="cvv"
                       />
                     </div>
                   </div>
@@ -198,6 +201,7 @@ const ManagedCards = namespace(ManagedCardsStore.name)
 @Component({
   components: {
     StatementItem: () => import('~/components/statement/item.vue'),
+    DeleteIcon: () => import('~/assets/svg/delete.svg?inline'),
     BIcon,
     BIconThreeDotsVertical
   }
@@ -245,19 +249,19 @@ export default class ManagedCardsTable extends Vue {
 
   confirmDeleteCard() {
     this.$bvModal
-      .msgBoxConfirm(
-        'Are you sure you want to delete this card? Any remaining balance will be returned to your account.',
-        {
-          buttonSize: 'sm',
-          centered: true,
-          cancelVariant: 'link'
-        }
-      )
-      .then((value) => {
-        if (value) {
-          this.doDeleteCard()
-        }
-      })
+            .msgBoxConfirm(
+                    'Are you sure you want to delete this card? Any remaining balance will be returned to your account.',
+                    {
+                      buttonSize: 'sm',
+                      centered: true,
+                      cancelVariant: 'link'
+                    }
+            )
+            .then((value) => {
+              if (value) {
+                this.doDeleteCard()
+              }
+            })
   }
 
   async doDeleteCard() {

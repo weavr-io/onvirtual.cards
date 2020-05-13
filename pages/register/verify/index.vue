@@ -25,10 +25,10 @@
             <b-col md="4" offset-md="4">
               <b-form-group label="">
                 <b-form-input
-                  v-model="verifyEmailRequest.request.nonce"
-                  :state="isInvalid($v.verifyEmailRequest.request.nonce)"
-                  placeholder="000000"
-                  class="text-center"
+                        v-model="verifyEmailRequest.request.nonce"
+                        :state="isInvalid($v.verifyEmailRequest.request.nonce)"
+                        placeholder="000000"
+                        class="text-center"
                 />
                 <b-form-invalid-feedback>This field is required and must be 6 characters.</b-form-invalid-feedback>
               </b-form-group>
@@ -99,7 +99,11 @@ export default class EmailVerificationPage extends VueWithRouter {
 
     if (request.request.nonce !== '') {
       AuthStore.Helpers.verifyEmail(store, request).then(() => {
-        redirect('/login')
+        if (AuthStore.Helpers.isLoggedIn(store)) {
+          redirect('/')
+        } else {
+          redirect('/login')
+        }
       })
     }
 

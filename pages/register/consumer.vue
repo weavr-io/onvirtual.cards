@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
@@ -13,6 +13,7 @@
               <h3 class="text-center font-weight-light mb-5">
                 Register
               </h3>
+
               <b-form-group label="First Name">
                 <b-form-input
                   v-model="registrationRequest.name"
@@ -28,6 +29,23 @@
                   placeholder="Last Name"
                 />
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+              </b-form-group>
+
+              <b-form-group label="Date of Birth">
+                <dob-picker
+                  :value="dateOfBirth"
+                  @input="updateDOB"
+                  @change="updateDOB"
+                  :placeholders="['Day', 'Month', 'Year']"
+                  month-format="long"
+                  show-labels="false"
+                  select-class="form-control"
+                  label-class="small flex-fill"
+                  class="d-flex"
+                />
+                <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.dateOfBirth)">
+                  This field is required.
+                </b-form-invalid-feedback>
               </b-form-group>
               <b-form-group :state="isInvalid($v.registrationRequest.email)" label="Email">
                 <b-form-input
@@ -69,6 +87,32 @@
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </weavr-form>
               </client-only>
+              <b-form-row class="small mt-3 text-muted">
+                <b-col>
+                  <b-form-group>
+                    <b-form-checkbox
+                      v-model="$v.registrationRequest.acceptedTerms.$model"
+                      :state="isInvalid($v.registrationRequest.acceptedTerms)"
+                    >
+                      I accept the
+                      <a
+                        href="https://www.onvirtual.cards/terms/consumer"
+                        target="_blank"
+                        class="text-decoration-underline text-muted"
+                        >terms of use</a
+                      >
+                      and
+                      <a
+                        href="https://www.onvirtual.cards/policy/"
+                        target="_blank"
+                        class="text-decoration-underline text-muted"
+                        >privacy policy</a
+                      >
+                    </b-form-checkbox>
+                    <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                  </b-form-group>
+                </b-col>
+              </b-form-row>
               <b-row class="mt-4" align-v="center">
                 <b-col class="text-center">
                   <loader-button :is-loading="isLoadingRegistration" button-text="continue" />
@@ -84,7 +128,7 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { email, helpers, maxLength, required } from 'vuelidate/lib/validators'
+import { email, helpers, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
 import config from '~/config'
@@ -100,6 +144,8 @@ import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import * as AuthStore from '~/store/modules/Auth'
 import { Schemas } from '~/api/Schemas'
+import { SourceOfFunds } from '~/api/Enums/Consumers/SourceOfFunds'
+import { IndustryOccupation } from '~/api/Enums/Consumers/IndustryOccupation'
 import LoginRequest = Schemas.LoginRequest
 
 const Consumers = namespace(ConsumersStore.name)
@@ -128,6 +174,13 @@ const touchMap = new WeakMap()
       },
       mobileNumber: {
         required
+      },
+      dateOfBirth: {
+        required
+      },
+      acceptedTerms: {
+        required,
+        sameAs: sameAs(() => true)
       }
     }
   },
@@ -138,7 +191,8 @@ const touchMap = new WeakMap()
     ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),
     CompanyDetailsForm: () => import('~/components/registration/CompanyDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
-    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
+    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
+    DobPicker: () => import('~/components/fields/dob-picker.vue')
   }
 })
 export default class ConsumerRegistrationPage extends VueWithRouter {
@@ -153,6 +207,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
   isLoadingRegistration: boolean = false
 
+  dateOfBirth = null
+
   public registrationRequest: CreateConsumerRequest = {
     profileId: 0,
     name: '',
@@ -160,7 +216,12 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     email: '',
     mobileCountryCode: '',
     mobileNumber: '',
-    baseCurrency: 'EUR'
+    sourceOfFunds: null,
+    sourceOfFundsOther: '',
+    industryOccupation: '',
+    baseCurrency: 'EUR',
+    dateOfBirth: null,
+    acceptedTerms: false
   }
 
   public password: string = ''
@@ -240,15 +301,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
 
   goToVerifyEmail() {
     this.isLoadingRegistration = false
-    this.$router.push({
-      path: '/register/verify',
-      query: {
-        cons: this.consumer.id.id + '',
-        email: this.registrationRequest.email,
-        mobileNumber: this.registrationRequest.mobileNumber,
-        mobileCountryCode: this.registrationRequest.mobileCountryCode
-      }
-    })
+    this.$router.push({ path: '/profile/address' })
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -340,6 +393,28 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       clearTimeout(touchMap.get($v))
     }
     touchMap.set($v, setTimeout($v.$touch, 1000))
+  }
+
+  get config() {
+    return {
+      wrap: false,
+      enableTime: false,
+      altInput: true,
+      altFormat: 'd/m/Y',
+      maxDate: new Date(),
+      locale: {
+        firstDayOfWeek: 1
+      }
+    }
+  }
+
+  updateDOB(val) {
+    console.log(val)
+    this.registrationRequest.dateOfBirth = {
+      year: val.getFullYear(),
+      month: val.getMonth() + 1,
+      day: val.getDate()
+    }
   }
 }
 </script>

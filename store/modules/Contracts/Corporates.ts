@@ -12,6 +12,7 @@ import { CorporateUsers } from '~/api/Responses/Corporates/CorporateUsers'
 import { Corporate } from '~/api/Models/Corporates/Corporate'
 import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
 import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/CreateCorporateUserFullRequest'
+import { UpdateCorporateUserFullRequest } from '~/api/Requests/Corporates/UpdateCorporateUserFullRequest'
 
 export const name = 'corporates'
 
@@ -37,6 +38,7 @@ export enum _Actions {
   getUsers = 'getUsers',
   getUser = 'getUser',
   addUser = 'addUser',
+  updateUser = 'updateUser',
   checkKYB = 'checkKYB',
   sendVerificationCodeEmail = 'sendVerificationCodeEmail',
   validateInvite = 'validateInvite',
@@ -56,6 +58,11 @@ export interface Actions<S, R> extends ActionTree<S, R> {
   [_Actions.getUser](
     context: ActionContext<S, R>,
     params: { corporateId: number; userId: number }
+  ): AxiosPromise<CorporateUser>
+
+  [_Actions.updateUser](
+    context: ActionContext<S, R>,
+    params: UpdateCorporateUserFullRequest
   ): AxiosPromise<CorporateUser>
 
   [_Actions.addUser](context: ActionContext<S, R>, request: CreateCorporateUserFullRequest)
@@ -93,6 +100,12 @@ export module Helpers {
     params: { corporateId: number; userId: number }
   ): AxiosPromise<CorporateUser> => {
     return StoreHelpers.dispatch(store, name, _Actions.getUser, params)
+  }
+  export const updateUser = (
+    store: Store<any>,
+    params: UpdateCorporateUserFullRequest
+  ): AxiosPromise<CorporateUser> => {
+    return StoreHelpers.dispatch(store, name, _Actions.updateUser, params)
   }
   export const addUser = (store: Store<any>, request: CreateCorporateUserFullRequest) => {
     return StoreHelpers.dispatch(store, name, _Actions.addUser, request)

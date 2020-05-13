@@ -1,0 +1,23 @@
+export enum IndustryOccupation {
+  'Accounting' = 'Accounting',
+  'Audit' = 'Audit',
+  'Finance' = 'Finance',
+  'Public sector/ Administration' = 'Public sector/ Administration',
+  'Art/Entertainment' = 'Art/Entertainment',
+  'Auto/Aviation' = 'Auto/Aviation',
+  'Banking/ Lending' = 'Banking/ Lending',
+  'Business/ Consultancy/ Legal' = 'Business/ Consultancy/ Legal',
+  'Construction/ Repair' = 'Construction/ Repair',
+  'Education/Professional services' = 'Education/Professional services',
+  'Informational technologies' = 'Informational technologies',
+  'Tobacco/Alcohol' = 'Tobacco/Alcohol',
+  'Gaming/Gambling' = 'Gaming/Gambling',
+  'Medical Services' = 'Medical Services',
+  'ManufacturingPR/Marketing' = 'ManufacturingPR/Marketing',
+  'Precious goods/ Jewelry' = 'Precious goods/ Jewelry',
+  'Non-governmental organization' = 'Non-governmental organization',
+  'Insurance/Security' = 'Insurance/Security',
+  'Retail/ Wholesale' = 'Retail/ Wholesale',
+  'Travel/ Tourism' = 'Travel/ Tourism',
+  'Freelancer' = 'Freelancer'
+}
