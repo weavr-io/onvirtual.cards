@@ -27,10 +27,6 @@ const config = {
         src: process.env.BASE_URL_SCRIPT + '/app/secure/static/client.1.js',
         // src: 'http://localhost/client.1.js',
         type: 'application/javascript'
-      },
-      {
-        src: process.env.SUM_SUB_URL || 'https://test-api.sumsub.com/idensic/static/sumsub-kyc.js',
-        type: 'application/javascript'
       }
     ],
 

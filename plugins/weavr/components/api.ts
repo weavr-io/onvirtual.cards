@@ -3,7 +3,7 @@
 export interface SecureClient {
   init(publicApiKey: string, options: SecureClientOptions): void
   associate(authToken: string, resolve?: () => void, reject?: (e?: any) => void): void
-  kybSumSub(): KYBSumSub
+  kyb(): KYB
   form(): SecureForm
   span(field: string, token: string, options?: SecureSpanOptions): SecureSpan
 }
@@ -117,20 +117,20 @@ export interface SecureElementStyleWithPseudoClasses extends SecureElementStyle 
   ':-webkit-autofill'?: SecureElementStyle
 }
 
-export interface KYBSumSubAuthObject {
+export interface KYBAuthObject {
   externalUserId: string
   accessToken: string
 }
 
-export interface KYBSumSubOptions {
+export interface KYBOptions {
   customCss?: string
 }
 
-export interface KYBSumSub {
+export interface KYB {
   init(
     selector: string,
-    auth: KYBSumSubAuthObject,
+    auth: KYBAuthObject,
     listener: (messageType: any, payload: any) => void,
-    options?: KYBSumSubOptions
+    options?: KYBOptions
   ): void
 }
