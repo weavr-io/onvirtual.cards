@@ -9,7 +9,6 @@
               <h3 class="text-center font-weight-light mb-5">
                 Your address details
               </h3>
-              <pre>{{form}}</pre>
               <b-form-group label="Address Line 1*">
                 <b-form-input
                   :state="isInvalid($v.form.request.address.addressLine1)"
