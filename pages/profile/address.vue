@@ -9,6 +9,7 @@
               <h3 class="text-center font-weight-light mb-5">
                 Your address details
               </h3>
+              <pre>{{form}}</pre>
               <b-form-group label="Address Line 1*">
                 <b-form-input
                   :state="isInvalid($v.form.request.address.addressLine1)"
@@ -53,10 +54,10 @@
                   placeholder="State"
                 />
               </b-form-group>
-              <b-form-group :state="isInvalid($v.form.request.industryOccupation)" label="Industry / Occupation">
+              <b-form-group :state="isInvalid($v.form.request.occupation)" label="Industry / Occupation">
                 <b-form-select
-                  v-model="$v.form.request.industryOccupation.$model"
-                  :state="isInvalid($v.form.request.industryOccupation)"
+                  v-model="$v.form.request.occupation.$model"
+                  :state="isInvalid($v.form.request.occupation)"
                   :options="industryOccupationOptions"
                 />
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -120,7 +121,7 @@ const Countries = require('~/static/json/countries.json')
           postCode: { required },
           state: {}
         },
-        industryOccupation: {
+        occupation: {
           required
         },
         sourceOfFunds: {
@@ -157,7 +158,7 @@ export default class ConsunmerAddressPage extends VueWithRouter {
         address: { ..._res.data.address },
         sourceOfFunds: '',
         sourceOfFundsOther: '',
-        industryOccupation: ''
+        occupation: ''
       }
     }
 
@@ -212,7 +213,7 @@ export default class ConsunmerAddressPage extends VueWithRouter {
     const _out: { text: string; value: string }[] = []
 
     Object.keys(SourceOfFunds).forEach((_key: string) => {
-      _out.push({ value: SourceOfFunds[_key], text: _key })
+      _out.push({ value: _key, text: SourceOfFunds[_key] })
     })
 
     return _out
@@ -222,14 +223,14 @@ export default class ConsunmerAddressPage extends VueWithRouter {
     const _out: { text: string; value: string }[] = []
 
     Object.keys(IndustryOccupation).forEach((_key: string) => {
-      _out.push({ value: IndustryOccupation[_key], text: _key })
+      _out.push({ value: _key, text: IndustryOccupation[_key] })
     })
 
     return _out
   }
 
   get shouldShowOtherSourceOfFunds(): boolean {
-    return this.form.request.sourceOfFunds === SourceOfFunds.Other
+    return this.form.request.sourceOfFunds === 'OTHER'
   }
 }
 </script>
