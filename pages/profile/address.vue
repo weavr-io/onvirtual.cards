@@ -99,8 +99,8 @@ import * as ConsumersStore from '~/store/modules/Consumers'
 import * as AuthStore from '~/store/modules/Auth'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
-import { SourceOfFunds } from '~/api/Enums/Consumers/SourceOfFunds'
-import { IndustryOccupation } from '~/api/Enums/Consumers/IndustryOccupation'
+import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Consumers/SourceOfFunds'
+import { IndustryOccupationOptions } from '~/api/Enums/Consumers/IndustryOccupation'
 
 const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')
@@ -155,9 +155,9 @@ export default class ConsunmerAddressPage extends VueWithRouter {
       request: {
         // @ts-ignore
         address: { ..._res.data.address },
-        sourceOfFunds: '',
+        sourceOfFunds: null,
         sourceOfFundsOther: '',
-        occupation: ''
+        occupation: null
       }
     }
 
@@ -208,28 +208,16 @@ export default class ConsunmerAddressPage extends VueWithRouter {
     })
   }
 
-  get sourceOfFundsOptions(): { text: string; value: string }[] {
-    const _out: { text: string; value: string }[] = []
-
-    Object.keys(SourceOfFunds).forEach((_key: string) => {
-      _out.push({ value: _key, text: SourceOfFunds[_key] })
-    })
-
-    return _out
+  get sourceOfFundsOptions() {
+    return SourceOfFundsOptions
   }
 
-  get industryOccupationOptions(): { text: string; value: string }[] {
-    const _out: { text: string; value: string }[] = []
-
-    Object.keys(IndustryOccupation).forEach((_key: string) => {
-      _out.push({ value: _key, text: IndustryOccupation[_key] })
-    })
-
-    return _out
+  get industryOccupationOptions() {
+    return IndustryOccupationOptions
   }
 
   get shouldShowOtherSourceOfFunds(): boolean {
-    return this.form.request.sourceOfFunds === 'OTHER'
+    return this.form.request.sourceOfFunds === SourceOfFunds.OTHER
   }
 }
 </script>
