@@ -22,5 +22,5 @@ export interface CreateConsumerRequest {
   acceptedTerms?: boolean
   sourceOfFunds?: SourceOfFunds | null
   sourceOfFundsOther?: string
-  occupation?: IndustryOccupation
+  occupation?: IndustryOccupation | null
 }
