@@ -26,9 +26,9 @@
               Kindly prepare to submit and upload the following information:
             </p>
             <ul class="my-3 font-weight-normal">
-              <li>An ID document (Passport, National ID Card, Driving Licence)</li>
+              <li>An ID document (Passport or National ID Card)</li>
               <li>Take a selfie</li>
-              <li>Two (2) recent utility bills showing your residential address</li>
+              <li>Two (2) documents for Proof of Address from utility bill, bank statement or driving licence</li>
             </ul>
 
             <h5 class="mt-4 text-center">
