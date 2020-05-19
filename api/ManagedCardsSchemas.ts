@@ -1,5 +1,6 @@
 import { Currencies } from '~/api/Constants/CurrencyOptions'
 import { CardBrand, CardType } from '~/api/Constants/Card'
+import { Address } from '~/api/Models/Common/Address'
 
 export module ManagedCardsSchemas {
   export interface ManagedInstrumentBalances {
@@ -14,7 +15,7 @@ export module ManagedCardsSchemas {
     }
     profileId: string
     tag: string
-    ownerId: {
+    owner: {
       type: string
       id: string
     }
@@ -43,6 +44,7 @@ export module ManagedCardsSchemas {
     creationTimestamp: string
     action: any[]
     cardholderMobileNumber: string
+    billingAddress?: Nullable<Address>
   }
 
   export interface CreateManagedCardRequest {

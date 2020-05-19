@@ -1,4 +1,7 @@
 import { ConsumerKycStatus } from './ConsumerKycStatus'
+import { IndustryOccupation } from '~/api/Enums/Consumers/IndustryOccupation'
+import { SourceOfFunds } from '~/api/Enums/Consumers/SourceOfFunds'
+import { Address } from '~/api/Models/Common/Address'
 
 export interface Consumer {
   id: {
@@ -15,19 +18,15 @@ export interface Consumer {
   mobileCountryCode: string
   mobileNumber: string
   kyc?: ConsumerKycStatus
-  defaultCurrency?: string
+  baseCurrency?: string
   dateOfBirth?: {
     year?: number
     month?: number
     day?: number
   }
-  address?: {
-    addressLine1: string
-    addressLine2?: string
-    city: string
-    country: string
-    postCode: string
-    state?: string
-  }
+  address?: Address
   feeGroup?: string
+  occupation?: IndustryOccupation
+  sourceOfFunds?: SourceOfFunds
+  sourceOfFundsOther?: string
 }

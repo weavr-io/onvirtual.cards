@@ -1,3 +1,7 @@
+import { SourceOfFunds } from '~/api/Enums/Consumers/SourceOfFunds'
+import { IndustryOccupation } from '~/api/Enums/Consumers/IndustryOccupation'
+import { Address } from '~/api/Models/Common/Address'
+
 export interface CreateConsumerRequest {
   profileId: any
   tag?: string
@@ -13,17 +17,10 @@ export interface CreateConsumerRequest {
     month?: number
     day?: number
   } | null
-  address?: {
-    addressLine1: string
-    addressLine2?: string
-    city: string
-    country: string
-    postCode: string
-    state?: string
-  }
+  address?: Address
   feeGroup?: string
   acceptedTerms?: boolean
-  sourceOfFunds?: string | null
+  sourceOfFunds?: SourceOfFunds | null
   sourceOfFundsOther?: string
-  occupation?: string
+  occupation?: IndustryOccupation | null
 }

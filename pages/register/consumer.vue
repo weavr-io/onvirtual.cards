@@ -218,7 +218,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     mobileNumber: '',
     sourceOfFunds: null,
     sourceOfFundsOther: '',
-    occupation: '',
+    occupation: null,
     baseCurrency: 'EUR',
     dateOfBirth: null,
     acceptedTerms: false

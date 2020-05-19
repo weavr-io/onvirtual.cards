@@ -32,4 +32,10 @@ export interface Corporate {
     remainingLimit: CurrencyAmount
   }
   baseCurrency?: string
+  feeGroup?: string
+  incorporatedOn?: {
+    year?: number
+    month?: number
+    day?: number
+  }
 }
