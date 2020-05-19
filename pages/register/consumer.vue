@@ -287,19 +287,19 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
       password: this.password
     }
 
-    Helpers.authenticate(this.$store, _loginRequest).then(this.sendVerifyEmail.bind(this))
+    Helpers.authenticate(this.$store, _loginRequest).then(this.goToAdressInputScreen.bind(this))
   }
 
-  sendVerifyEmail() {
-    ConsumerHelpers.sendVerificationCodeEmail(this.$store, {
-      consumerId: this.consumer.id.id,
-      request: {
-        emailAddress: this.registrationRequest.email
-      }
-    }).then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
-  }
+  // sendVerifyEmail() {
+  //   ConsumerHelpers.sendVerificationCodeEmail(this.$store, {
+  //     consumerId: this.consumer.id.id,
+  //     request: {
+  //       emailAddress: this.registrationRequest.email
+  //     }
+  //   }).then(this.goToAdressInputScreen.bind(this), this.registrationFailed.bind(this))
+  // }
 
-  goToVerifyEmail() {
+  goToAdressInputScreen() {
     this.isLoadingRegistration = false
     this.$router.push({ path: '/profile/address' })
   }

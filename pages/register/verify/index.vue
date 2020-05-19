@@ -14,7 +14,7 @@
           </b-col>
         </b-row>
         <form id="contact-form" @submit="doVerify" class="mt-5">
-          <b-alert :show="showEmailResentSuccess" variant="success">
+          <b-alert :show="showEmailResentSuccessAlert" variant="success">
             The verification code was resent by email.
           </b-alert>
           <p class="text-center mb-5 text-grey">
@@ -25,10 +25,10 @@
             <b-col md="4" offset-md="4">
               <b-form-group label="">
                 <b-form-input
-                        v-model="verifyEmailRequest.request.nonce"
-                        :state="isInvalid($v.verifyEmailRequest.request.nonce)"
-                        placeholder="000000"
-                        class="text-center"
+                  v-model="verifyEmailRequest.request.nonce"
+                  :state="isInvalid($v.verifyEmailRequest.request.nonce)"
+                  placeholder="000000"
+                  class="text-center"
                 />
                 <b-form-invalid-feedback>This field is required and must be 6 characters.</b-form-invalid-feedback>
               </b-form-group>
@@ -86,6 +86,14 @@ export default class EmailVerificationPage extends VueWithRouter {
   showEmailResentSuccess: boolean = false
 
   public verifyEmailRequest!: Schemas.verifyEmailRequest
+
+  get showEmailResentSuccessAlert(): boolean {
+    if (this.$route.query.send === 'true') {
+      return false
+    } else {
+      return this.showEmailResentSuccess
+    }
+  }
 
   asyncData({ route, redirect, store }) {
     const request: Schemas.verifyEmailRequest = {

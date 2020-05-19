@@ -193,7 +193,7 @@ export default class ConsunmerAddressPage extends VueWithRouter {
     }
 
     if (_cons && _cons.kyc && !_cons.kyc.emailVerified) {
-      this.$router.push('/register/verify')
+      this.$router.push('/register/verify?send=true')
     } else {
       this.$router.push('/')
     }
