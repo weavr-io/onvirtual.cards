@@ -6,11 +6,11 @@
           <b-row>
             <b-col>
               <h2 class="font-weight-light">
-                KYC Failed
+                KYC process cannot start
               </h2>
               <h5 class="font-weight-lighter">
-                We're sorry but we could not verify your documents automatically. These documents will now be manually
-                reviewed by one of our operators - this may take up to 15 minutes.
+                We're sorry but you cannot start a new verification process at this time.  This is possibly due to documents which have already 
+                been submitted and are currently under review.  If the issue persists, please contact support@onvirtual.cards for assistance.
               </h5>
             </b-col>
           </b-row>
