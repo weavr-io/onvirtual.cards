@@ -14,7 +14,7 @@
       <template v-if="isManagedAccounts">
         <b-col class="pb-2">
           <b-row v-if="account" align-h="end" align-v="end">
-            <b-col cols="2" lg="1" class="text-right">
+            <b-col v-if="canAddFunds" cols="2" lg="1" class="text-right">
               <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="secondary" class="add-funds">
                 +
               </b-button>
@@ -56,6 +56,11 @@ import { namespace } from 'vuex-class'
 import * as AccountsStore from '~/store/modules/Accounts'
 import * as CardsStore from '~/store/modules/Cards'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
+import * as AuthStore from '~/store/modules/Auth'
+import * as ConsumersStore from '~/store/modules/Consumers'
+import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+import * as CorporatesStore from '~/store/modules/Corporates'
+import { KYBState } from '~/api/Enums/KYBState'
 
 const Accounts = namespace(AccountsStore.name)
 const Cards = namespace(CardsStore.name)
@@ -83,6 +88,14 @@ export default class DashboardHeader extends Vue {
       return ['managed-accounts', 'managed-accounts-id'].indexOf(this.$route.matched[0].name) !== -1
     } else {
       return false
+    }
+  }
+
+  get canAddFunds(): boolean {
+    if (AuthStore.Helpers.isConsumer(this.$store)) {
+      return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
+    } else {
+      return CorporatesStore.Helpers.corporate(this.$store)?.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
     }
   }
 }
@@ -119,7 +132,7 @@ export default class DashboardHeader extends Vue {
 }
 
 .account-view-details {
-  background: #F0EDDE;
+  background: #f0edde;
   border-radius: 10px;
   padding: 10px;
   text-align: center;
