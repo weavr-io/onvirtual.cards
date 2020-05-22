@@ -209,6 +209,7 @@ export default class EmailVerificationPage extends VueWithRouter {
     this.$router.push({
       path: '/register/verify/mobile',
       query: {
+        send: 'true',
         cons: this.$route.query.cons,
         corp: this.$route.query.corp,
         mobileNumber: this.$route.query.mobileNumber,

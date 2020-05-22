@@ -17,11 +17,11 @@
       </b-navbar>
     </div>
     <b-container>
-      <b-row class="full-height-vh" align-v="center">
+      <b-row class="min-vh-100" align-v="center">
         <nuxt class="my-6" />
       </b-row>
     </b-container>
-    <cookie-policy />
+<!--    <cookie-policy />-->
     <!-- <app-footer /> -->
   </div>
 </template>

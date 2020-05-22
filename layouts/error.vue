@@ -1,6 +1,6 @@
 <template>
   <b-container class="container-full-height">
-    <b-row class="full-height-vh" align-v="center">
+    <b-row class="min-vh-100" align-v="center">
       <b-col class="text-center" lg="6" offset-lg="3">
         <template v-if="is404">
           <h1 class="font-weight-light">

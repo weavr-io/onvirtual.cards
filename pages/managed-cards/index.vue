@@ -3,7 +3,7 @@
     <section>
       <b-container class="mb-5 mt-n4">
         <b-row>
-          <b-col class="text-right">
+          <b-col class="text-right" v-if="canAddCard">
             <b-button to="/managed-cards/add" variant="border-primary">
               + add new card
             </b-button>
@@ -46,6 +46,7 @@ import * as CorporatesStore from '~/store/modules/Corporates'
 import { KYBState } from '~/api/Enums/KYBState'
 import * as ViewStore from '~/store/modules/View'
 import { Corporate } from '~/api/Models/Corporates/Corporate'
+import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 
 const Cards = namespace(CardsStore.name)
 const Corporates = namespace(CorporatesStore.name)
@@ -90,6 +91,14 @@ export default class CardsPage extends VueWithRouter {
       return this.corporate.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
     } else {
       return false
+    }
+  }
+
+  get canAddCard(): boolean {
+    if (AuthStore.Helpers.isConsumer(this.$store)) {
+      return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
+    } else {
+      return CorporatesStore.Helpers.corporate(this.$store)?.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
     }
   }
 }
