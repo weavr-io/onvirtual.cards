@@ -52,15 +52,25 @@
           </b-row>
           <loader-button :is-loading="isLoading" button-text="verify" class="mt-5 text-center mb-0" />
         </form>
-        <b-alert :show="dismissCountDown" @dismiss-count-down="countDownChanged" variant="white" class="text-center mt-4 mb-0 text-muted small">
+        <b-alert
+          :show="dismissCountDown"
+          @dismiss-count-down="countDownChanged"
+          variant="white"
+          class="text-center mt-4 mb-0 text-muted small"
+        >
           {{ dismissCountDown }} seconds until you can send another verification code
         </b-alert>
-        <div class="mt-4 text-center" v-if="!dismissCountDown">
-          <small class="text-grey">
-            Didn’t receive a code?
-            <b-link @click="sendVerifyPhone" class="text-decoration-underline text-grey">Send again</b-link>
-            .
-          </small>
+        <div v-if="!dismissCountDown" class="mt-4 text-center">
+          <template v-if="verificationIssue">
+            <small class="text-grey">We could not verify your mobile number. Please contact support for assistance</small>
+          </template>
+          <template v-else>
+            <small class="text-grey">
+              Didn’t receive a code?
+              <b-link @click="sendVerifyPhone" class="text-decoration-underline text-grey">Send again</b-link>
+              .
+            </small>
+          </template>
         </div>
       </b-card>
     </div>
@@ -108,6 +118,8 @@ export default class EmailVerificationPage extends VueWithRouter {
   public corporateVerifyMobileRequest!: CorporatesVerifyMobileRequest
 
   nonce: string = ''
+
+  verificationIssue: boolean = false
 
   mobile = {
     countryCode: 'GB',
@@ -173,10 +185,6 @@ export default class EmailVerificationPage extends VueWithRouter {
         consumerVerifyMobileRequest.request.mobileCountryCode + consumerVerifyMobileRequest.request.mobileNumber
       _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
       _number = consumerVerifyMobileRequest.request.mobileNumber
-
-      try {
-        await ConsumersStore.Helpers.sendVerificationCodeMobile(store, consumerVerifyMobileRequest)
-      } catch (e) {}
     } else if (AuthStore.Helpers.isCorporate(store)) {
       const _corporateId = AuthStore.Helpers.identityId(store)
       const _corporate = AuthStore.Helpers.auth(store)
@@ -201,10 +209,6 @@ export default class EmailVerificationPage extends VueWithRouter {
         corporateVerifyMobileRequest.request.mobileCountryCode + corporateVerifyMobileRequest.request.mobileNumber
       _parsedNumber = parsePhoneNumberFromString(_mobileNumber)
       _number = corporateVerifyMobileRequest.request.mobileNumber
-
-      try {
-        await CorporatesStore.Helpers.sendVerificationCodeMobile(store, corporateVerifyMobileRequest)
-      } catch (e) {}
     } else {
       redirect('/')
     }
@@ -268,8 +272,14 @@ export default class EmailVerificationPage extends VueWithRouter {
     )
   }
 
-  goToDashboard(res) {
+  goToDashboard() {
     this.$router.push('/')
+  }
+
+  mounted() {
+    if (this.$route.query.send && this.$route.query.send === 'true') {
+      this.sendVerifyPhone()
+    }
   }
 
   sendVerifyPhone() {
@@ -282,11 +292,21 @@ export default class EmailVerificationPage extends VueWithRouter {
   }
 
   sendVerifyPhoneCorporate() {
-    return CorporatesStore.Helpers.sendVerificationCodeMobile(this.$store, this.corporateVerifyMobileRequest)
+    return CorporatesStore.Helpers.sendVerificationCodeMobile(this.$store, this.corporateVerifyMobileRequest).catch(
+      () => {
+        this.verificationIssue = true
+        this.dismissCountDown = 0
+      }
+    )
   }
 
   sendVerifyPhoneConsumer() {
-    return ConsumersStore.Helpers.sendVerificationCodeMobile(this.$store, this.consumerVerifyMobileRequest)
+    return ConsumersStore.Helpers.sendVerificationCodeMobile(this.$store, this.consumerVerifyMobileRequest).catch(
+      () => {
+        this.verificationIssue = true
+        this.dismissCountDown = 0
+      }
+    )
   }
 
   phoneUpdate(number) {

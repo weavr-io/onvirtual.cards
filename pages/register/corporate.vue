@@ -177,25 +177,26 @@ export default class RegistrationPage extends VueWithRouter {
     }
 
     Helpers.authenticate(this.$store, _loginRequest).then(
-      this.sendVerifyEmail.bind(this),
+      this.goToVerifyEmail.bind(this),
       this.registrationFailed.bind(this)
     )
   }
 
-  sendVerifyEmail() {
-    CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, {
-      corporateId: this.corporate.id.id,
-      body: {
-        emailAddress: this.registrationRequest.rootEmail
-      }
-    }).then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
-  }
+  // sendVerifyEmail() {
+  //   CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, {
+  //     corporateId: this.corporate.id.id,
+  //     body: {
+  //       emailAddress: this.registrationRequest.rootEmail
+  //     }
+  //   }).then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
+  // }
 
   goToVerifyEmail() {
     CorporatesStore.Helpers.setIsLoadingRegistration(this.$store, false)
     this.$router.push({
       path: '/register/verify',
       query: {
+        send: 'true',
         corp: this.corporate.id.id,
         email: this.registrationRequest.rootEmail,
         mobileNumber: this.registrationRequest.rootMobileNumber,
