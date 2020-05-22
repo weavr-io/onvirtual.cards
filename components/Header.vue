@@ -5,7 +5,7 @@
         <b-navbar-brand to="/">
           <img src="/img/logo.svg" width="160" class="d-inline-block align-center" alt="WEAVR">
         </b-navbar-brand>
-        <b-collapse id="nav_collapse" is-nav>
+        <b-collapse id="nav_collapse" is-nav v-if="isLoggedIn">
           <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right toggle-class="border-bottom">
               <template slot="button-content">
@@ -51,6 +51,8 @@ export default class Header extends Vue {
   @Auth.Getter isConsumer!: boolean
 
   @Auth.Getter isCorporate!: boolean
+
+  @Auth.Getter isLoggedIn!: boolean
 
   @Auth.Getter identityId!: number | null
 
