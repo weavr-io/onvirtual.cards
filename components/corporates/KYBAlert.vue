@@ -26,19 +26,16 @@
           <ul class="my-3 font-weight-normal">
             <li>Copy of the Certificate of Incorporation</li>
             <li>Copy of the Articles of Association (last amendment)</li>
-            <li>Proof of Business Address such as a copy of a bank statement or lease agreement in the name of the business</li>
+            <li>Proof of Business Address (e.g. bank statement/lease agreement)</li>
             <li>UBO Declaration Form downloadable from <a href="">here.</a></li>
-            <li>Recent commercial registry extract showing shareholders and directors</a></li>
+            <li>Commercial registry extract showing shareholders and directors</a></li>
           </ul>
           <p>
-            You will also need to provider the following information:
+            You will also need to provide the following information:
           </p>
           <ul class="my-3 font-weight-normal">
             <li>Directors: name, date of birth, nationality, email address, contact number</li>
-            <li>
-              Ultimate Beneficiary Owners (UBOs) holding a stake of 25% or more of the equity: name, date of birth,
-              nationality
-            </li>
+            <li>Ultimate Beneficiary Owners (UBOs) holding a stake of 25% or more: name, date of birth, nationality</li>
           </ul>
           <div class="text-center">
             <b-button to="/managed-accounts/kyb">
