@@ -26,8 +26,8 @@
           <ul class="my-3 font-weight-normal">
             <li>Copy of the Certificate of Incorporation</li>
             <li>Copy of the Articles of Association (last amendment)</li>
-            <li>Proof of Business Address (e.g. bank statement/lease agreement)</li>
-            <li>UBO Declaration Form downloadable from <a href="">here.</a></li>
+            <li>Proof of Business Address (e.g. lease agreement)</li>
+            <li>UBO Declaration Form downloadable from <a href="https://storage.cloud.google.com/weavr-cdn/UBO-a.pdf">here.</a></li>
             <li>Commercial registry extract showing shareholders and directors</a></li>
           </ul>
           <p>
