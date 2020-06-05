@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-card">
@@ -12,9 +12,6 @@
           <div :class="{ 'd-none': screen !== 1 }" class="form-screen">
             <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
           </div>
-<!--          <div :class="{ 'd-none': screen !== 2 }" class="form-screen">-->
-<!--            <company-details-form :request="registrationRequest" @submit-form="form3Submit" @go-back="goBack" />-->
-<!--          </div>-->
         </div>
       </b-card-body>
     </b-card>
@@ -70,7 +67,7 @@ export default class RegistrationPage extends VueWithRouter {
     this.screen--
   }
 
-  public registrationRequest: CreateCorporateRequest = {
+  public registrationRequest: Nullable<CreateCorporateRequest> = {
     active: true,
     acceptedTerms: false,
     companyName: '',
@@ -85,7 +82,10 @@ export default class RegistrationPage extends VueWithRouter {
     rootMobileNumber: '',
     rootName: '',
     rootSurname: '',
-    supportEmail: ''
+    supportEmail: '',
+    occupation: null,
+    sourceOfFunds: null,
+    sourceOfFundsOther: ''
   }
 
   form1Submit(_data) {
@@ -111,6 +111,10 @@ export default class RegistrationPage extends VueWithRouter {
       this.registrationRequest.companyName = _data.companyName
       this.registrationRequest.companyRegistrationNumber = _data.companyRegistrationNumber
       this.registrationRequest.registrationCountry = _data.registrationCountry
+
+      this.registrationRequest.occupation = _data.occupation
+      this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
+      this.registrationRequest.sourceOfFundsOther = _data.sourceOfFundsOther
 
       this.doRegister()
     }
@@ -172,7 +176,7 @@ export default class RegistrationPage extends VueWithRouter {
 
   doLogin() {
     const _loginRequest: Schemas.LoginRequest = {
-      code: this.registrationRequest.rootEmail,
+      code: this.registrationRequest.rootEmail!,
       password: this.password
     }
 

@@ -1,6 +1,8 @@
 import { KYBState } from '~/api/Enums/KYBState'
 import { Schemas } from '~/api/Schemas'
 import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
+import { IndustryOccupation } from '~/api/Enums/Corporates/IndustryOccupation'
+import { SourceOfFunds } from '~/api/Enums/Corporates/SourceOfFunds'
 import CurrencyAmount = Schemas.CurrencyAmount
 
 export interface Corporate {
@@ -38,4 +40,7 @@ export interface Corporate {
     month?: number
     day?: number
   }
+  occupation?: IndustryOccupation
+  sourceOfFunds?: SourceOfFunds
+  sourceOfFundsOther?: string
 }
