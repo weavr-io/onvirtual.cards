@@ -57,6 +57,29 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
+    <b-form-group :state="isInvalid($v.form.occupation)" label="Industry">
+      <b-form-select
+        v-model="$v.form.occupation.$model"
+        :state="isInvalid($v.form.occupation)"
+        :options="industryOccupationOptions"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+    </b-form-group>
+    <b-form-group :state="isInvalid($v.form.sourceOfFunds)" label="Source of Funds">
+      <b-form-select
+        v-model="$v.form.sourceOfFunds.$model"
+        :state="isInvalid($v.form.sourceOfFunds)"
+        :options="sourceOfFundsOptions"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+    </b-form-group>
+    <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
+      <b-form-input
+        :state="isInvalid($v.form.sourceOfFundsOther)"
+        v-model="form.sourceOfFundsOther"
+        placeholder="Specify Other Source of Funds"
+      />
+    </b-form-group>
     <b-form-group label="My position within the company is">
       <b-form-radio v-model="$v.form.rootCompanyPosition.$model" name="company-position" value="Representative">
         I am a representative (with the relevant power of attorney)
@@ -88,6 +111,8 @@ import { Component, Emit, namespace } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
 import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
+import { IndustryOccupation, IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
+import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
 const Corporates = namespace(CorporatesStore.name)
 
 const Countries = require('~/static/json/countries.json')
@@ -123,7 +148,14 @@ const Countries = require('~/static/json/countries.json')
       registrationCountry: {
         required,
         maxLength: maxLength(2)
-      }
+      },
+      occupation: {
+        required
+      },
+      sourceOfFunds: {
+        required
+      },
+      sourceOfFundsOther: {}
     }
   },
   components: {
@@ -154,6 +186,9 @@ export default class PersonalDetailsForm extends VueWithRouter {
     rootCompanyPosition: string
     rootMobileCountryCode: string
     rootMobileNumber: string
+    occupation: IndustryOccupation | null
+    sourceOfFunds: SourceOfFunds | null
+    sourceOfFundsOther: string
   } = {
     rootName: '',
     rootSurname: '',
@@ -162,7 +197,10 @@ export default class PersonalDetailsForm extends VueWithRouter {
     rootMobileNumber: '',
     companyName: '',
     companyRegistrationNumber: '',
-    registrationCountry: ''
+    registrationCountry: '',
+    sourceOfFunds: null,
+    sourceOfFundsOther: '',
+    occupation: null
   }
 
   get countiesOptions() {
@@ -201,6 +239,14 @@ export default class PersonalDetailsForm extends VueWithRouter {
     this.form.rootMobileCountryCode = '+' + number.countryCallingCode
     this.form.rootMobileNumber = number.nationalNumber
     this.numberIsValid = number.isValid
+  }
+
+  get industryOccupationOptions() {
+    return IndustryOccupationOptions
+  }
+
+  get sourceOfFundsOptions() {
+    return SourceOfFundsOptions
   }
 }
 </script>
