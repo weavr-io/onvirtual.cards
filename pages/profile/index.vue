@@ -69,12 +69,12 @@
               <b-form-row>
                 <b-col>
                   <b-form-group label="FIRST NAME">
-                    <b-form-input v-model="corporate.name" class="form-control" placeholder="John" disabled />
+                    <b-form-input v-model="updateCorporate.body.name" class="form-control" placeholder="John" />
                   </b-form-group>
                 </b-col>
                 <b-col>
                   <b-form-group label="LAST NAME">
-                    <b-form-input v-model="corporate.surname" class="form-control" placeholder="Doe" disabled />
+                    <b-form-input v-model="updateCorporate.body.surname" class="form-control" placeholder="Doe" />
                   </b-form-group>
                 </b-col>
               </b-form-row>
@@ -235,6 +235,8 @@ export default class Profile extends VueWithRouter {
           corporateId: _id,
           userId: _corporate.credential!.id,
           body: {
+            name: _corporateUser.data.name,
+            surname: _corporateUser.data.surname,
             mobileCountryCode: _corporateUser.data.mobileCountryCode,
             mobileNumber: _corporateUser.data.mobileNumber,
             email: _corporateUser.data.email
