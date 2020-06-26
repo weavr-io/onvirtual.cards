@@ -169,8 +169,6 @@ export default class ConsunmerAddressPage extends VueWithRouter {
   submitForm(e) {
     e.preventDefault()
 
-    this.isLoading = true
-
     if (this.$v.form) {
       this.$v.form.$touch()
       if (this.$v.form.$anyError) {
@@ -178,12 +176,16 @@ export default class ConsunmerAddressPage extends VueWithRouter {
       }
     }
 
-    ConsumersStore.Helpers.update(this.$store, this.form).then(this.addressUpdated.bind(this))
+    this.isLoading = true
+
+    const xhr = ConsumersStore.Helpers.update(this.$store, this.form)
+    xhr.then(this.addressUpdated.bind(this))
+    xhr.finally(() => {
+      this.isLoading = false
+    })
   }
 
   async addressUpdated() {
-    this.isLoading = false
-
     const _auth = AuthStore.Helpers.auth(this.$store)
     let _cons = ConsumersStore.Helpers.consumer(this.$store)
 
