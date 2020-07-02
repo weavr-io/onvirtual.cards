@@ -1,12 +1,11 @@
 <template>
   <b-form-group class="mb-0">
-    <b-button v-if="!isLoading" type="submit" variant="secondary">
-      {{ buttonText }}
-      <span v-if="showArrow" class="pl-5">-></span>
-    </b-button>
-    <b-button v-if="isLoading" disabled variant="secondary">
-      <b-spinner small type="grow" />
-    </b-button>
+    <b-overlay :show="isLoading" rounded="pill" class="d-inline-block" spinner-small>
+      <b-button type="submit" variant="secondary">
+        {{ buttonText }}
+        <span v-if="showArrow" class="pl-5">-></span>
+      </b-button>
+    </b-overlay>
   </b-form-group>
 </template>
 

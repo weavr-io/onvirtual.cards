@@ -9,7 +9,7 @@
             </b-card-title>
             <b-card-body>
               <b-form @submit="doAdd">
-                <b-form-row v-if="!isConsumer">
+                <b-form-row v-if="showNameOnCardField">
                   <b-col>
                     <b-form-group label="Name of Person using Card">
                       <b-form-input
@@ -107,10 +107,7 @@ const Auth = namespace(AuthStore.name)
         })
       },
       nameOnCard: {
-        requiredIf: requiredIf(function() {
-          // @ts-ignore
-          return !this.isConsumer
-        }),
+        required,
         maxLength: maxLength(30)
       }
     }
@@ -124,6 +121,8 @@ export default class AddCardPage extends VueWithRouter {
   @Auth.Getter auth!: LoginResult
 
   @Auth.Getter isConsumer!: boolean
+
+  showNameOnCardField: boolean = false
 
   currencyOptions = [
     { value: 'EUR', text: 'EUR' },
@@ -203,7 +202,19 @@ export default class AddCardPage extends VueWithRouter {
       createManagedCardRequest.cardholderMobileNumber = _consumer.data.mobileCountryCode + _consumer.data.mobileNumber
     }
 
-    return { createManagedCardRequest: createManagedCardRequest }
+    let _showNameOnCardField: boolean = false
+    if (!AuthStore.Helpers.isConsumer(store)) {
+      _showNameOnCardField = true
+    } else if (createManagedCardRequest.nameOnCard && createManagedCardRequest.nameOnCard.length > 27) {
+      _showNameOnCardField = true
+    } else {
+      _showNameOnCardField = false
+    }
+
+    return {
+      createManagedCardRequest: createManagedCardRequest,
+      showNameOnCardField: _showNameOnCardField
+    }
   }
 
   phoneUpdate(number) {

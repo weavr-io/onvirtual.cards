@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
@@ -9,7 +9,7 @@
         <div class="form-screens">
           <error-alert />
           <div class="form-screen">
-            <b-form @submit="submitForm" novalidate>
+            <b-form @submit.prevent="submitForm" novalidate>
               <h3 class="text-center font-weight-light mb-5">
                 Register
               </h3>
@@ -99,20 +99,23 @@
                         href="https://www.onvirtual.cards/terms/consumer"
                         target="_blank"
                         class="text-decoration-underline text-muted"
-                        >terms of use</a
+                      >terms of use</a
                       >
                       and
                       <a
                         href="https://www.onvirtual.cards/policy/"
                         target="_blank"
                         class="text-decoration-underline text-muted"
-                        >privacy policy</a
+                      >privacy policy</a
                       >
                     </b-form-checkbox>
                     <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                   </b-form-group>
                 </b-col>
               </b-form-row>
+              <div class="mt-2">
+                <recaptcha />
+              </div>
               <b-row class="mt-4" align-v="center">
                 <b-col class="text-center">
                   <loader-button :is-loading="isLoadingRegistration" button-text="continue" />
@@ -197,6 +200,8 @@ const touchMap = new WeakMap()
 })
 export default class ConsumerRegistrationPage extends VueWithRouter {
   @Consumers.Getter consumer!: Consumer
+
+  private $recaptcha: any
 
   $refs!: {
     passwordForm: WeavrForm
@@ -322,36 +327,42 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     }
   }
 
-  submitForm(e) {
-    e.preventDefault()
-
-    if (this.numberIsValid === null) {
-      this.numberIsValid = false
-    }
-
-    if (this.$v.registrationRequest) {
-      this.$v.registrationRequest.$touch()
-      if (this.$v.registrationRequest.$anyError || !this.numberIsValid) {
-        return null
+  async submitForm() {
+    try {
+      if (this.numberIsValid === null) {
+        this.numberIsValid = false
       }
-    }
 
-    const form: WeavrForm = this.$refs.passwordForm as WeavrForm
-    form.tokenize(
-      (tokens) => {
-        if (tokens.password !== '') {
-          this.password = tokens.password
-
-          this.validatePassword()
-        } else {
+      if (this.$v.registrationRequest) {
+        this.$v.registrationRequest.$touch()
+        if (this.$v.registrationRequest.$anyError || !this.numberIsValid) {
           return null
         }
-      },
-      (e) => {
-        console.error(e)
-        return null
       }
-    )
+
+      const token = await this.$recaptcha.getResponse()
+      console.log('ReCaptcha token:', token)
+      await this.$recaptcha.reset()
+
+      const form: WeavrForm = this.$refs.passwordForm as WeavrForm
+      form.tokenize(
+        (tokens) => {
+          if (tokens.password !== '') {
+            this.password = tokens.password
+
+            this.validatePassword()
+          } else {
+            return null
+          }
+        },
+        (e) => {
+          console.error(e)
+          return null
+        }
+      )
+    } catch (error) {
+      console.log('Login error:', error)
+    }
   }
 
   validatePassword() {
@@ -370,7 +381,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     console.log('checkOnKeyUp')
     if (e.key === 'Enter') {
       e.preventDefault()
-      this.submitForm(e)
+      this.submitForm()
     }
   }
 

@@ -38,6 +38,7 @@
     "@nuxtjs/eslint-config": "^0.0.1",
     "@nuxtjs/eslint-module": "^0.0.1",
     "@nuxtjs/svg": "^0.1.11",
+    "@nuxtjs/recaptcha": "^0.6.2",
     "@types/dotenv": "^6.1.1",
     "@types/vuelidate": "^0.7.13",
     "@typescript-eslint/eslint-plugin": "^1.13.0",

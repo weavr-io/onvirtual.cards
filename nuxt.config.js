@@ -71,11 +71,16 @@ const config = {
     '@nuxtjs/axios',
     // '@nuxtjs/eslint-module'
     '@dansmaculotte/nuxt-segment',
-    '@nuxtjs/svg'
+    '@nuxtjs/svg',
+    '@nuxtjs/recaptcha'
   ],
   bootstrapVue: {
     bootstrapCSS: false, // Or `css: false`
     bootstrapVueCSS: false // Or `bvCSS: false`
+  },
+  recaptcha: {
+    siteKey: process.env.RECAPTCHA,
+    version: 2
   },
   /*
    ** Axios module configuration
