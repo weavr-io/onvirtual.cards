@@ -11,10 +11,6 @@ export default function createInterceptors() {
             // @ts-ignore
             window.$nuxt.$router.push('/login')
             break
-          case 403:
-            // @ts-ignore
-            window.$nuxt.$router.replace('/forbidden')
-            break
           case 409:
             Error.Helpers.setConflict(store, error)
             break

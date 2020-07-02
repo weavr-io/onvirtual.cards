@@ -8,7 +8,10 @@
               Create Card
             </b-card-title>
             <b-card-body>
-              <b-form @submit="doAdd">
+              <b-alert :show="showError" variant="danger">
+                Error creating new card. Contact support if problem persists.
+              </b-alert>
+              <b-form @submit="doAdd" v-if="!showError">
                 <b-form-row v-if="showNameOnCardField">
                   <b-col>
                     <b-form-group label="Name of Person using Card">
@@ -124,6 +127,8 @@ export default class AddCardPage extends VueWithRouter {
 
   showNameOnCardField: boolean = false
 
+  showError: boolean = false
+
   currencyOptions = [
     { value: 'EUR', text: 'EUR' },
     { value: 'GBP', text: 'GBP' }
@@ -152,12 +157,19 @@ export default class AddCardPage extends VueWithRouter {
       }
     }
 
-    this.addCard(this.createManagedCardRequest).then(() => {
-      try {
-        this.$segment.track('Card Added', this.createManagedCardRequest)
-      } catch (e) {}
-      this.$router.push('/managed-cards')
-    })
+    this.addCard(this.createManagedCardRequest).then(
+      () => {
+        try {
+          this.$segment.track('Card Added', this.createManagedCardRequest)
+        } catch (e) {}
+        this.$router.push('/managed-cards')
+      },
+      (err) => {
+        if (err.response.status) {
+          this.showError = true
+        }
+      }
+    )
   }
 
   mounted() {
