@@ -37,7 +37,8 @@
               target="_blank"
               class="text-decoration-underline text-muted"
             >terms of use</a>
-            href="https://www.onvirtual.cards/policy/"
+            and
+            <a href="https://www.onvirtual.cards/policy/"
             target="_blank"
             class="text-decoration-underline text-muted"
             >privacy policy</a>

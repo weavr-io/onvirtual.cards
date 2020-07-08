@@ -20,7 +20,12 @@
                   :state="isInvalid($v.registrationRequest.name)"
                   placeholder="First Name"
                 />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                <b-form-invalid-feedback v-if="!$v.registrationRequest.name.required">
+                  This field is required
+                </b-form-invalid-feedback>
+                <b-form-invalid-feedback v-if="!$v.registrationRequest.name.maxLength">
+                  Name is too long.
+                </b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="Last Name">
                 <b-form-input
@@ -28,7 +33,12 @@
                   v-model="registrationRequest.surname"
                   placeholder="Last Name"
                 />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                <b-form-invalid-feedback v-if="!$v.registrationRequest.surname.required">
+                  This field is required
+                </b-form-invalid-feedback>
+                <b-form-invalid-feedback v-if="!$v.registrationRequest.surname.maxLength">
+                  Surname is too long.
+                </b-form-invalid-feedback>
               </b-form-group>
 
               <b-form-group label="Date of Birth">
@@ -166,11 +176,11 @@ const touchMap = new WeakMap()
       },
       name: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(20)
       },
       surname: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(20)
       },
       mobileCountryCode: {
         required

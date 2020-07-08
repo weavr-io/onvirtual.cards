@@ -79,8 +79,7 @@ const config = {
     bootstrapVueCSS: false // Or `bvCSS: false`
   },
   recaptcha: {
-    // siteKey: process.env.RECAPTCHA,
-    siteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+    siteKey: process.env.RECAPTCHA,
     version: 2
   },
   /*

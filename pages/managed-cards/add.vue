@@ -111,7 +111,7 @@ const Auth = namespace(AuthStore.name)
       },
       nameOnCard: {
         required,
-        maxLength: maxLength(30)
+        maxLength: maxLength(27)
       }
     }
   }
