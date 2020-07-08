@@ -80,7 +80,7 @@ const config = {
   },
   recaptcha: {
     siteKey: process.env.RECAPTCHA,
-    version: 2
+    version: 3
   },
   /*
    ** Axios module configuration
