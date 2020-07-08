@@ -238,7 +238,7 @@ export default class ManagedCardsTable extends Vue {
       id: _cardId,
       request: {
         showFundMovementsOnly: true,
-        orderByTimestamp: OrderType.ASC
+        orderByTimestamp: OrderType.DESC
       }
     }
 
