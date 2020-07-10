@@ -42,12 +42,12 @@
   </b-container>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import * as AccountsStore from '~/store/modules/Accounts'
 import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Accounts = namespace(AccountsStore.name)
 
@@ -56,7 +56,7 @@ const Accounts = namespace(AccountsStore.name)
     StatementItem: () => import('~/components/statement/item.vue')
   }
 })
-export default class AccountStatement extends VueWithRouter {
+export default class AccountStatement extends mixins(BaseMixin) {
   @Accounts.Getter filteredStatement: StatementEntry[] | undefined
 
   @Accounts.Getter account!: ManagedAccountsSchemas.ManagedAccount | null

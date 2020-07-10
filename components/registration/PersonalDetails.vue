@@ -117,12 +117,12 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, namespace } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, namespace } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { IndustryOccupation, IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
 import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
+import BaseMixin from '~/minixs/BaseMixin'
 const Corporates = namespace(CorporatesStore.name)
 
 const Countries = require('~/static/json/countries.json')
@@ -173,7 +173,7 @@ const Countries = require('~/static/json/countries.json')
     LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
-export default class PersonalDetailsForm extends VueWithRouter {
+export default class PersonalDetailsForm extends mixins(BaseMixin) {
   $v
 
   @Corporates.Getter isLoadingRegistration

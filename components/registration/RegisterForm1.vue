@@ -61,16 +61,15 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, Ref } from 'nuxt-property-decorator'
+import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required, email, sameAs } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ErrorStore from '~/store/modules/Error'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import * as SecureClientStore from '~/store/modules/SecureClient'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
   validations: {
@@ -89,7 +88,7 @@ import * as SecureClientStore from '~/store/modules/SecureClient'
     ErrorAlert: () => import('~/components/ErrorAlert.vue')
   }
 })
-export default class RegisterForm1 extends VueWithRouter {
+export default class RegisterForm1 extends mixins(BaseMixin) {
   private $recaptcha: any
 
   public form: {

@@ -50,13 +50,13 @@
 
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
 import { Schemas } from '~/api/Schemas'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as ConsumersStore from '~/store/modules/Consumers'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Auth = namespace(AuthStore.name)
 
@@ -78,7 +78,7 @@ const Auth = namespace(AuthStore.name)
     }
   }
 })
-export default class EmailVerificationPage extends VueWithRouter {
+export default class EmailVerificationPage extends mixins(BaseMixin) {
   @Auth.Getter isLoggedIn
 
   @Auth.Getter isLoading

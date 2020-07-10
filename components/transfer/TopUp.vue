@@ -58,13 +58,13 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit } from 'nuxt-property-decorator'
-import { required, minValue, between } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { required, between } from 'vuelidate/lib/validators'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { namespace } from '~/node_modules/vuex-class'
 import * as AccountsStore from '~/store/modules/Accounts'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Accounts = namespace(AccountsStore.name)
 
@@ -81,7 +81,7 @@ const Accounts = namespace(AccountsStore.name)
     }
   }
 })
-export default class TopUpForm extends VueWithRouter {
+export default class TopUpForm extends mixins(BaseMixin) {
   $v
 
   @Accounts.Getter accounts!: ManagedAccountsSchemas.ManagedAccounts

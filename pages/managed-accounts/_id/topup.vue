@@ -39,7 +39,9 @@
                   </b-tr>
                   <b-tr>
                     <b-th>Address</b-th>
-                    <b-td style="white-space: pre">{{ account.bankAccountDetails.address | weavr_coma_to_newline }}</b-td>
+                    <b-td style="white-space: pre">
+                      {{ account.bankAccountDetails.address | weavr_coma_to_newline }}
+                    </b-td>
                   </b-tr>
                   <b-tr v-if="account.bankAccountDetails.paymentReference">
                     <b-th>Payment Reference</b-th>
@@ -64,16 +66,15 @@
   </section>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
 import * as AccountsStore from '~/store/modules/Accounts'
 import * as CorporatesStore from '~/store/modules/Corporates'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import config from '~/config'
+import BaseMixin from '~/minixs/BaseMixin'
 
 import ManagedAccount = ManagedAccountsSchemas.ManagedAccount
 
@@ -85,7 +86,7 @@ const Accounts = namespace(AccountsStore.name)
     BIconBoxArrowUpRight
   }
 })
-export default class AccountTopupPage extends VueWithRouter {
+export default class AccountTopupPage extends mixins(BaseMixin) {
   @Accounts.Getter account!: ManagedAccount | null
 
   async asyncData({ store, route, redirect }) {

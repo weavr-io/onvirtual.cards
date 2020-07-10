@@ -18,18 +18,17 @@
   </b-container>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import * as CardsStore from '~/store/modules/Cards'
 import * as AccountsStore from '~/store/modules/Accounts'
 import * as TransfersStore from '~/store/modules/Transfers'
 import { TransfersSchemas } from '~/api/TransfersSchemas'
 import config from '~/config'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
+import BaseMixin from '~/minixs/BaseMixin'
+import { cardsStore } from '~/utils/store-accessor'
 
 const Accounts = namespace(AccountsStore.name)
-const Cards = namespace(CardsStore.name)
 const Transfers = namespace(TransfersStore.name)
 
 @Component({
@@ -40,8 +39,10 @@ const Transfers = namespace(TransfersStore.name)
     TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue')
   }
 })
-export default class CardsPage extends VueWithRouter {
-  @Cards.Getter cards
+export default class TransfersPage extends mixins(BaseMixin) {
+  get cards() {
+    return this.stores.cards.cards
+  }
 
   @Accounts.Getter accounts?: ManagedAccountsSchemas.ManagedAccounts
 
@@ -70,7 +71,7 @@ export default class CardsPage extends VueWithRouter {
 
   public createTransferRequest!: TransfersSchemas.CreateTransferRequest
 
-  get formattedCards(): { value: string; text: string }[] {
+  get formattedCards(): { value: number; text: string }[] {
     return this.cards.map((val) => {
       return {
         value: val.id.id,
@@ -93,11 +94,17 @@ export default class CardsPage extends VueWithRouter {
   mounted() {
     try {
       this.$segment.track('Initiated Transfer', {})
-    } catch (e) {}
+    } catch (e) {
+    }
   }
 
   async asyncData({ store, route }) {
-    await store.dispatch('cards/getCards')
+    await cardsStore(store).getCards({
+      paging: {
+        offset: 0,
+        limit: 0
+      }
+    })
     const _accounts = await store.dispatch('accounts/index')
 
     const request: TransfersSchemas.CreateTransferRequest = {
@@ -120,41 +127,42 @@ export default class CardsPage extends VueWithRouter {
 
   doTransfer() {
     this.execute(this.createTransferRequest)
-      .then(() => {
-        this.createTransferRequest = {
-          profileId: null,
-          source: {
-            type: 'managed_accounts',
-            id: null
-          },
-          destination: {
-            type: 'managed_cards',
-            id: null
-          },
-          destinationAmount: {
-            currency: 'EUR',
-            amount: 0
-          }
-        }
-        this.screen = 2
+            .then(() => {
+              this.createTransferRequest = {
+                profileId: null,
+                source: {
+                  type: 'managed_accounts',
+                  id: null
+                },
+                destination: {
+                  type: 'managed_cards',
+                  id: null
+                },
+                destinationAmount: {
+                  currency: 'EUR',
+                  amount: 0
+                }
+              }
+              this.screen = 2
 
-        try {
-          this.$segment.track('Transfer Success', this.createTransferRequest)
-        } catch (e) {}
-      })
-      .catch((err) => {
-        this.screen = 1
+              try {
+                this.$segment.track('Transfer Success', this.createTransferRequest)
+              } catch (e) {
+              }
+            })
+            .catch((err) => {
+              this.screen = 1
 
-        const data = err.response.data
+              const data = err.response.data
 
-        let error = data.message ? data.message : data.errorCode
+              let error = data.message ? data.message : data.errorCode
 
-        if (error === 'DENIED_BY_INSTRUMENT') {
-          error = 'Amount is higher than available balance'
-        }
+              if (error === 'DENIED_BY_INSTRUMENT') {
+                error = 'Amount is higher than available balance'
+              }
 
-        this.$weavrToastError(error)
-      })
+              this.$weavrToastError(error)
+            })
   }
 }
 </script>

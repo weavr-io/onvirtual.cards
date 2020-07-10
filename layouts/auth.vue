@@ -27,11 +27,11 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import config from '~/config'
 import * as AuthStore from '~/store/modules/Auth'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Auth = namespace(AuthStore.name)
 
@@ -46,7 +46,7 @@ const Auth = namespace(AuthStore.name)
     }
   }
 })
-class AuthLayout extends VueWithRouter {
+class AuthLayout extends mixins(BaseMixin) {
   @Auth.Getter isLoggedIn!: boolean
 
   get isLogin(): boolean {

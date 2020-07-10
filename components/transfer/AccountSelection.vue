@@ -30,12 +30,12 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit } from 'nuxt-property-decorator'
+import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { namespace } from '~/node_modules/vuex-class'
 import * as AccountsStore from '~/store/modules/Accounts'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Accounts = namespace(AccountsStore.name)
 
@@ -50,7 +50,7 @@ const Accounts = namespace(AccountsStore.name)
     }
   }
 })
-export default class AccountSelectionForm extends VueWithRouter {
+export default class AccountSelectionForm extends mixins(BaseMixin) {
   @Accounts.Getter
   accounts!: ManagedAccountsSchemas.ManagedAccounts
 

@@ -19,8 +19,7 @@
 </template>
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component } from 'nuxt-property-decorator'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { Component, mixins } from 'nuxt-property-decorator'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as AuthStore from '~/store/modules/Auth'
 
@@ -31,6 +30,7 @@ import { Schemas } from '~/api/Schemas'
 import { Helpers } from '~/store/modules/Auth'
 import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
 import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -46,7 +46,7 @@ const Auth = namespace(AuthStore.name)
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
   }
 })
-export default class RegistrationPage extends VueWithRouter {
+export default class RegistrationPage extends mixins(BaseMixin) {
   @Corporates.Action register
 
   @Corporates.Getter isLoading

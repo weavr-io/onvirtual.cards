@@ -13,11 +13,11 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { BaseVue } from '~/base/classes/BaseVue'
 
 import * as LoaderStore from '~/store/modules/Loader'
+import BaseMixin from '~/minixs/BaseMixin'
 const Loader = namespace(LoaderStore.name)
 
 @Component({
@@ -27,7 +27,7 @@ const Loader = namespace(LoaderStore.name)
     cookiePolicy: () => import('~/components/cookie.vue')
   }
 })
-export default class DefaultLayout extends BaseVue {
+export default class DefaultLayout extends mixins(BaseMixin) {
   @Loader.Getter isLoading
 }
 </script>

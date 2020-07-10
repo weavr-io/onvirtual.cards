@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
     </div>
     <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
@@ -139,10 +139,9 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { email, helpers, maxLength, required, sameAs } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import config from '~/config'
 import { CreateConsumerRequest } from '~/api/Requests/Consumers/CreateConsumerRequest'
@@ -157,9 +156,7 @@ import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import * as AuthStore from '~/store/modules/Auth'
 import { Schemas } from '~/api/Schemas'
-import { SourceOfFunds } from '~/api/Enums/Consumers/SourceOfFunds'
-import { IndustryOccupation } from '~/api/Enums/Consumers/IndustryOccupation'
-import LoginRequest = Schemas.LoginRequest
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')
@@ -208,7 +205,7 @@ const touchMap = new WeakMap()
     DobPicker: () => import('~/components/fields/dob-picker.vue')
   }
 })
-export default class ConsumerRegistrationPage extends VueWithRouter {
+export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
   @Consumers.Getter consumer!: Consumer
 
   private $recaptcha: any

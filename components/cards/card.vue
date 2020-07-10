@@ -101,11 +101,10 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop } from 'nuxt-property-decorator'
+import { Component, mixins, Prop } from 'nuxt-property-decorator'
 import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
-import * as CardsStore from '~/store/modules/Cards'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
   components: {
@@ -113,7 +112,7 @@ import * as CardsStore from '~/store/modules/Cards'
     BIconThreeDotsVertical
   }
 })
-export default class WeavrCard extends VueWithRouter {
+export default class WeavrCard extends mixins(BaseMixin) {
   @Prop() readonly card!: ManagedCardsSchemas.ManagedCard
 
   showOptions: boolean = false
@@ -138,10 +137,19 @@ export default class WeavrCard extends VueWithRouter {
     }
   }
 
+  getCards() {
+    return this.stores.cards.getCards({
+      paging: {
+        offset: 0,
+        limit: 0
+      }
+    })
+  }
+
   freezeCard() {
-    CardsStore.Helpers.freeze(this.$store, this.card.id.id).then(
+    this.stores.cards.freeze(this.card.id.id).then(
       () => {
-        CardsStore.Helpers.getCards(this.$store)
+        this.getCards()
       },
       (err) => {
         const data = err.response.data
@@ -152,9 +160,9 @@ export default class WeavrCard extends VueWithRouter {
   }
 
   unfreezeCard() {
-    CardsStore.Helpers.unfreeze(this.$store, this.card.id.id).then(
+    this.stores.cards.unfreeze(this.card.id.id).then(
       () => {
-        CardsStore.Helpers.getCards(this.$store)
+        this.getCards()
       },
       (err) => {
         const data = err.response.data

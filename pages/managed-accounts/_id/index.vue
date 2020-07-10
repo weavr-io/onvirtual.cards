@@ -4,9 +4,8 @@
   </section>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 
 import * as AccountsStore from '~/store/modules/Accounts'
@@ -19,6 +18,7 @@ import { Consumer } from '~/api/Models/Consumers/Consumer'
 import * as ViewStore from '~/store/modules/View'
 import { Corporate } from '~/api/Models/Corporates/Corporate'
 import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Accounts = namespace(AccountsStore.name)
 const Consumers = namespace(ConsumersStore.name)
@@ -31,7 +31,7 @@ const View = namespace(ViewStore.name)
     Statement: () => import('~/components/accounts/statement/statement.vue')
   }
 })
-export default class AccountPage extends VueWithRouter {
+export default class AccountPage extends mixins(BaseMixin) {
   @Accounts.Getter account!: ManagedAccountsSchemas.ManagedAccount | null
 
   @Accounts.Getter filteredStatement: StatementEntry[] | undefined

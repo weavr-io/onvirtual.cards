@@ -76,19 +76,17 @@
 </template>
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import * as CardsStore from '~/store/modules/Cards'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
 import * as AccountsStore from '~/store/modules/Accounts'
+import BaseMixin from '~/minixs/BaseMixin'
 import LoginResult = Schemas.LoginResult
 
-const Cards = namespace(CardsStore.name)
 const Auth = namespace(AuthStore.name)
 
 @Component({
@@ -116,11 +114,7 @@ const Auth = namespace(AuthStore.name)
     }
   }
 })
-export default class AddCardPage extends VueWithRouter {
-  @Cards.Action addCard
-
-  @Cards.Getter isLoading
-
+export default class AddCardPage extends mixins(BaseMixin) {
   @Auth.Getter auth!: LoginResult
 
   @Auth.Getter isConsumer!: boolean
@@ -138,6 +132,10 @@ export default class AddCardPage extends VueWithRouter {
   cardholderMobileNumber = ''
 
   public createManagedCardRequest!: ManagedCardsSchemas.CreateManagedCardRequest
+
+  get isLoading() {
+    return this.stores.cards.isLoading
+  }
 
   doAdd(evt) {
     evt.preventDefault()
@@ -157,7 +155,7 @@ export default class AddCardPage extends VueWithRouter {
       }
     }
 
-    this.addCard(this.createManagedCardRequest).then(
+    this.stores.cards.addCard(this.createManagedCardRequest).then(
       () => {
         try {
           this.$segment.track('Card Added', this.createManagedCardRequest)

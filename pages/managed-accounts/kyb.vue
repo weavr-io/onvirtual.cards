@@ -48,13 +48,13 @@
   </section>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import config from '~/config'
 import { KYBOptions } from '~/plugins/weavr/components/api'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
   components: {
@@ -62,7 +62,7 @@ import { KYBOptions } from '~/plugins/weavr/components/api'
     BIconBoxArrowUpRight
   }
 })
-export default class KybPage extends VueWithRouter {
+export default class KybPage extends mixins(BaseMixin) {
   accessToken!: string
   corporateId!: string
 

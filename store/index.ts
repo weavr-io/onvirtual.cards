@@ -1,9 +1,8 @@
-import Vuex from 'vuex'
+import { Store } from 'vuex'
 import * as root from './root'
 import * as Auth from './modules/Auth'
 import * as Error from './modules/Error'
 import * as Loader from './modules/Loader'
-import * as Cards from './modules/Cards'
 import * as Corporates from './modules/Corporates'
 import * as Accounts from './modules/Accounts'
 import * as Transfers from './modules/Transfers'
@@ -11,6 +10,8 @@ import * as Consumers from './modules/Consumers'
 import * as View from './modules/View'
 import * as SecureClient from './modules/SecureClient'
 import createInterceptors from '~/plugins/AxiosInterceptors'
+import Cards from '~/store/cards'
+import { initialiseStores } from '~/utils/store-accessor'
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
 // See https://nuxtjs.org/guide/vuex-store#classic-mode
@@ -23,11 +24,12 @@ import createInterceptors from '~/plugins/AxiosInterceptors'
 
 export type RootState = root.State
 
+const initializer = (store: Store<any>) => initialiseStores(store)
 const interceptors = createInterceptors()
 
 const createStore = () => {
-  return new Vuex.Store({
-    plugins: [interceptors],
+  return new Store({
+    plugins: [interceptors, initializer],
     state: root.state(),
     getters: root.getters,
     mutations: root.mutations,
@@ -36,13 +38,13 @@ const createStore = () => {
       [Auth.name]: Auth,
       [Error.name]: Error,
       [Loader.name]: Loader,
-      [Cards.name]: Cards,
       [Corporates.name]: Corporates,
       [Accounts.name]: Accounts,
       [Transfers.name]: Transfers,
       [Consumers.name]: Consumers,
       [View.name]: View,
-      [SecureClient.name]: SecureClient
+      [SecureClient.name]: SecureClient,
+      cardsV2: Cards
     }
   })
 }

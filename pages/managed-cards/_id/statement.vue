@@ -186,26 +186,19 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 
 import { BModal, BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 
-import * as ManagedCardsStore from '~/store/modules/Cards'
 import * as TransfersStore from '~/store/modules/Transfers'
 import { Schemas } from '~/api/Schemas'
 import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
 import { TransfersSchemas } from '~/api/TransfersSchemas'
 import config from '~/config'
 import * as AccountsStore from '~/store/modules/Accounts'
-import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
-import * as AuthStore from '~/store/modules/Auth'
-import * as ConsumersStore from '~/store/modules/Consumers'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
-import * as CorporatesStore from '~/store/modules/Corporates'
-import { KYBState } from '~/api/Enums/KYBState'
+import { cardsStore } from '~/utils/store-accessor'
+import BaseMixin from '~/minixs/BaseMixin'
 import OrderType = Schemas.OrderType
-
-const ManagedCards = namespace(ManagedCardsStore.name)
 
 @Component({
   components: {
@@ -215,7 +208,7 @@ const ManagedCards = namespace(ManagedCardsStore.name)
     BIconThreeDotsVertical
   }
 })
-export default class ManagedCardsTable extends Vue {
+export default class ManagedCardsTable extends mixins(BaseMixin) {
   $route
 
   // @ts-ignore
@@ -225,9 +218,13 @@ export default class ManagedCardsTable extends Vue {
 
   cardId: string = ''
 
-  @ManagedCards.Getter filteredStatement
+  get filteredStatement() {
+    return this.stores.cards.filteredStatement
+  }
 
-  @ManagedCards.Getter managedCard!: ManagedCardsSchemas.ManagedCard
+  get managedCard() {
+    return this.stores.cards.managedCard
+  }
 
   public fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
 
@@ -242,8 +239,8 @@ export default class ManagedCardsTable extends Vue {
       }
     }
 
-    await store.dispatch('cards/getCardStatement', _req)
-    await store.dispatch('cards/getManagedCard', _cardId)
+    await cardsStore(store).getCardStatement(_req)
+    await cardsStore(store).getManagedCard(_cardId)
 
     return { cardId: _cardId }
   }
@@ -253,7 +250,7 @@ export default class ManagedCardsTable extends Vue {
   }
 
   get isFrozen() {
-    return Object.entries(this.managedCard.state.blockTypes).length > 0 || this.managedCard.state.destroyType !== ''
+    return Object.entries(this.managedCard!.state.blockTypes).length > 0 || this.managedCard!.state.destroyType !== ''
   }
 
   confirmDeleteCard() {
@@ -292,7 +289,7 @@ export default class ManagedCardsTable extends Vue {
         }
         await TransfersStore.Helpers.execute(this.$store, _request)
       }
-      await ManagedCardsStore.Helpers.remove(this.$store, this.cardId)
+      await this.stores.cards.remove(this.cardId)
 
       this.$router.push('/managed-cards')
     }

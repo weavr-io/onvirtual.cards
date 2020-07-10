@@ -3,14 +3,14 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { Component, mixins } from 'nuxt-property-decorator'
 import * as AccountsStore from '~/store/modules/Accounts'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
   layout: 'dashboard'
 })
-export default class DashboardPage extends VueWithRouter {
+export default class DashboardPage extends mixins(BaseMixin) {
   async asyncData({ redirect, store }) {
     const _accounts = await AccountsStore.Helpers.index(store)
 

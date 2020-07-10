@@ -44,9 +44,8 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { BaseVue } from '~/base/classes/BaseVue'
 
 import * as LoaderStore from '~/store/modules/Loader'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
@@ -58,6 +57,7 @@ import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { Schemas } from '~/api/Schemas'
 import { Corporate } from '~/api/Models/Corporates/Corporate'
 import CurrencyAmount = Schemas.CurrencyAmount
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Loader = namespace(LoaderStore.name)
 const Consumers = namespace(ConsumersStore.name)
@@ -75,7 +75,7 @@ const Accounts = namespace(AccountsStore.name)
     cookiePolicy: () => import('~/components/cookie.vue')
   }
 })
-export default class DefaultLayout extends BaseVue {
+export default class DefaultLayout extends mixins(BaseMixin) {
   @Loader.Getter isLoading
 
   @View.Getter showKybAlert!: boolean

@@ -64,17 +64,15 @@
 </template>
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import * as CardsStore from '~/store/modules/Cards'
 import * as AuthStore from '~/store/modules/Auth'
 import { Schemas } from '~/api/Schemas'
 import { UpdateManagedCardRequest } from '~/api/Requests/ManagedCards/UpdateManagedCardRequest'
+import BaseMixin from '~/minixs/BaseMixin'
 import LoginResult = Schemas.LoginResult
 
-const Cards = namespace(CardsStore.name)
 const Auth = namespace(AuthStore.name)
 
 @Component({
@@ -107,10 +105,10 @@ const Auth = namespace(AuthStore.name)
     }
   }
 })
-export default class AddCardPage extends VueWithRouter {
-  @Cards.Action addCard
-
-  @Cards.Getter isLoading
+export default class AddCardPage extends mixins(BaseMixin) {
+  get isLoading() {
+    return this.stores.cards.isLoading
+  }
 
   @Auth.Getter auth!: LoginResult
 
@@ -142,7 +140,7 @@ export default class AddCardPage extends VueWithRouter {
       }
     }
 
-    CardsStore.Helpers.update(this.$store, this.updateManagedCardRequest).then(() => {
+    this.stores.cards.update(this.updateManagedCardRequest).then(() => {
       try {
         this.$segment.track('Card Updated', this.updateManagedCardRequest)
       } catch (e) {}
@@ -153,7 +151,7 @@ export default class AddCardPage extends VueWithRouter {
   async asyncData({ store, route }) {
     const _cardId = route.params.id
 
-    const _card = await CardsStore.Helpers.getManagedCard(store, _cardId)
+    const _card = await this.stores.cards.getManagedCard(_cardId)
 
     const _parsedNumber = parsePhoneNumberFromString(_card.data.cardholderMobileNumber)
 

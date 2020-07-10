@@ -93,10 +93,9 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import { maxLength, required } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as AuthStore from '~/store/modules/Auth'
@@ -104,6 +103,7 @@ import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
 import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Consumers/SourceOfFunds'
 import { IndustryOccupationOptions } from '~/api/Enums/Consumers/IndustryOccupation'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')
@@ -143,7 +143,7 @@ const Countries = require('~/static/json/countries.json')
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
   }
 })
-export default class ConsunmerAddressPage extends VueWithRouter {
+export default class ConsunmerAddressPage extends mixins(BaseMixin) {
   @Consumers.Getter consumer!: Consumer
 
   form!: UpdateConsumerRequest

@@ -25,15 +25,15 @@
 </template>
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 
 import * as AccountsStore from '~/store/modules/Accounts'
 import * as AuthStore from '~/store/modules/Auth'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
+import BaseMixin from '~/minixs/BaseMixin'
 import LoginResult = Schemas.LoginResult
 
 const Auth = namespace(AuthStore.name)
@@ -56,7 +56,7 @@ const Accounts = namespace(AccountsStore.name)
     }
   }
 })
-export default class AddCardPage extends VueWithRouter {
+export default class AddCardPage extends mixins(BaseMixin) {
   @Accounts.Action add
 
   @Accounts.Getter isLoading

@@ -10,16 +10,16 @@
   </section>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { Component, mixins } from 'nuxt-property-decorator'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as AccountsStore from '~/store/modules/Accounts'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
   components: {}
 })
-export default class KycPage extends VueWithRouter {
+export default class KycPage extends mixins(BaseMixin) {
   redirectUrl!: string
 
   async asyncData({ store, redirect }) {

@@ -67,14 +67,14 @@
 
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component, Watch } from 'nuxt-property-decorator'
+import { Component, mixins, Watch } from 'nuxt-property-decorator'
 import { Schemas } from '~/api/Schemas'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import * as SecureClientStore from '~/store/modules/SecureClient'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Auth = namespace(AuthStore.name)
 
@@ -85,7 +85,7 @@ const Auth = namespace(AuthStore.name)
     LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
-export default class LoginPage extends VueWithRouter {
+export default class LoginPage extends mixins(BaseMixin) {
   @Auth.Getter isLoggedIn
 
   @Auth.Action authenticate
