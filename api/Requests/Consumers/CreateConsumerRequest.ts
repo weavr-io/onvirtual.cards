@@ -23,4 +23,5 @@ export interface CreateConsumerRequest {
   sourceOfFunds?: SourceOfFunds | null
   sourceOfFundsOther?: string
   occupation?: IndustryOccupation | null
+  amlProviderKey: string
 }

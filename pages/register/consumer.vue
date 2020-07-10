@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
@@ -233,7 +233,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     occupation: null,
     baseCurrency: 'EUR',
     dateOfBirth: null,
-    acceptedTerms: false
+    acceptedTerms: false,
+    amlProviderKey: 'sumsub'
   }
 
   public password: string = ''

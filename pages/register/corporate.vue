@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
     </div>
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-card">
@@ -85,7 +85,8 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     supportEmail: '',
     occupation: null,
     sourceOfFunds: null,
-    sourceOfFundsOther: ''
+    sourceOfFundsOther: '',
+    kybProviderKey: 'sumsub'
   }
 
   form1Submit(_data) {
