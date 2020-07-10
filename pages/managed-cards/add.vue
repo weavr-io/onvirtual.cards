@@ -171,10 +171,6 @@ export default class AddCardPage extends mixins(BaseMixin) {
   }
 
   mounted() {
-    if (this.auth.identity) {
-      this.createManagedCardRequest.owner = this.auth.identity
-    }
-
     this.createManagedCardRequest.profileId = AuthStore.Helpers.isConsumer(this.$store)
       ? config.profileId.managed_cards_consumers
       : config.profileId.managed_cards_corporates
@@ -191,15 +187,10 @@ export default class AddCardPage extends mixins(BaseMixin) {
       profileId: AuthStore.Helpers.isConsumer(store)
         ? config.profileId.managed_cards_consumers
         : config.profileId.managed_cards_corporates,
-      owner: AuthStore.Helpers.identity(store),
       friendlyName: '',
       currency: 'EUR',
-      fiProvider: 'paynetics',
-      channelProvider: 'gps',
       nameOnCard: '',
-      createNow: true,
-      cardholderMobileNumber: '',
-      formattedMobileNumber: ''
+      cardholderMobileNumber: ''
     }
 
     if (_accounts.data.count === 1) {

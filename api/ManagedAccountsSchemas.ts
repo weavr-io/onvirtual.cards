@@ -1,17 +1,9 @@
-import { Schemas } from './Schemas'
-
 export module ManagedAccountsSchemas {
-  import TypeId = Schemas.TypeId
-
   export interface CreateManagedAccountRequest {
     profileId: any
     tag?: string
-    owner: TypeId
     friendlyName: string
     currency: string
-    fiProvider: string
-    createNow?: boolean
-    channelProvider: string
   }
 
   export interface ManagedAccounts {

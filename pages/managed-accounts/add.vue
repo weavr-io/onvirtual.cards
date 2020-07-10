@@ -99,12 +99,8 @@ export default class AddCardPage extends mixins(BaseMixin) {
       profileId: AuthStore.Helpers.isConsumer(store)
         ? config.profileId.managed_accounts_consumers
         : config.profileId.managed_accounts_corporates,
-      owner: AuthStore.Helpers.identity(store),
       friendlyName: 'Main Account',
-      currency: 'EUR',
-      fiProvider: 'paynetics',
-      createNow: true,
-      channelProvider: 'gps'
+      currency: 'EUR'
     }
 
     if (AuthStore.Helpers.isConsumer(store)) {
