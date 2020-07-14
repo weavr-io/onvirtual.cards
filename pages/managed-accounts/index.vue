@@ -4,8 +4,8 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as AccountsStore from '~/store/modules/Accounts'
 import BaseMixin from '~/minixs/BaseMixin'
+import { accountsStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'dashboard'
@@ -13,7 +13,7 @@ import BaseMixin from '~/minixs/BaseMixin'
 export default class CardsPage extends mixins(BaseMixin) {
   async asyncData({ store, redirect }) {
     let _accountId
-    const _accounts = await AccountsStore.Helpers.index(store)
+    const _accounts = await accountsStore(store).index()
 
     if (_accounts.data.count === 1) {
       _accountId = _accounts.data.account[0].id.id

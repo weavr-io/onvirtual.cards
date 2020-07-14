@@ -62,11 +62,8 @@ import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required, between } from 'vuelidate/lib/validators'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { namespace } from '~/node_modules/vuex-class'
-import * as AccountsStore from '~/store/modules/Accounts'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
-
-const Accounts = namespace(AccountsStore.name)
 
 @Component({
   validations: {
@@ -84,7 +81,9 @@ const Accounts = namespace(AccountsStore.name)
 export default class TopUpForm extends mixins(BaseMixin) {
   $v
 
-  @Accounts.Getter accounts!: ManagedAccountsSchemas.ManagedAccounts
+  get accounts() {
+    return this.stores.accounts.accounts
+  }
 
   @Prop({ default: '' }) readonly selectedAccount
 
@@ -103,9 +102,11 @@ export default class TopUpForm extends mixins(BaseMixin) {
   }
 
   get accountDetails() {
-    return this.accounts.account.find((_a) => {
-      return _a.id.id === this.selectedAccount.id
-    })
+    if (this.accounts) {
+      return this.accounts.account.find((_a) => {
+        return _a.id.id === this.selectedAccount.id
+      })
+    }
   }
 
   get accountBalance() {

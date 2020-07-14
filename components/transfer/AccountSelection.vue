@@ -11,10 +11,10 @@
       <b-col>
         <b-form-group class="weavr-account-radio" :state="isInvalid($v.request.source.id)">
           <b-form-radio-group
-            v-model="request.source.id"
-            :options="formattedAccounts"
-            name="source-account-options"
-            stacked
+                  v-model="request.source.id"
+                  :options="formattedAccounts"
+                  name="source-account-options"
+                  stacked
           />
         </b-form-group>
       </b-col>
@@ -34,10 +34,7 @@ import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { namespace } from '~/node_modules/vuex-class'
-import * as AccountsStore from '~/store/modules/Accounts'
 import BaseMixin from '~/minixs/BaseMixin'
-
-const Accounts = namespace(AccountsStore.name)
 
 @Component({
   validations: {
@@ -51,8 +48,9 @@ const Accounts = namespace(AccountsStore.name)
   }
 })
 export default class AccountSelectionForm extends mixins(BaseMixin) {
-  @Accounts.Getter
-  accounts!: ManagedAccountsSchemas.ManagedAccounts
+  get accounts() {
+    return this.stores.accounts.accounts
+  }
 
   public request = {
     source: {
@@ -110,16 +108,16 @@ export default class AccountSelectionForm extends mixins(BaseMixin) {
         value: val.id.id,
         text: val.friendlyName,
         html:
-          '<div class="row w-100">' +
-          '<div class="col col-6 account-name"><p class="m-0">' +
-          val.friendlyName +
-          '</p>' +
-          disabledP +
-          '</div>' +
-          '<div class="col col-6 account-balance text-right">' +
-          formatter.format(_availableBalance) +
-          '</div>' +
-          '</div>',
+                '<div class="row w-100">' +
+                '<div class="col col-6 account-name"><p class="m-0">' +
+                val.friendlyName +
+                '</p>' +
+                disabledP +
+                '</div>' +
+                '<div class="col col-6 account-balance text-right">' +
+                formatter.format(_availableBalance) +
+                '</div>' +
+                '</div>',
         disabled: isDisabled
       }
     })

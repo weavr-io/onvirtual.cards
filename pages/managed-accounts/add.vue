@@ -29,15 +29,14 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 
-import * as AccountsStore from '~/store/modules/Accounts'
 import * as AuthStore from '~/store/modules/Auth'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import LoginResult = Schemas.LoginResult
+import { accountsStore } from '~/utils/store-accessor'
 
 const Auth = namespace(AuthStore.name)
-const Accounts = namespace(AccountsStore.name)
 
 @Component({
   components: {
@@ -57,9 +56,10 @@ const Accounts = namespace(AccountsStore.name)
   }
 })
 export default class AddCardPage extends mixins(BaseMixin) {
-  @Accounts.Action add
 
-  @Accounts.Getter isLoading
+  get isLoading() {
+    return this.stores.accounts.isLoading
+  }
 
   @Auth.Getter auth!: LoginResult
 
@@ -81,30 +81,30 @@ export default class AddCardPage extends mixins(BaseMixin) {
       }
     }
 
-    this.add(this.createManagedAccountRequest)
-      .then(() => {
-        this.$router.push('/managed-accounts')
-      })
-      .catch((err) => {
-        const data = err.response.data
+    this.stores.accounts.add(this.createManagedAccountRequest)
+            .then(() => {
+              this.$router.push('/managed-accounts')
+            })
+            .catch((err) => {
+              const data = err.response.data
 
-        const error = data.message ? data.message : data.errorCode
+              const error = data.message ? data.message : data.errorCode
 
-        this.$weavrToastError(error)
-      })
+              this.$weavrToastError(error)
+            })
   }
 
   async asyncData({ store, redirect }) {
     const createManagedAccountRequest: ManagedAccountsSchemas.CreateManagedAccountRequest = {
       profileId: AuthStore.Helpers.isConsumer(store)
-        ? config.profileId.managed_accounts_consumers
-        : config.profileId.managed_accounts_corporates,
+              ? config.profileId.managed_accounts_consumers
+              : config.profileId.managed_accounts_corporates,
       friendlyName: 'Main Account',
       currency: 'EUR'
     }
 
     if (AuthStore.Helpers.isConsumer(store)) {
-      await AccountsStore.Helpers.add(store, createManagedAccountRequest)
+      await accountsStore(store).add(createManagedAccountRequest)
 
       redirect('/managed-accounts')
     }

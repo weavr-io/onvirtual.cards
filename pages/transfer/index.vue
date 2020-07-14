@@ -20,15 +20,13 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import * as AccountsStore from '~/store/modules/Accounts'
 import * as TransfersStore from '~/store/modules/Transfers'
 import { TransfersSchemas } from '~/api/TransfersSchemas'
 import config from '~/config'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import BaseMixin from '~/minixs/BaseMixin'
-import { cardsStore } from '~/utils/store-accessor'
+import { accountsStore, cardsStore } from '~/utils/store-accessor'
 
-const Accounts = namespace(AccountsStore.name)
 const Transfers = namespace(TransfersStore.name)
 
 @Component({
@@ -44,7 +42,9 @@ export default class TransfersPage extends mixins(BaseMixin) {
     return this.stores.cards.cards
   }
 
-  @Accounts.Getter accounts?: ManagedAccountsSchemas.ManagedAccounts
+  get accounts() {
+    return this.stores.accounts.accounts
+  }
 
   @Transfers.Action execute
 
@@ -94,8 +94,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
   mounted() {
     try {
       this.$segment.track('Initiated Transfer', {})
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   async asyncData({ store, route }) {
@@ -105,7 +104,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
         limit: 0
       }
     })
-    const _accounts = await store.dispatch('accounts/index')
+    const _accounts = await accountsStore(store).index()
 
     const request: TransfersSchemas.CreateTransferRequest = {
       profileId: config.profileId.transfers,
@@ -127,42 +126,41 @@ export default class TransfersPage extends mixins(BaseMixin) {
 
   doTransfer() {
     this.execute(this.createTransferRequest)
-            .then(() => {
-              this.createTransferRequest = {
-                profileId: null,
-                source: {
-                  type: 'managed_accounts',
-                  id: null
-                },
-                destination: {
-                  type: 'managed_cards',
-                  id: null
-                },
-                destinationAmount: {
-                  currency: 'EUR',
-                  amount: 0
-                }
-              }
-              this.screen = 2
+      .then(() => {
+        this.createTransferRequest = {
+          profileId: null,
+          source: {
+            type: 'managed_accounts',
+            id: null
+          },
+          destination: {
+            type: 'managed_cards',
+            id: null
+          },
+          destinationAmount: {
+            currency: 'EUR',
+            amount: 0
+          }
+        }
+        this.screen = 2
 
-              try {
-                this.$segment.track('Transfer Success', this.createTransferRequest)
-              } catch (e) {
-              }
-            })
-            .catch((err) => {
-              this.screen = 1
+        try {
+          this.$segment.track('Transfer Success', this.createTransferRequest)
+        } catch (e) {}
+      })
+      .catch((err) => {
+        this.screen = 1
 
-              const data = err.response.data
+        const data = err.response.data
 
-              let error = data.message ? data.message : data.errorCode
+        let error = data.message ? data.message : data.errorCode
 
-              if (error === 'DENIED_BY_INSTRUMENT') {
-                error = 'Amount is higher than available balance'
-              }
+        if (error === 'DENIED_BY_INSTRUMENT') {
+          error = 'Amount is higher than available balance'
+        }
 
-              this.$weavrToastError(error)
-            })
+        this.$weavrToastError(error)
+      })
   }
 }
 </script>

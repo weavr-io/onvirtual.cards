@@ -4,13 +4,13 @@ import * as Auth from './modules/Auth'
 import * as Error from './modules/Error'
 import * as Loader from './modules/Loader'
 import * as Corporates from './modules/Corporates'
-import * as Accounts from './modules/Accounts'
 import * as Transfers from './modules/Transfers'
 import * as Consumers from './modules/Consumers'
 import * as View from './modules/View'
 import * as SecureClient from './modules/SecureClient'
 import createInterceptors from '~/plugins/AxiosInterceptors'
 import Cards from '~/store/cards'
+import Accounts from '~/store/accounts'
 import { initialiseStores } from '~/utils/store-accessor'
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
@@ -39,12 +39,12 @@ const createStore = () => {
       [Error.name]: Error,
       [Loader.name]: Loader,
       [Corporates.name]: Corporates,
-      [Accounts.name]: Accounts,
       [Transfers.name]: Transfers,
       [Consumers.name]: Consumers,
       [View.name]: View,
       [SecureClient.name]: SecureClient,
-      cardsV2: Cards
+      cardsV2: Cards,
+      accountsV2: Accounts
     }
   })
 }

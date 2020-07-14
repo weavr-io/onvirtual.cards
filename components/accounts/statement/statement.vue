@@ -5,7 +5,19 @@
         <b-row>
           <b-col>
             <h6 class="font-weight-lighter">
-              All Transactions
+              <b-row align-v="center">
+                <b-col cols="auto">
+                  All Transactions
+                </b-col>
+                <b-col cols="auto">
+                  <b-form-select
+                          :options="months"
+                          :value="filterDate"
+                          @change="filterMonthChange"
+                          class="w-auto d-inline-block"
+                  />
+                </b-col>
+              </b-row>
             </h6>
           </b-col>
         </b-row>
@@ -42,24 +54,28 @@
   </b-container>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
-import * as AccountsStore from '~/store/modules/Accounts'
-import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
+import { Component, mixins, Prop } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
+import RouterMixin from '~/minixs/RouterMixin'
+import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 
-const Accounts = namespace(AccountsStore.name)
+const moment = require('moment')
 
 @Component({
   components: {
     StatementItem: () => import('~/components/statement/item.vue')
   }
 })
-export default class AccountStatement extends mixins(BaseMixin) {
-  @Accounts.Getter filteredStatement: StatementEntry[] | undefined
+export default class AccountStatement extends mixins(BaseMixin, RouterMixin) {
+  get filteredStatement() {
+    return this.stores.accounts.filteredStatement
+  }
 
-  @Accounts.Getter account!: ManagedAccountsSchemas.ManagedAccount | null
+  get account() {
+    return this.stores.accounts.account
+  }
+
+  @Prop() filters!: ManagedAccountStatementRequest
 
   get filteredStatementLength(): number {
     if (this.filteredStatement) {
@@ -67,6 +83,51 @@ export default class AccountStatement extends mixins(BaseMixin) {
     } else {
       return 0
     }
+  }
+
+  get filterDate() {
+    return {
+      start: this.filters.fromTimestamp,
+      end: this.filters.toTimestamp
+    }
+  }
+
+  filterMonthChange(val) {
+    this.setFilters({ fromTimestamp: val.start, toTimestamp: val.end })
+    console.log(val)
+  }
+
+  get months() {
+    const _lastMonth = moment().subtract(1, 'month')
+    const _2Months = moment().subtract(2, 'month')
+
+    return [
+      {
+        value: {
+          start: moment()
+                  .startOf('month')
+                  .valueOf(),
+          end: moment()
+                  .endOf('month')
+                  .valueOf()
+        },
+        text: 'this month'
+      },
+      {
+        value: {
+          start: _lastMonth.startOf('month').valueOf(),
+          end: _lastMonth.endOf('month').valueOf()
+        },
+        text: _lastMonth.format('MMMM')
+      },
+      {
+        value: {
+          start: _2Months.startOf('month').valueOf(),
+          end: _2Months.endOf('month').valueOf()
+        },
+        text: _2Months.format('MMMM')
+      }
+    ]
   }
 }
 </script>

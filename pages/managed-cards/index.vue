@@ -104,6 +104,10 @@ export default class CardsPage extends mixins(BaseMixin) {
       },
       active: _active
     })
+
+    return {
+      showDeleted: route.query.showDeleted
+    }
   }
 
   @Watch('showDeleted')

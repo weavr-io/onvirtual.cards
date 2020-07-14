@@ -4,6 +4,8 @@ import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import { Statement } from '~/api/Models/Statements/Statement'
 import { StoreModule } from '~/store/storeModule'
 import { ManagedCardsFilter } from '~/api/Requests/ManagedCards/ManagedCardsFilter'
+import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
+import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 
 @Module({
   name: 'cardsV2',
@@ -17,7 +19,9 @@ export default class Cards extends StoreModule {
 
   managedCard: ManagedCardsSchemas.ManagedCard | null = null
 
-  statement: Statement | null = null
+  statement: StatementEntry[] = []
+
+  filteredStatement: any = {}
 
   get currency() {
     if (this.cards == null) {
@@ -45,12 +49,9 @@ export default class Cards extends StoreModule {
     return total
   }
 
-  get filteredStatement() {
-    if (this.statement == null) {
-      return []
-    }
-
-    const _entries = this.statement.entry.filter((transaction) => {
+  @Mutation
+  SET_FILTERED_STATEMENT() {
+    const _entries = this.statement.filter((transaction) => {
       const _shouldDisplay = !['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE'].includes(
         transaction.txId.type
       )
@@ -84,7 +85,7 @@ export default class Cards extends StoreModule {
       }
     })
 
-    return _out
+    this.filteredStatement = _out
   }
 
   @Mutation
@@ -99,7 +100,14 @@ export default class Cards extends StoreModule {
 
   @Mutation
   SET_STATEMENT(_statement: Statement) {
-    this.statement = _statement
+    this.statement = _statement.entry
+  }
+
+  @Mutation
+  APPEND_STATEMENT(_statement: Statement) {
+    _statement.entry.forEach((_statementEntry) => {
+      this.statement.push(_statementEntry)
+    })
   }
 
   @Mutation
@@ -141,17 +149,30 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getCardStatement(request) {
+  getCardStatement(request: ManagedCardStatementRequest) {
     this.SET_IS_LOADING(true)
 
-    const req = api.post('/app/api/managed_cards/' + request.id + '/statement/get', request)
+    const req = api.post('/app/api/managed_cards/' + request.id + '/statement/get', request.request)
 
     req.then((res) => {
       this.SET_STATEMENT(res.data)
+      this.SET_FILTERED_STATEMENT()
     })
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
+    })
+
+    return req
+  }
+
+  @Action({ rawError: true })
+  getCardStatementPage(request: ManagedCardStatementRequest) {
+    const req = api.post('/app/api/managed_cards/' + request.id + '/statement/get', request.request)
+
+    req.then((res) => {
+      this.APPEND_STATEMENT(res.data)
+      this.SET_FILTERED_STATEMENT()
     })
 
     return req

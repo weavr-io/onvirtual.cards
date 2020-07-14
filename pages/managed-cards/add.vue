@@ -83,9 +83,9 @@ import * as ConsumersStore from '~/store/modules/Consumers'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
-import * as AccountsStore from '~/store/modules/Accounts'
 import BaseMixin from '~/minixs/BaseMixin'
 import LoginResult = Schemas.LoginResult
+import { accountsStore } from '~/utils/store-accessor'
 
 const Auth = namespace(AuthStore.name)
 
@@ -181,7 +181,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
   }
 
   async asyncData({ store }) {
-    const _accounts = await AccountsStore.Helpers.index(store)
+    const _accounts = await accountsStore(store).index()
 
     const createManagedCardRequest: ManagedCardsSchemas.CreateManagedCardRequest = {
       profileId: AuthStore.Helpers.isConsumer(store)

@@ -19,7 +19,6 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import * as AuthStore from '../../../store/modules/Auth'
 import * as ConsumersStore from '../../../store/modules/Consumers'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
-import * as AccountsStore from '~/store/modules/Accounts'
 import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
@@ -56,7 +55,7 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   async redirectToAccountPage() {
-    const _accounts = await AccountsStore.Helpers.index(this.$store)
+    const _accounts = await this.stores.accounts.index()
 
     if (_accounts.data.count === 1) {
       const _accountId = _accounts.data.account[0].id.id

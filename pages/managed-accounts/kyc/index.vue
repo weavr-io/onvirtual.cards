@@ -13,8 +13,8 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
-import * as AccountsStore from '~/store/modules/Accounts'
 import BaseMixin from '~/minixs/BaseMixin'
+import { accountsStore } from '~/utils/store-accessor'
 
 @Component({
   components: {}
@@ -30,7 +30,7 @@ export default class KycPage extends mixins(BaseMixin) {
       return { redirectUrl: _res.data.redirectUrl }
     } catch (e) {
       if (e.response.data.errorCode === 'KYC_ALREADY_APPROVED') {
-        const _accounts = await AccountsStore.Helpers.index(store)
+        const _accounts = await accountsStore(store).index()
 
         if (_accounts.data.count === 1) {
           const _accountId = _accounts.data.account[0].id.id

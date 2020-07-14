@@ -51,10 +51,6 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-
-import * as AccountsStore from '~/store/modules/Accounts'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
@@ -62,13 +58,15 @@ import * as CorporatesStore from '~/store/modules/Corporates'
 import { KYBState } from '~/api/Enums/KYBState'
 import BaseMixin from '~/minixs/BaseMixin'
 
-const Accounts = namespace(AccountsStore.name)
-
 @Component
 export default class DashboardHeader extends mixins(BaseMixin) {
-  @Accounts.Getter account: ManagedAccountsSchemas.ManagedAccount | null | undefined
+  get account() {
+    return this.stores.accounts.account
+  }
 
-  @Accounts.Getter('totalAvailableBalance') accountsBalance
+  get accountsBalance() {
+    return this.stores.accounts.totalAvailableBalance
+  }
 
   get cardCurrency() {
     return this.stores.cards.currency

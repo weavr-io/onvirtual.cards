@@ -59,7 +59,8 @@ const config = {
     { src: '~/plugins/weavr/security.client.ts', ssr: false },
     { src: '~/plugins/WeavrVueFilters.ts', ssr: false },
     { src: '~/plugins/PhoneNumberInput.ts', ssr: false },
-    { src: '~/plugins/flatpickr.ts', ssr: false }
+    { src: '~/plugins/flatpickr.ts', ssr: false },
+    { src: '~/plugins/InfiniteLoading.ts', ssr: false }
   ],
   /*
    ** Nuxt.js modules

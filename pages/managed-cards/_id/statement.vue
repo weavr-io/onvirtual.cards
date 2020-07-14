@@ -56,7 +56,19 @@
       <b-row class="mb-3" align-v="center">
         <b-col>
           <h6 class="font-weight-lighter">
-            All Transactions
+            <b-row align-v="center">
+              <b-col cols="auto">
+                All Transactions
+              </b-col>
+              <b-col cols="auto">
+                <b-form-select
+                  :options="months"
+                  :value="filterDate"
+                  @change="filterMonthChange"
+                  class="w-auto d-inline-block"
+                />
+              </b-col>
+            </b-row>
           </h6>
         </b-col>
         <b-col v-if="managedCard.active" class="d-flex justify-content-end">
@@ -182,6 +194,10 @@
         </b-card-body>
       </b-card>
     </b-modal>
+    <infinite-loading @infinite="infiniteScroll" spinner="spiral" >
+      <span slot="no-more"></span>
+      <div slot="no-results"></div>
+    </infinite-loading>
   </section>
 </template>
 
@@ -195,12 +211,18 @@ import { Schemas } from '~/api/Schemas'
 import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
 import { TransfersSchemas } from '~/api/TransfersSchemas'
 import config from '~/config'
-import * as AccountsStore from '~/store/modules/Accounts'
 import { cardsStore } from '~/utils/store-accessor'
 import BaseMixin from '~/minixs/BaseMixin'
+import { StatementRequest } from '~/api/Requests/Statements/StatementRequest'
+import RouterMixin from '~/minixs/RouterMixin'
 import OrderType = Schemas.OrderType
 
+const dot = require('dot-object')
+
+const moment = require('moment')
+
 @Component({
+  watchQuery: true,
   components: {
     StatementItem: () => import('~/components/statement/item.vue'),
     DeleteIcon: () => import('~/assets/svg/delete.svg?inline'),
@@ -208,7 +230,7 @@ import OrderType = Schemas.OrderType
     BIconThreeDotsVertical
   }
 })
-export default class ManagedCardsTable extends mixins(BaseMixin) {
+export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin) {
   $route
 
   // @ts-ignore
@@ -218,6 +240,10 @@ export default class ManagedCardsTable extends mixins(BaseMixin) {
 
   cardId: string = ''
 
+  filters!: StatementRequest
+
+  page: number = 0
+
   get filteredStatement() {
     return this.stores.cards.filteredStatement
   }
@@ -226,23 +252,90 @@ export default class ManagedCardsTable extends mixins(BaseMixin) {
     return this.stores.cards.managedCard
   }
 
+  get filterDate() {
+    return {
+      start: this.filters.fromTimestamp,
+      end: this.filters.toTimestamp
+    }
+  }
+
+  filterMonthChange(val) {
+    this.setFilters({ fromTimestamp: val.start, toTimestamp: val.end })
+    console.log(val)
+  }
+
   public fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
+
+  get months() {
+    const _lastMonth = moment().subtract(1, 'month')
+    const _2Months = moment().subtract(2, 'month')
+
+    return [
+      {
+        value: {
+          start: moment()
+            .startOf('month')
+            .valueOf(),
+          end: moment()
+            .endOf('month')
+            .valueOf()
+        },
+        text: 'this month'
+      },
+      {
+        value: {
+          start: _lastMonth.startOf('month').valueOf(),
+          end: _lastMonth.endOf('month').valueOf()
+        },
+        text: _lastMonth.format('MMMM')
+      },
+      {
+        value: {
+          start: _2Months.startOf('month').valueOf(),
+          end: _2Months.endOf('month').valueOf()
+        },
+        text: _2Months.format('MMMM')
+      }
+    ]
+  }
 
   async asyncData({ store, route }) {
     const _cardId = route.params.id
 
+    const _routeQueries = dot.object(route.query)
+    const _filters = _routeQueries.filters ? _routeQueries.filters : {}
+
+    if (!_filters.fromTimestamp) {
+      _filters.fromTimestamp = moment()
+        .startOf('month')
+        .valueOf()
+    }
+
+    if (!_filters.toTimestamp) {
+      _filters.toTimestamp = moment()
+        .endOf('month')
+        .valueOf()
+    }
+
+    const _statementFilters: StatementRequest = {
+      showFundMovementsOnly: true,
+      orderByTimestamp: OrderType.DESC,
+      paging: {
+        limit: 10,
+        offset: 0
+      },
+      ..._filters
+    }
+
     const _req: ManagedCardStatementRequest = {
       id: _cardId,
-      request: {
-        showFundMovementsOnly: true,
-        orderByTimestamp: OrderType.DESC
-      }
+      request: _statementFilters
     }
 
     await cardsStore(store).getCardStatement(_req)
     await cardsStore(store).getManagedCard(_cardId)
 
-    return { cardId: _cardId }
+    return { cardId: _cardId, filters: _statementFilters }
   }
 
   toggleModal() {
@@ -271,7 +364,7 @@ export default class ManagedCardsTable extends mixins(BaseMixin) {
   }
 
   async doDeleteCard() {
-    const _accounts = await AccountsStore.Helpers.index(this.$store)
+    const _accounts = await this.stores.accounts.index()
 
     if (_accounts.data.count === 1 && this.managedCard) {
       if (this.managedCard.balances.availableBalance && parseInt(this.managedCard.balances.availableBalance) > 0) {
@@ -293,6 +386,23 @@ export default class ManagedCardsTable extends mixins(BaseMixin) {
 
       this.$router.push('/managed-cards')
     }
+  }
+
+  infiniteScroll($state) {
+    setTimeout(() => {
+      this.page++
+
+      const _request: StatementRequest = { ...this.filters }
+      _request.paging!.offset = this.page * _request.paging!.limit!
+
+      this.stores.cards.getCardStatementPage({ id: this.$route.params.id, request: _request }).then((response) => {
+        if (response.data.responseCount > 0) {
+          $state.loaded()
+        } else {
+          $state.complete()
+        }
+      })
+    }, 500)
   }
 }
 </script>
