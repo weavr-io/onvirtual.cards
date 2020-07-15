@@ -94,9 +94,13 @@ export default class Accounts extends StoreModule {
 
   @Mutation
   APPEND_STATEMENT(_statement: Statement) {
-    _statement.entry.forEach((_statementEntry) => {
-      this.statement?.entry.push(_statementEntry)
-    })
+    if (this.statement === null) {
+      this.statement = _statement
+    } else {
+      _statement.entry.forEach((_statementEntry) => {
+        this.statement?.entry.push(_statementEntry)
+      })
+    }
   }
 
   @Mutation

@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-row v-if="filteredStatement && filteredStatementLength > 0" class="mb-2" align-v="center">
+    <b-row class="mb-2" align-v="center">
       <b-col>
         <b-row>
           <b-col>
@@ -21,7 +21,7 @@
             </h6>
           </b-col>
         </b-row>
-        <b-row>
+        <b-row v-if="filteredStatement && filteredStatementLength > 0">
           <b-col>
             <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
               <b-col>
@@ -39,16 +39,17 @@
             </b-row>
           </b-col>
         </b-row>
-      </b-col>
-    </b-row>
-    <b-row v-else class="py-5">
-      <b-col class="text-center">
-        <h5 class="font-weight-light">
-          Your transactions will appear here.
-        </h5>
-        <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="link">
-          Start by topping up your account.
-        </b-button>
+        <b-row v-else-if="availableBalance === 0" class="py-5">
+          {{availableBalance}}
+          <b-col class="text-center">
+            <h5 class="font-weight-light">
+              Your transactions will appear here.
+            </h5>
+            <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="link">
+              Start by topping up your account.
+            </b-button>
+          </b-col>
+        </b-row>
       </b-col>
     </b-row>
   </b-container>
@@ -73,6 +74,14 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin) {
 
   get account() {
     return this.stores.accounts.account
+  }
+
+  get availableBalance() {
+    if (this.stores.accounts.account) {
+      return this.stores.accounts.account.balances.availableBalance
+    } else {
+      return 0
+    }
   }
 
   @Prop() filters!: ManagedAccountStatementRequest

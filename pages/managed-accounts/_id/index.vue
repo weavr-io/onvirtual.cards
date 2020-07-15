@@ -32,6 +32,7 @@ const dot = require('dot-object')
 const moment = require('moment')
 
 @Component({
+  watchQuery: true,
   layout: 'dashboard',
   components: {
     Statement: () => import('~/components/accounts/statement/statement.vue')
@@ -118,10 +119,12 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
       _request.paging!.offset = this.page * _request.paging!.limit!
 
       this.stores.accounts.getCardStatementPage({ id: this.$route.params.id, body: _request }).then((response) => {
-        if (response.data.responseCount > 0) {
-          $state.loaded()
-        } else {
+        if (response.data.responseCount <= _request.paging!.limit!) {
           $state.complete()
+          console.log('complete')
+        } else {
+          console.log('loaded')
+          $state.loaded()
         }
       })
     }, 500)
