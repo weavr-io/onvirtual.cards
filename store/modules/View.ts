@@ -16,7 +16,7 @@ export const getters: GetterTree<State, RootState> = {
       return false
     }
 
-    const _corporate = rootGetters['corporates/corporate']
+    const _corporate = rootGetters['vuexModuleDecorators/corporatesV2'].corporate
     if (_corporate && _corporate.kyb) {
       return _corporate.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
     } else {
@@ -41,7 +41,7 @@ export const getters: GetterTree<State, RootState> = {
   },
   showVerifyMobileAlert: (state, getters, rootState, rootGetters) => {
     const _consumer = rootGetters['consumers/consumer']
-    const _corporate = rootGetters['corporates/corporate']
+    const _corporate = rootGetters['vuexModuleDecorators/corporatesV2'].corporate
 
     if (_consumer && _consumer.kyc) {
       return _consumer.kyc.mobileVerified ? !_consumer.kyc.mobileVerified : true
@@ -53,7 +53,7 @@ export const getters: GetterTree<State, RootState> = {
   },
   showVerifyEmailAlert: (state, getters, rootState, rootGetters) => {
     const _consumer = rootGetters['consumers/consumer']
-    const _corporate = rootGetters['corporates/corporate']
+    const _corporate = rootGetters['vuexModuleDecorators/corporatesV2'].corporate
 
     if (_consumer && _consumer.kyc) {
       return _consumer.kyc.emailVerified ? !_consumer.kyc.emailVerified : true

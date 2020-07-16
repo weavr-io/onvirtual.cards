@@ -14,7 +14,7 @@ export default class DashboardPage extends mixins(BaseMixin) {
   async asyncData({ redirect, store }) {
     const _accounts = await accountsStore(store).index()
 
-    if (_accounts.data.count === 1) {
+    if (_accounts.data.count >= 1) {
       redirect('/managed-cards')
     } else {
       redirect('/managed-accounts/add')

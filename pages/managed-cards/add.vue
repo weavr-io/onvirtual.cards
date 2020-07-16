@@ -193,7 +193,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
       cardholderMobileNumber: ''
     }
 
-    if (_accounts.data.count === 1) {
+    if (_accounts.data.count >= 1) {
       createManagedCardRequest.currency = _accounts.data.account[0].currency
     }
 

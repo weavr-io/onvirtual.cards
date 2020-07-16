@@ -54,7 +54,6 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import { KYBState } from '~/api/Enums/KYBState'
 import BaseMixin from '~/minixs/BaseMixin'
 
@@ -96,7 +95,7 @@ export default class DashboardHeader extends mixins(BaseMixin) {
     if (AuthStore.Helpers.isConsumer(this.$store)) {
       return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
     } else {
-      return CorporatesStore.Helpers.corporate(this.$store)?.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
+      return this.stores.corporates.corporate?.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
     }
   }
 }

@@ -15,7 +15,7 @@ export default class CardsPage extends mixins(BaseMixin) {
     let _accountId
     const _accounts = await accountsStore(store).index()
 
-    if (_accounts.data.count === 1) {
+    if (_accounts.data.count >= 1) {
       _accountId = _accounts.data.account[0].id.id
 
       redirect('/managed-accounts/' + _accountId)

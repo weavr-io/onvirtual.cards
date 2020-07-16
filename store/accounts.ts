@@ -4,7 +4,6 @@ import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { Statement } from '~/api/Models/Statements/Statement'
 import { api } from '~/api/Axios'
 import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
-import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
 
 @Module({
   name: 'accountsV2',
@@ -90,6 +89,11 @@ export default class Accounts extends StoreModule {
   @Mutation
   SET_STATEMENT(statement: Statement) {
     this.statement = statement
+  }
+
+  @Mutation
+  RESET_STATEMENT() {
+    this.statement = null
   }
 
   @Mutation

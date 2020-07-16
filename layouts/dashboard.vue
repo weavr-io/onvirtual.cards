@@ -50,17 +50,13 @@ import { namespace } from 'vuex-class'
 import * as LoaderStore from '~/store/modules/Loader'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import * as ConsumersStore from '~/store/modules/Consumers'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import * as ViewStore from '~/store/modules/View'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { Schemas } from '~/api/Schemas'
-import { Corporate } from '~/api/Models/Corporates/Corporate'
 import CurrencyAmount = Schemas.CurrencyAmount
 import BaseMixin from '~/minixs/BaseMixin'
 
 const Loader = namespace(LoaderStore.name)
 const Consumers = namespace(ConsumersStore.name)
-const Corporates = namespace(CorporatesStore.name)
 const View = namespace(ViewStore.name)
 
 @Component({
@@ -90,7 +86,9 @@ export default class DefaultLayout extends mixins(BaseMixin) {
 
   @Consumers.Getter consumer!: Consumer | null
 
-  @Corporates.Getter corporate!: Corporate | null
+  get corporate() {
+    return this.stores.corporates.corporate
+  }
 
   get allowedLimit(): CurrencyAmount {
     const _out: CurrencyAmount = {

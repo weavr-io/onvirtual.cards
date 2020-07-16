@@ -22,10 +22,10 @@
                 <b-col>
                   <b-form-group label="E-Mail">
                     <b-form-input
-                      v-model="updateConsumer.request.email"
-                      :state="isInvalid($v.updateConsumer.request.email)"
-                      class="form-control"
-                      placeholder="johndoe@email.com"
+                            v-model="updateConsumer.request.email"
+                            :state="isInvalid($v.updateConsumer.request.email)"
+                            class="form-control"
+                            placeholder="johndoe@email.com"
                     />
                   </b-form-group>
                 </b-col>
@@ -34,14 +34,14 @@
                 <b-col>
                   <b-form-group label="MOBILE NUMBER">
                     <vue-phone-number-input
-                      :value="mobile.mobileNumber"
-                      @update="consumerPhoneUpdate"
-                      :error="numberIsValid === false"
-                      :border-radius="0"
-                      :defaultCountryCode="mobile.mobileCountryCode"
-                      color="#6C1C5C"
-                      error-color="#F50E4C"
-                      valid-color="#6D7490"
+                            :value="mobile.mobileNumber"
+                            @update="consumerPhoneUpdate"
+                            :error="numberIsValid === false"
+                            :border-radius="0"
+                            :defaultCountryCode="mobile.mobileCountryCode"
+                            color="#6C1C5C"
+                            error-color="#F50E4C"
+                            valid-color="#6D7490"
                     />
                     <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                       This field must be a valid mobile number.
@@ -136,16 +136,14 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { email, required } from 'vuelidate/lib/validators'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
-import { Corporate } from '~/api/Models/Corporates/Corporate'
 import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
 import { UpdateCorporateUserFullRequest } from '~/api/Requests/Corporates/UpdateCorporateUserFullRequest'
 import BaseMixin from '~/minixs/BaseMixin'
+import { corporatesStore } from '~/utils/store-accessor'
 
 const Auth = namespace(AuthStore.name)
 const Consumers = namespace(ConsumersStore.name)
-const Corporates = namespace(CorporatesStore.name)
 
 @Component({
   components: {
@@ -184,7 +182,9 @@ export default class Profile extends mixins(BaseMixin) {
 
   @Consumers.Getter consumer!: Consumer | null
 
-  @Corporates.Getter corporate!: Corporate | null
+  get corporate() {
+    return this.stores.corporates.corporate
+  }
 
   numberIsValid: boolean | null = null
 
@@ -221,14 +221,14 @@ export default class Profile extends mixins(BaseMixin) {
       } else if (AuthStore.Helpers.isCorporate(store)) {
         const _corporate = AuthStore.Helpers.auth(store)
 
-        await CorporatesStore.Helpers.getCorporateDetails(store, _id)
-        const _corporateUser = await CorporatesStore.Helpers.getUser(store, {
+        await corporatesStore(store).getCorporateDetails(_id)
+        const _corporateUser = await corporatesStore(store).getUser({
           corporateId: _id,
           userId: _corporate.credential!.id
         })
 
         const _parsedNumber = parsePhoneNumberFromString(
-          _corporateUser.data.mobileCountryCode! + _corporateUser.data.mobileNumber!
+                _corporateUser.data.mobileCountryCode! + _corporateUser.data.mobileNumber!
         )
 
         const _updateCorporateRequest: UpdateCorporateUserFullRequest = {
@@ -308,7 +308,7 @@ export default class Profile extends mixins(BaseMixin) {
 
     this.isLoading = true
 
-    CorporatesStore.Helpers.updateUser(this.$store, this.updateCorporate).then(() => {
+    this.stores.corporates.updateUser(this.updateCorporate).then(() => {
       this.isLoading = false
     })
   }

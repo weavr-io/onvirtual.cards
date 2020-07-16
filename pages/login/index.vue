@@ -36,10 +36,6 @@
         </client-only>
 
         <div class="mt-2">
-          <recaptcha @error="onError" @success="onSuccess" @expired="onExpired" />
-        </div>
-
-        <div class="mt-2">
           <b-link to="/password/reset" class="small text-decoration-underline text-grey">
             Forgot password?
           </b-link>
@@ -92,8 +88,6 @@ export default class LoginPage extends mixins(BaseMixin) {
 
   @Auth.Getter isLoading!: boolean
 
-  private $recaptcha: any
-
   @Watch('isLoggedIn')
   isLoggedInChanged(val) {
     console.warn(val)
@@ -112,10 +106,6 @@ export default class LoginPage extends mixins(BaseMixin) {
     console.log('Login Function')
 
     try {
-      const token = await this.$recaptcha.getResponse()
-      console.log('ReCaptcha token:', token)
-      await this.$recaptcha.reset()
-
       // const form: WeavrForm = this.$refs.passwordForm as WeavrForm
       SecureClientStore.Helpers.tokenize(this.$store).then(
         (tokens) => {
@@ -192,18 +182,6 @@ export default class LoginPage extends mixins(BaseMixin) {
 
   beforeDestroy() {
     window.removeEventListener('message', this.receiveMessage, false)
-  }
-
-  onError(error) {
-    console.warn('Error happened:', error)
-  }
-
-  onSuccess(token) {
-    console.warn('Succeeded:', token)
-  }
-
-  onExpired() {
-    console.warn('Expired')
   }
 }
 </script>

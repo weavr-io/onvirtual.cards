@@ -73,11 +73,9 @@
 <script lang="ts">
 import { Component, Emit, mixins, namespace } from 'nuxt-property-decorator'
 import { required, maxLength, sameAs, maxValue } from 'vuelidate/lib/validators'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import BaseMixin from '~/minixs/BaseMixin'
 
 const Countries = require('~/static/json/countries.json')
-const Corporates = namespace(CorporatesStore.name)
 @Component({
   validations: {
     form: {
@@ -118,7 +116,9 @@ export default class CompanyDetailsForm extends mixins(BaseMixin) {
 
   public maxDate = new Date()
 
-  @Corporates.Getter isLoadingRegistration
+  get isLoadingRegistration(){
+    return this.stores.corporates.isLoadingRegistration
+  }
 
   public companyRegistrationDate = ''
 

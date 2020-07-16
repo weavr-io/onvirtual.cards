@@ -40,11 +40,11 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
 import * as ErrorStore from '~/store/modules/Error'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
+import { corporatesStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'auth',
@@ -66,7 +66,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
     }
 
     try {
-      await CorporatesStore.Helpers.validateInvite(context.store, _validateRequest)
+      await corporatesStore(context.store).validateInvite(_validateRequest)
     } catch (e) {
       ErrorStore.Helpers.setError(context.store, e.response)
     }
@@ -74,7 +74,12 @@ export default class IniteConsume extends mixins(BaseMixin) {
     const _consumeInviteRequest: ConsumeCorporateUserInviteRequest = {
       id: _validateRequest.id,
       body: {
-        ..._validateRequest.body,
+        nonce: context.route.query.nonce.toString(),
+        identityId: {
+          type: context.route.query.identity_type,
+          id: context.route.query.identity_id
+        },
+        userId: context.route.query.user_id,
         password: {
           value: ''
         }
@@ -94,7 +99,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
       (tokens) => {
         if (tokens.password !== '') {
           this.form.body.password.value = tokens.password
-          CorporatesStore.Helpers.consumeInvite(this.$store, this.form).then(() => {
+          this.stores.corporates.consumeInvite(this.form).then(() => {
             this.$router.push('/login')
           })
         } else {

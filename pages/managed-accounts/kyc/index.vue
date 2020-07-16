@@ -32,7 +32,7 @@ export default class KycPage extends mixins(BaseMixin) {
       if (e.response.data.errorCode === 'KYC_ALREADY_APPROVED') {
         const _accounts = await accountsStore(store).index()
 
-        if (_accounts.data.count === 1) {
+        if (_accounts.data.count >= 1) {
           const _accountId = _accounts.data.account[0].id.id
           redirect('/managed-accounts/' + _accountId + '/topup')
         }

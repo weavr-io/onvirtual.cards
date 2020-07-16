@@ -20,7 +20,6 @@
 <script lang="ts">
 import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import * as AuthStore from '~/store/modules/Auth'
 
 import config from '~/config'
@@ -32,7 +31,6 @@ import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
 import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
 import BaseMixin from '~/minixs/BaseMixin'
 
-const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
 
 @Component({
@@ -47,13 +45,16 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
-  @Corporates.Action register
 
-  @Corporates.Getter isLoading
+  get isLoading() {
+    return this.stores.corporates.isLoading
+  }
 
   @Auth.Getter isLoggedIn
 
-  @Corporates.Getter corporate
+  get corporate() {
+    return this.stores.corporates.corporate
+  }
 
   screen = 0
 
@@ -122,15 +123,15 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   }
 
   doRegister() {
-    CorporatesStore.Helpers.setIsLoadingRegistration(this.$store, true)
+    this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
 
-    this.register(this.registrationRequest)
+    this.stores.corporates.register(this.registrationRequest as CreateCorporateRequest)
       .then(this.doCreateCorporatePasswordIdentity.bind(this))
       .catch(this.registrationFailed.bind(this))
   }
 
   registrationFailed(err) {
-    CorporatesStore.Helpers.setIsLoadingRegistration(this.$store, false)
+    this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
     const _errCode = err.response.data.errorCode
 
     if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
@@ -142,7 +143,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
   doCreateCorporatePasswordIdentity() {
     const _req: CreatePasswordIdentity = {
-      id: this.corporate.id.id,
+      id: this.corporate!.id.id,
       request: {
         profileId: this.registrationRequest.profileId!
       }
@@ -155,10 +156,10 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
   doCreateCorporatePassword() {
     const _req: CreatePassword = {
-      id: this.corporate.id.id,
+      id: this.corporate!.id.id,
       request: {
         credentialType: 'ROOT',
-        identityId: this.corporate.id.id,
+        identityId: this.corporate!.id.id,
         password: {
           value: this.password
         }
@@ -197,12 +198,12 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   // }
 
   goToVerifyEmail() {
-    CorporatesStore.Helpers.setIsLoadingRegistration(this.$store, false)
+    this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
     this.$router.push({
       path: '/register/verify',
       query: {
         send: 'true',
-        corp: this.corporate.id.id,
+        corp: this.corporate!.id.id + '',
         email: this.registrationRequest.rootEmail,
         mobileNumber: this.registrationRequest.rootMobileNumber,
         mobileCountryCode: this.registrationRequest.rootMobileCountryCode
@@ -213,7 +214,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   checkOnKeyUp(e) {
     if (e.key === 'Enter') {
       e.preventDefault()
-      this.register(e)
+      this.stores.corporates.register(e)
     }
   }
 

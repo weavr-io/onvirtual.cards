@@ -57,7 +57,7 @@ export default class KycPage extends mixins(BaseMixin) {
   async redirectToAccountPage() {
     const _accounts = await this.stores.accounts.index()
 
-    if (_accounts.data.count === 1) {
+    if (_accounts.data.count >= 1) {
       const _accountId = _accounts.data.account[0].id.id
       this.$router.push('/managed-accounts/' + _accountId)
     }

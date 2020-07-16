@@ -11,14 +11,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, mixins, Vue } from 'nuxt-property-decorator'
 
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
-import * as CorporatesStore from '~/store/modules/Corporates'
+import BaseMixin from '~/minixs/BaseMixin'
+import { corporatesStore } from '~/utils/store-accessor'
 
 @Component({})
-export default class IndexPage extends Vue {
+export default class IndexPage extends mixins(BaseMixin) {
   async asyncData({ store, redirect }) {
     const isLoggedIn = store.getters['auth/isLoggedIn']
 
@@ -42,11 +43,12 @@ export default class IndexPage extends Vue {
           redirect('/dashboard')
         }
       } else if (AuthStore.Helpers.isCorporate(store)) {
-        let _corp = CorporatesStore.Helpers.corporate(store)
+        const _corpStores = corporatesStore(store)
+        let _corp = _corpStores.corporate
 
         if (_corp === null) {
-          await CorporatesStore.Helpers.getCorporateDetails(store, _auth.identity!.id!)
-          _corp = CorporatesStore.Helpers.corporate(store)
+          await _corpStores.getCorporateDetails(_auth.identity!.id!)
+          _corp = _corpStores.corporate
         }
 
         if (_corp && _corp.kyb && !_corp.kyb.rootEmailVerified) {
