@@ -15,17 +15,16 @@
   </div>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import * as AuthStore from '../../../store/modules/Auth'
 import * as ConsumersStore from '../../../store/modules/Consumers'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import * as AccountsStore from '~/store/modules/Accounts'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
   components: {}
 })
-export default class KycPage extends VueWithRouter {
+export default class KycPage extends mixins(BaseMixin) {
   private tries: number = 0
 
   mounted() {
@@ -56,7 +55,7 @@ export default class KycPage extends VueWithRouter {
   }
 
   async redirectToAccountPage() {
-    const _accounts = await AccountsStore.Helpers.index(this.$store)
+    const _accounts = await this.stores.accounts.index()
 
     if (_accounts.data.count === 1) {
       const _accountId = _accounts.data.account[0].id.id

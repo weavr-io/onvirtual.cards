@@ -53,10 +53,9 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import { required, email } from 'vuelidate/lib/validators'
-import { BaseVue } from '~/base/classes/BaseVue'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/LoaderButton.vue'
 
@@ -67,6 +66,7 @@ import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Auth = namespace(AuthStore.name)
 
@@ -85,7 +85,7 @@ const Auth = namespace(AuthStore.name)
     }
   }
 })
-export default class PasswordSentPage extends BaseVue {
+export default class PasswordSentPage extends mixins(BaseMixin) {
   $refs!: {
     passwordForm: WeavrForm
   }

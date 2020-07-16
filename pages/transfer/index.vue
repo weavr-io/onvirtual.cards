@@ -18,18 +18,15 @@
   </b-container>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import * as CardsStore from '~/store/modules/Cards'
-import * as AccountsStore from '~/store/modules/Accounts'
 import * as TransfersStore from '~/store/modules/Transfers'
 import { TransfersSchemas } from '~/api/TransfersSchemas'
 import config from '~/config'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
+import BaseMixin from '~/minixs/BaseMixin'
+import { accountsStore, cardsStore } from '~/utils/store-accessor'
 
-const Accounts = namespace(AccountsStore.name)
-const Cards = namespace(CardsStore.name)
 const Transfers = namespace(TransfersStore.name)
 
 @Component({
@@ -40,10 +37,14 @@ const Transfers = namespace(TransfersStore.name)
     TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue')
   }
 })
-export default class CardsPage extends VueWithRouter {
-  @Cards.Getter cards
+export default class TransfersPage extends mixins(BaseMixin) {
+  get cards() {
+    return this.stores.cards.cards
+  }
 
-  @Accounts.Getter accounts?: ManagedAccountsSchemas.ManagedAccounts
+  get accounts() {
+    return this.stores.accounts.accounts
+  }
 
   @Transfers.Action execute
 
@@ -70,7 +71,7 @@ export default class CardsPage extends VueWithRouter {
 
   public createTransferRequest!: TransfersSchemas.CreateTransferRequest
 
-  get formattedCards(): { value: string; text: string }[] {
+  get formattedCards(): { value: number; text: string }[] {
     return this.cards.map((val) => {
       return {
         value: val.id.id,
@@ -97,8 +98,13 @@ export default class CardsPage extends VueWithRouter {
   }
 
   async asyncData({ store, route }) {
-    await store.dispatch('cards/getCards')
-    const _accounts = await store.dispatch('accounts/index')
+    await cardsStore(store).getCards({
+      paging: {
+        offset: 0,
+        limit: 0
+      }
+    })
+    const _accounts = await accountsStore(store).index()
 
     const request: TransfersSchemas.CreateTransferRequest = {
       profileId: config.profileId.transfers,

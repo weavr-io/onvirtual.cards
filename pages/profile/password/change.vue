@@ -53,15 +53,13 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import { required, maxLength, sameAs, minLength } from 'vuelidate/lib/validators'
-import { BaseVue } from '~/base/classes/BaseVue'
-import passwordComplexity from '~/plugins/customValidators/passwordComplexity'
+import { Component, mixins } from 'nuxt-property-decorator'
 import LoaderButton from '~/components/LoaderButton.vue'
 import * as AuthStore from '~/store/modules/Auth'
 import { UpdatePassword } from '~/api/Requests/Auth/UpdatePassword'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
   components: {
@@ -72,7 +70,7 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
     form: {}
   }
 })
-export default class BundlesPage extends BaseVue {
+export default class BundlesPage extends mixins(BaseMixin) {
   $refs!: {
     passwordForm: WeavrForm
   }

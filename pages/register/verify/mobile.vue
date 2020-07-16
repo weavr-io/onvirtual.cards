@@ -79,16 +79,16 @@
 
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { minLength, required, maxLength } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { VerifyMobileRequest as ConsumersVerifyMobileRequest } from '~/api/Requests/Consumers/VerifyMobileRequest'
 import { VerifyMobileRequest as CorporatesVerifyMobileRequest } from '~/api/Requests/Corporates/VerifyMobileRequest'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -108,7 +108,7 @@ const Consumers = namespace(ConsumersStore.name)
     }
   }
 })
-export default class EmailVerificationPage extends VueWithRouter {
+export default class EmailVerificationPage extends mixins(BaseMixin) {
   @Consumers.Getter isLoading
 
   @Consumers.Getter consumer!: Consumer | null
@@ -150,7 +150,7 @@ export default class EmailVerificationPage extends VueWithRouter {
     })
   }
 
-  async asyncData({ store, route, redirect }) {
+  async asyncData({ store, redirect }) {
     const consumerVerifyMobileRequest: ConsumersVerifyMobileRequest = {
       consumerId: 0,
       request: {

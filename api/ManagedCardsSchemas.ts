@@ -50,18 +50,11 @@ export module ManagedCardsSchemas {
   export interface CreateManagedCardRequest {
     profileId: any
     tag?: string
-    owner: {
-      type: string
-      id: number
-    }
     friendlyName: string
     currency: string
-    fiProvider: string
-    channelProvider: string
-    nameOnCard?: string
-    createNow?: boolean
+    nameOnCard: string
     cardholderMobileNumber?: string
-    formattedMobileNumber?: string
+    billingAddress?: Nullable<Address>
   }
 
   export interface DestroyRequest {

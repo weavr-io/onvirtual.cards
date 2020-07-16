@@ -9,7 +9,7 @@
         <div class="form-screens">
           <error-alert />
           <div class="form-screen">
-            <b-form @submit="submitForm" novalidate>
+            <b-form @submit.prevent="submitForm" novalidate>
               <h3 class="text-center font-weight-light mb-5">
                 Register
               </h3>
@@ -20,7 +20,12 @@
                   :state="isInvalid($v.registrationRequest.name)"
                   placeholder="First Name"
                 />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                <b-form-invalid-feedback v-if="!$v.registrationRequest.name.required">
+                  This field is required
+                </b-form-invalid-feedback>
+                <b-form-invalid-feedback v-if="!$v.registrationRequest.name.maxLength">
+                  Name is too long.
+                </b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="Last Name">
                 <b-form-input
@@ -28,7 +33,12 @@
                   v-model="registrationRequest.surname"
                   placeholder="Last Name"
                 />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                <b-form-invalid-feedback v-if="!$v.registrationRequest.surname.required">
+                  This field is required
+                </b-form-invalid-feedback>
+                <b-form-invalid-feedback v-if="!$v.registrationRequest.surname.maxLength">
+                  Surname is too long.
+                </b-form-invalid-feedback>
               </b-form-group>
 
               <b-form-group label="Date of Birth">
@@ -99,20 +109,23 @@
                         href="https://www.onvirtual.cards/terms/consumer"
                         target="_blank"
                         class="text-decoration-underline text-muted"
-                        >terms of use</a
+                      >terms of use</a
                       >
                       and
                       <a
                         href="https://www.onvirtual.cards/policy/"
                         target="_blank"
                         class="text-decoration-underline text-muted"
-                        >privacy policy</a
+                      >privacy policy</a
                       >
                     </b-form-checkbox>
                     <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                   </b-form-group>
                 </b-col>
               </b-form-row>
+              <div class="mt-2">
+                <recaptcha />
+              </div>
               <b-row class="mt-4" align-v="center">
                 <b-col class="text-center">
                   <loader-button :is-loading="isLoadingRegistration" button-text="continue" />
@@ -126,10 +139,9 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { email, helpers, maxLength, required, sameAs } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import config from '~/config'
 import { CreateConsumerRequest } from '~/api/Requests/Consumers/CreateConsumerRequest'
@@ -144,9 +156,7 @@ import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import * as AuthStore from '~/store/modules/Auth'
 import { Schemas } from '~/api/Schemas'
-import { SourceOfFunds } from '~/api/Enums/Consumers/SourceOfFunds'
-import { IndustryOccupation } from '~/api/Enums/Consumers/IndustryOccupation'
-import LoginRequest = Schemas.LoginRequest
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')
@@ -163,11 +173,11 @@ const touchMap = new WeakMap()
       },
       name: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(20)
       },
       surname: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(20)
       },
       mobileCountryCode: {
         required
@@ -195,8 +205,10 @@ const touchMap = new WeakMap()
     DobPicker: () => import('~/components/fields/dob-picker.vue')
   }
 })
-export default class ConsumerRegistrationPage extends VueWithRouter {
+export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
   @Consumers.Getter consumer!: Consumer
+
+  private $recaptcha: any
 
   $refs!: {
     passwordForm: WeavrForm
@@ -221,7 +233,8 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     occupation: null,
     baseCurrency: 'EUR',
     dateOfBirth: null,
-    acceptedTerms: false
+    acceptedTerms: false,
+    amlProviderKey: 'sumsub'
   }
 
   public password: string = ''
@@ -322,36 +335,42 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     }
   }
 
-  submitForm(e) {
-    e.preventDefault()
-
-    if (this.numberIsValid === null) {
-      this.numberIsValid = false
-    }
-
-    if (this.$v.registrationRequest) {
-      this.$v.registrationRequest.$touch()
-      if (this.$v.registrationRequest.$anyError || !this.numberIsValid) {
-        return null
+  async submitForm() {
+    try {
+      if (this.numberIsValid === null) {
+        this.numberIsValid = false
       }
-    }
 
-    const form: WeavrForm = this.$refs.passwordForm as WeavrForm
-    form.tokenize(
-      (tokens) => {
-        if (tokens.password !== '') {
-          this.password = tokens.password
-
-          this.validatePassword()
-        } else {
+      if (this.$v.registrationRequest) {
+        this.$v.registrationRequest.$touch()
+        if (this.$v.registrationRequest.$anyError || !this.numberIsValid) {
           return null
         }
-      },
-      (e) => {
-        console.error(e)
-        return null
       }
-    )
+
+      const token = await this.$recaptcha.getResponse()
+      console.log('ReCaptcha token:', token)
+      await this.$recaptcha.reset()
+
+      const form: WeavrForm = this.$refs.passwordForm as WeavrForm
+      form.tokenize(
+        (tokens) => {
+          if (tokens.password !== '') {
+            this.password = tokens.password
+
+            this.validatePassword()
+          } else {
+            return null
+          }
+        },
+        (e) => {
+          console.error(e)
+          return null
+        }
+      )
+    } catch (error) {
+      console.log('Login error:', error)
+    }
   }
 
   validatePassword() {
@@ -370,7 +389,7 @@ export default class ConsumerRegistrationPage extends VueWithRouter {
     console.log('checkOnKeyUp')
     if (e.key === 'Enter') {
       e.preventDefault()
-      this.submitForm(e)
+      this.submitForm()
     }
   }
 

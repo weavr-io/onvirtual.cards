@@ -40,10 +40,10 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, namespace } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, namespace } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as ConsumersStore from '~/store/modules/Consumers'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -72,7 +72,7 @@ const Consumers = namespace(ConsumersStore.name)
     LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
-export default class PersonalDetailsForm extends VueWithRouter {
+export default class PersonalDetailsForm extends mixins(BaseMixin) {
   $v
 
   rootMobileNumber = ''

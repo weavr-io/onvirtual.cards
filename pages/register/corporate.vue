@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
     </div>
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-card">
@@ -19,8 +19,7 @@
 </template>
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component } from 'nuxt-property-decorator'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { Component, mixins } from 'nuxt-property-decorator'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as AuthStore from '~/store/modules/Auth'
 
@@ -31,6 +30,7 @@ import { Schemas } from '~/api/Schemas'
 import { Helpers } from '~/store/modules/Auth'
 import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
 import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -46,7 +46,7 @@ const Auth = namespace(AuthStore.name)
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
   }
 })
-export default class RegistrationPage extends VueWithRouter {
+export default class RegistrationPage extends mixins(BaseMixin) {
   @Corporates.Action register
 
   @Corporates.Getter isLoading
@@ -85,7 +85,8 @@ export default class RegistrationPage extends VueWithRouter {
     supportEmail: '',
     occupation: null,
     sourceOfFunds: null,
-    sourceOfFundsOther: ''
+    sourceOfFundsOther: '',
+    kybProviderKey: 'sumsub'
   }
 
   form1Submit(_data) {

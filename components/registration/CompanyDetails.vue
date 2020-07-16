@@ -71,10 +71,10 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, namespace } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, namespace } from 'nuxt-property-decorator'
 import { required, maxLength, sameAs, maxValue } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Countries = require('~/static/json/countries.json')
 const Corporates = namespace(CorporatesStore.name)
@@ -113,7 +113,7 @@ const Corporates = namespace(CorporatesStore.name)
 
   }
 })
-export default class CompanyDetailsForm extends VueWithRouter {
+export default class CompanyDetailsForm extends mixins(BaseMixin) {
   $v
 
   public maxDate = new Date()

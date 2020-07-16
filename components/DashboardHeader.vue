@@ -50,30 +50,31 @@
   </b-container>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-
-import * as AccountsStore from '~/store/modules/Accounts'
-import * as CardsStore from '~/store/modules/Cards'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
+import { Component, mixins } from 'nuxt-property-decorator'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { KYBState } from '~/api/Enums/KYBState'
-
-const Accounts = namespace(AccountsStore.name)
-const Cards = namespace(CardsStore.name)
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component
-export default class DashboardHeader extends Vue {
-  @Accounts.Getter account: ManagedAccountsSchemas.ManagedAccount | null | undefined
+export default class DashboardHeader extends mixins(BaseMixin) {
+  get account() {
+    return this.stores.accounts.account
+  }
 
-  @Accounts.Getter('totalAvailableBalance') accountsBalance
+  get accountsBalance() {
+    return this.stores.accounts.totalAvailableBalance
+  }
 
-  @Cards.Getter('totalAvailableBalance') cardsBalance
+  get cardCurrency() {
+    return this.stores.cards.currency
+  }
 
-  @Cards.Getter('currency') cardCurrency
+  get cardsBalance() {
+    return this.stores.cards.totalAvailableBalance
+  }
 
   get isManagedCards(): boolean {
     if (this.$route.matched[0].name) {

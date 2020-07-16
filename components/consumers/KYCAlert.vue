@@ -43,19 +43,19 @@
   </section>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as ViewStore from '~/store/modules/View'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const View = namespace(ViewStore.name)
 const Consumers = namespace(ConsumersStore.name)
 
 @Component({})
-export default class KYCAlert extends VueWithRouter {
+export default class KYCAlert extends mixins(BaseMixin) {
   @View.Getter showKycAlert!: boolean
 
   @Consumers.Getter consumer!: Consumer | null

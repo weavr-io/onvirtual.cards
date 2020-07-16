@@ -32,16 +32,15 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
-import * as AuthStore from '~/store/modules/Auth'
-const Auth = namespace(AuthStore.name)
+import BaseMixin from '~/minixs/BaseMixin'
+
 const Corporates = namespace(CorporatesStore.name)
 
 @Component({})
-export default class CardsPage extends VueWithRouter {
+export default class UsersPage extends mixins(BaseMixin) {
   mainProps = {
     blank: true,
     blankColor: '#EAEDF6',

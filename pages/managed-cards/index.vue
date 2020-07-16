@@ -2,8 +2,13 @@
   <div>
     <section>
       <b-container class="mb-5 mt-n4">
-        <b-row>
-          <b-col class="text-right" v-if="canAddCard">
+        <b-row align-v="center">
+          <b-col>
+            <b-form-checkbox v-model="showDeleted" name="check-button" switch>
+              Show deleted cards
+            </b-form-checkbox>
+          </b-col>
+          <b-col v-if="canAddCard" class="text-right">
             <b-button to="/managed-cards/add" variant="border-primary">
               + add new card
             </b-button>
@@ -36,10 +41,8 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins, Watch } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import * as CardsStore from '~/store/modules/Cards'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as CorporatesStore from '~/store/modules/Corporates'
@@ -47,26 +50,33 @@ import { KYBState } from '~/api/Enums/KYBState'
 import * as ViewStore from '~/store/modules/View'
 import { Corporate } from '~/api/Models/Corporates/Corporate'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+import BaseMixin from '~/minixs/BaseMixin'
+import { cardsStore } from '~/utils/store-accessor'
+import { NullableBoolean } from '~/api/Generic/NullableBoolean'
 
-const Cards = namespace(CardsStore.name)
 const Corporates = namespace(CorporatesStore.name)
 const View = namespace(ViewStore.name)
 
 @Component({
   layout: 'dashboard',
+  watchQuery: true,
   components: {
     WeavrCard: () => import('~/components/cards/card.vue'),
     KybAlert: () => import('~/components/corporates/KYBAlert.vue')
   }
 })
-export default class CardsPage extends VueWithRouter {
+export default class CardsPage extends mixins(BaseMixin) {
   @Corporates.Getter corporate!: Corporate | null
 
-  @Cards.Getter cards
+  get cards() {
+    return this.stores.cards.cards
+  }
 
   @View.Getter hasAlert!: boolean
 
-  async asyncData({ store }) {
+  public showDeleted: boolean = false
+
+  async asyncData({ store, route }) {
     if (AuthStore.Helpers.isConsumer(store)) {
       const _consumerId = AuthStore.Helpers.identityId(store)
       if (_consumerId) {
@@ -79,7 +89,31 @@ export default class CardsPage extends VueWithRouter {
       }
     }
 
-    await CardsStore.Helpers.getCards(store)
+    let _active: NullableBoolean = NullableBoolean.NULL
+
+    if (route.query.showDeleted) {
+      _active = NullableBoolean.NULL
+    } else {
+      _active = NullableBoolean.TRUE
+    }
+
+    await cardsStore(store).getCards({
+      paging: {
+        offset: 0,
+        limit: 0
+      },
+      active: _active
+    })
+
+    return {
+      showDeleted: route.query.showDeleted
+    }
+  }
+
+  @Watch('showDeleted')
+  showDeletedChanged(val) {
+    this.showDeleted = val
+    this.$router.push({ path: this.$route.path, query: { showDeleted: val } })
   }
 
   get hasCards(): boolean {

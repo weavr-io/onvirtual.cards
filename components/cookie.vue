@@ -18,15 +18,15 @@
   </div>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import { BaseVue } from '~/base/classes/BaseVue'
+import { Component, mixins } from 'nuxt-property-decorator'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
 @Component({
   components: {}
 })
-export default class DefaultLayout extends BaseVue {
+export default class DefaultLayout extends mixins(BaseMixin) {
   cookieName: string = 'onvirtual-cookie'
 
   showCookieAlert: boolean = false

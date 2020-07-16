@@ -47,13 +47,13 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { Component, mixins } from 'nuxt-property-decorator'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
   layout: 'auth'
 })
-export default class RegistrationPage extends VueWithRouter {
+export default class RegistrationPage extends mixins(BaseMixin) {
   asyncData({ store, redirect }) {
     const isLoggedIn = store.getters['auth/isLoggedIn']
 

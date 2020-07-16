@@ -6,7 +6,12 @@
     <error-alert />
     <b-form-group label="First Name">
       <b-form-input v-model="$v.form.rootName.$model" :state="isInvalid($v.form.rootName)" placeholder="Name" />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+      <b-form-invalid-feedback v-if="!$v.form.rootName.required">
+        This field is required
+      </b-form-invalid-feedback>
+      <b-form-invalid-feedback v-if="!$v.form.rootName.maxLength">
+        Name is too long.
+      </b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Last Name">
       <b-form-input
@@ -14,7 +19,12 @@
         v-model="$v.form.rootSurname.$model"
         placeholder="Last Name"
       />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+      <b-form-invalid-feedback v-if="!$v.form.rootSurname.required">
+        This field is required
+      </b-form-invalid-feedback>
+      <b-form-invalid-feedback v-if="!$v.form.rootSurname.maxLength">
+        Surname is too long.
+      </b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="MOBILE NUMBER">
       <vue-phone-number-input
@@ -107,12 +117,12 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, namespace } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, namespace } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { IndustryOccupation, IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
 import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
+import BaseMixin from '~/minixs/BaseMixin'
 const Corporates = namespace(CorporatesStore.name)
 
 const Countries = require('~/static/json/countries.json')
@@ -122,11 +132,11 @@ const Countries = require('~/static/json/countries.json')
     form: {
       rootName: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(20)
       },
       rootSurname: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(20)
       },
       rootCompanyPosition: {
         required
@@ -163,7 +173,7 @@ const Countries = require('~/static/json/countries.json')
     LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
-export default class PersonalDetailsForm extends VueWithRouter {
+export default class PersonalDetailsForm extends mixins(BaseMixin) {
   $v
 
   @Corporates.Getter isLoadingRegistration

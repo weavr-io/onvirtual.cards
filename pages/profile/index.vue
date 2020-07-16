@@ -129,7 +129,7 @@
   </section>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator'
+import { Vue, Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -140,8 +140,8 @@ import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { Corporate } from '~/api/Models/Corporates/Corporate'
 import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import { UpdateCorporateUserFullRequest } from '~/api/Requests/Corporates/UpdateCorporateUserFullRequest'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Auth = namespace(AuthStore.name)
 const Consumers = namespace(ConsumersStore.name)
@@ -173,7 +173,7 @@ const Corporates = namespace(CorporatesStore.name)
     }
   }
 })
-export default class Profile extends VueWithRouter {
+export default class Profile extends mixins(BaseMixin) {
   @Auth.Action logout
 
   @Auth.Getter isConsumer!: boolean

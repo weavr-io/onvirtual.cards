@@ -1,11 +1,13 @@
-import { Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from 'nuxt-property-decorator'
+import { initialiseStores } from '~/utils/store-accessor'
 
-export class BaseVue extends Vue {
-  isInvalid(item) {
+@Component
+export default class BaseMixin extends Vue {
+  public isInvalid(item) {
     return item.$dirty ? !item.$error : null
   }
 
-  invalidFeedback(item, type, customMessage) {
+  public invalidFeedback(item, type, customMessage) {
     if (typeof customMessage !== 'undefined') {
       return customMessage
     }
@@ -28,6 +30,10 @@ export class BaseVue extends Vue {
           return 'Not Handled'
       }
     }
+  }
+
+  get stores() {
+    return initialiseStores(this.$store)
   }
 
   sleep(ms) {

@@ -1,5 +1,5 @@
 <template>
-  <b-form @submit="tryToSubmitForm">
+  <b-form @submit.prevent="tryToSubmitForm">
     <h3 class="text-center font-weight-light mb-5">
       Register
     </h3>
@@ -31,12 +31,25 @@
       <b-col>
         <b-form-group>
           <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
-            I accept the <a href="https://www.onvirtual.cards/terms/business" target="_blank" class="text-decoration-underline text-muted">terms of use</a> and <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted">privacy policy</a>
+            I accept the
+            <a
+              href="https://www.onvirtual.cards/terms/business"
+              target="_blank"
+              class="text-decoration-underline text-muted"
+            >terms of use</a>
+            and
+            <a href="https://www.onvirtual.cards/policy/"
+            target="_blank"
+            class="text-decoration-underline text-muted"
+            >privacy policy</a>
           </b-form-checkbox>
           <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
       </b-col>
     </b-form-row>
+    <div class="mt-2">
+      <recaptcha />
+    </div>
     <b-form-row class="mt-5">
       <b-col class="text-center">
         <b-button variant="secondary" type="submit">
@@ -48,16 +61,15 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, Ref } from 'nuxt-property-decorator'
+import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required, email, sameAs } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ErrorStore from '~/store/modules/Error'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import * as SecureClientStore from '~/store/modules/SecureClient'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
   validations: {
@@ -76,7 +88,9 @@ import * as SecureClientStore from '~/store/modules/SecureClient'
     ErrorAlert: () => import('~/components/ErrorAlert.vue')
   }
 })
-export default class RegisterForm1 extends VueWithRouter {
+export default class RegisterForm1 extends mixins(BaseMixin) {
+  private $recaptcha: any
+
   public form: {
     rootEmail: string
     password: string
@@ -87,35 +101,41 @@ export default class RegisterForm1 extends VueWithRouter {
     acceptedTerms: false
   }
 
-  tryToSubmitForm(e) {
-    e.preventDefault()
-
-    console.log('submit form checking validation')
-    if (this.$v.form) {
-      this.$v.form.$touch()
-      if (this.$v.form.$anyError) {
-        console.log(this.$v.form)
-        return null
-      }
-    }
-
-    console.log('submit form validation success')
-
-    SecureClientStore.Helpers.tokenize(this.$store).then(
-      (tokens) => {
-        console.log('password tokenisation')
-        if (tokens.password !== '') {
-          this.form.password = tokens.password
-
-          this.validatePassword()
-        } else {
+  async tryToSubmitForm() {
+    try {
+      console.log('submit form checking validation')
+      if (this.$v.form) {
+        this.$v.form.$touch()
+        if (this.$v.form.$anyError) {
+          console.log(this.$v.form)
           return null
         }
-      },
-      (e) => {
-        console.log('tokenisation failed', e)
       }
-    )
+
+      const token = await this.$recaptcha.getResponse()
+      console.log('ReCaptcha token:', token)
+      await this.$recaptcha.reset()
+
+      console.log('submit form validation success')
+
+      SecureClientStore.Helpers.tokenize(this.$store).then(
+        (tokens) => {
+          console.log('password tokenisation')
+          if (tokens.password !== '') {
+            this.form.password = tokens.password
+
+            this.validatePassword()
+          } else {
+            return null
+          }
+        },
+        (e) => {
+          console.log('tokenisation failed', e)
+        }
+      )
+    } catch (error) {
+      console.log('Login error:', error)
+    }
   }
 
   validatePassword() {
@@ -141,7 +161,7 @@ export default class RegisterForm1 extends VueWithRouter {
   checkOnKeyUp(e) {
     if (e.key === 'Enter') {
       e.preventDefault()
-      this.tryToSubmitForm(e)
+      this.tryToSubmitForm()
     }
   }
 

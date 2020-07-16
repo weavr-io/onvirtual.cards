@@ -39,7 +39,9 @@
                   </b-tr>
                   <b-tr>
                     <b-th>Address</b-th>
-                    <b-td style="white-space: pre">{{ account.bankAccountDetails.address | weavr_coma_to_newline }}</b-td>
+                    <b-td style="white-space: pre">
+                      {{ account.bankAccountDetails.address | weavr_coma_to_newline }}
+                    </b-td>
                   </b-tr>
                   <b-tr v-if="account.bankAccountDetails.paymentReference">
                     <b-th>Payment Reference</b-th>
@@ -64,20 +66,15 @@
   </section>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 
-import * as AccountsStore from '~/store/modules/Accounts'
 import * as CorporatesStore from '~/store/modules/Corporates'
-import * as ConsumersStore from '~/store/modules/Consumers'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import config from '~/config'
+import BaseMixin from '~/minixs/BaseMixin'
 
-import ManagedAccount = ManagedAccountsSchemas.ManagedAccount
+import { accountsStore } from '~/utils/store-accessor'
 
-const Accounts = namespace(AccountsStore.name)
 
 @Component({
   components: {
@@ -85,8 +82,10 @@ const Accounts = namespace(AccountsStore.name)
     BIconBoxArrowUpRight
   }
 })
-export default class AccountTopupPage extends VueWithRouter {
-  @Accounts.Getter account!: ManagedAccount | null
+export default class AccountTopupPage extends mixins(BaseMixin) {
+  get account() {
+    return this.stores.accounts.account
+  }
 
   async asyncData({ store, route, redirect }) {
     const accountId = route.params.id
@@ -108,12 +107,12 @@ export default class AccountTopupPage extends VueWithRouter {
       }
       if (_isCorporate) {
         await CorporatesStore.Helpers.checkKYB(store).then(
-          () => {
-            approved = true
-          },
-          () => {
-            approved = false
-          }
+                () => {
+                  approved = true
+                },
+                () => {
+                  approved = false
+                }
         )
       }
     } else {
@@ -121,7 +120,7 @@ export default class AccountTopupPage extends VueWithRouter {
     }
 
     if (approved) {
-      await AccountsStore.Helpers.get(store, accountId)
+      await accountsStore(store).get(accountId)
     } else {
       // if (_isConsumer) {
       //   redirect('/managed-accounts/kyc')
@@ -137,7 +136,8 @@ export default class AccountTopupPage extends VueWithRouter {
   mounted() {
     try {
       this.$segment.track('Account Top Up', {})
-    } catch (e) {}
+    } catch (e) {
+    }
   }
 }
 </script>

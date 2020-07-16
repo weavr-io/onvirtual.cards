@@ -95,13 +95,13 @@
 </template>
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import * as AuthStore from '~/store/modules/Auth'
 import { CorporateUserType } from '~/api/Enums/Corporates/CorporateUserType'
 import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/CreateCorporateUserFullRequest'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
@@ -139,7 +139,7 @@ const Countries = require('~/static/json/countries.json')
     }
   }
 })
-export default class AddCardPage extends VueWithRouter {
+export default class AddCardPage extends mixins(BaseMixin) {
   @Corporates.Getter isLoading
 
   @Auth.Getter identityId

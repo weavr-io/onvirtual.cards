@@ -23,11 +23,11 @@
   </div>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { Component, mixins } from 'nuxt-property-decorator'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({})
-export default class TopUpSuccess extends VueWithRouter {
+export default class TopUpSuccess extends mixins(BaseMixin) {
   goToCards(e: Event) {
     e.preventDefault()
     this.$router.push('/managed-cards')

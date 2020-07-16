@@ -61,13 +61,13 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import { required, email } from 'vuelidate/lib/validators'
-import { BaseVue } from '~/base/classes/BaseVue'
 
 import * as AuthStore from '~/store/modules/Auth'
 import { LostPasswordStartRequest } from '~/api/Requests/Auth/LostPasswordStartRequest'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Auth = namespace(AuthStore.name)
 
@@ -86,7 +86,7 @@ const Auth = namespace(AuthStore.name)
     }
   }
 })
-export default class ResetPasswordPage extends BaseVue {
+export default class ResetPasswordPage extends mixins(BaseMixin) {
   @Auth.Getter isLoading!: boolean
 
   passwordSent: boolean = false

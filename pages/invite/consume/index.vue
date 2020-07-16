@@ -37,14 +37,14 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
 import * as ErrorStore from '~/store/modules/Error'
 import * as CorporatesStore from '~/store/modules/Corporates'
 import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
   layout: 'auth',
@@ -53,7 +53,7 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
     LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
-export default class IniteConsume extends VueWithRouter {
+export default class IniteConsume extends mixins(BaseMixin) {
   protected form!: ConsumeCorporateUserInviteRequest
 
   async asyncData(context) {

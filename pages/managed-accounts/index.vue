@@ -3,18 +3,17 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
-
-import * as AccountsStore from '~/store/modules/Accounts'
+import { Component, mixins } from 'nuxt-property-decorator'
+import BaseMixin from '~/minixs/BaseMixin'
+import { accountsStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'dashboard'
 })
-export default class CardsPage extends VueWithRouter {
+export default class CardsPage extends mixins(BaseMixin) {
   async asyncData({ store, redirect }) {
     let _accountId
-    const _accounts = await AccountsStore.Helpers.index(store)
+    const _accounts = await accountsStore(store).index()
 
     if (_accounts.data.count === 1) {
       _accountId = _accounts.data.account[0].id.id

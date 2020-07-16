@@ -10,4 +10,5 @@ export type CreateCorporateRequest = Partial<Corporate> & {
   rootName: string
   rootSurname: string
   rootTitle?: string
+  kybProviderKey?: string
 }

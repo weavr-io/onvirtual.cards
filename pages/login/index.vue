@@ -1,14 +1,14 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <b-card body-class="p-card">
       <h3 class="text-center font-weight-light mb-5">
         Login
       </h3>
 
-      <form id="contact-form" @submit="login" class="mt-5">
+      <form id="contact-form" @submit.prevent="login" class="mt-5">
         <error-alert
           message="Incorrect email and password combination. If you do not have an account please click on Register."
         />
@@ -34,12 +34,25 @@
             />
           </weavr-form>
         </client-only>
+
+        <div class="mt-2">
+          <recaptcha @error="onError" @success="onSuccess" @expired="onExpired" />
+        </div>
+
         <div class="mt-2">
           <b-link to="/password/reset" class="small text-decoration-underline text-grey">
             Forgot password?
           </b-link>
         </div>
-        <loader-button :is-loading="isLoading" button-text="sign in" class="text-center mt-5" />
+
+        <b-form-group class="mt-5 text-center">
+          <b-overlay :show="isLoading" rounded="pill" class="d-inline-block" spinner-small>
+            <b-button type="submit" variant="secondary">
+              sign in
+              <span class="pl-5">-></span>
+            </b-button>
+          </b-overlay>
+        </b-form-group>
         <div class="mt-4 text-center">
           <small class="text-grey">
             Not yet registered? Register
@@ -54,14 +67,14 @@
 
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins, Watch } from 'nuxt-property-decorator'
 import { Schemas } from '~/api/Schemas'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import * as SecureClientStore from '~/store/modules/SecureClient'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Auth = namespace(AuthStore.name)
 
@@ -72,12 +85,19 @@ const Auth = namespace(AuthStore.name)
     LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
-export default class LoginPage extends VueWithRouter {
+export default class LoginPage extends mixins(BaseMixin) {
   @Auth.Getter isLoggedIn
 
   @Auth.Action authenticate
 
   @Auth.Getter isLoading!: boolean
+
+  private $recaptcha: any
+
+  @Watch('isLoggedIn')
+  isLoggedInChanged(val) {
+    console.warn(val)
+  }
 
   public loginRequest: Schemas.LoginRequest = {
     code: '',
@@ -88,21 +108,28 @@ export default class LoginPage extends VueWithRouter {
     passwordForm: WeavrForm
   }
 
-  login(evt) {
-    evt.preventDefault()
+  async login() {
     console.log('Login Function')
 
-    // const form: WeavrForm = this.$refs.passwordForm as WeavrForm
-    SecureClientStore.Helpers.tokenize(this.$store).then(
-      (tokens) => {
-        console.log('Password tokenisation success')
-        this.loginRequest.password = tokens.password
-        this.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
-      },
-      (e) => {
-        console.log('tokenisation failed', e)
-      }
-    )
+    try {
+      const token = await this.$recaptcha.getResponse()
+      console.log('ReCaptcha token:', token)
+      await this.$recaptcha.reset()
+
+      // const form: WeavrForm = this.$refs.passwordForm as WeavrForm
+      SecureClientStore.Helpers.tokenize(this.$store).then(
+        (tokens) => {
+          console.log('Password tokenisation success')
+          this.loginRequest.password = tokens.password
+          this.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
+        },
+        (e) => {
+          console.log('tokenisation failed', e)
+        }
+      )
+    } catch (error) {
+      console.log('Login error:', error)
+    }
   }
 
   async goToDashboard(res) {
@@ -125,7 +152,7 @@ export default class LoginPage extends VueWithRouter {
     if (e.key === 'Enter') {
       e.preventDefault()
       console.log('Submit form throught password enter')
-      this.login(e)
+      this.login()
     }
   }
 
@@ -165,6 +192,18 @@ export default class LoginPage extends VueWithRouter {
 
   beforeDestroy() {
     window.removeEventListener('message', this.receiveMessage, false)
+  }
+
+  onError(error) {
+    console.warn('Error happened:', error)
+  }
+
+  onSuccess(token) {
+    console.warn('Succeeded:', token)
+  }
+
+  onExpired() {
+    console.warn('Expired')
   }
 }
 </script>

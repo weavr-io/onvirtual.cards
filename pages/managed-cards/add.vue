@@ -8,8 +8,11 @@
               Create Card
             </b-card-title>
             <b-card-body>
-              <b-form @submit="doAdd">
-                <b-form-row v-if="!isConsumer">
+              <b-alert :show="showError" variant="danger">
+                Error creating new card. Contact support if problem persists.
+              </b-alert>
+              <b-form @submit="doAdd" v-if="!showError">
+                <b-form-row v-if="showNameOnCardField">
                   <b-col>
                     <b-form-group label="Name of Person using Card">
                       <b-form-input
@@ -73,19 +76,17 @@
 </template>
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
-import { VueWithRouter } from '~/base/classes/VueWithRouter'
-import * as CardsStore from '~/store/modules/Cards'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
-import * as AccountsStore from '~/store/modules/Accounts'
+import BaseMixin from '~/minixs/BaseMixin'
 import LoginResult = Schemas.LoginResult
+import { accountsStore } from '~/utils/store-accessor'
 
-const Cards = namespace(CardsStore.name)
 const Auth = namespace(AuthStore.name)
 
 @Component({
@@ -107,23 +108,20 @@ const Auth = namespace(AuthStore.name)
         })
       },
       nameOnCard: {
-        requiredIf: requiredIf(function() {
-          // @ts-ignore
-          return !this.isConsumer
-        }),
-        maxLength: maxLength(30)
+        required,
+        maxLength: maxLength(27)
       }
     }
   }
 })
-export default class AddCardPage extends VueWithRouter {
-  @Cards.Action addCard
-
-  @Cards.Getter isLoading
-
+export default class AddCardPage extends mixins(BaseMixin) {
   @Auth.Getter auth!: LoginResult
 
   @Auth.Getter isConsumer!: boolean
+
+  showNameOnCardField: boolean = false
+
+  showError: boolean = false
 
   currencyOptions = [
     { value: 'EUR', text: 'EUR' },
@@ -134,6 +132,10 @@ export default class AddCardPage extends VueWithRouter {
   cardholderMobileNumber = ''
 
   public createManagedCardRequest!: ManagedCardsSchemas.CreateManagedCardRequest
+
+  get isLoading() {
+    return this.stores.cards.isLoading
+  }
 
   doAdd(evt) {
     evt.preventDefault()
@@ -153,19 +155,22 @@ export default class AddCardPage extends VueWithRouter {
       }
     }
 
-    this.addCard(this.createManagedCardRequest).then(() => {
-      try {
-        this.$segment.track('Card Added', this.createManagedCardRequest)
-      } catch (e) {}
-      this.$router.push('/managed-cards')
-    })
+    this.stores.cards.addCard(this.createManagedCardRequest).then(
+      () => {
+        try {
+          this.$segment.track('Card Added', this.createManagedCardRequest)
+        } catch (e) {}
+        this.$router.push('/managed-cards')
+      },
+      (err) => {
+        if (err.response.status) {
+          this.showError = true
+        }
+      }
+    )
   }
 
   mounted() {
-    if (this.auth.identity) {
-      this.createManagedCardRequest.owner = this.auth.identity
-    }
-
     this.createManagedCardRequest.profileId = AuthStore.Helpers.isConsumer(this.$store)
       ? config.profileId.managed_cards_consumers
       : config.profileId.managed_cards_corporates
@@ -176,21 +181,16 @@ export default class AddCardPage extends VueWithRouter {
   }
 
   async asyncData({ store }) {
-    const _accounts = await AccountsStore.Helpers.index(store)
+    const _accounts = await accountsStore(store).index()
 
     const createManagedCardRequest: ManagedCardsSchemas.CreateManagedCardRequest = {
       profileId: AuthStore.Helpers.isConsumer(store)
         ? config.profileId.managed_cards_consumers
         : config.profileId.managed_cards_corporates,
-      owner: AuthStore.Helpers.identity(store),
       friendlyName: '',
       currency: 'EUR',
-      fiProvider: 'paynetics',
-      channelProvider: 'gps',
       nameOnCard: '',
-      createNow: true,
-      cardholderMobileNumber: '',
-      formattedMobileNumber: ''
+      cardholderMobileNumber: ''
     }
 
     if (_accounts.data.count === 1) {
@@ -203,7 +203,19 @@ export default class AddCardPage extends VueWithRouter {
       createManagedCardRequest.cardholderMobileNumber = _consumer.data.mobileCountryCode + _consumer.data.mobileNumber
     }
 
-    return { createManagedCardRequest: createManagedCardRequest }
+    let _showNameOnCardField: boolean = false
+    if (!AuthStore.Helpers.isConsumer(store)) {
+      _showNameOnCardField = true
+    } else if (createManagedCardRequest.nameOnCard && createManagedCardRequest.nameOnCard.length > 27) {
+      _showNameOnCardField = true
+    } else {
+      _showNameOnCardField = false
+    }
+
+    return {
+      createManagedCardRequest: createManagedCardRequest,
+      showNameOnCardField: _showNameOnCardField
+    }
   }
 
   phoneUpdate(number) {

@@ -36,6 +36,8 @@ export default class IndexPage extends Vue {
           redirect('/register/verify?send=true')
         } else if (_cons && _cons.kyc && !_cons.kyc.mobileVerified) {
           redirect('/register/verify/mobile')
+        } else if (_cons && typeof _cons.address === 'undefined') {
+          redirect('/profile/address')
         } else {
           redirect('/dashboard')
         }
