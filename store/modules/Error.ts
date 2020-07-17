@@ -48,6 +48,8 @@ export const getters: GetterTree<State, RootState> = {
           return 'Password is incorrect.'
         case 'FAILED_LOGIN':
           return 'Incorrect email and password combination. If you do not have an account please click on Register.'
+        case 'MOBILE_NOT_UNIQUE':
+          return 'Mobile is already in use.'
         case ValidatePasswordConflictErrorCode.PASSWORD_PROFILE_NOT_CONFIGURED_FOR_CREDENTIAL_TYPE:
           return 'PASSWORD_PROFILE_NOT_CONFIGURED_FOR_CREDENTIAL_TYPE'
         case ValidatePasswordConflictErrorCode.PASSWORD_TOO_LONG:

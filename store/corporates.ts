@@ -133,6 +133,19 @@ export default class Corporates extends StoreModule {
   }
 
   @Action({ rawError: true })
+  sendUserInvite(request: { corporateId: string; inviteId: string }) {
+    this.SET_IS_LOADING(true)
+
+    const req = api.post('/app/api/corporates/' + request.corporateId + '/invites/' + request.inviteId + '/send', {})
+
+    req.finally(() => {
+      this.SET_IS_LOADING(false)
+    })
+
+    return req
+  }
+
+  @Action({ rawError: true })
   sendVerificationCodeEmail(request) {
     return api.post('/app/api/corporates/' + request.corporateId + '/users/email/send_verification_code', request.body)
   }
