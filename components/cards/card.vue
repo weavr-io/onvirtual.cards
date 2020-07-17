@@ -53,7 +53,7 @@
               </b-row>
             </b-container>
           </b-link>
-          <b-button @click="toggleShowOptions" class="card-options-button">
+          <b-button @click="toggleShowOptions" class="card-options-button" v-if="isActive">
             <b-icon icon="three-dots-vertical" />
           </b-button>
         </b-aspect>
@@ -127,6 +127,10 @@ export default class WeavrCard extends mixins(BaseMixin) {
 
   get isFrozen() {
     return Object.entries(this.card.state.blockTypes).length > 0 || this.card.state.destroyType !== ''
+  }
+
+  get isActive() {
+    return this.card.active
   }
 
   toggleFreeze() {

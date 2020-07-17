@@ -40,7 +40,6 @@
           </b-col>
         </b-row>
         <b-row v-else-if="availableBalance === 0" class="py-5">
-          {{availableBalance}}
           <b-col class="text-center">
             <h5 class="font-weight-light">
               Your transactions will appear here.
@@ -59,6 +58,7 @@ import { Component, mixins, Prop } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
 import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
+import FiltersMixin from '~/minixs/FiltersMixin'
 
 const moment = require('moment')
 
@@ -67,7 +67,7 @@ const moment = require('moment')
     StatementItem: () => import('~/components/statement/item.vue')
   }
 })
-export default class AccountStatement extends mixins(BaseMixin, RouterMixin) {
+export default class AccountStatement extends mixins(BaseMixin, RouterMixin, FiltersMixin) {
   get filteredStatement() {
     return this.stores.accounts.filteredStatement
   }
@@ -107,36 +107,7 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin) {
   }
 
   get months() {
-    const _lastMonth = moment().subtract(1, 'month')
-    const _2Months = moment().subtract(2, 'month')
-
-    return [
-      {
-        value: {
-          start: moment()
-                  .startOf('month')
-                  .valueOf(),
-          end: moment()
-                  .endOf('month')
-                  .valueOf()
-        },
-        text: 'this month'
-      },
-      {
-        value: {
-          start: _lastMonth.startOf('month').valueOf(),
-          end: _lastMonth.endOf('month').valueOf()
-        },
-        text: _lastMonth.format('MMMM')
-      },
-      {
-        value: {
-          start: _2Months.startOf('month').valueOf(),
-          end: _2Months.endOf('month').valueOf()
-        },
-        text: _2Months.format('MMMM')
-      }
-    ]
+    return this.monthsFilter(parseInt(this.account!.creationTimestamp))
   }
 }
 </script>

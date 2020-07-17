@@ -31,21 +31,19 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator'
+import { Vue, Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
-import { Corporate } from '~/api/Models/Corporates/Corporate'
+import BaseMixin from '~/minixs/BaseMixin'
 
 const Auth = namespace(AuthStore.name)
 const Consumers = namespace(ConsumersStore.name)
-const Corporates = namespace(CorporatesStore.name)
 
 @Component
-export default class Header extends Vue {
+export default class Header extends mixins(BaseMixin) {
   @Auth.Action logout
 
   @Auth.Getter isConsumer!: boolean
@@ -58,7 +56,9 @@ export default class Header extends Vue {
 
   @Consumers.Getter consumer!: Consumer | null
 
-  @Corporates.Getter corporate!: Corporate | null
+  get corporate() {
+    return this.stores.corporates.corporate
+  }
 
   doLogout() {
     this.logout().then(this.redirectToLogin.bind(this))
@@ -79,7 +79,7 @@ export default class Header extends Vue {
         if (this.isConsumer) {
           ConsumersStore.Helpers.get(this.$store, _id)
         } else if (this.isCorporate) {
-          CorporatesStore.Helpers.getCorporateDetails(this.$store, _id)
+          this.stores.corporates.getCorporateDetails(_id)
         }
       }
     }

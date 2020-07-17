@@ -3,7 +3,7 @@
     <section v-if="!hasAlert">
       <statement :filters="filters" />
     </section>
-    <infinite-loading @infinite="infiniteScroll" spinner="spiral" >
+    <infinite-loading @infinite="infiniteScroll" spinner="spiral">
       <span slot="no-more"></span>
       <div slot="no-results"></div>
     </infinite-loading>
@@ -16,17 +16,14 @@ import { namespace } from 'vuex-class'
 import { OrderType } from '~/api/Enums/OrderType'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import * as ViewStore from '~/store/modules/View'
-import { Corporate } from '~/api/Models/Corporates/Corporate'
 import BaseMixin from '~/minixs/BaseMixin'
 import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import RouterMixin from '~/minixs/RouterMixin'
-import { accountsStore } from '~/utils/store-accessor'
+import { accountsStore, corporatesStore } from '~/utils/store-accessor'
 
 const Consumers = namespace(ConsumersStore.name)
-const Corporates = namespace(CorporatesStore.name)
 const View = namespace(ViewStore.name)
 const dot = require('dot-object')
 const moment = require('moment')
@@ -49,7 +46,9 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
 
   @Consumers.Getter consumer!: Consumer | null
 
-  @Corporates.Getter corporate!: Corporate | null
+  get corporate() {
+    return this.stores.corporates.corporate
+  }
 
   @View.Getter hasAlert!: boolean
 
@@ -69,21 +68,21 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
 
     if (!_filters.fromTimestamp) {
       _filters.fromTimestamp = moment()
-        .startOf('month')
-        .valueOf()
+              .startOf('month')
+              .valueOf()
     }
 
     if (!_filters.toTimestamp) {
       _filters.toTimestamp = moment()
-        .endOf('month')
-        .valueOf()
+              .endOf('month')
+              .valueOf()
     }
 
     const _statementFilters: ManagedAccountStatementRequest = {
       showFundMovementsOnly: true,
       orderByTimestamp: OrderType.DESC,
       paging: {
-        limit: 10,
+        limit: 100,
         offset: 0
       },
       ..._filters
@@ -104,7 +103,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
     } else {
       const _corporateId = AuthStore.Helpers.identityId(store)
       if (_corporateId) {
-        await CorporatesStore.Helpers.getCorporateDetails(store, _corporateId)
+        await corporatesStore(store).getCorporateDetails(_corporateId)
       }
     }
 
@@ -119,7 +118,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
       _request.paging!.offset = this.page * _request.paging!.limit!
 
       this.stores.accounts.getCardStatementPage({ id: this.$route.params.id, body: _request }).then((response) => {
-        if (response.data.responseCount <= _request.paging!.limit!) {
+        if (response.data.responseCount < _request.paging!.limit!) {
           $state.complete()
           console.log('complete')
         } else {

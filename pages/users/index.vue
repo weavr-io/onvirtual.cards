@@ -33,11 +33,8 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import BaseMixin from '~/minixs/BaseMixin'
-
-const Corporates = namespace(CorporatesStore.name)
+import { corporatesStore } from '~/utils/store-accessor'
 
 @Component({})
 export default class UsersPage extends mixins(BaseMixin) {
@@ -48,11 +45,13 @@ export default class UsersPage extends mixins(BaseMixin) {
     height: 45
   }
 
-  @Corporates.Getter users
+  get users() {
+    return this.stores.corporates.users
+  }
 
   asyncData({ store }) {
     const _corporateId = store.getters['auth/identityId']
-    return store.dispatch('corporates/getUsers', _corporateId)
+    return corporatesStore(store).getUsers(_corporateId)
   }
 }
 </script>

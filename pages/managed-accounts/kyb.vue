@@ -51,10 +51,10 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
 import * as AuthStore from '~/store/modules/Auth'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import config from '~/config'
 import { KYBOptions } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
+import { corporatesStore } from '~/utils/store-accessor'
 
 @Component({
   components: {
@@ -82,7 +82,7 @@ export default class KybPage extends mixins(BaseMixin) {
 
     if (config.app.sumsub_enabled) {
       try {
-        const _res = await CorporatesStore.Helpers.startKYB(store, _corproateid)
+        const _res = await corporatesStore(store).startKYB(_corproateid)
 
         return { accessToken: _res.data.accessToken, corporateId: _corproateid }
       } catch (e) {

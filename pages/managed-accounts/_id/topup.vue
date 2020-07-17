@@ -69,12 +69,10 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
 
-import * as CorporatesStore from '~/store/modules/Corporates'
 import config from '~/config'
 import BaseMixin from '~/minixs/BaseMixin'
 
-import { accountsStore } from '~/utils/store-accessor'
-
+import { accountsStore, corporatesStore } from '~/utils/store-accessor'
 
 @Component({
   components: {
@@ -106,14 +104,16 @@ export default class AccountTopupPage extends mixins(BaseMixin) {
         // )
       }
       if (_isCorporate) {
-        await CorporatesStore.Helpers.checkKYB(store).then(
-                () => {
-                  approved = true
-                },
-                () => {
-                  approved = false
-                }
-        )
+        await corporatesStore(store)
+          .checkKYB()
+          .then(
+            () => {
+              approved = true
+            },
+            () => {
+              approved = false
+            }
+          )
       }
     } else {
       approved = true
@@ -136,8 +136,7 @@ export default class AccountTopupPage extends mixins(BaseMixin) {
   mounted() {
     try {
       this.$segment.track('Account Top Up', {})
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 }
 </script>

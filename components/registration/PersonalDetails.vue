@@ -117,13 +117,11 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins, namespace } from 'nuxt-property-decorator'
+import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import { IndustryOccupation, IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
 import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
 import BaseMixin from '~/minixs/BaseMixin'
-const Corporates = namespace(CorporatesStore.name)
 
 const Countries = require('~/static/json/countries.json')
 
@@ -176,7 +174,9 @@ const Countries = require('~/static/json/countries.json')
 export default class PersonalDetailsForm extends mixins(BaseMixin) {
   $v
 
-  @Corporates.Getter isLoadingRegistration
+  get isLoadingRegistration() {
+    return this.stores.corporates.isLoadingRegistration
+  }
 
   rootMobileNumber = ''
   numberIsValid: boolean | null = null

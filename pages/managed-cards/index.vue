@@ -5,7 +5,9 @@
         <b-row align-v="center">
           <b-col>
             <b-form-checkbox v-model="showDeleted" name="check-button" switch>
-              Show deleted cards
+              <template v-if="showDeleted">Hide</template>
+              <template v-else>Show</template>
+              deleted cards
             </b-form-checkbox>
           </b-col>
           <b-col v-if="canAddCard" class="text-right">
@@ -45,16 +47,13 @@ import { Component, mixins, Watch } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import { KYBState } from '~/api/Enums/KYBState'
 import * as ViewStore from '~/store/modules/View'
-import { Corporate } from '~/api/Models/Corporates/Corporate'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import BaseMixin from '~/minixs/BaseMixin'
-import { cardsStore } from '~/utils/store-accessor'
+import { cardsStore, corporatesStore } from '~/utils/store-accessor'
 import { NullableBoolean } from '~/api/Generic/NullableBoolean'
 
-const Corporates = namespace(CorporatesStore.name)
 const View = namespace(ViewStore.name)
 
 @Component({
@@ -66,7 +65,9 @@ const View = namespace(ViewStore.name)
   }
 })
 export default class CardsPage extends mixins(BaseMixin) {
-  @Corporates.Getter corporate!: Corporate | null
+  get corporate() {
+    return this.stores.corporates.corporate
+  }
 
   get cards() {
     return this.stores.cards.cards
@@ -85,14 +86,14 @@ export default class CardsPage extends mixins(BaseMixin) {
     } else {
       const _corporateId = AuthStore.Helpers.identityId(store)
       if (_corporateId) {
-        await CorporatesStore.Helpers.getCorporateDetails(store, _corporateId)
+        await corporatesStore(store).getCorporateDetails(_corporateId)
       }
     }
 
     let _active: NullableBoolean = NullableBoolean.NULL
 
     if (route.query.showDeleted) {
-      _active = NullableBoolean.NULL
+      _active = NullableBoolean.FALSE
     } else {
       _active = NullableBoolean.TRUE
     }
@@ -132,7 +133,7 @@ export default class CardsPage extends mixins(BaseMixin) {
     if (AuthStore.Helpers.isConsumer(this.$store)) {
       return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
     } else {
-      return CorporatesStore.Helpers.corporate(this.$store)?.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
+      return this.stores.corporates.corporate?.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
     }
   }
 }

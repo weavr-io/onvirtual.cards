@@ -16,9 +16,9 @@
               <b-col>
                 <b-form-group label="Title:">
                   <b-form-select
-                    v-model="$v.request.request.title.$model"
-                    :state="isInvalid($v.request.request.title)"
-                    :options="titleOptions"
+                          v-model="$v.request.request.title.$model"
+                          :state="isInvalid($v.request.request.title)"
+                          :options="titleOptions"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
@@ -36,8 +36,8 @@
               <b-col>
                 <b-form-group label="Surname:">
                   <b-form-input
-                    v-model="$v.request.request.surname.$model"
-                    :state="isInvalid($v.request.request.surname)"
+                          v-model="$v.request.request.surname.$model"
+                          :state="isInvalid($v.request.request.surname)"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
@@ -47,9 +47,9 @@
               <b-col>
                 <b-form-group label="Email:">
                   <b-form-input
-                    v-model="$v.request.request.email.$model"
-                    :state="isInvalid($v.request.request.email)"
-                    type="email"
+                          v-model="$v.request.request.email.$model"
+                          :state="isInvalid($v.request.request.email)"
+                          type="email"
                   />
                   <b-form-invalid-feedback>This field is required and must be a valid email.</b-form-invalid-feedback>
                 </b-form-group>
@@ -59,8 +59,8 @@
               <b-col>
                 <b-form-group label="Company Position:">
                   <b-form-input
-                    v-model="$v.request.request.companyPosition.$model"
-                    :state="isInvalid($v.request.request.companyPosition)"
+                          v-model="$v.request.request.companyPosition.$model"
+                          :state="isInvalid($v.request.request.companyPosition)"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
@@ -70,15 +70,15 @@
               <b-col>
                 <b-form-group label="MOBILE NUMBER:">
                   <vue-phone-number-input
-                    v-model="rootMobileNumber"
-                    @update="phoneUpdate"
-                    :only-countries="mobileCountries"
-                    :border-radius="0"
-                    :error="numberIsValid === false"
-                    color="#6C1C5C"
-                    error-color="#F50E4C"
-                    valid-color="#6D7490"
-                    default-country-code="GB"
+                          v-model="rootMobileNumber"
+                          @update="phoneUpdate"
+                          :only-countries="mobileCountries"
+                          :border-radius="0"
+                          :error="numberIsValid === false"
+                          color="#6C1C5C"
+                          error-color="#F50E4C"
+                          valid-color="#6D7490"
+                          default-country-code="GB"
                   />
                   <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                     This field must be a valid mobile number.
@@ -97,13 +97,11 @@
 import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import * as AuthStore from '~/store/modules/Auth'
 import { CorporateUserType } from '~/api/Enums/Corporates/CorporateUserType'
 import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/CreateCorporateUserFullRequest'
 import BaseMixin from '~/minixs/BaseMixin'
 
-const Corporates = namespace(CorporatesStore.name)
 const Auth = namespace(AuthStore.name)
 const Countries = require('~/static/json/countries.json')
 
@@ -140,7 +138,9 @@ const Countries = require('~/static/json/countries.json')
   }
 })
 export default class AddCardPage extends mixins(BaseMixin) {
-  @Corporates.Getter isLoading
+  get isLoading(){
+    return this.stores.corporates.isLoading
+  }
 
   @Auth.Getter identityId
 
@@ -188,7 +188,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
       }
     }
 
-    CorporatesStore.Helpers.addUser(this.$store, this.request).then(this.userAdded.bind(this))
+    this.stores.corporates.addUser(this.request).then(this.userAdded.bind(this))
   }
 
   userAdded() {

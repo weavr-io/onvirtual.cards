@@ -194,9 +194,9 @@
         </b-card-body>
       </b-card>
     </b-modal>
-    <infinite-loading @infinite="infiniteScroll" spinner="spiral" >
-      <span slot="no-more"></span>
-      <div slot="no-results"></div>
+    <infinite-loading @infinite="infiniteScroll" spinner="spiral">
+      <span slot="no-more" />
+      <div slot="no-results" />
     </infinite-loading>
   </section>
 </template>
@@ -215,6 +215,7 @@ import { cardsStore } from '~/utils/store-accessor'
 import BaseMixin from '~/minixs/BaseMixin'
 import { StatementRequest } from '~/api/Requests/Statements/StatementRequest'
 import RouterMixin from '~/minixs/RouterMixin'
+import FiltersMixin from '~/minixs/FiltersMixin'
 import OrderType = Schemas.OrderType
 
 const dot = require('dot-object')
@@ -230,7 +231,7 @@ const moment = require('moment')
     BIconThreeDotsVertical
   }
 })
-export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin) {
+export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, FiltersMixin) {
   $route
 
   // @ts-ignore
@@ -267,36 +268,7 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin) {
   public fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
 
   get months() {
-    const _lastMonth = moment().subtract(1, 'month')
-    const _2Months = moment().subtract(2, 'month')
-
-    return [
-      {
-        value: {
-          start: moment()
-            .startOf('month')
-            .valueOf(),
-          end: moment()
-            .endOf('month')
-            .valueOf()
-        },
-        text: 'this month'
-      },
-      {
-        value: {
-          start: _lastMonth.startOf('month').valueOf(),
-          end: _lastMonth.endOf('month').valueOf()
-        },
-        text: _lastMonth.format('MMMM')
-      },
-      {
-        value: {
-          start: _2Months.startOf('month').valueOf(),
-          end: _2Months.endOf('month').valueOf()
-        },
-        text: _2Months.format('MMMM')
-      }
-    ]
+    return this.monthsFilter(parseInt(this.managedCard!.creationTimestamp))
   }
 
   async asyncData({ store, route }) {
@@ -321,7 +293,7 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin) {
       showFundMovementsOnly: true,
       orderByTimestamp: OrderType.DESC,
       paging: {
-        limit: 10,
+        limit: 100,
         offset: 0
       },
       ..._filters
@@ -366,7 +338,7 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin) {
   async doDeleteCard() {
     const _accounts = await this.stores.accounts.index()
 
-    if (_accounts.data.count === 1 && this.managedCard) {
+    if (_accounts.data.count >= 1 && this.managedCard) {
       if (this.managedCard.balances.availableBalance && parseInt(this.managedCard.balances.availableBalance) > 0) {
         const _request: TransfersSchemas.CreateTransferRequest = {
           profileId: config.profileId.transfers,
@@ -396,10 +368,12 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin) {
       _request.paging!.offset = this.page * _request.paging!.limit!
 
       this.stores.cards.getCardStatementPage({ id: this.$route.params.id, request: _request }).then((response) => {
-        if (response.data.responseCount > 0) {
-          $state.loaded()
-        } else {
+        if (response.data.responseCount < _request.paging!.limit!) {
           $state.complete()
+          console.log('complete')
+        } else {
+          console.log('loaded')
+          $state.loaded()
         }
       })
     }, 500)

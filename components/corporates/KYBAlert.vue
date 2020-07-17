@@ -51,18 +51,17 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 
-import * as CorporatesStore from '~/store/modules/Corporates'
 import * as ViewStore from '~/store/modules/View'
-import { Corporate } from '~/api/Models/Corporates/Corporate'
 import { KYBState } from '~/api/Enums/KYBState'
 import BaseMixin from '~/minixs/BaseMixin'
 
-const Corporates = namespace(CorporatesStore.name)
 const View = namespace(ViewStore.name)
 
 @Component({})
 export default class KYBAlert extends mixins(BaseMixin) {
-  @Corporates.Getter corporate!: Corporate | null
+  get corporate() {
+    return this.stores.corporates.corporate
+  }
 
   accountId!: number
 

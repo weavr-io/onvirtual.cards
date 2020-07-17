@@ -104,10 +104,19 @@ export default class Cards extends StoreModule {
   }
 
   @Mutation
+  RESET_STATEMENT() {
+    this.statement = []
+  }
+
+  @Mutation
   APPEND_STATEMENT(_statement: Statement) {
-    _statement.entry.forEach((_statementEntry) => {
-      this.statement.push(_statementEntry)
-    })
+    if (this.statement === null) {
+      this.statement = _statement.entry
+    } else {
+      _statement.entry.forEach((_statementEntry) => {
+        this.statement.push(_statementEntry)
+      })
+    }
   }
 
   @Mutation

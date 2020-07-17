@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -54,7 +54,6 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
 import { Schemas } from '~/api/Schemas'
 import * as AuthStore from '~/store/modules/Auth'
-import * as CorporatesStore from '~/store/modules/Corporates'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
 
@@ -148,7 +147,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
     const _corporate = AuthStore.Helpers.auth(this.$store)
 
     if (_corporateId != null && _corporate.credential) {
-      const res = await CorporatesStore.Helpers.getUser(this.$store, {
+      const res = await this.stores.corporates.getUser({
         corporateId: _corporateId,
         userId: _corporate.credential.id
       })
@@ -178,14 +177,16 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   sendVerifyEmailCorporates() {
-    CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, {
-      corporateId: this.verifyEmailRequest.corporateId,
-      body: {
-        emailAddress: this.verifyEmailRequest.request.emailAddress
-      }
-    }).then(() => {
-      this.showEmailResentSuccess = true
-    })
+    this.stores.corporates
+      .sendVerificationCodeEmail({
+        corporateId: this.verifyEmailRequest.corporateId,
+        body: {
+          emailAddress: this.verifyEmailRequest.request.emailAddress
+        }
+      })
+      .then(() => {
+        this.showEmailResentSuccess = true
+      })
   }
 
   doVerify(evt) {
