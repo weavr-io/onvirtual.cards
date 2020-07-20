@@ -58,7 +58,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
 
   async asyncData(context) {
     const _validateRequest: ValidateCorporateUserInviteRequest = {
-      id: context.route.query.corp.toString(),
+      id: context.route.query.identity_id,
       body: {
         nonce: context.route.query.nonce.toString(),
         emailAddress: context.route.query.email.toString()

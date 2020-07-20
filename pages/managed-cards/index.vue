@@ -4,9 +4,13 @@
       <b-container class="mb-5 mt-n4">
         <b-row align-v="center">
           <b-col>
-            <b-form-checkbox v-model="showDeleted" name="check-button" switch>
-              <template v-if="showDeleted">Hide</template>
-              <template v-else>Show</template>
+            <b-form-checkbox v-model="showDeleted" v-if="showDeletedSwitch" name="check-button" switch>
+              <template v-if="showDeleted">
+                Hide
+              </template>
+              <template v-else>
+                Show
+              </template>
               deleted cards
             </b-form-checkbox>
           </b-col>
@@ -53,6 +57,7 @@ import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import BaseMixin from '~/minixs/BaseMixin'
 import { cardsStore, corporatesStore } from '~/utils/store-accessor'
 import { NullableBoolean } from '~/api/Generic/NullableBoolean'
+import { api } from '~/api/Axios'
 
 const View = namespace(ViewStore.name)
 
@@ -76,6 +81,22 @@ export default class CardsPage extends mixins(BaseMixin) {
   @View.Getter hasAlert!: boolean
 
   public showDeleted: boolean = false
+
+  public showDeletedSwitch: boolean = false
+
+  mounted() {
+    api
+      .post('/app/api/managed_cards/get', {
+        paging: {
+          offset: 0,
+          limit: 1
+        },
+        active: NullableBoolean.FALSE
+      })
+      .then((res) => {
+        this.showDeletedSwitch = res.data.count > 0;
+      })
+  }
 
   async asyncData({ store, route }) {
     if (AuthStore.Helpers.isConsumer(store)) {
