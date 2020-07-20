@@ -7,8 +7,8 @@ import CurrencyAmount = Schemas.CurrencyAmount
 export interface ConsumerKycStatus {
   emailVerified?: boolean
   mobileVerified?: boolean
-  isPep?: IsPep
-  isSanctioned?: IsSanctioned
+  pep?: IsPep
+  sanctioned?: IsSanctioned
   fullDueDiligence?: FullDueDiligence
   enhancedDueDiligence?: FullDueDiligence
   allowedLimit?: CurrencyAmount

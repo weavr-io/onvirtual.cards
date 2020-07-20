@@ -98,7 +98,7 @@ export const actions: Actions<State, RootState> = {
 
     const _res = getters.consumer.kyc.emailVerified === true &&
       getters.consumer.kyc.mobileVerified === true &&
-      getters.consumer.kyc.isPep === IsPep.NO &&
+      getters.consumer.kyc.pep === IsPep.NO &&
       getters.consumer.kyc.fullDueDiligence === FullDueDiligence.APPROVED
 
     if (!_res) {
