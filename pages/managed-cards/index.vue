@@ -84,20 +84,6 @@ export default class CardsPage extends mixins(BaseMixin) {
 
   public showDeletedSwitch: boolean = false
 
-  mounted() {
-    api
-      .post('/app/api/managed_cards/get', {
-        paging: {
-          offset: 0,
-          limit: 1
-        },
-        active: NullableBoolean.FALSE
-      })
-      .then((res) => {
-        this.showDeletedSwitch = res.data.count > 0;
-      })
-  }
-
   async asyncData({ store, route }) {
     if (AuthStore.Helpers.isConsumer(store)) {
       const _consumerId = AuthStore.Helpers.identityId(store)
@@ -127,8 +113,17 @@ export default class CardsPage extends mixins(BaseMixin) {
       active: _active
     })
 
+    const _showDeletedSwitch = await api.post('/app/api/managed_cards/get', {
+      paging: {
+        offset: 0,
+        limit: 1
+      },
+      active: NullableBoolean.FALSE
+    })
+
     return {
-      showDeleted: route.query.showDeleted
+      showDeleted: route.query.showDeleted,
+      showDeletedSwitch: _showDeletedSwitch.data.count > 0
     }
   }
 
