@@ -142,7 +142,7 @@ export default class WeavrCard extends mixins(BaseMixin) {
   }
 
   getCards() {
-    return this.$router.push({ path: this.$route.path, query: { ...this.$route.query, u: (new Date()).getTime() } })
+    return this.$router.push({ path: this.$route.path, query: { ...this.$route.query, u: new Date().getTime() + '' } })
   }
 
   freezeCard() {
