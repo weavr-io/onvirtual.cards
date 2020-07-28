@@ -71,6 +71,7 @@ import * as AuthStore from '~/store/modules/Auth'
 import { Schemas } from '~/api/Schemas'
 import { UpdateManagedCardRequest } from '~/api/Requests/ManagedCards/UpdateManagedCardRequest'
 import BaseMixin from '~/minixs/BaseMixin'
+import { cardsStore } from '~/utils/store-accessor'
 import LoginResult = Schemas.LoginResult
 
 const Auth = namespace(AuthStore.name)
@@ -151,7 +152,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
   async asyncData({ store, route }) {
     const _cardId = route.params.id
 
-    const _card = await this.stores.cards.getManagedCard(_cardId)
+    const _card = await cardsStore(store).getManagedCard(_cardId)
 
     const _parsedNumber = parsePhoneNumberFromString(_card.data.cardholderMobileNumber)
 
