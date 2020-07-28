@@ -53,13 +53,13 @@
               </b-row>
             </b-container>
           </b-link>
-          <b-button @click="toggleShowOptions" class="card-options-button" v-if="isActive">
+          <b-button @click="toggleShowOptions" v-if="isActive" class="card-options-button">
             <b-icon icon="three-dots-vertical" />
           </b-button>
         </b-aspect>
       </b-card-body>
     </b-card>
-    <b-row v-if="showOptions" class="card-options">
+    <b-row v-if="showOptions && isActive" class="card-options">
       <b-col>
         <b-link @click="toggleFreeze" class="mt-3 py-2 d-block text-decoration-none">
           <b-row align-v="center">
@@ -142,12 +142,7 @@ export default class WeavrCard extends mixins(BaseMixin) {
   }
 
   getCards() {
-    return this.stores.cards.getCards({
-      paging: {
-        offset: 0,
-        limit: 0
-      }
-    })
+    return this.$router.push({ path: this.$route.path, query: { ...this.$route.query, u: (new Date()).getTime() } })
   }
 
   freezeCard() {
