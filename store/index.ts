@@ -7,7 +7,6 @@ import * as Transfers from './modules/Transfers'
 import * as Consumers from './modules/Consumers'
 import * as View from './modules/View'
 import * as SecureClient from './modules/SecureClient'
-import createInterceptors from '~/plugins/AxiosInterceptors'
 import Cards from '~/store/cards'
 import Accounts from '~/store/accounts'
 import Corporates from '~/store/corporates'
@@ -25,11 +24,10 @@ import { initialiseStores } from '~/utils/store-accessor'
 export type RootState = root.State
 
 const initializer = (store: Store<any>) => initialiseStores(store)
-const interceptors = createInterceptors()
 
 const createStore = () => {
   return new Store({
-    plugins: [interceptors, initializer],
+    plugins: [initializer],
     state: root.state(),
     getters: root.getters,
     mutations: root.mutations,

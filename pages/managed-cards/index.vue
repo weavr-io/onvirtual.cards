@@ -57,7 +57,7 @@ import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import BaseMixin from '~/minixs/BaseMixin'
 import { cardsStore, corporatesStore } from '~/utils/store-accessor'
 import { NullableBoolean } from '~/api/Generic/NullableBoolean'
-import { api } from '~/api/Axios'
+import { $api } from '~/utils/api'
 
 const View = namespace(ViewStore.name)
 
@@ -113,7 +113,7 @@ export default class CardsPage extends mixins(BaseMixin) {
       active: _active
     })
 
-    const _showDeletedSwitch = await api.post('/app/api/managed_cards/get', {
+    const _showDeletedSwitch = await $api.post('/app/api/managed_cards/get', {
       paging: {
         offset: 0,
         limit: 1

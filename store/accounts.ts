@@ -2,8 +2,8 @@ import { Module, Action, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { Statement } from '~/api/Models/Statements/Statement'
-import { api } from '~/api/Axios'
 import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
+import { $api } from '~/utils/api'
 
 @Module({
   name: 'accountsV2',
@@ -123,7 +123,7 @@ export default class Accounts extends StoreModule {
       }
     }
 
-    const req = api.post('/app/api/managed_accounts/get', body)
+    const req = $api.post('/app/api/managed_accounts/get', body)
 
     req.then((res) => {
       this.SET_ACCOUNTS(res.data)
@@ -134,7 +134,7 @@ export default class Accounts extends StoreModule {
 
   @Action({ rawError: true })
   add(request: ManagedAccountsSchemas.CreateManagedAccountRequest) {
-    const req = api.post('/app/api/managed_accounts/_/create', request)
+    const req = $api.post('/app/api/managed_accounts/_/create', request)
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -145,7 +145,7 @@ export default class Accounts extends StoreModule {
 
   @Action({ rawError: true })
   get(id: number) {
-    const req = api.post('/app/api/managed_accounts/' + id + '/get', {})
+    const req = $api.post('/app/api/managed_accounts/' + id + '/get', {})
 
     req.then((res) => {
       this.SET_ACCOUNT(res.data)
@@ -157,7 +157,7 @@ export default class Accounts extends StoreModule {
   @Action({ rawError: true })
   getStatement(request: { id: string; body: ManagedAccountStatementRequest }) {
     console.log(request)
-    const req = api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
+    const req = $api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
 
     req.then((res) => {
       this.SET_STATEMENT(res.data)
@@ -168,7 +168,7 @@ export default class Accounts extends StoreModule {
 
   @Action({ rawError: true })
   getCardStatementPage(request: { id: string; body: ManagedAccountStatementRequest }) {
-    const req = api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
+    const req = $api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
 
     req.then((res) => {
       this.APPEND_STATEMENT(res.data)

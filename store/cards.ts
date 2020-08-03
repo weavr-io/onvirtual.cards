@@ -1,11 +1,11 @@
 import { Module, Action, Mutation } from 'vuex-module-decorators'
-import { api } from '~/api/Axios'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import { Statement } from '~/api/Models/Statements/Statement'
 import { StoreModule } from '~/store/storeModule'
 import { ManagedCardsFilter } from '~/api/Requests/ManagedCards/ManagedCardsFilter'
 import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
 import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
+import { $api } from '~/utils/api'
 
 @Module({
   name: 'cardsV2',
@@ -126,7 +126,7 @@ export default class Cards extends StoreModule {
 
   @Action({ rawError: true })
   getCards(filters: ManagedCardsFilter) {
-    const req = api.post('/app/api/managed_cards/get', filters)
+    const req = $api.post('/app/api/managed_cards/get', filters)
 
     req.then((res) => {
       this.SET_CARDS(res.data.card)
@@ -137,7 +137,7 @@ export default class Cards extends StoreModule {
 
   @Action({ rawError: true })
   addCard(request: ManagedCardsSchemas.CreateManagedCardRequest) {
-    const req = api.post('/app/api/managed_cards/_/create', request)
+    const req = $api.post('/app/api/managed_cards/_/create', request)
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -148,7 +148,7 @@ export default class Cards extends StoreModule {
 
   @Action({ rawError: true })
   update(request) {
-    const req = api.post('/app/api/managed_cards/' + request.id + '/update', request.body)
+    const req = $api.post('/app/api/managed_cards/' + request.id + '/update', request.body)
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -161,7 +161,7 @@ export default class Cards extends StoreModule {
   getCardStatement(request: ManagedCardStatementRequest) {
     this.SET_IS_LOADING(true)
 
-    const req = api.post('/app/api/managed_cards/' + request.id + '/statement/get', request.request)
+    const req = $api.post('/app/api/managed_cards/' + request.id + '/statement/get', request.request)
 
     req.then((res) => {
       this.SET_STATEMENT(res.data)
@@ -177,7 +177,7 @@ export default class Cards extends StoreModule {
 
   @Action({ rawError: true })
   getCardStatementPage(request: ManagedCardStatementRequest) {
-    const req = api.post('/app/api/managed_cards/' + request.id + '/statement/get', request.request)
+    const req = $api.post('/app/api/managed_cards/' + request.id + '/statement/get', request.request)
 
     req.then((res) => {
       this.APPEND_STATEMENT(res.data)
@@ -189,7 +189,7 @@ export default class Cards extends StoreModule {
 
   @Action({ rawError: true })
   getManagedCard(id) {
-    const req = api.post('/app/api/managed_cards/' + id + '/get', {})
+    const req = $api.post('/app/api/managed_cards/' + id + '/get', {})
 
     req.then((res) => {
       this.SET_MANAGED_CARD(res.data)
@@ -202,7 +202,7 @@ export default class Cards extends StoreModule {
   freeze(id) {
     this.SET_IS_LOADING(true)
 
-    const req = api.post('/app/api/managed_cards/' + id + '/freeze', {})
+    const req = $api.post('/app/api/managed_cards/' + id + '/freeze', {})
 
     req.then((res) => {
       this.SET_MANAGED_CARD(res.data)
@@ -219,7 +219,7 @@ export default class Cards extends StoreModule {
   unfreeze(id) {
     this.SET_IS_LOADING(true)
 
-    const req = api.post('/app/api/managed_cards/' + id + '/unfreeze', {})
+    const req = $api.post('/app/api/managed_cards/' + id + '/unfreeze', {})
 
     req.then((res) => {
       this.SET_MANAGED_CARD(res.data)
@@ -236,7 +236,7 @@ export default class Cards extends StoreModule {
   remove(id) {
     this.SET_IS_LOADING(true)
 
-    const req = api.post('/app/api/managed_cards/' + id + '/remove', {})
+    const req = $api.post('/app/api/managed_cards/' + id + '/remove', {})
 
     req.then((res) => {
       this.SET_MANAGED_CARD(res.data)
