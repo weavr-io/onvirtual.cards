@@ -6,9 +6,9 @@
     <error-alert />
     <b-form-group :state="isInvalid($v.form.rootEmail)" label="Email">
       <b-form-input
-        v-model="$v.form.rootEmail.$model"
-        :state="isInvalid($v.form.rootEmail)"
-        placeholder="name@email.com"
+              v-model="$v.form.rootEmail.$model"
+              :state="isInvalid($v.form.rootEmail)"
+              placeholder="name@email.com"
       />
       <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
     </b-form-group>
@@ -16,13 +16,13 @@
       <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
         <label class="d-block">PASSWORD</label>
         <weavr-input
-          :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-          :base-style="passwordBaseStyle"
-          @onKeyUp="checkOnKeyUp"
-          class-name="sign-in-password"
-          name="password"
-          field="password"
-          required="true"
+                :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                :base-style="passwordBaseStyle"
+                @onKeyUp="checkOnKeyUp"
+                class-name="sign-in-password"
+                name="password"
+                field="password"
+                required="true"
         />
         <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
       </weavr-form>
@@ -33,21 +33,21 @@
           <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
             I accept the
             <a
-              href="https://www.onvirtual.cards/terms/business"
-              target="_blank"
-              class="text-decoration-underline text-muted"
+                    href="https://www.onvirtual.cards/terms/business"
+                    target="_blank"
+                    class="text-decoration-underline text-muted"
             >terms of use</a>
             and
             <a href="https://www.onvirtual.cards/policy/"
-            target="_blank"
-            class="text-decoration-underline text-muted"
+               target="_blank"
+               class="text-decoration-underline text-muted"
             >privacy policy</a>
           </b-form-checkbox>
           <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
       </b-col>
     </b-form-row>
-    <div class="mt-2">
+    <div class="mt-2" v-if="isRecaptchaEnabled">
       <recaptcha />
     </div>
     <b-form-row class="mt-5">
@@ -112,26 +112,28 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
         }
       }
 
-      const token = await this.$recaptcha.getResponse()
-      console.log('ReCaptcha token:', token)
-      await this.$recaptcha.reset()
+      if (this.isRecaptchaEnabled) {
+        const token = await this.$recaptcha.getResponse()
+        console.log('ReCaptcha token:', token)
+        await this.$recaptcha.reset()
+      }
 
       console.log('submit form validation success')
 
       SecureClientStore.Helpers.tokenize(this.$store).then(
-        (tokens) => {
-          console.log('password tokenisation')
-          if (tokens.password !== '') {
-            this.form.password = tokens.password
+              (tokens) => {
+                console.log('password tokenisation')
+                if (tokens.password !== '') {
+                  this.form.password = tokens.password
 
-            this.validatePassword()
-          } else {
-            return null
-          }
-        },
-        (e) => {
-          console.log('tokenisation failed', e)
-        }
+                  this.validatePassword()
+                } else {
+                  return null
+                }
+              },
+              (e) => {
+                console.log('tokenisation failed', e)
+              }
       )
     } catch (error) {
       console.log('Login error:', error)
@@ -170,7 +172,7 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
       color: '#495057',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
-      fontFamily: "'Be Vietnam', sans-serif",
+      fontFamily: '\'Be Vietnam\', sans-serif',
       fontWeight: '400',
       lineHeight: '24px',
       margin: '0',
@@ -181,6 +183,11 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
         fontWeight: '400'
       }
     }
+  }
+
+
+  get isRecaptchaEnabled(): boolean {
+    return typeof process.env.RECAPTCHA !== 'undefined'
   }
 }
 </script>

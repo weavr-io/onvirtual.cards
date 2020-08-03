@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
 
-const env = dotenv.config({ debug: true })
+const env = dotenv.config({debug: true})
 
 const config = {
   mode: 'spa',
@@ -14,8 +14,8 @@ const config = {
   head: {
     title: 'onvirtual.cards',
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      {charset: 'utf-8'},
+      {name: 'viewport', content: 'width=device-width, initial-scale=1'},
       {
         hid: 'description',
         name: 'description',
@@ -31,11 +31,11 @@ const config = {
     ],
 
     link: [
-      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-      { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
-      { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
-      { rel: 'manifest', href: '/site.webmanifest' },
-      { rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
+      {rel: 'apple-touch-icon', href: '/apple-touch-icon.png'},
+      {rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png'},
+      {rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png'},
+      {rel: 'manifest', href: '/site.webmanifest'},
+      {rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5'},
       {
         rel: 'stylesheet',
         href:
@@ -46,7 +46,7 @@ const config = {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#6C1C5C' },
+  loading: {color: '#6C1C5C'},
   /*
    ** Global CSS
    */
@@ -55,12 +55,12 @@ const config = {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    { src: '~/plugins/vuelidate' },
-    { src: '~/plugins/weavr/security.client.ts', ssr: false },
-    { src: '~/plugins/WeavrVueFilters.ts', ssr: false },
-    { src: '~/plugins/PhoneNumberInput.ts', ssr: false },
-    { src: '~/plugins/flatpickr.ts', ssr: false },
-    { src: '~/plugins/InfiniteLoading.ts', ssr: false }
+    {src: '~/plugins/vuelidate'},
+    {src: '~/plugins/weavr/security.client.ts', ssr: false},
+    {src: '~/plugins/WeavrVueFilters.ts', ssr: false},
+    {src: '~/plugins/PhoneNumberInput.ts', ssr: false},
+    {src: '~/plugins/flatpickr.ts', ssr: false},
+    {src: '~/plugins/InfiniteLoading.ts', ssr: false}
   ],
   /*
    ** Nuxt.js modules
@@ -72,8 +72,7 @@ const config = {
     '@nuxtjs/axios',
     // '@nuxtjs/eslint-module'
     '@dansmaculotte/nuxt-segment',
-    '@nuxtjs/svg',
-    '@nuxtjs/recaptcha'
+    '@nuxtjs/svg'
   ],
   bootstrapVue: {
     bootstrapCSS: false, // Or `css: false`
@@ -97,6 +96,10 @@ const config = {
     typeCheck: true,
     ignoreNotFoundWarnings: true
   }
+}
+console.log(process.env.RECAPTCHA, 're');
+if (process.env.RECAPTCHA) {
+  config.modules.push('@nuxtjs/recaptcha')
 }
 
 export default config
