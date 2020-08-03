@@ -60,7 +60,9 @@ const config = {
     { src: '~/plugins/WeavrVueFilters.ts', ssr: false },
     { src: '~/plugins/PhoneNumberInput.ts', ssr: false },
     { src: '~/plugins/flatpickr.ts', ssr: false },
-    { src: '~/plugins/InfiniteLoading.ts', ssr: false }
+    { src: '~/plugins/InfiniteLoading.ts', ssr: false },
+    { src: '~/plugins/axios.ts' },
+    { src: '~/plugins/axios-accessor.ts' }
   ],
   /*
    ** Nuxt.js modules
@@ -72,8 +74,7 @@ const config = {
     '@nuxtjs/axios',
     // '@nuxtjs/eslint-module'
     '@dansmaculotte/nuxt-segment',
-    '@nuxtjs/svg',
-    '@nuxtjs/recaptcha'
+    '@nuxtjs/svg'
   ],
   bootstrapVue: {
     bootstrapCSS: false, // Or `css: false`
@@ -97,6 +98,10 @@ const config = {
     typeCheck: true,
     ignoreNotFoundWarnings: true
   }
+}
+console.log(process.env.RECAPTCHA, 're')
+if (process.env.RECAPTCHA) {
+  config.modules.push('@nuxtjs/recaptcha')
 }
 
 export default config

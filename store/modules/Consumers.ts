@@ -3,9 +3,9 @@ import { GetterTree, MutationTree } from '~/node_modules/vuex'
 import { RootState } from '~/store'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import * as Loader from '~/store/modules/Loader'
-import { api } from '~/api/Axios'
 import { IsPep } from '~/api/Enums/Consumers/IsPep'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+import { $api } from '~/utils/api'
 
 export { name, namespaced, Helpers }
 
@@ -36,7 +36,7 @@ export const actions: Actions<State, RootState> = {
   create({ commit }, request) {
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post('/app/api/consumers/_/create', request)
+    const req = $api.post('/app/api/consumers/_/create', request)
 
     req.then((_res) => {
       commit(types.SET_CONSUMER, _res.data)
@@ -52,7 +52,7 @@ export const actions: Actions<State, RootState> = {
   update({ commit }, request) {
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post('/app/api/consumers/' + request.consumerId + '/update', request.request)
+    const req = $api.post('/app/api/consumers/' + request.consumerId + '/update', request.request)
 
     req.then((_res) => {
       commit(types.SET_CONSUMER, _res.data)
@@ -69,7 +69,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = api.post('/app/api/consumers/' + id + '/get', {})
+    const req = $api.post('/app/api/consumers/' + id + '/get', {})
 
     req.then((res) => {
       commit(types.SET_CONSUMER, res.data)
@@ -82,13 +82,13 @@ export const actions: Actions<State, RootState> = {
     return req
   },
   sendVerificationCodeEmail({}, request) {
-    return api.post('/app/api/consumers/' + request.consumerId + '/email/send_verification_code', request.request)
+    return $api.post('/app/api/consumers/' + request.consumerId + '/email/send_verification_code', request.request)
   },
   sendVerificationCodeMobile({}, request) {
-    return api.post('/app/api/consumers/' + request.consumerId + '/mobile/send_verification_code', request.request)
+    return $api.post('/app/api/consumers/' + request.consumerId + '/mobile/send_verification_code', request.request)
   },
   verifyMobile({}, request) {
-    return api.post('/app/api/consumers/' + request.consumerId + '/mobile/verify', request.request)
+    return $api.post('/app/api/consumers/' + request.consumerId + '/mobile/verify', request.request)
   },
   async checkKYC({ dispatch, getters, rootGetters }) {
     if (getters.consumer === null) {
@@ -106,6 +106,6 @@ export const actions: Actions<State, RootState> = {
     }
   },
   startKYC({}, consumerId) {
-    return api.post('/app/api/consumers/' + consumerId + '/kyc/start', {})
+    return $api.post('/app/api/consumers/' + consumerId + '/kyc/start', {})
   }
 }
