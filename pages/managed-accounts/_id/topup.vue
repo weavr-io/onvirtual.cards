@@ -2,7 +2,7 @@
   <section>
     <b-container>
       <b-row>
-        <b-col md="6" offset-md="3">
+        <b-col v-if="account" md="6" offset-md="3">
           <b-row>
             <b-col>
               <h2 class="text-center font-weight-lighter">
@@ -39,9 +39,7 @@
                   </b-tr>
                   <b-tr>
                     <b-th>Address</b-th>
-                    <b-td style="white-space: pre">
-                      {{ account.bankAccountDetails.address | weavr_coma_to_newline }}
-                    </b-td>
+                    <b-td v-html="address" />
                   </b-tr>
                   <b-tr v-if="account.bankAccountDetails.paymentReference">
                     <b-th>Payment Reference</b-th>
@@ -83,6 +81,10 @@ import { accountsStore, corporatesStore } from '~/utils/store-accessor'
 export default class AccountTopupPage extends mixins(BaseMixin) {
   get account() {
     return this.stores.accounts.account
+  }
+
+  get address() {
+    return this.account?.bankAccountDetails?.address?.split(',').join(',<br>')
   }
 
   async asyncData({ store, route, redirect }) {
@@ -129,6 +131,8 @@ export default class AccountTopupPage extends mixins(BaseMixin) {
         redirect('/managed-accounts/kyb')
       }
     }
+
+    await accountsStore(store).get(accountId)
 
     return { accountId: accountId, approved: approved }
   }
