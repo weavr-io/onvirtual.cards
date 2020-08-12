@@ -113,7 +113,7 @@ Vue.filter('weavr_underscore', function(value) {
 })
 
 Vue.filter('weavr_coma_to_newline', function(value) {
-  return value.split(',').join(',\n')
+  return value.split(',').join(',<br>')
 })
 
 Vue.filter('weavr_convert_camelcase', function(value) {
