@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile-app
+    ports:
+      - '80:80'
+  proxy:
+    container_name: proxy
+    build:
+      context: .
+      dockerfile: Dockerfile-proxy
+    ports:
+      - '81:80'
