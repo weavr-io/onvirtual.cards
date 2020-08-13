@@ -7,8 +7,8 @@ This is a demo application called **onvirtual.cards** used to illustrate how to 
 - **Proxy**: A lightweight back-end (Nginx proxy) used to hide sensitive application data
 
 # Configuration
-1. Copy .env.example file to a new .env file in the project root and fill in the correct environment variables.  These values are available upon setting an Innovator integration with the Weavr Platform.  For this application, you must choose the *Business Purchasing* payment model. Note that BASE_URL points to the proxy server (Dockerfile-proxy) while BASE_URL_SCRIPT should point to the Weavr **Build** environment. The CONSUMER variables can be ignored. 
-2. Copy .proxy.conf.example to .proxy.conf file in the project root. Replace ${SECRET_KEY} with the secret key value in the Innovator Portal.
+1. Copy .env.example file to a new .env file in the project root and fill in the correct environment variables.  These values are available upon setting an Innovator integration with the Weavr Platform (https://docs.weavr.io/docs/step-by-step/).  For this application, you must choose the *Business Purchasing* payment model. Note that BASE_URL points to the proxy server (Dockerfile-proxy) while BASE_URL_SCRIPT should point to the Weavr **Build** environment. The CONSUMER variables can be ignored. 
+2. Copy .proxy.conf.example to .proxy.conf file in the project root. Replace ${SECRET_KEY} with the **API Key** value in the Innovator Portal API Credentials.
 
 # Running the App
 
