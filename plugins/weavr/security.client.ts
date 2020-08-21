@@ -8,7 +8,7 @@ import WeavrKyb from '~/plugins/weavr/components/WeavrKyb.vue'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 
 // @ts-ignore
-window.OpcUxSecureClient.init(config.api.sharedKey, {
+window.OpcUxSecureClient.init(config.api.uiKey, {
   fonts: [
     {
       cssSrc:
