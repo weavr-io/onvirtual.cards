@@ -6,7 +6,7 @@ server {
     #access_log  /var/log/nginx/host.access.log  main;
 
     location / {
-        proxy_set_header programme-key ${SECRET_KEY};
+        proxy_set_header programme-key {{API_KEY}};
         proxy_pass https://build.weavr.io;
     }
 

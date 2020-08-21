@@ -4,7 +4,7 @@ export default {
     tenantId: process.env.TENANT_ID,
     programmeId: '' + process.env.APPLICATION_ID,
     secretKey: process.env.SECRET_KEY,
-    sharedKey: process.env.SHARED_KEY
+    uiKey: process.env.UI_KEY
   },
   profileId: {
     consumers: process.env.CONSUMERS_PROFILE_ID,
@@ -19,6 +19,6 @@ export default {
   app: {
     kyb_required: process.env.KYB_REQUIRED ? JSON.parse(process.env.KYB_REQUIRED) : true,
     view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true,
-    sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : false
+    sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : true
   }
 }
