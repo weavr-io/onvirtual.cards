@@ -15,6 +15,13 @@ This is a demo application called **onvirtual.cards** used to illustrate how to 
 **Note**: Docker and docker-compose are required.
 ``` bash
 # run docker-compose in root folder
-$ docker-compose up -d --build
+$ docker-compose up -d --build --force-recreate
 ```
-Access application at **http://localhost**
+Access application at **http://localhost**. 
+
+When running Docker on **Windows** localhost is not accessible.
+
+To access application call the following command and access at given ip:
+``` bash
+docker-machine ip default
+```
