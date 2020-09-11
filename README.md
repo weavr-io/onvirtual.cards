@@ -8,13 +8,20 @@ This is a demo application called **onvirtual.cards** used to illustrate how to 
 
 # Configuration
 1. Copy .env.example file to a new .env file in the project root and fill in the correct environment variables.  These values are available upon setting an Innovator integration with the Weavr Platform (https://docs.weavr.io/docs/step-by-step/).  For this application, you must choose the *Business Purchasing* payment model. Note that BASE_URL points to the proxy server (Dockerfile-proxy) while BASE_URL_SCRIPT should point to the Weavr **Build** environment. The CONSUMER variables can be ignored. 
-2. Copy .proxy.conf.example to .proxy.conf file in the project root. Replace ${SECRET_KEY} with the **API Key** value in the Innovator Portal API Credentials.
+2. Copy .proxy.conf.example to .proxy.conf file in the project root. Replace {{API_KEY}} with the **API Key** value in the Innovator Portal API Credentials.
 
 # Running the App
 
 **Note**: Docker and docker-compose are required.
 ``` bash
 # run docker-compose in root folder
-$ docker-compose up -d --build
+$ docker-compose up -d --build --force-recreate
 ```
-Access application at **http://localhost**
+Access application at **http://localhost**. 
+
+When running Docker on **Windows** localhost is not accessible.
+
+To access application call the following command and access at given ip:
+``` bash
+docker-machine ip default
+```
