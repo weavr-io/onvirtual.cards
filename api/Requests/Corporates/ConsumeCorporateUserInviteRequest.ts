@@ -1,11 +1,11 @@
 export interface ConsumeCorporateUserInviteRequest {
-  id: number
+  id: string
   body: {
     identityId: {
       type: string
-      id: number
+      id: string
     }
-    userId: number
+    userId: string
     nonce: string
     password: {
       value: string
