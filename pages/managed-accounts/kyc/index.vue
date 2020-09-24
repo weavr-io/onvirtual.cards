@@ -3,12 +3,19 @@
     <b-container>
       <b-row>
         <b-col>
-          <iframe id="iframe" :src="redirectUrl" style="width:100%; height:800px;" allow="camera *;" frameborder="0" />
+          <iframe
+            id="iframe"
+            :src="redirectUrl"
+            style="width:100%; height:800px;"
+            allow="camera *;"
+            frameborder="0"
+          />
         </b-col>
       </b-row>
     </b-container>
   </section>
 </template>
+
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import * as AuthStore from '~/store/modules/Auth'

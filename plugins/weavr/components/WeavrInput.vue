@@ -1,10 +1,15 @@
 <template>
   <div :class="className" class="weavr-input" />
 </template>
+
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
-import { SecureElementStyleWithPseudoClasses, SecureForm, SecureInputOptions } from '~/plugins/weavr/components/api'
 import * as SecureClientStore from '~/store/modules/SecureClient'
+import {
+  SecureElementStyleWithPseudoClasses,
+  SecureForm,
+  SecureInputOptions
+} from '~/plugins/weavr/components/api'
 
 @Component
 class WeavrInput extends Vue {
@@ -45,7 +50,11 @@ class WeavrInput extends Vue {
   protected _input
 
   mounted() {
-    this._input = SecureClientStore.Helpers.getForm(this.$store)?.input(this.name, this.field, this.inputOptions)
+    this._input = SecureClientStore.Helpers.getForm(this.$store)?.input(
+      this.name,
+      this.field,
+      this.inputOptions
+    )
     this._input.mount(this.$el)
     this._addListeners(this._input)
   }

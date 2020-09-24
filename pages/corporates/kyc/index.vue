@@ -17,8 +17,8 @@
         <b-col md="6">
           <b-alert variant="danger" show>
             <p class="text-center m-0">
-              The link that you are trying to use may have expired. Please contact your main account holder to obtain a
-              new link.
+              The link that you are trying to use may have expired. Please
+              contact your main account holder to obtain a new link.
             </p>
           </b-alert>
         </b-col>
@@ -51,7 +51,10 @@ export default class KybPage extends mixins(BaseMixin) {
   }
 
   asyncData({ route }) {
-    return { accessToken: route.query.token, corporateId: route.query.corporate }
+    return {
+      accessToken: route.query.token,
+      corporateId: route.query.corporate
+    }
   }
 
   handleSumSubMessage(message) {
