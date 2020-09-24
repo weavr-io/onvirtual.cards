@@ -108,7 +108,6 @@ export default class LoginPage extends mixins(BaseMixin) {
       SecureClientStore.Helpers.tokenize(this.$store).then(
         (tokens) => {
           console.log('Password tokenisation success')
-          console.log(tokens)
 
           this.loginRequest.password = tokens.password
           this.authenticate(this.loginRequest).then(
