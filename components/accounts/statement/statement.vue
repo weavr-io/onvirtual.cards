@@ -11,10 +11,10 @@
                 </b-col>
                 <b-col cols="auto">
                   <b-form-select
-                          :options="months"
-                          :value="filterDate"
-                          @change="filterMonthChange"
-                          class="w-auto d-inline-block"
+                    :options="months"
+                    :value="filterDate"
+                    @change="filterMonthChange"
+                    class="w-auto d-inline-block"
                   />
                 </b-col>
               </b-row>
@@ -23,7 +23,10 @@
         </b-row>
         <b-row v-if="filteredStatement && filteredStatementLength > 0">
           <b-col>
-            <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
+            <b-row
+              v-for="(statementEntries, date) in filteredStatement"
+              :key="date"
+            >
               <b-col>
                 <b-row class="mt-4">
                   <b-col class="text-muted">
@@ -44,7 +47,10 @@
             <h5 class="font-weight-light">
               Your transactions will appear here.
             </h5>
-            <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="link">
+            <b-button
+              :to="'/managed-accounts/' + account.id.id + '/topup'"
+              variant="link"
+            >
               Start by topping up your account.
             </b-button>
           </b-col>
@@ -67,7 +73,11 @@ const moment = require('moment')
     StatementItem: () => import('~/components/statement/item.vue')
   }
 })
-export default class AccountStatement extends mixins(BaseMixin, RouterMixin, FiltersMixin) {
+export default class AccountStatement extends mixins(
+  BaseMixin,
+  RouterMixin,
+  FiltersMixin
+) {
   get filteredStatement() {
     return this.stores.accounts.filteredStatement
   }

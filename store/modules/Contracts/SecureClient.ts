@@ -1,4 +1,10 @@
-import { ActionContext, ActionTree, GetterTree, Store, MutationTree } from '~/node_modules/vuex'
+import {
+  ActionContext,
+  ActionTree,
+  GetterTree,
+  Store,
+  MutationTree
+} from '~/node_modules/vuex'
 import { StoreHelpers } from '~/helpers/StoreHelpers'
 import { SecureForm } from '~/plugins/weavr/components/api'
 
