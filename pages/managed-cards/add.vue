@@ -65,7 +65,7 @@
                     </b-form-group>
                   </b-col>
                 </b-form-row>
-                <loader-button :is-loading="isLoading" button-text="next" class="mt-5 text-center" />
+                <loader-button :is-loading="isAdding" button-text="next" class="mt-5 text-center" />
               </b-form>
             </b-card-body>
           </b-card>
@@ -84,8 +84,8 @@ import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
-import LoginResult = Schemas.LoginResult
 import { accountsStore } from '~/utils/store-accessor'
+import LoginResult = Schemas.LoginResult
 
 const Auth = namespace(AuthStore.name)
 
@@ -123,6 +123,8 @@ export default class AddCardPage extends mixins(BaseMixin) {
 
   showError: boolean = false
 
+  isAdding: boolean = false
+
   currencyOptions = [
     { value: 'EUR', text: 'EUR' },
     { value: 'GBP', text: 'GBP' }
@@ -133,12 +135,12 @@ export default class AddCardPage extends mixins(BaseMixin) {
 
   public createManagedCardRequest!: ManagedCardsSchemas.CreateManagedCardRequest
 
-  get isLoading() {
-    return this.stores.cards.isLoading
-  }
-
   doAdd(evt) {
     evt.preventDefault()
+
+    if (this.isAdding) {
+      return
+    }
 
     if (this.isConsumer) {
       this.numberIsValid = true
@@ -155,6 +157,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
       }
     }
 
+    this.isAdding = true
     this.stores.cards.addCard(this.createManagedCardRequest).then(
       () => {
         try {
@@ -163,6 +166,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
         this.$router.push('/managed-cards')
       },
       (err) => {
+        this.isAdding = false
         if (err.response.status) {
           this.showError = true
         }
