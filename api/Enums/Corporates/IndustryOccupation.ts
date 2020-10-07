@@ -23,23 +23,47 @@ export enum IndustryOccupation {
 }
 
 export const IndustryOccupationOptions = [
-  { text: 'Accounting', value: IndustryOccupation.ACCOUNTING },
+  { value: IndustryOccupation.ACCOUNTING, text: 'Accounting' },
   { value: IndustryOccupation.AUDIT, text: 'Audit' },
   { value: IndustryOccupation.FINANCE, text: 'Finance' },
-  { value: IndustryOccupation.PUBLIC_SECTOR_ADMINISTRATION, text: 'Public sector/ Administration' },
+  {
+    value: IndustryOccupation.PUBLIC_SECTOR_ADMINISTRATION,
+    text: 'Public sector/ Administration'
+  },
   { value: IndustryOccupation.ART_ENTERTAINMENT, text: 'Art/Entertainment' },
   { value: IndustryOccupation.AUTO_AVIATION, text: 'Auto/Aviation' },
   { value: IndustryOccupation.BANKING_LENDING, text: 'Banking/ Lending' },
-  { value: IndustryOccupation.BUSINESS_CONSULTANCY_LEGAL, text: 'Business/ Consultancy/ Legal' },
-  { value: IndustryOccupation.CONSTRUCTION_REPAIR, text: 'Construction/ Repair' },
-  { value: IndustryOccupation.EDUCATION_PROFESSIONAL_SERVICES, text: 'Education/Professional services' },
-  { value: IndustryOccupation.INFORMATIONAL_TECHNOLOGIES, text: 'Informational technologies' },
+  {
+    value: IndustryOccupation.BUSINESS_CONSULTANCY_LEGAL,
+    text: 'Business/ Consultancy/ Legal'
+  },
+  {
+    value: IndustryOccupation.CONSTRUCTION_REPAIR,
+    text: 'Construction/ Repair'
+  },
+  {
+    value: IndustryOccupation.EDUCATION_PROFESSIONAL_SERVICES,
+    text: 'Education/Professional services'
+  },
+  {
+    value: IndustryOccupation.INFORMATIONAL_TECHNOLOGIES,
+    text: 'Informational technologies'
+  },
   { value: IndustryOccupation.TOBACCO_ALCOHOL, text: 'Tobacco/Alcohol' },
   { value: IndustryOccupation.GAMING_GAMBLING, text: 'Gaming/Gambling' },
   { value: IndustryOccupation.MEDICAL_SERVICES, text: 'Medical Services' },
-  { value: IndustryOccupation.MANUFACTURINGPR_MARKETING, text: 'ManufacturingPR/Marketing' },
-  { value: IndustryOccupation.PRECIOUS_GOODS_JEWELRY, text: 'Precious goods/ Jewelry' },
-  { value: IndustryOccupation.NON_GOVERNMENTAL_ORGANIZATION, text: 'Non-governmental organization' },
+  {
+    value: IndustryOccupation.MANUFACTURINGPR_MARKETING,
+    text: 'ManufacturingPR/Marketing'
+  },
+  {
+    value: IndustryOccupation.PRECIOUS_GOODS_JEWELRY,
+    text: 'Precious goods/ Jewelry'
+  },
+  {
+    value: IndustryOccupation.NON_GOVERNMENTAL_ORGANIZATION,
+    text: 'Non-governmental organization'
+  },
   { value: IndustryOccupation.INSURANCE_SECURITY, text: 'Insurance/Security' },
   { value: IndustryOccupation.RETAIL_WHOLESALE, text: 'Retail/ Wholesale' },
   { value: IndustryOccupation.TRAVEL_TOURISM, text: 'Travel/ Tourism' },

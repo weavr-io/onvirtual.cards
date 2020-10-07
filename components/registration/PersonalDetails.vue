@@ -4,8 +4,12 @@
       A few more steps
     </h3>
     <error-alert />
-    <b-form-group label="First Name">
-      <b-form-input v-model="$v.form.rootName.$model" :state="isInvalid($v.form.rootName)" placeholder="Name" />
+    <b-form-group label="First Name*">
+      <b-form-input
+        v-model="$v.form.rootName.$model"
+        :state="isInvalid($v.form.rootName)"
+        placeholder="Name"
+      />
       <b-form-invalid-feedback v-if="!$v.form.rootName.required">
         This field is required
       </b-form-invalid-feedback>
@@ -13,7 +17,7 @@
         Name is too long.
       </b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Last Name">
+    <b-form-group label="Last Name*">
       <b-form-input
         :state="isInvalid($v.form.rootSurname)"
         v-model="$v.form.rootSurname.$model"
@@ -26,7 +30,7 @@
         Surname is too long.
       </b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="MOBILE NUMBER">
+    <b-form-group label="MOBILE NUMBER*">
       <vue-phone-number-input
         v-model="rootMobileNumber"
         @update="phoneUpdate"
@@ -42,7 +46,7 @@
         This field must be a valid mobile number.
       </b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Name">
+    <b-form-group label="Company Name*">
       <b-form-input
         :state="isInvalid($v.form.companyName)"
         v-model="$v.form.companyName.$model"
@@ -50,7 +54,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Registration Number">
+    <b-form-group label="Company Registration Number*">
       <b-form-input
         :state="isInvalid($v.form.companyRegistrationNumber)"
         v-model="$v.form.companyRegistrationNumber.$model"
@@ -58,7 +62,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Registration Country">
+    <b-form-group label="Registration Country*">
       <b-form-select
         :state="isInvalid($v.form.registrationCountry)"
         v-model="$v.form.registrationCountry.$model"
@@ -67,7 +71,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.occupation)" label="Industry">
+    <b-form-group :state="isInvalid($v.form.occupation)" label="Industry*">
       <b-form-select
         v-model="$v.form.occupation.$model"
         :state="isInvalid($v.form.occupation)"
@@ -75,7 +79,10 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.sourceOfFunds)" label="Source of Funds">
+    <b-form-group
+      :state="isInvalid($v.form.sourceOfFunds)"
+      label="Source of Funds*"
+    >
       <b-form-select
         v-model="$v.form.sourceOfFunds.$model"
         :state="isInvalid($v.form.sourceOfFunds)"
@@ -90,18 +97,29 @@
         placeholder="Specify Other Source of Funds"
       />
     </b-form-group>
-    <b-form-group label="My position within the company is">
-      <b-form-radio v-model="$v.form.rootCompanyPosition.$model" name="company-position" value="Representative">
+    <b-form-group label="My position within the company is*" :state="isInvalid($v.form.rootCompanyPosition)">
+      <b-form-radio
+        v-model="$v.form.rootCompanyPosition.$model"
+        name="company-position"
+        value="Representative"
+        :state="isInvalid($v.form.rootCompanyPosition)"
+      >
         I am a representative (with the relevant power of attorney)
       </b-form-radio>
-      <b-form-radio v-model="$v.form.rootCompanyPosition.$model" name="company-position" value="Director">
+      <b-form-radio
+        v-model="$v.form.rootCompanyPosition.$model"
+        name="company-position"
+        value="Director"
+        :state="isInvalid($v.form.rootCompanyPosition)"
+      >
         I am a director
       </b-form-radio>
     </b-form-group>
     <p class="smaller text-muted">
-      To open account on behalf of the company you need to be a director or authorised representative. To enable us to
-      verify your identity, role and authorisation as part of our customer due diligence process, we will later ask you
-      to upload the relevant ID and power of attorney documents.
+      To open account on behalf of the company you need to be a director or
+      authorised representative. To enable us to verify your identity, role and
+      authorisation as part of our customer due diligence process, we will later
+      ask you to upload the relevant ID and power of attorney documents.
     </p>
 
     <b-form-row class="mt-5">
@@ -111,7 +129,11 @@
         </b-button>
       </b-col>
       <b-col class="text-right">
-        <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-right" />
+        <loader-button
+          :is-loading="isLoadingRegistration"
+          button-text="continue"
+          class="text-right"
+        />
       </b-col>
     </b-form-row>
   </b-form>
@@ -119,8 +141,14 @@
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
-import { IndustryOccupation, IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
-import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
+import {
+  IndustryOccupation,
+  IndustryOccupationOptions
+} from '~/api/Enums/Corporates/IndustryOccupation'
+import {
+  SourceOfFunds,
+  SourceOfFundsOptions
+} from '~/api/Enums/Corporates/SourceOfFunds'
 import BaseMixin from '~/minixs/BaseMixin'
 
 const Countries = require('~/static/json/countries.json')
@@ -257,6 +285,10 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
 
   get sourceOfFundsOptions() {
     return SourceOfFundsOptions
+  }
+
+  get shouldShowOtherSourceOfFunds(): boolean {
+    return this.form.sourceOfFunds === SourceOfFunds.OTHER
   }
 }
 </script>
