@@ -19,10 +19,7 @@ class WeavrForm extends Vue {
   }
 
   tokenize(resolve, reject) {
-    return SecureClientStore.Helpers.getForm(this.$store)?.tokenize(
-      resolve,
-      reject
-    )
+    return SecureClientStore.Helpers.getForm(this.$store)?.tokenize(resolve, reject)
   }
 }
 

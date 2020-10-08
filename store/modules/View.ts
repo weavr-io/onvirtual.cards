@@ -1,10 +1,4 @@
-import {
-  Actions,
-  State,
-  name,
-  namespaced,
-  Helpers
-} from '~/store/modules/Contracts/View'
+import { Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/View'
 import { GetterTree, MutationTree } from '~/node_modules/vuex'
 import { RootState } from '~/store'
 import { KYBState } from '~/api/Enums/KYBState'
@@ -40,9 +34,7 @@ export const getters: GetterTree<State, RootState> = {
     if (getters.showVerifyMobileAlert) {
       return false
     } else if (_consumer && _consumer.kyc) {
-      return _consumer.kyc.fullDueDiligence
-        ? _consumer.kyc.fullDueDiligence !== FullDueDiligence.APPROVED
-        : true
+      return _consumer.kyc.fullDueDiligence ? _consumer.kyc.fullDueDiligence !== FullDueDiligence.APPROVED : true
     } else {
       return false
     }
@@ -54,9 +46,7 @@ export const getters: GetterTree<State, RootState> = {
     if (_consumer && _consumer.kyc) {
       return _consumer.kyc.mobileVerified ? !_consumer.kyc.mobileVerified : true
     } else if (_corporate && _corporate.kyb) {
-      return _corporate.kyb.rootMobileVerified
-        ? !_corporate.kyb.rootMobileVerified
-        : true
+      return _corporate.kyb.rootMobileVerified ? !_corporate.kyb.rootMobileVerified : true
     } else {
       return false
     }
@@ -68,9 +58,7 @@ export const getters: GetterTree<State, RootState> = {
     if (_consumer && _consumer.kyc) {
       return _consumer.kyc.emailVerified ? !_consumer.kyc.emailVerified : true
     } else if (_corporate && _corporate.kyb) {
-      return _corporate.kyb.rootEmailVerified
-        ? !_corporate.kyb.rootEmailVerified
-        : true
+      return _corporate.kyb.rootEmailVerified ? !_corporate.kyb.rootEmailVerified : true
     } else {
       return false
     }

@@ -1,10 +1,12 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <b-card body-class="p-card">
-      <h3 class="text-center font-weight-light mb-5">Login</h3>
+      <h3 class="text-center font-weight-light mb-5">
+        Login
+      </h3>
 
       <form id="contact-form" @submit.prevent="login" class="mt-5">
         <error-alert
@@ -34,10 +36,9 @@
         </client-only>
 
         <div class="mt-2">
-          <b-link
-            to="/password/reset"
-            class="small text-decoration-underline text-grey"
-          >Forgot password?</b-link>
+          <b-link to="/password/reset" class="small text-decoration-underline text-grey">
+            Forgot password?
+          </b-link>
         </div>
 
         <b-form-group class="mt-5 text-center">
@@ -51,7 +52,8 @@
         <div class="mt-4 text-center">
           <small class="text-grey">
             Not yet registered? Register
-            <b-link to="/register" class="text-decoration-underline text-grey">here</b-link>.
+            <b-link to="/register" class="text-decoration-underline text-grey">here</b-link>
+            .
           </small>
         </div>
       </form>
@@ -108,11 +110,8 @@ export default class LoginPage extends mixins(BaseMixin) {
       SecureClientStore.Helpers.tokenize(this.$store).then(
         (tokens) => {
           console.log('Password tokenisation success')
-
           this.loginRequest.password = tokens.password
-          this.authenticate(this.loginRequest).then(
-            this.goToDashboard.bind(this)
-          )
+          this.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
         },
         (e) => {
           console.log('tokenisation failed', e)
@@ -133,10 +132,7 @@ export default class LoginPage extends mixins(BaseMixin) {
     } catch (e) {}
 
     if (AuthStore.Helpers.isConsumer(this.$store)) {
-      await ConsumersStore.Helpers.get(
-        this.$store,
-        AuthStore.Helpers.identity(this.$store).id
-      )
+      await ConsumersStore.Helpers.get(this.$store, AuthStore.Helpers.identity(this.$store).id)
     }
 
     this.$router.push('/')

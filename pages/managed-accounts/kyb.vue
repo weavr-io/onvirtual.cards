@@ -7,35 +7,25 @@
             We need some documents
           </h3>
           <p>
-            We are required by financial services regulations to perform due
-            diligence on your company before allowing you to transact with your
-            account.
+            We are required by financial services regulations to perform due diligence on your company before allowing
+            you to transact with your account.
           </p>
-          <p>Kindly prepare to submit and upload the following documents:</p>
+          <p>
+            Kindly prepare to submit and upload the following documents:
+          </p>
           <ul class="my-3 font-weight-normal">
             <li>Copy of the Certificate of Incorporation</li>
             <li>Copy of the Articles of Association (last amendment)</li>
             <li>Proof of Business Address (e.g. lease agreement)</li>
-            <li>
-              UBO Declaration Form downloadable from
-              <a href="https://storage.cloud.google.com/weavr-cdn/UBO-a.pdf">
-                here.
-              </a>
-            </li>
-            <li>
-              Commercial registry extract showing shareholders and directors
-            </li>
+            <li>UBO Declaration Form downloadable from <a href="https://storage.cloud.google.com/weavr-cdn/UBO-a.pdf">here.</a></li>
+            <li>Commercial registry extract showing shareholders and directors</a></li>
           </ul>
-          <p>You will also need to provide the following information:</p>
+          <p>
+            You will also need to provide the following information:
+          </p>
           <ul class="my-3 font-weight-normal">
-            <li>
-              Directors: name, date of birth, nationality, email address,
-              contact number
-            </li>
-            <li>
-              Ultimate Beneficiary Owners (UBOs) holding a stake of 25% or more:
-              name, date of birth, nationality
-            </li>
+            <li>Directors: name, date of birth, nationality, email address, contact number</li>
+            <li>Ultimate Beneficiary Owners (UBOs) holding a stake of 25% or more: name, date of birth, nationality</li>
           </ul>
           <div class="text-center">
             <b-button to="/managed-accounts/kyb">
@@ -57,7 +47,6 @@
     </b-container>
   </section>
 </template>
-
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
@@ -94,6 +83,7 @@ export default class KybPage extends mixins(BaseMixin) {
     if (config.app.sumsub_enabled) {
       try {
         const _res = await corporatesStore(store).startKYB(_corproateid)
+
         return { accessToken: _res.data.accessToken, corporateId: _corproateid }
       } catch (e) {
         console.log(e)

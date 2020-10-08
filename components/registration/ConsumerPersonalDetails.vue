@@ -4,19 +4,11 @@
       Personal Details
     </h3>
     <b-form-group label="First Name">
-      <b-form-input
-        v-model="form.rootName"
-        :state="isInvalid($v.form.rootName)"
-        placeholder="First Name"
-      />
+      <b-form-input v-model="form.rootName" :state="isInvalid($v.form.rootName)" placeholder="First Name" />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Last Name">
-      <b-form-input
-        :state="isInvalid($v.form.rootSurname)"
-        v-model="form.rootSurname"
-        placeholder="Last Name"
-      />
+      <b-form-input :state="isInvalid($v.form.rootSurname)" v-model="form.rootSurname" placeholder="Last Name" />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="MOBILE NUMBER">
@@ -42,16 +34,11 @@
         </b-button>
       </b-col>
       <b-col class="text-right">
-        <loader-button
-          :is-loading="isLoading"
-          button-text="finish"
-          class="text-right"
-        />
+        <loader-button :is-loading="isLoading" button-text="finish" class="text-right" />
       </b-col>
     </b-row>
   </b-form>
 </template>
-
 <script lang="ts">
 import { Component, Emit, mixins, namespace } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'

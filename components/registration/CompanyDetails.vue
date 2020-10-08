@@ -3,7 +3,7 @@
     <h3 class="text-center font-weight-light mb-5">
       Company Details
     </h3>
-    <error-alert />
+    <error-alert/>
     <b-form-group label="Company Name">
       <b-form-input
         :state="isInvalid($v.form.companyName)"
@@ -44,39 +44,17 @@
         @on-close="updatedCompanyRegistrationDate"
         class="form-control bg-transparent"
       />
-      <b-form-invalid-feedback
-        :state="isInvalid($v.form.companyRegistrationDate)"
-      >
+      <b-form-invalid-feedback :state="isInvalid($v.form.companyRegistrationDate)">
         This field is required.
       </b-form-invalid-feedback>
     </b-form-group>
     <b-form-row>
       <b-col>
         <b-form-group>
-          <b-form-checkbox
-            v-model="$v.form.acceptedTerms.$model"
-            :state="isInvalid($v.form.acceptedTerms)"
-          >
-            I accept the
-            <a
-              href="https://www.onvirtual.cards/terms/business"
-              target="_blank"
-              class="text-decoration-underline text-muted"
-            >
-              terms of use
-            </a>
-            and
-            <a
-              href="https://www.onvirtual.cards/policy/"
-              target="_blank"
-              class="text-decoration-underline text-muted"
-            >
-              privacy policy
-            </a>
+          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
+            I accept the <a href="https://www.onvirtual.cards/terms/business" target="_blank" class="text-decoration-underline text-muted">terms of use</a> and <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted">privacy policy</a>
           </b-form-checkbox>
-          <b-form-invalid-feedback>
-            This field is required.
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
       </b-col>
     </b-form-row>
@@ -87,18 +65,13 @@
         </b-button>
       </b-col>
       <b-col>
-        <loader-button
-          :is-loading="isLoadingRegistration"
-          button-text="Finish"
-          class="text-right"
-        />
+        <loader-button :is-loading="isLoadingRegistration" button-text="Finish" class="text-right" />
       </b-col>
     </b-form-row>
   </b-form>
 </template>
-
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, namespace } from 'nuxt-property-decorator'
 import { required, maxLength, sameAs, maxValue } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
 
@@ -134,7 +107,8 @@ const Countries = require('~/static/json/countries.json')
   },
   components: {
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    ErrorAlert: () => import('~/components/ErrorAlert.vue')
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+
   }
 })
 export default class CompanyDetailsForm extends mixins(BaseMixin) {
@@ -142,7 +116,7 @@ export default class CompanyDetailsForm extends mixins(BaseMixin) {
 
   public maxDate = new Date()
 
-  get isLoadingRegistration() {
+  get isLoadingRegistration(){
     return this.stores.corporates.isLoadingRegistration
   }
 

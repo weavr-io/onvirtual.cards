@@ -1,19 +1,10 @@
 import { MutationTree } from 'vuex'
 import { RootState } from 'store'
 import * as Loader from './Loader'
-import {
-  Getters,
-  Actions,
-  State,
-  types,
-  name,
-  namespaced,
-  Helpers
-} from '~/store/modules/Contracts/Auth'
+import { Getters, Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Auth'
 import { Schemas } from '~/api/Schemas'
-import { $api } from '~/utils/api'
-
 import LoginResult = Schemas.LoginResult
+import { $api } from '~/utils/api'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -38,14 +29,10 @@ export const getters: Getters<State, RootState> = {
     return state.auth.identity ? state.auth.identity.id : null
   },
   isConsumer: (state) => {
-    return state.auth.identity
-      ? state.auth.identity.type === 'consumers'
-      : false
+    return state.auth.identity ? state.auth.identity.type === 'consumers' : false
   },
   isCorporate: (state) => {
-    return state.auth.identity
-      ? state.auth.identity.type === 'corporates'
-      : false
+    return state.auth.identity ? state.auth.identity.type === 'corporates' : false
   },
   identity: (state) => {
     return state.auth.identity
@@ -63,10 +50,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = $api.post<LoginResult>(
-      '/app/api/auth/login_with_password',
-      loginRequest
-    )
+    const req = $api.post<LoginResult>('/app/api/auth/login_with_password', loginRequest)
 
     req.then((res) => {
       commit(types.AUTHENTICATE, res.data)
@@ -90,15 +74,9 @@ export const actions: Actions<State, RootState> = {
     let req
 
     if (request.consumerId) {
-      req = $api.post(
-        '/app/api/consumers/' + request.consumerId + '/email/verify',
-        request.request
-      )
+      req = $api.post('/app/api/consumers/' + request.consumerId + '/email/verify', request.request)
     } else {
-      req = $api.post(
-        '/app/api/corporates/' + request.corporateId + '/users/email/verify',
-        request.request
-      )
+      req = $api.post('/app/api/corporates/' + request.corporateId + '/users/email/verify', request.request)
     }
 
     req.finally(() => {
@@ -151,10 +129,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = $api.post(
-      '/app/api/passwords/identities/' + request.id + '/create',
-      request.request
-    )
+    const req = $api.post('/app/api/passwords/identities/' + request.id + '/create', request.request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
@@ -167,10 +142,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = $api.post(
-      '/app/api/passwords/' + request.id + '/create',
-      request.request
-    )
+    const req = $api.post('/app/api/passwords/' + request.id + '/create', request.request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
@@ -183,10 +155,7 @@ export const actions: Actions<State, RootState> = {
     commit(types.SET_IS_LOADING, true)
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = $api.post(
-      '/app/api/passwords/' + request.id + '/update',
-      request.request
-    )
+    const req = $api.post('/app/api/passwords/' + request.id + '/update', request.request)
 
     req.finally(() => {
       commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })

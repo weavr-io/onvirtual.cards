@@ -3,11 +3,7 @@
 export interface SecureClient {
   init(publicApiKey: string, options: SecureClientOptions): void
 
-  associate(
-    authToken: string,
-    resolve?: () => void,
-    reject?: (e?: any) => void
-  ): void
+  associate(authToken: string, resolve?: () => void, reject?: (e?: any) => void): void
 
   kyb(): KYB
 
@@ -21,10 +17,7 @@ export interface SecureClient {
 export interface SecureForm {
   input(name: string, field: string, options?: SecureInputOptions): SecureInput
 
-  tokenize(
-    resolve?: (tokens: { [key: string]: string }) => void,
-    reject?: (e?: any) => void
-  ): void
+  tokenize(resolve?: (tokens: { [key: string]: string }) => void, reject?: (e?: any) => void): void
 
   destroy(): this
 }
@@ -143,8 +136,7 @@ export interface SecureElementStyle {
   textTransform?: string
 }
 
-export interface SecureElementStyleWithPseudoClasses
-  extends SecureElementStyle {
+export interface SecureElementStyleWithPseudoClasses extends SecureElementStyle {
   ':hover'?: SecureElementStyle
   ':focus'?: SecureElementStyle
   '::placeholder'?: SecureElementStyle

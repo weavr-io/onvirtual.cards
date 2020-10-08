@@ -17,31 +17,16 @@ export const SourceOfFundsOptions = [
   { value: SourceOfFunds.LABOUR_CONTRACT, text: 'Labour contract' },
   { value: SourceOfFunds.CIVIL_CONTRACT, text: 'Civil contract' },
   { value: SourceOfFunds.RENT, text: 'Rent' },
-  {
-    value: SourceOfFunds.FUNDS_FROM_OTHER_AUXILIARY_SOURCES,
-    text: 'Funds from other auxiliary sources'
-  },
-  {
-    value: SourceOfFunds.SALE_OF_MOVABLE_ASSETS,
-    text: 'Sale of movable assets'
-  },
+  { value: SourceOfFunds.FUNDS_FROM_OTHER_AUXILIARY_SOURCES, text: 'Funds from other auxiliary sources' },
+  { value: SourceOfFunds.SALE_OF_MOVABLE_ASSETS, text: 'Sale of movable assets' },
   { value: SourceOfFunds.SALE_OF_REAL_ESTATE, text: 'Sale of real estate' },
-  {
-    value: SourceOfFunds.ORDINARY_BUSINESS_ACTIVITY,
-    text: 'Ordinary business activity'
-  },
+  { value: SourceOfFunds.ORDINARY_BUSINESS_ACTIVITY, text: 'Ordinary business activity' },
   { value: SourceOfFunds.DIVIDENDS, text: 'Dividends' },
   {
     value: SourceOfFunds.LOAN_FROM_FINANCIAL_INSTITUTIONS_CREDIT_UNIONS,
     text: 'Loan from financial institutions/credit unions'
   },
-  {
-    value: SourceOfFunds.LOAN_FROM_THIRD_PARTIES,
-    text: 'Loan from third parties'
-  },
-  {
-    value: SourceOfFunds.SALE_OF_COMPANY_SHARES_BUSINESS,
-    text: 'Sale of company shares/business'
-  },
+  { value: SourceOfFunds.LOAN_FROM_THIRD_PARTIES, text: 'Loan from third parties' },
+  { value: SourceOfFunds.SALE_OF_COMPANY_SHARES_BUSINESS, text: 'Sale of company shares/business' },
   { value: SourceOfFunds.OTHER, text: 'Other' }
 ]

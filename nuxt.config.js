@@ -25,25 +25,15 @@ const config = {
     script: [
       {
         src: process.env.BASE_URL_SCRIPT + '/app/secure/static/client.1.js',
-        // src: 'http://localhost:8080/client.js',
+        // src: 'http://localhost/client.1.js',
         type: 'application/javascript'
       }
     ],
 
     link: [
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-      {
-        rel: 'icon',
-        type: 'image/png',
-        sizes: '32x32',
-        href: '/favicon-32x32.png'
-      },
-      {
-        rel: 'icon',
-        type: 'image/png',
-        sizes: '16x16',
-        href: '/favicon-16x16.png'
-      },
+      { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+      { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
       { rel: 'manifest', href: '/site.webmanifest' },
       { rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
       {

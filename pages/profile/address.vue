@@ -15,9 +15,7 @@
                   v-model="form.request.address.addressLine1"
                   placeholder="Address Line 1"
                 />
-                <b-form-invalid-feedback>
-                  This field is required.
-                </b-form-invalid-feedback>
+                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="Address Line 2">
                 <b-form-input
@@ -32,9 +30,7 @@
                   v-model="form.request.address.city"
                   placeholder="City"
                 />
-                <b-form-invalid-feedback>
-                  This field is required.
-                </b-form-invalid-feedback>
+                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="Country*">
                 <b-form-select
@@ -43,9 +39,7 @@
                   :options="countiesOptions"
                   placeholder="Registration Country"
                 />
-                <b-form-invalid-feedback>
-                  This field is required.
-                </b-form-invalid-feedback>
+                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="Post Code*">
                 <b-form-input
@@ -53,9 +47,7 @@
                   v-model="form.request.address.postCode"
                   placeholder="Post Code"
                 />
-                <b-form-invalid-feedback>
-                  This field is required.
-                </b-form-invalid-feedback>
+                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="State">
                 <b-form-input
@@ -64,31 +56,21 @@
                   placeholder="State"
                 />
               </b-form-group>
-              <b-form-group
-                :state="isInvalid($v.form.request.occupation)"
-                label="Industry / Occupation*"
-              >
+              <b-form-group :state="isInvalid($v.form.request.occupation)" label="Industry / Occupation">
                 <b-form-select
                   v-model="$v.form.request.occupation.$model"
                   :state="isInvalid($v.form.request.occupation)"
                   :options="industryOccupationOptions"
                 />
-                <b-form-invalid-feedback>
-                  This field is required.
-                </b-form-invalid-feedback>
+                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
-              <b-form-group
-                :state="isInvalid($v.form.request.sourceOfFunds)"
-                label="Source of Funds*"
-              >
+              <b-form-group :state="isInvalid($v.form.request.sourceOfFunds)" label="Source of Funds">
                 <b-form-select
                   v-model="$v.form.request.sourceOfFunds.$model"
                   :state="isInvalid($v.form.request.sourceOfFunds)"
                   :options="sourceOfFundsOptions"
                 />
-                <b-form-invalid-feedback>
-                  This field is required.
-                </b-form-invalid-feedback>
+                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
                 <b-form-input
@@ -99,10 +81,7 @@
               </b-form-group>
               <b-row class="mt-4" align-v="center">
                 <b-col class="text-center">
-                  <loader-button
-                    :is-loading="isLoading"
-                    button-text="continue"
-                  />
+                  <loader-button :is-loading="isLoading" button-text="continue" />
                 </b-col>
               </b-row>
             </b-form>
@@ -122,10 +101,7 @@ import * as ConsumersStore from '~/store/modules/Consumers'
 import * as AuthStore from '~/store/modules/Auth'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
-import {
-  SourceOfFunds,
-  SourceOfFundsOptions
-} from '~/api/Enums/Consumers/SourceOfFunds'
+import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Consumers/SourceOfFunds'
 import { IndustryOccupationOptions } from '~/api/Enums/Consumers/IndustryOccupation'
 import BaseMixin from '~/minixs/BaseMixin'
 
@@ -161,10 +137,8 @@ const Countries = require('~/static/json/countries.json')
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
-    ConsumerPersonalDetailsForm: () =>
-      import('~/components/registration/ConsumerPersonalDetails.vue'),
-    CompanyDetailsForm: () =>
-      import('~/components/registration/CompanyDetails.vue'),
+    ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),
+    CompanyDetailsForm: () => import('~/components/registration/CompanyDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
   }
@@ -177,10 +151,7 @@ export default class ConsunmerAddressPage extends mixins(BaseMixin) {
   isLoading: boolean = false
 
   async asyncData({ store }) {
-    const _res = await ConsumersStore.Helpers.get(
-      store,
-      AuthStore.Helpers.identityId(store)!
-    )
+    const _res = await ConsumersStore.Helpers.get(store, AuthStore.Helpers.identityId(store)!)
 
     const _form: UpdateConsumerRequest = {
       consumerId: AuthStore.Helpers.identityId(store)!,

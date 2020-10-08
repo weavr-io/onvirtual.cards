@@ -1,5 +1,5 @@
 <template>
-  <section />
+  <section></section>
 </template>
 
 <script lang="ts">

@@ -1,41 +1,31 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img
-        src="/img/logo.svg"
-        width="200"
-        class="d-inline-block align-top"
-        alt="onvirtual.cards"
-      />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card body-class="p-6">
       <template v-if="showError">
-        <b-alert show variant="danger">
-          Some information is missing. Please make sure you copy the whole URL.
-        </b-alert>
+        <b-alert show variant="danger">Some information is missing. Please make sure you copy the whole URL.</b-alert>
       </template>
       <template v-else>
-        <h3 class="text-center font-weight-light mb-6">Accept Invite</h3>
+        <h3 class="text-center font-weight-light mb-6">
+          Accept Invite
+        </h3>
         <error-alert />
         <b-form @submit="tryToSubmitForm">
           <client-only placeholder="Loading...">
             <weavr-form ref="passwordForm">
               <label class="d-block">PASSWORD:</label>
               <weavr-input
-                :options="{
-                  placeholder: '****',
-                  classNames: { empty: 'is-invalid' }
-                }"
-                :base-style="passwordBaseStyle"
-                @onKeyUp="checkOnKeyUp"
-                class-name="sign-in-password"
-                name="password"
-                field="password"
-                required="true"
+                      :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                      :base-style="passwordBaseStyle"
+                      @onKeyUp="checkOnKeyUp"
+                      class-name="sign-in-password"
+                      name="password"
+                      field="password"
+                      required="true"
               />
-              <small class="form-text text-muted">
-                Minimum 8, Maximum 50 characters.
-              </small>
+              <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
             </weavr-form>
           </client-only>
           <b-form-row class="mt-6">
@@ -89,9 +79,11 @@ export default class IniteConsume extends mixins(BaseMixin) {
       }
 
       this.stores.corporates
-        .validateInvite(_validateRequest)
-        .catch(this.handleError.bind(this))
-    } catch (e) {}
+              .validateInvite(_validateRequest)
+              .catch(this.handleError.bind(this))
+    }catch (e) {
+
+    }
   }
 
   handleError(e) {
@@ -131,20 +123,20 @@ export default class IniteConsume extends mixins(BaseMixin) {
 
     const form: WeavrForm = this.$refs.passwordForm as WeavrForm
     form.tokenize(
-      (tokens) => {
-        if (tokens.password !== '') {
-          this.form.body.password.value = tokens.password
-          this.stores.corporates.consumeInvite(this.form).then(() => {
-            this.$router.push('/login')
-          })
-        } else {
-          return null
-        }
-      },
-      (e) => {
-        console.error(e)
-        return null
-      }
+            (tokens) => {
+              if (tokens.password !== '') {
+                this.form.body.password.value = tokens.password
+                this.stores.corporates.consumeInvite(this.form).then(() => {
+                  this.$router.push('/login')
+                })
+              } else {
+                return null
+              }
+            },
+            (e) => {
+              console.error(e)
+              return null
+            }
     )
   }
 
@@ -160,7 +152,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
       color: '#495057',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
-      fontFamily: "'Be Vietnam', sans-serif",
+      fontFamily: '\'Be Vietnam\', sans-serif',
       fontWeight: '400',
       lineHeight: '24px',
       margin: '0',
