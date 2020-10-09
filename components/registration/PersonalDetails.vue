@@ -4,7 +4,7 @@
       A few more steps
     </h3>
     <error-alert />
-    <b-form-group label="First Name">
+    <b-form-group label="First Name*">
       <b-form-input v-model="$v.form.rootName.$model" :state="isInvalid($v.form.rootName)" placeholder="Name" />
       <b-form-invalid-feedback v-if="!$v.form.rootName.required">
         This field is required
@@ -13,7 +13,7 @@
         Name is too long.
       </b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Last Name">
+    <b-form-group label="Last Name*">
       <b-form-input
         :state="isInvalid($v.form.rootSurname)"
         v-model="$v.form.rootSurname.$model"
@@ -26,7 +26,7 @@
         Surname is too long.
       </b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="MOBILE NUMBER">
+    <b-form-group label="MOBILE NUMBER*">
       <vue-phone-number-input
         v-model="rootMobileNumber"
         @update="phoneUpdate"
@@ -42,7 +42,7 @@
         This field must be a valid mobile number.
       </b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Name">
+    <b-form-group label="Company Name*">
       <b-form-input
         :state="isInvalid($v.form.companyName)"
         v-model="$v.form.companyName.$model"
@@ -50,7 +50,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Registration Number">
+    <b-form-group label="Company Registration Number*">
       <b-form-input
         :state="isInvalid($v.form.companyRegistrationNumber)"
         v-model="$v.form.companyRegistrationNumber.$model"
@@ -58,7 +58,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Registration Country">
+    <b-form-group label="Registration Country*">
       <b-form-select
         :state="isInvalid($v.form.registrationCountry)"
         v-model="$v.form.registrationCountry.$model"
@@ -67,7 +67,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.occupation)" label="Industry">
+    <b-form-group :state="isInvalid($v.form.occupation)" label="Industry*">
       <b-form-select
         v-model="$v.form.occupation.$model"
         :state="isInvalid($v.form.occupation)"
@@ -75,7 +75,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.sourceOfFunds)" label="Source of Funds">
+    <b-form-group :state="isInvalid($v.form.sourceOfFunds)" label="Source of Funds*">
       <b-form-select
         v-model="$v.form.sourceOfFunds.$model"
         :state="isInvalid($v.form.sourceOfFunds)"
@@ -90,11 +90,21 @@
         placeholder="Specify Other Source of Funds"
       />
     </b-form-group>
-    <b-form-group label="My position within the company is">
-      <b-form-radio v-model="$v.form.rootCompanyPosition.$model" name="company-position" value="Representative">
+    <b-form-group :state="isInvalid($v.form.rootCompanyPosition)" label="My position within the company is*">
+      <b-form-radio
+        v-model="$v.form.rootCompanyPosition.$model"
+        :state="isInvalid($v.form.rootCompanyPosition)"
+        name="company-position"
+        value="Representative"
+      >
         I am a representative (with the relevant power of attorney)
       </b-form-radio>
-      <b-form-radio v-model="$v.form.rootCompanyPosition.$model" name="company-position" value="Director">
+      <b-form-radio
+        v-model="$v.form.rootCompanyPosition.$model"
+        :state="isInvalid($v.form.rootCompanyPosition)"
+        name="company-position"
+        value="Director"
+      >
         I am a director
       </b-form-radio>
     </b-form-group>
@@ -257,6 +267,10 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
 
   get sourceOfFundsOptions() {
     return SourceOfFundsOptions
+  }
+
+  get shouldShowOtherSourceOfFunds(): boolean {
+    return this.form.sourceOfFunds === SourceOfFunds.OTHER
   }
 }
 </script>

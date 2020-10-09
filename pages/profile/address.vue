@@ -56,7 +56,7 @@
                   placeholder="State"
                 />
               </b-form-group>
-              <b-form-group :state="isInvalid($v.form.request.occupation)" label="Industry / Occupation">
+              <b-form-group :state="isInvalid($v.form.request.occupation)" label="Industry / Occupation*">
                 <b-form-select
                   v-model="$v.form.request.occupation.$model"
                   :state="isInvalid($v.form.request.occupation)"
@@ -64,7 +64,7 @@
                 />
                 <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
               </b-form-group>
-              <b-form-group :state="isInvalid($v.form.request.sourceOfFunds)" label="Source of Funds">
+              <b-form-group :state="isInvalid($v.form.request.sourceOfFunds)" label="Source of Funds*">
                 <b-form-select
                   v-model="$v.form.request.sourceOfFunds.$model"
                   :state="isInvalid($v.form.request.sourceOfFunds)"

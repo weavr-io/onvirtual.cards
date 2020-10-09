@@ -6,6 +6,7 @@ import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/Create
 import { KYBState } from '~/api/Enums/KYBState'
 import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
 import { $api } from '~/utils/api'
+import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
 
 @Module({
   name: 'corporatesV2',
@@ -167,8 +168,8 @@ export default class Corporates extends StoreModule {
   }
 
   @Action({ rawError: true })
-  validateInvite(request) {
-    return $api.post('/app/api/corporates/' + request.id + '/invites/validate', request.body)
+  validateInvite(request: ValidateCorporateUserInviteRequest) {
+    return $api.post('/app/api/corporates/' + request.id + '/invites/' + request.inviteId + '/validate', request.body)
   }
 
   @Action({ rawError: true })

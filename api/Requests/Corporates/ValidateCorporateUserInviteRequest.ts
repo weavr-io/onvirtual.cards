@@ -1,7 +1,7 @@
 export interface ValidateCorporateUserInviteRequest {
-  id: number
+  id: string
+  inviteId: string
   body: {
-    emailAddress: string
     nonce: string
   }
 }

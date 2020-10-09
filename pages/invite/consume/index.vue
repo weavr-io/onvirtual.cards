@@ -1,38 +1,43 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card body-class="p-6">
-      <h3 class="text-center font-weight-light mb-6">
-        Accept Invite
-      </h3>
-      <error-alert />
-      <b-form @submit="tryToSubmitForm">
-        <client-only placeholder="Loading...">
-          <weavr-form ref="passwordForm">
-            <label class="d-block">PASSWORD:</label>
-            <weavr-input
-              :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-              :base-style="passwordBaseStyle"
-              @onKeyUp="checkOnKeyUp"
-              class-name="sign-in-password"
-              name="password"
-              field="password"
-              required="true"
-            />
-            <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
-          </weavr-form>
-        </client-only>
-        <b-form-row class="mt-6">
-          <b-col class="text-center">
-            <b-button variant="secondary" type="submit">
-              submit
-              <span class="pl-5">-></span>
-            </b-button>
-          </b-col>
-        </b-form-row>
-      </b-form>
+      <template v-if="showError">
+        <b-alert show variant="danger">Some information is missing. Please make sure you copy the whole URL.</b-alert>
+      </template>
+      <template v-else>
+        <h3 class="text-center font-weight-light mb-6">
+          Accept Invite
+        </h3>
+        <error-alert />
+        <b-form @submit="tryToSubmitForm">
+          <client-only placeholder="Loading...">
+            <weavr-form ref="passwordForm">
+              <label class="d-block">PASSWORD:</label>
+              <weavr-input
+                      :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                      :base-style="passwordBaseStyle"
+                      @onKeyUp="checkOnKeyUp"
+                      class-name="sign-in-password"
+                      name="password"
+                      field="password"
+                      required="true"
+              />
+              <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
+            </weavr-form>
+          </client-only>
+          <b-form-row class="mt-6">
+            <b-col class="text-center">
+              <b-button variant="secondary" type="submit">
+                submit
+                <span class="pl-5">-></span>
+              </b-button>
+            </b-col>
+          </b-form-row>
+        </b-form>
+      </template>
     </b-card>
   </b-col>
 </template>
@@ -44,7 +49,6 @@ import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/Con
 import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
-import { corporatesStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'auth',
@@ -56,38 +60,61 @@ import { corporatesStore } from '~/utils/store-accessor'
 export default class IniteConsume extends mixins(BaseMixin) {
   protected form!: ConsumeCorporateUserInviteRequest
 
-  async asyncData(context) {
-    const _validateRequest: ValidateCorporateUserInviteRequest = {
-      id: context.route.query.identity_id,
-      body: {
-        nonce: context.route.query.nonce.toString(),
-        emailAddress: context.route.query.email.toString()
-      }
-    }
+  showError: boolean = false
 
+  // identity_type
+  // identity_id
+  // nonce
+  // user_id
+  // invite_id
+
+  mounted() {
     try {
-      await corporatesStore(context.store).validateInvite(_validateRequest)
-    } catch (e) {
-      ErrorStore.Helpers.setError(context.store, e.response)
-    }
-
-    const _consumeInviteRequest: ConsumeCorporateUserInviteRequest = {
-      id: _validateRequest.id,
-      body: {
-        nonce: context.route.query.nonce.toString(),
-        identityId: {
-          type: context.route.query.identity_type,
-          id: context.route.query.identity_id
-        },
-        userId: context.route.query.user_id,
-        password: {
-          value: ''
+      const _validateRequest: ValidateCorporateUserInviteRequest = {
+        id: this.$route.query.identity_id.toString(),
+        inviteId: this.$route.query.invite_id.toString(),
+        body: {
+          nonce: this.$route.query.nonce.toString()
         }
       }
-    }
 
-    return {
-      form: _consumeInviteRequest
+      this.stores.corporates
+              .validateInvite(_validateRequest)
+              .catch(this.handleError.bind(this))
+    }catch (e) {
+
+    }
+  }
+
+  handleError(e) {
+    ErrorStore.Helpers.setError(this.$store, e.response)
+  }
+
+  asyncData({ route }) {
+    try {
+      const _consumeInviteRequest: ConsumeCorporateUserInviteRequest = {
+        id: route.query.identity_id.toString(),
+        body: {
+          nonce: route.query.nonce.toString(),
+          identityId: {
+            type: route.query.identity_type.toString(),
+            id: route.query.identity_id.toString()
+          },
+          userId: route.query.user_id.toString(),
+          password: {
+            value: ''
+          }
+        }
+      }
+
+      return {
+        form: _consumeInviteRequest,
+        showError: false
+      }
+    } catch (e) {
+      return {
+        showError: true
+      }
     }
   }
 
@@ -96,20 +123,20 @@ export default class IniteConsume extends mixins(BaseMixin) {
 
     const form: WeavrForm = this.$refs.passwordForm as WeavrForm
     form.tokenize(
-      (tokens) => {
-        if (tokens.password !== '') {
-          this.form.body.password.value = tokens.password
-          this.stores.corporates.consumeInvite(this.form).then(() => {
-            this.$router.push('/login')
-          })
-        } else {
-          return null
-        }
-      },
-      (e) => {
-        console.error(e)
-        return null
-      }
+            (tokens) => {
+              if (tokens.password !== '') {
+                this.form.body.password.value = tokens.password
+                this.stores.corporates.consumeInvite(this.form).then(() => {
+                  this.$router.push('/login')
+                })
+              } else {
+                return null
+              }
+            },
+            (e) => {
+              console.error(e)
+              return null
+            }
     )
   }
 
@@ -125,7 +152,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
       color: '#495057',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
-      fontFamily: "'Be Vietnam', sans-serif",
+      fontFamily: '\'Be Vietnam\', sans-serif',
       fontWeight: '400',
       lineHeight: '24px',
       margin: '0',
