@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Vue } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
@@ -43,17 +43,13 @@ export default class IndexPage extends mixins(BaseMixin) {
           redirect('/dashboard')
         }
       } else if (AuthStore.Helpers.isCorporate(store)) {
-        const _corpStores = corporatesStore(store)
-        let _corp = _corpStores.corporate
+        const res = await corporatesStore(store).getKyb(_auth.identity!.id!)
 
-        if (_corp === null) {
-          await _corpStores.getCorporateDetails(_auth.identity!.id!)
-          _corp = _corpStores.corporate
-        }
-
-        if (_corp && _corp.kyb && !_corp.kyb.rootEmailVerified) {
+        if (res.data.rootEmailVerified && res.data.rootMobileVerified) {
+          redirect('/dashboard')
+        } else if (res.data.rootEmailVerified) {
           redirect('/register/verify?send=true')
-        } else if (_corp && _corp.kyb && !_corp.kyb.rootMobileVerified) {
+        } else if (res.data && res.data.rootMobileVerified) {
           redirect('/register/verify/mobile')
         } else {
           redirect('/dashboard')

@@ -1,9 +1,6 @@
-import { KYBState } from '~/api/Enums/KYBState'
-import { Schemas } from '~/api/Schemas'
 import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
 import { IndustryOccupation } from '~/api/Enums/Corporates/IndustryOccupation'
 import { SourceOfFunds } from '~/api/Enums/Corporates/SourceOfFunds'
-import CurrencyAmount = Schemas.CurrencyAmount
 
 export interface Corporate {
   id: {
@@ -19,20 +16,8 @@ export interface Corporate {
   creationTimestamp: number
   verifications?: string[]
   companyRegistrationNumber: string
-  companyRegistrationAddress: string
-  companyBusinessAddress: string
   registrationCountry: string
-  companyRegistrationDate: number
   acceptedTerms: boolean
-  kyb?: {
-    rootEmailVerified: boolean
-    rootMobileVerified: boolean
-    basicCompanyChecksVerified: KYBState
-    fullCompanyChecksVerified: KYBState
-    enhancedCompanyChecksVerified: KYBState
-    allowedLimit: CurrencyAmount
-    remainingLimit: CurrencyAmount
-  }
   baseCurrency?: string
   feeGroup?: string
   incorporatedOn?: {
@@ -40,7 +25,23 @@ export interface Corporate {
     month?: number
     day?: number
   }
-  occupation?: IndustryOccupation
+  industry: IndustryOccupation
   sourceOfFunds?: SourceOfFunds
   sourceOfFundsOther?: string
+  registrationAddress?: {
+    addressLine1?: string
+    addressLine2?: string
+    city?: string
+    country?: string
+    postCode?: string
+    state?: string
+  }
+  businessAddress?: {
+    addressLine1?: string
+    addressLine2?: string
+    city?: string
+    country?: string
+    postCode?: string
+    state?: string
+  }
 }
