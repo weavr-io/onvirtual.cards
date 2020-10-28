@@ -67,10 +67,10 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.occupation)" label="Industry*">
+    <b-form-group :state="isInvalid($v.form.industry)" label="Industry*">
       <b-form-select
-        v-model="$v.form.occupation.$model"
-        :state="isInvalid($v.form.occupation)"
+        v-model="$v.form.industry.$model"
+        :state="isInvalid($v.form.industry)"
         :options="industryOccupationOptions"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -132,6 +132,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
 import { IndustryOccupation, IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
 import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
 import BaseMixin from '~/minixs/BaseMixin'
+import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -167,7 +168,7 @@ const Countries = require('~/static/json/countries.json')
         required,
         maxLength: maxLength(2)
       },
-      occupation: {
+      industry: {
         required
       },
       sourceOfFunds: {
@@ -197,19 +198,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
     })
   }
 
-  public form: {
-    companyName: string
-    companyRegistrationNumber: string
-    registrationCountry: string
-    rootName: string
-    rootSurname: string
-    rootCompanyPosition: string
-    rootMobileCountryCode: string
-    rootMobileNumber: string
-    occupation: IndustryOccupation | null
-    sourceOfFunds: SourceOfFunds | null
-    sourceOfFundsOther: string
-  } = {
+  public form: Partial<Nullable<CreateCorporateRequest>> = {
     rootName: '',
     rootSurname: '',
     rootCompanyPosition: '',
@@ -220,7 +209,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
     registrationCountry: '',
     sourceOfFunds: null,
     sourceOfFundsOther: '',
-    occupation: null
+    industry: null
   }
 
   get countiesOptions() {

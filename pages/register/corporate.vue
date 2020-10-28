@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-card">
@@ -39,13 +39,11 @@ const Auth = namespace(AuthStore.name)
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
     PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
-    CompanyDetailsForm: () => import('~/components/registration/CompanyDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
   }
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
-
   get isLoading() {
     return this.stores.corporates.isLoading
   }
@@ -84,7 +82,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     rootName: '',
     rootSurname: '',
     supportEmail: '',
-    occupation: null,
+    industry: null,
     sourceOfFunds: null,
     sourceOfFundsOther: '',
     kybProviderKey: 'sumsub'
@@ -114,7 +112,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       this.registrationRequest.companyRegistrationNumber = _data.companyRegistrationNumber
       this.registrationRequest.registrationCountry = _data.registrationCountry
 
-      this.registrationRequest.occupation = _data.occupation
+      this.registrationRequest.industry = _data.industry
       this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
       this.registrationRequest.sourceOfFundsOther = _data.sourceOfFundsOther
 
@@ -125,7 +123,8 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   doRegister() {
     this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
 
-    this.stores.corporates.register(this.registrationRequest as CreateCorporateRequest)
+    this.stores.corporates
+      .register(this.registrationRequest as CreateCorporateRequest)
       .then(this.doCreateCorporatePasswordIdentity.bind(this))
       .catch(this.registrationFailed.bind(this))
   }
