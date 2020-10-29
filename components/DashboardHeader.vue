@@ -95,7 +95,7 @@ export default class DashboardHeader extends mixins(BaseMixin) {
     if (AuthStore.Helpers.isConsumer(this.$store)) {
       return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
     } else {
-      return this.stores.corporates.corporate?.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
+      return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
     }
   }
 }

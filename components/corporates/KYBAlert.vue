@@ -68,7 +68,7 @@ export default class KYBAlert extends mixins(BaseMixin) {
   @View.Getter showKybAlert!: boolean
 
   get isPendingReview(): boolean {
-    return this.corporate?.kyb?.fullCompanyChecksVerified === KYBState.PENDING_REVIEW
+    return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.PENDING_REVIEW
   }
 }
 </script>
