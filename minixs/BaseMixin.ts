@@ -1,5 +1,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
+import { $api } from '~/utils/api'
 import { initialiseStores } from '~/utils/store-accessor'
+
 
 @Component
 export default class BaseMixin extends Vue {
@@ -38,5 +40,27 @@ export default class BaseMixin extends Vue {
 
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  downloadAsCSV(_accId,_pathParam, _req){
+
+    const req = $api.post(
+      '/app/api/'+_pathParam+'/' +
+        _accId +
+        '/statement/download',
+      _req,
+      {
+        responseType: 'blob'
+      }
+    )
+
+    req.then((res) => {
+      const url = window.URL.createObjectURL(new Blob([res.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', 'statement.csv')
+      document.body.appendChild(link)
+      link.click()
+    })
   }
 }

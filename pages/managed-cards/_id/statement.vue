@@ -76,7 +76,22 @@
             </b-row>
           </h6>
         </b-col>
-        <b-col v-if="managedCard.active" class="d-flex justify-content-end">
+        <b-col
+          lg="7"
+          xs="14"
+          v-if="managedCard.active"
+          class="d-flex justify-content-end"
+        >
+          <div class="mr-5">
+            <b-button
+              @click="downloadStatement"
+              variant="link"
+              class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none"
+            >
+              <download-icon class="mr-2" />
+              download
+            </b-button>
+          </div>
           <div>
             <b-button
               @click="confirmDeleteCard"
@@ -109,11 +124,6 @@
               </b-row>
             </b-col>
           </b-row>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col>
-          <b-button> </b-button>
         </b-col>
       </b-row>
     </b-container>
@@ -238,6 +248,8 @@ import { StatementRequest } from '~/api/Requests/Statements/StatementRequest'
 import RouterMixin from '~/minixs/RouterMixin'
 import FiltersMixin from '~/minixs/FiltersMixin'
 import OrderType = Schemas.OrderType
+import axios from '~/plugins/axios'
+import { $api } from '~/utils/api'
 
 const dot = require('dot-object')
 
@@ -248,6 +260,7 @@ const moment = require('moment')
   components: {
     StatementItem: () => import('~/components/statement/item.vue'),
     DeleteIcon: () => import('~/assets/svg/delete.svg?inline'),
+    DownloadIcon: () => import('~/assets/svg/download.svg?inline'),
     BIcon,
     BIconThreeDotsVertical
   }
@@ -296,9 +309,34 @@ export default class ManagedCardsTable extends mixins(
     return this.monthsFilter(parseInt(this.managedCard!.creationTimestamp))
   }
 
-  // async downloadAsCSV(){
-  //    let _res = await
-  // }
+  downloadStatement() {
+    const _routeQueries = dot.object(this.$route.query)
+    const _filters = _routeQueries.filters ? _routeQueries.filters : {}
+
+    if (!_filters.fromTimestamp) {
+      _filters.fromTimestamp = moment()
+        .startOf('month')
+        .valueOf()
+    }
+
+    if (!_filters.toTimestamp) {
+      _filters.toTimestamp = moment()
+        .endOf('month')
+        .valueOf()
+    }
+
+    const _req: StatementRequest = {
+      showFundMovementsOnly: true,
+      orderByTimestamp: OrderType.DESC,
+      paging: {
+        limit: 100,
+        offset: 0
+      },
+      ..._filters
+    }
+
+    this.downloadAsCSV(this.cardId, 'managed_cards', _req)
+  }
 
   async asyncData({ store, route }) {
     const _cardId = route.params.id
