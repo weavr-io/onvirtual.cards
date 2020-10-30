@@ -1,7 +1,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import { $api } from '~/utils/api'
 import { initialiseStores } from '~/utils/store-accessor'
-
+const moment = require('moment')
 
 @Component
 export default class BaseMixin extends Vue {
@@ -58,7 +58,7 @@ export default class BaseMixin extends Vue {
       const url = window.URL.createObjectURL(new Blob([res.data]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', 'statement.csv')
+      link.setAttribute('download', 'statement_'+ moment().format('YYYYMMDDHHmmss')+'.csv')
       document.body.appendChild(link)
       link.click()
     })
