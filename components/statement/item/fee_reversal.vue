@@ -3,14 +3,14 @@
     <b-col cols="1">
       <div class="transaction-type-icon">
         <div class="transaction">
-          <img src="~/assets/svg/statement/deposit.svg" alt="" />
+          <img src="~/assets/svg/statement/refund.svg" alt="" />
         </div>
       </div>
     </b-col>
     <b-col>
       <div class="transaction-type">
         <div class="transaction">
-          Deposit
+          {{ transaction.txId.type | weavr_underscore }}
         </div>
       </div>
       <div class="text-muted">
