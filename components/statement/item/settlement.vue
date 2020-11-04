@@ -3,7 +3,15 @@
     <b-col cols="1">
       <div class="transaction-type-icon">
         <div class="transaction increase">
-          <img src="~/assets/svg/statement/settlement.svg" alt="" />
+          <img
+            v-if="
+              transaction.additionalFields.merchantTransactionType ==
+                'CASH_WITHDRAWAL'
+            "
+            src="~/assets/svg/statement/atm_withdrawal.svg"
+            alt=""
+          />
+          <img v-else src="~/assets/svg/statement/settlement.svg" alt="" />
         </div>
       </div>
     </b-col>
@@ -16,13 +24,23 @@
       <div class="text-muted">
         <b-row>
           <b-col>
-            <span class="mr-2">Purchase, </span>
-            <span v-if="transaction.additionalFields.merchantTerminalCountry" class="mr-2">{{
-              transaction.additionalFields.merchantTerminalCountry
-            }}</span>
+            <span
+              v-if="
+                transaction.additionalFields.merchantTransactionType ==
+                  'CASH_WITHDRAWAL'
+              "
+              class="mr-2"
+              >ATM Withdrawal,
+            </span>
+            <span v-else class="mr-2">Purchase, </span>
+            <span
+              v-if="transaction.additionalFields.merchantTerminalCountry"
+              class="mr-2"
+              >{{ transaction.additionalFields.merchantTerminalCountry }}</span
+            >
             <span v-if="transaction.sourceAmount">
-              {{ 100 | weavr_currency(transaction.transactionAmount.currency) }} =
-              {{ transaction.sourceAmount.currency | weavr_currency_symbol
+              {{ 100 | weavr_currency(transaction.transactionAmount.currency) }}
+              = {{ transaction.sourceAmount.currency | weavr_currency_symbol
               }}{{ transaction.additionalFields.exchangeRate }}
             </span>
           </b-col>

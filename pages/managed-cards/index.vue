@@ -138,8 +138,8 @@ export default class CardsPage extends mixins(BaseMixin) {
   }
 
   get showKybAlert(): boolean {
-    if (this.corporate && this.corporate.kyb) {
-      return this.corporate.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
+    if (this.stores.corporates.kyb) {
+      return this.stores.corporates.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
     } else {
       return false
     }
@@ -149,7 +149,7 @@ export default class CardsPage extends mixins(BaseMixin) {
     if (AuthStore.Helpers.isConsumer(this.$store)) {
       return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
     } else {
-      return this.stores.corporates.corporate?.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
+      return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
     }
   }
 }
