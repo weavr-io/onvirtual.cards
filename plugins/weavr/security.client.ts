@@ -6,6 +6,7 @@ import WeavrSpan from '~/plugins/weavr/components/WeavrSpan.vue'
 import { SecureClient } from '~/plugins/weavr/components/api'
 import WeavrKyb from '~/plugins/weavr/components/WeavrKyb.vue'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
+import WeavrConsumerKyc from '~/plugins/weavr/components/WeavrConsumerKyc.vue'
 
 // @ts-ignore
 window.OpcUxSecureClient.init(config.api.uiKey, {
@@ -48,6 +49,7 @@ Vue.component('weavr-input', WeavrInput)
 Vue.component('weavr-span', WeavrSpan)
 Vue.component('weavr-kyb', WeavrKyb)
 Vue.component('weavr-kyc', WeavrKyc)
+Vue.component('weavr-consumer-kyc', WeavrConsumerKyc)
 
 declare module 'vue/types/vue' {
   interface Vue {
