@@ -9,6 +9,8 @@ export interface SecureClient {
 
   kyc(): KYC
 
+  consumer_kyc(): ConsumerVerificationFlowContract
+
   form(): SecureForm
 
   span(field: string, token: string, options?: SecureSpanOptions): SecureSpan
@@ -149,32 +151,112 @@ export interface SumSubAuthObject {
   accessToken: string
 }
 
-export interface KYBAuthObject extends SumSubAuthObject {}
+export interface KYBAuthObject extends SumSubAuthObject {
+
+}
 
 export interface KYBOptions {
   customCss?: string
 }
 
 export interface KYB {
-  init(
-    selector: string,
-    auth: KYBAuthObject,
-    listener: (messageType: any, payload: any) => void,
-    options?: KYBOptions
-  ): void
+  init(selector: string, auth: KYBAuthObject, listener: (messageType: any, payload: any) => void, options?: KYBOptions): void
 }
 
-export interface KYCAuthObject extends SumSubAuthObject {}
+export interface KYCAuthObject extends SumSubAuthObject {
+
+}
 
 export interface KYCOptions {
   customCss?: string
 }
 
 export interface KYC {
-  init(
-    selector: string,
-    auth: KYCAuthObject,
-    listener: (messageType: any, payload: any) => void,
-    options?: KYCOptions
-  ): void
+  init(selector: string, auth: KYCAuthObject, listener: (messageType: any, payload: any) => void, options?: KYCOptions): void
+}
+
+export interface ConsumerKYC {
+
+}
+
+
+export declare type VerificationFlowLoadHandler = () => void
+export declare type VerificationFlowLaunchHandler = (response: CorporateVerificationFlowLoadAndLaunchParams) => void
+
+export interface VerificationFlow {
+  getPath(reference: bigint): string
+
+  getParams(authToken: string, reference: bigint, callback: VerificationFlowLaunchHandler): void
+
+  getParamsLoadAndLaunch(authToken: string, reference: bigint): void
+
+  loadAndLaunch(
+    params: CorporateVerificationFlowLoadAndLaunchParams | ConsumerVerificationFlowLoadAndLaunchParams
+  ): SumSub
+}
+
+export interface ConsumerVerificationFlowLaunchParams {
+  reference: bigint | string
+}
+
+export interface ConsumerVerificationFlowContract extends VerificationFlow {
+  options: ConsumerVerificationFlowOptions
+
+  loadAndLaunch(params: ConsumerVerificationFlowLoadAndLaunchParams): SumSub
+
+  launch(params: ConsumerVerificationFlowLaunchParams): void
+
+  init(params: ConsumerVerificationFlowInitOption): void
+}
+
+export interface VerificationFlowProvider {
+  type: VerificationFlowProviders.SUMSUB
+
+  load(callback: VerificationFlowLoadHandler): void
+}
+
+export interface VerificationFlowOptions {
+  selector: string
+}
+
+export interface ConsumerVerificationFlowInitOption extends ConsumerVerificationFlowOptions, ConsumerVerificationFlowLaunchParams {
+
+}
+
+export interface ConsumerVerificationFlowOptions extends VerificationFlowOptions {
+  onMessage?: (message: string, additionalInfo?: any) => void
+  onError?: (message: any) => void
+  customCss?: string
+  customCssStr?: string
+}
+
+export interface LaunchParams {
+  email?: string
+  mobile?: string
+}
+
+
+export interface SumSubConsumerVerificationFlowLoadAndLaunchParams extends LaunchParams {
+  accessToken: string
+  verificationFlow: string
+  externalUserId?: bigint
+  kycProviderKey?: VerificationFlowProviders.SUMSUB
+}
+
+
+export type ConsumerVerificationFlowLoadAndLaunchParams =
+  SumSubConsumerVerificationFlowLoadAndLaunchParams
+
+export type CorporateVerificationFlowLoadAndLaunchParams =
+  SumSubConsumerVerificationFlowLoadAndLaunchParams
+
+export interface SumSub extends VerificationFlowProvider {
+  type: VerificationFlowProviders.SUMSUB
+
+  launch(params: ConsumerVerificationFlowLoadAndLaunchParams): void
+}
+
+
+export enum VerificationFlowProviders {
+  SUMSUB = 'sumsub'
 }

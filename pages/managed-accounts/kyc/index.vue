@@ -3,14 +3,7 @@
     <b-container>
       <b-row>
         <b-col>
-          <iframe
-            id="iframe"
-            :src="redirectUrl"
-            allowfullscreen
-            style="width:100%; height:800px;"
-            allow="camera *;"
-            frameborder="0"
-          />
+          <weavr-consumer-kyc :reference="reference" :options="options" />
         </b-col>
       </b-row>
     </b-container>
@@ -22,19 +15,23 @@ import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore } from '~/utils/store-accessor'
+import WeavrConsumerKyc from '~/plugins/weavr/components/WeavrConsumerKyc.vue'
+import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 
 @Component({
-  components: {}
+  components: { WeavrConsumerKyc }
 })
 export default class KycPage extends mixins(BaseMixin) {
   redirectUrl!: string
+
+  reference!: string
 
   async asyncData({ store, redirect }) {
     const _consumerId = AuthStore.Helpers.identityId(store)
 
     try {
       const _res = await ConsumersStore.Helpers.startKYC(store, _consumerId)
-      return { redirectUrl: _res.data.redirectUrl }
+      return { reference: _res.data.reference }
     } catch (e) {
       if (e.response.data.errorCode === 'KYC_ALREADY_APPROVED') {
         const _accounts = await accountsStore(store).index()
@@ -44,6 +41,17 @@ export default class KycPage extends mixins(BaseMixin) {
           redirect('/managed-accounts/' + _accountId + '/topup')
         }
       }
+    }
+  }
+
+  options: Partial<ConsumerVerificationFlowOptions> = {
+    onMessage: this.onMessage
+  }
+
+  onMessage(message, additionalInfo) {
+    console.log(message, additionalInfo)
+    if (message === 'kycSubmitted') {
+      this.$router.push('/managed-accounts/kyc/check')
     }
   }
 
@@ -57,14 +65,6 @@ export default class KycPage extends mixins(BaseMixin) {
         this.$router.push('/managed-accounts/kyc/check')
         break
     }
-  }
-
-  beforeMount() {
-    window.addEventListener('message', this.receiveMessage, false)
-  }
-
-  beforeDestroy() {
-    window.removeEventListener('message', this.receiveMessage, false)
   }
 }
 </script>

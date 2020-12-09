@@ -1,3 +1,4 @@
 export interface InitFullKycProcessResponse {
-  redirectUrl: string
+  redirectUrl?: string
+  reference?: string
 }
