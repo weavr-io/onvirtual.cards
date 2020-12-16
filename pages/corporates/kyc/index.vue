@@ -4,10 +4,9 @@
       <b-row :class="{ 'd-none': accessTokenError }">
         <b-col>
           <weavr-kyc
-            :corporate-id="corporateId"
-            :access-token="accessToken"
-            :options="kybOptions"
-            @message="handleSumSubMessage"
+                  :reference="reference"
+                  :options="kybOptions"
+                  @message="handleSumSubMessage"
           />
         </b-col>
       </b-row>
@@ -39,8 +38,7 @@ import BaseMixin from '~/minixs/BaseMixin'
   }
 })
 export default class KybPage extends mixins(BaseMixin) {
-  accessToken!: string
-  corporateId!: string
+  reference!: string
 
   accessTokenError: boolean = false
 
@@ -51,7 +49,7 @@ export default class KybPage extends mixins(BaseMixin) {
   }
 
   asyncData({ route }) {
-    return { accessToken: route.query.token, corporateId: route.query.corporate }
+    return { reference: route.query.reference }
   }
 
   handleSumSubMessage(message) {
