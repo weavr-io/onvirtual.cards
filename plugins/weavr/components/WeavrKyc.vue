@@ -7,16 +7,14 @@ import { KYCOptions } from './api'
 
 @Component
 export default class WeavrKyc extends Vue {
-  @Prop({}) corporateId!: string
-  @Prop({}) accessToken!: string
+  @Prop({}) reference!: string
   @Prop({}) options!: KYCOptions
 
   mounted() {
     this.$OpcUxSecureClient.kyc().init(
       '#idensic',
       {
-        accessToken: this.accessToken,
-        externalUserId: this.corporateId
+        reference: this.reference
       },
       this.sumsubMessage.bind(this),
       this.options

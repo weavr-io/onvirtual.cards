@@ -7,16 +7,16 @@ import { KYBOptions } from '~/plugins/weavr/components/api'
 
 @Component
 export default class WeavrKyb extends Vue {
-  @Prop({}) corporateId!: string
-  @Prop({}) accessToken!: string
+  @Prop({}) reference!: string
   @Prop({}) options!: KYBOptions
 
   mounted() {
-    this.$OpcUxSecureClient.kyb().init(
+    const kyb = this.$OpcUxSecureClient.kyb()
+
+    kyb.init(
       '#idensic',
       {
-        accessToken: this.accessToken,
-        externalUserId: this.corporateId
+        reference: this.reference
       },
       this.sumsubMessage.bind(this),
       this.options
