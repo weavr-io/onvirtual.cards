@@ -64,7 +64,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
   showError: boolean = false
 
   @Ref('passwordField')
-  passwordField: WeavrPasswordInput
+  passwordField!: WeavrPasswordInput
 
   // identity_type
   // identity_id

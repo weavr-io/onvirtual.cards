@@ -15,7 +15,7 @@ import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore } from '~/utils/store-accessor'
-import WeavrKyc from '~/plugins/weavr/components/WeavrConsumerKyc.vue'
+import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 
 @Component({
