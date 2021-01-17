@@ -3,11 +3,7 @@
     <b-container>
       <b-row :class="{ 'd-none': accessTokenError }">
         <b-col>
-          <weavr-kyc
-                  :reference="reference"
-                  :options="kybOptions"
-                  @message="handleSumSubMessage"
-          />
+          <weavr-kyc-beneficiaries :reference="reference" :options="kybOptions" @message="handleSumSubMessage" />
         </b-col>
       </b-row>
     </b-container>

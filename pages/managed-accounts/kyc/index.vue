@@ -3,7 +3,7 @@
     <b-container>
       <b-row>
         <b-col>
-          <weavr-consumer-kyc :reference="reference" :options="options" />
+          <weavr-kyc :reference="reference" :options="options" />
         </b-col>
       </b-row>
     </b-container>
@@ -15,11 +15,11 @@ import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore } from '~/utils/store-accessor'
-import WeavrConsumerKyc from '~/plugins/weavr/components/WeavrConsumerKyc.vue'
+import WeavrKyc from '~/plugins/weavr/components/WeavrConsumerKyc.vue'
 import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 
 @Component({
-  components: { WeavrConsumerKyc }
+  components: { WeavrKyc }
 })
 export default class KycPage extends mixins(BaseMixin) {
   redirectUrl!: string

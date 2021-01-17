@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
@@ -139,7 +139,7 @@
   </b-col>
 </template>
 <script lang="ts">
-import {Component, mixins, Ref} from 'nuxt-property-decorator'
+import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
@@ -152,12 +152,11 @@ import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
 import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import * as AuthStore from '~/store/modules/Auth'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
-import WeavrPasswordInput from "~/plugins/weavr/components/WeavrPassword.vue";
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
 const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')

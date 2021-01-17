@@ -1,32 +1,17 @@
 <template>
-  <div id="idensic" />
+  <div id="consumer-kyc"/>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
-import { KYCOptions } from './api'
+import {Vue, Component, Prop} from 'nuxt-property-decorator'
+import {ConsumerVerificationFlowContract, ConsumerVerificationFlowOptions} from './api'
 
 @Component
 export default class WeavrKyc extends Vue {
   @Prop({}) reference!: string
-  @Prop({}) options!: KYCOptions
+  @Prop({}) options!: ConsumerVerificationFlowOptions
 
   mounted() {
-    this.$OpcUxSecureClient.kyc().init(
-      '#idensic',
-      {
-        reference: this.reference
-      },
-      this.sumsubMessage.bind(this),
-      this.options
-    )
-  }
-
-  @Emit('message')
-  sumsubMessage(messageType, payload) {
-    return {
-      messageType: messageType,
-      payload: payload
-    }
+    this.$weavrComponents.verification.kyc(this.reference).mount('#consumer-kyc', this.options)
   }
 }
 </script>
