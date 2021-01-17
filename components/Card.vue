@@ -7,9 +7,8 @@
             <img src="/img/logo.svg" alt height="15px" />
           </div>
           <div class="card-number">
-            <weavr-span
+            <weavr-card-number-span
               class="card-select-number"
-              field="cardNumber"
               :token="card.cardNumber"
               :base-style="{
                 fontFamily: '\'Be Vietnam\', sans-serif',
@@ -29,9 +28,8 @@
           <div class="strip-black" />
           <div class="cvv">
             <label>CVV:</label>
-            <weavr-span
+            <weavr-cvv-span
               class="card-select-number"
-              field="cvv"
               :token="card.cvv"
               :base-style="{
                 fontFamily: '\'Be Vietnam\', sans-serif',

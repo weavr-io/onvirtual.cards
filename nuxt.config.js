@@ -23,9 +23,13 @@ const config = {
       }
     ],
     script: [
+      // {
+      //   src: process.env.BASE_URL_SCRIPT + '/app/secure/static/client.1.js',
+      //   // src: 'http://localhost/client.1.js',
+      //   type: 'application/javascript'
+      // },
       {
-        src: process.env.BASE_URL_SCRIPT + '/app/secure/static/client.1.js',
-        // src: 'http://localhost/client.1.js',
+        src: 'http://localhost:3002/client.bundle.js',
         type: 'application/javascript'
       }
     ],

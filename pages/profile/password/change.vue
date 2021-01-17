@@ -16,29 +16,29 @@
             <error-alert />
             <b-form id="contact-form" @submit="submitChangePassword">
               <client-only placeholder="Loading...">
-                <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
+                <div :class="{ 'is-dirty': $v.form.$dirty }">
                   <label class="d-block">OLD PASSWORD:</label>
-                  <weavr-input
+                  <weavr-password-input
+                    ref="oldPassword"
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
                     :base-style="passwordBaseStyle"
                     @onKeyUp="checkOnKeyUp"
                     class-name="sign-in-password"
                     name="old-password"
-                    field="password"
                     required="true"
                   />
                   <label class="d-block mt-3">NEW PASSWORD:</label>
-                  <weavr-input
+                  <weavr-password-input
+                    ref="newPassword"
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
                     :base-style="passwordBaseStyle"
                     @onKeyUp="checkOnKeyUp"
                     class-name="sign-in-password"
                     name="new-password"
-                    field="password"
                     required="true"
                   />
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
-                </weavr-form>
+                </div>
               </client-only>
 
               <div class="text-center">
@@ -53,27 +53,30 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import LoaderButton from '~/components/LoaderButton.vue'
 import * as AuthStore from '~/store/modules/Auth'
 import { UpdatePassword } from '~/api/Requests/Auth/UpdatePassword'
-import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
 @Component({
   components: {
     LoaderButton,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+    WeavrPasswordInput
   },
   validations: {
     form: {}
   }
 })
 export default class BundlesPage extends mixins(BaseMixin) {
-  $refs!: {
-    passwordForm: WeavrForm
-  }
+  @Ref('oldPassword')
+  oldPassword!: WeavrPasswordInput
+
+  @Ref('newPassword')
+  newPassword!: WeavrPasswordInput
 
   public changePasswordRequest: UpdatePassword = {
     id: 0,
@@ -111,24 +114,21 @@ export default class BundlesPage extends mixins(BaseMixin) {
       }
     }
 
-    const form: WeavrForm = this.$refs.passwordForm as WeavrForm
-    form.tokenize(
-      (tokens) => {
-        if (tokens['old-password'] !== '' && tokens['new-password']) {
-          this.changePasswordRequest.request.oldPassword.value = tokens['old-password']
-          this.changePasswordRequest.request.password.value = tokens['new-password']
-          AuthStore.Helpers.updatePassword(this.$store, this.changePasswordRequest).then(() => {
-            this.$router.push('/profile')
-          })
-        } else {
-          return null
-        }
-      },
-      (e) => {
-        console.error(e)
+    const promises: Promise<any>[] = []
+    promises.push(this.oldPassword.createToken())
+    promises.push(this.newPassword.createToken())
+
+    Promise.all(promises).then((values) => {
+      if (values[0].tokens['old-password'] !== '' && values[1].tokens['new-password']) {
+        this.changePasswordRequest.request.oldPassword.value = values[0].tokens['old-password']
+        this.changePasswordRequest.request.password.value = values[1].tokens['new-password']
+        AuthStore.Helpers.updatePassword(this.$store, this.changePasswordRequest).then(() => {
+          this.$router.push('/profile')
+        })
+      } else {
         return null
       }
-    )
+    })
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {

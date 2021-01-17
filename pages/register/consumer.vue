@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
     </div>
     <coming-soon-currencies />
     <b-card no-body class="overflow-hidden">
@@ -83,19 +83,19 @@
                 </b-form-invalid-feedback>
               </b-form-group>
               <client-only placeholder="Loading...">
-                <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.registrationRequest.$dirty }">
+                <div :class="{ 'is-dirty': $v.registrationRequest.$dirty }">
                   <label class="d-block">PASSWORD</label>
-                  <weavr-input
+                  <weavr-password-input
+                    ref="passwordField"
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
                     :base-style="passwordBaseStyle"
                     @onKeyUp="checkOnKeyUp"
                     class-name="sign-in-password"
                     name="password"
-                    field="password"
                     required="true"
                   />
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
-                </weavr-form>
+                </div>
               </client-only>
               <b-form-row class="small mt-3 text-muted">
                 <b-col>
@@ -139,7 +139,7 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import {Component, mixins, Ref} from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
@@ -157,6 +157,7 @@ import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordReq
 import * as AuthStore from '~/store/modules/Auth'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
+import WeavrPasswordInput from "~/plugins/weavr/components/WeavrPassword.vue";
 
 const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')
@@ -201,7 +202,8 @@ const touchMap = new WeakMap()
     ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
-    DobPicker: () => import('~/components/fields/dob-picker.vue')
+    DobPicker: () => import('~/components/fields/dob-picker.vue'),
+    WeavrPasswordInput
   }
 })
 export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
@@ -209,9 +211,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
 
   private $recaptcha: any
 
-  $refs!: {
-    passwordForm: WeavrForm
-  }
+  @Ref('passwordField')
+  passwordField!: WeavrPasswordInput
 
   rootMobileNumber = ''
   numberIsValid: boolean | null = null
@@ -353,11 +354,10 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
         await this.$recaptcha.reset()
       }
 
-      const form: WeavrForm = this.$refs.passwordForm as WeavrForm
-      form.tokenize(
+      this.passwordField.createToken().then(
         (tokens) => {
-          if (tokens.password !== '') {
-            this.password = tokens.password
+          if (tokens.tokens.password !== '') {
+            this.password = tokens.tokens.password
 
             this.validatePassword()
           } else {
