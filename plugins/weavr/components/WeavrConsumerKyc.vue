@@ -1,9 +1,9 @@
 <template>
-  <div id="consumer-kyc" />
+  <div id="consumer-kyc"/>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { ConsumerVerificationFlowContract, ConsumerVerificationFlowOptions } from './api'
+import {Vue, Component, Prop} from 'nuxt-property-decorator'
+import {ConsumerVerificationFlowContract, ConsumerVerificationFlowOptions} from './api'
 
 @Component
 export default class WeavrConsumerKyc extends Vue {
@@ -11,8 +11,7 @@ export default class WeavrConsumerKyc extends Vue {
   @Prop({}) options!: ConsumerVerificationFlowOptions
 
   mounted() {
-    const _kyc = this.$OpcUxSecureClient.consumer_kyc()
-    _kyc.init({ ...this.options, selector: '#consumer-kyc', reference: this.reference })
+    this.$weavrComponents.verification.kyc(this.reference).mount('#consumer-kyc', this.options)
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div id="idensic" />
+  <div id="kyb-container" />
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
@@ -11,16 +11,7 @@ export default class WeavrKyb extends Vue {
   @Prop({}) options!: KYBOptions
 
   mounted() {
-    const kyb = this.$OpcUxSecureClient.kyb()
-
-    kyb.init(
-      '#idensic',
-      {
-        reference: this.reference
-      },
-      this.sumsubMessage.bind(this),
-      this.options
-    )
+    this.$weavrComponents.verification.kyb(this.reference).mount('#kyb-container', this.options)
   }
 
   @Emit('message')

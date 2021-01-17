@@ -51,7 +51,7 @@ Vue.component('weavr-cvv-span', WeavrCVVSpan)
 
 // Vue.component('weavr-form', WeavrForm)
 // Vue.component('weavr-input', WeavrInput)
-Vue.component('weavr-span', WeavrSpan)
+// Vue.component('weavr-span', WeavrSpan)
 Vue.component('weavr-kyb', WeavrKyb)
 Vue.component('weavr-kyc', WeavrKyc)
 Vue.component('weavr-consumer-kyc', WeavrConsumerKyc)
