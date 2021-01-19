@@ -43,6 +43,7 @@ export default class Corporates extends StoreModule {
   @Mutation
   SET_KYB(kyb: CorporateKybStatus) {
     this.kyb = kyb
+
   }
 
   @Mutation
@@ -71,7 +72,10 @@ export default class Corporates extends StoreModule {
   getCorporateDetails(corporateId) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post<Corporate>('/app/api/corporates/' + corporateId + '/get', {})
+    const req = $api.post<Corporate>(
+      '/app/api/corporates/' + corporateId + '/get',
+      {}
+    )
 
     req.then((res) => {
       this.SET_CORPORATE(res.data)
@@ -85,7 +89,10 @@ export default class Corporates extends StoreModule {
 
   @Action({ rawError: true })
   getKyb(corporateId: number) {
-    const req = $api.post<CorporateKybStatus>('/app/api/corporates/' + corporateId + '/kyb/get', {})
+    const req = $api.post<CorporateKybStatus>(
+      '/app/api/corporates/' + corporateId + '/kyb/get',
+      {}
+    )
 
     req.then((res) => {
       this.SET_KYB(res.data)
@@ -98,7 +105,10 @@ export default class Corporates extends StoreModule {
   getUsers(corporateId) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post('/app/api/corporates/' + corporateId + '/users/get', {})
+    const req = $api.post(
+      '/app/api/corporates/' + corporateId + '/users/get',
+      {}
+    )
 
     req.then((res) => {
       this.SET_USERS(res.data)
@@ -114,7 +124,14 @@ export default class Corporates extends StoreModule {
   getUser(params) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post('/app/api/corporates/' + params.corporateId + '/users/' + params.userId + '/get', {})
+    const req = $api.post(
+      '/app/api/corporates/' +
+        params.corporateId +
+        '/users/' +
+        params.userId +
+        '/get',
+      {}
+    )
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -128,7 +145,11 @@ export default class Corporates extends StoreModule {
     this.SET_IS_LOADING(true)
 
     const req = $api.post(
-      '/app/api/corporates/' + request.corporateId + '/users/' + request.userId + '/update',
+      '/app/api/corporates/' +
+        request.corporateId +
+        '/users/' +
+        request.userId +
+        '/update',
       request.body
     )
 
@@ -143,7 +164,10 @@ export default class Corporates extends StoreModule {
   addUser(request: CreateCorporateUserFullRequest) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post('/app/api/corporates/' + request.corporateId + '/users/_/create', request.request)
+    const req = $api.post(
+      '/app/api/corporates/' + request.corporateId + '/users/_/create',
+      request.request
+    )
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -156,7 +180,14 @@ export default class Corporates extends StoreModule {
   sendUserInvite(request: { corporateId: string; inviteId: string }) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post('/app/api/corporates/' + request.corporateId + '/invites/' + request.inviteId + '/send', {})
+    const req = $api.post(
+      '/app/api/corporates/' +
+        request.corporateId +
+        '/invites/' +
+        request.inviteId +
+        '/send',
+      {}
+    )
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -167,7 +198,12 @@ export default class Corporates extends StoreModule {
 
   @Action({ rawError: true })
   sendVerificationCodeEmail(request) {
-    return $api.post('/app/api/corporates/' + request.corporateId + '/users/email/send_verification_code', request.body)
+    return $api.post(
+      '/app/api/corporates/' +
+        request.corporateId +
+        '/users/email/send_verification_code',
+      request.body
+    )
   }
 
   @Action({ rawError: true })
@@ -188,12 +224,22 @@ export default class Corporates extends StoreModule {
 
   @Action({ rawError: true })
   validateInvite(request: ValidateCorporateUserInviteRequest) {
-    return $api.post('/app/api/corporates/' + request.id + '/invites/' + request.inviteId + '/validate', request.body)
+    return $api.post(
+      '/app/api/corporates/' +
+        request.id +
+        '/invites/' +
+        request.inviteId +
+        '/validate',
+      request.body
+    )
   }
 
   @Action({ rawError: true })
   consumeInvite(request: ConsumeCorporateUserInviteRequest) {
-    return $api.post('/app/api/auth/invites/' + request.id + '/consume', request.body)
+    return $api.post(
+      '/app/api/auth/invites/' + request.id + '/consume',
+      request.body
+    )
   }
 
   @Action({ rawError: true })
@@ -204,13 +250,18 @@ export default class Corporates extends StoreModule {
   @Action({ rawError: true })
   sendVerificationCodeMobile(request) {
     return $api.post(
-      '/app/api/corporates/' + request.corporateId + '/users/mobile/send_verification_code',
+      '/app/api/corporates/' +
+        request.corporateId +
+        '/users/mobile/send_verification_code',
       request.request
     )
   }
 
   @Action({ rawError: true })
   verifyMobile(request) {
-    return $api.post('/app/api/corporates/' + request.corporateId + '/users/mobile/verify', request.request)
+    return $api.post(
+      '/app/api/corporates/' + request.corporateId + '/users/mobile/verify',
+      request.request
+    )
   }
 }

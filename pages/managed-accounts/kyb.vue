@@ -59,7 +59,8 @@ import { corporatesStore } from '~/utils/store-accessor'
   components: {
     BIcon,
     BIconBoxArrowUpRight
-  }
+  },
+  middleware: ['kyVerified']
 })
 export default class KybPage extends mixins(BaseMixin) {
   reference!: string

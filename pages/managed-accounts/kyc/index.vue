@@ -19,7 +19,8 @@ import WeavrConsumerKyc from '~/plugins/weavr/components/WeavrConsumerKyc.vue'
 import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 
 @Component({
-  components: { WeavrConsumerKyc }
+  components: { WeavrConsumerKyc },
+  middleware: ['kyVerified']
 })
 export default class KycPage extends mixins(BaseMixin) {
   redirectUrl!: string
