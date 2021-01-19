@@ -10,12 +10,22 @@
             <b-form @submit="doAdd">
               <b-form-row>
                 <b-col>
-                  <b-form-group :state="isInvalid($v.createManagedAccountRequest.currency)" label="Currency">
-                    <b-form-select v-model="createManagedAccountRequest.currency" :options="currencyOptions" />
+                  <b-form-group
+                    :state="isInvalid($v.createManagedAccountRequest.currency)"
+                    label="Currency"
+                  >
+                    <b-form-select
+                      v-model="createManagedAccountRequest.currency"
+                      :options="currencyOptions"
+                    />
                   </b-form-group>
                 </b-col>
               </b-form-row>
-              <loader-button :is-loading="isLoading" button-text="finish" class="mt-5 text-center" />
+              <loader-button
+                :is-loading="isLoading"
+                button-text="finish"
+                class="mt-5 text-center"
+              />
             </b-form>
           </b-card>
         </b-col>
@@ -33,8 +43,8 @@ import * as AuthStore from '~/store/modules/Auth'
 import config from '~/config'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
-import LoginResult = Schemas.LoginResult
 import { accountsStore } from '~/utils/store-accessor'
+import LoginResult = Schemas.LoginResult
 
 const Auth = namespace(AuthStore.name)
 
@@ -53,10 +63,10 @@ const Auth = namespace(AuthStore.name)
         required
       }
     }
-  }
+  },
+  middleware: ['kyVerified']
 })
 export default class AddCardPage extends mixins(BaseMixin) {
-
   get isLoading() {
     return this.stores.accounts.isLoading
   }
@@ -81,24 +91,25 @@ export default class AddCardPage extends mixins(BaseMixin) {
       }
     }
 
-    this.stores.accounts.add(this.createManagedAccountRequest)
-            .then(() => {
-              this.$router.push('/managed-accounts')
-            })
-            .catch((err) => {
-              const data = err.response.data
+    this.stores.accounts
+      .add(this.createManagedAccountRequest)
+      .then(() => {
+        this.$router.push('/managed-accounts')
+      })
+      .catch((err) => {
+        const data = err.response.data
 
-              const error = data.message ? data.message : data.errorCode
+        const error = data.message ? data.message : data.errorCode
 
-              this.$weavrToastError(error)
-            })
+        this.$weavrToastError(error)
+      })
   }
 
   async asyncData({ store, redirect }) {
     const createManagedAccountRequest: ManagedAccountsSchemas.CreateManagedAccountRequest = {
       profileId: AuthStore.Helpers.isConsumer(store)
-              ? config.profileId.managed_accounts_consumers
-              : config.profileId.managed_accounts_corporates,
+        ? config.profileId.managed_accounts_consumers
+        : config.profileId.managed_accounts_corporates,
       friendlyName: 'Main Account',
       currency: 'EUR'
     }
