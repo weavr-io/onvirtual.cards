@@ -19,8 +19,6 @@ export default class CardsPage extends mixins(BaseMixin) {
       _accountId = _accounts.data.account[0].id.id
 
       redirect('/managed-accounts/' + _accountId)
-    } else {
-      redirect('/managed-accounts/add')
     }
 
     return { accountId: _accountId }
