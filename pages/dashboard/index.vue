@@ -16,9 +16,8 @@ export default class DashboardPage extends mixins(BaseMixin) {
 
     if (_accounts.data.count >= 1) {
       redirect('/managed-cards')
-    } else {
-      redirect('/managed-accounts/add')
     }
+
   }
 }
 </script>
