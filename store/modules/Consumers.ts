@@ -101,6 +101,7 @@ export const actions: Actions<State, RootState> = {
       getters.consumer.kyc.pep === IsPep.NO &&
       getters.consumer.kyc.fullDueDiligence === FullDueDiligence.APPROVED
 
+
     if (!_res) {
       return Promise.reject(new Error('KYC not approved'))
     }

@@ -1,4 +1,4 @@
-§<template>
+<template>
   <section></section>
 </template>
 
@@ -17,7 +17,6 @@ export default class DashboardPage extends mixins(BaseMixin) {
     if (_accounts.data.count >= 1) {
       redirect('/managed-cards')
     }
-
   }
 }
 </script>
