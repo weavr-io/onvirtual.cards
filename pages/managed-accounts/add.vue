@@ -44,6 +44,7 @@ import config from '~/config'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore } from '~/utils/store-accessor'
+import * as ConsumersStore from '~/store/modules/Consumers'
 import LoginResult = Schemas.LoginResult
 
 const Auth = namespace(AuthStore.name)
@@ -114,14 +115,20 @@ export default class AddCardPage extends mixins(BaseMixin) {
       currency: 'EUR'
     }
 
-    if (AuthStore.Helpers.isConsumer(store)) {
-      await accountsStore(store).add(createManagedAccountRequest)
+    const _accounts = await accountsStore(store).index()
 
+    console.log(_accounts.data.count)
+
+    if (_accounts.data.count < 1) {
+      if (AuthStore.Helpers.isConsumer(store)) {
+        await accountsStore(store).add(createManagedAccountRequest)
+        redirect('/managed-accounts')
+      }
+      return {
+        createManagedAccountRequest: createManagedAccountRequest
+      }
+    } else {
       redirect('/managed-accounts')
-    }
-
-    return {
-      createManagedAccountRequest: createManagedAccountRequest
     }
   }
 }

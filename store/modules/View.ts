@@ -24,13 +24,13 @@ export const getters: GetterTree<State, RootState> = {
     }
   },
   showKycAlert: (state, getters, rootState, rootGetters) => {
-    const _consumer = rootGetters['consumers/consumer']
     const _isConsumer = rootGetters['auth/isConsumer']
 
     if (!_isConsumer) {
       return false
     }
 
+    const _consumer = rootGetters['consumers/consumer']
     if (getters.showVerifyMobileAlert) {
       return false
     } else if (_consumer && _consumer.kyc) {

@@ -1,4 +1,11 @@
-import { Actions, Helpers, name, namespaced, State, types } from '~/store/modules/Contracts/Consumers'
+import {
+  Actions,
+  Helpers,
+  name,
+  namespaced,
+  State,
+  types
+} from '~/store/modules/Contracts/Consumers'
 import { GetterTree, MutationTree } from '~/node_modules/vuex'
 import { RootState } from '~/store'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
@@ -52,7 +59,10 @@ export const actions: Actions<State, RootState> = {
   update({ commit }, request) {
     commit(Loader.name + '/' + Loader.types.START, null, { root: true })
 
-    const req = $api.post('/app/api/consumers/' + request.consumerId + '/update', request.request)
+    const req = $api.post(
+      '/app/api/consumers/' + request.consumerId + '/update',
+      request.request
+    )
 
     req.then((_res) => {
       commit(types.SET_CONSUMER, _res.data)
@@ -82,13 +92,26 @@ export const actions: Actions<State, RootState> = {
     return req
   },
   sendVerificationCodeEmail({}, request) {
-    return $api.post('/app/api/consumers/' + request.consumerId + '/email/send_verification_code', request.request)
+    return $api.post(
+      '/app/api/consumers/' +
+        request.consumerId +
+        '/email/send_verification_code',
+      request.request
+    )
   },
   sendVerificationCodeMobile({}, request) {
-    return $api.post('/app/api/consumers/' + request.consumerId + '/mobile/send_verification_code', request.request)
+    return $api.post(
+      '/app/api/consumers/' +
+        request.consumerId +
+        '/mobile/send_verification_code',
+      request.request
+    )
   },
   verifyMobile({}, request) {
-    return $api.post('/app/api/consumers/' + request.consumerId + '/mobile/verify', request.request)
+    return $api.post(
+      '/app/api/consumers/' + request.consumerId + '/mobile/verify',
+      request.request
+    )
   },
   async checkKYC({ dispatch, getters, rootGetters }) {
     if (getters.consumer === null) {
@@ -96,11 +119,8 @@ export const actions: Actions<State, RootState> = {
       await dispatch('get', _id)
     }
 
-    const _res = getters.consumer.kyc.emailVerified === true &&
-      getters.consumer.kyc.mobileVerified === true &&
-      getters.consumer.kyc.pep === IsPep.NO &&
+    const _res =
       getters.consumer.kyc.fullDueDiligence === FullDueDiligence.APPROVED
-
 
     if (!_res) {
       return Promise.reject(new Error('KYC not approved'))
