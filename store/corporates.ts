@@ -43,7 +43,6 @@ export default class Corporates extends StoreModule {
   @Mutation
   SET_KYB(kyb: CorporateKybStatus) {
     this.kyb = kyb
-
   }
 
   @Mutation
@@ -208,9 +207,15 @@ export default class Corporates extends StoreModule {
 
   @Action({ rawError: true })
   async checkKYB() {
+
     if (this.corporate === null) {
+
       const _corpId = this.store.getters['auth/auth'].identity.id
       await this.getKyb(_corpId)
+    }
+
+    if (this.kyb === undefined || this.kyb === null){
+      await this.getKyb(this.corporate!.id.id)
     }
 
     const _res = this.kyb!.fullCompanyChecksVerified === KYBState.APPROVED

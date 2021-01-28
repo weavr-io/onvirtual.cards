@@ -29,14 +29,18 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
     } else {
       try {
         const _corpId = store.getters['auth/auth'].identity.id
-        await corporatesStore(store).getCorporateDetails(_corpId)
 
+        await corporatesStore(store).getCorporateDetails(_corpId)
         await corporatesStore(store).checkKYB()
+
         if (route.path === '/managed-accounts/kyb') {
           redirect('/managed-accounts/add')
         }
       } catch (e) {
-        if (route.path === '/managed-accounts/add') {
+        if (
+          route.path === '/managed-accounts/add' ||
+          route.path === '/managed-cards/add'
+        ) {
           redirect('/managed-accounts/kyb')
         }
       }

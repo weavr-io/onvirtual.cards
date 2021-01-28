@@ -156,7 +156,6 @@ export default class Accounts extends StoreModule {
 
   @Action({ rawError: true })
   getStatement(request: { id: string; body: ManagedAccountStatementRequest }) {
-    console.log(request)
     const req = $api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
 
     req.then((res) => {

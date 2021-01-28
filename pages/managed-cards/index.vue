@@ -4,7 +4,12 @@
       <b-container class="mb-5 mt-n4">
         <b-row align-v="center">
           <b-col>
-            <b-form-checkbox v-model="showDeleted" v-if="showDeletedSwitch" name="check-button" switch>
+            <b-form-checkbox
+              v-model="showDeleted"
+              v-if="showDeletedSwitch"
+              name="check-button"
+              switch
+            >
               <template v-if="showDeleted">
                 Hide
               </template>
@@ -139,7 +144,10 @@ export default class CardsPage extends mixins(BaseMixin) {
 
   get showKybAlert(): boolean {
     if (this.stores.corporates.kyb) {
-      return this.stores.corporates.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
+      return (
+        this.stores.corporates.kyb.fullCompanyChecksVerified !==
+        KYBState.APPROVED
+      )
     } else {
       return false
     }
@@ -147,9 +155,15 @@ export default class CardsPage extends mixins(BaseMixin) {
 
   get canAddCard(): boolean {
     if (AuthStore.Helpers.isConsumer(this.$store)) {
-      return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
+      return (
+        ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence ===
+        FullDueDiligence.APPROVED
+      )
     } else {
-      return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
+      return (
+        this.stores.corporates.kyb?.fullCompanyChecksVerified ===
+        KYBState.APPROVED
+      )
     }
   }
 }
