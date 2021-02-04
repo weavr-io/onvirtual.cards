@@ -11,8 +11,8 @@ export default class WeavrKycBeneficiaries extends Vue {
   @Prop({}) options!: KYCOptions
 
   mounted() {
-    this.$weavrComponents.verification
-      .kycBeneficiaries(this.reference)
+    this.$weavrComponents.capture
+      .beneficiariesKyc(this.reference)
       .mount('#director-kyc', { ...this.options, onMessage: this.sumsubMessage })
   }
 

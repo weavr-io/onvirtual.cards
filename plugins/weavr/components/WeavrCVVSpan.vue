@@ -23,7 +23,7 @@ class WeavrSpan extends Vue {
   protected _span
 
   mounted() {
-    this._span = this.$weavrComponents.span.cvv(
+    this._span = this.$weavrComponents.display.cvv(
             this.token,
             this.spanOptions
     )

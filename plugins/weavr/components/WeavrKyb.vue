@@ -11,8 +11,8 @@ export default class WeavrKyb extends Vue {
   @Prop({}) options!: KYBOptions
 
   mounted() {
-    this.$weavrComponents.verification
-      .kyb(this.reference)
+    this.$weavrComponents.capture
+      .corporateKyb(this.reference)
       .mount('#kyb-container', { ...this.options, onMessage: this.sumsubMessage })
   }
 

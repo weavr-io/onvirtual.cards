@@ -1,9 +1,9 @@
 <template>
-  <div :class="className" class="weavr-input" />
+  <div :class="className" class="weavr-input"/>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
-import { SecureElementStyleWithPseudoClasses, SecureInputOptions } from '~/plugins/weavr/components/api'
+import {Vue, Component, Prop, Emit} from 'nuxt-property-decorator'
+import {SecureElementStyleWithPseudoClasses, SecureInputOptions} from '~/plugins/weavr/components/api'
 
 @Component
 export default class WeavrPasswordInput extends Vue {
@@ -45,7 +45,7 @@ export default class WeavrPasswordInput extends Vue {
   protected _input
 
   mounted() {
-    this._input = this.$weavrComponents.input.password(this.name, this.inputOptions)
+    this._input = this.$weavrComponents.capture.password(this.name, this.inputOptions)
     this._input.mount(this.$el)
     this._addListeners(this._input)
   }

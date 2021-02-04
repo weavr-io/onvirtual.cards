@@ -11,7 +11,7 @@ export default class WeavrKyc extends Vue {
   @Prop({}) options!: ConsumerVerificationFlowOptions
 
   mounted() {
-    this.$weavrComponents.verification.kyc(this.reference).mount('#consumer-kyc', this.options)
+    this.$weavrComponents.capture.consumerKyc(this.reference).mount('#consumer-kyc', this.options)
   }
 }
 </script>

@@ -23,7 +23,7 @@ class WeavrSpan extends Vue {
   protected _span
 
   mounted() {
-    this._span = this.$weavrComponents.span.cardNumber(
+    this._span = this.$weavrComponents.display.cardNumber(
       this.token,
       this.spanOptions
     )
