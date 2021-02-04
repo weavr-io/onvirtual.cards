@@ -11,7 +11,7 @@ export default class FiltersMixin extends Vue {
     const _today = moment()
     // console.log(_pointer)
     while (_pointer.isBefore(_today) && !_pointer.isSame(_today, 'month')) {
-      const _readableText = _pointer.isSame(_today, 'year') ? _pointer.format('MMMM') : _pointer.format('MMMM Y')
+      const _readableText = _pointer.format('MMMM Y')
 
       _out.push({
         value: {

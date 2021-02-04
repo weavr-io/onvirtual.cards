@@ -60,6 +60,8 @@ export default class KycPage extends mixins(BaseMixin) {
     if (_accounts.data.count >= 1) {
       const _accountId = _accounts.data.account[0].id.id
       this.$router.push('/managed-accounts/' + _accountId)
+    } else {
+      this.$router.push('/managed-accounts')
     }
   }
 }
