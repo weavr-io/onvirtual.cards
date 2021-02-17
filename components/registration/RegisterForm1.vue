@@ -6,26 +6,26 @@
     <error-alert />
     <b-form-group :state="isInvalid($v.form.rootEmail)" label="Email">
       <b-form-input
-              v-model="$v.form.rootEmail.$model"
-              :state="isInvalid($v.form.rootEmail)"
-              placeholder="name@email.com"
+        v-model="$v.form.rootEmail.$model"
+        :state="isInvalid($v.form.rootEmail)"
+        placeholder="name@email.com"
       />
       <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
     </b-form-group>
     <client-only placeholder="Loading...">
-      <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
+      <div :class="{ 'is-dirty': $v.form.$dirty }">
         <label class="d-block">PASSWORD</label>
-        <weavr-input
-                :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                :base-style="passwordBaseStyle"
-                @onKeyUp="checkOnKeyUp"
-                class-name="sign-in-password"
-                name="password"
-                field="password"
-                required="true"
+        <weavr-password-input
+          ref="passwordField"
+          :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+          :base-style="passwordBaseStyle"
+          @onKeyUp="checkOnKeyUp"
+          class-name="sign-in-password"
+          name="password"
+          required="true"
         />
         <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
-      </weavr-form>
+      </div>
     </client-only>
     <b-form-row class="small mt-3 text-muted">
       <b-col>
@@ -33,21 +33,20 @@
           <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
             I accept the
             <a
-                    href="https://www.onvirtual.cards/terms/business"
-                    target="_blank"
-                    class="text-decoration-underline text-muted"
+              href="https://www.onvirtual.cards/terms/business"
+              target="_blank"
+              class="text-decoration-underline text-muted"
             >terms of use</a>
             and
-            <a href="https://www.onvirtual.cards/policy/"
-               target="_blank"
-               class="text-decoration-underline text-muted"
-            >privacy policy</a>
+            <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted"
+              >privacy policy</a
+            >
           </b-form-checkbox>
           <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
       </b-col>
     </b-form-row>
-    <div class="mt-2" v-if="isRecaptchaEnabled">
+    <div v-if="isRecaptchaEnabled" class="mt-2">
       <recaptcha />
     </div>
     <b-form-row class="mt-5">
@@ -61,15 +60,15 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
 import { required, email, sameAs } from 'vuelidate/lib/validators'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ErrorStore from '~/store/modules/Error'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import * as SecureClientStore from '~/store/modules/SecureClient'
 import BaseMixin from '~/minixs/BaseMixin'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
 @Component({
   validations: {
@@ -85,11 +84,15 @@ import BaseMixin from '~/minixs/BaseMixin'
     }
   },
   components: {
-    ErrorAlert: () => import('~/components/ErrorAlert.vue')
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+    WeavrPasswordInput
   }
 })
 export default class RegisterForm1 extends mixins(BaseMixin) {
   private $recaptcha: any
+
+  @Ref('passwordField')
+  passwordField!: WeavrPasswordInput
 
   public form: {
     rootEmail: string
@@ -120,20 +123,20 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
 
       console.log('submit form validation success')
 
-      SecureClientStore.Helpers.tokenize(this.$store).then(
-              (tokens) => {
-                console.log('password tokenisation')
-                if (tokens.password !== '') {
-                  this.form.password = tokens.password
+      this.passwordField.createToken().then(
+        (tokens) => {
+          console.log('password tokenisation')
+          if (tokens.tokens.password !== '') {
+            this.form.password = tokens.tokens.password
 
-                  this.validatePassword()
-                } else {
-                  return null
-                }
-              },
-              (e) => {
-                console.log('tokenisation failed', e)
-              }
+            this.validatePassword()
+          } else {
+            return null
+          }
+        },
+        (e) => {
+          console.log('tokenisation failed', e)
+        }
       )
     } catch (error) {
       console.log('Login error:', error)
@@ -172,7 +175,7 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
       color: '#495057',
       fontSize: '16px',
       fontSmoothing: 'antialiased',
-      fontFamily: '\'Be Vietnam\', sans-serif',
+      fontFamily: "'Be Vietnam', sans-serif",
       fontWeight: '400',
       lineHeight: '24px',
       margin: '0',
@@ -184,7 +187,6 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
       }
     }
   }
-
 
   get isRecaptchaEnabled(): boolean {
     return typeof process.env.RECAPTCHA !== 'undefined'

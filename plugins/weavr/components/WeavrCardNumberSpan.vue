@@ -1,13 +1,11 @@
 <template>
   <div :class="className" :style="baseStyle" />
-</template>
-<script lang="ts">
+  </template>
+  <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
 
 @Component
 class WeavrSpan extends Vue {
-  @Prop() readonly field!: string
-
   @Prop() readonly token!: string
 
   @Prop() readonly options!: object
@@ -25,28 +23,27 @@ class WeavrSpan extends Vue {
   protected _span
 
   mounted() {
-    this._span = this.$OpcUxSecureClient.span(
-            this.field,
-            this.token,
-            this.spanOptions
+    this._span = this.$weavrComponents.display.cardNumber(
+      this.token,
+      this.spanOptions
     )
     this._span.mount(this.$el)
-    this._addListeners(this._span)
+    this._addListeners()
   }
 
   beforeDestroy() {
-    this._removeListeners(this._span)
+    this._removeListeners()
     this._span.destroy()
   }
 
-  _addListeners(input) {
-    this.onReady && input.on('ready', this.onReady)
-    this.onChange && input.on('change', this.onChange)
+  _addListeners() {
+    this.onReady && this._span.on('ready', this.onReady)
+    this.onChange && this._span.on('change', this.onChange)
   }
 
-  _removeListeners(input) {
-    this.onReady && input.off('ready', this.onReady)
-    this.onChange && input.off('change', this.onChange)
+  _removeListeners() {
+    this.onReady && this._span.off('ready', this.onReady)
+    this.onChange && this._span.off('change', this.onChange)
   }
 
   get spanOptions() {
