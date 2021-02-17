@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
 
-const env = dotenv.config({ debug: true })
+const env = dotenv.config({debug: true})
 
 const config = {
   mode: 'spa',
@@ -14,8 +14,8 @@ const config = {
   head: {
     title: 'onvirtual.cards',
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      {charset: 'utf-8'},
+      {name: 'viewport', content: 'width=device-width, initial-scale=1'},
       {
         hid: 'description',
         name: 'description',
@@ -23,19 +23,19 @@ const config = {
       }
     ],
     script: [
-      // {
-      //   src: process.env.BASE_URL_SCRIPT + '/app/secure/static/client.1.js',
-      //   // src: 'http://localhost/client.1.js',
-      //   type: 'application/javascript'
-      // },
       {
-        src: 'http://localhost:3002/client.bundle.js',
+        src: process.env.BASE_URL_SCRIPT,
+        // src: 'http://localhost/client.1.js',
         type: 'application/javascript'
-      }
+      },
+      // {
+      //   src: 'http://localhost:3002/client.bundle.js',
+      //   type: 'application/javascript'
+      // }
     ],
 
     link: [
-      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      {rel: 'apple-touch-icon', href: '/apple-touch-icon.png'},
       {
         rel: 'icon',
         type: 'image/png',
@@ -48,8 +48,8 @@ const config = {
         sizes: '16x16',
         href: '/favicon-16x16.png'
       },
-      { rel: 'manifest', href: '/site.webmanifest' },
-      { rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
+      {rel: 'manifest', href: '/site.webmanifest'},
+      {rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5'},
       {
         rel: 'stylesheet',
         href:
@@ -60,7 +60,7 @@ const config = {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#6C1C5C' },
+  loading: {color: '#6C1C5C'},
   /*
    ** Global CSS
    */
@@ -69,14 +69,14 @@ const config = {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    { src: '~/plugins/vuelidate' },
-    { src: '~/plugins/weavr/security.client.ts', ssr: false },
-    { src: '~/plugins/WeavrVueFilters.ts', ssr: false },
-    { src: '~/plugins/PhoneNumberInput.ts', ssr: false },
-    { src: '~/plugins/flatpickr.ts', ssr: false },
-    { src: '~/plugins/InfiniteLoading.ts', ssr: false },
-    { src: '~/plugins/axios.ts' },
-    { src: '~/plugins/axios-accessor.ts' }
+    {src: '~/plugins/vuelidate'},
+    {src: '~/plugins/weavr/security.client.ts', ssr: false},
+    {src: '~/plugins/WeavrVueFilters.ts', ssr: false},
+    {src: '~/plugins/PhoneNumberInput.ts', ssr: false},
+    {src: '~/plugins/flatpickr.ts', ssr: false},
+    {src: '~/plugins/InfiniteLoading.ts', ssr: false},
+    {src: '~/plugins/axios.ts'},
+    {src: '~/plugins/axios-accessor.ts'}
   ],
   /*
    ** Nuxt.js modules

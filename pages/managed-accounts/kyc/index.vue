@@ -46,7 +46,7 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   options: Partial<ConsumerVerificationFlowOptions> = {
-    onMessage: this.onMessage
+    onMessage: this.onMessage,
   }
 
   onMessage(message, additionalInfo) {
