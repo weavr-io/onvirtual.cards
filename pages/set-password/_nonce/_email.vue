@@ -29,18 +29,18 @@
             />
           </b-form-group>
           <client-only placeholder="Loading...">
-            <weavr-form ref="passwordForm" :class="{ 'is-dirty': $v.form.$dirty }">
+            <div :class="{ 'is-dirty': $v.form.$dirty }">
               <label class="d-block">PASSWORD:</label>
-              <weavr-input
+              <weavr-password-input
+                ref="passwordField"
                 :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
                 :base-style="passwordBaseStyle"
                 @onKeyUp="checkOnKeyUp"
                 class-name="sign-in-password"
                 name="password"
-                field="password"
                 required="true"
               />
-            </weavr-form>
+            </div>
             <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
           </client-only>
           <div class="text-center">
@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import { required, email } from 'vuelidate/lib/validators'
 import ErrorAlert from '~/components/ErrorAlert.vue'
@@ -62,11 +62,11 @@ import LoaderButton from '~/components/LoaderButton.vue'
 import * as AuthStore from '~/store/modules/Auth'
 import { LostPasswordValidateRequest } from '~/api/Requests/Auth/LostPasswordValidateRequest'
 import { LostPasswordContinueRequest } from '~/api/Requests/Auth/LostPasswordContinueRequest'
-import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
 const Auth = namespace(AuthStore.name)
 
@@ -74,7 +74,8 @@ const Auth = namespace(AuthStore.name)
   layout: 'auth',
   components: {
     ErrorAlert,
-    LoaderButton
+    LoaderButton,
+    WeavrPasswordInput
   },
   validations: {
     form: {
@@ -86,9 +87,8 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class PasswordSentPage extends mixins(BaseMixin) {
-  $refs!: {
-    passwordForm: WeavrForm
-  }
+  @Ref('passwordField')
+  passwordField!: WeavrPasswordInput
 
   @Auth.Getter isLoading!: boolean
 
@@ -125,11 +125,10 @@ export default class PasswordSentPage extends mixins(BaseMixin) {
       }
     }
 
-    const form: WeavrForm = this.$refs.passwordForm as WeavrForm
-    form.tokenize(
+    this.passwordField.createToken().then(
       (tokens) => {
-        if (tokens.password !== '') {
-          this.form.password.value = tokens.password
+        if (tokens.tokens.password !== '') {
+          this.form.password.value = tokens.tokens.password
           this.validatePassword()
         } else {
           return null

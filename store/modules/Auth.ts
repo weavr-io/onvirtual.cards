@@ -186,7 +186,7 @@ export const mutations: MutationTree<State> = {
     $api.defaults.headers.Authorization = 'Bearer ' + state.auth.token
 
     // @ts-ignore
-    this.$weavrSecurityAssociate('Bearer ' + state.auth.token)
+    this.$weavrSetUserToken('Bearer ' + state.auth.token)
   },
   [types.LOGOUT](state) {
     state.auth = {}
@@ -197,7 +197,7 @@ export const mutations: MutationTree<State> = {
     delete $api.defaults.headers['X-Tenant']
 
     // @ts-ignore
-    this.$weavrSecurityAssociate(null)
+    this.$weavrSetUserToken(null)
   },
   [types.SET_IS_LOADING](state, isLoading: boolean) {
     state.isLoading = isLoading

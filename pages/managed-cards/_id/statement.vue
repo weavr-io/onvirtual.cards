@@ -166,7 +166,7 @@
                   <b-row class="mt-2">
                     <b-col>
                       <div class="card-number">
-                        <weavr-span
+                        <weavr-card-number-span
                           :token="managedCard.cardNumber"
                           :base-style="{
                             fontFamily: '\'Be Vietnam\', sans-serif',
@@ -175,7 +175,6 @@
                             fontSize: '20px'
                           }"
                           class="card-select-number"
-                          field="cardNumber"
                         />
                       </div>
                     </b-col>
@@ -204,7 +203,7 @@
                       CVV
                     </div>
                     <div class="card-cvv-value">
-                      <weavr-span
+                      <weavr-cvv-span
                         :token="managedCard.cvv"
                         :base-style="{
                           fontFamily: '\'Be Vietnam\', sans-serif',
@@ -214,7 +213,6 @@
                           fontWeight: 300
                         }"
                         class="card-select-number"
-                        field="cvv"
                       />
                     </div>
                   </div>

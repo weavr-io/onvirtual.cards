@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card body-class="p-card">
       <h3 class="text-center font-weight-light mb-5">
@@ -22,17 +22,15 @@
           />
         </b-form-group>
         <client-only placeholder="Loading...">
-          <weavr-form ref="passwordForm">
-            <label class="d-block">PASSWORD</label>
-            <weavr-input
-              :options="{ placeholder: 'Password' }"
-              :base-style="passwordBaseStyle"
-              @onKeyUp="checkOnKeyUp"
-              class-name="sign-in-password"
-              name="password"
-              field="password"
-            />
-          </weavr-form>
+          <label class="d-block">PASSWORD</label>
+          <weavr-password-input
+            ref="passwordField"
+            :options="{ placeholder: 'Password' }"
+            :base-style="passwordBaseStyle"
+            @onKeyUp="checkOnKeyUp"
+            class-name="sign-in-password"
+            name="password"
+          />
         </client-only>
 
         <div class="mt-2">
@@ -63,14 +61,13 @@
 
 <script lang="ts">
 import { namespace } from 'vuex-class'
-import { Component, mixins, Watch } from 'nuxt-property-decorator'
+import { Component, mixins, Ref, Watch } from 'nuxt-property-decorator'
 import { Schemas } from '~/api/Schemas'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
-import WeavrForm from '~/plugins/weavr/components/WeavrForm.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import * as SecureClientStore from '~/store/modules/SecureClient'
 import BaseMixin from '~/minixs/BaseMixin'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
 const Auth = namespace(AuthStore.name)
 
@@ -78,7 +75,8 @@ const Auth = namespace(AuthStore.name)
   layout: 'auth',
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
+    WeavrPasswordInput
   }
 })
 export default class LoginPage extends mixins(BaseMixin) {
@@ -93,24 +91,22 @@ export default class LoginPage extends mixins(BaseMixin) {
     console.warn(val)
   }
 
+  @Ref('passwordField')
+  passwordField!: WeavrPasswordInput
+
   public loginRequest: Schemas.LoginRequest = {
     code: '',
     password: ''
   }
 
-  $refs!: {
-    passwordForm: WeavrForm
-  }
-
-  async login() {
+  login() {
     console.log('Login Function')
 
     try {
-      // const form: WeavrForm = this.$refs.passwordForm as WeavrForm
-      SecureClientStore.Helpers.tokenize(this.$store).then(
+      this.passwordField.createToken().then(
         (tokens) => {
           console.log('Password tokenisation success')
-          this.loginRequest.password = tokens.password
+          this.loginRequest.password = tokens.tokens.password
           this.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
         },
         (e) => {

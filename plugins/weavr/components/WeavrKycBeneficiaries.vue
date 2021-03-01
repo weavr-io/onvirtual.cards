@@ -1,19 +1,19 @@
 <template>
-  <div id="kyb-container" />
+  <div id="director-kyc" />
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
-import { KYBOptions } from '~/plugins/weavr/components/api'
+import { KYCOptions } from './api'
 
 @Component
-export default class WeavrKyb extends Vue {
+export default class WeavrKycBeneficiaries extends Vue {
   @Prop({}) reference!: string
-  @Prop({}) options!: KYBOptions
+  @Prop({}) options!: KYCOptions
 
   mounted() {
     this.$weavrComponents.capture
-      .corporateKyb(this.reference)
-      .mount('#kyb-container', { ...this.options, onMessage: this.sumsubMessage })
+      .beneficiariesKyc(this.reference)
+      .mount('#director-kyc', { ...this.options, onMessage: this.sumsubMessage })
   }
 
   @Emit('message')
