@@ -97,7 +97,6 @@
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </div>
               </client-only>
-              <pre>{{registrationRequest}}</pre>
               <b-form-row class="small mt-3 text-muted">
                 <b-col>
                   <b-form-group>
