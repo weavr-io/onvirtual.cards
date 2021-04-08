@@ -97,12 +97,15 @@
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </div>
               </client-only>
+              <pre>{{registrationRequest}}</pre>
               <b-form-row class="small mt-3 text-muted">
                 <b-col>
                   <b-form-group>
                     <b-form-checkbox
                       v-model="$v.registrationRequest.acceptedTerms.$model"
                       :state="isInvalid($v.registrationRequest.acceptedTerms)"
+                      unchecked-value="FALSE"
+                      value="TRUE"
                     >
                       I accept the
                       <a
@@ -157,6 +160,7 @@ import * as AuthStore from '~/store/modules/Auth'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import {BooleanString} from "~/api/Generic/BooleanString";
 
 const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')
@@ -190,7 +194,7 @@ const touchMap = new WeakMap()
       },
       acceptedTerms: {
         required,
-        sameAs: sameAs(() => true)
+        sameAs: sameAs(() => BooleanString.TRUE)
       }
     }
   },
@@ -232,7 +236,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     occupation: null,
     baseCurrency: 'EUR',
     dateOfBirth: null,
-    acceptedTerms: false,
+    acceptedTerms: BooleanString.FALSE,
     amlProviderKey: 'sumsub'
   }
 

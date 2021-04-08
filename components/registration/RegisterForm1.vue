@@ -30,7 +30,12 @@
     <b-form-row class="small mt-3 text-muted">
       <b-col>
         <b-form-group>
-          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
+          <b-form-checkbox
+            v-model="$v.form.acceptedTerms.$model"
+            :state="isInvalid($v.form.acceptedTerms)"
+            unchecked-value="FALSE"
+            value="TRUE"
+          >
             I accept the
             <a
               href="https://www.onvirtual.cards/terms/business"
@@ -61,7 +66,7 @@
 </template>
 <script lang="ts">
 import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
-import { required, email, sameAs } from 'vuelidate/lib/validators'
+import { email, required, sameAs } from 'vuelidate/lib/validators'
 import * as AuthStore from '~/store/modules/Auth'
 import * as ErrorStore from '~/store/modules/Error'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
@@ -69,6 +74,7 @@ import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import { BooleanString } from '~/api/Generic/BooleanString'
 
 @Component({
   validations: {
@@ -79,7 +85,7 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
       },
       acceptedTerms: {
         required,
-        sameAs: sameAs(() => true)
+        sameAs: sameAs(() => BooleanString.TRUE)
       }
     }
   },
@@ -97,11 +103,11 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
   public form: {
     rootEmail: string
     password: string
-    acceptedTerms: boolean
+    acceptedTerms: BooleanString
   } = {
     rootEmail: '',
     password: '',
-    acceptedTerms: false
+    acceptedTerms: BooleanString.FALSE
   }
 
   async tryToSubmitForm() {

@@ -1,6 +1,7 @@
 import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
 import { IndustryOccupation } from '~/api/Enums/Corporates/IndustryOccupation'
 import { SourceOfFunds } from '~/api/Enums/Corporates/SourceOfFunds'
+import { BooleanString } from '~/api/Generic/BooleanString'
 
 export interface Corporate {
   id: {
@@ -17,7 +18,7 @@ export interface Corporate {
   verifications?: string[]
   companyRegistrationNumber: string
   registrationCountry: string
-  acceptedTerms: boolean
+  acceptedTerms: BooleanString
   baseCurrency?: string
   feeGroup?: string
   incorporatedOn?: {
