@@ -129,7 +129,7 @@
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
-import { IndustryOccupation, IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
+import { IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
 import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
 import BaseMixin from '~/minixs/BaseMixin'
 import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
