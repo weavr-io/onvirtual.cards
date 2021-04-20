@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-card">
@@ -21,15 +21,16 @@
 import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
 import * as AuthStore from '~/store/modules/Auth'
+import { Helpers } from '~/store/modules/Auth'
 
 import config from '~/config'
 import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
 import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
 import { Schemas } from '~/api/Schemas'
-import { Helpers } from '~/store/modules/Auth'
 import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
 import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
 import BaseMixin from '~/minixs/BaseMixin'
+import { BooleanString } from '~/api/Generic/BooleanString'
 
 const Auth = namespace(AuthStore.name)
 
@@ -68,7 +69,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
   public registrationRequest: Nullable<CreateCorporateRequest> = {
     active: true,
-    acceptedTerms: false,
+    acceptedTerms: BooleanString.FALSE,
     companyName: '',
     companyRegistrationNumber: '',
     companyType: CompanyType.LLC,
