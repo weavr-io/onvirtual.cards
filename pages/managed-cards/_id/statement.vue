@@ -79,10 +79,9 @@
         <b-col
           lg="7"
           xs="14"
-          v-if="managedCard.active"
           class="d-flex justify-content-end"
         >
-          <div class="mr-5">
+          <div>
             <b-button
               @click="downloadStatement"
               variant="link"
@@ -92,7 +91,7 @@
               download
             </b-button>
           </div>
-          <div>
+          <div v-if="managedCard.active" class="ml-5">
             <b-button
               @click="confirmDeleteCard"
               variant="link"
