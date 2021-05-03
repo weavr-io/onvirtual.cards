@@ -4,6 +4,7 @@ import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import { Statement } from '~/api/Models/Statements/Statement'
 import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import { $api } from '~/utils/api'
+import { NullableBoolean } from '~/api/Generic/NullableBoolean'
 
 @Module({
   name: 'accountsV2',
@@ -115,7 +116,7 @@ export default class Accounts extends StoreModule {
   @Action({ rawError: true })
   index() {
     const body = {
-      active: true,
+      active: NullableBoolean.TRUE,
       paging: {
         count: true,
         offset: 0,
@@ -144,7 +145,7 @@ export default class Accounts extends StoreModule {
   }
 
   @Action({ rawError: true })
-  get(id: number) {
+  get(id: string) {
     const req = $api.post('/app/api/managed_accounts/' + id + '/get', {})
 
     req.then((res) => {
