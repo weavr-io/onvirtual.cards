@@ -9,7 +9,6 @@ export interface CreateConsumerRequest {
   name: string
   surname: string
   email: string
-  credentialCode?: string
   mobileCountryCode: string
   mobileNumber: string
   baseCurrency?: string
@@ -20,9 +19,9 @@ export interface CreateConsumerRequest {
   } | null
   address?: Address
   feeGroup?: string
-  acceptedTerms?: BooleanString
-  sourceOfFunds?: SourceOfFunds | null
-  sourceOfFundsOther?: string
   occupation?: IndustryOccupation | null
-  amlProviderKey: string
+  sourceOfFunds: SourceOfFunds | null
+  sourceOfFundsOther?: string
+  ipAddress?: string
+  acceptedTerms?: BooleanString
 }
