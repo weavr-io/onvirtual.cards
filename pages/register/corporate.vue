@@ -4,16 +4,18 @@
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
     </div>
     <b-card no-body class="overflow-hidden">
-      <b-card-body class="p-card">
-        <div class="form-screens">
-          <div :class="{ 'd-none': screen !== 0 }" class="form-screen">
-            <register-form :request="registrationRequest" @submit-form="form1Submit" />
+      <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
+        <b-card-body class="p-card">
+          <div class="form-screens">
+            <div :class="{ 'd-none': screen !== 0 }" class="form-screen">
+              <register-form :request="registrationRequest" @submit-form="form1Submit" />
+            </div>
+            <div :class="{ 'd-none': screen !== 1 }" class="form-screen">
+              <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
+            </div>
           </div>
-          <div :class="{ 'd-none': screen !== 1 }" class="form-screen">
-            <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
-          </div>
-        </div>
-      </b-card-body>
+        </b-card-body>
+      </b-overlay>
     </b-card>
   </b-col>
 </template>

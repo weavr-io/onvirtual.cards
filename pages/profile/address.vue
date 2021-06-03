@@ -1,93 +1,72 @@
 <template>
   <b-col md="6" offset-md="3">
     <b-card no-body class="overflow-hidden">
-      <b-card-body class="p-card">
-        <div class="form-screens">
-          <error-alert />
-          <div class="form-screen">
-            <b-form @submit="submitForm" novalidate>
-              <h3 class="text-center font-weight-light mb-5">
-                Your address details
-              </h3>
-              <b-form-group label="Address Line 1*">
-                <b-form-input
-                  :state="isInvalid($v.form.request.address.addressLine1)"
-                  v-model="form.request.address.addressLine1"
-                  placeholder="Address Line 1"
-                />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group label="Address Line 2">
-                <b-form-input
-                  :state="isInvalid($v.form.request.address.addressLine2)"
-                  v-model="form.request.address.addressLine2"
-                  placeholder="Address Line 2"
-                />
-              </b-form-group>
-              <b-form-group label="City*">
-                <b-form-input
-                  :state="isInvalid($v.form.request.address.city)"
-                  v-model="form.request.address.city"
-                  placeholder="City"
-                />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group label="Country*">
-                <b-form-select
-                  :state="isInvalid($v.form.request.address.country)"
-                  v-model="form.request.address.country"
-                  :options="countiesOptions"
-                  placeholder="Registration Country"
-                />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group label="Post Code*">
-                <b-form-input
-                  :state="isInvalid($v.form.request.address.postCode)"
-                  v-model="form.request.address.postCode"
-                  placeholder="Post Code"
-                />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group label="State">
-                <b-form-input
-                  :state="isInvalid($v.form.request.address.state)"
-                  v-model="form.request.address.state"
-                  placeholder="State"
-                />
-              </b-form-group>
-              <b-form-group :state="isInvalid($v.form.request.occupation)" label="Industry / Occupation*">
-                <b-form-select
-                  v-model="$v.form.request.occupation.$model"
-                  :state="isInvalid($v.form.request.occupation)"
-                  :options="industryOccupationOptions"
-                />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group :state="isInvalid($v.form.request.sourceOfFunds)" label="Source of Funds*">
-                <b-form-select
-                  v-model="$v.form.request.sourceOfFunds.$model"
-                  :state="isInvalid($v.form.request.sourceOfFunds)"
-                  :options="sourceOfFundsOptions"
-                />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
-                <b-form-input
-                  :state="isInvalid($v.form.request.sourceOfFundsOther)"
-                  v-model="form.request.sourceOfFundsOther"
-                  placeholder="Specify Other Source of Funds"
-                />
-              </b-form-group>
-              <b-row class="mt-4" align-v="center">
-                <b-col class="text-center">
-                  <loader-button :is-loading="isLoading" button-text="continue" />
-                </b-col>
-              </b-row>
-            </b-form>
+      <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
+        <b-card-body class="p-card">
+          <div class="form-screens">
+            <error-alert />
+            <div class="form-screen">
+              <b-form @submit="submitForm" novalidate>
+                <h3 class="text-center font-weight-light mb-5">
+                  Your address details
+                </h3>
+                <b-form-group label="Address Line 1*">
+                  <b-form-input
+                    :state="isInvalid($v.form.request.address.addressLine1)"
+                    v-model="form.request.address.addressLine1"
+                    placeholder="Address Line 1"
+                  />
+                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group label="Address Line 2">
+                  <b-form-input
+                    :state="isInvalid($v.form.request.address.addressLine2)"
+                    v-model="form.request.address.addressLine2"
+                    placeholder="Address Line 2"
+                  />
+                </b-form-group>
+                <b-form-group label="City*">
+                  <b-form-input
+                    :state="isInvalid($v.form.request.address.city)"
+                    v-model="form.request.address.city"
+                    placeholder="City"
+                  />
+                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group label="Country*">
+                  <b-form-select
+                    :state="isInvalid($v.form.request.address.country)"
+                    v-model="form.request.address.country"
+                    :options="countiesOptions"
+                    placeholder="Registration Country"
+                  />
+                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group label="Post Code*">
+                  <b-form-input
+                    :state="isInvalid($v.form.request.address.postCode)"
+                    v-model="form.request.address.postCode"
+                    placeholder="Post Code"
+                  />
+                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group label="State">
+                  <b-form-input
+                    :state="isInvalid($v.form.request.address.state)"
+                    v-model="form.request.address.state"
+                    placeholder="State"
+                  />
+                </b-form-group>
+                <b-row class="mt-4" align-v="center">
+                  <b-col class="text-center">
+                    <loader-button :is-loading="isLoading" button-text="continue" />
+                  </b-col>
+                </b-row>
+              </b-form>
+            </div>
           </div>
-        </div>
-      </b-card-body>
+        </b-card-body>
+      </b-overlay>
     </b-card>
   </b-col>
 </template>
@@ -122,14 +101,7 @@ const Countries = require('~/static/json/countries.json')
           country: { required, maxLength: maxLength(2) },
           postCode: { required },
           state: {}
-        },
-        occupation: {
-          required
-        },
-        sourceOfFunds: {
-          required
-        },
-        sourceOfFundsOther: {}
+        }
       }
     }
   },
@@ -156,10 +128,7 @@ export default class ConsunmerAddressPage extends mixins(BaseMixin) {
       consumerId: AuthStore.Helpers.identityId(store)!,
       request: {
         // @ts-ignore
-        address: { ..._res.data.address },
-        sourceOfFunds: null,
-        sourceOfFundsOther: '',
-        occupation: null
+        address: { ..._res.data.address }
       }
     }
 
