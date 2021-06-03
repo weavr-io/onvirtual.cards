@@ -9,6 +9,10 @@ server {
         proxy_set_header programme-key {{API_KEY}};
         proxy_pass https://build.weavr.io;
     }
+    
+    location /health {
+        return 200;
+    }
 
     #error_page  404              /404.html;
 
