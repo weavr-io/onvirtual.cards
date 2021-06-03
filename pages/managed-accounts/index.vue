@@ -14,7 +14,7 @@
         <b-row>
           <b-col class="py-5 text-center">
             <h4 class="font-weight-light">
-              You have do not have an account.
+              You do not have an account.
             </h4>
             <h5 class="font-weight-lighter">
               Click
@@ -56,15 +56,9 @@ export default class CardsPage extends mixins(BaseMixin) {
 
   get isVerified() {
     if (this.$store.getters['auth/isConsumer']) {
-      return (
-        this.$store.getters['consumers/consumer'].kyc.fullDueDiligence ===
-        FullDueDiligence.APPROVED
-      )
+      return this.$store.getters['consumers/consumer'].kyc.fullDueDiligence === FullDueDiligence.APPROVED
     } else {
-      return (
-        this.stores.corporates.kyb?.fullCompanyChecksVerified ===
-        KYBState.APPROVED
-      )
+      return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
     }
   }
 }
