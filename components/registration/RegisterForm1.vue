@@ -51,7 +51,7 @@
         </b-form-group>
       </b-col>
     </b-form-row>
-    <div v-if="isRecaptchaEnabled" class="mt-2">
+    <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
       <recaptcha />
     </div>
     <b-form-row class="mt-5">
