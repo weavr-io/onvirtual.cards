@@ -17,9 +17,7 @@
           </b-row>
           <b-row>
             <b-col>
-              <span class="card-number">
-                •••• {{ managedCard.cardNumberLastFour }}
-              </span>
+              <span class="card-number"> •••• {{ managedCard.cardNumberLastFour }} </span>
 
               <span class="card-expiry ml-5">
                 <span class="card-expiry-label">EXP</span>
@@ -48,10 +46,7 @@
                   balance
                 </div>
                 <div class="card-balance-value">
-                  {{
-                    managedCard.balances.availableBalance
-                      | weavr_currency(managedCard.currency)
-                  }}
+                  {{ managedCard.balances.availableBalance | weavr_currency(managedCard.currency) }}
                 </div>
               </div>
             </b-col>
@@ -76,11 +71,7 @@
             </b-row>
           </h6>
         </b-col>
-        <b-col
-          lg="7"
-          xs="14"
-          class="d-flex justify-content-end"
-        >
+        <b-col lg="7" xs="14" class="d-flex justify-content-end">
           <div>
             <b-button
               @click="downloadStatement"
@@ -106,10 +97,7 @@
 
       <b-row v-if="filteredStatement">
         <b-col>
-          <b-row
-            v-for="(statementEntries, date) in filteredStatement"
-            :key="date"
-          >
+          <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
             <b-col>
               <b-row class="mt-4">
                 <b-col class="text-muted">
@@ -136,17 +124,9 @@
       content-class="transparent-modal"
       size="md"
     >
-      <b-card
-        v-if="managedCard"
-        no-body
-        class="border-0 cards-card"
-        bg-variant="card-purple"
-      >
+      <b-card v-if="managedCard" no-body class="border-0 cards-card" bg-variant="card-purple">
         <b-card-body class="card-body-modal card-body onvirtual-card">
-          <b-link
-            :to="'/managed-cards/' + managedCard.id.id + '/statement'"
-            class="p-5"
-          >
+          <b-link :to="'/managed-cards/' + managedCard.id.id + '/statement'" class="p-5">
             <b-container fluid class="p-0">
               <b-row align-h="end">
                 <b-col cols="2" class="text-right">
@@ -244,9 +224,9 @@ import BaseMixin from '~/minixs/BaseMixin'
 import { StatementRequest } from '~/api/Requests/Statements/StatementRequest'
 import RouterMixin from '~/minixs/RouterMixin'
 import FiltersMixin from '~/minixs/FiltersMixin'
-import OrderType = Schemas.OrderType
 import axios from '~/plugins/axios'
 import { $api } from '~/utils/api'
+import OrderType = Schemas.OrderType
 
 const dot = require('dot-object')
 
@@ -262,11 +242,7 @@ const moment = require('moment')
     BIconThreeDotsVertical
   }
 })
-export default class ManagedCardsTable extends mixins(
-  BaseMixin,
-  RouterMixin,
-  FiltersMixin
-) {
+export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, FiltersMixin) {
   $route
 
   // @ts-ignore
@@ -323,7 +299,7 @@ export default class ManagedCardsTable extends mixins(
     }
 
     const _req: StatementRequest = {
-      showFundMovementsOnly: true,
+      showFundMovementsOnly: false,
       orderByTimestamp: OrderType.DESC,
       paging: {
         limit: 100,
@@ -354,7 +330,7 @@ export default class ManagedCardsTable extends mixins(
     }
 
     const _statementFilters: StatementRequest = {
-      showFundMovementsOnly: true,
+      showFundMovementsOnly: false,
       orderByTimestamp: OrderType.DESC,
       paging: {
         limit: 100,
@@ -379,10 +355,7 @@ export default class ManagedCardsTable extends mixins(
   }
 
   get isFrozen() {
-    return (
-      Object.entries(this.managedCard!.state.blockTypes).length > 0 ||
-      this.managedCard!.state.destroyType !== ''
-    )
+    return Object.entries(this.managedCard!.state.blockTypes).length > 0 || this.managedCard!.state.destroyType !== ''
   }
 
   confirmDeleteCard() {
@@ -406,10 +379,7 @@ export default class ManagedCardsTable extends mixins(
     const _accounts = await this.stores.accounts.index()
 
     if (_accounts.data.count >= 1 && this.managedCard) {
-      if (
-        this.managedCard.balances.availableBalance &&
-        parseInt(this.managedCard.balances.availableBalance) > 0
-      ) {
+      if (this.managedCard.balances.availableBalance && parseInt(this.managedCard.balances.availableBalance) > 0) {
         const _request: TransfersSchemas.CreateTransferRequest = {
           profileId: config.profileId.transfers,
           source: {
@@ -437,17 +407,15 @@ export default class ManagedCardsTable extends mixins(
       const _request: StatementRequest = { ...this.filters }
       _request.paging!.offset = this.page * _request.paging!.limit!
 
-      this.stores.cards
-        .getCardStatementPage({ id: this.$route.params.id, request: _request })
-        .then((response) => {
-          if (response.data.responseCount < _request.paging!.limit!) {
-            $state.complete()
-            console.log('complete')
-          } else {
-            console.log('loaded')
-            $state.loaded()
-          }
-        })
+      this.stores.cards.getCardStatementPage({ id: this.$route.params.id, request: _request }).then((response) => {
+        if (response.data.responseCount < _request.paging!.limit!) {
+          $state.complete()
+          console.log('complete')
+        } else {
+          console.log('loaded')
+          $state.loaded()
+        }
+      })
     }, 500)
   }
 }

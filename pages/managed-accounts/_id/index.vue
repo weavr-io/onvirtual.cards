@@ -4,8 +4,8 @@
       <statement :filters="filters" />
     </section>
     <infinite-loading @infinite="infiniteScroll" spinner="spiral">
-      <span slot="no-more"></span>
-      <div slot="no-results"></div>
+      <span slot="no-more" />
+      <div slot="no-results" />
     </infinite-loading>
   </div>
 </template>
@@ -68,18 +68,18 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
 
     if (!_filters.fromTimestamp) {
       _filters.fromTimestamp = moment()
-              .startOf('month')
-              .valueOf()
+        .startOf('month')
+        .valueOf()
     }
 
     if (!_filters.toTimestamp) {
       _filters.toTimestamp = moment()
-              .endOf('month')
-              .valueOf()
+        .endOf('month')
+        .valueOf()
     }
 
     const _statementFilters: ManagedAccountStatementRequest = {
-      showFundMovementsOnly: true,
+      showFundMovementsOnly: false,
       orderByTimestamp: OrderType.DESC,
       paging: {
         limit: 100,
