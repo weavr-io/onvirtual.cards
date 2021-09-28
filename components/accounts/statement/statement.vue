@@ -35,10 +35,7 @@
         </b-row>
         <b-row v-if="filteredStatement && filteredStatementLength > 0">
           <b-col>
-            <b-row
-              v-for="(statementEntries, date) in filteredStatement"
-              :key="date"
-            >
+            <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
               <b-col>
                 <b-row class="mt-4">
                   <b-col class="text-muted">
@@ -59,10 +56,7 @@
             <h5 class="font-weight-light">
               Your transactions will appear here.
             </h5>
-            <b-button
-              :to="'/managed-accounts/' + account.id.id + '/topup'"
-              variant="link"
-            >
+            <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="link">
               Start by topping up your account.
             </b-button>
           </b-col>
@@ -91,11 +85,7 @@ const dot = require('dot-object')
     DownloadIcon: () => import('~/assets/svg/download.svg?inline')
   }
 })
-export default class AccountStatement extends mixins(
-  BaseMixin,
-  RouterMixin,
-  FiltersMixin
-) {
+export default class AccountStatement extends mixins(BaseMixin, RouterMixin, FiltersMixin) {
   get filteredStatement() {
     return this.stores.accounts.filteredStatement
   }
@@ -155,7 +145,7 @@ export default class AccountStatement extends mixins(
     }
 
     const _req: ManagedAccountStatementRequest = {
-      showFundMovementsOnly: true,
+      showFundMovementsOnly: false,
       orderByTimestamp: OrderType.DESC,
       paging: {
         limit: 100,

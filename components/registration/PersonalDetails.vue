@@ -95,7 +95,7 @@
         v-model="$v.form.rootCompanyPosition.$model"
         :state="isInvalid($v.form.rootCompanyPosition)"
         name="company-position"
-        value="Representative"
+        value="AUTHORISED_REPRESENTATIVE"
       >
         I am a representative (with the relevant power of attorney)
       </b-form-radio>
@@ -103,7 +103,7 @@
         v-model="$v.form.rootCompanyPosition.$model"
         :state="isInvalid($v.form.rootCompanyPosition)"
         name="company-position"
-        value="Director"
+        value="DIRECTOR"
       >
         I am a director
       </b-form-radio>

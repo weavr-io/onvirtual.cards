@@ -41,11 +41,9 @@ export default class Accounts extends StoreModule {
     let _entries = this.statement.entry
 
     _entries = _entries.filter((transaction) => {
-      const _shouldDisplay = !['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE'].includes(
-        transaction.txId.type
-      )
+      const DO_NOT_DISPLAY = ['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE']
 
-      if (!_shouldDisplay) {
+      if (DO_NOT_DISPLAY.includes(transaction.txId.type)) {
         return false
       }
 
