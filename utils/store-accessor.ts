@@ -4,12 +4,14 @@ import Cards from '~/store/cards'
 import Accounts from '~/store/accounts'
 import Corporates from '~/store/corporates'
 import Loader from '~/store/loader'
+import Auth from '~/store/auth'
 
 export interface Stores {
   cards: Cards
   accounts: Accounts
   corporates: Corporates
   loader: Loader
+  auth: Auth
 }
 
 function initialiseStores(store: Store<any>): Stores {
@@ -17,16 +19,17 @@ function initialiseStores(store: Store<any>): Stores {
     cards: cardsStore(store),
     accounts: accountsStore(store),
     corporates: corporatesStore(store),
-    loader: loaderStore(store)
+    loader: loaderStore(store),
+    auth: authStore(store)
   }
-}
-
-function loaderStore(store: Store<any>) {
-  return getModule(Loader, store)
 }
 
 function cardsStore(store: Store<any>) {
   return getModule(Cards, store)
+}
+
+function authStore(store: Store<any>) {
+  return getModule(Auth, store)
 }
 
 function accountsStore(store: Store<any>) {
@@ -37,4 +40,8 @@ function corporatesStore(store: Store<any>) {
   return getModule(Corporates, store)
 }
 
-export { initialiseStores, cardsStore, accountsStore, corporatesStore, loaderStore }
+function loaderStore(store: Store<any>) {
+  return getModule(Loader, store)
+}
+
+export { initialiseStores, cardsStore, accountsStore, corporatesStore, loaderStore, authStore }
