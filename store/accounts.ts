@@ -7,7 +7,7 @@ import { $api } from '~/utils/api'
 import { NullableBoolean } from '~/api/Generic/NullableBoolean'
 
 @Module({
-  name: 'accountsV2',
+  name: 'accountsModule',
   stateFactory: true,
   namespaced: true
 })

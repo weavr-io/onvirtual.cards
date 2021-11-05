@@ -8,7 +8,7 @@ import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 import { $api } from '~/utils/api'
 
 @Module({
-  name: 'cardsV2',
+  name: 'cardsModule',
   stateFactory: true,
   namespaced: true
 })
