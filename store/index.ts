@@ -35,14 +35,15 @@ const createStore = () => {
     modules: {
       [Auth.name]: Auth,
       [Error.name]: Error,
-      [Loader.name]: Loader,
+      // [Loader.name]: Loader,
       [Transfers.name]: Transfers,
       [Consumers.name]: Consumers,
       [View.name]: View,
       [SecureClient.name]: SecureClient,
-      cardsV2: Cards,
-      accountsV2: Accounts,
-      corporatesV2: Corporates
+      cardsModule: Cards,
+      accountsModule: Accounts,
+      corporatesModule: Corporates,
+      loaderModule: Loader
     }
   })
 }

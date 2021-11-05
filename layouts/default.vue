@@ -2,7 +2,7 @@
   <div>
     <app-header />
     <Nuxt />
-    <div v-if="isLoading" id="loader">
+    <div id="loader" v-if="isLoading">
       <div class="loader-spinner">
         <b-spinner />
       </div>
@@ -14,11 +14,7 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-
-import * as LoaderStore from '~/store/modules/Loader'
 import BaseMixin from '~/minixs/BaseMixin'
-const Loader = namespace(LoaderStore.name)
 
 @Component({
   components: {
@@ -28,6 +24,8 @@ const Loader = namespace(LoaderStore.name)
   }
 })
 export default class DefaultLayout extends mixins(BaseMixin) {
-  @Loader.Getter isLoading
+  get isLoading() {
+    return this.stores.loader.isLoading
+  }
 }
 </script>

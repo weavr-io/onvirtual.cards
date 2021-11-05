@@ -6,10 +6,10 @@
     <kyb-alert />
     <kyc-alert />
     <b-alert
-            id="verify-mobile"
-            :show="showVerifyMobileAlert && !showVerifyEmailAlert"
-            class="fixed-bottom bottom-left-alert m-4 p-4"
-            variant="bg-colored"
+      id="verify-mobile"
+      :show="showVerifyMobileAlert && !showVerifyEmailAlert"
+      class="fixed-bottom bottom-left-alert m-4 p-4"
+      variant="bg-colored"
     >
       We need to verify your mobile number. Please click
       <b-link to="/register/verify/mobile" class="link">
@@ -17,10 +17,10 @@
       </b-link>
     </b-alert>
     <b-alert
-            id="verify-email"
-            :show="showVerifyEmailAlert"
-            class="fixed-bottom bottom-left-alert m-4 p-4"
-            variant="bg-colored"
+      id="verify-email"
+      :show="showVerifyEmailAlert"
+      class="fixed-bottom bottom-left-alert m-4 p-4"
+      variant="bg-colored"
     >
       We need to verify your email address. Please click
       <b-link to="/register/verify" class="link">
@@ -46,8 +46,6 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-
-import * as LoaderStore from '~/store/modules/Loader'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import * as ViewStore from '~/store/modules/View'
@@ -55,7 +53,6 @@ import { Schemas } from '~/api/Schemas'
 import CurrencyAmount = Schemas.CurrencyAmount
 import BaseMixin from '~/minixs/BaseMixin'
 
-const Loader = namespace(LoaderStore.name)
 const Consumers = namespace(ConsumersStore.name)
 const View = namespace(ViewStore.name)
 
@@ -70,7 +67,9 @@ const View = namespace(ViewStore.name)
   }
 })
 export default class DefaultLayout extends mixins(BaseMixin) {
-  @Loader.Getter isLoading
+  get isLoading() {
+    return this.stores.loader.isLoading
+  }
 
   @View.Getter showKybAlert!: boolean
 
