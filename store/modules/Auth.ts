@@ -1,10 +1,10 @@
 import { MutationTree } from 'vuex'
 import { RootState } from 'store'
-import * as Loader from './Loader'
 import { Getters, Actions, State, types, name, namespaced, Helpers } from '~/store/modules/Contracts/Auth'
 import { Schemas } from '~/api/Schemas'
 import LoginResult = Schemas.LoginResult
 import { $api } from '~/utils/api'
+import Loader from '~/store/loader'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -46,9 +46,12 @@ export const actions: Actions<State, RootState> = {
   invalidateToken({ commit }) {
     commit(types.LOGOUT)
   },
-  authenticate({ commit }, loginRequest: Schemas.LoginRequest) {
+  authenticate({ commit, dispatch, getters }, loginRequest: Schemas.LoginRequest) {
     commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+    dispatch(Loader.name + '/start')
+
+    debugger
+    console.log(getters['loaderModule/isLoading'])
 
     const req = $api.post<LoginResult>('/app/api/auth/login_with_password', loginRequest)
 
@@ -57,19 +60,19 @@ export const actions: Actions<State, RootState> = {
       commit(types.SET_IS_LOADING, false)
     })
     req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      dispatch(Loader.name + '/stop')
       commit(types.SET_IS_LOADING, false)
     })
 
     return req
   },
-  logout({ commit }) {
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+  logout({ commit, dispatch }) {
+    dispatch(Loader.name + '/start')
     commit(types.LOGOUT)
   },
-  verifyEmail({ commit }, request: Schemas.verifyEmailRequest) {
+  verifyEmail({ commit, dispatch }, request: Schemas.verifyEmailRequest) {
     commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+    dispatch(Loader.name + '/start')
 
     let req
 
@@ -80,98 +83,102 @@ export const actions: Actions<State, RootState> = {
     }
 
     req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      dispatch(Loader.name + '/stop')
       commit(types.SET_IS_LOADING, false)
     })
 
     return req
   },
-  lostPasswordStart({ commit }, request) {
+  lostPasswordStart({ commit, dispatch }, request) {
     commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+    dispatch(Loader.name + '/start')
 
     const req = $api.post('/app/api/passwords/lost_password/start', request)
 
     req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      dispatch(Loader.name + '/stop')
       commit(types.SET_IS_LOADING, false)
     })
 
     return req
   },
-  lostPasswordValidate({ commit }, request) {
+  lostPasswordValidate({ commit, dispatch }, request) {
     commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+    dispatch(Loader.name + '/start')
 
     const req = $api.post('/app/api/passwords/lost_password/validate', request)
 
     req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      dispatch(Loader.name + '/stop')
       commit(types.SET_IS_LOADING, false)
     })
 
     return req
   },
-  lostPasswordResume({ commit }, request) {
+  lostPasswordResume({ commit, dispatch }, request) {
     commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+    dispatch(Loader.name + '/start')
 
     const req = $api.post('/app/api/passwords/lost_password/resume', request)
 
     req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      dispatch(Loader.name + '/stop')
       commit(types.SET_IS_LOADING, false)
     })
 
     return req
   },
-  createPasswordIdentity({ commit }, request) {
+  createPasswordIdentity({ commit, dispatch }, request) {
     commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+    dispatch(Loader.name + '/start')
 
     const req = $api.post('/app/api/passwords/identities/' + request.id + '/create', request.request)
 
     req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      dispatch(Loader.name + '/stop')
+
       commit(types.SET_IS_LOADING, false)
     })
 
     return req
   },
-  createPassword({ commit }, request) {
+  createPassword({ commit, dispatch }, request) {
     commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+    dispatch(Loader.name + '/start')
 
     const req = $api.post('/app/api/passwords/' + request.id + '/create', request.request)
 
     req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      dispatch(Loader.name + '/stop')
+
       commit(types.SET_IS_LOADING, false)
     })
 
     return req
   },
-  updatePassword({ commit }, request) {
+  updatePassword({ commit, dispatch }, request) {
     commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+    dispatch(Loader.name + '/start')
 
     const req = $api.post('/app/api/passwords/' + request.id + '/update', request.request)
 
     req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      dispatch(Loader.name + '/stop')
+
       commit(types.SET_IS_LOADING, false)
     })
 
     return req
   },
-  validatePassword({ commit }, request) {
+  validatePassword({ commit, dispatch }, request) {
     commit(types.SET_IS_LOADING, true)
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+    dispatch(Loader.name + '/start')
 
     const req = $api.post('/app/api/passwords/validate', request)
 
     req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      dispatch(Loader.name + '/stop')
+
       commit(types.SET_IS_LOADING, false)
     })
 

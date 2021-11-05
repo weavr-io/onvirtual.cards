@@ -1,9 +1,9 @@
 import { GetterTree, MutationTree } from 'vuex'
 import { Actions, State, _Mutations, name, namespaced, Helpers } from '~/store/modules/Contracts/Transfers'
 import { RootState } from '~/store'
-import * as Loader from '~/store/modules/Loader'
 import { TransfersSchemas } from '~/api/TransfersSchemas'
 import { $api } from '~/utils/api'
+import Loader from '~/store/loader'
 
 export { name, namespaced, Helpers }
 
@@ -18,13 +18,13 @@ export const getters: GetterTree<State, RootState> = {
 }
 
 export const actions: Actions<State, RootState> = {
-  execute({ commit }, request: TransfersSchemas.CreateTransferRequest) {
-    commit(Loader.name + '/' + Loader.types.START, null, { root: true })
+  execute({ commit, dispatch }, request: TransfersSchemas.CreateTransferRequest) {
+    dispatch(Loader.name + '/start')
 
     const req = $api.post('/app/api/transfers/_/execute', request)
 
     req.finally(() => {
-      commit(Loader.name + '/' + Loader.types.STOP, null, { root: true })
+      dispatch(Loader.name + '/stop')
       commit(_Mutations.SET_IS_LOADING, false)
     })
 
