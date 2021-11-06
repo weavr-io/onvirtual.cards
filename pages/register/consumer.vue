@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <coming-soon-currencies />
 
@@ -143,7 +143,7 @@
                           href="https://www.onvirtual.cards/policy/"
                           target="_blank"
                           class="text-decoration-underline text-muted"
-                        >privacy policy</a
+                          >privacy policy</a
                         >
                       </b-form-checkbox>
                       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -173,7 +173,6 @@ import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import config from '~/config'
 import { CreateConsumerRequest } from '~/api/Requests/Consumers/CreateConsumerRequest'
-import { Helpers } from '~/store/modules/Contracts/Auth'
 import { Helpers as ConsumerHelpers } from '~/store/modules/Contracts/Consumers'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
@@ -181,7 +180,6 @@ import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
 import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
-import * as AuthStore from '~/store/modules/Auth'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
@@ -317,10 +315,9 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
         profileId: this.registrationRequest.profileId
       }
     }
-    Helpers.createPasswordIdentity(this.$store, _req).then(
-      this.doCreatePassword.bind(this),
-      this.registrationFailed.bind(this)
-    )
+    this.stores.auth
+      .createPasswordIdentity(_req)
+      .then(this.doCreatePassword.bind(this), this.registrationFailed.bind(this))
   }
 
   doCreatePassword() {
@@ -335,7 +332,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
       }
     }
 
-    Helpers.createPassword(this.$store, _req).then(this.waitAndDoLogin.bind(this), this.registrationFailed.bind(this))
+    this.stores.auth.createPassword(_req).then(this.waitAndDoLogin.bind(this), this.registrationFailed.bind(this))
   }
 
   waitAndDoLogin() {
@@ -348,7 +345,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
       password: this.password
     }
 
-    Helpers.authenticate(this.$store, _loginRequest).then(this.goToAdressInputScreen.bind(this))
+    this.stores.auth.authenticate(_loginRequest).then(this.goToAdressInputScreen.bind(this))
   }
 
   // sendVerifyEmail() {
@@ -431,7 +428,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
       }
     }
 
-    AuthStore.Helpers.validatePassword(this.$store, _request).then(this.doRegister.bind(this))
+    this.stores.auth.validatePassword(_request).then(this.doRegister.bind(this))
   }
 
   checkOnKeyUp(e) {

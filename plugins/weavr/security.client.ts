@@ -57,3 +57,9 @@ declare module 'vue/types/vue' {
     $weavrSetUserToken: (token) => {}
   }
 }
+
+declare module 'vuex/types/index' {
+  interface Store<S> {
+    $weavrSetUserToken: (token) => {}
+  }
+}

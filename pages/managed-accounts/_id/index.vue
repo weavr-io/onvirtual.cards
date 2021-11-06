@@ -14,14 +14,13 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 
 import { OrderType } from '~/api/Enums/OrderType'
-import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import * as ViewStore from '~/store/modules/View'
 import BaseMixin from '~/minixs/BaseMixin'
 import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import RouterMixin from '~/minixs/RouterMixin'
-import { accountsStore, corporatesStore } from '~/utils/store-accessor'
+import { accountsStore, authStore, corporatesStore } from '~/utils/store-accessor'
 
 const Consumers = namespace(ConsumersStore.name)
 const View = namespace(ViewStore.name)
@@ -95,19 +94,22 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
 
     await accountsStore(store).getStatement(_req)
 
-    if (AuthStore.Helpers.isConsumer(store)) {
-      const _consumerId = AuthStore.Helpers.identityId(store)
+    if (authStore(store).isConsumer) {
+      const _consumerId = authStore(store).identityId
       if (_consumerId) {
         await ConsumersStore.Helpers.get(store, _consumerId)
       }
     } else {
-      const _corporateId = AuthStore.Helpers.identityId(store)
+      const _corporateId = authStore(store).identityId
       if (_corporateId) {
         await corporatesStore(store).getCorporateDetails(_corporateId)
       }
     }
 
-    return { accountId: _accountId, filters: _statementFilters }
+    return {
+      accountId: _accountId,
+      filters: _statementFilters
+    }
   }
 
   infiniteScroll($state) {
@@ -117,15 +119,20 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
       const _request: ManagedAccountStatementRequest = { ...this.filters }
       _request.paging!.offset = this.page * _request.paging!.limit!
 
-      this.stores.accounts.getCardStatementPage({ id: this.$route.params.id, body: _request }).then((response) => {
-        if (response.data.responseCount < _request.paging!.limit!) {
-          $state.complete()
-          console.log('complete')
-        } else {
-          console.log('loaded')
-          $state.loaded()
-        }
-      })
+      this.stores.accounts
+        .getCardStatementPage({
+          id: this.$route.params.id,
+          body: _request
+        })
+        .then((response) => {
+          if (response.data.responseCount < _request.paging!.limit!) {
+            $state.complete()
+            console.log('complete')
+          } else {
+            console.log('loaded')
+            $state.loaded()
+          }
+        })
     }, 500)
   }
 }

@@ -12,11 +12,9 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-
-import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
-import { corporatesStore } from '~/utils/store-accessor'
+import { authStore, corporatesStore } from '~/utils/store-accessor'
 
 @Component({})
 export default class IndexPage extends mixins(BaseMixin) {
@@ -24,8 +22,8 @@ export default class IndexPage extends mixins(BaseMixin) {
     const isLoggedIn = store.getters['auth/isLoggedIn']
 
     if (isLoggedIn) {
-      const _auth = AuthStore.Helpers.auth(store)
-      if (AuthStore.Helpers.isConsumer(store)) {
+      const _auth = authStore(store).auth(store)
+      if (authStore(store).isConsumer) {
         let _cons = ConsumersStore.Helpers.consumer(store)
 
         if (_cons === null) {
@@ -42,7 +40,7 @@ export default class IndexPage extends mixins(BaseMixin) {
         } else {
           redirect('/dashboard')
         }
-      } else if (AuthStore.Helpers.isCorporate(store)) {
+      } else if (authStore(store).isCorporate) {
         const res = await corporatesStore(store).getKyb(_auth.identity!.id!)
 
         if (res.data.rootEmailVerified && res.data.rootMobileVerified) {

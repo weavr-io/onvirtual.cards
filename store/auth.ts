@@ -46,8 +46,7 @@ export default class AuthModule extends StoreModule {
     Cookie.set('auth-onvirtual', this.auth)
     $api.defaults.headers.Authorization = 'Bearer ' + this.auth.token
 
-    // @ts-ignore
-    this.$weavrSetUserToken('Bearer ' + this.auth.token)
+    $weavrSetUserToken('Bearer ' + this.auth.token)
   }
 
   @Mutation

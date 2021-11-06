@@ -10,22 +10,12 @@
             <b-form @submit="doAdd">
               <b-form-row>
                 <b-col>
-                  <b-form-group
-                    :state="isInvalid($v.createManagedAccountRequest.currency)"
-                    label="Currency"
-                  >
-                    <b-form-select
-                      v-model="createManagedAccountRequest.currency"
-                      :options="currencyOptions"
-                    />
+                  <b-form-group :state="isInvalid($v.createManagedAccountRequest.currency)" label="Currency">
+                    <b-form-select v-model="createManagedAccountRequest.currency" :options="currencyOptions" />
                   </b-form-group>
                 </b-col>
               </b-form-row>
-              <loader-button
-                :is-loading="isLoading"
-                button-text="finish"
-                class="mt-5 text-center"
-              />
+              <loader-button :is-loading="isLoading" button-text="finish" class="mt-5 text-center" />
             </b-form>
           </b-card>
         </b-col>
@@ -34,20 +24,12 @@
   </section>
 </template>
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { required, maxLength } from 'vuelidate/lib/validators'
+import { maxLength, required } from 'vuelidate/lib/validators'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
-
-import * as AuthStore from '~/store/modules/Auth'
 import config from '~/config'
-import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore } from '~/utils/store-accessor'
-import * as ConsumersStore from '~/store/modules/Consumers'
-import LoginResult = Schemas.LoginResult
-
-const Auth = namespace(AuthStore.name)
+import { accountsStore, authStore } from '~/utils/store-accessor'
 
 @Component({
   components: {
@@ -72,12 +54,23 @@ export default class AddCardPage extends mixins(BaseMixin) {
     return this.stores.accounts.isLoading
   }
 
-  @Auth.Getter auth!: LoginResult
+  get auth() {
+    return this.stores.auth.isLoading
+  }
 
   currencyOptions = [
-    { value: 'EUR', text: 'Euro - EUR' },
-    { value: 'GBP', text: 'Great Britain Pound - GBP' },
-    { value: 'USD', text: 'US Dollars - USD' }
+    {
+      value: 'EUR',
+      text: 'Euro - EUR'
+    },
+    {
+      value: 'GBP',
+      text: 'Great Britain Pound - GBP'
+    },
+    {
+      value: 'USD',
+      text: 'US Dollars - USD'
+    }
   ]
 
   public createManagedAccountRequest!: ManagedAccountsSchemas.CreateManagedAccountRequest
@@ -108,7 +101,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
 
   async asyncData({ store, redirect }) {
     const createManagedAccountRequest: ManagedAccountsSchemas.CreateManagedAccountRequest = {
-      profileId: AuthStore.Helpers.isConsumer(store)
+      profileId: authStore(store).isConsumer
         ? config.profileId.managed_accounts_consumers
         : config.profileId.managed_accounts_corporates,
       friendlyName: 'Main Account',
@@ -120,7 +113,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
     console.log(_accounts.data.count)
 
     if (_accounts.data.count < 1) {
-      if (AuthStore.Helpers.isConsumer(store)) {
+      if (authStore(store).isConsumer) {
         await accountsStore(store).add(createManagedAccountRequest)
         redirect('/managed-accounts')
       }

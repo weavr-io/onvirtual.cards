@@ -94,15 +94,13 @@
   </section>
 </template>
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
-import * as AuthStore from '~/store/modules/Auth'
+
 import { CorporateUserType } from '~/api/Enums/Corporates/CorporateUserType'
 import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/CreateCorporateUserFullRequest'
 import BaseMixin from '~/minixs/BaseMixin'
 
-const Auth = namespace(AuthStore.name)
 const Countries = require('~/static/json/countries.json')
 
 @Component({
@@ -142,7 +140,9 @@ export default class AddCardPage extends mixins(BaseMixin) {
     return this.stores.corporates.isLoading
   }
 
-  @Auth.Getter identityId
+  get identityId() {
+    return this.stores.auth.identityId
+  }
 
   rootMobileNumber = ''
 

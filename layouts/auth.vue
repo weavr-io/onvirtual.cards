@@ -21,19 +21,15 @@
         <nuxt class="my-6" />
       </b-row>
     </b-container>
-<!--    <cookie-policy />-->
+    <!--    <cookie-policy />-->
     <!-- <app-footer /> -->
   </div>
 </template>
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
 import config from '~/config'
-import * as AuthStore from '~/store/modules/Auth'
 import BaseMixin from '~/minixs/BaseMixin'
-
-const Auth = namespace(AuthStore.name)
 
 @Component({
   components: {
@@ -47,7 +43,9 @@ const Auth = namespace(AuthStore.name)
   }
 })
 class AuthLayout extends mixins(BaseMixin) {
-  @Auth.Getter isLoggedIn!: boolean
+  get isLoggedIn() {
+    return this.stores.auth.isLoggedIn
+  }
 
   get isLogin(): boolean {
     return this.$route.path === '/login'

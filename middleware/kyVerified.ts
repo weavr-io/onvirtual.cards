@@ -1,12 +1,11 @@
 import { Middleware } from '@nuxt/types'
-import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
-import { corporatesStore } from '~/utils/store-accessor'
+import { authStore, corporatesStore } from '~/utils/store-accessor'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 
 const kyVerified: Middleware = async ({ store, route, redirect }) => {
-  if (AuthStore.Helpers.isLoggedIn(store)) {
-    if (AuthStore.Helpers.isConsumer(store)) {
+  if (authStore(store).isLoggedIn) {
+    if (authStore(store).isConsumer) {
       try {
         const _consumerId = store.getters['auth/auth'].identity.id
         await ConsumersStore.Helpers.get(store, _consumerId)
@@ -17,10 +16,7 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
           redirect('/managed-accounts/add')
         }
       } catch (e) {
-        if (
-          store.getters['consumers/consumer'].kyc!.fullDueDiligence! ===
-          FullDueDiligence.PENDING_REVIEW
-        ) {
+        if (store.getters['consumers/consumer'].kyc!.fullDueDiligence! === FullDueDiligence.PENDING_REVIEW) {
           redirect('/managed-accounts')
         } else if (route.path === '/managed-accounts/add') {
           redirect('/managed-accounts/kyc')
@@ -37,10 +33,7 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
           redirect('/managed-accounts/add')
         }
       } catch (e) {
-        if (
-          route.path === '/managed-accounts/add' ||
-          route.path === '/managed-cards/add'
-        ) {
+        if (route.path === '/managed-accounts/add' || route.path === '/managed-cards/add') {
           redirect('/managed-accounts/kyb')
         }
       }

@@ -3,13 +3,13 @@
     <b-navbar type="light" fixed="top" variant="white" class="navbar-padding-adjust">
       <b-container>
         <b-navbar-brand to="/">
-          <img src="/img/logo.svg" width="160" class="d-inline-block align-center" alt="WEAVR">
+          <img src="/img/logo.svg" width="160" class="d-inline-block align-center" alt="WEAVR" />
         </b-navbar-brand>
-        <b-collapse id="nav_collapse" is-nav v-if="isLoggedIn">
+        <b-collapse id="nav_collapse" v-if="isLoggedIn" is-nav>
           <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right toggle-class="border-bottom">
               <template slot="button-content">
-                <template v-if="isConsumer && consumer">{{ consumer.name }} {{ consumer.surname }}</template>
+                <template v-if="isConsumer && consumer"> {{ consumer.name }} {{ consumer.surname }} </template>
                 <template v-if="isCorporate && corporate">
                   {{ corporate.name }}
                 </template>
@@ -17,7 +17,7 @@
               <b-dropdown-item to="/profile">
                 Profile
               </b-dropdown-item>
-              <b-dropdown-item to="/users" v-if="isCorporate">
+              <b-dropdown-item v-if="isCorporate" to="/users">
                 Users
               </b-dropdown-item>
               <b-dropdown-item @click="doLogout">
@@ -31,28 +31,35 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, mixins } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-
-import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import BaseMixin from '~/minixs/BaseMixin'
 
-const Auth = namespace(AuthStore.name)
 const Consumers = namespace(ConsumersStore.name)
 
 @Component
 export default class Header extends mixins(BaseMixin) {
-  @Auth.Action logout
+  logout() {
+    return this.stores.auth.logout()
+  }
 
-  @Auth.Getter isConsumer!: boolean
+  get isConsumer() {
+    return this.stores.auth.isConsumer
+  }
 
-  @Auth.Getter isCorporate!: boolean
+  get isCorporate() {
+    return this.stores.auth.isCorporate
+  }
 
-  @Auth.Getter isLoggedIn!: boolean
+  get isLoggedIn() {
+    return this.stores.auth.isLoggedIn
+  }
 
-  @Auth.Getter identityId!: number | null
+  get identityId() {
+    return this.stores.auth.identityId
+  }
 
   @Consumers.Getter consumer!: Consumer | null
 
@@ -67,8 +74,7 @@ export default class Header extends mixins(BaseMixin) {
   redirectToLogin() {
     try {
       this.$segment.reset()
-    } catch (e) {
-    }
+    } catch (e) {}
     this.$router.push('/login')
   }
 

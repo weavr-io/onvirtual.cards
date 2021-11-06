@@ -54,12 +54,10 @@
 
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import { required, email } from 'vuelidate/lib/validators'
+import { email, required } from 'vuelidate/lib/validators'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/LoaderButton.vue'
 
-import * as AuthStore from '~/store/modules/Auth'
 import { LostPasswordValidateRequest } from '~/api/Requests/Auth/LostPasswordValidateRequest'
 import { LostPasswordContinueRequest } from '~/api/Requests/Auth/LostPasswordContinueRequest'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
@@ -67,8 +65,6 @@ import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-
-const Auth = namespace(AuthStore.name)
 
 @Component({
   layout: 'auth',
@@ -90,7 +86,9 @@ export default class PasswordSentPage extends mixins(BaseMixin) {
   @Ref('passwordField')
   passwordField!: WeavrPasswordInput
 
-  @Auth.Getter isLoading!: boolean
+  get isLoading() {
+    return this.stores.auth.isLoading
+  }
 
   protected form: LostPasswordContinueRequest = {
     nonce: '',
@@ -112,7 +110,7 @@ export default class PasswordSentPage extends mixins(BaseMixin) {
     this.validateNonce.nonce = this.$route.params.nonce
     this.validateNonce.email = this.$route.params.email
 
-    AuthStore.Helpers.lostPasswordValidate(this.$store, this.validateNonce)
+    this.stores.auth.lostPasswordValidate(this.validateNonce)
   }
 
   setPassword(evt) {
@@ -150,11 +148,11 @@ export default class PasswordSentPage extends mixins(BaseMixin) {
       }
     }
 
-    AuthStore.Helpers.validatePassword(this.$store, _request).then(this.submitForm.bind(this))
+    this.stores.auth.validatePassword(_request).then(this.submitForm.bind(this))
   }
 
   submitForm() {
-    AuthStore.Helpers.lostPasswordResume(this.$store, this.form).then(() => {
+    this.stores.auth.lostPasswordResume(this.form).then(() => {
       this.$router.push('/login')
     })
   }
