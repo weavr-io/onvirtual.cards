@@ -60,16 +60,12 @@
 </template>
 
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins, Ref, Watch } from 'nuxt-property-decorator'
 import { Schemas } from '~/api/Schemas'
-import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-
-const Auth = namespace(AuthStore.name)
 
 @Component({
   layout: 'auth',
@@ -80,11 +76,13 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class LoginPage extends mixins(BaseMixin) {
-  @Auth.Getter isLoggedIn
+  get isLoggedIn() {
+    return this.stores.auth.isLoggedIn
+  }
 
-  @Auth.Action authenticate
-
-  @Auth.Getter isLoading!: boolean
+  get isLoading() {
+    return this.stores.auth.isLoading
+  }
 
   @Watch('isLoggedIn')
   isLoggedInChanged(val) {
@@ -107,7 +105,7 @@ export default class LoginPage extends mixins(BaseMixin) {
         (tokens) => {
           console.log('Password tokenisation success')
           this.loginRequest.password = tokens.tokens.password
-          this.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
+          this.stores.auth.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
         },
         (e) => {
           console.log('tokenisation failed', e)
@@ -127,8 +125,8 @@ export default class LoginPage extends mixins(BaseMixin) {
       })
     } catch (e) {}
 
-    if (AuthStore.Helpers.isConsumer(this.$store)) {
-      await ConsumersStore.Helpers.get(this.$store, AuthStore.Helpers.identity(this.$store).id)
+    if (this.stores.auth.isConsumer) {
+      await ConsumersStore.Helpers.get(this.$store, this.stores.auth.identity.id)
     }
 
     this.$router.push('/')

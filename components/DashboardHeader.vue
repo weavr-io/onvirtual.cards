@@ -51,7 +51,6 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import { KYBState } from '~/api/Enums/KYBState'
@@ -92,7 +91,7 @@ export default class DashboardHeader extends mixins(BaseMixin) {
   }
 
   get canAddFunds(): boolean {
-    if (AuthStore.Helpers.isConsumer(this.$store)) {
+    if (this.stores.auth.isConsumer) {
       return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
     } else {
       return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED

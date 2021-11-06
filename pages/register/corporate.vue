@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card no-body class="overflow-hidden">
       <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
@@ -20,11 +20,7 @@
   </b-col>
 </template>
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as AuthStore from '~/store/modules/Auth'
-import { Helpers } from '~/store/modules/Auth'
-
 import config from '~/config'
 import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
 import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
@@ -33,8 +29,6 @@ import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
 import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
 import BaseMixin from '~/minixs/BaseMixin'
 import { BooleanString } from '~/api/Generic/BooleanString'
-
-const Auth = namespace(AuthStore.name)
 
 @Component({
   layout: 'auth',
@@ -51,7 +45,9 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     return this.stores.corporates.isLoading
   }
 
-  @Auth.Getter isLoggedIn
+  get isLoggedIn() {
+    return this.stores.auth.isLoggedIn
+  }
 
   get corporate() {
     return this.stores.corporates.corporate
@@ -150,10 +146,9 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         profileId: this.registrationRequest.profileId!
       }
     }
-    AuthStore.Helpers.createPasswordIdentity(this.$store, _req).then(
-      this.doCreateCorporatePassword.bind(this),
-      this.registrationFailed.bind(this)
-    )
+    this.stores.auth
+      .createPasswordIdentity(_req)
+      .then(this.doCreateCorporatePassword.bind(this), this.registrationFailed.bind(this))
   }
 
   doCreateCorporatePassword() {
@@ -168,10 +163,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       }
     }
 
-    AuthStore.Helpers.createPassword(this.$store, _req).then(
-      this.waitAndDoLogin.bind(this),
-      this.registrationFailed.bind(this)
-    )
+    this.stores.auth.createPassword(_req).then(this.waitAndDoLogin.bind(this), this.registrationFailed.bind(this))
   }
 
   waitAndDoLogin() {
@@ -184,20 +176,10 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       password: this.password
     }
 
-    Helpers.authenticate(this.$store, _loginRequest).then(
-      this.goToVerifyEmail.bind(this),
-      this.registrationFailed.bind(this)
-    )
+    this.stores.auth
+      .authenticate(_loginRequest)
+      .then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
   }
-
-  // sendVerifyEmail() {
-  //   CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, {
-  //     corporateId: this.corporate.id.id,
-  //     body: {
-  //       emailAddress: this.registrationRequest.rootEmail
-  //     }
-  //   }).then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
-  // }
 
   goToVerifyEmail() {
     this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)

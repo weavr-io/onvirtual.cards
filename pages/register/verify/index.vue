@@ -1,7 +1,7 @@
 <template>
   <b-col md="6" offset-md="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -49,15 +49,12 @@
 </template>
 
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
 import { Schemas } from '~/api/Schemas'
-import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
-
-const Auth = namespace(AuthStore.name)
+import { authStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'auth',
@@ -78,9 +75,13 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class EmailVerificationPage extends mixins(BaseMixin) {
-  @Auth.Getter isLoggedIn
+  get isLoggedIn() {
+    return this.stores.auth.isLoggedIn
+  }
 
-  @Auth.Getter isLoading
+  get isLoading() {
+    return this.stores.auth.isLoading
+  }
 
   showEmailResentSuccess: boolean = false
 
@@ -105,13 +106,15 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
     }
 
     if (request.request.nonce !== '') {
-      AuthStore.Helpers.verifyEmail(store, request).then(() => {
-        if (AuthStore.Helpers.isLoggedIn(store)) {
-          redirect('/')
-        } else {
-          redirect('/login')
-        }
-      })
+      authStore(store)
+        .verifyEmail(request)
+        .then(() => {
+          if (authStore(store).isLoggedIn) {
+            redirect('/')
+          } else {
+            redirect('/login')
+          }
+        })
     }
 
     return {
@@ -121,7 +124,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
 
   async mounted() {
     if (this.verifyEmailRequest.corporateId === undefined && this.verifyEmailRequest.consumerId === undefined) {
-      if (AuthStore.Helpers.isConsumer(this.$store)) {
+      if (this.stores.auth.isConsumer) {
         await this.getConsumerUser()
       } else {
         await this.getCorporateUser()
@@ -134,7 +137,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   async getConsumerUser() {
-    const _consumerId = AuthStore.Helpers.identityId(this.$store)
+    const _consumerId = this.stores.auth.identityId
     if (_consumerId != null) {
       const res = await ConsumersStore.Helpers.get(this.$store, _consumerId)
       this.verifyEmailRequest.consumerId = _consumerId
@@ -143,8 +146,8 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   async getCorporateUser() {
-    const _corporateId = AuthStore.Helpers.identityId(this.$store)
-    const _corporate = AuthStore.Helpers.auth(this.$store)
+    const _corporateId = this.stores.auth.identityId
+    const _corporate = this.stores.auth.auth
 
     if (_corporateId != null && _corporate.credential) {
       const res = await this.stores.corporates.getUser({
@@ -158,7 +161,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   sendVerifyEmail() {
-    if (this.$route.query.cons || AuthStore.Helpers.isConsumer(this.$store)) {
+    if (this.$route.query.cons || this.stores.auth.isConsumer) {
       this.sendVerifyEmailConsumers()
     } else {
       this.sendVerifyEmailCorporates()
@@ -199,7 +202,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
       }
     }
 
-    AuthStore.Helpers.verifyEmail(this.$store, this.verifyEmailRequest).then(this.nextPage.bind(this))
+    this.stores.auth.verifyEmail(this.verifyEmailRequest).then(this.nextPage.bind(this))
   }
 
   nextPage() {

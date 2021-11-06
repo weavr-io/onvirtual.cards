@@ -77,12 +77,12 @@ import { namespace } from 'vuex-class'
 import { maxLength, required } from 'vuelidate/lib/validators'
 
 import * as ConsumersStore from '~/store/modules/Consumers'
-import * as AuthStore from '~/store/modules/Auth'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
 import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Consumers/SourceOfFunds'
 import { IndustryOccupationOptions } from '~/api/Enums/Consumers/IndustryOccupation'
 import BaseMixin from '~/minixs/BaseMixin'
+import { authStore } from '~/utils/store-accessor'
 
 const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')
@@ -98,7 +98,10 @@ const Countries = require('~/static/json/countries.json')
           },
           addressLine2: {},
           city: { required },
-          country: { required, maxLength: maxLength(2) },
+          country: {
+            required,
+            maxLength: maxLength(2)
+          },
           postCode: { required },
           state: {}
         }
@@ -122,10 +125,10 @@ export default class ConsunmerAddressPage extends mixins(BaseMixin) {
   isLoading: boolean = false
 
   async asyncData({ store }) {
-    const _res = await ConsumersStore.Helpers.get(store, AuthStore.Helpers.identityId(store)!)
+    const _res = await ConsumersStore.Helpers.get(store, authStore(store).identityId!)
 
     const _form: UpdateConsumerRequest = {
-      consumerId: AuthStore.Helpers.identityId(store)!,
+      consumerId: authStore(store).identityId!,
       request: {
         // @ts-ignore
         address: { ..._res.data.address }
@@ -157,7 +160,7 @@ export default class ConsunmerAddressPage extends mixins(BaseMixin) {
   }
 
   async addressUpdated() {
-    const _auth = AuthStore.Helpers.auth(this.$store)
+    const _auth = this.stores.auth.auth
     let _cons = ConsumersStore.Helpers.consumer(this.$store)
 
     if (_cons === null) {

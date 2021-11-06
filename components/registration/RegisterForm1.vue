@@ -41,7 +41,8 @@
               href="https://www.onvirtual.cards/terms/business"
               target="_blank"
               class="text-decoration-underline text-muted"
-            >terms of use</a>
+              >terms of use</a
+            >
             and
             <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted"
               >privacy policy</a
@@ -67,7 +68,6 @@
 <script lang="ts">
 import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required, sameAs } from 'vuelidate/lib/validators'
-import * as AuthStore from '~/store/modules/Auth'
 import * as ErrorStore from '~/store/modules/Error'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
@@ -159,7 +159,7 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
       }
     }
 
-    AuthStore.Helpers.validatePassword(this.$store, _request).then(this.submitForm.bind(this))
+    this.stores.auth.validatePassword(_request).then(this.submitForm.bind(this))
   }
 
   @Emit()

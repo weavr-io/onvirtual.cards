@@ -22,10 +22,10 @@
                 <b-col>
                   <b-form-group label="E-Mail">
                     <b-form-input
-                            v-model="updateConsumer.request.email"
-                            :state="isInvalid($v.updateConsumer.request.email)"
-                            class="form-control"
-                            placeholder="johndoe@email.com"
+                      v-model="updateConsumer.request.email"
+                      :state="isInvalid($v.updateConsumer.request.email)"
+                      class="form-control"
+                      placeholder="johndoe@email.com"
                     />
                   </b-form-group>
                 </b-col>
@@ -34,14 +34,14 @@
                 <b-col>
                   <b-form-group label="MOBILE NUMBER">
                     <vue-phone-number-input
-                            :value="mobile.mobileNumber"
-                            @update="consumerPhoneUpdate"
-                            :error="numberIsValid === false"
-                            :border-radius="0"
-                            :defaultCountryCode="mobile.mobileCountryCode"
-                            color="#6C1C5C"
-                            error-color="#F50E4C"
-                            valid-color="#6D7490"
+                      :value="mobile.mobileNumber"
+                      @update="consumerPhoneUpdate"
+                      :error="numberIsValid === false"
+                      :border-radius="0"
+                      :defaultCountryCode="mobile.mobileCountryCode"
+                      color="#6C1C5C"
+                      error-color="#F50E4C"
+                      valid-color="#6D7490"
                     />
                     <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                       This field must be a valid mobile number.
@@ -82,10 +82,10 @@
                 <b-col>
                   <b-form-group label="E-Mail">
                     <b-form-input
-                            v-model="updateCorporate.body.email"
-                            :state="isInvalid($v.updateCorporate.body.email)"
-                            class="form-control"
-                            placeholder="johndoe@email.com"
+                      v-model="updateCorporate.body.email"
+                      :state="isInvalid($v.updateCorporate.body.email)"
+                      class="form-control"
+                      placeholder="johndoe@email.com"
                     />
                   </b-form-group>
                 </b-col>
@@ -94,14 +94,14 @@
                 <b-col>
                   <b-form-group label="MOBILE NUMBER">
                     <vue-phone-number-input
-                            :value="mobile.mobileNumber"
-                            @update="corporatePhoneUpdate"
-                            :error="numberIsValid === false"
-                            :border-radius="0"
-                            :defaultCountryCode="mobile.mobileCountryCode"
-                            color="#6C1C5C"
-                            error-color="#F50E4C"
-                            valid-color="#6D7490"
+                      :value="mobile.mobileNumber"
+                      @update="corporatePhoneUpdate"
+                      :error="numberIsValid === false"
+                      :border-radius="0"
+                      :defaultCountryCode="mobile.mobileCountryCode"
+                      color="#6C1C5C"
+                      error-color="#F50E4C"
+                      valid-color="#6D7490"
                     />
                     <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                       This field must be a valid mobile number.
@@ -129,20 +129,18 @@
   </section>
 </template>
 <script lang="ts">
-import { Vue, Component, mixins } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { email, required } from 'vuelidate/lib/validators'
-import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
 import { UpdateCorporateUserFullRequest } from '~/api/Requests/Corporates/UpdateCorporateUserFullRequest'
 import BaseMixin from '~/minixs/BaseMixin'
-import { corporatesStore } from '~/utils/store-accessor'
+import { authStore, corporatesStore } from '~/utils/store-accessor'
 
-const Auth = namespace(AuthStore.name)
 const Consumers = namespace(ConsumersStore.name)
 
 @Component({
@@ -157,7 +155,10 @@ const Consumers = namespace(ConsumersStore.name)
           required
         },
         mobileCountryCode: { required },
-        email: { required, email }
+        email: {
+          required,
+          email
+        }
       }
     },
     updateCorporate: {
@@ -166,19 +167,30 @@ const Consumers = namespace(ConsumersStore.name)
           required
         },
         mobileCountryCode: { required },
-        email: { required, email }
+        email: {
+          required,
+          email
+        }
       }
     }
   }
 })
 export default class Profile extends mixins(BaseMixin) {
-  @Auth.Action logout
+  logout() {
+    return this.stores.auth.logout()
+  }
 
-  @Auth.Getter isConsumer!: boolean
+  get isConsumer() {
+    return this.stores.auth.isConsumer
+  }
 
-  @Auth.Getter isCorporate!: boolean
+  get isCorporate() {
+    return this.stores.auth.isCorporate
+  }
 
-  @Auth.Getter identityId!: number | null
+  get identityId() {
+    return this.stores.auth.identityId
+  }
 
   @Consumers.Getter consumer!: Consumer | null
 
@@ -194,10 +206,10 @@ export default class Profile extends mixins(BaseMixin) {
   isLoading: boolean = false
 
   async asyncData({ store }) {
-    const _id = AuthStore.Helpers.identityId(store)
+    const _id = authStore(store).identityId
 
     if (_id) {
-      if (AuthStore.Helpers.isConsumer(store)) {
+      if (authStore(store).isConsumer) {
         const _consumer = await ConsumersStore.Helpers.get(store, _id)
 
         const _parsedNumber = parsePhoneNumberFromString(_consumer.data.mobileCountryCode + _consumer.data.mobileNumber)
@@ -218,8 +230,8 @@ export default class Profile extends mixins(BaseMixin) {
             mobileNumber: _consumer.data.mobileNumber
           }
         }
-      } else if (AuthStore.Helpers.isCorporate(store)) {
-        const _corporate = AuthStore.Helpers.auth(store)
+      } else if (authStore(store).isCorporate) {
+        const _corporate = authStore(store).auth
 
         await corporatesStore(store).getCorporateDetails(_id)
         const _corporateUser = await corporatesStore(store).getUser({
@@ -228,7 +240,7 @@ export default class Profile extends mixins(BaseMixin) {
         })
 
         const _parsedNumber = parsePhoneNumberFromString(
-                _corporateUser.data.mobileCountryCode! + _corporateUser.data.mobileNumber!
+          _corporateUser.data.mobileCountryCode! + _corporateUser.data.mobileNumber!
         )
 
         const _updateCorporateRequest: UpdateCorporateUserFullRequest = {

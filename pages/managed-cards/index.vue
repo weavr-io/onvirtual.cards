@@ -4,12 +4,7 @@
       <b-container class="mb-5 mt-n4">
         <b-row align-v="center">
           <b-col>
-            <b-form-checkbox
-              v-model="showDeleted"
-              v-if="showDeletedSwitch"
-              name="check-button"
-              switch
-            >
+            <b-form-checkbox v-model="showDeleted" v-if="showDeletedSwitch" name="check-button" switch>
               <template v-if="showDeleted">
                 Hide
               </template>
@@ -54,13 +49,12 @@
 <script lang="ts">
 import { Component, mixins, Watch } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
-import * as AuthStore from '~/store/modules/Auth'
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { KYBState } from '~/api/Enums/KYBState'
 import * as ViewStore from '~/store/modules/View'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import BaseMixin from '~/minixs/BaseMixin'
-import { cardsStore, corporatesStore } from '~/utils/store-accessor'
+import { authStore, cardsStore, corporatesStore } from '~/utils/store-accessor'
 import { NullableBoolean } from '~/api/Generic/NullableBoolean'
 import { $api } from '~/utils/api'
 
@@ -90,13 +84,13 @@ export default class CardsPage extends mixins(BaseMixin) {
   public showDeletedSwitch: boolean = false
 
   async asyncData({ store, route }) {
-    if (AuthStore.Helpers.isConsumer(store)) {
-      const _consumerId = AuthStore.Helpers.identityId(store)
+    if (authStore(store).isConsumer) {
+      const _consumerId = authStore(store).identityId
       if (_consumerId) {
         await ConsumersStore.Helpers.get(store, _consumerId)
       }
     } else {
-      const _corporateId = AuthStore.Helpers.identityId(store)
+      const _corporateId = authStore(store).identityId
       if (_corporateId) {
         await corporatesStore(store).getCorporateDetails(_corporateId)
       }
@@ -135,7 +129,10 @@ export default class CardsPage extends mixins(BaseMixin) {
   @Watch('showDeleted')
   showDeletedChanged(val) {
     this.showDeleted = val
-    this.$router.push({ path: this.$route.path, query: { showDeleted: val } })
+    this.$router.push({
+      path: this.$route.path,
+      query: { showDeleted: val }
+    })
   }
 
   get hasCards(): boolean {
@@ -144,26 +141,17 @@ export default class CardsPage extends mixins(BaseMixin) {
 
   get showKybAlert(): boolean {
     if (this.stores.corporates.kyb) {
-      return (
-        this.stores.corporates.kyb.fullCompanyChecksVerified !==
-        KYBState.APPROVED
-      )
+      return this.stores.corporates.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
     } else {
       return false
     }
   }
 
   get canAddCard(): boolean {
-    if (AuthStore.Helpers.isConsumer(this.$store)) {
-      return (
-        ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence ===
-        FullDueDiligence.APPROVED
-      )
+    if (this.stores.auth.isConsumer) {
+      return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
     } else {
-      return (
-        this.stores.corporates.kyb?.fullCompanyChecksVerified ===
-        KYBState.APPROVED
-      )
+      return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
     }
   }
 }

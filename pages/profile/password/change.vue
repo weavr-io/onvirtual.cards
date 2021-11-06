@@ -55,7 +55,6 @@
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import LoaderButton from '~/components/LoaderButton.vue'
-import * as AuthStore from '~/store/modules/Auth'
 import { UpdatePassword } from '~/api/Requests/Auth/UpdatePassword'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
@@ -91,7 +90,7 @@ export default class BundlesPage extends mixins(BaseMixin) {
   }
 
   mounted() {
-    const _id = AuthStore.Helpers.identityId(this.$store)
+    const _id = this.stores.auth.identityId
     if (_id) {
       this.changePasswordRequest.id = _id
     }
@@ -122,7 +121,7 @@ export default class BundlesPage extends mixins(BaseMixin) {
       if (values[0].tokens['old-password'] !== '' && values[1].tokens['new-password']) {
         this.changePasswordRequest.request.oldPassword.value = values[0].tokens['old-password']
         this.changePasswordRequest.request.password.value = values[1].tokens['new-password']
-        AuthStore.Helpers.updatePassword(this.$store, this.changePasswordRequest).then(() => {
+        this.stores.auth.updatePassword(this.changePasswordRequest).then(() => {
           this.$router.push('/profile')
         })
       } else {

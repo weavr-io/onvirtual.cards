@@ -16,20 +16,14 @@
                   <b-col>
                     <b-form-group label="Name of Person using Card">
                       <b-form-input
-                        :state="
-                          isInvalid($v.createManagedCardRequest.nameOnCard)
-                        "
+                        :state="isInvalid($v.createManagedCardRequest.nameOnCard)"
                         v-model="$v.createManagedCardRequest.nameOnCard.$model"
                         placeholder="eg. Elon Musk"
                       />
-                      <b-form-invalid-feedback
-                        v-if="!$v.createManagedCardRequest.nameOnCard.required"
-                      >
+                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.nameOnCard.required">
                         Name on Card is required.
                       </b-form-invalid-feedback>
-                      <b-form-invalid-feedback
-                        v-if="!$v.createManagedCardRequest.nameOnCard.maxLength"
-                      >
+                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.nameOnCard.maxLength">
                         Name on Card too long.
                       </b-form-invalid-feedback>
                     </b-form-group>
@@ -48,10 +42,7 @@
                         valid-color="#6D7490"
                         default-country-code="GB"
                       />
-                      <b-form-invalid-feedback
-                        v-if="numberIsValid === false"
-                        force-show
-                      >
+                      <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                         This field must be a valid mobile number.
                       </b-form-invalid-feedback>
                     </b-form-group>
@@ -61,36 +52,20 @@
                   <b-col>
                     <b-form-group label="ADD A CUSTOM CARD NAME">
                       <b-form-input
-                        :state="
-                          isInvalid($v.createManagedCardRequest.friendlyName)
-                        "
-                        v-model="
-                          $v.createManagedCardRequest.friendlyName.$model
-                        "
+                        :state="isInvalid($v.createManagedCardRequest.friendlyName)"
+                        v-model="$v.createManagedCardRequest.friendlyName.$model"
                         placeholder="eg. travel expenses"
                       />
-                      <b-form-invalid-feedback
-                        v-if="
-                          !$v.createManagedCardRequest.friendlyName.required
-                        "
-                      >
+                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.friendlyName.required">
                         Friendly Name is required.
                       </b-form-invalid-feedback>
-                      <b-form-invalid-feedback
-                        v-if="
-                          !$v.createManagedCardRequest.friendlyName.maxLength
-                        "
-                      >
+                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.friendlyName.maxLength">
                         Friendly Name too long.
                       </b-form-invalid-feedback>
                     </b-form-group>
                   </b-col>
                 </b-form-row>
-                <loader-button
-                  :is-loading="isAdding"
-                  button-text="next"
-                  class="mt-5 text-center"
-                />
+                <loader-button :is-loading="isAdding" button-text="next" class="mt-5 text-center" />
               </b-form>
             </b-card-body>
           </b-card>
@@ -100,24 +75,14 @@
   </section>
 </template>
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
-import {
-  helpers,
-  maxLength,
-  required,
-  requiredIf
-} from 'vuelidate/lib/validators'
-import * as AuthStore from '~/store/modules/Auth'
+import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
+
 import * as ConsumersStore from '~/store/modules/Consumers'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
-import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore } from '~/utils/store-accessor'
-import LoginResult = Schemas.LoginResult
-
-const Auth = namespace(AuthStore.name)
+import { accountsStore, authStore } from '~/utils/store-accessor'
 
 @Component({
   components: {
@@ -131,10 +96,8 @@ const Auth = namespace(AuthStore.name)
         maxLength: maxLength(50)
       },
       cardholderMobileNumber: {
-        cardholderMobileNumber: helpers.regex(
-          'cardholderMobileNumber',
-          /^\+[0-9]+$/
-        ),
+        cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/),
+        // eslint-disable-next-line
         requiredIf: requiredIf(function() {
           // @ts-ignore
           return !this.isConsumer
@@ -149,9 +112,13 @@ const Auth = namespace(AuthStore.name)
   middleware: ['kyVerified']
 })
 export default class AddCardPage extends mixins(BaseMixin) {
-  @Auth.Getter auth!: LoginResult
+  get auth() {
+    return this.stores.auth.auth
+  }
 
-  @Auth.Getter isConsumer!: boolean
+  get isConsumer() {
+    return this.stores.auth.isConsumer
+  }
 
   showNameOnCardField: boolean = false
 
@@ -160,8 +127,14 @@ export default class AddCardPage extends mixins(BaseMixin) {
   isAdding: boolean = false
 
   currencyOptions = [
-    { value: 'EUR', text: 'EUR' },
-    { value: 'GBP', text: 'GBP' }
+    {
+      value: 'EUR',
+      text: 'EUR'
+    },
+    {
+      value: 'GBP',
+      text: 'GBP'
+    }
   ]
 
   numberIsValid: boolean | null = null
@@ -209,9 +182,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
   }
 
   mounted() {
-    this.createManagedCardRequest.profileId = AuthStore.Helpers.isConsumer(
-      this.$store
-    )
+    this.createManagedCardRequest.profileId = this.stores.auth.isConsumer
       ? config.profileId.managed_cards_consumers
       : config.profileId.managed_cards_corporates
 
@@ -224,7 +195,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
     const _accounts = await accountsStore(store).index()
 
     const createManagedCardRequest: ManagedCardsSchemas.CreateManagedCardRequest = {
-      profileId: AuthStore.Helpers.isConsumer(store)
+      profileId: authStore(store).isConsumer
         ? config.profileId.managed_cards_consumers
         : config.profileId.managed_cards_corporates,
       friendlyName: '',
@@ -237,24 +208,16 @@ export default class AddCardPage extends mixins(BaseMixin) {
       createManagedCardRequest.currency = _accounts.data.account[0].currency
     }
 
-    if (AuthStore.Helpers.isConsumer(store)) {
-      const _consumer = await ConsumersStore.Helpers.get(
-        store,
-        AuthStore.Helpers.identity(store).id
-      )
-      createManagedCardRequest.nameOnCard =
-        _consumer.data.name + ' ' + _consumer.data.surname
-      createManagedCardRequest.cardholderMobileNumber =
-        _consumer.data.mobileCountryCode + _consumer.data.mobileNumber
+    if (authStore(store).isConsumer) {
+      const _consumer = await ConsumersStore.Helpers.get(store, authStore(store).identity.id)
+      createManagedCardRequest.nameOnCard = _consumer.data.name + ' ' + _consumer.data.surname
+      createManagedCardRequest.cardholderMobileNumber = _consumer.data.mobileCountryCode + _consumer.data.mobileNumber
     }
 
     let _showNameOnCardField: boolean = false
-    if (!AuthStore.Helpers.isConsumer(store)) {
+    if (!authStore(store).isConsumer) {
       _showNameOnCardField = true
-    } else if (
-      createManagedCardRequest.nameOnCard &&
-      createManagedCardRequest.nameOnCard.length > 27
-    ) {
+    } else if (createManagedCardRequest.nameOnCard && createManagedCardRequest.nameOnCard.length > 27) {
       _showNameOnCardField = true
     } else {
       _showNameOnCardField = false
@@ -267,8 +230,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
   }
 
   phoneUpdate(number) {
-    this.createManagedCardRequest.cardholderMobileNumber =
-      '+' + number.countryCallingCode + number.nationalNumber
+    this.createManagedCardRequest.cardholderMobileNumber = '+' + number.countryCallingCode + number.nationalNumber
     this.numberIsValid = number.isValid
   }
 }

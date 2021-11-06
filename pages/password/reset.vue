@@ -62,14 +62,9 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import { required, email } from 'vuelidate/lib/validators'
-
-import * as AuthStore from '~/store/modules/Auth'
+import { email, required } from 'vuelidate/lib/validators'
 import { LostPasswordStartRequest } from '~/api/Requests/Auth/LostPasswordStartRequest'
 import BaseMixin from '~/minixs/BaseMixin'
-
-const Auth = namespace(AuthStore.name)
 
 @Component({
   layout: 'auth',
@@ -87,7 +82,9 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class ResetPasswordPage extends mixins(BaseMixin) {
-  @Auth.Getter isLoading!: boolean
+  get isLoading() {
+    return this.stores.auth.isLoading
+  }
 
   passwordSent: boolean = false
 
@@ -99,7 +96,7 @@ export default class ResetPasswordPage extends mixins(BaseMixin) {
     evt.preventDefault()
     this.$v.$touch()
     if (!this.$v.$invalid) {
-      AuthStore.Helpers.lostPasswordStart(this.$store, this.form).then(() => {
+      this.stores.auth.lostPasswordStart(this.form).then(() => {
         this.passwordSent = true
       })
     }

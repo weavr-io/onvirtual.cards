@@ -63,18 +63,12 @@
   </section>
 </template>
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import * as AuthStore from '~/store/modules/Auth'
-import { Schemas } from '~/api/Schemas'
 import { UpdateManagedCardRequest } from '~/api/Requests/ManagedCards/UpdateManagedCardRequest'
 import BaseMixin from '~/minixs/BaseMixin'
 import { cardsStore } from '~/utils/store-accessor'
-import LoginResult = Schemas.LoginResult
-
-const Auth = namespace(AuthStore.name)
 
 @Component({
   components: {
@@ -89,6 +83,7 @@ const Auth = namespace(AuthStore.name)
           maxLength: maxLength(50)
         },
         cardholderMobileNumber: {
+          // eslint-disable-next-line
           requiredIf: requiredIf(function() {
             // @ts-ignore
             return !this.isConsumer
@@ -96,6 +91,7 @@ const Auth = namespace(AuthStore.name)
           cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
         },
         nameOnCard: {
+          // eslint-disable-next-line
           requiredIf: requiredIf(function() {
             // @ts-ignore
             return !this.isConsumer
@@ -111,9 +107,13 @@ export default class AddCardPage extends mixins(BaseMixin) {
     return this.stores.cards.isLoading
   }
 
-  @Auth.Getter auth!: LoginResult
+  get auth() {
+    return this.stores.auth.auth
+  }
 
-  @Auth.Getter isConsumer!: boolean
+  get isConsumer() {
+    return this.stores.auth.isConsumer
+  }
 
   numberIsValid: boolean | null = null
   mobile = {
