@@ -55,7 +55,7 @@ export default class CardsPage extends mixins(BaseMixin) {
   }
 
   get isVerified() {
-    if (this.$store.getters['auth/isConsumer']) {
+    if (this.stores.auth.isConsumer) {
       return this.$store.getters['consumers/consumer'].kyc.fullDueDiligence === FullDueDiligence.APPROVED
     } else {
       return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED

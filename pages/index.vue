@@ -19,10 +19,10 @@ import { authStore, corporatesStore } from '~/utils/store-accessor'
 @Component({})
 export default class IndexPage extends mixins(BaseMixin) {
   async asyncData({ store, redirect }) {
-    const isLoggedIn = store.getters['auth/isLoggedIn']
+    const isLoggedIn = authStore(store).isLoggedIn
 
     if (isLoggedIn) {
-      const _auth = authStore(store).auth(store)
+      const _auth = authStore(store).auth
       if (authStore(store).isConsumer) {
         let _cons = ConsumersStore.Helpers.consumer(store)
 

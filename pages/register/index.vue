@@ -3,7 +3,7 @@
     <b-row>
       <b-col>
         <div class="text-center">
-          <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+          <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
         </div>
       </b-col>
     </b-row>
@@ -25,8 +25,8 @@
               <b-card-text class="mt-4 mb-5">
                 Issue cards and assign them to employees. You decide when to stop cards or add more funds.
               </b-card-text>
-              <b-img src="/img/large-arrow.svg"></b-img>
-              <b-link to="/register/corporate" class=" stretched-link"></b-link>
+              <b-img src="/img/large-arrow.svg" />
+              <b-link to="/register/corporate" class=" stretched-link" />
             </b-card-body>
           </b-card>
           <b-card class="" no-body>
@@ -37,8 +37,8 @@
               <b-card-text class="mt-4 mb-5">
                 Take control of your online purchases and shop securely without exposing your bank card.
               </b-card-text>
-              <b-img src="/img/large-arrow.svg"></b-img>
-              <b-link to="/register/consumer" class=" stretched-link"></b-link>
+              <b-img src="/img/large-arrow.svg" />
+              <b-link to="/register/consumer" class=" stretched-link" />
             </b-card-body>
           </b-card>
         </b-card-group>
@@ -49,13 +49,14 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
+import { authStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'auth'
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
   asyncData({ store, redirect }) {
-    const isLoggedIn = store.getters['auth/isLoggedIn']
+    const isLoggedIn = authStore(store).isLoggedIn
 
     if (isLoggedIn) {
       redirect('/dashboard')

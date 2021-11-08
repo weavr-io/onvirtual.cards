@@ -8,6 +8,7 @@ import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/Con
 import { $api } from '~/utils/api'
 import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
 import { CorporateKybStatus } from '~/api/Models/Corporates/CorporateKybStatus'
+import { authStore } from '~/utils/store-accessor'
 
 @Module({
   name: 'corporatesModule',
@@ -173,7 +174,7 @@ export default class Corporates extends StoreModule {
   @Action({ rawError: true })
   async checkKYB() {
     if (this.corporate === null) {
-      const _corpId = this.store.getters['auth/auth'].identity.id
+      const _corpId = authStore(this.store).identity.id
       await this.getKyb(_corpId)
     }
 

@@ -44,9 +44,10 @@ export default class AuthModule extends StoreModule {
   AUTHENTICATE(_res: LoginResult) {
     this.auth = _res
     Cookie.set('auth-onvirtual', this.auth)
+
     $api.defaults.headers.Authorization = 'Bearer ' + this.auth.token
 
-    $weavrSetUserToken('Bearer ' + this.auth.token)
+    // this.store.$weavrSetUserToken!('Bearer ' + this.auth.token)
   }
 
   @Mutation
@@ -59,7 +60,7 @@ export default class AuthModule extends StoreModule {
     delete $api.defaults.headers['X-Tenant']
 
     // @ts-ignore
-    this.$weavrSetUserToken(null)
+    // this.store.$weavrSetUserToken!(null)
   }
 
   @Mutation
@@ -67,12 +68,23 @@ export default class AuthModule extends StoreModule {
     this.isLoading = isLoading
   }
 
-  @Action
+  @Action({ rawError: true })
   invalidateToken() {
     this.LOGOUT()
+    this.removeHeader()
   }
 
-  @Action
+  @Action({ rawError: true })
+  setHeaders(token: any) {
+    this.store.$weavrSetUserToken('Bearer ' + token.token)
+  }
+
+  @Action({ rawError: true })
+  removeHeader() {
+    this.store.$weavrSetUserToken(null)
+  }
+
+  @Action({ rawError: true })
   authenticate(loginRequest: Schemas.LoginRequest) {
     this.SET_IS_LOADING(true)
     loaderStore(this.store).start()
@@ -80,6 +92,7 @@ export default class AuthModule extends StoreModule {
     const req = $api.post<LoginResult>('/app/api/auth/login_with_password', loginRequest)
 
     req.then((res) => {
+      this.setHeaders(res.data)
       this.AUTHENTICATE(res.data)
       this.SET_IS_LOADING(false)
     })
@@ -91,12 +104,13 @@ export default class AuthModule extends StoreModule {
     return req
   }
 
-  @Action
+  @Action({ rawError: true })
   logout() {
     const xPromise = new Promise((resolve, reject) => {
       try {
         loaderStore(this.store).start()
         this.LOGOUT()
+        this.removeHeader()
         resolve('ok')
       } catch (e) {
         reject(e)
@@ -106,7 +120,7 @@ export default class AuthModule extends StoreModule {
     return xPromise
   }
 
-  @Action
+  @Action({ rawError: true })
   verifyEmail(request: Schemas.verifyEmailRequest) {
     this.SET_IS_LOADING(true)
     loaderStore(this.store).start()
@@ -127,7 +141,7 @@ export default class AuthModule extends StoreModule {
     return req
   }
 
-  @Action
+  @Action({ rawError: true })
   lostPasswordStart(request: any) {
     this.SET_IS_LOADING(true)
     loaderStore(this.store).start()
@@ -142,7 +156,7 @@ export default class AuthModule extends StoreModule {
     return req
   }
 
-  @Action
+  @Action({ rawError: true })
   lostPasswordValidate(request: any) {
     this.SET_IS_LOADING(true)
     loaderStore(this.store).start()
@@ -157,7 +171,7 @@ export default class AuthModule extends StoreModule {
     return req
   }
 
-  @Action
+  @Action({ rawError: true })
   lostPasswordResume(request: any) {
     this.SET_IS_LOADING(true)
     loaderStore(this.store).start()
@@ -172,7 +186,7 @@ export default class AuthModule extends StoreModule {
     return req
   }
 
-  @Action
+  @Action({ rawError: true })
   createPasswordIdentity(request: any) {
     this.SET_IS_LOADING(true)
     loaderStore(this.store).start()
@@ -187,7 +201,7 @@ export default class AuthModule extends StoreModule {
     return req
   }
 
-  @Action
+  @Action({ rawError: true })
   createPassword(request: any) {
     this.SET_IS_LOADING(true)
     loaderStore(this.store).start()
@@ -202,7 +216,7 @@ export default class AuthModule extends StoreModule {
     return req
   }
 
-  @Action
+  @Action({ rawError: true })
   updatePassword(request: any) {
     this.SET_IS_LOADING(true)
     loaderStore(this.store).start()
@@ -217,7 +231,7 @@ export default class AuthModule extends StoreModule {
     return req
   }
 
-  @Action
+  @Action({ rawError: true })
   validatePassword(request) {
     this.SET_IS_LOADING(true)
     loaderStore(this.store).start()
