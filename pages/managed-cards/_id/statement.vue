@@ -3,7 +3,7 @@
     <b-container>
       <b-row v-if="managedCard" align-v="end" class="mb-5 border-bottom pb-3">
         <b-col cols="1">
-          <b-link @click="toggleModal" class="card-view-details">
+          <b-link class="card-view-details" @click="toggleModal">
             view details
           </b-link>
         </b-col>
@@ -64,8 +64,8 @@
                 <b-form-select
                   :options="months"
                   :value="filterDate"
-                  @change="filterMonthChange"
                   class="w-auto d-inline-block"
+                  @change="filterMonthChange"
                 />
               </b-col>
             </b-row>
@@ -74,9 +74,9 @@
         <b-col lg="7" xs="14" class="d-flex justify-content-end">
           <div>
             <b-button
-              @click="downloadStatement"
               variant="link"
               class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none"
+              @click="downloadStatement"
             >
               <download-icon class="mr-2" />
               download
@@ -84,9 +84,9 @@
           </div>
           <div v-if="managedCard.active" class="ml-5">
             <b-button
-              @click="confirmDeleteCard"
               variant="link"
               class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none"
+              @click="confirmDeleteCard"
             >
               <delete-icon class="mr-2" />
               delete card
@@ -202,7 +202,7 @@
         </b-card-body>
       </b-card>
     </b-modal>
-    <infinite-loading @infinite="infiniteScroll" spinner="spiral">
+    <infinite-loading spinner="spiral" @infinite="infiniteScroll">
       <span slot="no-more" />
       <div slot="no-results" />
     </infinite-loading>
@@ -214,7 +214,6 @@ import { Component, mixins } from 'nuxt-property-decorator'
 
 import { BModal, BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 
-import * as TransfersStore from '~/store/modules/Transfers'
 import { Schemas } from '~/api/Schemas'
 import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
 import { TransfersSchemas } from '~/api/TransfersSchemas'
@@ -224,8 +223,7 @@ import BaseMixin from '~/minixs/BaseMixin'
 import { StatementRequest } from '~/api/Requests/Statements/StatementRequest'
 import RouterMixin from '~/minixs/RouterMixin'
 import FiltersMixin from '~/minixs/FiltersMixin'
-import axios from '~/plugins/axios'
-import { $api } from '~/utils/api'
+
 import OrderType = Schemas.OrderType
 
 const dot = require('dot-object')
@@ -392,7 +390,7 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, Fi
             amount: this.managedCard.balances.availableBalance
           }
         }
-        await TransfersStore.Helpers.execute(this.$store, _request)
+        await this.stores.transfers.execute(_request)
       }
       await this.stores.cards.remove(this.cardId)
 
