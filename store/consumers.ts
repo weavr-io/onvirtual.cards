@@ -104,6 +104,8 @@ export default class Consumers extends StoreModule {
 
     if (!_res) {
       return Promise.reject(new Error('KYC not approved'))
+    } else {
+      return Promise.resolve()
     }
   }
 
