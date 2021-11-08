@@ -64,8 +64,8 @@ const config = {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    { src: '~/plugins/vuelidate' },
     { src: '~/plugins/weavr/security.client.ts', ssr: false },
+    { src: '~/plugins/vuelidate' },
     { src: '~/plugins/WeavrVueFilters.ts', ssr: false },
     { src: '~/plugins/PhoneNumberInput.ts', ssr: false },
     { src: '~/plugins/flatpickr.ts', ssr: false },
@@ -108,6 +108,7 @@ const config = {
     ignoreNotFoundWarnings: true
   }
 }
+
 console.log(process.env.RECAPTCHA, 're')
 if (process.env.RECAPTCHA) {
   config.modules.push('@nuxtjs/recaptcha')

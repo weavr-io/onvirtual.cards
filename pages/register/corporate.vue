@@ -29,6 +29,7 @@ import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
 import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
 import BaseMixin from '~/minixs/BaseMixin'
 import { BooleanString } from '~/api/Generic/BooleanString'
+import { authStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'auth',
@@ -207,7 +208,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   }
 
   asyncData({ store, redirect }) {
-    const isLoggedIn = store.getters['auth/isLoggedIn']
+    const isLoggedIn = authStore(store).isLoggedIn
 
     if (isLoggedIn) {
       redirect('/dashboard')

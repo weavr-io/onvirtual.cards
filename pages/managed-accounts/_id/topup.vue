@@ -70,7 +70,7 @@ import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
 import config from '~/config'
 import BaseMixin from '~/minixs/BaseMixin'
 
-import { accountsStore, corporatesStore } from '~/utils/store-accessor'
+import { accountsStore, authStore, corporatesStore } from '~/utils/store-accessor'
 
 @Component({
   components: {
@@ -91,8 +91,8 @@ export default class AccountTopupPage extends mixins(BaseMixin) {
     const accountId = route.params.id
     let approved = false
 
-    const _isConsumer = store.getters['auth/isConsumer']
-    const _isCorporate = store.getters['auth/isCorporate']
+    const _isConsumer = authStore(store).isConsumer
+    const _isCorporate = authStore(store).isCorporate
 
     if (config.app.kyb_required === true) {
       if (_isConsumer) {

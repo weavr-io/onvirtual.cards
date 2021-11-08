@@ -1,3 +1,5 @@
+import { authStore } from '~/utils/store-accessor'
+
 const Cookie = process.client ? require('js-cookie') : undefined
 
 export default function(ctxt) {
@@ -12,10 +14,10 @@ export default function(ctxt) {
 
     if (authCookie) {
       auth = JSON.parse(authCookie)
-      const _storeAuth = ctxt.store.getters['auth/auth']
+      const _storeAuth = authStore(ctxt.store).auth
 
       if (_storeAuth?.token !== auth?.token) {
-        ctxt.store.commit('auth/AUTHENTICATE', auth, { root: true })
+        authStore(ctxt.store).AUTHENTICATE(auth as authCookieContents)
       }
     }
   } catch (err) {

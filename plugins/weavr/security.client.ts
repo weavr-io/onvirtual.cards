@@ -7,6 +7,7 @@ import WeavrCVVSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrKyb from '~/plugins/weavr/components/WeavrKyb.vue'
 import WeavrKycBeneficiaries from '~/plugins/weavr/components/WeavrKycBeneficiaries.vue'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
+import { Plugin } from '~/node_modules/@nuxt/types'
 
 // @ts-ignore
 const weavrComponents = window.weavr.init(config.api.uiKey, {
@@ -20,14 +21,6 @@ const weavrComponents = window.weavr.init(config.api.uiKey, {
 
 // @ts-ignore
 Vue.prototype.$weavrComponents = weavrComponents
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default ({ app }, inject) => {
-  inject('weavrSetUserToken', (token) => {
-    // @ts-ignore
-    return asyncAssociate(token)
-  })
-}
 
 function asyncAssociate(token) {
   return new Promise((resolve, reject) => {
@@ -51,15 +44,10 @@ Vue.component('weavr-kyb', WeavrKyb)
 Vue.component('weavr-kyc-beneficiaries', WeavrKycBeneficiaries)
 Vue.component('weavr-kyc', WeavrKyc)
 
-declare module 'vue/types/vue' {
-  interface Vue {
-    $weavrComponents: any
-    $weavrSetUserToken: (token) => {}
-  }
+const weavrModules: Plugin = (context, inject) => {
+  inject('weavrSetUserToken', (token) => {
+    return asyncAssociate(token)
+  })
 }
 
-declare module 'vuex/types/index' {
-  interface Store<S> {
-    $weavrSetUserToken: (token) => {}
-  }
-}
+export default weavrModules

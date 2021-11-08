@@ -14,12 +14,12 @@ export default class Loader extends StoreModule {
     this.isLoading = val
   }
 
-  @Action
+  @Action({ rawError: true })
   start() {
     this.SET_IS_LOADING(true)
   }
 
-  @Action
+  @Action({ rawError: true })
   stop() {
     this.SET_IS_LOADING(false)
   }

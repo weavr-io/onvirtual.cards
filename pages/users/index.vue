@@ -34,7 +34,7 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
-import { corporatesStore } from '~/utils/store-accessor'
+import { authStore, corporatesStore } from '~/utils/store-accessor'
 
 @Component({})
 export default class UsersPage extends mixins(BaseMixin) {
@@ -50,7 +50,7 @@ export default class UsersPage extends mixins(BaseMixin) {
   }
 
   asyncData({ store }) {
-    const _corporateId = store.getters['auth/identityId']
+    const _corporateId = authStore(store).identityId
     return corporatesStore(store).getUsers(_corporateId)
   }
 }

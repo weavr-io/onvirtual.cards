@@ -7,7 +7,7 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
   if (authStore(store).isLoggedIn) {
     if (authStore(store).isConsumer) {
       try {
-        const _consumerId = store.getters['auth/auth'].identity.id
+        const _consumerId = authStore(store).auth.identity.id
         await ConsumersStore.Helpers.get(store, _consumerId)
 
         await ConsumersStore.Helpers.checkKYC(store)
@@ -24,7 +24,7 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
       }
     } else {
       try {
-        const _corpId = store.getters['auth/auth'].identity.id
+        const _corpId = authStore(store).auth.identity.id
 
         await corporatesStore(store).getCorporateDetails(_corpId)
         await corporatesStore(store).checkKYB()

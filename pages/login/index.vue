@@ -66,6 +66,7 @@ import * as ConsumersStore from '~/store/modules/Consumers'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import { authStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'auth',
@@ -159,7 +160,7 @@ export default class LoginPage extends mixins(BaseMixin) {
   }
 
   asyncData({ store, redirect }) {
-    const isLoggedIn = store.getters['auth/isLoggedIn']
+    const isLoggedIn = authStore(store).isLoggedIn
 
     if (isLoggedIn) {
       redirect('/')
