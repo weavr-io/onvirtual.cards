@@ -11,17 +11,14 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
 
 import { OrderType } from '~/api/Enums/OrderType'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
-import * as ViewStore from '~/store/modules/View'
 import BaseMixin from '~/minixs/BaseMixin'
 import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import RouterMixin from '~/minixs/RouterMixin'
 import { accountsStore, authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 
-const View = namespace(ViewStore.name)
 const dot = require('dot-object')
 const moment = require('moment')
 
@@ -49,7 +46,9 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
     return this.stores.corporates.corporate
   }
 
-  @View.Getter hasAlert!: boolean
+  get hasAlert() {
+    return this.stores.view.hasAlert
+  }
 
   accountId!: number
 

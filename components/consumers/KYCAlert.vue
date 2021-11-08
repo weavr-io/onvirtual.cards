@@ -45,17 +45,15 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import * as ViewStore from '~/store/modules/View'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import BaseMixin from '~/minixs/BaseMixin'
 
-const View = namespace(ViewStore.name)
-
-@Component({})
+@Component
 export default class KYCAlert extends mixins(BaseMixin) {
-  @View.Getter showKycAlert!: boolean
+  get showKycAlert() {
+    return this.stores.view.showKycAlert
+  }
 
   get consumer(): Consumer | null {
     return this.stores.consumers.consumer

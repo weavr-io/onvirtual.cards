@@ -1,6 +1,5 @@
 import { Store } from 'vuex'
 import * as root from './root'
-import * as View from './modules/View'
 import Cards from '~/store/cards'
 import Accounts from '~/store/accounts'
 import Corporates from '~/store/corporates'
@@ -36,7 +35,7 @@ const createStore = () => {
       // [Error.name]: Error,
       // [Transfers.name]: Transfers,
       // [Consumers.name]: Consumers,
-      [View.name]: View,
+      // [View.name]: View,
       cardsModule: Cards,
       accountsModule: Accounts,
       corporatesModule: Corporates,
