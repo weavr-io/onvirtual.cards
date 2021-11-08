@@ -7,6 +7,7 @@ import Loader from '~/store/loader'
 import Auth from '~/store/auth'
 import SecureClient from '~/store/secureClient'
 import Consumers from '~/store/consumers'
+import Transfers from '~/store/transfers'
 
 export interface Stores {
   cards: Cards
@@ -16,6 +17,7 @@ export interface Stores {
   auth: Auth
   secureClient: SecureClient
   consumers: Consumers
+  transfers: Transfers
 }
 
 function initialiseStores(store: Store<any>): Stores {
@@ -26,8 +28,13 @@ function initialiseStores(store: Store<any>): Stores {
     loader: loaderStore(store),
     auth: authStore(store),
     secureClient: secureClientStore(store),
-    consumers: consumersStore(store)
+    consumers: consumersStore(store),
+    transfers: transfersStore(store)
   }
+}
+
+function transfersStore(store: Store<any>) {
+  return getModule(Transfers, store)
 }
 
 function consumersStore(store: Store<any>) {
@@ -70,5 +77,6 @@ export {
   loaderStore,
   authStore,
   secureClientStore,
-  consumersStore
+  consumersStore,
+  transfersStore
 }

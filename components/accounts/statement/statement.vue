@@ -13,8 +13,8 @@
                   <b-form-select
                     :options="months"
                     :value="filterDate"
-                    @change="filterMonthChange"
                     class="w-auto d-inline-block"
+                    @change="filterMonthChange"
                   />
                 </b-col>
               </b-row>
@@ -23,9 +23,9 @@
           <b-col lg="7" xs="14" class="d-flex justify-content-end">
             <div>
               <b-button
-                @click="downloadStatement"
                 variant="link"
                 class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none"
+                @click="downloadStatement"
               >
                 <download-icon class="mr-2" />
                 download
@@ -71,8 +71,7 @@ import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
 import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import FiltersMixin from '~/minixs/FiltersMixin'
-import { StatementRequest } from '~/api/Requests/Statements/StatementRequest'
-import { $api } from '~/utils/api'
+
 import { OrderType } from '~/api/Enums/OrderType'
 
 const moment = require('moment')

@@ -19,15 +19,10 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import * as TransfersStore from '~/store/modules/Transfers'
 import { TransfersSchemas } from '~/api/TransfersSchemas'
 import config from '~/config'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore, cardsStore } from '~/utils/store-accessor'
-
-const Transfers = namespace(TransfersStore.name)
 
 @Component({
   components: {
@@ -45,8 +40,6 @@ export default class TransfersPage extends mixins(BaseMixin) {
   get accounts() {
     return this.stores.accounts.accounts
   }
-
-  @Transfers.Action execute
 
   screen: number = 1
 
@@ -125,7 +118,8 @@ export default class TransfersPage extends mixins(BaseMixin) {
   }
 
   doTransfer() {
-    this.execute(this.createTransferRequest)
+    this.stores.transfers
+      .execute(this.createTransferRequest)
       .then(() => {
         this.createTransferRequest = {
           profileId: null,
