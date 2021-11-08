@@ -1,7 +1,7 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card body-class="p-6">
       <template v-if="showError">
@@ -13,18 +13,18 @@
         <h3 class="text-center font-weight-light mb-6">
           Accept Invite
         </h3>
-        <error-alert/>
+        <error-alert />
         <b-form @submit="tryToSubmitForm">
           <client-only placeholder="Loading...">
             <label class="d-block">PASSWORD:</label>
             <weavr-password-input
-                    ref="passwordField"
-                    :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
-                    :base-style="passwordBaseStyle"
-                    @onKeyUp="checkOnKeyUp"
-                    class-name="sign-in-password"
-                    name="password"
-                    required="true"
+              ref="passwordField"
+              :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+              :base-style="passwordBaseStyle"
+              class-name="sign-in-password"
+              name="password"
+              required="true"
+              @onKeyUp="checkOnKeyUp"
             />
             <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
           </client-only>
@@ -42,11 +42,10 @@
   </b-col>
 </template>
 <script lang="ts">
-import {Component, mixins, Ref} from 'nuxt-property-decorator'
-import {ValidateCorporateUserInviteRequest} from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
-import * as ErrorStore from '~/store/modules/Error'
-import {ConsumeCorporateUserInviteRequest} from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
-import {SecureElementStyleWithPseudoClasses} from '~/plugins/weavr/components/api'
+import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
+import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
@@ -82,15 +81,14 @@ export default class IniteConsume extends mixins(BaseMixin) {
       }
 
       this.stores.corporates.validateInvite(_validateRequest).catch(this.handleError.bind(this))
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   handleError(e) {
-    ErrorStore.Helpers.setError(this.$store, e.response)
+    this.stores.errors.SET_ERROR(e.response)
   }
 
-  asyncData({route}) {
+  asyncData({ route }) {
     try {
       const _consumeInviteRequest: ConsumeCorporateUserInviteRequest = {
         id: route.query.identity_id.toString(),
@@ -122,20 +120,20 @@ export default class IniteConsume extends mixins(BaseMixin) {
     e.preventDefault()
 
     this.passwordField.createToken().then(
-            (tokens) => {
-              if (tokens.tokens.password !== '') {
-                this.form.body.password.value = tokens.tokens.password
-                this.stores.corporates.consumeInvite(this.form).then(() => {
-                  this.$router.push('/login')
-                })
-              } else {
-                return null
-              }
-            },
-            (e) => {
-              console.error(e)
-              return null
-            }
+      (tokens) => {
+        if (tokens.tokens.password !== '') {
+          this.form.body.password.value = tokens.tokens.password
+          this.stores.corporates.consumeInvite(this.form).then(() => {
+            this.$router.push('/login')
+          })
+        } else {
+          return null
+        }
+      },
+      (e) => {
+        console.error(e)
+        return null
+      }
     )
   }
 

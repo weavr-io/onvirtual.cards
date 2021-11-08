@@ -19,10 +19,10 @@
           ref="passwordField"
           :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
           :base-style="passwordBaseStyle"
-          @onKeyUp="checkOnKeyUp"
           class-name="sign-in-password"
           name="password"
           required="true"
+          @onKeyUp="checkOnKeyUp"
         />
         <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
       </div>
@@ -68,7 +68,6 @@
 <script lang="ts">
 import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required, sameAs } from 'vuelidate/lib/validators'
-import * as ErrorStore from '~/store/modules/Error'
 import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
@@ -165,7 +164,7 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
   @Emit()
   submitForm() {
     console.log('form success')
-    ErrorStore.Helpers.resetErrors(this.$store)
+    this.stores.errors.RESET_ERROR()
     return this.form
   }
 
