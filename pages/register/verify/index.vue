@@ -13,7 +13,7 @@
             <b-img fluid src="/img/email.svg" class="mt-5 mb-2" />
           </b-col>
         </b-row>
-        <form id="contact-form" @submit="doVerify" class="mt-5">
+        <form id="contact-form" class="mt-5" @submit="doVerify">
           <b-alert :show="showEmailResentSuccessAlert" variant="success">
             The verification code was resent by email.
           </b-alert>
@@ -39,7 +39,7 @@
         <div class="mt-4 text-center">
           <small class="text-grey">
             Didn’t receive a code?
-            <b-link @click="sendVerifyEmail" class="text-decoration-underline text-grey">Send again</b-link>
+            <b-link class="text-decoration-underline text-grey" @click="sendVerifyEmail">Send again</b-link>
             .
           </small>
         </div>
@@ -52,7 +52,6 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
 import { Schemas } from '~/api/Schemas'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore } from '~/utils/store-accessor'
 
@@ -139,7 +138,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   async getConsumerUser() {
     const _consumerId = this.stores.auth.identityId
     if (_consumerId != null) {
-      const res = await ConsumersStore.Helpers.get(this.$store, _consumerId)
+      const res = await this.stores.consumers.get(_consumerId)
       this.verifyEmailRequest.consumerId = _consumerId
       this.verifyEmailRequest.request.emailAddress = res.data.email
     }
@@ -169,14 +168,16 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   sendVerifyEmailConsumers() {
-    ConsumersStore.Helpers.sendVerificationCodeEmail(this.$store, {
-      consumerId: this.verifyEmailRequest.consumerId,
-      request: {
-        emailAddress: this.verifyEmailRequest.request.emailAddress
-      }
-    }).then(() => {
-      this.showEmailResentSuccess = true
-    })
+    this.stores.consumers
+      .sendVerificationCodeEmail({
+        consumerId: this.verifyEmailRequest.consumerId,
+        request: {
+          emailAddress: this.verifyEmailRequest.request.emailAddress
+        }
+      })
+      .then(() => {
+        this.showEmailResentSuccess = true
+      })
   }
 
   sendVerifyEmailCorporates() {

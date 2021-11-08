@@ -8,7 +8,7 @@
         Login
       </h3>
 
-      <form id="contact-form" @submit.prevent="login" class="mt-5">
+      <form id="contact-form" class="mt-5" @submit.prevent="login">
         <error-alert
           message="Incorrect email and password combination. If you do not have an account please click on Register."
         />
@@ -27,9 +27,9 @@
             ref="passwordField"
             :options="{ placeholder: 'Password' }"
             :base-style="passwordBaseStyle"
-            @onKeyUp="checkOnKeyUp"
             class-name="sign-in-password"
             name="password"
+            @onKeyUp="checkOnKeyUp"
           />
         </client-only>
 
@@ -62,7 +62,6 @@
 <script lang="ts">
 import { Component, mixins, Ref, Watch } from 'nuxt-property-decorator'
 import { Schemas } from '~/api/Schemas'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
@@ -127,7 +126,7 @@ export default class LoginPage extends mixins(BaseMixin) {
     } catch (e) {}
 
     if (this.stores.auth.isConsumer) {
-      await ConsumersStore.Helpers.get(this.$store, this.stores.auth.identity.id)
+      await this.stores.consumers.get(this.stores.auth.identity.id)
     }
 
     this.$router.push('/')

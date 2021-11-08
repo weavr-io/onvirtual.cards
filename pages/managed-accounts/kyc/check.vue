@@ -16,7 +16,6 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as ConsumersStore from '../../../store/modules/Consumers'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import BaseMixin from '~/minixs/BaseMixin'
 
@@ -31,7 +30,7 @@ export default class KycPage extends mixins(BaseMixin) {
   async KycApproved() {
     const _id = this.stores.auth.identityId
     if (_id != null) {
-      const _consumer = await ConsumersStore.Helpers.get(this.$store, _id)
+      const _consumer = await this.stores.consumers.get(_id)
 
       if (
         _consumer.data.kyc?.fullDueDiligence === FullDueDiligence.APPROVED ||

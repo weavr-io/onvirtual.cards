@@ -33,7 +33,7 @@
     <!--        here.-->
     <!--      </b-link>-->
     <!--    </b-alert>-->
-    <div id="loader" v-if="isLoading">
+    <div v-if="isLoading" id="loader">
       <div class="loader-spinner">
         <b-spinner />
       </div>
@@ -47,13 +47,11 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import * as ViewStore from '~/store/modules/View'
 import { Schemas } from '~/api/Schemas'
-import CurrencyAmount = Schemas.CurrencyAmount
 import BaseMixin from '~/minixs/BaseMixin'
+import CurrencyAmount = Schemas.CurrencyAmount
 
-const Consumers = namespace(ConsumersStore.name)
 const View = namespace(ViewStore.name)
 
 @Component({
@@ -83,7 +81,9 @@ export default class DefaultLayout extends mixins(BaseMixin) {
     return this.stores.accounts.accounts
   }
 
-  @Consumers.Getter consumer!: Consumer | null
+  get consumer(): Consumer | null {
+    return this.stores.consumers.consumer
+  }
 
   get corporate() {
     return this.stores.corporates.corporate

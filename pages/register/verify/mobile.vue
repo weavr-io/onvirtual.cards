@@ -42,9 +42,9 @@
                 <b-form-input
                   v-model="nonce"
                   :state="isInvalid($v.nonce)"
-                  @update="nonceChanged"
                   placeholder="000000"
                   class="text-center"
+                  @update="nonceChanged"
                 />
                 <b-form-invalid-feedback>This field is required and must be 6 characters.</b-form-invalid-feedback>
               </b-form-group>
@@ -54,9 +54,9 @@
         </form>
         <b-alert
           :show="dismissCountDown"
-          @dismiss-count-down="countDownChanged"
           variant="white"
           class="text-center mt-4 mb-0 text-muted small"
+          @dismiss-count-down="countDownChanged"
         >
           {{ dismissCountDown }} seconds until you can send another verification code
         </b-alert>
@@ -69,7 +69,7 @@
           <template v-else>
             <small class="text-grey">
               Didn’t receive a code?
-              <b-link @click="sendVerifyPhone" class="text-decoration-underline text-grey">Send again</b-link>
+              <b-link class="text-decoration-underline text-grey" @click="sendVerifyPhone">Send again</b-link>
               .
             </small>
           </template>
@@ -80,20 +80,16 @@
 </template>
 
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { minLength, required, maxLength } from 'vuelidate/lib/validators'
-import * as ConsumersStore from '~/store/modules/Consumers'
+import { maxLength, minLength, required } from 'vuelidate/lib/validators'
 import { VerifyMobileRequest as ConsumersVerifyMobileRequest } from '~/api/Requests/Consumers/VerifyMobileRequest'
 import { VerifyMobileRequest as CorporatesVerifyMobileRequest } from '~/api/Requests/Corporates/VerifyMobileRequest'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore, corporatesStore } from '~/utils/store-accessor'
+import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 
 const Countries = require('~/static/json/countries.json')
-
-const Consumers = namespace(ConsumersStore.name)
 
 @Component({
   layout: 'auth',
@@ -110,9 +106,13 @@ const Consumers = namespace(ConsumersStore.name)
   }
 })
 export default class EmailVerificationPage extends mixins(BaseMixin) {
-  @Consumers.Getter isLoading
+  get isLoading() {
+    return this.stores.consumers.isLoading
+  }
 
-  @Consumers.Getter consumer!: Consumer | null
+  get consumer(): Consumer | null {
+    return this.stores.consumers.consumer
+  }
 
   public consumerVerifyMobileRequest!: ConsumersVerifyMobileRequest
 
@@ -176,7 +176,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
       const _consumerId = authStore(store).identityId
 
       if (_consumerId != null) {
-        const res = await ConsumersStore.Helpers.get(store, _consumerId)
+        const res = await consumersStore(store).get(_consumerId)
         consumerVerifyMobileRequest.consumerId = _consumerId
         consumerVerifyMobileRequest.request.mobileCountryCode = res.data.mobileCountryCode
         consumerVerifyMobileRequest.request.mobileNumber = res.data.mobileNumber
@@ -215,8 +215,8 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
     }
 
     return {
-      consumerVerifyMobileRequest: consumerVerifyMobileRequest,
-      corporateVerifyMobileRequest: corporateVerifyMobileRequest,
+      consumerVerifyMobileRequest,
+      corporateVerifyMobileRequest,
       mobile: {
         countryCode: _parsedNumber?.country,
         number: _number
@@ -248,10 +248,9 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   doVerifyConsumer() {
-    ConsumersStore.Helpers.verifyMobile(this.$store, this.consumerVerifyMobileRequest).then(
-      this.getConsumer.bind(this),
-      this.errorOccurred.bind(this)
-    )
+    this.stores.consumers
+      .verifyMobile(this.consumerVerifyMobileRequest)
+      .then(this.getConsumer.bind(this), this.errorOccurred.bind(this))
   }
 
   errorOccurred(err) {
@@ -265,10 +264,9 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   getConsumer() {
-    ConsumersStore.Helpers.get(this.$store, this.consumerVerifyMobileRequest.consumerId).then(
-      this.goToDashboard.bind(this),
-      this.errorOccurred.bind(this)
-    )
+    this.stores.consumers
+      .get(this.consumerVerifyMobileRequest.consumerId)
+      .then(this.goToDashboard.bind(this), this.errorOccurred.bind(this))
   }
 
   goToDashboard() {
@@ -298,12 +296,10 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   sendVerifyPhoneConsumer() {
-    return ConsumersStore.Helpers.sendVerificationCodeMobile(this.$store, this.consumerVerifyMobileRequest).catch(
-      () => {
-        this.verificationIssue = true
-        this.dismissCountDown = 0
-      }
-    )
+    return this.stores.consumers.sendVerificationCodeMobile(this.consumerVerifyMobileRequest).catch(() => {
+      this.verificationIssue = true
+      this.dismissCountDown = 0
+    })
   }
 
   phoneUpdate(number) {

@@ -43,7 +43,7 @@ const createStore = () => {
       loaderModule: Loader,
       authModule: Auth,
       secureClientModule: SecureClient,
-      consumers: Consumers
+      consumersModule: Consumers
     }
   })
 }

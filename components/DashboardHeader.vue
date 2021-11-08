@@ -51,7 +51,6 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import { KYBState } from '~/api/Enums/KYBState'
 import BaseMixin from '~/minixs/BaseMixin'
@@ -76,7 +75,7 @@ export default class DashboardHeader extends mixins(BaseMixin) {
 
   get isManagedCards(): boolean {
     if (this.$route.matched[0].name) {
-      return ['managed-cards', 'managed-cards-id-statement'].indexOf(this.$route.matched[0].name) !== -1
+      return ['managed-cards', 'managed-cards-id-statement'].includes(this.$route.matched[0].name)
     } else {
       return false
     }
@@ -84,7 +83,7 @@ export default class DashboardHeader extends mixins(BaseMixin) {
 
   get isManagedAccounts(): boolean {
     if (this.$route.matched[0].name) {
-      return ['managed-accounts', 'managed-accounts-id'].indexOf(this.$route.matched[0].name) !== -1
+      return ['managed-accounts', 'managed-accounts-id'].includes(this.$route.matched[0].name)
     } else {
       return false
     }
@@ -92,7 +91,7 @@ export default class DashboardHeader extends mixins(BaseMixin) {
 
   get canAddFunds(): boolean {
     if (this.stores.auth.isConsumer) {
-      return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
+      return this.stores.consumers.consumer?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
     } else {
       return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
     }

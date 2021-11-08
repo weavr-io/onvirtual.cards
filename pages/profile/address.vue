@@ -6,37 +6,37 @@
           <div class="form-screens">
             <error-alert />
             <div class="form-screen">
-              <b-form @submit="submitForm" novalidate>
+              <b-form novalidate @submit="submitForm">
                 <h3 class="text-center font-weight-light mb-5">
                   Your address details
                 </h3>
                 <b-form-group label="Address Line 1*">
                   <b-form-input
-                    :state="isInvalid($v.form.request.address.addressLine1)"
                     v-model="form.request.address.addressLine1"
+                    :state="isInvalid($v.form.request.address.addressLine1)"
                     placeholder="Address Line 1"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label="Address Line 2">
                   <b-form-input
-                    :state="isInvalid($v.form.request.address.addressLine2)"
                     v-model="form.request.address.addressLine2"
+                    :state="isInvalid($v.form.request.address.addressLine2)"
                     placeholder="Address Line 2"
                   />
                 </b-form-group>
                 <b-form-group label="City*">
                   <b-form-input
-                    :state="isInvalid($v.form.request.address.city)"
                     v-model="form.request.address.city"
+                    :state="isInvalid($v.form.request.address.city)"
                     placeholder="City"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label="Country*">
                   <b-form-select
-                    :state="isInvalid($v.form.request.address.country)"
                     v-model="form.request.address.country"
+                    :state="isInvalid($v.form.request.address.country)"
                     :options="countiesOptions"
                     placeholder="Registration Country"
                   />
@@ -44,16 +44,16 @@
                 </b-form-group>
                 <b-form-group label="Post Code*">
                   <b-form-input
-                    :state="isInvalid($v.form.request.address.postCode)"
                     v-model="form.request.address.postCode"
+                    :state="isInvalid($v.form.request.address.postCode)"
                     placeholder="Post Code"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label="State">
                   <b-form-input
-                    :state="isInvalid($v.form.request.address.state)"
                     v-model="form.request.address.state"
+                    :state="isInvalid($v.form.request.address.state)"
                     placeholder="State"
                   />
                 </b-form-group>
@@ -73,18 +73,15 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
 import { maxLength, required } from 'vuelidate/lib/validators'
 
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
 import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Consumers/SourceOfFunds'
 import { IndustryOccupationOptions } from '~/api/Enums/Consumers/IndustryOccupation'
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore } from '~/utils/store-accessor'
+import { authStore, consumersStore } from '~/utils/store-accessor'
 
-const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')
 
 @Component({
@@ -118,14 +115,16 @@ const Countries = require('~/static/json/countries.json')
   }
 })
 export default class ConsunmerAddressPage extends mixins(BaseMixin) {
-  @Consumers.Getter consumer!: Consumer
+  get consumer(): Consumer | null {
+    return this.stores.consumers.consumer
+  }
 
   form!: UpdateConsumerRequest
 
   isLoading: boolean = false
 
   async asyncData({ store }) {
-    const _res = await ConsumersStore.Helpers.get(store, authStore(store).identityId!)
+    const _res = await consumersStore(store).get(authStore(store).identityId!)
 
     const _form: UpdateConsumerRequest = {
       consumerId: authStore(store).identityId!,
@@ -152,7 +151,7 @@ export default class ConsunmerAddressPage extends mixins(BaseMixin) {
 
     this.isLoading = true
 
-    const xhr = ConsumersStore.Helpers.update(this.$store, this.form)
+    const xhr = this.stores.consumers.update(this.form)
     xhr.then(this.addressUpdated.bind(this))
     xhr.finally(() => {
       this.isLoading = false
@@ -161,11 +160,11 @@ export default class ConsunmerAddressPage extends mixins(BaseMixin) {
 
   async addressUpdated() {
     const _auth = this.stores.auth.auth
-    let _cons = ConsumersStore.Helpers.consumer(this.$store)
+    let _cons = this.stores.consumers.consumer
 
     if (_cons === null) {
-      await ConsumersStore.Helpers.get(this.$store, _auth.identity!.id!)
-      _cons = ConsumersStore.Helpers.consumer(this.$store)
+      await this.stores.consumers.get(_auth.identity!.id!)
+      _cons = this.stores.consumers.consumer
     }
 
     if (_cons && _cons.kyc && !_cons.kyc.emailVerified) {
