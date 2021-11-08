@@ -48,16 +48,12 @@
 
 <script lang="ts">
 import { Component, mixins, Watch } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
 import { KYBState } from '~/api/Enums/KYBState'
-import * as ViewStore from '~/store/modules/View'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore, cardsStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 import { NullableBoolean } from '~/api/Generic/NullableBoolean'
 import { $api } from '~/utils/api'
-
-const View = namespace(ViewStore.name)
 
 @Component({
   layout: 'dashboard',
@@ -76,7 +72,9 @@ export default class CardsPage extends mixins(BaseMixin) {
     return this.stores.cards.cards
   }
 
-  @View.Getter hasAlert!: boolean
+  get hasAlert() {
+    return this.stores.view.hasAlert
+  }
 
   public showDeleted: boolean = false
 

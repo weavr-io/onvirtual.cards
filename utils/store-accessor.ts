@@ -9,6 +9,7 @@ import SecureClient from '~/store/secureClient'
 import Consumers from '~/store/consumers'
 import Transfers from '~/store/transfers'
 import Errors from '~/store/errors'
+import View from '~/store/view'
 
 export interface Stores {
   cards: Cards
@@ -20,6 +21,7 @@ export interface Stores {
   consumers: Consumers
   transfers: Transfers
   errors: Errors
+  view: View
 }
 
 function initialiseStores(store: Store<any>): Stores {
@@ -32,7 +34,8 @@ function initialiseStores(store: Store<any>): Stores {
     secureClient: secureClientStore(store),
     consumers: consumersStore(store),
     transfers: transfersStore(store),
-    errors: errorsStore(store)
+    errors: errorsStore(store),
+    view: viewStore(store)
   }
 }
 
@@ -72,9 +75,9 @@ function errorsStore(store: Store<any>) {
   return getModule(Errors, store)
 }
 
-// function viewStore(store: Store<any>) {
-//   return getModule(View, store)
-// }
+function viewStore(store: Store<any>) {
+  return getModule(View, store)
+}
 
 export {
   initialiseStores,
@@ -86,5 +89,6 @@ export {
   secureClientStore,
   consumersStore,
   transfersStore,
-  errorsStore
+  errorsStore,
+  viewStore
 }

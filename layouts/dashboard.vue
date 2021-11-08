@@ -45,14 +45,10 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
-import * as ViewStore from '~/store/modules/View'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import CurrencyAmount = Schemas.CurrencyAmount
-
-const View = namespace(ViewStore.name)
 
 @Component({
   components: {
@@ -69,13 +65,25 @@ export default class DefaultLayout extends mixins(BaseMixin) {
     return this.stores.loader.isLoading
   }
 
-  @View.Getter showKybAlert!: boolean
+  get hasAlert() {
+    return this.stores.view.hasAlert
+  }
 
-  @View.Getter showKycAlert!: boolean
+  get showKybAlert() {
+    return this.stores.view.showKybAlert
+  }
 
-  @View.Getter showVerifyMobileAlert!: boolean
+  get showKycAlert() {
+    return this.stores.view.showKycAlert
+  }
 
-  @View.Getter showVerifyEmailAlert!: boolean
+  get showVerifyMobileAlert() {
+    return this.stores.view.showVerifyMobileAlert
+  }
+
+  get showVerifyEmailAlert() {
+    return this.stores.view.showVerifyEmailAlert
+  }
 
   get accounts() {
     return this.stores.accounts.accounts
