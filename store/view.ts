@@ -27,6 +27,7 @@ export default class View extends StoreModule {
   }
 
   get showKycAlert() {
+    debugger
     const _isConsumer = authStore(this.store).isConsumer
 
     if (!_isConsumer) {

@@ -1,9 +1,9 @@
 <template>
-  <div id="consumer-kyc"/>
+  <div id="consumer-kyc" />
 </template>
 <script lang="ts">
-import {Vue, Component, Prop} from 'nuxt-property-decorator'
-import {ConsumerVerificationFlowContract, ConsumerVerificationFlowOptions} from './api'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { ConsumerVerificationFlowOptions } from './api'
 
 @Component
 export default class WeavrKyc extends Vue {
