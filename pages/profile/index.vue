@@ -4,7 +4,7 @@
       <b-row>
         <b-col md="6" offset-md="3">
           <template v-if="isConsumer">
-            <b-form @submit="doUpdateConsumer" novalidate>
+            <b-form novalidate @submit="doUpdateConsumer">
               <error-alert />
               <b-form-row>
                 <b-col>
@@ -35,13 +35,13 @@
                   <b-form-group label="MOBILE NUMBER">
                     <vue-phone-number-input
                       :value="mobile.mobileNumber"
-                      @update="consumerPhoneUpdate"
                       :error="numberIsValid === false"
                       :border-radius="0"
-                      :defaultCountryCode="mobile.mobileCountryCode"
+                      :default-country-code="mobile.mobileCountryCode"
                       color="#6C1C5C"
                       error-color="#F50E4C"
                       valid-color="#6D7490"
+                      @update="consumerPhoneUpdate"
                     />
                     <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                       This field must be a valid mobile number.
@@ -64,7 +64,7 @@
             </b-form>
           </template>
           <template v-if="isCorporate">
-            <b-form @submit="doUpdateCorporate" novalidate>
+            <b-form novalidate @submit="doUpdateCorporate">
               <error-alert />
               <b-form-row>
                 <b-col>
@@ -95,13 +95,13 @@
                   <b-form-group label="MOBILE NUMBER">
                     <vue-phone-number-input
                       :value="mobile.mobileNumber"
-                      @update="corporatePhoneUpdate"
                       :error="numberIsValid === false"
                       :border-radius="0"
-                      :defaultCountryCode="mobile.mobileCountryCode"
+                      :default-country-code="mobile.mobileCountryCode"
                       color="#6C1C5C"
                       error-color="#F50E4C"
                       valid-color="#6D7490"
+                      @update="corporatePhoneUpdate"
                     />
                     <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                       This field must be a valid mobile number.
@@ -130,18 +130,14 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
 
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { email, required } from 'vuelidate/lib/validators'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
 import { UpdateCorporateUserFullRequest } from '~/api/Requests/Corporates/UpdateCorporateUserFullRequest'
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore, corporatesStore } from '~/utils/store-accessor'
-
-const Consumers = namespace(ConsumersStore.name)
+import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 
 @Component({
   components: {
@@ -192,7 +188,9 @@ export default class Profile extends mixins(BaseMixin) {
     return this.stores.auth.identityId
   }
 
-  @Consumers.Getter consumer!: Consumer | null
+  get consumer(): Consumer | null {
+    return this.stores.consumers.consumer
+  }
 
   get corporate() {
     return this.stores.corporates.corporate
@@ -210,7 +208,7 @@ export default class Profile extends mixins(BaseMixin) {
 
     if (_id) {
       if (authStore(store).isConsumer) {
-        const _consumer = await ConsumersStore.Helpers.get(store, _id)
+        const _consumer = await consumersStore(store).get(_id)
 
         const _parsedNumber = parsePhoneNumberFromString(_consumer.data.mobileCountryCode + _consumer.data.mobileNumber)
 
@@ -299,7 +297,7 @@ export default class Profile extends mixins(BaseMixin) {
 
     this.isLoading = true
 
-    ConsumersStore.Helpers.update(this.$store, this.updateConsumer).then(() => {
+    this.stores.consumers.update(this.updateConsumer).then(() => {
       this.isLoading = false
     })
   }

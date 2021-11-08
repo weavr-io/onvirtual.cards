@@ -11,7 +11,7 @@
           <div class="form-screens">
             <error-alert />
             <div class="form-screen">
-              <b-form @submit.prevent="submitForm" novalidate>
+              <b-form novalidate @submit.prevent="submitForm">
                 <h3 class="text-center font-weight-light mb-5">
                   Register
                 </h3>
@@ -31,8 +31,8 @@
                 </b-form-group>
                 <b-form-group label="Last Name">
                   <b-form-input
-                    :state="isInvalid($v.registrationRequest.surname)"
                     v-model="registrationRequest.surname"
+                    :state="isInvalid($v.registrationRequest.surname)"
                     placeholder="Last Name"
                   />
                   <b-form-invalid-feedback v-if="!$v.registrationRequest.surname.required">
@@ -46,14 +46,14 @@
                 <b-form-group label="Date of Birth">
                   <dob-picker
                     :value="dateOfBirth"
-                    @input="updateDOB"
-                    @change="updateDOB"
                     :placeholders="['Day', 'Month', 'Year']"
                     month-format="long"
                     show-labels="false"
                     select-class="form-control"
                     label-class="small flex-fill"
                     class="d-flex"
+                    @input="updateDOB"
+                    @change="updateDOB"
                   />
                   <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.dateOfBirth)">
                     This field is required.
@@ -63,15 +63,14 @@
                   <b-form-input
                     v-model="$v.registrationRequest.email.$model"
                     :state="isInvalid($v.registrationRequest.email)"
-                    @input="delayTouch($v.registrationRequest.email)"
                     placeholder="name@email.com"
+                    @input="delayTouch($v.registrationRequest.email)"
                   />
                   <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label="MOBILE NUMBER">
                   <vue-phone-number-input
                     v-model="rootMobileNumber"
-                    @update="phoneUpdate"
                     :only-countries="mobileCountries"
                     :border-radius="0"
                     :error="numberIsValid === false"
@@ -79,6 +78,7 @@
                     error-color="#F50E4C"
                     valid-color="#6D7490"
                     default-country-code="GB"
+                    @update="phoneUpdate"
                   />
                   <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                     This field must be a valid mobile number.
@@ -102,8 +102,8 @@
                 </b-form-group>
                 <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
                   <b-form-input
-                    :state="isInvalid($v.registrationRequest.sourceOfFundsOther)"
                     v-model="registrationRequest.sourceOfFundsOther"
+                    :state="isInvalid($v.registrationRequest.sourceOfFundsOther)"
                     placeholder="Specify Other Source of Funds"
                   />
                 </b-form-group>
@@ -114,10 +114,10 @@
                       ref="passwordField"
                       :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
                       :base-style="passwordBaseStyle"
-                      @onKeyUp="checkOnKeyUp"
                       class-name="sign-in-password"
                       name="password"
                       required="true"
+                      @onKeyUp="checkOnKeyUp"
                     />
                     <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                   </div>
@@ -168,13 +168,10 @@
 </template>
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
 import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import config from '~/config'
 import { CreateConsumerRequest } from '~/api/Requests/Consumers/CreateConsumerRequest'
-import { Helpers as ConsumerHelpers } from '~/store/modules/Contracts/Consumers'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
 import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
@@ -187,7 +184,6 @@ import { BooleanString } from '~/api/Generic/BooleanString'
 import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
 import { IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
 
-const Consumers = namespace(ConsumersStore.name)
 const Countries = require('~/static/json/countries.json')
 
 const touchMap = new WeakMap()
@@ -242,7 +238,9 @@ const touchMap = new WeakMap()
   }
 })
 export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
-  @Consumers.Getter consumer!: Consumer
+  get consumer(): Consumer | null {
+    return this.stores.consumers.consumer
+  }
 
   private $recaptcha: any
 
@@ -291,7 +289,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
 
   doRegister() {
     this.isLoadingRegistration = true
-    ConsumerHelpers.create(this.$store, this.registrationRequest)
+    this.stores.consumers
+      .create(this.registrationRequest)
       .then(this.doCreatePasswordIdentity.bind(this))
       .catch(this.registrationFailed.bind(this))
   }
@@ -310,7 +309,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
 
   doCreatePasswordIdentity() {
     const _req: CreatePasswordIdentity = {
-      id: this.consumer.id.id,
+      id: this.consumer!.id.id,
       request: {
         profileId: this.registrationRequest.profileId
       }
@@ -322,10 +321,10 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
 
   doCreatePassword() {
     const _req: CreatePassword = {
-      id: this.consumer.id.id,
+      id: this.consumer!.id.id,
       request: {
         credentialType: 'ROOT',
-        identityId: this.consumer.id.id,
+        identityId: this.consumer!.id.id,
         password: {
           value: this.password
         }

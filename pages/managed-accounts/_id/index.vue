@@ -3,7 +3,7 @@
     <section v-if="!hasAlert">
       <statement :filters="filters" />
     </section>
-    <infinite-loading @infinite="infiniteScroll" spinner="spiral">
+    <infinite-loading spinner="spiral" @infinite="infiniteScroll">
       <span slot="no-more" />
       <div slot="no-results" />
     </infinite-loading>
@@ -14,15 +14,13 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 
 import { OrderType } from '~/api/Enums/OrderType'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import * as ViewStore from '~/store/modules/View'
 import BaseMixin from '~/minixs/BaseMixin'
 import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import RouterMixin from '~/minixs/RouterMixin'
-import { accountsStore, authStore, corporatesStore } from '~/utils/store-accessor'
+import { accountsStore, authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 
-const Consumers = namespace(ConsumersStore.name)
 const View = namespace(ViewStore.name)
 const dot = require('dot-object')
 const moment = require('moment')
@@ -43,7 +41,9 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
     return this.stores.accounts.filteredStatement
   }
 
-  @Consumers.Getter consumer!: Consumer | null
+  get consumer(): Consumer | null {
+    return this.stores.consumers.consumer
+  }
 
   get corporate() {
     return this.stores.corporates.corporate
@@ -97,7 +97,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
     if (authStore(store).isConsumer) {
       const _consumerId = authStore(store).identityId
       if (_consumerId) {
-        await ConsumersStore.Helpers.get(store, _consumerId)
+        await consumersStore(store).get(_consumerId)
       }
     } else {
       const _corporateId = authStore(store).identityId

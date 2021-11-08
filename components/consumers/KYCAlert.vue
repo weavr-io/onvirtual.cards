@@ -7,7 +7,8 @@
             Your documentation is currently under review.
           </h3>
           <p>
-            This process normally takes a few minutes.  During busy times, review of documentation may take a bit longer up to 24 hours.
+            This process normally takes a few minutes. During busy times, review of documentation may take a bit longer
+            up to 24 hours.
           </p>
         </b-col>
       </b-row>
@@ -46,19 +47,19 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { namespace } from 'vuex-class'
 import * as ViewStore from '~/store/modules/View'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import BaseMixin from '~/minixs/BaseMixin'
 
 const View = namespace(ViewStore.name)
-const Consumers = namespace(ConsumersStore.name)
 
 @Component({})
 export default class KYCAlert extends mixins(BaseMixin) {
   @View.Getter showKycAlert!: boolean
 
-  @Consumers.Getter consumer!: Consumer | null
+  get consumer(): Consumer | null {
+    return this.stores.consumers.consumer
+  }
 
   get isPendingReview(): boolean {
     return this.consumer?.kyc?.fullDueDiligence === FullDueDiligence.PENDING_REVIEW

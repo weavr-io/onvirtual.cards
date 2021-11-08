@@ -11,9 +11,8 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore, authStore } from '~/utils/store-accessor'
+import { accountsStore, authStore, consumersStore } from '~/utils/store-accessor'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 
@@ -30,7 +29,7 @@ export default class KycPage extends mixins(BaseMixin) {
     const _consumerId = authStore(store).identityId
 
     try {
-      const _res = await ConsumersStore.Helpers.startKYC(store, _consumerId)
+      const _res = await consumersStore(store).startKYC(_consumerId)
       return { reference: _res.data.reference }
     } catch (e) {
       if (e.response.data.errorCode === 'KYC_ALREADY_APPROVED') {

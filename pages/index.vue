@@ -12,9 +12,8 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore, corporatesStore } from '~/utils/store-accessor'
+import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 
 @Component({})
 export default class IndexPage extends mixins(BaseMixin) {
@@ -24,11 +23,11 @@ export default class IndexPage extends mixins(BaseMixin) {
     if (isLoggedIn) {
       const _auth = authStore(store).auth
       if (authStore(store).isConsumer) {
-        let _cons = ConsumersStore.Helpers.consumer(store)
+        let _cons = consumersStore(store).consumer
 
         if (_cons === null) {
-          await ConsumersStore.Helpers.get(store, _auth.identity!.id!)
-          _cons = ConsumersStore.Helpers.consumer(store)
+          await consumersStore(store).get(_auth.identity!.id!)
+          _cons = consumersStore(store).consumer
         }
 
         if (_cons && _cons.kyc && !_cons.kyc.emailVerified) {

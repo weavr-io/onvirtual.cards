@@ -11,13 +11,13 @@
               <b-alert :show="showError" variant="danger">
                 Error creating new card. Contact support if problem persists.
               </b-alert>
-              <b-form @submit="doAdd" v-if="!showError">
+              <b-form v-if="!showError" @submit="doAdd">
                 <b-form-row v-if="showNameOnCardField">
                   <b-col>
                     <b-form-group label="Name of Person using Card">
                       <b-form-input
-                        :state="isInvalid($v.createManagedCardRequest.nameOnCard)"
                         v-model="$v.createManagedCardRequest.nameOnCard.$model"
+                        :state="isInvalid($v.createManagedCardRequest.nameOnCard)"
                         placeholder="eg. Elon Musk"
                       />
                       <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.nameOnCard.required">
@@ -34,13 +34,13 @@
                     <b-form-group label="CARDHOLDER MOBILE NUMBER">
                       <vue-phone-number-input
                         v-model="createManagedCardRequest.formattedMobileNumber"
-                        @update="phoneUpdate"
                         :error="numberIsValid === false"
                         :border-radius="0"
                         color="#6C1C5C"
                         error-color="#F50E4C"
                         valid-color="#6D7490"
                         default-country-code="GB"
+                        @update="phoneUpdate"
                       />
                       <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                         This field must be a valid mobile number.
@@ -52,8 +52,8 @@
                   <b-col>
                     <b-form-group label="ADD A CUSTOM CARD NAME">
                       <b-form-input
-                        :state="isInvalid($v.createManagedCardRequest.friendlyName)"
                         v-model="$v.createManagedCardRequest.friendlyName.$model"
+                        :state="isInvalid($v.createManagedCardRequest.friendlyName)"
                         placeholder="eg. travel expenses"
                       />
                       <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.friendlyName.required">
@@ -78,11 +78,10 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
 import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore, authStore } from '~/utils/store-accessor'
+import { accountsStore, authStore, consumersStore } from '~/utils/store-accessor'
 
 @Component({
   components: {
@@ -209,7 +208,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
     }
 
     if (authStore(store).isConsumer) {
-      const _consumer = await ConsumersStore.Helpers.get(store, authStore(store).identity.id)
+      const _consumer = await consumersStore(store).get(authStore(store).identity.id)
       createManagedCardRequest.nameOnCard = _consumer.data.name + ' ' + _consumer.data.surname
       createManagedCardRequest.cardholderMobileNumber = _consumer.data.mobileCountryCode + _consumer.data.mobileNumber
     }
@@ -224,7 +223,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
     }
 
     return {
-      createManagedCardRequest: createManagedCardRequest,
+      createManagedCardRequest,
       showNameOnCardField: _showNameOnCardField
     }
   }

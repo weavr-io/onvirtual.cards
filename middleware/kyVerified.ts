@@ -1,6 +1,5 @@
 import { Middleware } from '@nuxt/types'
-import * as ConsumersStore from '~/store/modules/Consumers'
-import { authStore, corporatesStore } from '~/utils/store-accessor'
+import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 
 const kyVerified: Middleware = async ({ store, route, redirect }) => {
@@ -8,15 +7,15 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
     if (authStore(store).isConsumer) {
       try {
         const _consumerId = authStore(store).auth.identity.id
-        await ConsumersStore.Helpers.get(store, _consumerId)
+        await consumersStore(store).get(_consumerId)
 
-        await ConsumersStore.Helpers.checkKYC(store)
+        await consumersStore(store).checkKYC
 
         if (route.path === '/managed-accounts/kyc') {
           redirect('/managed-accounts/add')
         }
       } catch (e) {
-        if (store.getters['consumers/consumer'].kyc!.fullDueDiligence! === FullDueDiligence.PENDING_REVIEW) {
+        if (consumersStore(store).consumer.kyc!.fullDueDiligence! === FullDueDiligence.PENDING_REVIEW) {
           redirect('/managed-accounts')
         } else if (route.path === '/managed-accounts/add') {
           redirect('/managed-accounts/kyc')

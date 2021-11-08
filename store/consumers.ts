@@ -6,7 +6,7 @@ import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import { StoreModule } from '~/store/storeModule'
 
 @Module({
-  name: 'ConsumersModule',
+  name: 'consumersModule',
   namespaced: true,
   stateFactory: true
 })

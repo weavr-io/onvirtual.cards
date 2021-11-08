@@ -5,11 +5,11 @@
         <b-navbar-brand to="/">
           <img src="/img/logo.svg" width="160" class="d-inline-block align-center" alt="WEAVR" />
         </b-navbar-brand>
-        <b-collapse id="nav_collapse" v-if="isLoggedIn" is-nav>
+        <b-collapse v-if="isLoggedIn" id="nav_collapse" is-nav>
           <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right toggle-class="border-bottom">
               <template slot="button-content">
-                <template v-if="isConsumer && consumer"> {{ consumer.name }} {{ consumer.surname }} </template>
+                <template v-if="isConsumer && consumer"> {{ consumer.name }} {{ consumer.surname }}</template>
                 <template v-if="isCorporate && corporate">
                   {{ corporate.name }}
                 </template>
@@ -32,12 +32,8 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { Consumer } from '~/api/Models/Consumers/Consumer'
 import BaseMixin from '~/minixs/BaseMixin'
-
-const Consumers = namespace(ConsumersStore.name)
 
 @Component
 export default class Header extends mixins(BaseMixin) {
@@ -61,7 +57,9 @@ export default class Header extends mixins(BaseMixin) {
     return this.stores.auth.identityId
   }
 
-  @Consumers.Getter consumer!: Consumer | null
+  get consumer(): Consumer | null {
+    return this.stores.consumers.consumer
+  }
 
   get corporate() {
     return this.stores.corporates.corporate
@@ -83,7 +81,7 @@ export default class Header extends mixins(BaseMixin) {
       const _id = this.identityId
       if (_id) {
         if (this.isConsumer) {
-          ConsumersStore.Helpers.get(this.$store, _id)
+          this.stores.consumers.get(_id)
         } else if (this.isCorporate) {
           this.stores.corporates.getCorporateDetails(_id)
         }
