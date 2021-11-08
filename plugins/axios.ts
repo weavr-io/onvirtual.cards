@@ -1,5 +1,5 @@
 import config from '~/config'
-import * as Error from '~/store/modules/Error'
+import { authStore, errorsStore } from '~/utils/store-accessor'
 
 export default function({ $axios, redirect, store }, inject) {
   const api = $axios.create({
@@ -21,17 +21,17 @@ export default function({ $axios, redirect, store }, inject) {
 
     switch (code) {
       case 401:
-        store.commit('auth/LOGOUT', error.response, { root: true })
+        authStore(store).LOGOUT()
         redirect('/login')
         return
       case 403:
         redirect('/forbidden')
         return
       case 409:
-        Error.Helpers.setConflict(store, error)
+        errorsStore(store).SET_CONFLICT(error)
         break
       default:
-        Error.Helpers.setError(store, error)
+        errorsStore(store).SET_ERROR(error)
         break
     }
 
