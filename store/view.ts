@@ -1,15 +1,15 @@
 // import { Module } from 'vuex-module-decorators'
-// import { BaseVuexModule } from '~/store/baseVuexModule'
 // import { KYBState } from '~/api/Enums/KYBState'
 // import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 // import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+// import { StoreModule } from '~/store/storeModule'
 //
 // @Module({
 //   name: 'ViewModule',
 //   namespaced: true,
-//   stateFactory: true,
+//   stateFactory: true
 // })
-// export default class ViewModule extends BaseVuexModule {
+// export default class View extends StoreModule {
 //   get showKybAlert() {
 //     const _isCorporate = authStore(this.store).isCorporate
 //
@@ -33,6 +33,7 @@
 //       return false
 //     }
 //
+//     // const _consumer = consumersStore(this.store).consumer
 //     const _consumer = consumersStore(this.store).consumer
 //
 //     if (this.showVerifyMobileAlert) {

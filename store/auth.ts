@@ -12,7 +12,7 @@ const Cookie = process.client ? require('js-cookie') : undefined
   namespaced: true,
   stateFactory: true
 })
-export default class AuthModule extends StoreModule {
+export default class Auth extends StoreModule {
   auth: any = {}
   isLoading: boolean = false
 

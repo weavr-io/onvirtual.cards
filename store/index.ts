@@ -2,15 +2,15 @@ import { Store } from 'vuex'
 import * as root from './root'
 import * as Error from './modules/Error'
 import * as Transfers from './modules/Transfers'
-import * as Consumers from './modules/Consumers'
 import * as View from './modules/View'
-import * as SecureClient from './modules/SecureClient'
 import Cards from '~/store/cards'
 import Accounts from '~/store/accounts'
 import Corporates from '~/store/corporates'
 import { initialiseStores } from '~/utils/store-accessor'
 import Loader from '~/store/loader'
 import Auth from '~/store/auth'
+import SecureClient from '~/store/secureClient'
+import Consumers from '~/store/consumers'
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
 // See https://nuxtjs.org/guide/vuex-store#classic-mode
@@ -35,14 +35,15 @@ const createStore = () => {
     modules: {
       [Error.name]: Error,
       [Transfers.name]: Transfers,
-      [Consumers.name]: Consumers,
+      // [Consumers.name]: Consumers,
       [View.name]: View,
-      [SecureClient.name]: SecureClient,
       cardsModule: Cards,
       accountsModule: Accounts,
       corporatesModule: Corporates,
       loaderModule: Loader,
-      authModule: Auth
+      authModule: Auth,
+      secureClientModule: SecureClient,
+      consumers: Consumers
     }
   })
 }
