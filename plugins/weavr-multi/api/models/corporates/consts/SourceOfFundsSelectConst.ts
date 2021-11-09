@@ -8,7 +8,7 @@ export const SourceOfFundsSelectConst: { value: CorporateSourceOfFundTypeEnum; t
   { value: CorporateSourceOfFundTypeEnum.RENT, text: 'Rent' },
   {
     value: CorporateSourceOfFundTypeEnum.FUNDS_FROM_OTHER_AUXILIARY_SOURCES,
-    text: 'Funds from other auxiliary sources',
+    text: 'Funds from other auxiliary sources'
   },
   { value: CorporateSourceOfFundTypeEnum.SALE_OF_MOVABLE_ASSETS, text: 'Sale of movable assets' },
   { value: CorporateSourceOfFundTypeEnum.SALE_OF_REAL_ESTATE, text: 'Sale of real estate' },
@@ -16,9 +16,9 @@ export const SourceOfFundsSelectConst: { value: CorporateSourceOfFundTypeEnum; t
   { value: CorporateSourceOfFundTypeEnum.DIVIDENDS, text: 'Dividends' },
   {
     value: CorporateSourceOfFundTypeEnum.LOAN_FROM_FINANCIAL_INSTITUTIONS_CREDIT_UNIONS,
-    text: 'Loan from financial institutions/credit unions',
+    text: 'Loan from financial institutions/credit unions'
   },
   { value: CorporateSourceOfFundTypeEnum.LOAN_FROM_THIRD_PARTIES, text: 'Loan from third parties' },
   { value: CorporateSourceOfFundTypeEnum.SALE_OF_COMPANY_SHARES_BUSINESS, text: 'Sale of company shares/business' },
-  { value: CorporateSourceOfFundTypeEnum.OTHER, text: 'Other' },
+  { value: CorporateSourceOfFundTypeEnum.OTHER, text: 'Other' }
 ]
