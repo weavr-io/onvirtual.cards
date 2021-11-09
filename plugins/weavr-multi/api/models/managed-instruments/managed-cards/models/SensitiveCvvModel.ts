@@ -1,3 +1,3 @@
 export interface SensitiveCvvModel {
-    value: string;
+  value: string
 }

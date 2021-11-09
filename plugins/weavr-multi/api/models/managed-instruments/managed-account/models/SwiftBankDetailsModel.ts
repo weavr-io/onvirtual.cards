@@ -1,4 +1,4 @@
 export interface SwiftBankDetailsModel {
-    iban: string;
-    code: string;
+  iban: string
+  code: string
 }

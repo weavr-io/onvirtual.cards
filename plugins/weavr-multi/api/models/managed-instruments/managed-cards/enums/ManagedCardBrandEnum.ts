@@ -1,4 +1,4 @@
 export enum ManagedCardBrandEnum {
-    MASTERCARD = "MASTERCARD",
-    VISA = "VISA",
+  MASTERCARD = 'MASTERCARD',
+  VISA = 'VISA'
 }

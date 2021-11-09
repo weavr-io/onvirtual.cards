@@ -1,4 +1,4 @@
 export enum CardLevelClassificationEnum {
   CONSUMER = 'CONSUMER',
-  CORPORATE = 'CORPORATE',
+  CORPORATE = 'CORPORATE'
 }

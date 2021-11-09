@@ -1,3 +1,3 @@
 export interface SensitivePasswordModel {
-    value?: string;
+  value?: string
 }

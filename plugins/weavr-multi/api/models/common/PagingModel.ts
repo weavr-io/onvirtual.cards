@@ -1,6 +1,6 @@
-import { IDModel } from "./IDModel";
+import { IDModel } from './IDModel'
 
 export interface PagingModel {
-    offset?: IDModel;
-    limit?: IDModel;
+  offset?: IDModel
+  limit?: IDModel
 }

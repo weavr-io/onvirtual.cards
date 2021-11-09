@@ -1,3 +1,3 @@
 export interface SensitiveCardNumberModel {
-    value: string;
+  value: string
 }

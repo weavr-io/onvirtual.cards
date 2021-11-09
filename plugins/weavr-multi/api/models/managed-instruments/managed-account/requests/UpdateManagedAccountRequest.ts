@@ -1,4 +1,4 @@
 export interface UpdateManagedAccountRequest {
-    tag?: string;
-    friendlyName?: string;
+  tag?: string
+  friendlyName?: string
 }

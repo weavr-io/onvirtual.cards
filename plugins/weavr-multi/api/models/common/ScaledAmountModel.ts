@@ -1,4 +1,4 @@
 export interface ScaledAmountModel {
-    value?: bigint | string;
-    scale?: number;
+  value?: bigint | string
+  scale?: number
 }

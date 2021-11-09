@@ -1,1 +1,1 @@
-export type IDModel = string;
+export type IDModel = string

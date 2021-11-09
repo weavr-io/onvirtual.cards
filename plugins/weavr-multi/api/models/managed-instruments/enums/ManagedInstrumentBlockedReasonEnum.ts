@@ -1,4 +1,4 @@
 export enum ManagedInstrumentBlockedReasonEnum {
-    USER = "USER",
-    SYSTEM = "SYSTEM",
+  USER = 'USER',
+  SYSTEM = 'SYSTEM'
 }

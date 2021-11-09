@@ -1,5 +1,5 @@
 export enum ManagedInstrumentStateEnum {
-    ACTIVE = "ACTIVE",
-    BLOCKED = "BLOCKED",
-    DESTROYED = "DESTROYED",
+  ACTIVE = 'ACTIVE',
+  BLOCKED = 'BLOCKED',
+  DESTROYED = 'DESTROYED'
 }

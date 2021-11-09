@@ -1,4 +1,4 @@
 export interface CurrencyAmountModel {
-    currency: string;
-    amount?: number | string;
+  currency: string
+  amount?: number | string
 }

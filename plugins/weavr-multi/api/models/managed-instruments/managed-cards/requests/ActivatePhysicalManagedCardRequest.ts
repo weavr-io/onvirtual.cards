@@ -1,3 +1,3 @@
 export interface ActivatePhysicalManagedCardRequest {
-    activationCode: string;
+  activationCode: string
 }

@@ -1,3 +1,3 @@
 export interface ResumeLostPasswordResponseModel {
-    token: string;
+  token: string
 }

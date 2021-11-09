@@ -1,4 +1,4 @@
 export enum ManagedCardTypeEnum {
-    VIRTUAL = "VIRTUAL",
-    PHYSICAL = "PHYSICAL",
+  VIRTUAL = 'VIRTUAL',
+  PHYSICAL = 'PHYSICAL'
 }

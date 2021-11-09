@@ -1,3 +1,3 @@
 export interface InviteValidateRequestModel {
-    inviteCode: string;
+  inviteCode: string
 }
