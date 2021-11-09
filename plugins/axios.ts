@@ -12,8 +12,18 @@ export default function({ $axios, redirect, store }, inject) {
     baseURL: config.api.baseUrl
   })
 
+  const axiosMulti = $axios.create({
+    headers: {
+      common: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      }
+    },
+    baseURL: config.multiApi.baseUrl
+  })
+
   function onRequest(config) {
-    // console.log('Making request to: ' + config.url)
+    console.log('Making request to: ' + config.url)
   }
 
   function onError(error) {
@@ -38,9 +48,14 @@ export default function({ $axios, redirect, store }, inject) {
     return Promise.reject(error)
   }
 
+  axiosMulti.interceptors.response.use(undefined, onError)
+
   api.onRequest(onRequest)
   api.onError(onError)
 
   // Inject to context as $api
   inject('api', api)
+
+  // Inject to context as $axiosMulti
+  inject('axiosMulti', axiosMulti)
 }

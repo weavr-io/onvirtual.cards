@@ -71,7 +71,8 @@ const config = {
     { src: '~/plugins/flatpickr.ts', ssr: false },
     { src: '~/plugins/InfiniteLoading.ts', ssr: false },
     { src: '~/plugins/axios.ts' },
-    { src: '~/plugins/axios-accessor.ts' }
+    { src: '~/plugins/axios-accessor.ts' },
+    { src: '~/plugins/weavr-multi/index.ts' }
   ],
   /*
    ** Nuxt.js modules
