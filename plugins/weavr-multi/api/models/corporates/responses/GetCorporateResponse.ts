@@ -2,12 +2,14 @@ import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/Identit
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/IndustryTypeEnum'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { UsersRootUserModel } from '~/plugins/weavr-multi/api/models/users/models/UsersRootUserModel'
 
 export interface GetCorporateResponse {
   id: IdentityIdModel
-  profileId: string
+  profileId: IDModel
   tag?: string
-  // rootUser:
+  rootUser: UsersRootUserModel
   // company:
   industry: IndustryTypeEnum
   sourceOfFunds: CorporateSourceOfFundTypeEnum

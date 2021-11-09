@@ -1,6 +1,6 @@
 import { IDModel } from '../../common/IDModel'
 import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
-import { RootUserModel } from '~/plugins/weavr-multi/api/models/users/models/RootUserModel'
+import { UsersRootUserModel } from '~/plugins/weavr-multi/api/models/users/models/UsersRootUserModel'
 import { CompanyTypeEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CompanyTypeEnum'
 import { LegalAddressModel } from '~/plugins/weavr-multi/api/models/corporates/models/LegalAddressModel'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
@@ -11,7 +11,7 @@ export interface ConsumerModel {
   id: IdentityIdModel
   profileId: IDModel
   tag?: string
-  rootUser: RootUserModel
+  rootUser: UsersRootUserModel
   company: {
     name: string
     type: CompanyTypeEnum
