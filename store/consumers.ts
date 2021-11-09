@@ -1,9 +1,9 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { $api } from '~/utils/api'
 import { authStore, loaderStore } from '~/utils/store-accessor'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import { StoreModule } from '~/store/storeModule'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
 
 @Module({
   name: 'consumersModule',
@@ -12,7 +12,7 @@ import { StoreModule } from '~/store/storeModule'
 })
 export default class Consumers extends StoreModule {
   isLoading: boolean = false
-  consumer: any = null
+  consumer: ConsumerModel | null = null
 
   @Mutation
   SET_IS_LOADING(isLoading: boolean) {
@@ -20,7 +20,7 @@ export default class Consumers extends StoreModule {
   }
 
   @Mutation
-  SET_CONSUMER(consumer: Consumer) {
+  SET_CONSUMER(consumer: ConsumerModel) {
     this.consumer = consumer
   }
 
@@ -61,11 +61,12 @@ export default class Consumers extends StoreModule {
   }
 
   @Action({ rawError: true })
-  get(id) {
+  get() {
     loaderStore(this.store).start()
     this.SET_IS_LOADING(true)
 
-    const req = $api.post('/app/api/consumers/' + id + '/get', {})
+    // const req = $api.post('/app/api/consumers/' + id + '/get', {})
+    const req = this.store.$apiMulti.consumers.show()
 
     req.then((_res) => {
       this.SET_CONSUMER(_res.data)
@@ -96,8 +97,8 @@ export default class Consumers extends StoreModule {
   @Action({ rawError: true })
   async checkKYC() {
     if (this.consumer === null) {
-      const _id = authStore(this.store).identity.id
-      await this.get(_id)
+      // const _id = authStore(this.store).identity?.id
+      await this.get()
     }
 
     const _res = this.consumer.kyc.fullDueDiligence === FullDueDiligence.APPROVED

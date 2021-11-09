@@ -174,7 +174,7 @@ export default class Corporates extends StoreModule {
   @Action({ rawError: true })
   async checkKYB() {
     if (this.corporate === null) {
-      const _corpId = authStore(this.store).identity.id
+      const _corpId = authStore(this.store).identity?.id
       await this.getKyb(_corpId)
     }
 

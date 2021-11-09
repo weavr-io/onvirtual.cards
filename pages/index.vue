@@ -26,7 +26,7 @@ export default class IndexPage extends mixins(BaseMixin) {
         let _cons = consumersStore(store).consumer
 
         if (_cons === null) {
-          await consumersStore(store).get(_auth.identity!.id!)
+          await consumersStore(store).get()
           _cons = consumersStore(store).consumer
         }
 

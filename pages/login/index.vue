@@ -131,7 +131,7 @@ export default class LoginPage extends mixins(BaseMixin) {
     } catch (e) {}
 
     if (this.stores.auth.isConsumer) {
-      await this.stores.consumers.get(this.stores.auth.identity.id)
+      await this.stores.consumers.get(this.stores.auth.identity?.id)
     }
 
     await this.$router.push('/')
