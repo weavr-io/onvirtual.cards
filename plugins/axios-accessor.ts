@@ -3,7 +3,7 @@ import { initializeAxios } from '~/utils/api'
 
 const accessor: Plugin = ({ store }) => {
   // @ts-ignore
-  initializeAxios(store.$api, store.$apiMulti)
+  initializeAxios(store.$api, store.$axiosMulti)
 }
 
 export default accessor

@@ -1,8 +1,9 @@
+import { Plugin } from '@nuxt/types'
 import config from '~/config'
 import { authStore, errorsStore } from '~/utils/store-accessor'
 
-export default function({ $axios, redirect, store }, inject) {
-  const api = $axios.create({
+const axiosPlugin: Plugin = (ctxt, inject) => {
+  const api = ctxt.$axios.create({
     headers: {
       common: {
         'Content-Type': 'application/json',
@@ -12,7 +13,7 @@ export default function({ $axios, redirect, store }, inject) {
     baseURL: config.api.baseUrl
   })
 
-  const axiosMulti = $axios.create({
+  const axiosMulti = ctxt.$axios.create({
     headers: {
       common: {
         'Content-Type': 'application/json',
@@ -31,17 +32,17 @@ export default function({ $axios, redirect, store }, inject) {
 
     switch (code) {
       case 401:
-        authStore(store).LOGOUT()
-        redirect('/login')
+        authStore(ctxt.store).logout()
+        ctxt.redirect('/login')
         return
       case 403:
-        redirect('/forbidden')
+        ctxt.redirect('/forbidden')
         return
       case 409:
-        errorsStore(store).SET_CONFLICT(error)
+        errorsStore(ctxt.store).SET_CONFLICT(error)
         break
       default:
-        errorsStore(store).SET_ERROR(error)
+        errorsStore(ctxt.store).SET_ERROR(error)
         break
     }
 
@@ -59,3 +60,5 @@ export default function({ $axios, redirect, store }, inject) {
   // Inject to context as $axiosMulti
   inject('axiosMulti', axiosMulti)
 }
+
+export default axiosPlugin

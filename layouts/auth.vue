@@ -21,8 +21,6 @@
         <nuxt class="my-6" />
       </b-row>
     </b-container>
-    <!--    <cookie-policy />-->
-    <!-- <app-footer /> -->
   </div>
 </template>
 

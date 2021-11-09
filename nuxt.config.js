@@ -111,6 +111,7 @@ const config = {
 }
 
 console.log(process.env.RECAPTCHA, 're')
+
 if (process.env.RECAPTCHA) {
   config.modules.push('@nuxtjs/recaptcha')
 }

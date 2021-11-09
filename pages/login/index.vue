@@ -12,12 +12,12 @@
         <error-alert
           message="Incorrect email and password combination. If you do not have an account please click on Register."
         />
-        <b-form-group id="ig-code" label="EMAIL" label-for="form-code">
+        <b-form-group id="login-email" label="EMAIL" label-for="form-email">
           <b-form-input
-            id="from-code"
-            v-model="loginRequest.code"
+            id="from-email"
+            v-model="loginRequest.email"
             class="form-control"
-            name="setCode"
+            name="Email"
             placeholder="Email"
           />
         </b-form-group>
@@ -61,11 +61,12 @@
 
 <script lang="ts">
 import { Component, mixins, Ref, Watch } from 'nuxt-property-decorator'
-import { Schemas } from '~/api/Schemas'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { authStore } from '~/utils/store-accessor'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/requests/LoginWithPasswordRequest'
+import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/responses/LoginWithPasswordResponse'
 
 @Component({
   layout: 'auth',
@@ -92,9 +93,11 @@ export default class LoginPage extends mixins(BaseMixin) {
   @Ref('passwordField')
   passwordField!: WeavrPasswordInput
 
-  public loginRequest: Schemas.LoginRequest = {
-    code: '',
-    password: ''
+  private loginRequest: LoginWithPasswordRequest = {
+    email: '',
+    password: {
+      value: ''
+    }
   }
 
   login() {
@@ -104,8 +107,10 @@ export default class LoginPage extends mixins(BaseMixin) {
       this.passwordField.createToken().then(
         (tokens) => {
           console.log('Password tokenisation success')
-          this.loginRequest.password = tokens.tokens.password
-          this.stores.auth.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
+          this.loginRequest.password.value = tokens.tokens.password
+          this.stores.auth.loginWithPassword(this.loginRequest).then((res) => {
+            this.goToDashboard(res.data)
+          })
         },
         (e) => {
           console.log('tokenisation failed', e)
@@ -116,12 +121,12 @@ export default class LoginPage extends mixins(BaseMixin) {
     }
   }
 
-  async goToDashboard(res) {
+  async goToDashboard(res: LoginWithPasswordResponse) {
     console.log('auth success')
-    const _id = res.data.credential.type + '-' + res.data.credential.id
+    const _id = res.credentials.type! + '-' + res.credentials.id
     try {
       this.$segment.identify(_id, {
-        email: this.loginRequest.code
+        email: this.loginRequest.email
       })
     } catch (e) {}
 
@@ -129,7 +134,7 @@ export default class LoginPage extends mixins(BaseMixin) {
       await this.stores.consumers.get(this.stores.auth.identity.id)
     }
 
-    this.$router.push('/')
+    await this.$router.push('/')
   }
 
   checkOnKeyUp(e) {
