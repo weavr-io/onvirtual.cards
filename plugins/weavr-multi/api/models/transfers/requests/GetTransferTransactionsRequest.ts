@@ -1,7 +1,7 @@
 import { InstrumentIdModel } from '~/plugins/weavr-multi/api/models/common/InstrumentIdModel'
 import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
 
-export interface getTransferTransactionsRequest {
+export interface GetTransferTransactionsRequest {
   offset?: number
   limit?: number
   profileId?: string
