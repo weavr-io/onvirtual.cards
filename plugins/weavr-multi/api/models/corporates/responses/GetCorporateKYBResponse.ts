@@ -1,5 +1,5 @@
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/KYBStatusEnum'
 
-export interface getCorporateKYBResponse {
+export interface GetCorporateKYBResponse {
   kybStatus: KYBStatusEnum
 }
