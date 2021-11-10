@@ -47,7 +47,7 @@ export class ManagedCardsApi {
 
   statement(id: IDModel, filters?: StatementFiltersRequest): Promise<AxiosResponse<StatementResponseModel>> {
     return $axiosMulti.get<StatementResponseModel>('/managed_cards/' + id + '/statement', {
-      params: filters
+      params: filters,
     })
   }
 
@@ -114,5 +114,9 @@ export class ManagedCardsApi {
       '/managed_cards/' + params.id + '/physical/replace_lost_stolen',
       params.body
     )
+  }
+
+  resetPhysicalCardContactlessLimit(id: IDModel): Promise<AxiosResponse> {
+    return $axiosMulti.post('/managed_cards/' + id + '/physical/contactless_limit/reset')
   }
 }
