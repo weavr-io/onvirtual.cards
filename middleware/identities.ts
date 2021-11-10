@@ -5,7 +5,6 @@ const identitiesMiddleware: Middleware = async ({ store }) => {
   // this will run in async before every route change in order to populate identities respectively
 
   if (authStore(store).isConsumer && consumersStore(store).consumer === null) {
-    debugger
     await consumersStore(store).get()
   }
 

@@ -17,7 +17,7 @@ export interface UpdateConsumerRequest {
   address?: AddressModel
   feeGroup?: string
   baseCurrency?: string
-  occupation: OccupationTypeEnum
+  occupation?: OccupationTypeEnum
   sourceOfFunds?: CorporateSourceOfFundTypeEnum
   sourceOfFundsOther?: string
 }

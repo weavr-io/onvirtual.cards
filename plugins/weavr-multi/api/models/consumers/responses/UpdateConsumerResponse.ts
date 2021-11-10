@@ -2,7 +2,7 @@ import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/Identit
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/ConsumerSourceOfFundTypeEnum'
 
-export interface UpdateConsumerRequest {
+export interface UpdateConsumerResponse {
   id: IdentityIdModel
   profileId: IDModel
   tag?: string

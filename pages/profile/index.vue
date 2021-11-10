@@ -9,12 +9,12 @@
               <b-form-row>
                 <b-col>
                   <b-form-group label="FIRST NAME">
-                    <b-form-input v-model="consumer.name" class="form-control" placeholder="John" disabled />
+                    <b-form-input :value="rootName" class="form-control" placeholder="John" readonly disabled />
                   </b-form-group>
                 </b-col>
                 <b-col>
                   <b-form-group label="LAST NAME">
-                    <b-form-input v-model="consumer.surname" class="form-control" placeholder="Doe" disabled />
+                    <b-form-input :value="rootSurname" class="form-control" placeholder="Doe" readonly disabled />
                   </b-form-group>
                 </b-col>
               </b-form-row>
@@ -22,10 +22,10 @@
                 <b-col>
                   <b-form-group label="E-Mail">
                     <b-form-input
-                      v-model="updateConsumer.request.email"
-                      :state="isInvalid($v.updateConsumer.request.email)"
+                      v-model="updateConsumer.email"
+                      :state="isInvalid($v.updateConsumer.email)"
                       class="form-control"
-                      placeholder="johndoe@email.com"
+                      placeholder="example@email.com"
                     />
                   </b-form-group>
                 </b-col>
@@ -34,10 +34,10 @@
                 <b-col>
                   <b-form-group label="MOBILE NUMBER">
                     <vue-phone-number-input
-                      :value="mobile.mobileNumber"
+                      :value="mobile.number"
                       :error="numberIsValid === false"
                       :border-radius="0"
-                      :default-country-code="mobile.mobileCountryCode"
+                      :default-country-code="mobile.countryCode"
                       color="#6C1C5C"
                       error-color="#F50E4C"
                       valid-color="#6D7490"
@@ -62,6 +62,9 @@
                 </b-col>
               </b-row>
             </b-form>
+            <pre>
+              {{ consumer }}
+            </pre>
           </template>
           <template v-if="isCorporate">
             <b-form novalidate @submit="doUpdateCorporate">
@@ -133,10 +136,11 @@ import { Component, mixins } from 'nuxt-property-decorator'
 
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { email, required } from 'vuelidate/lib/validators'
-import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
+
 import { UpdateCorporateUserFullRequest } from '~/api/Requests/Corporates/UpdateCorporateUserFullRequest'
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/UpdateConsumerRequest'
 
 @Component({
   components: {
@@ -145,27 +149,25 @@ import { authStore, consumersStore, corporatesStore } from '~/utils/store-access
   },
   validations: {
     updateConsumer: {
-      request: {
-        mobileNumber: {
+      mobile: {
+        number: {
           required
         },
-        mobileCountryCode: { required },
-        email: {
-          required,
-          email
-        }
+        countryCode: { required }
+      },
+      email: {
+        required,
+        email
       }
     },
     updateCorporate: {
-      body: {
-        mobileNumber: {
-          required
-        },
-        mobileCountryCode: { required },
-        email: {
-          required,
-          email
-        }
+      number: {
+        required
+      },
+      countryCode: { required },
+      email: {
+        required,
+        email
       }
     }
   }
@@ -178,34 +180,34 @@ export default class Profile extends mixins(BaseMixin) {
   isLoading: boolean = false
 
   mobile!: {
-    mobileCountryCode: string
-    mobileNumber: string
+    countryCode: string
+    number: string
   }
 
   async asyncData({ store }) {
     if (authStore(store).isConsumer) {
-      const _parsedNumber = parsePhoneNumberFromString(_consumer.data.mobileCountryCode + _consumer.data.mobileNumber)
+      const _consumer = consumersStore(store).consumer
+
+      const _parsedNumber = parsePhoneNumberFromString(
+        _consumer!.rootUser.mobile.countryCode + _consumer!.rootUser.mobile.number
+      )
 
       const _updateConsumerRequest: UpdateConsumerRequest = {
-        consumerId: _id,
-        request: {
-          mobileCountryCode: _consumer.data.mobileCountryCode,
-          mobileNumber: _consumer.data.mobileNumber,
-          email: _consumer.data.email
-        }
+        mobile: {
+          countryCode: _consumer!.rootUser.mobile.countryCode,
+          number: _consumer!.rootUser.mobile.number
+        },
+        email: _consumer?.rootUser.email
       }
 
       return {
         updateConsumer: _updateConsumerRequest,
         mobile: {
-          mobileCountryCode: _parsedNumber?.country,
-          mobileNumber: _consumer.data.mobileNumber
+          countryCode: _parsedNumber?.country,
+          number: _consumer?.rootUser.mobile.number
         }
       }
     } else if (authStore(store).isCorporate) {
-      const _corporate = authStore(store).auth
-
-      await corporatesStore(store).getCorporateDetails(_id)
       const _corporateUser = await corporatesStore(store).getUser({
         corporateId: _id,
         userId: _corporate.credential!.id
@@ -238,14 +240,14 @@ export default class Profile extends mixins(BaseMixin) {
   }
 
   consumerPhoneUpdate(number) {
-    this.$set(this.mobile, 'mobileNumber', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.updateConsumer.request.mobileNumber = number.phoneNumber
+    this.$set(this.mobile, 'number', number.formatNational ? number.formatNational : number.phoneNumber)
+    this.updateConsumer.mobile!.number = number.phoneNumber
     this.numberIsValid = number.isValid
   }
 
   corporatePhoneUpdate(number) {
-    this.$set(this.mobile, 'mobileNumber', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.updateCorporate.body.mobileNumber = number.phoneNumber
+    this.$set(this.mobile, 'number', number.formatNational ? number.formatNational : number.phoneNumber)
+    this.updateCorporate.mobile.number = number.phoneNumber
     this.numberIsValid = number.isValid
   }
 
