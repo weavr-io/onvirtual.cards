@@ -1,5 +1,5 @@
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 
-export interface getConsumerKYCResponse {
+export interface GetConsumerKYCResponse {
   fullDueDiligence: FullDueDiligence
 }
