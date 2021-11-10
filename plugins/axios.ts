@@ -49,7 +49,8 @@ const axiosPlugin: Plugin = (ctxt, inject) => {
     return Promise.reject(error)
   }
 
-  axiosMulti.interceptors.response.use(undefined, onError)
+  // axiosMulti.interceptors.response.use(undefined, onError)
+  axiosMulti.onError(onError)
 
   api.onRequest(onRequest)
   api.onError(onError)

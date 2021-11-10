@@ -23,7 +23,6 @@ export default class IndexPage extends mixins(BaseMixin) {
     if (isLoggedIn) {
       const _auth = authStore(store).auth
       if (authStore(store).isConsumer) {
-        debugger
         let _cons = consumersStore(store).consumer
 
         if (_cons === null) {

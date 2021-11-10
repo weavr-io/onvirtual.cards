@@ -14,6 +14,7 @@ const cookieMiddleware: Middleware = async ({ store }) => {
       await authStore(store).SET_AUTH(auth)
       console.log('valid cookie found')
     } catch (err) {
+      debugger
       // No valid cookie found
       console.log('no valid cookie found')
     }

@@ -4,10 +4,10 @@ import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/corpora
 import { CorporateModel } from '~/plugins/weavr-multi/api/models/corporates/models/CorporateModel'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/UpdateCorporateRequest'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/SendVerificationCodeRequest'
-import { VerifyEmail } from '~/plugins/weavr-multi/api/models/corporates/requests/VerifyEmail'
 import { StartCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/corporates/responses/StartCorporateKYBResponse'
-import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/corporates/responses/GetCorporateKYBResponse'
 import { ChargeFeeToCorporate } from '~/plugins/weavr-multi/api/models/corporates/requests/ChargeFeeToCorporate'
+import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/corporates/responses/GetCorporateKYBResponse'
+import { VerifyEmail } from '~/plugins/weavr-multi/api/models/corporates/requests/VerifyEmail'
 
 export class CorporatesApi {
   store(data: CreateCorporateRequest): Promise<AxiosResponse<CorporateModel>> {

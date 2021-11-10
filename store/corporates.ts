@@ -9,6 +9,7 @@ import { $api } from '~/utils/api'
 import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
 import { CorporateKybStatus } from '~/api/Models/Corporates/CorporateKybStatus'
 import { authStore } from '~/utils/store-accessor'
+import { CorporateModel } from '~/plugins/weavr-multi/api/models/corporates/models/CorporateModel'
 
 @Module({
   name: 'corporatesModule',
@@ -20,7 +21,7 @@ export default class Corporates extends StoreModule {
 
   isLoadingRegistration: boolean = false
 
-  corporate: Corporate | null = null
+  corporate: CorporateModel | null = null
 
   kyb: CorporateKybStatus | null = null
 
@@ -37,7 +38,7 @@ export default class Corporates extends StoreModule {
   }
 
   @Mutation
-  SET_CORPORATE(_corporate: Corporate) {
+  SET_CORPORATE(_corporate: CorporateModel) {
     this.corporate = _corporate
   }
 

@@ -19,6 +19,6 @@ export class ConsumersApi {
   }
 
   showKYC(): Promise<AxiosResponse<GetConsumerKYCResponse>> {
-    return $axiosMulti.get<GetConsumerKYCResponse>('/consumers/kyc')
+    return $axiosMulti.get<GetConsumerKYCResponse>('/consumers/kyc', {})
   }
 }

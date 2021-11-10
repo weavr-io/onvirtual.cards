@@ -6,6 +6,8 @@ import { CorporateModel } from '~/plugins/weavr-multi/api/models/corporates/mode
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/requests/LoginWithPasswordRequest'
+import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/passwords/requests/UpdatePasswordRequestModel'
+import { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/passwords/responses/CreatePasswordResponseModel'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -45,13 +47,26 @@ export default class Auth extends StoreModule {
   }
 
   get identityAddressArray() {
-    return [
-      this.authIdentity?.company.businessAddress?.addressLine1,
-      this.authIdentity?.company.businessAddress?.addressLine2,
-      this.authIdentity?.company.businessAddress?.city,
-      this.authIdentity?.company.businessAddress?.country,
-      this.authIdentity?.company.businessAddress?.postCode
-    ]
+    if (this.isConsumer) {
+      const userAddress = this.authIdentity as ConsumerModel
+      return [
+        userAddress.rootUser.address.addressLine1,
+        userAddress.rootUser.address.addressLine2,
+        userAddress.rootUser.address.city,
+        userAddress.rootUser.address.country,
+        userAddress.rootUser.address.postCode
+      ]
+    } else {
+      const companyAddress = this.authIdentity as CorporateModel
+
+      return [
+        companyAddress.company.businessAddress?.addressLine1,
+        companyAddress.company.businessAddress?.addressLine2,
+        companyAddress.company.businessAddress?.city,
+        companyAddress.company.businessAddress?.country,
+        companyAddress.company.businessAddress?.postCode
+      ]
+    }
   }
 
   @Mutation
@@ -65,6 +80,24 @@ export default class Auth extends StoreModule {
     Cookie.set('auth-onv', this.auth)
 
     $axiosMulti.defaults.headers.Authorization = 'Bearer ' + this.auth?.token
+  }
+
+  @Mutation
+  SET_TOKEN(res: CreatePasswordResponseModel) {
+    this.auth!.token = res.token!
+
+    Cookie.set('auth-onv', this.auth)
+
+    $axiosMulti.defaults.headers.Authorization = 'Bearer ' + this.auth?.token
+  }
+
+  @Mutation
+  REMOVE_AUTH(auth: null) {
+    this.auth = auth
+
+    Cookie.set('auth-onv', this.auth)
+
+    delete $axiosMulti.defaults.headers.Authorization
   }
 
   @Mutation
@@ -88,7 +121,18 @@ export default class Auth extends StoreModule {
     const _req = this.store.$apiMulti.authentication.logout()
 
     _req.then(() => {
-      this.SET_AUTH(null)
+      this.REMOVE_AUTH(null)
+    })
+
+    return _req
+  }
+
+  @Action({ rawError: true })
+  updatePassword(request: UpdatePasswordRequestModel) {
+    const _req = this.store.$apiMulti.passwords.update(request)
+
+    _req.then((res) => {
+      this.SET_TOKEN(res.data)
     })
 
     return _req

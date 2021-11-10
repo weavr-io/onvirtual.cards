@@ -23,7 +23,7 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
       }
     } else {
       try {
-        const _corpId = authStore(store).auth.identity.id
+        const _corpId = authStore(store).auth?.identity.id
 
         await corporatesStore(store).getCorporateDetails(_corpId)
         await corporatesStore(store).checkKYB()

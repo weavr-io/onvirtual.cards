@@ -22,20 +22,20 @@
                     ref="oldPassword"
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
                     :base-style="passwordBaseStyle"
-                    @onKeyUp="checkOnKeyUp"
                     class-name="sign-in-password"
                     name="old-password"
                     required="true"
+                    @onKeyUp="checkOnKeyUp"
                   />
                   <label class="d-block mt-3">NEW PASSWORD:</label>
                   <weavr-password-input
                     ref="newPassword"
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
                     :base-style="passwordBaseStyle"
-                    @onKeyUp="checkOnKeyUp"
                     class-name="sign-in-password"
                     name="new-password"
                     required="true"
+                    @onKeyUp="checkOnKeyUp"
                   />
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </div>
@@ -55,10 +55,10 @@
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import LoaderButton from '~/components/LoaderButton.vue'
-import { UpdatePassword } from '~/api/Requests/Auth/UpdatePassword'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/passwords/requests/UpdatePasswordRequestModel'
 
 @Component({
   components: {
@@ -77,22 +77,12 @@ export default class BundlesPage extends mixins(BaseMixin) {
   @Ref('newPassword')
   newPassword!: WeavrPasswordInput
 
-  public changePasswordRequest: UpdatePassword = {
-    id: 0,
-    request: {
-      oldPassword: {
-        value: ''
-      },
-      password: {
-        value: ''
-      }
-    }
-  }
-
-  mounted() {
-    const _id = this.stores.auth.identityId
-    if (_id) {
-      this.changePasswordRequest.id = _id
+  public changePasswordRequest: UpdatePasswordRequestModel = {
+    oldPassword: {
+      value: ''
+    },
+    newPassword: {
+      value: ''
     }
   }
 
@@ -119,8 +109,8 @@ export default class BundlesPage extends mixins(BaseMixin) {
 
     Promise.all(promises).then((values) => {
       if (values[0].tokens['old-password'] !== '' && values[1].tokens['new-password']) {
-        this.changePasswordRequest.request.oldPassword.value = values[0].tokens['old-password']
-        this.changePasswordRequest.request.password.value = values[1].tokens['new-password']
+        this.changePasswordRequest.oldPassword.value = values[0].tokens['old-password']
+        this.changePasswordRequest.newPassword.value = values[1].tokens['new-password']
         this.stores.auth.updatePassword(this.changePasswordRequest).then(() => {
           this.$router.push('/profile')
         })

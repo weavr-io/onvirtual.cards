@@ -62,9 +62,6 @@
                 </b-col>
               </b-row>
             </b-form>
-            <pre>
-              {{ consumer }}
-            </pre>
           </template>
           <template v-if="isCorporate">
             <b-form novalidate @submit="doUpdateCorporate">
