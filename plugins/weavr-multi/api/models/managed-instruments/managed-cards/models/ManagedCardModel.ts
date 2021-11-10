@@ -9,20 +9,17 @@ import { PhysicalCardDetailsModel } from '~/plugins/weavr-multi/api/models/manag
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 import { ManagedCardTypeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardTypeEnum'
 import { ManagedCardBrandEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardBrandEnum'
+import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
 
 export interface ManagedCardModel {
   id: IDModel
   profileId: IDModel
   externalHandle: string
   tag?: string
-  owner: {
-    type: 'corporates' | 'consumers'
-    id: IDModel
-  }
   friendlyName: string
   currency: string
   balances?: ManagedInstrumentBalanceModel
-  state?: ManagedInstrumentStateModel
+  state: ManagedInstrumentStateModel
   type: ManagedCardTypeEnum
   cardBrand: ManagedCardBrandEnum
   cardNumber?: SensitiveCardNumberModel
@@ -39,8 +36,5 @@ export interface ManagedCardModel {
   cardholderMobileNumber: string
   billingAddress?: AddressModel
   physicalCardDetails?: PhysicalCardDetailsModel
-  deliveryAddress?: {
-    name: string
-    surname: string
-  } & AddressModel
+  mode: ManagedCardModeEnum
 }

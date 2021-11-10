@@ -4,18 +4,18 @@ import { authStore, loaderStore } from '~/utils/store-accessor'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import { StoreModule } from '~/store/storeModule'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
-import { ConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/ConsumerKYCResponse'
+import { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/GetConsumerKYCResponse'
 
 @Module({
   name: 'consumersModule',
   namespaced: true,
-  stateFactory: true
+  stateFactory: true,
 })
 export default class Consumers extends StoreModule {
   isLoading: boolean = false
 
   consumer: ConsumerModel | null = null
-  kyc: ConsumerKYCResponse | null = null
+  kyc: GetConsumerKYCResponse | null = null
 
   @Mutation
   SET_IS_LOADING(isLoading: boolean) {
@@ -28,7 +28,7 @@ export default class Consumers extends StoreModule {
   }
 
   @Mutation
-  SET_KYC(_kyc: ConsumerKYCResponse) {
+  SET_KYC(_kyc: GetConsumerKYCResponse) {
     this.kyc = _kyc
   }
 

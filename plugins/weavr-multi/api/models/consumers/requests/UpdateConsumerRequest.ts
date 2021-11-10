@@ -2,6 +2,8 @@ import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/corporates/models/MobileModel'
 import { OccupationTypeEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/OccupationTypeEnum'
+import { DateModel } from '~/plugins/weavr-multi/api/models/common/DateModel'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
 export interface UpdateConsumerRequest {
   tag?: string
@@ -9,11 +11,7 @@ export interface UpdateConsumerRequest {
   surname?: string
   email?: string
   mobile?: MobileModel
-  dateOfBirth?: {
-    year?: number
-    month?: number
-    day?: number
-  } | null
+  dateOfBirth?: DateModel
   address?: AddressModel
   feeGroup?: string
   baseCurrency?: string

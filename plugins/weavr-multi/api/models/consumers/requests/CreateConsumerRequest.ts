@@ -1,18 +1,12 @@
 import { IDModel } from '../../common/IDModel'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/corporates/models/MobileModel'
 import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/ConsumerSourceOfFundTypeEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { ConsumersRootUserRequestModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumersRootUserRequestModel'
 
 export interface CreateConsumerRequest {
   profileId: IDModel
   tag?: string
-  rootUser: {
-    name: string
-    surname: string
-    email: string
-    mobile: MobileModel
-    companyPosition: string
-  }
+  rootUser: ConsumersRootUserRequestModel
   ipAddress: string
   acceptedTerms: boolean
   baseCurrency?: CurrencyEnum
