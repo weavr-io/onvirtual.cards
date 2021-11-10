@@ -4,6 +4,7 @@ import { authStore, loaderStore } from '~/utils/store-accessor'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import { StoreModule } from '~/store/storeModule'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
+import { ConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/ConsumerKYCResponse'
 
 @Module({
   name: 'consumersModule',
@@ -12,7 +13,9 @@ import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models
 })
 export default class Consumers extends StoreModule {
   isLoading: boolean = false
+
   consumer: ConsumerModel | null = null
+  kyc: ConsumerKYCResponse | null = null
 
   @Mutation
   SET_IS_LOADING(isLoading: boolean) {
@@ -22,6 +25,11 @@ export default class Consumers extends StoreModule {
   @Mutation
   SET_CONSUMER(consumer: ConsumerModel) {
     this.consumer = consumer
+  }
+
+  @Mutation
+  SET_KYC(_kyc: ConsumerKYCResponse) {
+    this.kyc = _kyc
   }
 
   @Action({ rawError: true })
@@ -95,19 +103,26 @@ export default class Consumers extends StoreModule {
   }
 
   @Action({ rawError: true })
-  async checkKYC() {
-    if (this.consumer === null) {
-      // const _id = authStore(this.store).identity?.id
-      await this.get()
-    }
+  getKYC() {
+    // if (this.consumer === null) {
+    //   const _id = authStore(this.store).identity?.id
+    //   await this.get()
+    // }
 
-    const _res = this.consumer.kyc.fullDueDiligence === FullDueDiligence.APPROVED
+    // const _res = this.consumer.kyc.fullDueDiligence === FullDueDiligence.APPROVED
+    //
+    // if (!_res) {
+    //   return Promise.reject(new Error('KYC not approved'))
+    // } else {
+    //   return Promise.resolve()
+    // }
 
-    if (!_res) {
-      return Promise.reject(new Error('KYC not approved'))
-    } else {
-      return Promise.resolve()
-    }
+    const req = this.store.$apiMulti.consumers.showKYC()
+    req.then((res) => {
+      this.SET_KYC(res.data)
+    })
+
+    return req
   }
 
   @Action({ rawError: true })

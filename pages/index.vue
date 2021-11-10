@@ -23,6 +23,7 @@ export default class IndexPage extends mixins(BaseMixin) {
     if (isLoggedIn) {
       const _auth = authStore(store).auth
       if (authStore(store).isConsumer) {
+        debugger
         let _cons = consumersStore(store).consumer
 
         if (_cons === null) {
@@ -30,17 +31,17 @@ export default class IndexPage extends mixins(BaseMixin) {
           _cons = consumersStore(store).consumer
         }
 
-        if (_cons && _cons.kyc && !_cons.kyc.emailVerified) {
+        if (_cons && _cons.rootUser && !_cons.rootUser.emailVerified) {
           redirect('/register/verify?send=true')
-        } else if (_cons && _cons.kyc && !_cons.kyc.mobileVerified) {
+        } else if (_cons && _cons.rootUser && !_cons.rootUser.mobileNumberVerified) {
           redirect('/register/verify/mobile')
-        } else if (_cons && typeof _cons.address === 'undefined') {
+        } else if (_cons && typeof _cons.rootUser === 'undefined') {
           redirect('/profile/address')
         } else {
           redirect('/dashboard')
         }
       } else if (authStore(store).isCorporate) {
-        const res = await corporatesStore(store).getKyb(_auth.identity!.id!)
+        const res = await corporatesStore(store).getKyb(_auth.identity.id!)
 
         if (res.data.rootEmailVerified && res.data.rootMobileVerified) {
           redirect('/dashboard')

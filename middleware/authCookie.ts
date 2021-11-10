@@ -1,27 +1,23 @@
+import { Middleware } from '@nuxt/types'
 import { authStore } from '~/utils/store-accessor'
+import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/responses/LoginWithPasswordResponse'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
-export default function(ctxt) {
-  let auth: authCookieContents | null = null
+const cookieMiddleware: Middleware = async ({ store }) => {
+  let auth: LoginWithPasswordResponse | null = null
 
-  interface authCookieContents {
-    token: string
-  }
-
-  try {
-    const authCookie = Cookie.get('auth-onvirtual')
-
-    if (authCookie) {
+  const authCookie = Cookie.get('auth-onv')
+  if (authCookie) {
+    try {
       auth = JSON.parse(authCookie)
-      const _storeAuth = authStore(ctxt.store).auth
-
-      if (_storeAuth?.token !== auth?.token) {
-        authStore(ctxt.store).AUTHENTICATE(auth as authCookieContents)
-      }
+      await authStore(store).SET_AUTH(auth)
+      console.log('valid cookie found')
+    } catch (err) {
+      // No valid cookie found
+      console.log('no valid cookie found')
     }
-  } catch (err) {
-    console.error(err)
-    // No valid cookie found
   }
 }
+
+export default cookieMiddleware

@@ -81,17 +81,18 @@ export default class CardsPage extends mixins(BaseMixin) {
   public showDeletedSwitch: boolean = false
 
   async asyncData({ store, route }) {
-    if (authStore(store).isConsumer) {
-      const _consumerId = authStore(store).identityId
-      if (_consumerId) {
-        await consumersStore(store).get(_consumerId)
-      }
-    } else {
-      const _corporateId = authStore(store).identityId
-      if (_corporateId) {
-        await corporatesStore(store).getCorporateDetails(_corporateId)
-      }
-    }
+    // if (authStore(store).isConsumer) {
+    //   const _consumerId = authStore(store).identityId
+    //   if (_consumerId) {
+    //     debugger
+    //     await consumersStore(store).get(_consumerId)
+    //   }
+    // } else {
+    //   const _corporateId = authStore(store).identityId
+    //   if (_corporateId) {
+    //     await corporatesStore(store).getCorporateDetails(_corporateId)
+    //   }
+    // }
 
     let _active: NullableBoolean = NullableBoolean.NULL
 

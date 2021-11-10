@@ -9,10 +9,7 @@
           <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right toggle-class="border-bottom">
               <template slot="button-content">
-                <template v-if="isConsumer && consumer"> {{ consumer.name }} {{ consumer.surname }}</template>
-                <template v-if="isCorporate && corporate">
-                  {{ corporate.name }}
-                </template>
+                {{ rootFullName }}
               </template>
               <b-dropdown-item to="/profile">
                 Profile
@@ -32,7 +29,6 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { Consumer } from '~/api/Models/Consumers/Consumer'
 import BaseMixin from '~/minixs/BaseMixin'
 
 @Component
@@ -41,32 +37,8 @@ export default class Header extends mixins(BaseMixin) {
     return this.stores.auth.logout()
   }
 
-  get isConsumer() {
-    return this.stores.auth.isConsumer
-  }
-
-  get isCorporate() {
-    return this.stores.auth.isCorporate
-  }
-
-  get isLoggedIn() {
-    return this.stores.auth.isLoggedIn
-  }
-
-  get identityId() {
-    return this.stores.auth.identityId
-  }
-
-  get consumer(): Consumer | null {
-    return this.stores.consumers.consumer
-  }
-
-  get corporate() {
-    return this.stores.corporates.corporate
-  }
-
   doLogout() {
-    this.logout().then(this.redirectToLogin.bind(this))
+    this.logout().then(this.redirectToLogin)
   }
 
   redirectToLogin() {
@@ -76,15 +48,12 @@ export default class Header extends mixins(BaseMixin) {
     this.$router.push('/login')
   }
 
-  mounted() {
+  fetch() {
     if (this.consumer === null && this.corporate === null) {
-      const _id = this.identityId
-      if (_id) {
-        if (this.isConsumer) {
-          this.stores.consumers.get(_id)
-        } else if (this.isCorporate) {
-          this.stores.corporates.getCorporateDetails(_id)
-        }
+      if (this.isConsumer) {
+        this.stores.consumers.get()
+      } else if (this.isCorporate) {
+        // this.stores.corporates.getCorporateDetails
       }
     }
   }

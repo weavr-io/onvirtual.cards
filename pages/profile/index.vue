@@ -133,7 +133,6 @@ import { Component, mixins } from 'nuxt-property-decorator'
 
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { email, required } from 'vuelidate/lib/validators'
-import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { UpdateConsumerRequest } from '~/api/Requests/Consumers/UpdateConsumerRequest'
 import { UpdateCorporateUserFullRequest } from '~/api/Requests/Corporates/UpdateCorporateUserFullRequest'
 import BaseMixin from '~/minixs/BaseMixin'
@@ -172,101 +171,70 @@ import { authStore, consumersStore, corporatesStore } from '~/utils/store-access
   }
 })
 export default class Profile extends mixins(BaseMixin) {
-  logout() {
-    return this.stores.auth.logout()
-  }
-
-  get isConsumer() {
-    return this.stores.auth.isConsumer
-  }
-
-  get isCorporate() {
-    return this.stores.auth.isCorporate
-  }
-
-  get identityId() {
-    return this.stores.auth.identityId
-  }
-
-  get consumer(): Consumer | null {
-    return this.stores.consumers.consumer
-  }
-
-  get corporate() {
-    return this.stores.corporates.corporate
-  }
-
   numberIsValid: boolean | null = null
-
   updateConsumer!: UpdateConsumerRequest
   updateCorporate!: UpdateCorporateUserFullRequest
 
   isLoading: boolean = false
 
-  async asyncData({ store }) {
-    const _id = authStore(store).identityId
-
-    if (_id) {
-      if (authStore(store).isConsumer) {
-        const _consumer = await consumersStore(store).get(_id)
-
-        const _parsedNumber = parsePhoneNumberFromString(_consumer.data.mobileCountryCode + _consumer.data.mobileNumber)
-
-        const _updateConsumerRequest: UpdateConsumerRequest = {
-          consumerId: _id,
-          request: {
-            mobileCountryCode: _consumer.data.mobileCountryCode,
-            mobileNumber: _consumer.data.mobileNumber,
-            email: _consumer.data.email
-          }
-        }
-
-        return {
-          updateConsumer: _updateConsumerRequest,
-          mobile: {
-            mobileCountryCode: _parsedNumber?.country,
-            mobileNumber: _consumer.data.mobileNumber
-          }
-        }
-      } else if (authStore(store).isCorporate) {
-        const _corporate = authStore(store).auth
-
-        await corporatesStore(store).getCorporateDetails(_id)
-        const _corporateUser = await corporatesStore(store).getUser({
-          corporateId: _id,
-          userId: _corporate.credential!.id
-        })
-
-        const _parsedNumber = parsePhoneNumberFromString(
-          _corporateUser.data.mobileCountryCode! + _corporateUser.data.mobileNumber!
-        )
-
-        const _updateCorporateRequest: UpdateCorporateUserFullRequest = {
-          corporateId: _id,
-          userId: _corporate.credential!.id,
-          body: {
-            name: _corporateUser.data.name,
-            surname: _corporateUser.data.surname,
-            mobileCountryCode: _corporateUser.data.mobileCountryCode,
-            mobileNumber: _corporateUser.data.mobileNumber,
-            email: _corporateUser.data.email
-          }
-        }
-
-        return {
-          updateCorporate: _updateCorporateRequest,
-          mobile: {
-            mobileCountryCode: _parsedNumber?.country,
-            mobileNumber: _corporateUser.data.mobileNumber
-          }
-        }
-      }
-    }
-  }
-
   mobile!: {
     mobileCountryCode: string
     mobileNumber: string
+  }
+
+  async asyncData({ store }) {
+    if (authStore(store).isConsumer) {
+      const _parsedNumber = parsePhoneNumberFromString(_consumer.data.mobileCountryCode + _consumer.data.mobileNumber)
+
+      const _updateConsumerRequest: UpdateConsumerRequest = {
+        consumerId: _id,
+        request: {
+          mobileCountryCode: _consumer.data.mobileCountryCode,
+          mobileNumber: _consumer.data.mobileNumber,
+          email: _consumer.data.email
+        }
+      }
+
+      return {
+        updateConsumer: _updateConsumerRequest,
+        mobile: {
+          mobileCountryCode: _parsedNumber?.country,
+          mobileNumber: _consumer.data.mobileNumber
+        }
+      }
+    } else if (authStore(store).isCorporate) {
+      const _corporate = authStore(store).auth
+
+      await corporatesStore(store).getCorporateDetails(_id)
+      const _corporateUser = await corporatesStore(store).getUser({
+        corporateId: _id,
+        userId: _corporate.credential!.id
+      })
+
+      const _parsedNumber = parsePhoneNumberFromString(
+        _corporateUser.data.mobileCountryCode! + _corporateUser.data.mobileNumber!
+      )
+
+      const _updateCorporateRequest: UpdateCorporateUserFullRequest = {
+        corporateId: _id,
+        userId: _corporate.credential!.id,
+        body: {
+          name: _corporateUser.data.name,
+          surname: _corporateUser.data.surname,
+          mobileCountryCode: _corporateUser.data.mobileCountryCode,
+          mobileNumber: _corporateUser.data.mobileNumber,
+          email: _corporateUser.data.email
+        }
+      }
+
+      return {
+        updateCorporate: _updateCorporateRequest,
+        mobile: {
+          mobileCountryCode: _parsedNumber?.country,
+          mobileNumber: _corporateUser.data.mobileNumber
+        }
+      }
+    }
   }
 
   consumerPhoneUpdate(number) {

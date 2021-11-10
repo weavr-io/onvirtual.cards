@@ -131,7 +131,7 @@ export default class LoginPage extends mixins(BaseMixin) {
     } catch (e) {}
 
     if (this.stores.auth.isConsumer) {
-      await this.stores.consumers.get(this.stores.auth.identity?.id)
+      await this.stores.consumers.get()
     }
 
     await this.$router.push('/')
@@ -175,7 +175,7 @@ export default class LoginPage extends mixins(BaseMixin) {
     console.log('MESSAGE', event.data)
   }
 
-  beforeMount() {
+  created() {
     window.addEventListener('message', this.receiveMessage, false)
   }
 

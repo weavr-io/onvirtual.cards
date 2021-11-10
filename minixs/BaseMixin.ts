@@ -1,6 +1,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import { $api } from '~/utils/api'
 import { initialiseStores } from '~/utils/store-accessor'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
 
 const moment = require('moment')
 
@@ -59,5 +60,55 @@ export default class BaseMixin extends Vue {
       document.body.appendChild(link)
       link.click()
     })
+  }
+
+  get isConsumer() {
+    return this.stores.auth.isConsumer
+  }
+
+  get isCorporate() {
+    return this.stores.auth.isCorporate
+  }
+
+  get isLoggedIn() {
+    return this.stores.auth.isLoggedIn
+  }
+
+  get identityId() {
+    return this.stores.auth.identityId
+  }
+
+  get consumer(): ConsumerModel | null {
+    return this.stores.consumers.consumer
+  }
+
+  get rootName(): string {
+    if (this.isConsumer) {
+      return this.stores.consumers.consumer!.rootUser.name
+    } else {
+      // return this.stores.corporates.corporate!.rootUser.name
+      return 'name'
+    }
+  }
+
+  get rootSurname(): string {
+    if (this.isConsumer) {
+      return this.stores.consumers.consumer!.rootUser.surname
+    } else {
+      // return this.stores.corporates.corporate!.rootUser.name
+      return 'surname'
+    }
+  }
+
+  get rootFullName(): string {
+    return `${this.rootName} ${this.rootSurname}`
+  }
+
+  get corporate() {
+    return this.stores.corporates.corporate
+  }
+
+  logout() {
+    return this.stores.auth.logout()
   }
 }

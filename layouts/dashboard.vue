@@ -27,18 +27,11 @@
         here.
       </b-link>
     </b-alert>
-    <!--    <b-alert id="account-kyc" v-if="showKycAlert" :show="true" class="fixed-bottom m-4 p-4" variant="bg-colored">-->
-    <!--      Your account is currently restricted to {{ allowedLimit | weavr_currency }}. You can lift this restriction-->
-    <!--      <b-link to="/managed-accounts/kyc" class="link">-->
-    <!--        here.-->
-    <!--      </b-link>-->
-    <!--    </b-alert>-->
     <div v-if="isLoading" id="loader">
       <div class="loader-spinner">
         <b-spinner />
       </div>
     </div>
-    <!-- <app-footer /> -->
     <cookie-policy />
   </div>
 </template>

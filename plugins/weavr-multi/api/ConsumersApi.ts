@@ -4,6 +4,7 @@ import { CorporateModel } from '~/plugins/weavr-multi/api/models/corporates/mode
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
 import { CreateConsumerRequest } from '~/api/Requests/Consumers/CreateConsumerRequest'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/UpdateConsumerRequest'
+import { ConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/ConsumerKYCResponse'
 
 export class ConsumersApi {
   store(data: CreateConsumerRequest): Promise<AxiosResponse<ConsumerModel>> {
@@ -16,5 +17,9 @@ export class ConsumersApi {
 
   update(data: UpdateConsumerRequest): Promise<AxiosResponse<ConsumerModel>> {
     return $axiosMulti.patch<CorporateModel>('/consumers', data)
+  }
+
+  showKYC(): Promise<AxiosResponse<ConsumerKYCResponse>> {
+    return $axiosMulti.get<ConsumerKYCResponse>('/consumers/kyc')
   }
 }

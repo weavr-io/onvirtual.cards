@@ -100,7 +100,7 @@ const config = {
    */
   axios: {},
   router: {
-    middleware: ['authCookie', 'errorReset'],
+    middleware: ['authCookie', 'errorReset', 'identities'],
     linkActiveClass: 'active'
   },
   buildModules: ['@nuxt/typescript-build'],

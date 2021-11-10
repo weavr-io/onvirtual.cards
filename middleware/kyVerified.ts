@@ -6,16 +6,14 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
   if (authStore(store).isLoggedIn) {
     if (authStore(store).isConsumer) {
       try {
-        const _consumerId = authStore(store).auth.identity.id
-        await consumersStore(store).get(_consumerId)
-
-        await consumersStore(store).checkKYC()
+        // await consumersStore(store).get()
+        await consumersStore(store).getKYC()
 
         if (route.name === 'managed-accounts-kyc') {
           return redirect('/managed-accounts/add')
         }
       } catch (e) {
-        if (consumersStore(store).consumer.kyc!.fullDueDiligence! === FullDueDiligence.PENDING_REVIEW) {
+        if (consumersStore(store).kyc!.fullDueDiligence! === FullDueDiligence.PENDING_REVIEW) {
           return redirect('/managed-accounts')
         }
 
