@@ -3,10 +3,10 @@ import { OccupationTypeEnum } from '~/plugins/weavr-multi/api/models/consumers/e
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 
 export interface ConsumersRootUserModel extends RootUserModel {
-  occupation: OccupationTypeEnum
+  occupation?: OccupationTypeEnum
   active: boolean
   emailVerified: boolean
   mobileNumberVerified: boolean
-  address: AddressModel
-  nationality: string
+  address?: AddressModel
+  nationality?: string
 }
