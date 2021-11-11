@@ -8,5 +8,5 @@ export interface CorporatesRootUserRequest {
   email: string
   mobile: MobileModel
   companyPosition: CompanyPositionEnum
-  dateOfBirth: DateModel
+  dateOfBirth?: DateModel
 }

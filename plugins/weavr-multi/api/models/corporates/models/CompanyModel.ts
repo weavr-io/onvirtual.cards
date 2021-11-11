@@ -8,7 +8,7 @@ export interface CompanyModel {
   type: CompanyTypeEnum
   registrationNumber: string
   registeredAddress?: LegalAddressModel
-  businessAddress?: Nullable<AddressModel>
+  businessAddress?: AddressModel
   countryOfRegistration: string
   incorporatedOn?: DateModel
 }
