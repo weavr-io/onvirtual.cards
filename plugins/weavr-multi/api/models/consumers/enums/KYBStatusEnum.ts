@@ -1,4 +1,4 @@
-export enum KYBStatusEnum {
+export enum KYCStatusEnum {
   NOT_STARTED = 'NOT_STARTED',
   INITIATED = 'INITIATED',
   PENDING_REVIEW = 'PENDING_REVIEW',

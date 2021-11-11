@@ -1,15 +1,11 @@
 import { Module, Action, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
-import { Corporate } from '~/api/Models/Corporates/Corporate'
-import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
-import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/CreateCorporateUserFullRequest'
 import { KYBState } from '~/api/Enums/KYBState'
-import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
 import { $api } from '~/utils/api'
-import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
-import { CorporateKybStatus } from '~/api/Models/Corporates/CorporateKybStatus'
 import { authStore } from '~/utils/store-accessor'
 import { CorporateModel } from '~/plugins/weavr-multi/api/models/corporates/models/CorporateModel'
+import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/corporates/responses/GetCorporateKYBResponse'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/KYBStatusEnum'
 
 @Module({
   name: 'corporatesModule',
@@ -23,7 +19,7 @@ export default class Corporates extends StoreModule {
 
   corporate: CorporateModel | null = null
 
-  kyb: CorporateKybStatus | null = null
+  kyb: KYBStatusEnum | null = null
 
   users: any = null
 

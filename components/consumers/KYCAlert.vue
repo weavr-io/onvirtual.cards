@@ -45,7 +45,6 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { Consumer } from '~/api/Models/Consumers/Consumer'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import BaseMixin from '~/minixs/BaseMixin'
 
@@ -55,12 +54,8 @@ export default class KYCAlert extends mixins(BaseMixin) {
     return this.stores.view.showKycAlert
   }
 
-  get consumer(): Consumer | null {
-    return this.stores.consumers.consumer
-  }
-
   get isPendingReview(): boolean {
-    return this.consumer?.kyc?.fullDueDiligence === FullDueDiligence.PENDING_REVIEW
+    return this.stores.consumers?.kyc?.fullDueDiligence === FullDueDiligence.PENDING_REVIEW
   }
 }
 </script>

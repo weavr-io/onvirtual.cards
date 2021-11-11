@@ -90,10 +90,12 @@ export default class DashboardHeader extends mixins(BaseMixin) {
   }
 
   get canAddFunds(): boolean {
-    if (this.stores.auth.isConsumer) {
-      return this.stores.consumers.consumer?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
-    } else {
+    if (this.isConsumer) {
+      return this.stores.consumers.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
+    } else if (this.isCorporate) {
       return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
+    } else {
+      return false
     }
   }
 }
