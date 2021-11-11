@@ -1,8 +1,7 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { TransfersSchemas } from '~/api/TransfersSchemas'
 import { loaderStore } from '~/utils/store-accessor'
-import { $api } from '~/utils/api'
 import { StoreModule } from '~/store/storeModule'
+import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 
 @Module({
   name: 'transfersModule',
@@ -18,10 +17,10 @@ export default class Transfers extends StoreModule {
   }
 
   @Action
-  execute(request: TransfersSchemas.CreateTransferRequest) {
+  execute(request: CreateTransferRequest) {
     loaderStore(this.store).start()
 
-    const req = $api.post('/app/api/transfers/_/execute', request)
+    const req = this.store.$apiMulti.transfers.store(request)
 
     req.finally(() => {
       loaderStore(this.store).stop()
