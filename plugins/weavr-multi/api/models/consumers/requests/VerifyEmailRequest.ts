@@ -1,4 +1,4 @@
-export interface VerifyEmail {
+export interface VerifyEmailRequest {
   email: string
   verificationCode: string
 }

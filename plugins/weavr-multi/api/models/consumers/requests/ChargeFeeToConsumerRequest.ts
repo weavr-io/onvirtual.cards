@@ -1,6 +1,6 @@
 import { InstrumentIdModel } from '~/plugins/weavr-multi/api/models/common/InstrumentIdModel'
 
-export interface ChargeFeeToConsumer {
+export interface ChargeFeeToConsumerRequest {
   feeType: string
   source: InstrumentIdModel
 }

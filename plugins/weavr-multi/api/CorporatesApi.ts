@@ -5,9 +5,9 @@ import { CorporateModel } from '~/plugins/weavr-multi/api/models/corporates/mode
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/UpdateCorporateRequest'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/SendVerificationCodeRequest'
 import { StartCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/corporates/responses/StartCorporateKYBResponse'
-import { ChargeFeeToCorporate } from '~/plugins/weavr-multi/api/models/corporates/requests/ChargeFeeToCorporate'
+import { ChargeFeeToCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/ChargeFeeToCorporateRequest'
 import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/corporates/responses/GetCorporateKYBResponse'
-import { VerifyEmail } from '~/plugins/weavr-multi/api/models/corporates/requests/VerifyEmail'
+import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/VerifyEmailRequest'
 
 export class CorporatesApi {
   store(data: CreateCorporateRequest): Promise<AxiosResponse<CorporateModel>> {
@@ -26,7 +26,7 @@ export class CorporatesApi {
     return $axiosMulti.post('/consumers/verification/email/send', data)
   }
 
-  verifyEmail(data: VerifyEmail): Promise<AxiosResponse> {
+  verifyEmail(data: VerifyEmailRequest): Promise<AxiosResponse> {
     return $axiosMulti.post('/corporates/verification/email/verify', data)
   }
 
@@ -38,7 +38,7 @@ export class CorporatesApi {
     return $axiosMulti.get<GetCorporateKYBResponse>('/corporates/kyb')
   }
 
-  chargeFee(data: ChargeFeeToCorporate): Promise<AxiosResponse> {
+  chargeFee(data: ChargeFeeToCorporateRequest): Promise<AxiosResponse> {
     return $axiosMulti.post('/corporates/fees/charge', data)
   }
 }

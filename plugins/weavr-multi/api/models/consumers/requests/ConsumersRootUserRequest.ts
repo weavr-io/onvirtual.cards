@@ -3,7 +3,7 @@ import { DateModel } from '~/plugins/weavr-multi/api/models/common/DateModel'
 import { OccupationTypeEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/OccupationTypeEnum'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 
-export interface ConsumersRootUserRequestModel {
+export interface ConsumersRootUserRequest {
   name: string
   surname: string
   email: string

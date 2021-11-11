@@ -5,10 +5,10 @@ import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumer
 import { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/GetConsumerKYCResponse'
 import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/CreateConsumerRequest'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/SendVerificationCodeRequest'
-import { VerifyEmail } from '~/plugins/weavr-multi/api/models/consumers/requests/VerifyEmail'
+import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/VerifyEmailRequest'
 import { StartConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/StartConsumerKYCResponse'
 import { StartConsumerKYCMobileResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/StartConsumerKYCMobileResponse'
-import { ChargeFeeToConsumer } from '~/plugins/weavr-multi/api/models/consumers/requests/ChargeFeeToConsumer'
+import { ChargeFeeToConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/ChargeFeeToConsumerRequest'
 
 export class ConsumersApi {
   store(data: CreateConsumerRequest): Promise<AxiosResponse<ConsumerModel>> {
@@ -27,7 +27,7 @@ export class ConsumersApi {
     return $axiosMulti.post('/consumers/verification/email/send', data)
   }
 
-  verifyEmail(data: VerifyEmail): Promise<AxiosResponse> {
+  verifyEmail(data: VerifyEmailRequest): Promise<AxiosResponse> {
     return $axiosMulti.post('/consumers/verification/email/verify', data)
   }
 
@@ -43,7 +43,7 @@ export class ConsumersApi {
     return $axiosMulti.post<StartConsumerKYCMobileResponse>('/consumers/kyc_mobile_sumsub')
   }
 
-  chargeFee(data: ChargeFeeToConsumer): Promise<AxiosResponse> {
+  chargeFee(data: ChargeFeeToConsumerRequest): Promise<AxiosResponse> {
     return $axiosMulti.post('/consumers/fees/charge', data)
   }
 }

@@ -1,12 +1,12 @@
 import { IDModel } from '../../common/IDModel'
 import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/ConsumerSourceOfFundTypeEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import { ConsumersRootUserRequestModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumersRootUserRequestModel'
+import { ConsumersRootUserRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/ConsumersRootUserRequest'
 
 export interface CreateConsumerRequest {
   profileId: IDModel
   tag?: string
-  rootUser: ConsumersRootUserRequestModel
+  rootUser: ConsumersRootUserRequest
   ipAddress: string
   acceptedTerms: boolean
   baseCurrency?: CurrencyEnum

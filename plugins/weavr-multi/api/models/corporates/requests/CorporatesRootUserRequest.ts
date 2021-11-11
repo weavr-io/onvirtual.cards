@@ -2,7 +2,7 @@ import { MobileModel } from '~/plugins/weavr-multi/api/models/corporates/models/
 import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CompanyPositionEnum'
 import { DateModel } from '~/plugins/weavr-multi/api/models/common/DateModel'
 
-export interface CorporatesRootUserRequestModel {
+export interface CorporatesRootUserRequest {
   name: string
   surname: string
   email: string
