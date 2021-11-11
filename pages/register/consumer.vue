@@ -18,27 +18,27 @@
 
                 <b-form-group label="First Name">
                   <b-form-input
-                    v-model="registrationRequest.name"
-                    :state="isInvalid($v.registrationRequest.name)"
+                    v-model="registrationRequest.rootUser.name"
+                    :state="isInvalid($v.registrationRequest.rootUser.name)"
                     placeholder="First Name"
                   />
-                  <b-form-invalid-feedback v-if="!$v.registrationRequest.name.required">
+                  <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.name.required">
                     This field is required
                   </b-form-invalid-feedback>
-                  <b-form-invalid-feedback v-if="!$v.registrationRequest.name.maxLength">
+                  <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.name.maxLength">
                     Name is too long.
                   </b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label="Last Name">
                   <b-form-input
-                    v-model="registrationRequest.surname"
-                    :state="isInvalid($v.registrationRequest.surname)"
+                    v-model="registrationRequest.rootUser.surname"
+                    :state="isInvalid($v.registrationRequest.rootUser.surname)"
                     placeholder="Last Name"
                   />
-                  <b-form-invalid-feedback v-if="!$v.registrationRequest.surname.required">
+                  <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.surname.required">
                     This field is required
                   </b-form-invalid-feedback>
-                  <b-form-invalid-feedback v-if="!$v.registrationRequest.surname.maxLength">
+                  <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.surname.maxLength">
                     Surname is too long.
                   </b-form-invalid-feedback>
                 </b-form-group>
@@ -55,16 +55,16 @@
                     @input="updateDOB"
                     @change="updateDOB"
                   />
-                  <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.dateOfBirth)">
+                  <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.rootUser.dateOfBirth)">
                     This field is required.
                   </b-form-invalid-feedback>
                 </b-form-group>
-                <b-form-group :state="isInvalid($v.registrationRequest.email)" label="Email">
+                <b-form-group :state="isInvalid($v.registrationRequest.rootUser.email)" label="Email">
                   <b-form-input
-                    v-model="$v.registrationRequest.email.$model"
-                    :state="isInvalid($v.registrationRequest.email)"
+                    v-model="$v.registrationRequest.rootUser.email.$model"
+                    :state="isInvalid($v.registrationRequest.rootUser.email)"
                     placeholder="name@email.com"
-                    @input="delayTouch($v.registrationRequest.email)"
+                    @input="delayTouch($v.registrationRequest.rootUser.email)"
                   />
                   <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
                 </b-form-group>
@@ -84,10 +84,10 @@
                     This field must be a valid mobile number.
                   </b-form-invalid-feedback>
                 </b-form-group>
-                <b-form-group :state="isInvalid($v.registrationRequest.occupation)" label="Industry*">
+                <b-form-group :state="isInvalid($v.registrationRequest.rootUser.occupation)" label="Industry*">
                   <b-form-select
-                    v-model="$v.registrationRequest.occupation.$model"
-                    :state="isInvalid($v.registrationRequest.occupation)"
+                    v-model="$v.registrationRequest.rootUser.occupation.$model"
+                    :state="isInvalid($v.registrationRequest.rootUser.occupation)"
                     :options="industryOccupationOptions"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -159,6 +159,9 @@
                   </b-col>
                 </b-row>
               </b-form>
+              <pre>
+                {{ registrationRequest }}
+              </pre>
             </div>
           </div>
         </b-card-body>
@@ -195,33 +198,37 @@ const touchMap = new WeakMap()
   layout: 'auth',
   validations: {
     registrationRequest: {
-      email: {
-        required,
-        email
-      },
-      name: {
-        required,
-        maxLength: maxLength(20)
-      },
-      surname: {
-        required,
-        maxLength: maxLength(20)
-      },
-      mobileCountryCode: {
-        required
-      },
-      mobileNumber: {
-        required
-      },
-      dateOfBirth: {
-        required
+      rootUser: {
+        name: {
+          required,
+          maxLength: maxLength(20)
+        },
+        surname: {
+          required,
+          maxLength: maxLength(20)
+        },
+        email: {
+          required,
+          email
+        },
+        mobile: {
+          countryCode: {
+            required
+          },
+          number: {
+            required
+          }
+        },
+        occupation: {
+          required
+        },
+        dateOfBirth: {
+          required
+        }
       },
       acceptedTerms: {
         required,
         sameAs: sameAs(() => BooleanString.TRUE)
-      },
-      occupation: {
-        required
       },
       sourceOfFunds: {
         required
@@ -263,6 +270,20 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
       mobile: {
         number: null,
         countryCode: '+356'
+      },
+      dateOfBirth: {
+        day: null,
+        month: null,
+        year: null
+      },
+      occupation: null,
+      address: {
+        addressLine1: null,
+        addressLine2: null,
+        city: null,
+        postCode: null,
+        state: null,
+        country: null
       }
     },
     ipAddress: null,
@@ -356,7 +377,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
           if (tokens.tokens.password !== '') {
             this.password = tokens.tokens.password
 
-            this.onConsumerCreated.bind(this)
+            // this.doRegister.bind(this)
           } else {
             return null
           }
