@@ -68,7 +68,6 @@
 <script lang="ts">
 import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required, sameAs } from 'vuelidate/lib/validators'
-import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
 import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
@@ -150,15 +149,15 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
 
   validatePassword() {
     console.log('password  validation')
-    const _request: ValidatePasswordRequest = {
-      identityProfileId: config.profileId.corporates ? config.profileId.corporates : '',
-      credentialType: 'ROOT',
-      password: {
-        value: this.form.password
-      }
-    }
-
-    this.stores.auth.validatePassword(_request).then(this.submitForm.bind(this))
+    // const _request: ValidatePasswordRequest = {
+    //   identityProfileId: config.profileId.corporates ? config.profileId.corporates : '',
+    //   credentialType: 'ROOT',
+    //   password: {
+    //     value: this.form.password
+    //   }
+    // }
+    //
+    // this.stores.auth.validatePassword(_request).then(this.submitForm.bind(this))
   }
 
   @Emit()

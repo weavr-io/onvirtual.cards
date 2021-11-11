@@ -48,12 +48,13 @@
 
 <script lang="ts">
 import { Component, mixins, Watch } from 'nuxt-property-decorator'
-import { KYBState } from '~/api/Enums/KYBState'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore, cardsStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import { cardsStore } from '~/utils/store-accessor'
 import { NullableBoolean } from '~/api/Generic/NullableBoolean'
 import { $api } from '~/utils/api'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/KYBStatusEnum'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/KYCStatusEnum'
 
 @Component({
   layout: 'dashboard',
@@ -139,7 +140,7 @@ export default class CardsPage extends mixins(BaseMixin) {
 
   get showKybAlert(): boolean {
     if (this.stores.corporates.kyb) {
-      return this.stores.corporates.kyb.fullCompanyChecksVerified !== KYBState.APPROVED
+      return this.stores.corporates.kyb.kybStatus !== KYBStatusEnum.APPROVED
     } else {
       return false
     }
@@ -147,9 +148,9 @@ export default class CardsPage extends mixins(BaseMixin) {
 
   get canAddCard(): boolean {
     if (this.stores.auth.isConsumer) {
-      return this.stores.consumers.consumer?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
+      return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
     } else {
-      return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
+      return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
     }
   }
 }

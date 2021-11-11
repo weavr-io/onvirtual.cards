@@ -19,10 +19,11 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { TransfersSchemas } from '~/api/TransfersSchemas'
 import config from '~/config'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore, cardsStore } from '~/utils/store-accessor'
+import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
+import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 
 @Component({
   components: {
@@ -49,20 +50,20 @@ export default class TransfersPage extends mixins(BaseMixin) {
 
   accountSelected(_data) {
     if (_data != null) {
-      this.createTransferRequest.source.type = _data.source.type
-      this.createTransferRequest.source.id = _data.source.id
+      this.createTransferRequest.source!.type = _data.source.type
+      this.createTransferRequest.source!.id = _data.source.id
       this.nextScreen()
     }
   }
 
   topUpSelected(_data) {
     if (_data != null) {
-      this.createTransferRequest.destinationAmount.amount = _data.amount * 100
+      this.createTransferRequest.destinationAmount!.amount = _data.amount * 100
       this.doTransfer()
     }
   }
 
-  public createTransferRequest!: TransfersSchemas.CreateTransferRequest
+  public createTransferRequest!: DeepNullable<RecursivePartial<CreateTransferRequest>>
 
   get formattedCards(): { value: number; text: string }[] {
     return this.cards.map((val) => {
@@ -99,11 +100,11 @@ export default class TransfersPage extends mixins(BaseMixin) {
     })
     const _accounts = await accountsStore(store).index()
 
-    const request: TransfersSchemas.CreateTransferRequest = {
-      profileId: config.profileId.transfers,
+    const request: CreateTransferRequest = {
+      profileId: config.profileId.transfers!,
       source: _accounts.data.account[0].id,
       destination: {
-        type: 'managed_cards',
+        type: InstrumentEnum.managedCards,
         id: route.query.destination
       },
       destinationAmount: {
@@ -119,16 +120,16 @@ export default class TransfersPage extends mixins(BaseMixin) {
 
   doTransfer() {
     this.stores.transfers
-      .execute(this.createTransferRequest)
+      .execute(this.createTransferRequest as CreateTransferRequest)
       .then(() => {
         this.createTransferRequest = {
           profileId: null,
           source: {
-            type: 'managed_accounts',
+            type: InstrumentEnum.managedAccounts,
             id: null
           },
           destination: {
-            type: 'managed_cards',
+            type: InstrumentEnum.managedCards,
             id: null
           },
           destinationAmount: {

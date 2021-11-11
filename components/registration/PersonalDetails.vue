@@ -1,5 +1,5 @@
 <template>
-  <b-form @submit="submitForm" novalidate>
+  <b-form novalidate @submit="submitForm">
     <h3 class="text-center font-weight-light mb-5">
       A few more steps
     </h3>
@@ -15,8 +15,8 @@
     </b-form-group>
     <b-form-group label="Last Name*">
       <b-form-input
-        :state="isInvalid($v.form.rootSurname)"
         v-model="$v.form.rootSurname.$model"
+        :state="isInvalid($v.form.rootSurname)"
         placeholder="Last Name"
       />
       <b-form-invalid-feedback v-if="!$v.form.rootSurname.required">
@@ -29,7 +29,6 @@
     <b-form-group label="MOBILE NUMBER*">
       <vue-phone-number-input
         v-model="rootMobileNumber"
-        @update="phoneUpdate"
         :only-countries="mobileCountries"
         :border-radius="0"
         :error="numberIsValid === false"
@@ -37,6 +36,7 @@
         error-color="#F50E4C"
         valid-color="#6D7490"
         default-country-code="GB"
+        @update="phoneUpdate"
       />
       <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
         This field must be a valid mobile number.
@@ -44,24 +44,24 @@
     </b-form-group>
     <b-form-group label="Company Name*">
       <b-form-input
-        :state="isInvalid($v.form.companyName)"
         v-model="$v.form.companyName.$model"
+        :state="isInvalid($v.form.companyName)"
         placeholder="Company Name"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Company Registration Number*">
       <b-form-input
-        :state="isInvalid($v.form.companyRegistrationNumber)"
         v-model="$v.form.companyRegistrationNumber.$model"
+        :state="isInvalid($v.form.companyRegistrationNumber)"
         placeholder="C00000"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Registration Country*">
       <b-form-select
-        :state="isInvalid($v.form.registrationCountry)"
         v-model="$v.form.registrationCountry.$model"
+        :state="isInvalid($v.form.registrationCountry)"
         :options="countiesOptions"
         placeholder="Registration Country"
       />
@@ -85,8 +85,8 @@
     </b-form-group>
     <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
       <b-form-input
-        :state="isInvalid($v.form.sourceOfFundsOther)"
         v-model="form.sourceOfFundsOther"
+        :state="isInvalid($v.form.sourceOfFundsOther)"
         placeholder="Specify Other Source of Funds"
       />
     </b-form-group>
@@ -116,7 +116,7 @@
 
     <b-form-row class="mt-5">
       <b-col md="4">
-        <b-button @click="goBack" variant="outline">
+        <b-button variant="outline" @click="goBack">
           <-
         </b-button>
       </b-col>
@@ -129,10 +129,11 @@
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
-import { IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
-import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
+
 import BaseMixin from '~/minixs/BaseMixin'
-import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/CreateCorporateRequest'
+import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
+import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -251,11 +252,11 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
   }
 
   get industryOccupationOptions() {
-    return IndustryOccupationOptions
+    return IndustryTypeSelectConst
   }
 
   get sourceOfFundsOptions() {
-    return SourceOfFundsOptions
+    return SourceOfFundsSelectConst
   }
 
   get shouldShowOtherSourceOfFunds(): boolean {

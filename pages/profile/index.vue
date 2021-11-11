@@ -134,10 +134,10 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { email, required } from 'vuelidate/lib/validators'
 
-import { UpdateCorporateUserFullRequest } from '~/api/Requests/Corporates/UpdateCorporateUserFullRequest'
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/UpdateConsumerRequest'
+import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/UpdateCorporateRequest'
 
 @Component({
   components: {
@@ -172,7 +172,7 @@ import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumer
 export default class Profile extends mixins(BaseMixin) {
   numberIsValid: boolean | null = null
   updateConsumer!: UpdateConsumerRequest
-  updateCorporate!: UpdateCorporateUserFullRequest
+  updateCorporate!: UpdateCorporateRequest
 
   isLoading: boolean = false
 
@@ -181,7 +181,7 @@ export default class Profile extends mixins(BaseMixin) {
     number: string
   }
 
-  async asyncData({ store }) {
+  asyncData({ store }) {
     if (authStore(store).isConsumer) {
       const _consumer = consumersStore(store).consumer
 
@@ -205,32 +205,25 @@ export default class Profile extends mixins(BaseMixin) {
         }
       }
     } else if (authStore(store).isCorporate) {
-      const _corporateUser = await corporatesStore(store).getUser({
-        corporateId: _id,
-        userId: _corporate.credential!.id
-      })
+      const _corporate = corporatesStore(store).corporate
 
       const _parsedNumber = parsePhoneNumberFromString(
-        _corporateUser.data.mobileCountryCode! + _corporateUser.data.mobileNumber!
+        _corporate!.rootUser?.mobile.countryCode! + _corporate!.rootUser?.mobile.number!
       )
 
-      const _updateCorporateRequest: UpdateCorporateUserFullRequest = {
-        corporateId: _id,
-        userId: _corporate.credential!.id,
-        body: {
-          name: _corporateUser.data.name,
-          surname: _corporateUser.data.surname,
-          mobileCountryCode: _corporateUser.data.mobileCountryCode,
-          mobileNumber: _corporateUser.data.mobileNumber,
-          email: _corporateUser.data.email
-        }
+      const _updateCorporateRequest: UpdateCorporateRequest = {
+        mobile: {
+          countryCode: _corporate!.rootUser.mobile.countryCode,
+          number: _corporate!.rootUser.mobile.number
+        },
+        email: _corporate?.rootUser.email
       }
 
       return {
         updateCorporate: _updateCorporateRequest,
         mobile: {
-          mobileCountryCode: _parsedNumber?.country,
-          mobileNumber: _corporateUser.data.mobileNumber
+          countryCode: _parsedNumber?.country,
+          number: _corporate?.rootUser.mobile.number
         }
       }
     }
@@ -244,7 +237,7 @@ export default class Profile extends mixins(BaseMixin) {
 
   corporatePhoneUpdate(number) {
     this.$set(this.mobile, 'number', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.updateCorporate.mobile.number = number.phoneNumber
+    this.updateCorporate.mobile!.number = number.phoneNumber
     this.numberIsValid = number.isValid
   }
 

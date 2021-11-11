@@ -51,9 +51,10 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
-import { KYBState } from '~/api/Enums/KYBState'
+
 import BaseMixin from '~/minixs/BaseMixin'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/KYBStatusEnum'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/KYCStatusEnum'
 
 @Component
 export default class DashboardHeader extends mixins(BaseMixin) {
@@ -91,9 +92,9 @@ export default class DashboardHeader extends mixins(BaseMixin) {
 
   get canAddFunds(): boolean {
     if (this.isConsumer) {
-      return this.stores.consumers.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
+      return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
     } else if (this.isCorporate) {
-      return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
+      return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
     } else {
       return false
     }

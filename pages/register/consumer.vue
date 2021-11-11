@@ -170,19 +170,22 @@
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
+import { AxiosResponse } from 'axios'
 import config from '~/config'
-import { CreateConsumerRequest } from '~/api/Requests/Consumers/CreateConsumerRequest'
-import { Consumer } from '~/api/Models/Consumers/Consumer'
-import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
-import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
+
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
-import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { BooleanString } from '~/api/Generic/BooleanString'
-import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
-import { IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
+import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
+import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
+import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/CreateConsumerRequest'
+import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/ConsumerSourceOfFundTypeEnum'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
+import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/passwords/requests/CreatePasswordRequestModel'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/requests/LoginWithPasswordRequest'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -238,10 +241,6 @@ const touchMap = new WeakMap()
   }
 })
 export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
-  get consumer(): Consumer | null {
-    return this.stores.consumers.consumer
-  }
-
   private $recaptcha: any
 
   @Ref('passwordField')
@@ -254,44 +253,52 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
 
   dateOfBirth = null
 
-  public registrationRequest: CreateConsumerRequest = {
-    profileId: 0,
-    name: '',
-    surname: '',
-    email: '',
-    mobileCountryCode: '',
-    mobileNumber: '',
-    baseCurrency: 'EUR',
-    dateOfBirth: null,
-    occupation: null,
+  public registrationRequest: DeepNullable<RecursivePartial<CreateConsumerRequest> & { password: string }> = {
+    profileId: config.profileId.consumers,
+    tag: 'tag',
+    rootUser: {
+      name: null,
+      surname: null,
+      email: null,
+      mobile: {
+        number: null,
+        countryCode: '+356'
+      }
+    },
+    ipAddress: null,
+    acceptedTerms: false,
+    baseCurrency: null,
+    feeGroup: null,
     sourceOfFunds: null,
-    sourceOfFundsOther: '',
-    acceptedTerms: BooleanString.FALSE
+    sourceOfFundsOther: null,
+    password: null
   }
 
   get industryOccupationOptions() {
-    return IndustryOccupationOptions
+    return IndustryTypeSelectConst
   }
 
   get sourceOfFundsOptions() {
-    return SourceOfFundsOptions
+    return SourceOfFundsSelectConst
   }
 
   get shouldShowOtherSourceOfFunds(): boolean {
-    return this.registrationRequest.sourceOfFunds === SourceOfFunds.OTHER
+    return this.registrationRequest.sourceOfFunds === ConsumerSourceOfFundTypeEnum.OTHER
   }
 
   public password: string = ''
 
   mounted() {
-    this.registrationRequest.profileId = config.profileId.consumers
+    this.$apiMulti.ipify.get().then((ip) => {
+      this.registrationRequest.ipAddress = ip.data.ip
+    })
   }
 
   doRegister() {
     this.isLoadingRegistration = true
     this.stores.consumers
-      .create(this.registrationRequest)
-      .then(this.doCreatePasswordIdentity.bind(this))
+      .create(this.registrationRequest as CreateConsumerRequest)
+      .then(this.onConsumerCreated.bind(this))
       .catch(this.registrationFailed.bind(this))
   }
 
@@ -300,61 +307,13 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     const _errCode = err.response.data.errorCode
 
     if (_errCode === 'USERNAME_NOT_UNIQUE' || _errCode === 'EMAIL_NOT_UNIQUE') {
+      return
     } else {
       this.$weavrToastError(_errCode)
     }
 
     window.scrollTo(0, 0)
   }
-
-  doCreatePasswordIdentity() {
-    const _req: CreatePasswordIdentity = {
-      id: this.consumer!.id.id,
-      request: {
-        profileId: this.registrationRequest.profileId
-      }
-    }
-    this.stores.auth
-      .createPasswordIdentity(_req)
-      .then(this.doCreatePassword.bind(this), this.registrationFailed.bind(this))
-  }
-
-  doCreatePassword() {
-    const _req: CreatePassword = {
-      id: this.consumer!.id.id,
-      request: {
-        credentialType: 'ROOT',
-        identityId: this.consumer!.id.id,
-        password: {
-          value: this.password
-        }
-      }
-    }
-
-    this.stores.auth.createPassword(_req).then(this.waitAndDoLogin.bind(this), this.registrationFailed.bind(this))
-  }
-
-  waitAndDoLogin() {
-    this.sleep(2000).then(this.doLogin.bind(this))
-  }
-
-  doLogin() {
-    const _loginRequest: Schemas.LoginRequest = {
-      code: this.registrationRequest.email,
-      password: this.password
-    }
-
-    this.stores.auth.authenticate(_loginRequest).then(this.goToAdressInputScreen.bind(this))
-  }
-
-  // sendVerifyEmail() {
-  //   ConsumerHelpers.sendVerificationCodeEmail(this.$store, {
-  //     consumerId: this.consumer.id.id,
-  //     request: {
-  //       emailAddress: this.registrationRequest.email
-  //     }
-  //   }).then(this.goToAdressInputScreen.bind(this), this.registrationFailed.bind(this))
-  // }
 
   goToAdressInputScreen() {
     this.isLoadingRegistration = false
@@ -381,15 +340,9 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
 
   async submitForm() {
     try {
-      if (this.numberIsValid === null) {
-        this.numberIsValid = false
-      }
-
-      if (this.$v.registrationRequest) {
-        this.$v.registrationRequest.$touch()
-        if (this.$v.registrationRequest.$anyError || !this.numberIsValid) {
-          return null
-        }
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        return
       }
 
       if (this.isRecaptchaEnabled) {
@@ -403,7 +356,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
           if (tokens.tokens.password !== '') {
             this.password = tokens.tokens.password
 
-            this.validatePassword()
+            this.onConsumerCreated.bind(this)
           } else {
             return null
           }
@@ -418,16 +371,41 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     }
   }
 
-  validatePassword() {
-    const _request: ValidatePasswordRequest = {
-      identityProfileId: config.profileId.corporates ? config.profileId.corporates : '',
-      credentialType: 'ROOT',
+  onConsumerCreated(res: AxiosResponse<ConsumerModel>) {
+    this.createPassword(res.data.id, res.data.rootUser.id.id!)
+  }
+
+  createPassword(identity: IdentityIdModel, rootUserId: IDModel) {
+    const passwordRequest: CreatePasswordRequestModel = {
       password: {
-        value: this.password
+        value: this.registrationRequest.password as string
+      }
+    }
+    this.$apiMulti.passwords
+      .store({
+        userId: rootUserId,
+        data: passwordRequest
+      })
+      .then(this.onRegisteredSuccessfully.bind(this))
+  }
+
+  onRegisteredSuccessfully() {
+    if (!this.registrationRequest.rootUser) {
+      return
+    }
+
+    const loginRequest: LoginWithPasswordRequest = {
+      email: this.registrationRequest.rootUser.email as string,
+      password: {
+        value: this.registrationRequest.password as string
       }
     }
 
-    this.stores.auth.validatePassword(_request).then(this.doRegister.bind(this))
+    const _req = this.stores.auth.loginWithPassword(loginRequest)
+
+    _req.then(() => {
+      this.$router.push('/')
+    })
   }
 
   checkOnKeyUp(e) {
@@ -439,8 +417,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
   }
 
   phoneUpdate(number) {
-    this.registrationRequest.mobileCountryCode = '+' + number.countryCallingCode
-    this.registrationRequest.mobileNumber = number.nationalNumber
+    this.registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
+    this.registrationRequest.rootUser!.mobile!.number = number.nationalNumber
     this.numberIsValid = number.isValid
     console.log(number)
   }
@@ -474,7 +452,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
 
   updateDOB(val) {
     console.log(val)
-    this.registrationRequest.dateOfBirth = {
+    this.registrationRequest.rootUser!.dateOfBirth = {
       year: val.getFullYear(),
       month: val.getMonth() + 1,
       day: val.getDate()

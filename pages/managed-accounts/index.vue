@@ -34,8 +34,8 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore } from '~/utils/store-accessor'
-import { KYBState } from '~/api/Enums/KYBState'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/KYCStatusEnum'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/KYBStatusEnum'
 
 @Component({
   layout: 'dashboard',
@@ -56,9 +56,9 @@ export default class CardsPage extends mixins(BaseMixin) {
 
   get isVerified() {
     if (this.stores.auth.isConsumer) {
-      return this.stores.consumers.consumer.kyc.fullDueDiligence === FullDueDiligence.APPROVED
+      return this.stores.consumers.kyc!.fullDueDiligence === KYCStatusEnum.APPROVED
     } else {
-      return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
+      return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
     }
   }
 }

@@ -10,6 +10,7 @@ import SecureClient from '~/store/secureClient'
 import Consumers from '~/store/consumers'
 import Transfers from '~/store/transfers'
 import Errors from '~/store/errors'
+import Users from '~/store/users'
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
 // See https://nuxtjs.org/guide/vuex-store#classic-mode
@@ -32,10 +33,6 @@ const createStore = () => {
     mutations: root.mutations,
     actions: root.actions,
     modules: {
-      // [Error.name]: Error,
-      // [Transfers.name]: Transfers,
-      // [Consumers.name]: Consumers,
-      // [View.name]: View,
       cardsModule: Cards,
       accountsModule: Accounts,
       corporatesModule: Corporates,
@@ -44,7 +41,8 @@ const createStore = () => {
       secureClientModule: SecureClient,
       consumersModule: Consumers,
       transfersModule: Transfers,
-      errorsModule: Errors
+      errorsModule: Errors,
+      usersModule: Users
     }
   })
 }

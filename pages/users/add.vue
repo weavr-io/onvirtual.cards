@@ -71,7 +71,6 @@
                 <b-form-group label="MOBILE NUMBER:">
                   <vue-phone-number-input
                     v-model="rootMobileNumber"
-                    @update="phoneUpdate"
                     :only-countries="mobileCountries"
                     :border-radius="0"
                     :error="numberIsValid === false"
@@ -79,6 +78,7 @@
                     error-color="#F50E4C"
                     valid-color="#6D7490"
                     default-country-code="GB"
+                    @update="phoneUpdate"
                   />
                   <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                     This field must be a valid mobile number.
@@ -96,9 +96,6 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
-
-import { CorporateUserType } from '~/api/Enums/Corporates/CorporateUserType'
-import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/CreateCorporateUserFullRequest'
 import BaseMixin from '~/minixs/BaseMixin'
 
 const Countries = require('~/static/json/countries.json')

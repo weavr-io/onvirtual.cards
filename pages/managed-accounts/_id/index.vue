@@ -101,7 +101,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
     } else {
       const _corporateId = authStore(store).identityId
       if (_corporateId) {
-        await corporatesStore(store).getCorporateDetails(_corporateId)
+        await corporatesStore(store).get(_corporateId)
       }
     }
 

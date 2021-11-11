@@ -50,8 +50,8 @@
 <script lang="ts">
 import { Component, mixins } from "nuxt-property-decorator";
 
-import { KYBState } from "~/api/Enums/KYBState";
 import BaseMixin from "~/minixs/BaseMixin";
+import { KYBStatusEnum } from "~/plugins/weavr-multi/api/models/corporates/enums/KYBStatusEnum";
 
 @Component({})
 export default class KYBAlert extends mixins(BaseMixin) {
@@ -66,7 +66,7 @@ export default class KYBAlert extends mixins(BaseMixin) {
   }
 
   get isPendingReview(): boolean {
-    return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.PENDING_REVIEW
+    return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.PENDING_REVIEW
   }
 }
 </script>

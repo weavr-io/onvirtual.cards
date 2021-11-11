@@ -22,14 +22,17 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import config from '~/config'
-import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
-import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
+
 import { Schemas } from '~/api/Schemas'
-import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
-import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
+
 import BaseMixin from '~/minixs/BaseMixin'
-import { BooleanString } from '~/api/Generic/BooleanString'
 import { authStore } from '~/utils/store-accessor'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/CreateCorporateRequest'
+import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CompanyPositionEnum'
+import { CompanyTypeEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CompanyTypeEnum'
+import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/IndustryTypeEnum'
+import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
 @Component({
   layout: 'auth',
@@ -46,15 +49,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     return this.stores.corporates.isLoading
   }
 
-  get isLoggedIn() {
-    return this.stores.auth.isLoggedIn
-  }
-
-  get corporate() {
-    return this.stores.corporates.corporate
-  }
-
-  screen = 0
+  screen: number = 0
 
   public password: string = ''
 
@@ -66,32 +61,70 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     this.screen--
   }
 
-  public registrationRequest: Nullable<CreateCorporateRequest> = {
-    active: true,
-    acceptedTerms: BooleanString.FALSE,
-    companyName: '',
-    companyRegistrationNumber: '',
-    companyType: CompanyType.LLC,
-    ipAddress: '111.222.333.444',
-    profileId: '0',
-    registrationCountry: 'MT',
-    rootCompanyPosition: '',
-    rootEmail: '',
-    rootMobileCountryCode: '',
-    rootMobileNumber: '',
-    rootName: '',
-    rootSurname: '',
-    supportEmail: '',
-    industry: null,
-    sourceOfFunds: null,
-    sourceOfFundsOther: '',
-    kybProviderKey: 'sumsub'
+  // public registrationRequest: CreateCorporateRequest = {
+  //
+  //   companyName: '',
+  //   companyRegistrationNumber: '',
+  //   companyType: CompanyType.LLC,
+  //   ipAddress: '111.222.333.444',
+  //   profileId: '0',
+  //   registrationCountry: 'MT',
+  //   rootCompanyPosition: '',
+  //   rootEmail: '',
+  //   rootMobileCountryCode: '',
+  //   rootMobileNumber: '',
+  //   rootName: '',
+  //   rootSurname: '',
+  //   supportEmail: '',
+  //   industry: null,
+  //   sourceOfFunds: null,
+  //   sourceOfFundsOther: '',
+  //   kybProviderKey: 'sumsub',
+  //   acceptedTerms: false,
+  // }
+
+  private registrationRequest: CreateCorporateRequest = {
+    profileId: '',
+    rootUser: {
+      name: '',
+      surname: '',
+      email: '',
+      mobile: {
+        countryCode: '',
+        number: ''
+      },
+      companyPosition: CompanyPositionEnum.DIRECTOR,
+      dateOfBirth: {
+        day: 1,
+        month: 1,
+        year: 1700
+      }
+    },
+    company: {
+      type: CompanyTypeEnum.LLC,
+      businessAddress: {
+        addressLine1: '',
+        addressLine2: '',
+        city: '',
+        postCode: '',
+        state: '',
+        country: ''
+      },
+      name: '',
+      registrationNumber: '',
+      registrationCountry: ''
+    },
+    industry: IndustryTypeEnum.ACCOUNTING,
+    sourceOfFunds: CorporateSourceOfFundTypeEnum.CIVIL_CONTRACT,
+    acceptedTerms: false,
+    ipAddress: '',
+    baseCurrency: CurrencyEnum.EUR,
+    feeGroup: ''
   }
 
-  form1Submit(_data) {
+  form1Submit(_data: CreateCorporateRequest) {
     if (_data != null) {
-      this.registrationRequest.rootEmail = _data.rootEmail
-      this.registrationRequest.supportEmail = _data.rootEmail
+      this.registrationRequest.rootUser.email = _data.rootUser.email
       this.password = _data.password
 
       this.registrationRequest.acceptedTerms = _data.acceptedTerms
@@ -124,7 +157,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
 
     this.stores.corporates
-      .register(this.registrationRequest as CreateCorporateRequest)
+      .create(this.registrationRequest as CreateCorporateRequest)
       .then(this.doCreateCorporatePasswordIdentity.bind(this))
       .catch(this.registrationFailed.bind(this))
   }
@@ -199,7 +232,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   checkOnKeyUp(e) {
     if (e.key === 'Enter') {
       e.preventDefault()
-      this.stores.corporates.register(e)
+      this.stores.corporates.create(e)
     }
   }
 

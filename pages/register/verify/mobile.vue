@@ -259,7 +259,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
 
   getCorporate() {
     this.stores.corporates
-      .getCorporateDetails(this.corporateVerifyMobileRequest.corporateId)
+      .get(this.corporateVerifyMobileRequest.corporateId)
       .then(this.goToDashboard.bind(this), this.errorOccurred.bind(this))
   }
 

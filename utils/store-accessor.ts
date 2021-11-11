@@ -9,6 +9,7 @@ import Consumers from '~/store/consumers'
 import Transfers from '~/store/transfers'
 import Errors from '~/store/errors'
 import View from '~/store/view'
+import Users from '~/store/users'
 
 export interface Stores {
   cards: Cards
@@ -20,6 +21,7 @@ export interface Stores {
   transfers: Transfers
   errors: Errors
   view: View
+  users: Users
 }
 
 function initialiseStores(store: Store<any>): Stores {
@@ -32,12 +34,17 @@ function initialiseStores(store: Store<any>): Stores {
     consumers: consumersStore(store),
     transfers: transfersStore(store),
     errors: errorsStore(store),
-    view: viewStore(store)
+    view: viewStore(store),
+    users: usersStore(store)
   }
 }
 
 function transfersStore(store: Store<any>) {
   return getModule(Transfers, store)
+}
+
+function usersStore(store: Store<any>) {
+  return getModule(Users, store)
 }
 
 function consumersStore(store: Store<any>) {
@@ -82,5 +89,6 @@ export {
   consumersStore,
   transfersStore,
   errorsStore,
-  viewStore
+  viewStore,
+  usersStore
 }

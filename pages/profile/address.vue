@@ -66,11 +66,11 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
-import { SourceOfFundsOptions } from '~/api/Enums/Consumers/SourceOfFunds'
-import { IndustryOccupationOptions } from '~/api/Enums/Consumers/IndustryOccupation'
 import BaseMixin from '~/minixs/BaseMixin'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 import { LegalAddressModel } from '~/plugins/weavr-multi/api/models/corporates/models/LegalAddressModel'
+import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
+import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -130,10 +130,10 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
     if (this.isConsumer) {
       xhr = this.stores.consumers.update({ address: this.address as AddressModel })
     } else if (this.isCorporate) {
-      // xhr = this.stores.corporates.update({address: this.address})
+      xhr = this.stores.corporates.update({ companyBusinessAddress: this.address as AddressModel })
     }
-
     xhr.then(this.addressUpdated)
+
     xhr.finally(() => {
       this.isLoading = false
     })
@@ -147,7 +147,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
         _kyVerify = res.data
       })
     } else if (this.isCorporate) {
-      await this.stores.corporates.getKyb(23).then((res) => {
+      await this.stores.corporates.getKyb().then((res) => {
         _kyVerify = res.data
       })
     }
@@ -174,11 +174,11 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
   }
 
   get sourceOfFundsOptions() {
-    return SourceOfFundsOptions
+    return SourceOfFundsSelectConst
   }
 
   get industryOccupationOptions() {
-    return IndustryOccupationOptions
+    return IndustryTypeSelectConst
   }
 }
 </script>

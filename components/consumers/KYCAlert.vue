@@ -45,8 +45,9 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+
 import BaseMixin from '~/minixs/BaseMixin'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/KYCStatusEnum'
 
 @Component
 export default class KYCAlert extends mixins(BaseMixin) {
@@ -55,7 +56,7 @@ export default class KYCAlert extends mixins(BaseMixin) {
   }
 
   get isPendingReview(): boolean {
-    return this.stores.consumers?.kyc?.fullDueDiligence === FullDueDiligence.PENDING_REVIEW
+    return this.stores.consumers?.kyc?.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
   }
 }
 </script>

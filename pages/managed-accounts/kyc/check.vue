@@ -16,8 +16,8 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 import BaseMixin from '~/minixs/BaseMixin'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/KYCStatusEnum'
 
 @Component
 export default class KycPage extends mixins(BaseMixin) {
@@ -30,11 +30,11 @@ export default class KycPage extends mixins(BaseMixin) {
   async KycApproved() {
     const _id = this.stores.auth.identityId
     if (_id != null) {
-      const _consumer = await this.stores.consumers.get(_id)
+      const _res = await this.stores.consumers.getKYC()
 
       if (
-        _consumer.data.kyc?.fullDueDiligence === FullDueDiligence.APPROVED ||
-        _consumer.data.kyc?.fullDueDiligence === FullDueDiligence.PENDING_REVIEW
+        _res.data.fullDueDiligence === KYCStatusEnum.APPROVED ||
+        _res.data.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
       ) {
         this.redirectToAccountPage()
       } else {

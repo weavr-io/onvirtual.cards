@@ -1,6 +1,6 @@
 import { Middleware } from '@nuxt/types'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/KYCStatusEnum'
 
 const kyVerified: Middleware = async ({ store, route, redirect }) => {
   if (authStore(store).isLoggedIn) {
@@ -13,7 +13,7 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
           return redirect('/managed-accounts/add')
         }
       } catch (e) {
-        if (consumersStore(store).kyc!.fullDueDiligence! === FullDueDiligence.PENDING_REVIEW) {
+        if (consumersStore(store).kyc!.fullDueDiligence! === KYCStatusEnum.PENDING_REVIEW) {
           return redirect('/managed-accounts')
         }
 
@@ -23,10 +23,8 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
       }
     } else {
       try {
-        const _corpId = authStore(store).auth?.identity.id
-
-        await corporatesStore(store).getCorporateDetails(_corpId)
-        await corporatesStore(store).checkKYB()
+        await corporatesStore(store).get()
+        await corporatesStore(store).getKyb()
 
         if (route.name === 'managed-accounts-kyb') {
           return redirect('/managed-accounts/add')
