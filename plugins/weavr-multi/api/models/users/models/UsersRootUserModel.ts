@@ -1,6 +1,6 @@
 import { UserIdentityModel } from '~/plugins/weavr-multi/api/models/users/models/UserIdentityModel'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/corporates/models/MobileModel'
-import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CompanyPositionEnum'
+import { MobileModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/MobileModel'
+import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
 import { DateModel } from '~/plugins/weavr-multi/api/models/common/DateModel'
 
 export interface UsersRootUserModel {

@@ -1,4 +1,4 @@
-import { CompanyTypeEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CompanyTypeEnum'
+import { CompanyTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyTypeEnum'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 
 export const CompanyTypeSelectConst: { value: CompanyTypeEnum; text: string }[] = [

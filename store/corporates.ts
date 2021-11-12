@@ -1,13 +1,13 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
 import { $api } from '~/utils/api'
-import { CorporateModel } from '~/plugins/weavr-multi/api/models/corporates/models/CorporateModel'
-import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/corporates/responses/GetCorporateKYBResponse'
-import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/KYBStatusEnum'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/CreateCorporateRequest'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/UpdateConsumerRequest'
+import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
+import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { loaderStore } from '~/utils/store-accessor'
-import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/UpdateCorporateRequest'
+import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 
 @Module({
   name: 'corporatesModule',

@@ -1,4 +1,4 @@
-import { CompanyTypeEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CompanyTypeEnum'
+import { CompanyTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyTypeEnum'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 
 export interface CompanyRequest {

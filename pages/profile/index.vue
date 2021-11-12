@@ -136,8 +136,8 @@ import { email, required } from 'vuelidate/lib/validators'
 
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/UpdateConsumerRequest'
-import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/UpdateCorporateRequest'
+import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
+import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 
 @Component({
   components: {

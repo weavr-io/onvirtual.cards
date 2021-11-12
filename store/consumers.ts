@@ -2,10 +2,10 @@ import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { $api } from '~/utils/api'
 import { loaderStore } from '~/utils/store-accessor'
 import { StoreModule } from '~/store/storeModule'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
-import { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/GetConsumerKYCResponse'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/UpdateConsumerRequest'
-import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/CreateConsumerRequest'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/identities/consumers/responses/GetConsumerKYCResponse'
+import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
+import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 
 @Module({
   name: 'consumersModule',

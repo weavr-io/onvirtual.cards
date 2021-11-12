@@ -68,9 +68,11 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
-import { LegalAddressModel } from '~/plugins/weavr-multi/api/models/corporates/models/LegalAddressModel'
+import { LegalAddressModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/LegalAddressModel'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
+import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
+import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -140,27 +142,28 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
   }
 
   async addressUpdated() {
-    let _kyVerify
+    let identityRootVerified: CorporatesRootUserModel | ConsumersRootUserModel
 
     if (this.isConsumer) {
-      await this.stores.consumers.getKYC().then((res) => {
-        _kyVerify = res.data
-      })
-    } else if (this.isCorporate) {
-      await this.stores.corporates.getKyb().then((res) => {
-        _kyVerify = res.data
-      })
-    }
+      await this.stores.consumers.get().then((res) => {
+        identityRootVerified = res.data.rootUser
 
-    if (_kyVerify && _kyVerify.kyc && !_kyVerify.kyc.emailVerified) {
-      return this.$router.push({
-        path: '/register/verify',
-        query: {
-          send: 'true'
+        if (identityRootVerified && !(identityRootVerified as ConsumersRootUserModel).emailVerified) {
+          this.goToRegisterVerify()
+        } else {
+          this.goToIndex()
         }
       })
-    } else {
-      return this.$router.push('/')
+    } else if (this.isCorporate) {
+      await this.stores.corporates.get().then((res) => {
+        identityRootVerified = res.data.rootUser
+
+        if (identityRootVerified && !(identityRootVerified as CorporatesRootUserModel).emailVerified) {
+          this.goToRegisterVerify()
+        } else {
+          this.goToIndex()
+        }
+      })
     }
   }
 
@@ -179,6 +182,15 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
 
   get industryOccupationOptions() {
     return IndustryTypeSelectConst
+  }
+
+  goToRegisterVerify() {
+    return this.$router.push({
+      path: '/register/verify',
+      query: {
+        send: 'true'
+      }
+    })
   }
 }
 </script>

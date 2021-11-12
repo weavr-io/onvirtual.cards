@@ -1,13 +1,13 @@
 import { AxiosResponse } from 'axios'
 import { $axiosMulti } from '~/utils/api'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/CreateCorporateRequest'
-import { CorporateModel } from '~/plugins/weavr-multi/api/models/corporates/models/CorporateModel'
-import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/UpdateCorporateRequest'
-import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/SendVerificationCodeRequest'
-import { StartCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/corporates/responses/StartCorporateKYBResponse'
-import { ChargeFeeToCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/ChargeFeeToCorporateRequest'
-import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/corporates/responses/GetCorporateKYBResponse'
-import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/VerifyEmailRequest'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
+import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/SendVerificationCodeRequest'
+import { StartCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/StartCorporateKYBResponse'
+import { ChargeFeeToCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/ChargeFeeToCorporateRequest'
+import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
+import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/VerifyEmailRequest'
 
 export class CorporatesApi {
   store(data: CreateCorporateRequest): Promise<AxiosResponse<CorporateModel>> {

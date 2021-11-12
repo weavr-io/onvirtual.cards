@@ -22,15 +22,6 @@ export module Schemas {
     identity?: TypeId
   }
 
-  export interface verifyEmailRequest {
-    corporateId: any
-    consumerId: any
-    request: {
-      emailAddress: string
-      nonce: string
-    }
-  }
-
   export interface CurrencyAmount {
     currency: string
     amount: number

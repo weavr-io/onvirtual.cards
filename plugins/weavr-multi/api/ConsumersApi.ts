@@ -1,14 +1,14 @@
 import { AxiosResponse } from 'axios'
 import { $axiosMulti } from '~/utils/api'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/UpdateConsumerRequest'
-import { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/GetConsumerKYCResponse'
-import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/CreateConsumerRequest'
-import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/SendVerificationCodeRequest'
-import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/VerifyEmailRequest'
-import { StartConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/StartConsumerKYCResponse'
-import { StartConsumerKYCMobileResponse } from '~/plugins/weavr-multi/api/models/consumers/responses/StartConsumerKYCMobileResponse'
-import { ChargeFeeToConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/ChargeFeeToConsumerRequest'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
+import { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/identities/consumers/responses/GetConsumerKYCResponse'
+import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
+import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/SendVerificationCodeRequest'
+import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/VerifyEmailRequest'
+import { StartConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/identities/consumers/responses/StartConsumerKYCResponse'
+import { StartConsumerKYCMobileResponse } from '~/plugins/weavr-multi/api/models/identities/consumers/responses/StartConsumerKYCMobileResponse'
+import { ChargeFeeToConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/ChargeFeeToConsumerRequest'
 
 export class ConsumersApi {
   store(data: CreateConsumerRequest): Promise<AxiosResponse<ConsumerModel>> {

@@ -54,6 +54,7 @@ import { maxLength, minLength, required } from 'vuelidate/lib/validators'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore } from '~/utils/store-accessor'
+import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/VerifyEmailRequest'
 
 @Component({
   layout: 'auth',
@@ -74,6 +75,10 @@ import { authStore } from '~/utils/store-accessor'
   }
 })
 export default class EmailVerificationPage extends mixins(BaseMixin) {
+  showEmailResentSuccess: boolean = false
+
+  private verifyEmailRequest!: VerifyEmailRequest
+
   get isLoggedIn() {
     return this.stores.auth.isLoggedIn
   }
@@ -81,10 +86,6 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   get isLoading() {
     return this.stores.auth.isLoading
   }
-
-  showEmailResentSuccess: boolean = false
-
-  public verifyEmailRequest!: Schemas.verifyEmailRequest
 
   get showEmailResentSuccessAlert(): boolean {
     if (this.$route.query.send === 'true') {

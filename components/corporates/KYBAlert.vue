@@ -51,7 +51,7 @@
 import { Component, mixins } from "nuxt-property-decorator";
 
 import BaseMixin from "~/minixs/BaseMixin";
-import { KYBStatusEnum } from "~/plugins/weavr-multi/api/models/corporates/enums/KYBStatusEnum";
+import { KYBStatusEnum } from "~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum";
 
 @Component({})
 export default class KYBAlert extends mixins(BaseMixin) {

@@ -131,7 +131,7 @@ import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required, maxLength } from 'vuelidate/lib/validators'
 
 import BaseMixin from '~/minixs/BaseMixin'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/corporates/requests/CreateCorporateRequest'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 

@@ -53,8 +53,8 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 
 import BaseMixin from '~/minixs/BaseMixin'
-import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/KYBStatusEnum'
-import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/KYCStatusEnum'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 @Component
 export default class DashboardHeader extends mixins(BaseMixin) {

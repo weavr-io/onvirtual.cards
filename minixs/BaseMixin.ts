@@ -1,7 +1,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import { $api } from '~/utils/api'
 import { initialiseStores } from '~/utils/store-accessor'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 
 const moment = require('moment')
 
@@ -106,6 +106,10 @@ export default class BaseMixin extends Vue {
 
   get corporate() {
     return this.stores.corporates.corporate
+  }
+
+  goToIndex() {
+    return this.$router.push('/')
   }
 
   logout() {

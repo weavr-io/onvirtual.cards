@@ -266,11 +266,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   getConsumer() {
     this.stores.consumers
       .get(this.consumerVerifyMobileRequest.consumerId)
-      .then(this.goToDashboard.bind(this), this.errorOccurred.bind(this))
-  }
-
-  goToDashboard() {
-    this.$router.push('/')
+      .then(this.goToIndex(), this.errorOccurred.bind(this))
   }
 
   mounted() {

@@ -1,4 +1,4 @@
-import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 
 export const SourceOfFundsSelectConst: { value: CorporateSourceOfFundTypeEnum; text: string }[] = [

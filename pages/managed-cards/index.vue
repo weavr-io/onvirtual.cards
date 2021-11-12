@@ -53,8 +53,8 @@ import BaseMixin from '~/minixs/BaseMixin'
 import { cardsStore } from '~/utils/store-accessor'
 import { NullableBoolean } from '~/api/Generic/NullableBoolean'
 import { $api } from '~/utils/api'
-import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/KYBStatusEnum'
-import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/KYCStatusEnum'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 @Component({
   layout: 'dashboard',

@@ -134,7 +134,7 @@ export default class LoginPage extends mixins(BaseMixin) {
       await this.stores.consumers.get()
     }
 
-    await this.$router.push('/')
+    await this.goToIndex()
   }
 
   checkOnKeyUp(e) {

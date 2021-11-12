@@ -1,6 +1,6 @@
 import { Middleware } from '@nuxt/types'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
-import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/KYCStatusEnum'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 const kyVerified: Middleware = async ({ store, route, redirect }) => {
   if (authStore(store).isLoggedIn) {

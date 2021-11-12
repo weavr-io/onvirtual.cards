@@ -181,9 +181,9 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import { BooleanString } from '~/api/Generic/BooleanString'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
-import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/consumers/requests/CreateConsumerRequest'
-import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/consumers/enums/ConsumerSourceOfFundTypeEnum'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumerModel'
+import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
+import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/passwords/requests/CreatePasswordRequestModel'
@@ -368,8 +368,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
         (tokens) => {
           if (tokens.tokens.password !== '') {
             this.registrationRequest.password = tokens.tokens.password
-            debugger
-            // this.doRegister.bind(this)
+            this.doRegister()
           } else {
             return null
           }
@@ -385,11 +384,12 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
   }
 
   doRegister() {
+    debugger
     this.isLoadingRegistration = true
     this.stores.consumers
       .create(this.registrationRequest as CreateConsumerRequest)
-      .then(this.onConsumerCreated.bind(this))
-      .catch(this.registrationFailed.bind(this))
+      .then(this.onConsumerCreated)
+      .catch(this.registrationFailed)
   }
 
   onConsumerCreated(res: AxiosResponse<ConsumerModel>) {
@@ -410,24 +410,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
       .then(this.onRegisteredSuccessfully.bind(this))
   }
 
-  goToAdressInputScreen() {
-    this.isLoadingRegistration = false
-    this.$router.push({ path: '/profile/address' })
-  }
-
-  registrationFailed(err) {
-    this.isLoadingRegistration = false
-    const _errCode = err.response.data.errorCode
-
-    if (_errCode === 'USERNAME_NOT_UNIQUE' || _errCode === 'EMAIL_NOT_UNIQUE') {
-      return
-    } else {
-      this.$weavrToastError(_errCode)
-    }
-
-    window.scrollTo(0, 0)
-  }
-
   onRegisteredSuccessfully() {
     if (!this.registrationRequest.rootUser) {
       return
@@ -443,8 +425,21 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     const _req = this.stores.auth.loginWithPassword(loginRequest)
 
     _req.then(() => {
-      this.$router.push('/')
+      this.$router.push({ path: '/profile/address' })
     })
+  }
+
+  registrationFailed(err) {
+    this.isLoadingRegistration = false
+    const _errCode = err.response.data.errorCode
+
+    if (_errCode === 'USERNAME_NOT_UNIQUE' || _errCode === 'EMAIL_NOT_UNIQUE') {
+      this.$weavrToastError(_errCode)
+    } else {
+      this.$weavrToastError(_errCode)
+    }
+
+    window.scrollTo(0, 0)
   }
 
   checkOnKeyUp(e) {

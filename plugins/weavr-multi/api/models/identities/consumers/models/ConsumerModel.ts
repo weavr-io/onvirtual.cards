@@ -1,7 +1,7 @@
-import { IDModel } from '../../common/IDModel'
+import { IDModel } from '../../../common/IDModel'
 import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
-import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/corporates/enums/CorporateSourceOfFundTypeEnum'
-import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/consumers/models/ConsumersRootUserModel'
+import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
 export interface ConsumerModel {
