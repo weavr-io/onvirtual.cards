@@ -1,10 +1,13 @@
-import { Module, Action, Mutation } from 'vuex-module-decorators'
+import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
-import { Statement } from '~/api/Models/Statements/Statement'
-import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import { $api } from '~/utils/api'
-import { NullableBoolean } from '~/api/Generic/NullableBoolean'
+import { GetManagedAccountsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountsRequest'
+import { PaginatedManagedAccountsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/responses/PaginatedManagedAccountsResponse'
+import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
+import { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountModel'
+import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
+import { ManagedAccountStatementRequest } from '~/api/Requests/Statements/ManagedAccountStatementRequest'
 
 @Module({
   name: 'accountsModule',
@@ -13,9 +16,9 @@ import { NullableBoolean } from '~/api/Generic/NullableBoolean'
 })
 export default class Accounts extends StoreModule {
   isLoading: boolean = false
-  accounts: ManagedAccountsSchemas.ManagedAccounts | null = null
-  account: ManagedAccountsSchemas.ManagedAccount | null = null
-  statement: Statement | null = null
+  accounts: PaginatedManagedAccountsResponse | null = null
+  account: ManagedAccountModel | null = null
+  statement: StatementResponseModel | null = null
 
   get totalAvailableBalance() {
     if (this.accounts == null) {
@@ -24,9 +27,9 @@ export default class Accounts extends StoreModule {
 
     let total = 0
 
-    this.accounts.account.forEach((account: ManagedAccountsSchemas.ManagedAccount) => {
+    this.accounts.accounts.forEach((account) => {
       if (account.balances.availableBalance) {
-        total += parseInt(account.balances.availableBalance)
+        total += account.balances.availableBalance
       }
     })
 
@@ -40,14 +43,14 @@ export default class Accounts extends StoreModule {
 
     let _entries = this.statement.entry
 
-    _entries = _entries.filter((transaction) => {
+    _entries = _entries!.filter((transaction) => {
       const DO_NOT_DISPLAY = ['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE']
 
-      if (DO_NOT_DISPLAY.includes(transaction.txId.type)) {
+      if (DO_NOT_DISPLAY.includes(transaction.transactionId.type)) {
         return false
       }
 
-      if (transaction.txId.type === 'AUTHORISATION') {
+      if (transaction.transactionId.type === 'AUTHORISATION') {
         if (transaction.additionalFields?.authorisationState === 'COMPLETED') {
           return false
         }
@@ -76,17 +79,17 @@ export default class Accounts extends StoreModule {
   }
 
   @Mutation
-  SET_ACCOUNTS(accounts: ManagedAccountsSchemas.ManagedAccounts) {
+  SET_ACCOUNTS(accounts: PaginatedManagedAccountsResponse) {
     this.accounts = accounts
   }
 
   @Mutation
-  SET_ACCOUNT(account: ManagedAccountsSchemas.ManagedAccount) {
+  SET_ACCOUNT(account: ManagedAccountModel) {
     this.account = account
   }
 
   @Mutation
-  SET_STATEMENT(statement: Statement) {
+  SET_STATEMENT(statement: StatementResponseModel) {
     this.statement = statement
   }
 
@@ -96,12 +99,12 @@ export default class Accounts extends StoreModule {
   }
 
   @Mutation
-  APPEND_STATEMENT(_statement: Statement) {
+  APPEND_STATEMENT(_statement: StatementResponseModel) {
     if (this.statement === null) {
       this.statement = _statement
     } else {
-      _statement.entry.forEach((_statementEntry) => {
-        this.statement?.entry.push(_statementEntry)
+      _statement.entry!.forEach((_statementEntry) => {
+        this.statement?.entry!.push(_statementEntry)
       })
     }
   }
@@ -112,17 +115,18 @@ export default class Accounts extends StoreModule {
   }
 
   @Action({ rawError: true })
-  index() {
-    const body = {
-      active: NullableBoolean.TRUE,
-      paging: {
-        count: true,
-        offset: 0,
-        limit: 0
-      }
-    }
+  index(filters: GetManagedAccountsRequest) {
+    // const body = {
+    //   active: NullableBoolean.TRUE,
+    //   paging: {
+    //     count: true,
+    //     offset: 0,
+    //     limit: 0
+    //   }
+    // }
 
-    const req = $api.post('/app/api/managed_accounts/get', body)
+    // const req = $api.post('/app/api/managed_accounts/get', body)
+    const req = this.store.$apiMulti.managedAccounts.index(filters)
 
     req.then((res) => {
       this.SET_ACCOUNTS(res.data)
@@ -132,8 +136,10 @@ export default class Accounts extends StoreModule {
   }
 
   @Action({ rawError: true })
-  add(request: ManagedAccountsSchemas.CreateManagedAccountRequest) {
-    const req = $api.post('/app/api/managed_accounts/_/create', request)
+  create(request: CreateManagedAccountRequest) {
+    // const req = $api.post('/app/api/managed_accounts/_/create', request)
+
+    const req = this.store.$apiMulti.managedAccounts.store(request)
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -144,7 +150,9 @@ export default class Accounts extends StoreModule {
 
   @Action({ rawError: true })
   get(id: string) {
-    const req = $api.post('/app/api/managed_accounts/' + id + '/get', {})
+    // const req = $api.post('/app/api/managed_accounts/' + id + '/get', {})
+
+    const req = this.store.$apiMulti.managedAccounts.show(id)
 
     req.then((res) => {
       this.SET_ACCOUNT(res.data)
@@ -154,8 +162,10 @@ export default class Accounts extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getStatement(request: { id: string; body: ManagedAccountStatementRequest }) {
-    const req = $api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
+  getStatement(request: { id: string; filters: GetManagedAccountStatementRequest }) {
+    // const req = $api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
+
+    const req = this.store.$apiMulti.managedAccounts.statement(request)
 
     req.then((res) => {
       this.SET_STATEMENT(res.data)

@@ -6,6 +6,8 @@ import { ManagedCardsFilter } from '~/api/Requests/ManagedCards/ManagedCardsFilt
 import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
 import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 import { $api } from '~/utils/api'
+import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
+import { ManagedCardsFilterRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/ManagedCardsFilterRequest'
 
 @Module({
   name: 'cardsModule',
@@ -125,8 +127,9 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getCards(filters: ManagedCardsFilter) {
-    const req = $api.post('/app/api/managed_cards/get', filters)
+  getCards(filters: ManagedCardsFilterRequest) {
+    // const req = $api.post('/app/api/managed_cards/get', filters)
+    const req = this.store.$apiMulti.managedCards.index(filters)
 
     req.then((res) => {
       this.SET_CARDS(res.data.card)

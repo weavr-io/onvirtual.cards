@@ -9,7 +9,7 @@ export interface StatementEntryModel {
   transactionAmount: CurrencyAmountModel
   balanceAfter?: CurrencyAmountModel
   cardholderFee?: CurrencyAmountModel
-  processedTimestamp: bigint | string
+  processedTimestamp: string
   sourceAmount: CurrencyAmountModel
   additionalFields: {
     [k: string]: string

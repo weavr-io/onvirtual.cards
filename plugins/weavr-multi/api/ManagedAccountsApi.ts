@@ -1,17 +1,17 @@
 import { AxiosResponse } from 'axios'
 import { IDModel } from './models/common/IDModel'
 import { $axiosMulti } from '~/utils/api'
-import { ManagedAccountsFilterRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/ManagedAccountsFilterRequest'
 import { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountModel'
 import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
 import { UpdateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/UpdateManagedAccountRequest'
 import { PaginatedManagedAccountsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/responses/PaginatedManagedAccountsResponse'
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
-import { ManagedAccountsStatementsFilterRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/ManagedAccountsStatementsFilterRequest'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
+import { GetManagedAccountsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountsRequest'
+import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 
 export class ManagedAccountsApi {
-  index(filters?: ManagedAccountsFilterRequest): Promise<AxiosResponse<PaginatedManagedAccountsResponse>> {
+  index(filters?: GetManagedAccountsRequest): Promise<AxiosResponse<PaginatedManagedAccountsResponse>> {
     return $axiosMulti.get<PaginatedManagedAccountsResponse>('/managed_accounts', { params: filters })
   }
 
@@ -49,7 +49,7 @@ export class ManagedAccountsApi {
 
   statement(params: {
     id: IDModel
-    filters: ManagedAccountsStatementsFilterRequest
+    filters: GetManagedAccountStatementRequest
   }): Promise<AxiosResponse<StatementResponseModel>> {
     return $axiosMulti.get<StatementResponseModel>('/managed_accounts/' + params.id + '/statement', {
       data: params.filters
