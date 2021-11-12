@@ -124,8 +124,6 @@ export default class Accounts extends StoreModule {
     //     limit: 0
     //   }
     // }
-
-    // const req = $api.post('/app/api/managed_accounts/get', body)
     const req = this.store.$apiMulti.managedAccounts.index(filters)
 
     req.then((res) => {
@@ -137,8 +135,6 @@ export default class Accounts extends StoreModule {
 
   @Action({ rawError: true })
   create(request: CreateManagedAccountRequest) {
-    // const req = $api.post('/app/api/managed_accounts/_/create', request)
-
     const req = this.store.$apiMulti.managedAccounts.store(request)
 
     req.finally(() => {
@@ -150,8 +146,6 @@ export default class Accounts extends StoreModule {
 
   @Action({ rawError: true })
   get(id: string) {
-    // const req = $api.post('/app/api/managed_accounts/' + id + '/get', {})
-
     const req = this.store.$apiMulti.managedAccounts.show(id)
 
     req.then((res) => {
@@ -163,8 +157,6 @@ export default class Accounts extends StoreModule {
 
   @Action({ rawError: true })
   getStatement(request: { id: string; filters: GetManagedAccountStatementRequest }) {
-    // const req = $api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
-
     const req = this.store.$apiMulti.managedAccounts.statement(request)
 
     req.then((res) => {

@@ -1,13 +1,15 @@
-import { Module, Action, Mutation } from 'vuex-module-decorators'
-import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
-import { Statement } from '~/api/Models/Statements/Statement'
+import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
-import { ManagedCardsFilter } from '~/api/Requests/ManagedCards/ManagedCardsFilter'
 import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
-import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 import { $api } from '~/utils/api'
 import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
-import { ManagedCardsFilterRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/ManagedCardsFilterRequest'
+import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
+import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
+import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
+import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 
 @Module({
   name: 'cardsModule',
@@ -17,18 +19,18 @@ import { ManagedCardsFilterRequest } from '~/plugins/weavr-multi/api/models/mana
 export default class Cards extends StoreModule {
   isLoading: boolean = false
 
-  cards: ManagedCardsSchemas.ManagedCard[] = []
+  cards: PaginatedManagedCardsResponse | null = null
 
-  managedCard: ManagedCardsSchemas.ManagedCard | null = null
+  managedCard: ManagedCardModel | null = null
 
-  statement: StatementEntry[] = []
+  statement: StatementResponseModel | null = null
 
   filteredStatement: any = {}
 
   get currency() {
     if (this.cards == null) {
       return null
-    } else if (this.cards.length > 0) {
+    } else if (this.cards.cards.length > 0) {
       return this.cards[0].currency
     } else {
       return null
@@ -42,9 +44,9 @@ export default class Cards extends StoreModule {
 
     let total = 0
 
-    this.cards.forEach((card: ManagedCardsSchemas.ManagedCard) => {
-      if (card.balances.availableBalance) {
-        total += parseInt(card.balances.availableBalance)
+    this.cards.cards.forEach((card) => {
+      if (card.balances?.availableBalance) {
+        total += card.balances.availableBalance
       }
     })
 
@@ -53,16 +55,20 @@ export default class Cards extends StoreModule {
 
   @Mutation
   SET_FILTERED_STATEMENT() {
-    const _entries = this.statement.filter((transaction) => {
+    if (this.statement == null) {
+      return []
+    }
+
+    const _entries = this.statement.entry!.filter((transaction) => {
       const _shouldDisplay = !['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE'].includes(
-        transaction.txId.type
+        transaction.transactionId.type
       )
 
       if (!_shouldDisplay) {
         return false
       }
 
-      if (transaction.txId.type === 'AUTHORISATION') {
+      if (transaction.transactionId.type === 'AUTHORISATION') {
         if (transaction.additionalFields?.authorisationState === 'COMPLETED') {
           return false
         }
@@ -91,7 +97,7 @@ export default class Cards extends StoreModule {
   }
 
   @Mutation
-  SET_CARDS(_cards: ManagedCardsSchemas.ManagedCard[]) {
+  SET_CARDS(_cards: PaginatedManagedCardsResponse) {
     this.cards = _cards
   }
 
@@ -101,46 +107,45 @@ export default class Cards extends StoreModule {
   }
 
   @Mutation
-  SET_STATEMENT(_statement: Statement) {
-    this.statement = _statement.entry
+  SET_STATEMENT(statement: StatementResponseModel) {
+    this.statement = statement
   }
 
   @Mutation
   RESET_STATEMENT() {
-    this.statement = []
+    this.statement = null
   }
 
   @Mutation
-  APPEND_STATEMENT(_statement: Statement) {
+  APPEND_STATEMENT(_statement: StatementResponseModel) {
     if (this.statement === null) {
-      this.statement = _statement.entry
+      this.statement = _statement
     } else {
-      _statement.entry.forEach((_statementEntry) => {
-        this.statement.push(_statementEntry)
+      _statement.entry!.forEach((_statementEntry) => {
+        this.statement?.entry!.push(_statementEntry)
       })
     }
   }
 
   @Mutation
-  SET_MANAGED_CARD(_card: ManagedCardsSchemas.ManagedCard) {
+  SET_MANAGED_CARD(_card: ManagedCardModel) {
     this.managedCard = _card
   }
 
   @Action({ rawError: true })
-  getCards(filters: ManagedCardsFilterRequest) {
-    // const req = $api.post('/app/api/managed_cards/get', filters)
+  getCards(filters: GetManagedCardsRequest) {
     const req = this.store.$apiMulti.managedCards.index(filters)
 
     req.then((res) => {
-      this.SET_CARDS(res.data.card)
+      this.SET_CARDS(res.data)
     })
 
     return req
   }
 
   @Action({ rawError: true })
-  addCard(request: ManagedCardsSchemas.CreateManagedCardRequest) {
-    const req = $api.post('/app/api/managed_cards/_/create', request)
+  addCard(request: CreateManagedCardRequest) {
+    const req = this.store.$apiMulti.managedCards.store(request)
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -150,8 +155,8 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  update(request) {
-    const req = $api.post('/app/api/managed_cards/' + request.id + '/update', request.body)
+  update(id: IDModel, request: UpdateManagedCardRequest) {
+    const req = this.store.$apiMulti.managedCards.update(id, request)
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -161,10 +166,10 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getCardStatement(request: ManagedCardStatementRequest) {
+  getCardStatement(id: IDModel, filters: StatementFiltersRequest) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post('/app/api/managed_cards/' + request.id + '/statement/get', request.request)
+    const req = this.store.$apiMulti.managedCards.statement(id, filters)
 
     req.then((res) => {
       this.SET_STATEMENT(res.data)
@@ -191,8 +196,8 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getManagedCard(id) {
-    const req = $api.post('/app/api/managed_cards/' + id + '/get', {})
+  getManagedCard(id: string) {
+    const req = this.store.$apiMulti.managedCards.show(id)
 
     req.then((res) => {
       this.SET_MANAGED_CARD(res.data)
@@ -236,10 +241,10 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  remove(id) {
+  remove(id: string) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post('/app/api/managed_cards/' + id + '/remove', {})
+    const req = this.store.$apiMulti.managedCards.remove(id)
 
     req.then((res) => {
       this.SET_MANAGED_CARD(res.data)
