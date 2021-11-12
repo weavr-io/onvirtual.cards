@@ -158,9 +158,6 @@
                   </b-col>
                 </b-row>
               </b-form>
-              <pre>
-                {{ registrationRequest }}
-              </pre>
             </div>
           </div>
         </b-card-body>

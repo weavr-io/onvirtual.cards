@@ -21,38 +21,41 @@ export default class IndexPage extends mixins(BaseMixin) {
     const isLoggedIn = authStore(store).isLoggedIn
 
     if (isLoggedIn) {
-      const _auth = authStore(store).auth
       if (authStore(store).isConsumer) {
-        let _cons = consumersStore(store).consumer
+        let _consumer = consumersStore(store).consumer
 
-        if (_cons === null) {
+        if (_consumer === null) {
           await consumersStore(store).get()
-          _cons = consumersStore(store).consumer
+          _consumer = consumersStore(store).consumer
         }
 
-        if (_cons && _cons.rootUser && !_cons.rootUser.emailVerified) {
-          redirect('/register/verify?send=true')
-        } else if (_cons && _cons.rootUser && !_cons.rootUser.mobileNumberVerified) {
+        if (_consumer && _consumer.rootUser && !_consumer.rootUser.emailVerified) {
+          redirect(`/register/verify?send=true&email=${_consumer.rootUser.email}`)
+        } else if (_consumer && _consumer.rootUser && !_consumer.rootUser.mobileNumberVerified) {
           redirect('/register/verify/mobile')
-        } else if (_cons && typeof _cons.rootUser === 'undefined') {
+        } else if (_consumer && typeof _consumer.rootUser === 'undefined') {
           redirect('/profile/address')
         } else {
           redirect('/dashboard')
         }
-      } else if (authStore(store).isCorporate) {
-        const res = await corporatesStore(store).getKyb(_auth.identity.id!)
+      } else {
+        // treat as corporate
+        let _corporate = corporatesStore(store).corporate
 
-        if (res.data.rootEmailVerified && res.data.rootMobileVerified) {
-          redirect('/dashboard')
-        } else if (res.data.rootEmailVerified) {
-          redirect('/register/verify?send=true')
-        } else if (res.data && res.data.rootMobileVerified) {
+        if (_corporate === null) {
+          await corporatesStore(store).get()
+          _corporate = corporatesStore(store).corporate
+        }
+
+        if (_corporate && _corporate.rootUser && !_corporate.rootUser.emailVerified) {
+          redirect(`/register/verify?send=true&email=${_corporate.rootUser.email}`)
+        } else if (_corporate && _corporate.rootUser && !_corporate.rootUser.mobileNumberVerified) {
           redirect('/register/verify/mobile')
+        } else if (_corporate && typeof _corporate.rootUser === 'undefined') {
+          redirect('/profile/address')
         } else {
           redirect('/dashboard')
         }
-      } else {
-        redirect('/dashboard')
       }
     } else {
       redirect('/login')
