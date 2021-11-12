@@ -9,6 +9,7 @@ import { TransfersApi } from '~/plugins/weavr-multi/api/TransfersApi'
 import { OutgoingWireTransferApi } from '~/plugins/weavr-multi/api/OutgoingWireTransferApi'
 import { UsersApi } from '~/plugins/weavr-multi/api/UsersApi'
 import { ConsumersApi } from '~/plugins/weavr-multi/api/ConsumersApi'
+import { AdditionalFactorsApi } from '~/plugins/weavr-multi/api/AdditionalFactorsApi'
 
 export class ApiModule implements ApiInterface {
   authentication: AuthenticationApi
@@ -21,14 +22,16 @@ export class ApiModule implements ApiInterface {
   outgoingWireTransfers: OutgoingWireTransferApi
   ipify: IpifyApi
   users: UsersApi
+  additionalFactors: AdditionalFactorsApi
 
   constructor() {
     this.authentication = new AuthenticationApi()
+    this.passwords = new PasswordsApi()
+    this.additionalFactors = new AdditionalFactorsApi()
     this.managedAccounts = new ManagedAccountsApi()
     this.managedCards = new ManagedCardsApi()
     this.corporates = new CorporatesApi()
     this.consumers = new ConsumersApi()
-    this.passwords = new PasswordsApi()
     this.transfers = new TransfersApi()
     this.outgoingWireTransfers = new OutgoingWireTransferApi()
     this.ipify = new IpifyApi()

@@ -72,21 +72,11 @@ import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/mode
   }
 })
 export default class EmailVerificationPage extends mixins(BaseMixin) {
-  validate({ route }) {
-    return route.query.email !== undefined
-  }
-
   showEmailResentSuccess: boolean = false
 
   private verifyEmailRequest!: VerifyEmailRequest
 
-  get isLoggedIn() {
-    return this.stores.auth.isLoggedIn
-  }
-
-  get isLoading() {
-    return this.stores.auth.isLoading
-  }
+  isLoading: boolean = false
 
   get showEmailResentSuccessAlert(): boolean {
     if (this.$route.query.send === 'true') {
@@ -97,6 +87,22 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   asyncData({ route, redirect, store }) {
+    if (!authStore(store).isLoggedIn) {
+      redirect('/')
+    }
+
+    if (authStore(store).isConsumer) {
+      if (consumersStore(store).consumer?.rootUser.emailVerified) {
+        return redirect('/register/verify/mobile')
+      }
+    }
+
+    if (authStore(store).isCorporate) {
+      if (corporatesStore(store).corporate?.rootUser.emailVerified) {
+        return redirect('/register/verify/mobile')
+      }
+    }
+
     const request: VerifyEmailRequest = {
       email: route.query.email + '',
       verificationCode: route.query.nonce ? route.query.nonce + '' : ''
@@ -139,12 +145,19 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   async sendVerifyEmail() {
+    this.isLoading = true
     if (this.isConsumer) {
-      await this.sendVerifyEmailConsumers()
+      await this.sendVerifyEmailConsumers().then(() => {
+        this.isLoading = false
+      })
     } else {
       // else treat as corporate
-      await this.sendVerifyEmailCorporates()
+      await this.sendVerifyEmailCorporates().then(() => {
+        this.isLoading = false
+      })
     }
+
+    this.isLoading = false
   }
 
   async sendVerifyEmailConsumers() {
@@ -187,7 +200,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   goToVerifyMobile() {
-    this.$router.push({
+    return this.$router.push({
       path: '/register/verify/mobile',
       query: {
         send: 'true',

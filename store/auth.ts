@@ -8,6 +8,9 @@ import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 import { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'
+import { GetAuthenticationFactorsResponse } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/responses/GetAuthenticationFactorsResponse'
+import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
+import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -19,7 +22,7 @@ const Cookie = process.client ? require('js-cookie') : undefined
 export default class Auth extends StoreModule {
   auth: LoginWithPasswordResponse | null = null
   authIdentity: CorporateModel | ConsumerModel | null = null
-
+  authFactors: GetAuthenticationFactorsResponse | null = null
   isLoading: boolean = false
 
   get isLoggedIn(): boolean {
@@ -92,6 +95,11 @@ export default class Auth extends StoreModule {
   }
 
   @Mutation
+  SET_AUTH_FACTORS(res: GetAuthenticationFactorsResponse) {
+    this.authFactors = res
+  }
+
+  @Mutation
   REMOVE_AUTH(auth: null) {
     this.auth = auth
 
@@ -134,6 +142,31 @@ export default class Auth extends StoreModule {
     _req.then((res) => {
       this.SET_TOKEN(res.data)
     })
+
+    return _req
+  }
+
+  @Action({ rawError: true })
+  indexAuthFactors() {
+    const _req = this.store.$apiMulti.additionalFactors.index()
+
+    _req.then((res) => {
+      this.SET_AUTH_FACTORS(res.data)
+    })
+
+    return _req
+  }
+
+  @Action({ rawError: true })
+  enrollAuthFactors(channel: SCAOtpChannelEnum) {
+    const _req = this.store.$apiMulti.additionalFactors.enroll(channel)
+
+    return _req
+  }
+
+  @Action({ rawError: true })
+  verifyAuthFactors(request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrolRequest }) {
+    const _req = this.store.$apiMulti.additionalFactors.verify(request)
 
     return _req
   }

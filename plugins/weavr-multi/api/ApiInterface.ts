@@ -8,14 +8,16 @@ import { TransfersApi } from '~/plugins/weavr-multi/api/TransfersApi'
 import { OutgoingWireTransferApi } from '~/plugins/weavr-multi/api/OutgoingWireTransferApi'
 import { UsersApi } from '~/plugins/weavr-multi/api/UsersApi'
 import { ConsumersApi } from '~/plugins/weavr-multi/api/ConsumersApi'
+import { AdditionalFactorsApi } from '~/plugins/weavr-multi/api/AdditionalFactorsApi'
 
 export interface ApiInterface {
   authentication: AuthenticationApi
+  passwords: PasswordsApi
+  additionalFactors: AdditionalFactorsApi
   managedAccounts: ManagedAccountsApi
   managedCards: ManagedCardsApi
   corporates: CorporatesApi
   consumers: ConsumersApi
-  passwords: PasswordsApi
   transfers: TransfersApi
   outgoingWireTransfers: OutgoingWireTransferApi
   ipify: IpifyApi
