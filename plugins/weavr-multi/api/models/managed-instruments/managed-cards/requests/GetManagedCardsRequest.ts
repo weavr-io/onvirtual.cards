@@ -3,10 +3,9 @@ import { ManagedCardTypeEnum } from '~/plugins/weavr-multi/api/models/managed-in
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
 import { ManufacturingStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManufacturingStateEnum'
 import { ManagedInstrumentStateModel } from '~/plugins/weavr-multi/api/models/managed-instruments/models/ManagedInstrumentStateModel'
+import { PagingModel } from '~/plugins/weavr-multi/api/models/common/PagingModel'
 
-export interface GetManagedCardsRequest {
-  offset?: number
-  limit?: number
+export interface GetManagedCardsRequest extends PagingModel {
   profileId?: string
   friendlyName?: string
   state?: ManagedInstrumentStateModel

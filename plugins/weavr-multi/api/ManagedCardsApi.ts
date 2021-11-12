@@ -4,7 +4,6 @@ import { $axiosMulti } from '~/utils/api'
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
-import { ManagedCardsFilterRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/ManagedCardsFilterRequest'
 import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
@@ -15,9 +14,10 @@ import { PhysicalCardPinResponse } from '~/plugins/weavr-multi/api/models/manage
 import { SetPhysicalCardPinRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/SetPhysicalCardPinRequest'
 import { ReplaceDamagedPhysicalManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/ReplaceDamagedPhysicalManagedCardRequest'
 import { ReplaceLostStolenPhysicalManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/ReplaceLostStolenPhysicalManagedCardRequest'
+import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
 
 export class ManagedCardsApi {
-  index(filters?: ManagedCardsFilterRequest): Promise<AxiosResponse<PaginatedManagedCardsResponse>> {
+  index(filters?: GetManagedCardsRequest): Promise<AxiosResponse<PaginatedManagedCardsResponse>> {
     return $axiosMulti.get<PaginatedManagedCardsResponse>('/managed_cards', { params: filters })
   }
 
@@ -47,7 +47,7 @@ export class ManagedCardsApi {
 
   statement(id: IDModel, filters?: StatementFiltersRequest): Promise<AxiosResponse<StatementResponseModel>> {
     return $axiosMulti.get<StatementResponseModel>('/managed_cards/' + id + '/statement', {
-      params: filters,
+      params: filters
     })
   }
 
