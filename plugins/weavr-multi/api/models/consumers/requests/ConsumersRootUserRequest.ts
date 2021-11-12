@@ -10,5 +10,5 @@ export interface ConsumersRootUserRequest {
   mobile: MobileModel
   dateOfBirth: DateModel
   occupation: OccupationTypeEnum
-  address: AddressModel
+  address?: AddressModel
 }

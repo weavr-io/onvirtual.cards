@@ -45,7 +45,6 @@
 
                 <b-form-group label="Date of Birth">
                   <dob-picker
-                    :value="dateOfBirth"
                     :placeholders="['Day', 'Month', 'Year']"
                     month-format="long"
                     show-labels="false"
@@ -223,7 +222,15 @@ const touchMap = new WeakMap()
           required
         },
         dateOfBirth: {
-          required
+          day: {
+            required
+          },
+          month: {
+            required
+          },
+          year: {
+            required
+          }
         }
       },
       acceptedTerms: {
@@ -248,6 +255,8 @@ const touchMap = new WeakMap()
   }
 })
 export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
+  // public password: string = ''
+
   private $recaptcha: any
 
   @Ref('passwordField')
@@ -257,8 +266,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
   numberIsValid: boolean | null = null
 
   isLoadingRegistration: boolean = false
-
-  dateOfBirth = null
 
   public registrationRequest: DeepNullable<RecursivePartial<CreateConsumerRequest> & { password: string }> = {
     profileId: config.profileId.consumers,
@@ -276,20 +283,10 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
         month: null,
         year: null
       },
-      occupation: null,
-      address: {
-        addressLine1: null,
-        addressLine2: null,
-        city: null,
-        postCode: null,
-        state: null,
-        country: null
-      }
+      occupation: null
     },
     ipAddress: null,
     acceptedTerms: false,
-    baseCurrency: null,
-    feeGroup: null,
     sourceOfFunds: null,
     sourceOfFundsOther: null,
     password: null
@@ -305,40 +302,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
 
   get shouldShowOtherSourceOfFunds(): boolean {
     return this.registrationRequest.sourceOfFunds === ConsumerSourceOfFundTypeEnum.OTHER
-  }
-
-  public password: string = ''
-
-  mounted() {
-    this.$apiMulti.ipify.get().then((ip) => {
-      this.registrationRequest.ipAddress = ip.data.ip
-    })
-  }
-
-  doRegister() {
-    this.isLoadingRegistration = true
-    this.stores.consumers
-      .create(this.registrationRequest as CreateConsumerRequest)
-      .then(this.onConsumerCreated.bind(this))
-      .catch(this.registrationFailed.bind(this))
-  }
-
-  registrationFailed(err) {
-    this.isLoadingRegistration = false
-    const _errCode = err.response.data.errorCode
-
-    if (_errCode === 'USERNAME_NOT_UNIQUE' || _errCode === 'EMAIL_NOT_UNIQUE') {
-      return
-    } else {
-      this.$weavrToastError(_errCode)
-    }
-
-    window.scrollTo(0, 0)
-  }
-
-  goToAdressInputScreen() {
-    this.isLoadingRegistration = false
-    this.$router.push({ path: '/profile/address' })
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -359,6 +322,35 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     }
   }
 
+  get mobileCountries(): string[] {
+    return Countries.map((_c) => {
+      return _c['alpha-2']
+    })
+  }
+
+  get config() {
+    return {
+      wrap: false,
+      enableTime: false,
+      altInput: true,
+      altFormat: 'd/m/Y',
+      maxDate: new Date(),
+      locale: {
+        firstDayOfWeek: 1
+      }
+    }
+  }
+
+  get isRecaptchaEnabled(): boolean {
+    return typeof process.env.RECAPTCHA !== 'undefined'
+  }
+
+  fetch() {
+    this.$apiMulti.ipify.get().then((ip) => {
+      this.registrationRequest.ipAddress = ip.data.ip
+    })
+  }
+
   async submitForm() {
     try {
       this.$v.$touch()
@@ -375,8 +367,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
       this.passwordField.createToken().then(
         (tokens) => {
           if (tokens.tokens.password !== '') {
-            this.password = tokens.tokens.password
-
+            this.registrationRequest.password = tokens.tokens.password
+            debugger
             // this.doRegister.bind(this)
           } else {
             return null
@@ -390,6 +382,14 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     } catch (error) {
       console.log('Login error:', error)
     }
+  }
+
+  doRegister() {
+    this.isLoadingRegistration = true
+    this.stores.consumers
+      .create(this.registrationRequest as CreateConsumerRequest)
+      .then(this.onConsumerCreated.bind(this))
+      .catch(this.registrationFailed.bind(this))
   }
 
   onConsumerCreated(res: AxiosResponse<ConsumerModel>) {
@@ -408,6 +408,24 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
         data: passwordRequest
       })
       .then(this.onRegisteredSuccessfully.bind(this))
+  }
+
+  goToAdressInputScreen() {
+    this.isLoadingRegistration = false
+    this.$router.push({ path: '/profile/address' })
+  }
+
+  registrationFailed(err) {
+    this.isLoadingRegistration = false
+    const _errCode = err.response.data.errorCode
+
+    if (_errCode === 'USERNAME_NOT_UNIQUE' || _errCode === 'EMAIL_NOT_UNIQUE') {
+      return
+    } else {
+      this.$weavrToastError(_errCode)
+    }
+
+    window.scrollTo(0, 0)
   }
 
   onRegisteredSuccessfully() {
@@ -444,12 +462,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     console.log(number)
   }
 
-  get mobileCountries(): string[] {
-    return Countries.map((_c) => {
-      return _c['alpha-2']
-    })
-  }
-
   delayTouch($v) {
     $v.$reset()
     if (touchMap.has($v)) {
@@ -458,30 +470,12 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     touchMap.set($v, setTimeout($v.$touch, 1000))
   }
 
-  get config() {
-    return {
-      wrap: false,
-      enableTime: false,
-      altInput: true,
-      altFormat: 'd/m/Y',
-      maxDate: new Date(),
-      locale: {
-        firstDayOfWeek: 1
-      }
-    }
-  }
-
   updateDOB(val) {
-    console.log(val)
     this.registrationRequest.rootUser!.dateOfBirth = {
       year: val.getFullYear(),
       month: val.getMonth() + 1,
       day: val.getDate()
     }
-  }
-
-  get isRecaptchaEnabled(): boolean {
-    return typeof process.env.RECAPTCHA !== 'undefined'
   }
 }
 </script>

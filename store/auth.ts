@@ -50,11 +50,11 @@ export default class Auth extends StoreModule {
     if (this.isConsumer) {
       const userAddress = this.authIdentity as ConsumerModel
       return [
-        userAddress.rootUser.address.addressLine1,
-        userAddress.rootUser.address.addressLine2,
-        userAddress.rootUser.address.city,
-        userAddress.rootUser.address.country,
-        userAddress.rootUser.address.postCode
+        userAddress.rootUser.address?.addressLine1,
+        userAddress.rootUser.address?.addressLine2,
+        userAddress.rootUser.address?.city,
+        userAddress.rootUser.address?.country,
+        userAddress.rootUser.address?.postCode
       ]
     } else {
       const companyAddress = this.authIdentity as CorporateModel
