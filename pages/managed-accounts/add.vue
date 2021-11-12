@@ -86,7 +86,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
     }
 
     this.stores.accounts
-      .add(this.createManagedAccountRequest)
+      .create(this.createManagedAccountRequest)
       .then(() => {
         this.$router.push('/managed-accounts')
       })
@@ -114,11 +114,11 @@ export default class AddCardPage extends mixins(BaseMixin) {
 
     if (_accounts.data.count < 1) {
       if (authStore(store).isConsumer) {
-        await accountsStore(store).add(createManagedAccountRequest)
+        await accountsStore(store).create(createManagedAccountRequest)
         redirect('/managed-accounts')
       }
       return {
-        createManagedAccountRequest: createManagedAccountRequest
+        createManagedAccountRequest
       }
     } else {
       redirect('/managed-accounts')
