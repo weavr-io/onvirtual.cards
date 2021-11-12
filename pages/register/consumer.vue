@@ -384,7 +384,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
   }
 
   doRegister() {
-    debugger
     this.isLoadingRegistration = true
     this.stores.consumers
       .create(this.registrationRequest as CreateConsumerRequest)

@@ -25,8 +25,8 @@
             <b-col md="4" offset-md="4">
               <b-form-group label="">
                 <b-form-input
-                  v-model="verifyEmailRequest.request.nonce"
-                  :state="isInvalid($v.verifyEmailRequest.request.nonce)"
+                  v-model="verifyEmailRequest.verificationCode"
+                  :state="isInvalid($v.verifyEmailRequest.verificationCode)"
                   placeholder="000000"
                   class="text-center"
                 />
@@ -51,10 +51,9 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore } from '~/utils/store-accessor'
-import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/VerifyEmailRequest'
+import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 
 @Component({
   layout: 'auth',
@@ -64,17 +63,19 @@ import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/identities/
   },
   validations: {
     verifyEmailRequest: {
-      request: {
-        nonce: {
-          required,
-          minLength: minLength(6),
-          maxLength: maxLength(6)
-        }
+      verificationCode: {
+        required,
+        minLength: minLength(6),
+        maxLength: maxLength(6)
       }
     }
   }
 })
 export default class EmailVerificationPage extends mixins(BaseMixin) {
+  validate({ route }) {
+    return route.query.email !== undefined
+  }
+
   showEmailResentSuccess: boolean = false
 
   private verifyEmailRequest!: VerifyEmailRequest
@@ -96,25 +97,34 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   asyncData({ route, redirect, store }) {
-    const request: Schemas.verifyEmailRequest = {
-      consumerId: route.query.cons,
-      corporateId: route.query.corp,
-      request: {
-        emailAddress: route.query.email + '',
-        nonce: route.query.nonce ? route.query.nonce + '' : ''
-      }
+    const request: VerifyEmailRequest = {
+      email: route.query.email + '',
+      verificationCode: route.query.nonce ? route.query.nonce + '' : ''
     }
 
-    if (request.request.nonce !== '') {
-      authStore(store)
-        .verifyEmail(request)
-        .then(() => {
-          if (authStore(store).isLoggedIn) {
-            redirect('/')
-          } else {
-            redirect('/login')
-          }
-        })
+    if (request.verificationCode !== '') {
+      if (authStore(store).isConsumer) {
+        consumersStore(store)
+          .verifyEmail(request)
+          .then(() => {
+            if (authStore(store).isLoggedIn) {
+              redirect('/')
+            } else {
+              redirect('/login')
+            }
+          })
+      } else {
+        // else treat as Corporate
+        corporatesStore(store)
+          .verifyEmail(request)
+          .then(() => {
+            if (authStore(store).isLoggedIn) {
+              redirect('/')
+            } else {
+              redirect('/login')
+            }
+          })
+      }
     }
 
     return {
@@ -123,71 +133,34 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   async mounted() {
-    if (this.verifyEmailRequest.corporateId === undefined && this.verifyEmailRequest.consumerId === undefined) {
-      if (this.stores.auth.isConsumer) {
-        await this.getConsumerUser()
-      } else {
-        await this.getCorporateUser()
-      }
-    }
-
     if (this.$route.query.send === 'true') {
-      this.sendVerifyEmail()
+      await this.sendVerifyEmail()
     }
   }
 
-  async getConsumerUser() {
-    const _consumerId = this.stores.auth.identityId
-    if (_consumerId != null) {
-      const res = await this.stores.consumers.get(_consumerId)
-      this.verifyEmailRequest.consumerId = _consumerId
-      this.verifyEmailRequest.request.emailAddress = res.data.email
-    }
-  }
-
-  async getCorporateUser() {
-    const _corporateId = this.stores.auth.identityId
-    const _corporate = this.stores.auth.auth
-
-    if (_corporateId != null && _corporate.credential) {
-      const res = await this.stores.corporates.getUser({
-        corporateId: _corporateId,
-        userId: _corporate.credential.id
-      })
-
-      this.verifyEmailRequest.corporateId = _corporateId
-      this.verifyEmailRequest.request.emailAddress = res.data.email
-    }
-  }
-
-  sendVerifyEmail() {
-    if (this.$route.query.cons || this.stores.auth.isConsumer) {
-      this.sendVerifyEmailConsumers()
+  async sendVerifyEmail() {
+    if (this.isConsumer) {
+      await this.sendVerifyEmailConsumers()
     } else {
-      this.sendVerifyEmailCorporates()
+      // else treat as corporate
+      await this.sendVerifyEmailCorporates()
     }
   }
 
-  sendVerifyEmailConsumers() {
-    this.stores.consumers
+  async sendVerifyEmailConsumers() {
+    await this.stores.consumers
       .sendVerificationCodeEmail({
-        consumerId: this.verifyEmailRequest.consumerId,
-        request: {
-          emailAddress: this.verifyEmailRequest.request.emailAddress
-        }
+        email: this.verifyEmailRequest.email
       })
       .then(() => {
         this.showEmailResentSuccess = true
       })
   }
 
-  sendVerifyEmailCorporates() {
-    this.stores.corporates
+  async sendVerifyEmailCorporates() {
+    await this.stores.corporates
       .sendVerificationCodeEmail({
-        corporateId: this.verifyEmailRequest.corporateId,
-        body: {
-          emailAddress: this.verifyEmailRequest.request.emailAddress
-        }
+        email: this.verifyEmailRequest.email
       })
       .then(() => {
         this.showEmailResentSuccess = true
@@ -204,7 +177,9 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
       }
     }
 
-    this.stores.auth.verifyEmail(this.verifyEmailRequest).then(this.nextPage.bind(this))
+    this.isConsumer
+      ? this.stores.consumers.verifyEmail(this.verifyEmailRequest).then(this.nextPage)
+      : this.stores.corporates.verifyEmail(this.verifyEmailRequest).then(this.nextPage)
   }
 
   nextPage() {
@@ -222,10 +197,6 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
         mobileCountryCode: this.$route.query.mobileCountryCode
       }
     })
-  }
-
-  goToLogin() {
-    this.$router.push('/login')
   }
 }
 </script>

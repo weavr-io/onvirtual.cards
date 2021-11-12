@@ -6,6 +6,8 @@ import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consu
 import { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/identities/consumers/responses/GetConsumerKYCResponse'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
+import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
+import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 
 @Module({
   name: 'consumersModule',
@@ -97,8 +99,14 @@ export default class Consumers extends StoreModule {
   }
 
   @Action({ rawError: true })
-  sendVerificationCodeEmail(request) {
-    return $api.post('/app/api/consumers/' + request.consumerId + '/email/send_verification_code', request.request)
+  verifyEmail(request: VerifyEmailRequest) {
+    return this.store.$apiMulti.consumers.verifyEmail(request)
+  }
+
+  @Action({ rawError: true })
+  sendVerificationCodeEmail(request: SendVerificationCodeRequest) {
+    // return $api.post('/app/api/consumers/' + request.consumerId + '/email/send_verification_code', request.request)
+    return this.store.$apiMulti.consumers.sendVerificationCode(request)
   }
 
   @Action({ rawError: true })

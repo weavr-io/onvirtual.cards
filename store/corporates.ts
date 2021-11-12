@@ -8,6 +8,8 @@ import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identit
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { loaderStore } from '~/utils/store-accessor'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
+import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 
 @Module({
   name: 'corporatesModule',
@@ -115,6 +117,19 @@ export default class Corporates extends StoreModule {
   }
 
   @Action({ rawError: true })
+  verifyEmail(request: VerifyEmailRequest) {
+    return this.store.$apiMulti.corporates.verifyEmail(request)
+  }
+
+  @Action({ rawError: true })
+  sendVerificationCodeEmail(request: SendVerificationCodeRequest) {
+    // return $api.post('/app/api/corporates/' + request.corporateId + '/users/email/send_verification_code', request.body)
+    return this.store.$apiMulti.consumers.sendVerificationCode(request)
+  }
+
+  // -- refactored above below is still not refactored
+
+  @Action({ rawError: true })
   getUsers(corporateId) {
     this.SET_IS_LOADING(true)
 
@@ -183,11 +198,6 @@ export default class Corporates extends StoreModule {
     })
 
     return req
-  }
-
-  @Action({ rawError: true })
-  sendVerificationCodeEmail(request) {
-    return $api.post('/app/api/corporates/' + request.corporateId + '/users/email/send_verification_code', request.body)
   }
 
   @Action({ rawError: true })

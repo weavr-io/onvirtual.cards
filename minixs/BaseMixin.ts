@@ -108,6 +108,10 @@ export default class BaseMixin extends Vue {
     return this.stores.corporates.corporate
   }
 
+  get rootUserEmail() {
+    return this.isConsumer ? this.consumer?.rootUser.email : this.corporate?.rootUser.email
+  }
+
   goToIndex() {
     return this.$router.push('/')
   }
