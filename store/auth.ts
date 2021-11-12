@@ -1,13 +1,13 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { $axiosMulti } from '~/utils/api'
 import { StoreModule } from '~/store/storeModule'
-import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/responses/LoginWithPasswordResponse'
+import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
 import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/requests/LoginWithPasswordRequest'
-import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/passwords/requests/UpdatePasswordRequestModel'
-import { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/passwords/responses/CreatePasswordResponseModel'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
+import { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 

@@ -58,7 +58,7 @@ import LoaderButton from '~/components/LoaderButton.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/passwords/requests/UpdatePasswordRequestModel'
+import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 
 @Component({
   components: {

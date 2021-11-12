@@ -1,6 +1,6 @@
 import { Middleware } from '@nuxt/types'
 import { authStore } from '~/utils/store-accessor'
-import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/responses/LoginWithPasswordResponse'
+import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 

@@ -65,8 +65,8 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { authStore } from '~/utils/store-accessor'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/requests/LoginWithPasswordRequest'
-import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/responses/LoginWithPasswordResponse'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
 
 @Component({
   layout: 'auth',

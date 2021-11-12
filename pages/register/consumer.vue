@@ -183,8 +183,8 @@ import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/i
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/passwords/requests/CreatePasswordRequestModel'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/requests/LoginWithPasswordRequest'
+import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 
 const Countries = require('~/static/json/countries.json')
 

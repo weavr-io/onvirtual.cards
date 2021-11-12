@@ -83,9 +83,6 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import { VerifyMobileRequest as ConsumersVerifyMobileRequest } from '~/api/Requests/Consumers/VerifyMobileRequest'
-import { VerifyMobileRequest as CorporatesVerifyMobileRequest } from '~/api/Requests/Corporates/VerifyMobileRequest'
-import { Consumer } from '~/api/Models/Consumers/Consumer'
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 
@@ -107,14 +104,10 @@ const Countries = require('~/static/json/countries.json')
 })
 export default class EmailVerificationPage extends mixins(BaseMixin) {
   get isLoading() {
-    return this.stores.consumers.isLoading
+    return this.stores.consumers.isLoading || this.stores.corporates.isLoading
   }
 
-  get consumer(): Consumer | null {
-    return this.stores.consumers.consumer
-  }
-
-  public consumerVerifyMobileRequest!: ConsumersVerifyMobileRequest
+  public consumerVerifyMobileRequest!: Verif
 
   public corporateVerifyMobileRequest!: CorporatesVerifyMobileRequest
 
