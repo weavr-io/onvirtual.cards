@@ -110,7 +110,8 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
   fetch() {
     if (this.isConsumer) {
       this.address = { ...this.consumer?.rootUser.address! }
-    } else if (this.isCorporate) {
+    } else {
+      // treat as corporate
       this.address = { ...this.corporate?.company.registeredAddress! }
     }
   }
@@ -131,7 +132,9 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
 
     if (this.isConsumer) {
       xhr = this.stores.consumers.update({ address: this.address as AddressModel })
-    } else if (this.isCorporate) {
+    } else {
+      // treat as corporate
+
       xhr = this.stores.corporates.update({ companyBusinessAddress: this.address as AddressModel })
     }
     xhr.then(this.addressUpdated)

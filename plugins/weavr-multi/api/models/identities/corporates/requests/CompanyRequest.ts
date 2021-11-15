@@ -3,7 +3,7 @@ import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressMod
 
 export interface CompanyRequest {
   type: CompanyTypeEnum
-  businessAddress: AddressModel
+  businessAddress?: AddressModel
   name: string
   registrationNumber: string
   registrationCountry: string

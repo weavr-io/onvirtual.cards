@@ -5,30 +5,34 @@
     </h3>
     <error-alert />
     <b-form-group label="First Name*">
-      <b-form-input v-model="$v.form.rootName.$model" :state="isInvalid($v.form.rootName)" placeholder="Name" />
-      <b-form-invalid-feedback v-if="!$v.form.rootName.required">
+      <b-form-input
+        v-model="$v.form.rootUser.name.$model"
+        :state="isInvalid($v.form.rootUser.name)"
+        placeholder="Name"
+      />
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.required">
         This field is required
       </b-form-invalid-feedback>
-      <b-form-invalid-feedback v-if="!$v.form.rootName.maxLength">
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.maxLength">
         Name is too long.
       </b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Last Name*">
       <b-form-input
-        v-model="$v.form.rootSurname.$model"
-        :state="isInvalid($v.form.rootSurname)"
+        v-model="$v.form.rootUser.surname.$model"
+        :state="isInvalid($v.form.rootUser.surname)"
         placeholder="Last Name"
       />
-      <b-form-invalid-feedback v-if="!$v.form.rootSurname.required">
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.required">
         This field is required
       </b-form-invalid-feedback>
-      <b-form-invalid-feedback v-if="!$v.form.rootSurname.maxLength">
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.maxLength">
         Surname is too long.
       </b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="MOBILE NUMBER*">
       <vue-phone-number-input
-        v-model="rootMobileNumber"
+        v-model="$v.form.rootUser.mobile.number.$model"
         :only-countries="mobileCountries"
         :border-radius="0"
         :error="numberIsValid === false"
@@ -44,24 +48,24 @@
     </b-form-group>
     <b-form-group label="Company Name*">
       <b-form-input
-        v-model="$v.form.companyName.$model"
-        :state="isInvalid($v.form.companyName)"
+        v-model="$v.form.company.name.$model"
+        :state="isInvalid($v.form.company.name)"
         placeholder="Company Name"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Company Registration Number*">
       <b-form-input
-        v-model="$v.form.companyRegistrationNumber.$model"
-        :state="isInvalid($v.form.companyRegistrationNumber)"
+        v-model="$v.form.company.registrationNumber.$model"
+        :state="isInvalid($v.form.company.registrationNumber)"
         placeholder="C00000"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Registration Country*">
       <b-form-select
-        v-model="$v.form.registrationCountry.$model"
-        :state="isInvalid($v.form.registrationCountry)"
+        v-model="$v.form.company.registrationCountry.$model"
+        :state="isInvalid($v.form.company.registrationCountry)"
         :options="countiesOptions"
         placeholder="Registration Country"
       />
@@ -90,18 +94,18 @@
         placeholder="Specify Other Source of Funds"
       />
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootCompanyPosition)" label="My position within the company is*">
+    <b-form-group :state="isInvalid($v.form.rootUser.companyPosition)" label="My position within the company is*">
       <b-form-radio
-        v-model="$v.form.rootCompanyPosition.$model"
-        :state="isInvalid($v.form.rootCompanyPosition)"
+        v-model="$v.form.rootUser.companyPosition.$model"
+        :state="isInvalid($v.form.rootUser.companyPosition)"
         name="company-position"
         value="AUTHORISED_REPRESENTATIVE"
       >
         I am a representative (with the relevant power of attorney)
       </b-form-radio>
       <b-form-radio
-        v-model="$v.form.rootCompanyPosition.$model"
-        :state="isInvalid($v.form.rootCompanyPosition)"
+        v-model="$v.form.rootUser.companyPosition.$model"
+        :state="isInvalid($v.form.rootUser.companyPosition)"
         name="company-position"
         value="DIRECTOR"
       >
@@ -116,58 +120,67 @@
 
     <b-form-row class="mt-5">
       <b-col md="4">
-        <b-button variant="outline" @click="goBack">
-          <-
-        </b-button>
+        <b-button variant="outline" @click="goBack"> </b-button>
       </b-col>
       <b-col class="text-right">
         <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-right" />
       </b-col>
     </b-form-row>
+
+    <pre>
+      {{ form }}
+    </pre>
   </b-form>
 </template>
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
-import { required, maxLength } from 'vuelidate/lib/validators'
+import { maxLength, required } from 'vuelidate/lib/validators'
 
 import BaseMixin from '~/minixs/BaseMixin'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
+import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 
 const Countries = require('~/static/json/countries.json')
 
 @Component({
   validations: {
     form: {
-      rootName: {
-        required,
-        maxLength: maxLength(20)
+      rootUser: {
+        name: {
+          required,
+          maxLength: maxLength(20)
+        },
+        surname: {
+          required,
+          maxLength: maxLength(20)
+        },
+        mobile: {
+          number: {
+            required
+          },
+          countryCode: {
+            required
+          }
+        },
+        companyPosition: {
+          required
+        }
       },
-      rootSurname: {
-        required,
-        maxLength: maxLength(20)
-      },
-      rootCompanyPosition: {
-        required
-      },
-      rootMobileCountryCode: {
-        required
-      },
-      rootMobileNumber: {
-        required
-      },
-      companyName: {
-        required,
-        maxLength: maxLength(100)
-      },
-      companyRegistrationNumber: {
-        required,
-        maxLength: maxLength(20)
-      },
-      registrationCountry: {
-        required,
-        maxLength: maxLength(2)
+      company: {
+        name: {
+          required,
+          maxLength: maxLength(100)
+        },
+        registrationNumber: {
+          required,
+          maxLength: maxLength(20)
+        },
+        registrationCountry: {
+          required,
+          maxLength: maxLength(2)
+        }
       },
       industry: {
         required
@@ -199,18 +212,39 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
     })
   }
 
-  public form: Partial<Nullable<CreateCorporateRequest>> = {
-    rootName: '',
-    rootSurname: '',
-    rootCompanyPosition: '',
-    rootMobileCountryCode: '',
-    rootMobileNumber: '',
-    companyName: '',
-    companyRegistrationNumber: '',
-    registrationCountry: '',
+  // public form: any = {
+  //   // xname: '',
+  //   // xsurname: '',
+  //   // companyPosition: '',
+  //   // rootMobileCountryCode: '',
+  //   // xrootMobileNumber: '',
+  //   // companyName: '',
+  //   // companyRegistrationNumber: '',
+  //   // registrationCountry: '',
+  //   // sourceOfFunds: null,
+  //   // sourceOfFundsOther: '',
+  //   industry: null
+  // }
+
+  public form: DeepNullable<RecursivePartial<CreateCorporateRequest>> = {
+    rootUser: {
+      name: null,
+      surname: null,
+      mobile: {
+        number: null,
+        countryCode: ''
+      },
+      companyPosition: null
+    },
+    company: {
+      type: null,
+      name: null,
+      registrationNumber: null,
+      registrationCountry: null
+    },
+    industry: null,
     sourceOfFunds: null,
-    sourceOfFundsOther: '',
-    industry: null
+    sourceOfFundsOther: null
   }
 
   get countiesOptions() {
@@ -260,7 +294,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
   }
 
   get shouldShowOtherSourceOfFunds(): boolean {
-    return this.form.sourceOfFunds === SourceOfFunds.OTHER
+    return this.form.sourceOfFunds === CorporateSourceOfFundTypeEnum.OTHER
   }
 }
 </script>

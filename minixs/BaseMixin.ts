@@ -101,7 +101,7 @@ export default class BaseMixin extends Vue {
   }
 
   get rootFullName(): string {
-    return `${this.rootName} ${this.rootSurname}`
+    return `${this.name} ${this.surname}`
   }
 
   get corporate() {

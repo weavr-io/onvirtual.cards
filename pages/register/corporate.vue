@@ -7,11 +7,11 @@
       <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
         <b-card-body class="p-card">
           <div class="form-screens">
-            <div :class="{ 'd-none': screen !== 0 }" class="form-screen">
-              <register-form :request="registrationRequest" @submit-form="form1Submit" />
-            </div>
-            <div :class="{ 'd-none': screen !== 1 }" class="form-screen">
-              <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
+            <!--            <div v-if="screen === 0" class="form-screen">-->
+            <!--              <register-form @submit-form="form1Submit" />-->
+            <!--            </div>-->
+            <div class="form-screen">
+              <personal-details-form @submit-form="form2Submit" @go-back="goBack" />
             </div>
           </div>
         </b-card-body>
@@ -28,8 +28,6 @@ import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore } from '~/utils/store-accessor'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
-import { CompanyTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyTypeEnum'
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
@@ -51,7 +49,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
   screen: number = 0
 
-  public password: string = ''
+  // public password: string = ''
 
   nextScreen() {
     this.screen++
@@ -70,7 +68,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   //   profileId: '0',
   //   registrationCountry: 'MT',
   //   rootCompanyPosition: '',
-  //   rootEmail: '',
+  // X rootEmail: '',
   //   rootMobileCountryCode: '',
   //   rootMobileNumber: '',
   //   rootName: '',
@@ -80,28 +78,29 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   //   sourceOfFunds: null,
   //   sourceOfFundsOther: '',
   //   kybProviderKey: 'sumsub',
-  //   acceptedTerms: false,
+  // X  acceptedTerms: false,
   // }
 
-  private registrationRequest: CreateCorporateRequest = {
-    profileId: '',
+  private registrationRequest: DeepNullable<RecursivePartial<CreateCorporateRequest & { password: string }>> = {
+    profileId: config.profileId.corporates,
+    tag: 'tag',
     rootUser: {
-      name: '',
-      surname: '',
-      email: '',
+      name: null,
+      surname: null,
+      email: null,
       mobile: {
-        countryCode: '',
-        number: ''
+        number: null,
+        countryCode: '+356'
       },
-      companyPosition: CompanyPositionEnum.DIRECTOR,
+      companyPosition: null,
       dateOfBirth: {
-        day: 1,
-        month: 1,
-        year: 1700
+        day: null,
+        month: null,
+        year: null
       }
     },
     company: {
-      type: CompanyTypeEnum.LLC,
+      type: null,
       businessAddress: {
         addressLine1: '',
         addressLine2: '',
@@ -122,11 +121,10 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     feeGroup: ''
   }
 
-  form1Submit(_data: CreateCorporateRequest) {
-    if (_data != null) {
-      this.registrationRequest.rootUser.email = _data.rootUser.email
-      this.password = _data.password
-
+  form1Submit(_data: { email: string | null; password: string | null; acceptedTerms: boolean } | null) {
+    if (_data !== null) {
+      this.registrationRequest.rootUser!.email = _data.email
+      this.registrationRequest.password = _data.password
       this.registrationRequest.acceptedTerms = _data.acceptedTerms
 
       this.screen = 1
@@ -135,21 +133,21 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
   form2Submit(_data) {
     if (_data != null) {
-      this.registrationRequest.rootName = _data.rootName
-      this.registrationRequest.rootSurname = _data.rootSurname
-      this.registrationRequest.rootCompanyPosition = _data.rootCompanyPosition
-      this.registrationRequest.rootMobileCountryCode = _data.rootMobileCountryCode
-      this.registrationRequest.rootMobileNumber = _data.rootMobileNumber
+      this.registrationRequest.rootUser!.name = _data.name
+      this.registrationRequest.rootUser!.surname = _data.surname
+      this.registrationRequest.rootUser!.companyPosition = _data.companyPosition
+      this.registrationRequest.rootUser!.mobile!.countryCode = _data.rootMobileCountryCode
+      this.registrationRequest.rootUser!.mobile!.number = _data.rootMobileNumber
 
-      this.registrationRequest.companyName = _data.companyName
-      this.registrationRequest.companyRegistrationNumber = _data.companyRegistrationNumber
-      this.registrationRequest.registrationCountry = _data.registrationCountry
+      this.registrationRequest.company!.name = _data.companyName
+      this.registrationRequest.company!.registrationNumber = _data.companyRegistrationNumber
+      this.registrationRequest.company!.registrationCountry = _data.registrationCountry
 
       this.registrationRequest.industry = _data.industry
       this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
       this.registrationRequest.sourceOfFundsOther = _data.sourceOfFundsOther
 
-      this.doRegister()
+      // this.doRegister()
     }
   }
 
