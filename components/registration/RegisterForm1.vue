@@ -48,9 +48,6 @@
         </b-form-group>
       </b-col>
     </b-form-row>
-    <pre>
-      {{ form }}
-    </pre>
     <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
       <recaptcha />
     </div>

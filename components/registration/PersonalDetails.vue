@@ -32,7 +32,7 @@
     </b-form-group>
     <b-form-group label="MOBILE NUMBER*">
       <vue-phone-number-input
-        v-model="$v.form.rootUser.mobile.number.$model"
+        :value="form.rootUser.mobile.number"
         :only-countries="mobileCountries"
         :border-radius="0"
         :error="numberIsValid === false"
@@ -62,11 +62,20 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
+    <b-form-group label="Company Type">
+      <b-form-select
+        v-model="$v.form.company.type.$model"
+        :state="isInvalid($v.form.company.type)"
+        :options="companyTypeOptionsWithDefault"
+        placeholder="Company Type"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+    </b-form-group>
     <b-form-group label="Registration Country*">
       <b-form-select
         v-model="$v.form.company.registrationCountry.$model"
         :state="isInvalid($v.form.company.registrationCountry)"
-        :options="countiesOptions"
+        :options="countryOptionsWithDefault"
         placeholder="Registration Country"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -120,16 +129,12 @@
 
     <b-form-row class="mt-5">
       <b-col md="4">
-        <b-button variant="outline" @click="goBack"> </b-button>
+        <b-button variant="outline" @click="goBack"></b-button>
       </b-col>
       <b-col class="text-right">
         <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-right" />
       </b-col>
     </b-form-row>
-
-    <pre>
-      {{ form }}
-    </pre>
   </b-form>
 </template>
 <script lang="ts">
@@ -141,6 +146,9 @@ import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
+import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
+import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -169,6 +177,9 @@ const Countries = require('~/static/json/countries.json')
         }
       },
       company: {
+        type: {
+          required
+        },
         name: {
           required,
           maxLength: maxLength(100)
@@ -197,34 +208,9 @@ const Countries = require('~/static/json/countries.json')
   }
 })
 export default class PersonalDetailsForm extends mixins(BaseMixin) {
-  $v
+  companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
 
-  get isLoadingRegistration() {
-    return this.stores.corporates.isLoadingRegistration
-  }
-
-  rootMobileNumber = ''
   numberIsValid: boolean | null = null
-
-  get mobileCountries(): string[] {
-    return Countries.map((_c) => {
-      return _c['alpha-2']
-    })
-  }
-
-  // public form: any = {
-  //   // xname: '',
-  //   // xsurname: '',
-  //   // companyPosition: '',
-  //   // rootMobileCountryCode: '',
-  //   // xrootMobileNumber: '',
-  //   // companyName: '',
-  //   // companyRegistrationNumber: '',
-  //   // registrationCountry: '',
-  //   // sourceOfFunds: null,
-  //   // sourceOfFundsOther: '',
-  //   industry: null
-  // }
 
   public form: DeepNullable<RecursivePartial<CreateCorporateRequest>> = {
     rootUser: {
@@ -247,13 +233,33 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
     sourceOfFundsOther: null
   }
 
-  get countiesOptions() {
+  get mobileCountries(): string[] {
     return Countries.map((_c) => {
-      return {
-        text: _c.name,
-        value: _c['alpha-2']
-      }
+      return _c['alpha-2']
     })
+  }
+
+  get isLoadingRegistration() {
+    return this.stores.corporates.isLoadingRegistration
+  }
+
+  get industryOccupationOptions() {
+    return IndustryTypeSelectConst
+  }
+
+  get sourceOfFundsOptions() {
+    return SourceOfFundsSelectConst
+  }
+
+  get shouldShowOtherSourceOfFunds(): boolean {
+    return this.form.sourceOfFunds === CorporateSourceOfFundTypeEnum.OTHER
+  }
+
+  phoneUpdate(number) {
+    this.$v.form.rootUser!.mobile.number.$touch()
+    this.$set(this.form.rootUser!.mobile!, 'countryCode', '+' + number.countryCallingCode)
+    this.$set(this.form.rootUser!.mobile!, 'number', number.phoneNumber)
+    this.numberIsValid = number.isValid
   }
 
   @Emit()
@@ -277,24 +283,6 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
   @Emit()
   goBack(e) {
     e.preventDefault()
-  }
-
-  phoneUpdate(number) {
-    this.form.rootMobileCountryCode = '+' + number.countryCallingCode
-    this.form.rootMobileNumber = number.nationalNumber
-    this.numberIsValid = number.isValid
-  }
-
-  get industryOccupationOptions() {
-    return IndustryTypeSelectConst
-  }
-
-  get sourceOfFundsOptions() {
-    return SourceOfFundsSelectConst
-  }
-
-  get shouldShowOtherSourceOfFunds(): boolean {
-    return this.form.sourceOfFunds === CorporateSourceOfFundTypeEnum.OTHER
   }
 }
 </script>

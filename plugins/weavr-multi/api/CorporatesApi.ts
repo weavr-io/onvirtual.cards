@@ -23,7 +23,7 @@ export class CorporatesApi {
   }
 
   sendVerificationCode(data: SendVerificationCodeRequest): Promise<AxiosResponse> {
-    return $axiosMulti.post('/consumers/verification/email/send', data)
+    return $axiosMulti.post('/corporates/verification/email/send', data)
   }
 
   verifyEmail(data: VerifyEmailRequest): Promise<AxiosResponse> {

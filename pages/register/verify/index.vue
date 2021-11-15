@@ -78,14 +78,6 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
 
   isLoading: boolean = false
 
-  get showEmailResentSuccessAlert(): boolean {
-    if (this.$route.query.send === 'true') {
-      return false
-    } else {
-      return this.showEmailResentSuccess
-    }
-  }
-
   asyncData({ route, redirect, store }) {
     if (!authStore(store).isLoggedIn) {
       redirect('/')
@@ -135,6 +127,14 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
 
     return {
       verifyEmailRequest: request
+    }
+  }
+
+  get showEmailResentSuccessAlert(): boolean {
+    if (this.$route.query.send === 'true') {
+      return false
+    } else {
+      return this.showEmailResentSuccess
     }
   }
 

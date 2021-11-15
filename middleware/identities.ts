@@ -9,9 +9,7 @@ const identitiesMiddleware: Middleware = async ({ store }) => {
   }
 
   if (authStore(store).isCorporate && corporatesStore(store).corporate === null) {
-    // await corporatesStore(store).getCorporateDetails('sdfasf')
-
-    console.log('')
+    await corporatesStore(store).get()
   }
 }
 

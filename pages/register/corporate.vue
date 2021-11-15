@@ -7,10 +7,10 @@
       <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
         <b-card-body class="p-card">
           <div class="form-screens">
-            <!--            <div v-if="screen === 0" class="form-screen">-->
-            <!--              <register-form @submit-form="form1Submit" />-->
-            <!--            </div>-->
-            <div class="form-screen">
+            <div v-if="screen === 0" class="form-screen">
+              <register-form @submit-form="form1Submit" />
+            </div>
+            <div v-else class="form-screen">
               <personal-details-form @submit-form="form2Submit" @go-back="goBack" />
             </div>
           </div>
@@ -21,9 +21,8 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
+import { AxiosResponse } from 'axios'
 import config from '~/config'
-
-import { Schemas } from '~/api/Schemas'
 
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore } from '~/utils/store-accessor'
@@ -31,6 +30,11 @@ import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identit
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 
 @Component({
   layout: 'auth',
@@ -43,43 +47,7 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
   }
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
-  get isLoading() {
-    return this.stores.corporates.isLoading
-  }
-
   screen: number = 0
-
-  // public password: string = ''
-
-  nextScreen() {
-    this.screen++
-  }
-
-  goBack() {
-    this.screen--
-  }
-
-  // public registrationRequest: CreateCorporateRequest = {
-  //
-  //   companyName: '',
-  //   companyRegistrationNumber: '',
-  //   companyType: CompanyType.LLC,
-  //   ipAddress: '111.222.333.444',
-  //   profileId: '0',
-  //   registrationCountry: 'MT',
-  //   rootCompanyPosition: '',
-  // X rootEmail: '',
-  //   rootMobileCountryCode: '',
-  //   rootMobileNumber: '',
-  //   rootName: '',
-  //   rootSurname: '',
-  //   supportEmail: '',
-  //   industry: null,
-  //   sourceOfFunds: null,
-  //   sourceOfFundsOther: '',
-  //   kybProviderKey: 'sumsub',
-  // X  acceptedTerms: false,
-  // }
 
   private registrationRequest: DeepNullable<RecursivePartial<CreateCorporateRequest & { password: string }>> = {
     profileId: config.profileId.corporates,
@@ -92,23 +60,10 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         number: null,
         countryCode: '+356'
       },
-      companyPosition: null,
-      dateOfBirth: {
-        day: null,
-        month: null,
-        year: null
-      }
+      companyPosition: null
     },
     company: {
       type: null,
-      businessAddress: {
-        addressLine1: '',
-        addressLine2: '',
-        city: '',
-        postCode: '',
-        state: '',
-        country: ''
-      },
       name: '',
       registrationNumber: '',
       registrationCountry: ''
@@ -117,8 +72,29 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     sourceOfFunds: CorporateSourceOfFundTypeEnum.CIVIL_CONTRACT,
     acceptedTerms: false,
     ipAddress: '',
-    baseCurrency: CurrencyEnum.EUR,
-    feeGroup: ''
+    baseCurrency: CurrencyEnum.EUR
+  }
+
+  get isLoading() {
+    return this.stores.corporates.isLoading
+  }
+
+  goBack() {
+    this.screen--
+  }
+
+  asyncData({ store, redirect }) {
+    const isLoggedIn = authStore(store).isLoggedIn
+
+    if (isLoggedIn) {
+      redirect('/dashboard')
+    }
+  }
+
+  fetch() {
+    this.$apiMulti.ipify.get().then((ip) => {
+      this.registrationRequest.ipAddress = ip.data.ip
+    })
   }
 
   form1Submit(_data: { email: string | null; password: string | null; acceptedTerms: boolean } | null) {
@@ -133,21 +109,21 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
   form2Submit(_data) {
     if (_data != null) {
-      this.registrationRequest.rootUser!.name = _data.name
-      this.registrationRequest.rootUser!.surname = _data.surname
-      this.registrationRequest.rootUser!.companyPosition = _data.companyPosition
-      this.registrationRequest.rootUser!.mobile!.countryCode = _data.rootMobileCountryCode
-      this.registrationRequest.rootUser!.mobile!.number = _data.rootMobileNumber
+      this.registrationRequest.rootUser!.name = _data.rootUser.name
+      this.registrationRequest.rootUser!.surname = _data.rootUser.surname
+      this.registrationRequest.rootUser!.companyPosition = _data.rootUser.companyPosition
+      this.registrationRequest.rootUser!.mobile! = { ..._data.rootUser.mobile }
 
-      this.registrationRequest.company!.name = _data.companyName
-      this.registrationRequest.company!.registrationNumber = _data.companyRegistrationNumber
-      this.registrationRequest.company!.registrationCountry = _data.registrationCountry
+      this.registrationRequest.company!.name = _data.company.name
+      this.registrationRequest.company!.type = _data.company.type
+      this.registrationRequest.company!.registrationNumber = _data.company.registrationNumber
+      this.registrationRequest.company!.registrationCountry = _data.company.registrationCountry
 
       this.registrationRequest.industry = _data.industry
       this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
       this.registrationRequest.sourceOfFundsOther = _data.sourceOfFundsOther
 
-      // this.doRegister()
+      this.doRegister()
     }
   }
 
@@ -156,8 +132,50 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
     this.stores.corporates
       .create(this.registrationRequest as CreateCorporateRequest)
-      .then(this.doCreateCorporatePasswordIdentity.bind(this))
-      .catch(this.registrationFailed.bind(this))
+      .then(this.onCorporateCreated)
+      .catch(this.registrationFailed)
+
+    // this.stores.corporates
+    //         .create(this.registrationRequest as CreateCorporateRequest)
+    //         .then(this.doCreateCorporatePasswordIdentity.bind(this))
+    //         .catch(this.registrationFailed.bind(this))
+  }
+
+  onCorporateCreated(res: AxiosResponse<ConsumerModel>) {
+    this.createPassword(res.data.id, res.data.rootUser.id.id!)
+  }
+
+  createPassword(identity: IdentityIdModel, rootUserId: IDModel) {
+    const passwordRequest: CreatePasswordRequestModel = {
+      password: {
+        value: this.registrationRequest.password as string
+      }
+    }
+    this.$apiMulti.passwords
+      .store({
+        userId: rootUserId,
+        data: passwordRequest
+      })
+      .then(this.onRegisteredSuccessfully.bind(this))
+  }
+
+  onRegisteredSuccessfully() {
+    if (!this.registrationRequest.rootUser) {
+      return
+    }
+
+    const loginRequest: LoginWithPasswordRequest = {
+      email: this.registrationRequest.rootUser.email as string,
+      password: {
+        value: this.registrationRequest.password as string
+      }
+    }
+
+    const _req = this.stores.auth.loginWithPassword(loginRequest)
+
+    _req.then(() => {
+      this.$router.push({ path: '/profile/address' })
+    })
   }
 
   registrationFailed(err) {
@@ -171,79 +189,57 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
   }
 
-  doCreateCorporatePasswordIdentity() {
-    const _req: CreatePasswordIdentity = {
-      id: this.corporate!.id.id,
-      request: {
-        profileId: this.registrationRequest.profileId!
-      }
-    }
-    this.stores.auth
-      .createPasswordIdentity(_req)
-      .then(this.doCreateCorporatePassword.bind(this), this.registrationFailed.bind(this))
-  }
+  //
+  // doLogin() {
+  //   const _loginRequest: Schemas.LoginRequest = {
+  //     code: this.registrationRequest.rootEmail!,
+  //     password: this.password
+  //   }
+  //
+  //   this.stores.auth
+  //     .authenticate(_loginRequest)
+  //     .then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
+  // }
 
-  doCreateCorporatePassword() {
-    const _req: CreatePassword = {
-      id: this.corporate!.id.id,
-      request: {
-        credentialType: 'ROOT',
-        identityId: this.corporate!.id.id,
-        password: {
-          value: this.password
-        }
-      }
-    }
+  // goToVerifyEmail() {
+  //   this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
+  //   this.$router.push({
+  //     path: '/register/verify',
+  //     query: {
+  //       send: 'true',
+  //       corp: this.corporate!.id.id + '',
+  //       email: this.registrationRequest.rootEmail,
+  //       mobileNumber: this.registrationRequest.rootMobileNumber,
+  //       mobileCountryCode: this.registrationRequest.rootMobileCountryCode
+  //     }
+  //   })
+  // }
 
-    this.stores.auth.createPassword(_req).then(this.waitAndDoLogin.bind(this), this.registrationFailed.bind(this))
-  }
-
-  waitAndDoLogin() {
-    this.sleep(2000).then(this.doLogin.bind(this))
-  }
-
-  doLogin() {
-    const _loginRequest: Schemas.LoginRequest = {
-      code: this.registrationRequest.rootEmail!,
-      password: this.password
-    }
-
-    this.stores.auth
-      .authenticate(_loginRequest)
-      .then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
-  }
-
-  goToVerifyEmail() {
-    this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
-    this.$router.push({
-      path: '/register/verify',
-      query: {
-        send: 'true',
-        corp: this.corporate!.id.id + '',
-        email: this.registrationRequest.rootEmail,
-        mobileNumber: this.registrationRequest.rootMobileNumber,
-        mobileCountryCode: this.registrationRequest.rootMobileCountryCode
-      }
-    })
-  }
-
-  checkOnKeyUp(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      this.stores.corporates.create(e)
-    }
-  }
-
-  mounted() {
-    this.registrationRequest.profileId = config.profileId.corporates
-  }
-
-  asyncData({ store, redirect }) {
-    const isLoggedIn = authStore(store).isLoggedIn
-
-    if (isLoggedIn) {
-      redirect('/dashboard')
-    }
-  }
+  // doCreateCorporatePasswordIdentity() {
+  //   const _req: CreatePasswordIdentity = {
+  //     id: this.corporate!.id.id,
+  //     request: {
+  //       profileId: this.registrationRequest.profileId!
+  //     }
+  //   }
+  //   this.stores.auth
+  //     .createPasswordIdentity(_req)
+  //     .then(this.doCreateCorporatePassword.bind(this), this.registrationFailed.bind(this))
+  // }
+  //
+  // doCreateCorporatePassword() {
+  //   const _req: CreatePassword = {
+  //     id: this.corporate!.id.id,
+  //     request: {
+  //       credentialType: 'ROOT',
+  //       identityId: this.corporate!.id.id,
+  //       password: {
+  //         value: this.password
+  //       }
+  //     }
+  //   }
+  //
+  //   this.stores.auth.createPassword(_req).then(this.waitAndDoLogin.bind(this), this.registrationFailed.bind(this))
+  // }
 }
 </script>

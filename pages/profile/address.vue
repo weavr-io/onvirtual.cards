@@ -31,9 +31,9 @@
                 </b-form-group>
                 <b-form-group label="Country*">
                   <b-form-select
-                    v-model="address.country"
+                    v-model="country"
                     :state="isInvalid($v.address.country)"
-                    :options="countiesOptions"
+                    :options="countryOptionsWithDefault"
                     placeholder="Registration Country"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -56,6 +56,9 @@
                 </b-row>
               </b-form>
             </div>
+            <pre>
+              {{ address }}
+            </pre>
           </div>
         </b-card-body>
       </b-overlay>
@@ -73,8 +76,6 @@ import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/commo
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
 import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
-
-const Countries = require('~/static/json/countries.json')
 
 @Component({
   layout: 'auth',
@@ -109,11 +110,31 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
 
   fetch() {
     if (this.isConsumer) {
-      this.address = { ...this.consumer?.rootUser.address! }
+      if (Object.keys(this.consumer!.rootUser.address!).length !== 0) {
+        this.address = { ...this.consumer?.rootUser.address! }
+      }
     } else {
       // treat as corporate
-      this.address = { ...this.corporate?.company.registeredAddress! }
+      if (Object.keys(this.corporate!.company.registeredAddress!).length !== 0) {
+        this.address = { ...this.corporate?.company.registeredAddress! }
+      }
     }
+  }
+
+  get country() {
+    return this.address.country !== undefined ? this.address.country : null
+  }
+
+  set country(val) {
+    this.$set(this.address, 'country', val)
+  }
+
+  get sourceOfFundsOptions() {
+    return SourceOfFundsSelectConst
+  }
+
+  get industryOccupationOptions() {
+    return IndustryTypeSelectConst
   }
 
   submitForm(e) {
@@ -168,23 +189,6 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
         }
       })
     }
-  }
-
-  get countiesOptions() {
-    return Countries.map((_c) => {
-      return {
-        text: _c.name,
-        value: _c['alpha-2']
-      }
-    })
-  }
-
-  get sourceOfFundsOptions() {
-    return SourceOfFundsSelectConst
-  }
-
-  get industryOccupationOptions() {
-    return IndustryTypeSelectConst
   }
 
   goToRegisterVerify() {

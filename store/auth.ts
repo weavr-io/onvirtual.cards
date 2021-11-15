@@ -21,7 +21,6 @@ const Cookie = process.client ? require('js-cookie') : undefined
 })
 export default class Auth extends StoreModule {
   auth: LoginWithPasswordResponse | null = null
-  authIdentity: CorporateModel | ConsumerModel | null = null
   authFactors: GetAuthenticationFactorsResponse | null = null
   isLoading: boolean = false
 
@@ -49,37 +48,9 @@ export default class Auth extends StoreModule {
     return this.auth?.identity
   }
 
-  get identityAddressArray() {
-    if (this.isConsumer) {
-      const userAddress = this.authIdentity as ConsumerModel
-      return [
-        userAddress.rootUser.address?.addressLine1,
-        userAddress.rootUser.address?.addressLine2,
-        userAddress.rootUser.address?.city,
-        userAddress.rootUser.address?.country,
-        userAddress.rootUser.address?.postCode
-      ]
-    } else {
-      const companyAddress = this.authIdentity as CorporateModel
-
-      return [
-        companyAddress.company.businessAddress?.addressLine1,
-        companyAddress.company.businessAddress?.addressLine2,
-        companyAddress.company.businessAddress?.city,
-        companyAddress.company.businessAddress?.country,
-        companyAddress.company.businessAddress?.postCode
-      ]
-    }
-  }
-
   @Mutation
   SET_AUTH(auth: LoginWithPasswordResponse | null) {
     this.auth = auth
-
-    if (!this.auth && this.authIdentity !== null) {
-      this.authIdentity = null
-    }
-
     Cookie.set('auth-onv', this.auth)
 
     $axiosMulti.defaults.headers.Authorization = 'Bearer ' + this.auth?.token
@@ -106,11 +77,6 @@ export default class Auth extends StoreModule {
     Cookie.set('auth-onv', this.auth)
 
     delete $axiosMulti.defaults.headers.Authorization
-  }
-
-  @Mutation
-  SET_AUTH_IDENTITY(_identity: CorporateModel | ConsumerModel | null) {
-    this.authIdentity = _identity
   }
 
   @Action({ rawError: true })

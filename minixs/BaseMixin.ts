@@ -2,8 +2,10 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import { $api } from '~/utils/api'
 import { initialiseStores } from '~/utils/store-accessor'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 
 const moment = require('moment')
+const Countries = require('~/static/json/countries.json')
 
 @Component
 export default class BaseMixin extends Vue {
@@ -86,8 +88,7 @@ export default class BaseMixin extends Vue {
     if (this.isConsumer) {
       return this.stores.consumers.consumer!.rootUser.name
     } else if (this.isCorporate) {
-      // return this.stores.corporates.corporate!.rootUser.name
-      return 'name'
+      return this.stores.corporates.corporate!.rootUser.name
     } else return 'noname'
   }
 
@@ -95,13 +96,12 @@ export default class BaseMixin extends Vue {
     if (this.isConsumer) {
       return this.stores.consumers.consumer!.rootUser.surname
     } else if (this.isCorporate) {
-      // return this.stores.corporates.corporate!.rootUser.name
-      return 'surname'
+      return this.stores.corporates.corporate!.rootUser.surname
     } else return 'nosurname'
   }
 
   get rootFullName(): string {
-    return `${this.name} ${this.surname}`
+    return `${this.rootName} ${this.rootSurname}`
   }
 
   get corporate() {
@@ -110,6 +110,21 @@ export default class BaseMixin extends Vue {
 
   get rootUserEmail() {
     return this.isConsumer ? this.consumer?.rootUser.email : this.corporate?.rootUser.email
+  }
+
+  get countiesOptions() {
+    return Countries.map((_c) => {
+      return {
+        text: _c.name,
+        value: _c['alpha-2']
+      }
+    })
+  }
+
+  get countryOptionsWithDefault() {
+    const _default: [any] = [{ ...DefaultSelectValueConst }]
+    _default.push(...this.countiesOptions)
+    return _default
   }
 
   goToIndex() {

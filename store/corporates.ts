@@ -5,7 +5,6 @@ import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corp
 import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { loaderStore } from '~/utils/store-accessor'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
@@ -124,7 +123,7 @@ export default class Corporates extends StoreModule {
   @Action({ rawError: true })
   sendVerificationCodeEmail(request: SendVerificationCodeRequest) {
     // return $api.post('/app/api/corporates/' + request.corporateId + '/users/email/send_verification_code', request.body)
-    return this.store.$apiMulti.consumers.sendVerificationCode(request)
+    return this.store.$apiMulti.corporates.sendVerificationCode(request)
   }
 
   // -- refactored above below is still not refactored
@@ -159,13 +158,13 @@ export default class Corporates extends StoreModule {
   }
 
   @Action({ rawError: true })
-  updateUser(request) {
+  updateUser(request: UpdateCorporateRequest) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post(
-      '/app/api/corporates/' + request.corporateId + '/users/' + request.userId + '/update',
-      request.body
-    )
+    const req = this.store.$apiMulti.corporates.update(request)
+    req.then((_res) => {
+      this.SET_CORPORATE(_res.data)
+    })
 
     req.finally(() => {
       this.SET_IS_LOADING(false)

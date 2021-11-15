@@ -69,12 +69,12 @@
               <b-form-row>
                 <b-col>
                   <b-form-group label="FIRST NAME">
-                    <b-form-input v-model="updateCorporate.body.name" class="form-control" placeholder="John" />
+                    <b-form-input :value="rootName" class="form-control" placeholder="John" disabled readonly />
                   </b-form-group>
                 </b-col>
                 <b-col>
                   <b-form-group label="LAST NAME">
-                    <b-form-input v-model="updateCorporate.body.surname" class="form-control" placeholder="Doe" />
+                    <b-form-input :value="rootSurname" class="form-control" placeholder="Doe" disabled readonly />
                   </b-form-group>
                 </b-col>
               </b-form-row>
@@ -82,10 +82,10 @@
                 <b-col>
                   <b-form-group label="E-Mail">
                     <b-form-input
-                      v-model="updateCorporate.body.email"
-                      :state="isInvalid($v.updateCorporate.body.email)"
+                      v-model="updateCorporate.email"
+                      :state="isInvalid($v.updateCorporate.email)"
                       class="form-control"
-                      placeholder="johndoe@email.com"
+                      placeholder="example@email.com"
                     />
                   </b-form-group>
                 </b-col>
@@ -94,10 +94,10 @@
                 <b-col>
                   <b-form-group label="MOBILE NUMBER">
                     <vue-phone-number-input
-                      :value="mobile.mobileNumber"
+                      :value="mobile.number"
                       :error="numberIsValid === false"
                       :border-radius="0"
-                      :default-country-code="mobile.mobileCountryCode"
+                      :default-country-code="mobile.countryCode"
                       color="#6C1C5C"
                       error-color="#F50E4C"
                       valid-color="#6D7490"
@@ -130,10 +130,8 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { email, required } from 'vuelidate/lib/validators'
-
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
@@ -158,10 +156,12 @@ import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identit
       }
     },
     updateCorporate: {
-      number: {
-        required
+      mobile: {
+        number: {
+          required
+        },
+        countryCode: { required }
       },
-      countryCode: { required },
       email: {
         required,
         email
@@ -230,14 +230,18 @@ export default class Profile extends mixins(BaseMixin) {
   }
 
   consumerPhoneUpdate(number) {
-    this.$set(this.mobile, 'number', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.updateConsumer.mobile!.number = number.phoneNumber
+    this.$set(this.mobile, 'number', number.phoneNumber)
+    this.$set(this.mobile, 'countryCode', '+' + number.countryCallingCode)
+    this.updateConsumer.mobile = { ...this.mobile }
     this.numberIsValid = number.isValid
   }
 
   corporatePhoneUpdate(number) {
-    this.$set(this.mobile, 'number', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.updateCorporate.mobile!.number = number.phoneNumber
+    this.$set(this.mobile, 'number', number.phoneNumber)
+    this.$set(this.mobile, 'countryCode', '+' + number.countryCallingCode)
+
+    this.updateCorporate.mobile = { ...this.mobile }
+
     this.numberIsValid = number.isValid
   }
 
@@ -257,7 +261,7 @@ export default class Profile extends mixins(BaseMixin) {
 
     this.isLoading = true
 
-    this.stores.consumers.update(this.updateConsumer).then(() => {
+    this.stores.consumers.update(this.updateConsumer).finally(() => {
       this.isLoading = false
     })
   }
@@ -278,7 +282,7 @@ export default class Profile extends mixins(BaseMixin) {
 
     this.isLoading = true
 
-    this.stores.corporates.updateUser(this.updateCorporate).then(() => {
+    this.stores.corporates.updateUser(this.updateCorporate).finally(() => {
       this.isLoading = false
     })
   }
