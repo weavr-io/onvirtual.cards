@@ -282,7 +282,7 @@ export default class Profile extends mixins(BaseMixin) {
 
     this.isLoading = true
 
-    this.stores.corporates.updateUser(this.updateCorporate).finally(() => {
+    this.stores.corporates.update(this.updateCorporate).finally(() => {
       this.isLoading = false
     })
   }

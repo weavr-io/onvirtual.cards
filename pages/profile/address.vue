@@ -56,9 +56,6 @@
                 </b-row>
               </b-form>
             </div>
-            <pre>
-              {{ address }}
-            </pre>
           </div>
         </b-card-body>
       </b-overlay>
@@ -104,18 +101,25 @@ import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identit
   }
 })
 export default class ConsumerAddressPage extends mixins(BaseMixin) {
-  address!: AddressModel | LegalAddressModel
+  address: Nullable<AddressModel | LegalAddressModel> = {
+    addressLine1: null,
+    addressLine2: null,
+    city: null,
+    postCode: null,
+    state: null,
+    country: null
+  }
 
   isLoading: boolean = false
 
   fetch() {
-    if (this.isConsumer) {
-      if (Object.keys(this.consumer!.rootUser.address!).length !== 0) {
+    if (this.isConsumer && this.consumer) {
+      if (Object.keys(this.consumer.rootUser.address as AddressModel).length !== 0) {
         this.address = { ...this.consumer?.rootUser.address! }
       }
-    } else {
-      // treat as corporate
-      if (Object.keys(this.corporate!.company.registeredAddress!).length !== 0) {
+    } else if (this.isCorporate && this.corporate) {
+      if (Object.keys(this.corporate.company.registeredAddress as LegalAddressModel).length !== 0) {
+        // treat as corporate
         this.address = { ...this.corporate?.company.registeredAddress! }
       }
     }

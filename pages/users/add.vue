@@ -14,20 +14,8 @@
           <b-form @submit="doAdd">
             <b-form-row>
               <b-col>
-                <b-form-group label="Title:">
-                  <b-form-select
-                    v-model="$v.request.request.title.$model"
-                    :state="isInvalid($v.request.request.title)"
-                    :options="titleOptions"
-                  />
-                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-                </b-form-group>
-              </b-col>
-            </b-form-row>
-            <b-form-row>
-              <b-col>
                 <b-form-group label="Name:">
-                  <b-form-input v-model="$v.request.request.name.$model" :state="isInvalid($v.request.request.name)" />
+                  <b-form-input v-model="$v.request.name.$model" :state="isInvalid($v.request.name)" />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
               </b-col>
@@ -35,10 +23,7 @@
             <b-form-row>
               <b-col>
                 <b-form-group label="Surname:">
-                  <b-form-input
-                    v-model="$v.request.request.surname.$model"
-                    :state="isInvalid($v.request.request.surname)"
-                  />
+                  <b-form-input v-model="$v.request.surname.$model" :state="isInvalid($v.request.surname)" />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
               </b-col>
@@ -46,23 +31,8 @@
             <b-form-row>
               <b-col>
                 <b-form-group label="Email:">
-                  <b-form-input
-                    v-model="$v.request.request.email.$model"
-                    :state="isInvalid($v.request.request.email)"
-                    type="email"
-                  />
+                  <b-form-input v-model="$v.request.email.$model" :state="isInvalid($v.request.email)" type="email" />
                   <b-form-invalid-feedback>This field is required and must be a valid email.</b-form-invalid-feedback>
-                </b-form-group>
-              </b-col>
-            </b-form-row>
-            <b-form-row>
-              <b-col>
-                <b-form-group label="Company Position:">
-                  <b-form-input
-                    v-model="$v.request.request.companyPosition.$model"
-                    :state="isInvalid($v.request.request.companyPosition)"
-                  />
-                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
               </b-col>
             </b-form-row>
@@ -70,7 +40,7 @@
               <b-col>
                 <b-form-group label="MOBILE NUMBER:">
                   <vue-phone-number-input
-                    v-model="rootMobileNumber"
+                    :value="mobile.number"
                     :only-countries="mobileCountries"
                     :border-radius="0"
                     :error="numberIsValid === false"
@@ -97,6 +67,9 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
+import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
+import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
+import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -107,41 +80,38 @@ const Countries = require('~/static/json/countries.json')
   },
   validations: {
     request: {
-      request: {
-        name: {
-          required,
-          maxLength: maxLength(100)
-        },
-        surname: {
-          required,
-          maxLength: maxLength(100)
-        },
-        title: {
-          required
-        },
-        email: {
-          required,
-          email
-        },
-        companyPosition: {
-          required
-        },
-        mobileCountryCode: {},
-        mobileNumber: {}
+      name: {
+        required,
+        maxLength: maxLength(100)
+      },
+      surname: {
+        required,
+        maxLength: maxLength(100)
+      },
+      email: {
+        required,
+        email
       }
     }
   }
 })
 export default class AddCardPage extends mixins(BaseMixin) {
-  get isLoading() {
-    return this.stores.corporates.isLoading
+  isLoading: boolean = false
+
+  mobile: Nullable<MobileModel> = {
+    countryCode: null,
+    number: null
   }
 
-  get identityId() {
-    return this.stores.auth.identityId
-  }
+  numberIsValid: boolean | null = null
 
-  rootMobileNumber = ''
+  request: Nullable<CreateUserRequestModel> = {
+    name: null,
+    surname: null,
+    email: null,
+    mobile: null,
+    dateOfBirth: null
+  }
 
   get mobileCountries(): string[] {
     return Countries.map((_c) => {
@@ -149,29 +119,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
     })
   }
 
-  titleOptions = [
-    { value: null, text: 'Mr / Ms / Mrs', disabled: true },
-    { value: 'Mr', text: 'Mr' },
-    { value: 'Mrs', text: 'Mrs' },
-    { value: 'Ms', text: 'Ms' }
-  ]
-
-  public request: CreateCorporateUserFullRequest = {
-    corporateId: '0',
-    request: {
-      type: CorporateUserType.USER,
-      title: null,
-      name: '',
-      surname: '',
-      email: '',
-      active: true,
-      companyPosition: '',
-      mobileCountryCode: '',
-      mobileNumber: ''
-    }
-  }
-
-  doAdd(evt) {
+  async doAdd(evt) {
     evt.preventDefault()
 
     if (this.numberIsValid === null) {
@@ -185,26 +133,31 @@ export default class AddCardPage extends mixins(BaseMixin) {
       }
     }
 
-    this.stores.corporates.addUser(this.request).then(this.userAdded.bind(this))
-  }
+    this.isLoading = true
 
-  userAdded(res) {
-    this.stores.corporates
-      .sendUserInvite({ corporateId: this.request.corporateId, inviteId: res.data.inviteId })
-      .then(() => {
-        this.$router.push('/users')
+    await this.stores.users
+      .add(this.request as CreateUserRequestModel)
+      .then((res) => {
+        this.userAdded(res.data)
+      })
+      .finally(() => {
+        this.isLoading = false
       })
   }
 
-  mounted() {
-    this.request.corporateId = this.identityId
+  userAdded(res: UserModel) {
+    this.stores.users.inviteSend(res.id).then(() => {
+      this.$router.push('/users')
+    })
   }
 
-  numberIsValid: boolean | null = null
-
   phoneUpdate(number) {
-    this.request.request.mobileCountryCode = '+' + number.countryCallingCode
-    this.request.request.mobileNumber = number.nationalNumber
+    this.mobile = {
+      countryCode: '+' + number.countryCallingCode,
+      number: number.phoneNumber
+    }
+
+    this.request.mobile = { ...this.mobile }
     this.numberIsValid = number.isValid
   }
 }

@@ -30,7 +30,7 @@
           </client-only>
           <b-form-row class="mt-6">
             <b-col class="text-center">
-              <b-button variant="secondary" type="submit">
+              <b-button variant="secondary" type="submit" :disabled="$fetchState.pending">
                 submit
                 <span class="pl-5">-></span>
               </b-button>
@@ -43,11 +43,12 @@
 </template>
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
-import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
 
 @Component({
   layout: 'auth',
@@ -58,47 +59,19 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
   }
 })
 export default class IniteConsume extends mixins(BaseMixin) {
-  protected form!: ConsumeCorporateUserInviteRequest
+  protected form!: { id: IDModel; data: InviteConsumeRequestModel }
 
   showError: boolean = false
 
   @Ref('passwordField')
   passwordField!: WeavrPasswordInput
 
-  // identity_type
-  // identity_id
-  // nonce
-  // user_id
-  // invite_id
-  mounted() {
-    try {
-      const _validateRequest: ValidateCorporateUserInviteRequest = {
-        id: this.$route.query.identity_id.toString(),
-        inviteId: this.$route.query.invite_id.toString(),
-        body: {
-          nonce: this.$route.query.nonce.toString()
-        }
-      }
-
-      this.stores.corporates.validateInvite(_validateRequest).catch(this.handleError.bind(this))
-    } catch (e) {}
-  }
-
-  handleError(e) {
-    this.stores.errors.SET_ERROR(e.response)
-  }
-
   asyncData({ route }) {
     try {
-      const _consumeInviteRequest: ConsumeCorporateUserInviteRequest = {
-        id: route.query.identity_id.toString(),
-        body: {
-          nonce: route.query.nonce.toString(),
-          identityId: {
-            type: route.query.identity_type.toString(),
-            id: route.query.identity_id.toString()
-          },
-          userId: route.query.user_id.toString(),
+      const _consumeInviteRequest: { id: IDModel; data: InviteConsumeRequestModel } = {
+        id: route.query.invite_id.toString(),
+        data: {
+          inviteCode: route.query.nonce.toString(),
           password: {
             value: ''
           }
@@ -116,14 +89,31 @@ export default class IniteConsume extends mixins(BaseMixin) {
     }
   }
 
+  fetch() {
+    try {
+      const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
+        id: this.$route.query.invite_id.toString(),
+        data: {
+          inviteCode: this.$route.query.nonce.toString()
+        }
+      }
+
+      return this.stores.users.inviteValidate(_validateRequest).catch(this.handleError)
+    } catch (e) {}
+  }
+
+  handleError(e) {
+    this.stores.errors.SET_ERROR(e.response)
+  }
+
   tryToSubmitForm(e) {
     e.preventDefault()
 
     this.passwordField.createToken().then(
       (tokens) => {
         if (tokens.tokens.password !== '') {
-          this.form.body.password.value = tokens.tokens.password
-          this.stores.corporates.consumeInvite(this.form).then(() => {
+          this.form.data.password!.value = tokens.tokens.password
+          this.stores.users.inviteConsume(this.form).then(() => {
             this.$router.push('/login')
           })
         } else {
