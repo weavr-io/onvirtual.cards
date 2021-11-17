@@ -1,4 +1,4 @@
-import { Module, Mutation } from 'vuex-module-decorators'
+import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { AxiosError } from 'axios'
 import { ConflictResponse } from '~/api/Conflicts/Responses/ConflictResponse'
 import { LoginWithPasswordConflict } from '~/api/Conflicts/Responses/Password/LoginWithPasswordConflict'

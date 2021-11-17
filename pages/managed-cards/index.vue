@@ -14,7 +14,7 @@
               deleted cards
             </b-form-checkbox>
           </b-col>
-          <b-col v-if="canAddCard" class="text-right">
+          <b-col v-if="identityVerified" class="text-right">
             <b-button to="/managed-cards/add" variant="border-primary">
               + add new card
             </b-button>
@@ -22,7 +22,12 @@
         </b-row>
       </b-container>
       <b-container v-if="!hasAlert" class="mt-5">
-        <b-row v-if="!hasCards">
+        <b-row v-if="hasCards" cols="1" cols-md="3">
+          <b-col v-for="(card, key) in cards" :key="key">
+            <weavr-card :card="card" no-body class="mb-5" />
+          </b-col>
+        </b-row>
+        <b-row v-else>
           <b-col class="py-5 text-center">
             <h4 class="font-weight-light">
               You have no cards.
@@ -36,11 +41,6 @@
             </h5>
           </b-col>
         </b-row>
-        <b-row v-if="hasCards" cols="1" cols-md="3">
-          <b-col v-for="(card, key) in cards" :key="key">
-            <weavr-card :card="card" no-body class="mb-5" />
-          </b-col>
-        </b-row>
       </b-container>
     </section>
   </div>
@@ -50,11 +50,9 @@
 import { Component, mixins, Watch } from 'nuxt-property-decorator'
 
 import BaseMixin from '~/minixs/BaseMixin'
-import { cardsStore } from '~/utils/store-accessor'
-import { NullableBoolean } from '~/api/Generic/NullableBoolean'
-import { $api } from '~/utils/api'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import CardsMixin from '~/minixs/CardsMixin'
 
 @Component({
   layout: 'dashboard',
@@ -64,65 +62,46 @@ import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consu
     KybAlert: () => import('~/components/corporates/KYBAlert.vue')
   }
 })
-export default class CardsPage extends mixins(BaseMixin) {
-  get corporate() {
-    return this.stores.corporates.corporate
-  }
+export default class CardsPage extends mixins(BaseMixin, CardsMixin) {
+  public showDeleted: boolean = false
 
-  get cards() {
-    return this.stores.cards.cards
-  }
+  public showDeletedSwitch: boolean = false
 
   get hasAlert() {
     return this.stores.view.hasAlert
   }
 
-  public showDeleted: boolean = false
+  // async asyncData({ store, route }) {
+  // if (route.query.showDeleted) {
+  //   _active = NullableBoolean.FALSE
+  // } else {
+  //   _active = NullableBoolean.TRUE
+  // }
+  //
+  // await cardsStore(store).getCards({
+  //   paging: {
+  //     offset: 0,
+  //     limit: 0
+  //   },
+  //   active: _active
+  // })
+  //
+  // const _showDeletedSwitch = await $api.post('/app/api/managed_cards/get', {
+  //   paging: {
+  //     offset: 0,
+  //     limit: 1
+  //   },
+  //   active: NullableBoolean.FALSE
+  // })
+  //
+  // return {
+  //   showDeleted: route.query.showDeleted,
+  //   showDeletedSwitch: _showDeletedSwitch.data.count > 0
+  // }
+  // }
 
-  public showDeletedSwitch: boolean = false
-
-  async asyncData({ store, route }) {
-    // if (authStore(store).isConsumer) {
-    //   const _consumerId = authStore(store).identityId
-    //   if (_consumerId) {
-    //     debugger
-    //     await consumersStore(store).get(_consumerId)
-    //   }
-    // } else {
-    //   const _corporateId = authStore(store).identityId
-    //   if (_corporateId) {
-    //     await corporatesStore(store).getCorporateDetails(_corporateId)
-    //   }
-    // }
-
-    let _active: NullableBoolean = NullableBoolean.NULL
-
-    if (route.query.showDeleted) {
-      _active = NullableBoolean.FALSE
-    } else {
-      _active = NullableBoolean.TRUE
-    }
-
-    await cardsStore(store).getCards({
-      paging: {
-        offset: 0,
-        limit: 0
-      },
-      active: _active
-    })
-
-    const _showDeletedSwitch = await $api.post('/app/api/managed_cards/get', {
-      paging: {
-        offset: 0,
-        limit: 1
-      },
-      active: NullableBoolean.FALSE
-    })
-
-    return {
-      showDeleted: route.query.showDeleted,
-      showDeletedSwitch: _showDeletedSwitch.data.count > 0
-    }
+  fetch() {
+    return this.stores.cards.getCards()
   }
 
   @Watch('showDeleted')
@@ -134,23 +113,11 @@ export default class CardsPage extends mixins(BaseMixin) {
     })
   }
 
-  get hasCards(): boolean {
-    return this.cards.length > 0
-  }
-
   get showKybAlert(): boolean {
     if (this.stores.corporates.kyb) {
       return this.stores.corporates.kyb.kybStatus !== KYBStatusEnum.APPROVED
     } else {
       return false
-    }
-  }
-
-  get canAddCard(): boolean {
-    if (this.stores.auth.isConsumer) {
-      return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
-    } else {
-      return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
     }
   }
 }

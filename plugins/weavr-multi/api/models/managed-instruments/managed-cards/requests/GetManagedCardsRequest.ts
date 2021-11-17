@@ -19,5 +19,5 @@ export interface GetManagedCardsRequest extends PagingModel {
   mode?: ManagedCardModeEnum
   tag?: string
   parentManagedAccountId?: string
-  manufacturingState: ManufacturingStateEnum
+  manufacturingState?: ManufacturingStateEnum
 }

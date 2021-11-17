@@ -11,7 +11,7 @@
           </h5>
         </div>
         <error-alert />
-        <b-form id="contact-form" @submit="resetPassword" class="mt-5">
+        <b-form id="contact-form" class="mt-5" @submit="resetPassword">
           <b-form-group
             id="ig-email"
             :state="isInvalid($v.form.email)"
@@ -50,7 +50,7 @@
               <img src="/img/success.svg" alt="" style="max-width: 100px" />
             </div>
             <div>
-              <b-form id="contact-form" @submit="resetPassword" class="mt-5">
+              <b-form id="contact-form" class="mt-5" @submit="resetPassword">
                 <loader-button :is-loading="isLoading" button-text="resend" class="text-center" />
               </b-form>
             </div>
@@ -63,8 +63,8 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
-import { LostPasswordStartRequest } from '~/api/Requests/Auth/LostPasswordStartRequest'
 import BaseMixin from '~/minixs/BaseMixin'
+import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 
 @Component({
   layout: 'auth',
@@ -82,13 +82,11 @@ import BaseMixin from '~/minixs/BaseMixin'
   }
 })
 export default class ResetPasswordPage extends mixins(BaseMixin) {
-  get isLoading() {
-    return this.stores.auth.isLoading
-  }
+  isLoading: boolean = false
 
   passwordSent: boolean = false
 
-  protected form: LostPasswordStartRequest = {
+  protected form: InitiateLostPasswordRequestModel = {
     email: ''
   }
 
@@ -96,9 +94,15 @@ export default class ResetPasswordPage extends mixins(BaseMixin) {
     evt.preventDefault()
     this.$v.$touch()
     if (!this.$v.$invalid) {
-      this.stores.auth.lostPasswordStart(this.form).then(() => {
-        this.passwordSent = true
-      })
+      this.isLoading = true
+      this.stores.auth
+        .lostPasswordInitiate(this.form)
+        .then(() => {
+          this.passwordSent = true
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
     }
   }
 }

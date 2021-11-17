@@ -35,7 +35,7 @@
       <b-col v-if="isManagedCards">
         <b-col class="pb-2">
           <b-row align-h="end" align-v="end">
-            <div v-if="cardCurrency" class="account-balance">
+            <div v-if="hasCards" class="account-balance">
               <p class="mb-0 text-muted account-balance-label">
                 total balance
               </p>
@@ -51,45 +51,14 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-
 import BaseMixin from '~/minixs/BaseMixin'
+import CardsMixin from '~/minixs/CardsMixin'
+import AccountsMixin from '~/minixs/AccountsMixin'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 @Component
-export default class DashboardHeader extends mixins(BaseMixin) {
-  get account() {
-    return this.stores.accounts.account
-  }
-
-  get accountsBalance() {
-    return this.stores.accounts.totalAvailableBalance
-  }
-
-  get cardCurrency() {
-    return this.stores.cards.currency
-  }
-
-  get cardsBalance() {
-    return this.stores.cards.totalAvailableBalance
-  }
-
-  get isManagedCards(): boolean {
-    if (this.$route.matched[0].name) {
-      return ['managed-cards', 'managed-cards-id-statement'].includes(this.$route.matched[0].name)
-    } else {
-      return false
-    }
-  }
-
-  get isManagedAccounts(): boolean {
-    if (this.$route.matched[0].name) {
-      return ['managed-accounts', 'managed-accounts-id'].includes(this.$route.matched[0].name)
-    } else {
-      return false
-    }
-  }
-
+export default class DashboardHeader extends mixins(BaseMixin, CardsMixin, AccountsMixin) {
   get canAddFunds(): boolean {
     if (this.isConsumer) {
       return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED

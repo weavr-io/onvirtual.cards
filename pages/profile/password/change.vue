@@ -111,8 +111,10 @@ export default class BundlesPage extends mixins(BaseMixin) {
       if (values[0].tokens['old-password'] !== '' && values[1].tokens['new-password']) {
         this.changePasswordRequest.oldPassword.value = values[0].tokens['old-password']
         this.changePasswordRequest.newPassword.value = values[1].tokens['new-password']
-        this.stores.auth.updatePassword(this.changePasswordRequest).then(() => {
-          this.$router.push('/profile')
+        this.stores.auth.validatePassword({ password: this.changePasswordRequest.newPassword }).then(() => {
+          this.stores.auth.updatePassword(this.changePasswordRequest).then(() => {
+            this.$router.push('/profile')
+          })
         })
       } else {
         return null

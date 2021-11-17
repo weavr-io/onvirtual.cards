@@ -133,8 +133,8 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getCards(filters: GetManagedCardsRequest) {
-    const req = this.store.$apiMulti.managedCards.index(filters)
+  getCards(filters?: GetManagedCardsRequest) {
+    const req = this.store.$apiMulti.managedCards.index(filters || {})
 
     req.then((res) => {
       this.SET_CARDS(res.data)

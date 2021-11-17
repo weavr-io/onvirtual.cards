@@ -2,8 +2,6 @@ import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { $axiosMulti } from '~/utils/api'
 import { StoreModule } from '~/store/storeModule'
 import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
-import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
@@ -11,6 +9,9 @@ import { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/au
 import { GetAuthenticationFactorsResponse } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/responses/GetAuthenticationFactorsResponse'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
+import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
+import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
+import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -133,6 +134,27 @@ export default class Auth extends StoreModule {
   @Action({ rawError: true })
   verifyAuthFactors(request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrolRequest }) {
     const _req = this.store.$apiMulti.additionalFactors.verify(request)
+
+    return _req
+  }
+
+  @Action({ rawError: true })
+  lostPasswordInitiate(request: InitiateLostPasswordRequestModel) {
+    const _req = this.store.$apiMulti.passwords.initiate(request)
+
+    return _req
+  }
+
+  @Action({ rawError: true })
+  lostPasswordResume(request: ResumeLostPasswordRequestModel) {
+    const _req = this.store.$apiMulti.passwords.resume(request)
+
+    return _req
+  }
+
+  @Action({ rawError: true })
+  validatePassword(request: ValidatePasswordRequestModel) {
+    const _req = this.store.$apiMulti.passwords.validate(request)
 
     return _req
   }

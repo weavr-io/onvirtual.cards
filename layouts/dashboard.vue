@@ -38,10 +38,7 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { Consumer } from '~/api/Models/Consumers/Consumer'
-import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
-import CurrencyAmount = Schemas.CurrencyAmount
 
 @Component({
   components: {
@@ -82,31 +79,23 @@ export default class DefaultLayout extends mixins(BaseMixin) {
     return this.stores.accounts.accounts
   }
 
-  get consumer(): Consumer | null {
-    return this.stores.consumers.consumer
-  }
-
-  get corporate() {
-    return this.stores.corporates.corporate
-  }
-
-  get allowedLimit(): CurrencyAmount {
-    const _out: CurrencyAmount = {
-      amount: 10000,
-      currency: 'EUR'
-    }
-
-    if (this.accounts) {
-      if (this.accounts.account.length > 0) {
-        if (this.accounts.account[0].currency === 'GBP') {
-          _out.amount = 8000
-          _out.currency = 'GBP'
-        }
-      }
-    }
-
-    return _out
-  }
+  // get allowedLimit(): CurrencyAmount {
+  //   const _out: CurrencyAmount = {
+  //     amount: 10000,
+  //     currency: 'EUR'
+  //   }
+  //
+  //   if (this.accounts) {
+  //     if (this.accounts.account.length > 0) {
+  //       if (this.accounts.account[0].currency === 'GBP') {
+  //         _out.amount = 8000
+  //         _out.currency = 'GBP'
+  //       }
+  //     }
+  //   }
+  //
+  //   return _out
+  // }
 }
 </script>
 <style lang="scss" scoped>

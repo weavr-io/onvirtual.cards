@@ -21,12 +21,12 @@ export class PasswordsApi {
     return $axiosMulti.post<CreatePasswordResponseModel>('/passwords/update', request)
   }
 
-  initiate(request: InitiateLostPasswordRequestModel): Promise<AxiosResponse> {
-    return $axiosMulti.post('/passwords/lost_password/start', request)
-  }
-
   validate(request: ValidatePasswordRequestModel): Promise<AxiosResponse> {
     return $axiosMulti.post('/passwords/validate', request)
+  }
+
+  initiate(request: InitiateLostPasswordRequestModel): Promise<AxiosResponse> {
+    return $axiosMulti.post('/passwords/lost_password/start', request)
   }
 
   resume(request: ResumeLostPasswordRequestModel): Promise<AxiosResponse<ResumeLostPasswordResponseModel>> {
