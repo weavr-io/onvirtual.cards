@@ -1,23 +1,26 @@
 <template>
   <div>
-    <section v-if="!hasAlert">
+    <section v-if="!hasAlert && !$fetchState.pending">
       <statement :filters="filters" />
+      test
+      <pre>
+        {{ filters }}
+      </pre>
     </section>
-    <infinite-loading spinner="spiral" @infinite="infiniteScroll">
-      <span slot="no-more" />
-      <div slot="no-results" />
-    </infinite-loading>
+    <!--    <infinite-loading spinner="spiral" @infinite="infiniteScroll">-->
+    <!--      <span slot="no-more" />-->
+    <!--      <div slot="no-results" />-->
+    <!--    </infinite-loading>-->
   </div>
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 
 import { OrderType } from '~/api/Enums/OrderType'
-import { Consumer } from '~/api/Models/Consumers/Consumer'
 import BaseMixin from '~/minixs/BaseMixin'
-import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import RouterMixin from '~/minixs/RouterMixin'
-import { accountsStore, authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import AccountsMixin from '~/minixs/AccountsMixin'
+import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 
 const dot = require('dot-object')
 const moment = require('moment')
@@ -29,39 +32,25 @@ const moment = require('moment')
     Statement: () => import('~/components/accounts/statement/statement.vue')
   }
 })
-export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
-  get account() {
-    return this.stores.accounts.account
-  }
+export default class AccountPage extends mixins(BaseMixin, RouterMixin, AccountsMixin) {
+  filters: GetManagedAccountStatementRequest | null = null
+
+  page: number = 0
 
   get filteredStatement() {
     return this.stores.accounts.filteredStatement
-  }
-
-  get consumer(): Consumer | null {
-    return this.stores.consumers.consumer
-  }
-
-  get corporate() {
-    return this.stores.corporates.corporate
   }
 
   get hasAlert() {
     return this.stores.view.hasAlert
   }
 
-  accountId!: number
+  async fetch() {
+    const _accountId = this.$route.params.id
 
-  filters!: ManagedAccountStatementRequest
+    await this.stores.accounts.get(_accountId)
 
-  page: number = 0
-
-  async asyncData({ store, route }) {
-    const _accountId = route.params.id
-
-    await accountsStore(store).get(_accountId)
-
-    const _routeQueries = dot.object(route.query)
+    const _routeQueries = dot.object(this.$route.query)
     const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
     if (!_filters.fromTimestamp) {
@@ -76,7 +65,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
         .valueOf()
     }
 
-    const _statementFilters: ManagedAccountStatementRequest = {
+    const _statementFilters: GetManagedAccountStatementRequest = {
       showFundMovementsOnly: false,
       orderByTimestamp: OrderType.DESC,
       paging: {
@@ -88,43 +77,28 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
 
     const _req = {
       id: _accountId,
-      body: _statementFilters
-    }
-
-    await accountsStore(store).getStatement(_req)
-
-    if (authStore(store).isConsumer) {
-      const _consumerId = authStore(store).identityId
-      if (_consumerId) {
-        await consumersStore(store).get(_consumerId)
-      }
-    } else {
-      const _corporateId = authStore(store).identityId
-      if (_corporateId) {
-        await corporatesStore(store).get(_corporateId)
-      }
-    }
-
-    return {
-      accountId: _accountId,
       filters: _statementFilters
     }
+
+    this.filters = { ..._filters }
+
+    await this.stores.accounts.getStatements(_req)
   }
 
   infiniteScroll($state) {
     setTimeout(() => {
       this.page++
 
-      const _request: ManagedAccountStatementRequest = { ...this.filters }
-      _request.paging!.offset = this.page * _request.paging!.limit!
+      const _request: GetManagedAccountStatementRequest = { ...this.filters }
+      _request!.offset = (this.page * +_request!.limit!).toString()
 
       this.stores.accounts
         .getCardStatementPage({
           id: this.$route.params.id,
-          body: _request
+          filters: _request
         })
-        .then((response) => {
-          if (response.data.responseCount < _request.paging!.limit!) {
+        .then((res) => {
+          if (res.data.responseCount! < _request.limit!) {
             $state.complete()
             console.log('complete')
           } else {

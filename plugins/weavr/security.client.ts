@@ -24,6 +24,7 @@ Vue.prototype.$weavrComponents = weavrComponents
 
 function asyncAssociate(token) {
   return new Promise((resolve, reject) => {
+    // debugger
     weavrComponents.setUserToken(
       token,
       (res) => {

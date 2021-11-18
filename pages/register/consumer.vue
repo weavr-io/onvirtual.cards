@@ -185,6 +185,7 @@ import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/Identit
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -282,6 +283,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
       },
       occupation: null
     },
+    baseCurrency: CurrencyEnum.EUR,
     ipAddress: null,
     acceptedTerms: false,
     sourceOfFunds: null,

@@ -5,6 +5,7 @@ import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consu
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import config from '~/config'
 
 const moment = require('moment')
 const Countries = require('~/static/json/countries.json')
@@ -49,7 +50,7 @@ export default class BaseMixin extends Vue {
   }
 
   downloadAsCSV(_accId, _pathParam, _req) {
-    const req = $api.post('/app/api/' + _pathParam + '/' + _accId + '/statement/download', _req, {
+    const req = $api.post('/app/api/' + _pathParam + '/' + _accId + '/statements/download', _req, {
       responseType: 'blob',
       headers: {
         Accept: '*/*'
@@ -80,6 +81,12 @@ export default class BaseMixin extends Vue {
 
   get identityId() {
     return this.stores.auth.identityId
+  }
+
+  get profileId() {
+    return this.isConsumer
+      ? config.profileId.managed_accounts_consumers!
+      : config.profileId.managed_accounts_corporates!
   }
 
   get consumer(): ConsumerModel | null {

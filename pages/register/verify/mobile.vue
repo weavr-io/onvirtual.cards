@@ -129,7 +129,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
     await this.stores.auth.enrollAuthFactors(SCAOtpChannelEnum.SMS).then(() => (this.isLoading = false))
   }
 
-  doVerify() {
+  async doVerify() {
     this.$v.$touch()
     if (this.$v.$invalid) {
       return null
@@ -140,14 +140,16 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
       body: this.request as AuthVerifyEnrolRequest
     }
 
-    this.stores.auth
+    await this.stores.auth
       .verifyAuthFactors(req)
-      .then(() => {
-        this.goToIndex()
-      })
+      .finally(this.nextPage)
       .catch((e) => {
         this.errorOccurred(e)
       })
+  }
+
+  async nextPage() {
+    await this.stores.consumers.get().then(this.goToIndex)
   }
 
   countDownChanged(dismissCountDown) {

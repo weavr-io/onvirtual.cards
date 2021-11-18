@@ -1,11 +1,5 @@
 <template>
   <section>
-    <pre>
-      {{ hasAccount }}
-    </pre>
-    <pre>
-      {{ identityVerified }}
-    </pre>
     <template v-if="!hasAccount && identityVerified && !$fetchState.pending">
       <b-container class="mb-5 mt-n4">
         <b-row align-v="center">
@@ -34,8 +28,9 @@
       </b-container>
     </template>
     <template v-else>
-      <div class="d-flex justify-content-center">
-        <div class="loader-spinner">
+      <div class="d-flex flex-column align-items-center">
+        <p>You are being redirected.</p>
+        <div class="loader-spinner ">
           <b-spinner />
         </div>
       </div>
@@ -54,19 +49,21 @@ import AccountsMixin from '~/minixs/AccountsMixin'
 })
 export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
   fetch() {
-    return this.stores.accounts.index()
-  }
+    return this.stores.accounts
+      .index()
+      .then((res) => {
+        if (parseInt(res.data.count!) >= 1) {
+          const _accountId = res.data.accounts[0].id
+          this.$router.push('/managed-accounts/' + _accountId)
+        }
+      })
+      .catch((err) => {
+        const data = err.response.data
 
-  // async asyncData({ store, redirect }) {
-  //   let _accountId
-  //   const _accounts = await accountsStore(store).index()
-  //
-  //   if (_accounts.data.count >= 1) {
-  //     _accountId = _accounts.data.account[0].id.id
-  //     redirect('/managed-accounts/' + _accountId)
-  //   }
-  //
-  //   return { accountId: _accountId }
-  // }
+        const error = data.message ? data.message : data.errorCode
+
+        this.$weavrToastError(error)
+      })
+  }
 }
 </script>

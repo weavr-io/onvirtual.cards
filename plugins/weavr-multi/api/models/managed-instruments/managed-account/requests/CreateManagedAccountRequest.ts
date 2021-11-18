@@ -1,9 +1,9 @@
 import { IDModel } from '../../../common/IDModel'
-import { UpdateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/UpdateManagedAccountRequest'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
-export interface CreateManagedAccountRequest extends UpdateManagedAccountRequest {
+export interface CreateManagedAccountRequest {
   profileId: IDModel
   friendlyName: string
-  currency: string
+  currency: CurrencyEnum
   tag?: string
 }

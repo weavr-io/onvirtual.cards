@@ -126,7 +126,7 @@
     >
       <b-card v-if="managedCard" no-body class="border-0 cards-card" bg-variant="card-purple">
         <b-card-body class="card-body-modal card-body onvirtual-card">
-          <b-link :to="'/managed-cards/' + managedCard.id.id + '/statement'" class="p-5">
+          <b-link :to="'/managed-cards/' + managedCard.id.id + '/statements'" class="p-5">
             <b-container fluid class="p-0">
               <b-row align-h="end">
                 <b-col cols="2" class="text-right">

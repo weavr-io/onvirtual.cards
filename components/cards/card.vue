@@ -8,14 +8,11 @@
     >
       <b-card-body class="card-body onvirtual-card">
         <b-aspect :aspect="'1.6:1'" class="overflow-hidden">
-          <b-link :to="'/managed-cards/' + card.id.id + '/statement'">
+          <b-link :to="'/managed-cards/' + card.id.id + '/statements'">
             <b-container fluid class="p-0">
               <b-row>
                 <b-col class="card-balance text-right">
-                  {{
-                    card.balances.availableBalance
-                      | weavr_currency(card.currency)
-                  }}
+                  {{ card.balances.availableBalance | weavr_currency(card.currency) }}
                 </b-col>
               </b-row>
               <b-row class="mt-3 mb-3">
@@ -29,9 +26,7 @@
                   </b-row>
                   <b-row class="mt-2">
                     <b-col>
-                      <div class="card-number">
-                        •••• {{ card.cardNumberLastFour }}
-                      </div>
+                      <div class="card-number">•••• {{ card.cardNumberLastFour }}</div>
                     </b-col>
                   </b-row>
                 </b-col>
@@ -58,11 +53,7 @@
               </b-row>
             </b-container>
           </b-link>
-          <b-button
-            @click="toggleShowOptions"
-            v-if="isActive"
-            class="card-options-button"
-          >
+          <b-button v-if="isActive" class="card-options-button" @click="toggleShowOptions">
             <b-icon icon="three-dots-vertical" />
           </b-button>
         </b-aspect>
@@ -70,10 +61,7 @@
     </b-card>
     <b-row v-if="showOptions && isActive" class="card-options">
       <b-col>
-        <b-link
-          @click="toggleFreeze"
-          class="mt-3 py-2 d-block text-decoration-none"
-        >
+        <b-link class="mt-3 py-2 d-block text-decoration-none" @click="toggleFreeze">
           <b-row align-v="center">
             <b-col cols="auto">
               <b-img fluid src="/img/freeze-icon.svg" />
@@ -93,10 +81,7 @@
             </b-col>
           </b-row>
         </b-link>
-        <b-link
-          :to="'/managed-cards/' + card.id.id + '/edit'"
-          class="py-2 d-block text-decoration-none"
-        >
+        <b-link :to="'/managed-cards/' + card.id.id + '/edit'" class="py-2 d-block text-decoration-none">
           <b-row align-v="center">
             <b-col cols="auto">
               <b-img fluid src="/img/edit-icon.svg" />
@@ -141,10 +126,7 @@ export default class WeavrCard extends mixins(BaseMixin) {
   }
 
   get isFrozen() {
-    return (
-      Object.entries(this.card.state.blockTypes).length > 0 ||
-      this.card.state.destroyType !== ''
-    )
+    return Object.entries(this.card.state.blockTypes).length > 0 || this.card.state.destroyType !== ''
   }
 
   get isActive() {

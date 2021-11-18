@@ -185,7 +185,7 @@ export default class Cards extends StoreModule {
 
   @Action({ rawError: true })
   getCardStatementPage(request: ManagedCardStatementRequest) {
-    const req = $api.post('/app/api/managed_cards/' + request.id + '/statement/get', request.request)
+    const req = $api.post('/app/api/managed_cards/' + request.id + '/statements/get', request.request)
 
     req.then((res) => {
       this.APPEND_STATEMENT(res.data)

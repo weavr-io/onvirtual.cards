@@ -39,24 +39,6 @@ export default class KycPage extends mixins(BaseMixin) {
     })
   }
 
-  // async asyncData({ store, redirect }) {
-  //   const _consumerId = authStore(store).identityId
-  //
-  //   try {
-  //     const _res = await consumersStore(store).startKYC(_consumerId)
-  //     return { reference: _res.data.reference }
-  //   } catch (e) {
-  //     if (e.response.data.errorCode === 'KYC_ALREADY_APPROVED') {
-  //       const _accounts = await accountsStore(store).index()
-  //
-  //       if (_accounts.data.count >= 1) {
-  //         const _accountId = _accounts.data.account[0].id.id
-  //         redirect('/managed-accounts/' + _accountId + '/topup')
-  //       }
-  //     }
-  //   }
-  // }
-
   options: Partial<ConsumerVerificationFlowOptions> = {
     onMessage: this.onMessage
   }

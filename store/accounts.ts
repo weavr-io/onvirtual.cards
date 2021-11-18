@@ -1,16 +1,16 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
-import { $api } from '~/utils/api'
 import { GetManagedAccountsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountsRequest'
 import { PaginatedManagedAccountsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/responses/PaginatedManagedAccountsResponse'
 import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
 import { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountModel'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
-import { ManagedAccountStatementRequest } from '~/api/Requests/Statements/ManagedAccountStatementRequest'
 import { authStore } from '~/utils/store-accessor'
 import config from '~/config'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
 
 @Module({
   name: 'accountsModule',
@@ -21,7 +21,8 @@ export default class Accounts extends StoreModule {
   isLoading: boolean = false
   accounts: PaginatedManagedAccountsResponse | null = null
   account: ManagedAccountModel | null = null
-  statement: StatementResponseModel | null = null
+  statements: StatementResponseModel | null = null
+  ibanDetails: ManagedAccountIBANModel | null = null
 
   get totalAvailableBalance() {
     if (this.accounts == null) {
@@ -40,11 +41,11 @@ export default class Accounts extends StoreModule {
   }
 
   get filteredStatement() {
-    if (this.statement == null) {
+    if (this.statements?.entry === undefined) {
       return []
     }
 
-    let _entries = this.statement.entry
+    let _entries = this.statements.entry
 
     _entries = _entries!.filter((transaction) => {
       const DO_NOT_DISPLAY = ['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE']
@@ -92,22 +93,22 @@ export default class Accounts extends StoreModule {
   }
 
   @Mutation
-  SET_STATEMENT(statement: StatementResponseModel) {
-    this.statement = statement
+  SET_STATEMENTS(statement: StatementResponseModel) {
+    this.statements = statement
   }
 
   @Mutation
-  RESET_STATEMENT() {
-    this.statement = null
+  RESET_STATEMENTS() {
+    this.statements = null
   }
 
   @Mutation
-  APPEND_STATEMENT(_statement: StatementResponseModel) {
-    if (this.statement === null) {
-      this.statement = _statement
+  APPEND_STATEMENTS(_statement: StatementResponseModel) {
+    if (this.statements === null) {
+      this.statements = _statement
     } else {
       _statement.entry!.forEach((_statementEntry) => {
-        this.statement?.entry!.push(_statementEntry)
+        this.statements?.entry!.push(_statementEntry)
       })
     }
   }
@@ -117,14 +118,18 @@ export default class Accounts extends StoreModule {
     this.isLoading = isLoading
   }
 
+  @Mutation
+  SET_IBAN(_res: ManagedAccountIBANModel) {
+    this.ibanDetails = _res
+  }
+
   @Action({ rawError: true })
   index() {
     const defaultFilter: GetManagedAccountsRequest = {
       profileId: authStore(this.store).isConsumer
-        ? config.profileId.managed_cards_consumers!
-        : config.profileId.managed_cards_corporates!,
+        ? config.profileId.managed_accounts_consumers!
+        : config.profileId.managed_accounts_corporates!,
       state: ManagedInstrumentStateEnum.ACTIVE,
-      // 'state.destroyedReason': ManagedInstrumentDestroyedReasonEnum.EXPIRED,
       offset: '0'
     }
 
@@ -132,6 +137,9 @@ export default class Accounts extends StoreModule {
 
     req.then((res) => {
       this.SET_ACCOUNTS(res.data)
+      if (parseInt(res.data.count!) >= 1) {
+        this.SET_ACCOUNT(res.data.accounts[0])
+      }
     })
 
     return req
@@ -160,22 +168,42 @@ export default class Accounts extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getStatement(request: { id: string; filters: GetManagedAccountStatementRequest }) {
+  getStatements(request: { id: string; filters: GetManagedAccountStatementRequest }) {
     const req = this.store.$apiMulti.managedAccounts.statement(request)
 
     req.then((res) => {
-      this.SET_STATEMENT(res.data)
+      this.SET_STATEMENTS(res.data)
     })
 
     return req
   }
 
   @Action({ rawError: true })
-  getCardStatementPage(request: { id: string; body: ManagedAccountStatementRequest }) {
-    const req = $api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
+  getCardStatementPage(request: { id: string; filters: GetManagedAccountStatementRequest }) {
+    // const req = $api.post('/app/api/managed_accounts/' + request.id + '/statements/get', request.body)
+    const req = this.store.$apiMulti.managedAccounts.statement(request)
 
     req.then((res) => {
-      this.APPEND_STATEMENT(res.data)
+      this.APPEND_STATEMENTS(res.data)
+    })
+
+    return req
+  }
+
+  @Action({ rawError: true })
+  getIBANDetails(id: IDModel) {
+    const req = this.store.$apiMulti.managedAccounts.retrieveIban(id)
+    req.then((res) => {
+      this.SET_IBAN(res.data)
+    })
+    return req
+  }
+
+  @Action({ rawError: true })
+  upgradeIban(id: IDModel) {
+    const req = this.store.$apiMulti.managedAccounts.assignIban(id)
+    req.then((res) => {
+      this.SET_IBAN(res.data)
     })
 
     return req

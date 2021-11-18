@@ -56,7 +56,7 @@
             <h5 class="font-weight-light">
               Your transactions will appear here.
             </h5>
-            <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="link">
+            <b-button :to="'/managed-accounts/' + account.id + '/topup'" variant="link">
               Start by topping up your account.
             </b-button>
           </b-col>
@@ -69,10 +69,11 @@
 import { Component, mixins, Prop } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
-import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import FiltersMixin from '~/minixs/FiltersMixin'
 
 import { OrderType } from '~/api/Enums/OrderType'
+import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import AccountsMixin from '~/minixs/AccountsMixin'
 
 const moment = require('moment')
 
@@ -84,13 +85,11 @@ const dot = require('dot-object')
     DownloadIcon: () => import('~/assets/svg/download.svg?inline')
   }
 })
-export default class AccountStatement extends mixins(BaseMixin, RouterMixin, FiltersMixin) {
+export default class AccountStatement extends mixins(BaseMixin, RouterMixin, FiltersMixin, AccountsMixin) {
+  @Prop() filters!: GetManagedAccountStatementRequest
+
   get filteredStatement() {
     return this.stores.accounts.filteredStatement
-  }
-
-  get account() {
-    return this.stores.accounts.account
   }
 
   get availableBalance() {
@@ -100,8 +99,6 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin, Fil
       return 0
     }
   }
-
-  @Prop() filters!: ManagedAccountStatementRequest
 
   get filteredStatementLength(): number {
     if (this.filteredStatement) {
@@ -118,13 +115,16 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin, Fil
     }
   }
 
-  filterMonthChange(val) {
-    this.setFilters({ fromTimestamp: val.start, toTimestamp: val.end })
-    console.log(val)
+  get months() {
+    return this.monthsFilter(this.account!.creationTimestamp)
   }
 
-  get months() {
-    return this.monthsFilter(parseInt(this.account!.creationTimestamp))
+  filterMonthChange(val) {
+    this.setFilters({
+      fromTimestamp: val.start,
+      toTimestamp: val.end
+    })
+    console.log(val)
   }
 
   downloadStatement() {
@@ -143,17 +143,15 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin, Fil
         .valueOf()
     }
 
-    const _req: ManagedAccountStatementRequest = {
+    const _req: GetManagedAccountStatementRequest = {
+      limit: 100,
+      offset: 0,
       showFundMovementsOnly: false,
       orderByTimestamp: OrderType.DESC,
-      paging: {
-        limit: 100,
-        offset: 0
-      },
       ..._filters
     }
 
-    this.downloadAsCSV(this.account!.id.id, 'managed_accounts', _req)
+    this.downloadAsCSV(this.account!.id, 'managed_accounts', _req)
   }
 }
 </script>

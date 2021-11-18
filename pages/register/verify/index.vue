@@ -191,12 +191,12 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
     }
 
     this.isConsumer
-      ? this.stores.consumers.verifyEmail(this.verifyEmailRequest).then(this.nextPage)
-      : this.stores.corporates.verifyEmail(this.verifyEmailRequest).then(this.nextPage)
+      ? this.stores.consumers.verifyEmail(this.verifyEmailRequest).finally(this.nextPage)
+      : this.stores.corporates.verifyEmail(this.verifyEmailRequest).finally(this.nextPage)
   }
 
-  nextPage() {
-    this.goToVerifyMobile()
+  async nextPage() {
+    await this.stores.consumers.get().then(this.goToVerifyMobile)
   }
 
   goToVerifyMobile() {

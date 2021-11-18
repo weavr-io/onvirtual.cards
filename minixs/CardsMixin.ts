@@ -5,7 +5,7 @@ import BaseMixin from '~/minixs/BaseMixin'
 export default class CardsMixin extends mixins(BaseMixin) {
   get isManagedCards(): boolean {
     if (this.$route.matched[0].name) {
-      return ['managed-cards', 'managed-cards-id-statement'].includes(this.$route.matched[0].name)
+      return ['managed-cards', 'managed-cards-id-statements'].includes(this.$route.matched[0].name)
     } else {
       return false
     }

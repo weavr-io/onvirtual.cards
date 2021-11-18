@@ -7,6 +7,7 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
     if (authStore(store).isConsumer) {
       try {
         await consumersStore(store).get()
+        await consumersStore(store).getKYC()
         await consumersStore(store).checkKYC()
 
         if (route.name === 'managed-accounts-kyc') {
@@ -24,6 +25,7 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
     } else {
       try {
         await corporatesStore(store).get()
+        await corporatesStore(store).getKyb()
         await corporatesStore(store).checkKYB()
 
         if (route.name === 'managed-accounts-kyb') {

@@ -3,7 +3,16 @@
     <b-container>
       <b-row>
         <b-col md="4" offset-md="4">
-          <b-card class="border-0">
+          <pre>
+            {{ createManagedAccountRequest }}
+          </pre>
+          <pre>
+            {{ profileId }}
+          </pre>
+          <pre>
+            {{ isConsumer }}
+          </pre>
+          <b-card v-if="isCorporate" class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
               Select Account Currency
             </b-card-title>
@@ -24,12 +33,12 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component, mixins, Watch } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
-import config from '~/config'
 import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore, authStore } from '~/utils/store-accessor'
+import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import AccountsMixin from '~/minixs/AccountsMixin'
 
 @Component({
   components: {
@@ -49,13 +58,11 @@ import { accountsStore, authStore } from '~/utils/store-accessor'
   },
   middleware: ['kyVerified']
 })
-export default class AddCardPage extends mixins(BaseMixin) {
-  get isLoading() {
-    return this.stores.accounts.isLoading
-  }
-
-  get auth() {
-    return this.stores.auth.isLoading
+export default class AddCardPage extends mixins(BaseMixin, AccountsMixin) {
+  createManagedAccountRequest: CreateManagedAccountRequest = {
+    profileId: '',
+    friendlyName: 'Main Account',
+    currency: CurrencyEnum.EUR
   }
 
   currencyOptions = [
@@ -73,7 +80,38 @@ export default class AddCardPage extends mixins(BaseMixin) {
     }
   ]
 
-  public createManagedAccountRequest!: ManagedAccountsSchemas.CreateManagedAccountRequest
+  get isLoading() {
+    return this.stores.accounts.isLoading
+  }
+
+  get auth() {
+    return this.stores.auth.isLoading
+  }
+
+  async fetch() {
+    await this.stores.accounts.index().then(async (res) => {
+      if (parseInt(res.data.count!) < 1) {
+        if (this.isConsumer) {
+          await this.stores.accounts
+            .create(this.createManagedAccountRequest)
+            .then(async (res) => {
+              await this.stores.accounts.upgradeIban(res.data.id)
+              return this.goToManagedAccountIndex()
+            })
+            .catch((err) => {
+              const data = err.response.data
+
+              const error = data.message ? data.message : data.errorCode
+
+              this.$weavrToastError(error)
+              this.goToManagedAccountIndex()
+            })
+        }
+      } else {
+        return this.goToManagedAccountIndex()
+      }
+    })
+  }
 
   doAdd(evt) {
     evt.preventDefault()
@@ -87,9 +125,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
 
     this.stores.accounts
       .create(this.createManagedAccountRequest)
-      .then(() => {
-        this.$router.push('/managed-accounts')
-      })
+      .then(this.goToManagedAccountIndex)
       .catch((err) => {
         const data = err.response.data
 
@@ -99,30 +135,9 @@ export default class AddCardPage extends mixins(BaseMixin) {
       })
   }
 
-  async asyncData({ store, redirect }) {
-    const createManagedAccountRequest: ManagedAccountsSchemas.CreateManagedAccountRequest = {
-      profileId: authStore(store).isConsumer
-        ? config.profileId.managed_accounts_consumers
-        : config.profileId.managed_accounts_corporates,
-      friendlyName: 'Main Account',
-      currency: 'EUR'
-    }
-
-    const _accounts = await accountsStore(store).index()
-
-    console.log(_accounts.data.count)
-
-    if (_accounts.data.count < 1) {
-      if (authStore(store).isConsumer) {
-        await accountsStore(store).create(createManagedAccountRequest)
-        redirect('/managed-accounts')
-      }
-      return {
-        createManagedAccountRequest
-      }
-    } else {
-      redirect('/managed-accounts')
-    }
+  @Watch('isConsumer', { immediate: true })
+  updateProfileId() {
+    this.createManagedAccountRequest.profileId = this.profileId
   }
 }
 </script>

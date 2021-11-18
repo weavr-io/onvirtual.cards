@@ -2,7 +2,7 @@
   <section>
     <b-container>
       <b-row>
-        <b-col v-if="account" md="6" offset-md="3">
+        <b-col v-if="account && !$fetchState.pending" md="6" offset-md="3">
           <b-row>
             <b-col>
               <h2 class="text-center font-weight-lighter">
@@ -10,7 +10,7 @@
               </h2>
             </b-col>
           </b-row>
-          <b-row v-if="account.bankAccountDetails.paymentReference" class="pt-4">
+          <b-row v-if="bankAccountDetails" class="pt-4">
             <b-col>
               <b-alert show variant="warning">
                 Please remember to include payment reference.
@@ -23,28 +23,28 @@
                 <b-tbody>
                   <b-tr>
                     <b-th>Beneficiary</b-th>
-                    <b-td>{{ account.bankAccountDetails.beneficiary }}</b-td>
+                    <b-td>{{ bankAccountDetails.beneficiaryNameAndSurname }}</b-td>
                   </b-tr>
                   <b-tr>
                     <b-th>IBAN</b-th>
-                    <b-td>{{ account.bankAccountDetails.iban }}</b-td>
+                    <b-td>{{ bankAccountDetails.details.iban }}</b-td>
                   </b-tr>
                   <b-tr>
                     <b-th>BIC</b-th>
-                    <b-td>{{ account.bankAccountDetails.bankIdentifierCode }}</b-td>
+                    <b-td>{{ bic }}</b-td>
                   </b-tr>
                   <b-tr>
                     <b-th>Bank</b-th>
-                    <b-td>{{ account.bankAccountDetails.beneficiaryBank }}</b-td>
+                    <b-td>{{ bankAccountDetails.beneficiaryBank }}</b-td>
                   </b-tr>
                   <b-tr>
                     <b-th>Address</b-th>
                     <b-td v-html="address" />
                   </b-tr>
-                  <b-tr v-if="account.bankAccountDetails.paymentReference">
+                  <b-tr v-if="bankAccountDetails.paymentReference">
                     <b-th>Payment Reference</b-th>
                     <b-td>
-                      {{ account.bankAccountDetails.paymentReference }}
+                      {{ bankAccountDetails.paymentReference }}
                     </b-td>
                   </b-tr>
                 </b-tbody>
@@ -52,7 +52,7 @@
             </b-col>
           </b-row>
           <b-row>
-            <b-col class="text-center">
+            <b-col class="text-center mt-5">
               <b-button :to="'/managed-accounts/' + accountId" variant="secondary" class="px-5">
                 close
               </b-button>
@@ -66,75 +66,47 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
-
-import config from '~/config'
 import BaseMixin from '~/minixs/BaseMixin'
-
-import { accountsStore, authStore, corporatesStore } from '~/utils/store-accessor'
+import AccountsMixin from '~/minixs/AccountsMixin'
+import { BankAccountDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/BankAccountDetailsModel'
+import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
+import { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
 
 @Component({
   components: {
     BIcon,
     BIconBoxArrowUpRight
-  }
+  },
+  middleware: ['kyVerified', 'instruments']
 })
-export default class AccountTopupPage extends mixins(BaseMixin) {
-  get account() {
-    return this.stores.accounts.account
+export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
+  fetch() {
+    return this.stores.accounts.getIBANDetails(this.$route.params.id)
   }
 
   get address() {
-    return this.account?.bankAccountDetails?.address?.split(',').join(',<br>')
+    return this.bankAccountDetails?.beneficiaryBankAddress?.split(',').join(',<br>')
   }
 
-  async asyncData({ store, route, redirect }) {
-    const accountId = route.params.id
-    let approved = false
+  get bic() {
+    const i = this.iban?.bankAccountDetails.findIndex((details) => {
+      return (details.details as SepaBankDetailsModel).bankIdentifierCode !== undefined
+    })
 
-    const _isConsumer = authStore(store).isConsumer
-    const _isCorporate = authStore(store).isCorporate
+    return ((this.iban?.bankAccountDetails[i!] as BankAccountDetailsModel).details as SepaBankDetailsModel)
+      .bankIdentifierCode
+  }
 
-    if (config.app.kyb_required === true) {
-      if (_isConsumer) {
-        // await ConsumersStore.Helpers.checkKYC(store).then(
-        //   () => {
-        //     approved = true
-        //   },
-        //   () => {
-        //     approved = false
-        //   }
-        // )
-      }
-      if (_isCorporate) {
-        await corporatesStore(store)
-          .checkKYB()
-          .then(
-            () => {
-              approved = true
-            },
-            () => {
-              approved = false
-            }
-          )
-      }
-    } else {
-      approved = true
+  get bankAccountDetails(): BankAccountDetailsModel | undefined {
+    try {
+      return this.iban?.bankAccountDetails[0]
+    } catch (e) {
+      return undefined
     }
+  }
 
-    if (approved) {
-      await accountsStore(store).get(accountId)
-    } else {
-      // if (_isConsumer) {
-      //   redirect('/managed-accounts/kyc')
-      // }
-      if (_isCorporate) {
-        redirect('/managed-accounts/kyb')
-      }
-    }
-
-    await accountsStore(store).get(accountId)
-
-    return { accountId: accountId, approved: approved }
+  get iban(): ManagedAccountIBANModel | null {
+    return this.stores.accounts.ibanDetails
   }
 
   mounted() {
