@@ -2,13 +2,17 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
 import { ManagedCardTypeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardTypeEnum'
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
 import { ManufacturingStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManufacturingStateEnum'
-import { ManagedInstrumentStateModel } from '~/plugins/weavr-multi/api/models/managed-instruments/models/ManagedInstrumentStateModel'
 import { PagingModel } from '~/plugins/weavr-multi/api/models/common/PagingModel'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { ManagedInstrumentBlockedReasonEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentBlockedReasonEnum'
+import { ManagedInstrumentDestroyedReasonEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentDestroyedReasonEnum'
 
 export interface GetManagedCardsRequest extends PagingModel {
   profileId?: string
   friendlyName?: string
-  state?: ManagedInstrumentStateModel
+  state: ManagedInstrumentStateEnum
+  ['state.blockedReason']?: ManagedInstrumentBlockedReasonEnum
+  ['state.destroyedReason']?: ManagedInstrumentDestroyedReasonEnum
   currency?: CurrencyEnum
   type?: ManagedCardTypeEnum
   externalHandle?: string

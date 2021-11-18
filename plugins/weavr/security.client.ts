@@ -36,13 +36,13 @@ function asyncAssociate(token) {
   })
 }
 
-Vue.component('weavr-password-input', WeavrPasswordInput)
-Vue.component('weavr-card-number-span', WeavrCardNumberSpan)
-Vue.component('weavr-cvv-span', WeavrCVVSpan)
+Vue.component('WeavrPasswordInput', WeavrPasswordInput)
+Vue.component('WeavrCardNumberSpan', WeavrCardNumberSpan)
+Vue.component('WeavrCvvSpan', WeavrCVVSpan)
 
-Vue.component('weavr-kyb', WeavrKyb)
-Vue.component('weavr-kyc-beneficiaries', WeavrKycBeneficiaries)
-Vue.component('weavr-kyc', WeavrKyc)
+Vue.component('WeavrKyb', WeavrKyb)
+Vue.component('WeavrKycBeneficiaries', WeavrKycBeneficiaries)
+Vue.component('WeavrKyc', WeavrKyc)
 
 const weavrModules: Plugin = (context, inject) => {
   inject('weavrSetUserToken', (token) => {

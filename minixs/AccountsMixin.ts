@@ -18,4 +18,10 @@ export default class AccountsMixin extends mixins(BaseMixin) {
   get account() {
     return this.stores.accounts.account
   }
+
+  get hasAccount() {
+    return this.stores.accounts.accounts?.accounts !== undefined
+      ? this.stores.accounts.accounts.accounts.length > 0
+      : false
+  }
 }

@@ -77,11 +77,12 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
-
-import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import config from '~/config'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore, authStore, consumersStore } from '~/utils/store-accessor'
+import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
 
 @Component({
   components: {
@@ -111,14 +112,6 @@ import { accountsStore, authStore, consumersStore } from '~/utils/store-accessor
   middleware: ['kyVerified']
 })
 export default class AddCardPage extends mixins(BaseMixin) {
-  get auth() {
-    return this.stores.auth.auth
-  }
-
-  get isConsumer() {
-    return this.stores.auth.isConsumer
-  }
-
   showNameOnCardField: boolean = false
 
   showError: boolean = false
@@ -139,7 +132,26 @@ export default class AddCardPage extends mixins(BaseMixin) {
   numberIsValid: boolean | null = null
   cardholderMobileNumber = ''
 
-  public createManagedCardRequest!: ManagedCardsSchemas.CreateManagedCardRequest
+  createManagedCardRequest: CreateManagedCardRequest = {
+    profileId: this.isConsumer ? config.profileId.managed_cards_consumers! : config.profileId.managed_cards_corporates!,
+    friendlyName: '',
+    nameOnCard: '',
+    cardholderMobileNumber: '',
+    billingAddress: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      postCode: '',
+      state: '',
+      country: ''
+    },
+    mode: ManagedCardModeEnum.PREPAID_MODE,
+    currency: CurrencyEnum.EUR
+  }
+
+  get auth() {
+    return this.stores.auth.auth
+  }
 
   doAdd(evt) {
     evt.preventDefault()
@@ -181,22 +193,26 @@ export default class AddCardPage extends mixins(BaseMixin) {
   }
 
   mounted() {
-    this.createManagedCardRequest.profileId = this.stores.auth.isConsumer
-      ? config.profileId.managed_cards_consumers
-      : config.profileId.managed_cards_corporates
-
     try {
       this.$segment.track('Initiated Add Card', {})
     } catch (e) {}
   }
 
+  async fetch() {
+    const _accounts = await this.stores.accounts.index({})
+
+    if (_accounts.data.count >= 1) {
+      createManagedCardRequest.currency = _accounts.data.account[0].currency
+    }
+  }
+
   async asyncData({ store }) {
     const _accounts = await accountsStore(store).index()
 
-    const createManagedCardRequest: ManagedCardsSchemas.CreateManagedCardRequest = {
+    const createManagedCardRequest: CreateManagedCardRequest = {
       profileId: authStore(store).isConsumer
-        ? config.profileId.managed_cards_consumers
-        : config.profileId.managed_cards_corporates,
+        ? config.profileId.managed_cards_consumers!
+        : config.profileId.managed_cards_corporates!,
       friendlyName: '',
       currency: 'EUR',
       nameOnCard: '',

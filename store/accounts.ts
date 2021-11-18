@@ -8,6 +8,9 @@ import { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-in
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { ManagedAccountStatementRequest } from '~/api/Requests/Statements/ManagedAccountStatementRequest'
+import { authStore } from '~/utils/store-accessor'
+import config from '~/config'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Module({
   name: 'accountsModule',
@@ -115,16 +118,17 @@ export default class Accounts extends StoreModule {
   }
 
   @Action({ rawError: true })
-  index(filters: GetManagedAccountsRequest) {
-    // const body = {
-    //   active: NullableBoolean.TRUE,
-    //   paging: {
-    //     count: true,
-    //     offset: 0,
-    //     limit: 0
-    //   }
-    // }
-    const req = this.store.$apiMulti.managedAccounts.index(filters)
+  index() {
+    const defaultFilter: GetManagedAccountsRequest = {
+      profileId: authStore(this.store).isConsumer
+        ? config.profileId.managed_cards_consumers!
+        : config.profileId.managed_cards_corporates!,
+      state: ManagedInstrumentStateEnum.ACTIVE,
+      // 'state.destroyedReason': ManagedInstrumentDestroyedReasonEnum.EXPIRED,
+      offset: '0'
+    }
+
+    const req = this.store.$apiMulti.managedAccounts.index(defaultFilter)
 
     req.then((res) => {
       this.SET_ACCOUNTS(res.data)

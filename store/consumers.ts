@@ -8,6 +8,7 @@ import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identiti
 import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 @Module({
   name: 'consumersModule',
@@ -99,13 +100,27 @@ export default class Consumers extends StoreModule {
   }
 
   @Action({ rawError: true })
+  async checkKYC() {
+    if (this.kyc === undefined || this.kyc === null) {
+      await this.getKYC()
+    }
+
+    const _res = this.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+
+    if (!_res) {
+      return Promise.reject(new Error('KYC not approved'))
+    } else {
+      return Promise.resolve()
+    }
+  }
+
+  @Action({ rawError: true })
   verifyEmail(request: VerifyEmailRequest) {
     return this.store.$apiMulti.consumers.verifyEmail(request)
   }
 
   @Action({ rawError: true })
   sendVerificationCodeEmail(request: SendVerificationCodeRequest) {
-    // return $api.post('/app/api/consumers/' + request.consumerId + '/email/send_verification_code', request.request)
     return this.store.$apiMulti.consumers.sendVerificationCode(request)
   }
 
@@ -120,7 +135,8 @@ export default class Consumers extends StoreModule {
   }
 
   @Action({ rawError: true })
-  startKYC(consumerId) {
-    return $api.post('/app/api/consumers/' + consumerId + '/kyc/start', {})
+  startKYC() {
+    const _res = this.store.$apiMulti.consumers.startKYC()
+    return _res
   }
 }

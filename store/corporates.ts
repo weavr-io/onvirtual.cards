@@ -135,7 +135,8 @@ export default class Corporates extends StoreModule {
   }
 
   @Action({ rawError: true })
-  startKYB(corporateId) {
-    return $api.post('/app/api/corporates/' + corporateId + '/kyb/start', {})
+  startKYB() {
+    const _res = this.store.$apiMulti.corporates.startKYB()
+    return _res
   }
 }

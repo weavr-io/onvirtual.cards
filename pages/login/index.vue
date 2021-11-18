@@ -77,13 +77,7 @@ import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/auth
   }
 })
 export default class LoginPage extends mixins(BaseMixin) {
-  get isLoggedIn() {
-    return this.stores.auth.isLoggedIn
-  }
-
-  get isLoading() {
-    return this.stores.auth.isLoading
-  }
+  isLoading: boolean = false
 
   @Watch('isLoggedIn')
   isLoggedInChanged(val) {
@@ -104,13 +98,19 @@ export default class LoginPage extends mixins(BaseMixin) {
     console.log('Login Function')
 
     try {
+      this.isLoading = true
       this.passwordField.createToken().then(
         (tokens) => {
           console.log('Password tokenisation success')
           this.loginRequest.password.value = tokens.tokens.password
-          this.stores.auth.loginWithPassword(this.loginRequest).then((res) => {
-            this.goToDashboard(res.data)
-          })
+          this.stores.auth
+            .loginWithPassword(this.loginRequest)
+            .then((res) => {
+              this.goToDashboard(res.data)
+            })
+            .finally(() => {
+              this.isLoading = false
+            })
         },
         (e) => {
           console.log('tokenisation failed', e)

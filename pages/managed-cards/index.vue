@@ -51,7 +51,6 @@ import { Component, mixins, Watch } from 'nuxt-property-decorator'
 
 import BaseMixin from '~/minixs/BaseMixin'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
-import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import CardsMixin from '~/minixs/CardsMixin'
 
 @Component({

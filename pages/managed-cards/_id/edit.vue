@@ -13,8 +13,8 @@
                   <b-col>
                     <b-form-group label="Name of Person using Card">
                       <b-form-input
-                        :state="isInvalid($v.updateManagedCardRequest.body.nameOnCard)"
                         v-model="$v.updateManagedCardRequest.body.nameOnCard.$model"
+                        :state="isInvalid($v.updateManagedCardRequest.body.nameOnCard)"
                         placeholder="eg. Elon Musk"
                         disabled
                       />
@@ -27,13 +27,13 @@
                     <b-form-group label="CARDHOLDER MOBILE NUMBER">
                       <vue-phone-number-input
                         :value="mobile.cardholderMobileNumber"
-                        @update="phoneUpdate"
                         :error="numberIsValid === false"
                         :border-radius="0"
-                        :defaultCountryCode="mobile.countryCode"
+                        :default-country-code="mobile.countryCode"
                         color="#6C1C5C"
                         error-color="#F50E4C"
                         valid-color="#6D7490"
+                        @update="phoneUpdate"
                       />
                       <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                         This field must be a valid mobile number.
@@ -45,8 +45,8 @@
                   <b-col>
                     <b-form-group label="CUSTOM CARD NAME">
                       <b-form-input
-                        :state="isInvalid($v.updateManagedCardRequest.body.friendlyName)"
                         v-model="$v.updateManagedCardRequest.body.friendlyName.$model"
+                        :state="isInvalid($v.updateManagedCardRequest.body.friendlyName)"
                         placeholder="eg. travel expenses"
                       />
                       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -111,10 +111,6 @@ export default class AddCardPage extends mixins(BaseMixin) {
     return this.stores.auth.auth
   }
 
-  get isConsumer() {
-    return this.stores.auth.isConsumer
-  }
-
   numberIsValid: boolean | null = null
   mobile = {
     countryCode: 'GB',
@@ -165,7 +161,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
 
     return {
       cardId: _cardId,
-      updateManagedCardRequest: updateManagedCardRequest,
+      updateManagedCardRequest,
       mobile: {
         countryCode: _parsedNumber?.country,
         cardholderMobileNumber: _parsedNumber?.nationalNumber

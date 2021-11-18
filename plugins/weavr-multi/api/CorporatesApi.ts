@@ -30,7 +30,7 @@ export class CorporatesApi {
     return $axiosMulti.post('/corporates/verification/email/verify', data)
   }
 
-  startCorporateKYB(): Promise<AxiosResponse<StartCorporateKYBResponse>> {
+  startKYB(): Promise<AxiosResponse<StartCorporateKYBResponse>> {
     return $axiosMulti.post<StartCorporateKYBResponse>('/corporates/kyb')
   }
 

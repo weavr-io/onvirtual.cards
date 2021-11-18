@@ -1,7 +1,5 @@
 import { Component, mixins } from '~/node_modules/nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
-import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
-import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 
 @Component
 export default class CardsMixin extends mixins(BaseMixin) {
@@ -27,13 +25,5 @@ export default class CardsMixin extends mixins(BaseMixin) {
 
   get cardCurrency() {
     return this.stores.cards
-  }
-
-  get identityVerified(): boolean {
-    if (this.stores.auth.isConsumer) {
-      return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
-    } else {
-      return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
-    }
   }
 }

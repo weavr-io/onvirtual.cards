@@ -1,12 +1,16 @@
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import { ManagedInstrumentStateModel } from '~/plugins/weavr-multi/api/models/managed-instruments/models/ManagedInstrumentStateModel'
 import { PagingModel } from '~/plugins/weavr-multi/api/models/common/PagingModel'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { ManagedInstrumentBlockedReasonEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentBlockedReasonEnum'
+import { ManagedInstrumentDestroyedReasonEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentDestroyedReasonEnum'
 
 export interface GetManagedAccountsRequest extends PagingModel {
   profileId?: IDModel
   friendlyName?: string
-  state?: ManagedInstrumentStateModel
+  state: ManagedInstrumentStateEnum
+  ['state.blockedReason']?: ManagedInstrumentBlockedReasonEnum
+  ['state.destroyedReason']?: ManagedInstrumentDestroyedReasonEnum
   currency?: CurrencyEnum
   createdFrom?: number
   createdTo?: number

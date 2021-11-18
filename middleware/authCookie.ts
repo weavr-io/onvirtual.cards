@@ -4,7 +4,7 @@ import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/auth
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
-const cookieMiddleware: Middleware = async ({ store }) => {
+const cookieMiddleware: Middleware = async ({ store, redirect }) => {
   let auth: LoginWithPasswordResponse | null = null
 
   const authCookie = Cookie.get('auth-onv')
@@ -15,6 +15,7 @@ const cookieMiddleware: Middleware = async ({ store }) => {
       console.log('valid cookie found')
     } catch (err) {
       // No valid cookie found
+      await authStore(store).logout()
       console.log('no valid cookie found')
     }
   }

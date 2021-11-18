@@ -4,6 +4,6 @@ import { ManagedInstrumentDestroyedReasonEnum } from '~/plugins/weavr-multi/api/
 
 export interface ManagedInstrumentStateModel {
   state: ManagedInstrumentStateEnum
-  blockedReason: ManagedInstrumentBlockedReasonEnum
-  destroyedReason: ManagedInstrumentDestroyedReasonEnum
+  blockedReason?: ManagedInstrumentBlockedReasonEnum
+  destroyedReason?: ManagedInstrumentDestroyedReasonEnum
 }

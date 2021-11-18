@@ -3,6 +3,8 @@ import { $api } from '~/utils/api'
 import { initialiseStores } from '~/utils/store-accessor'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 
 const moment = require('moment')
 const Countries = require('~/static/json/countries.json')
@@ -125,6 +127,14 @@ export default class BaseMixin extends Vue {
     const _default: [any] = [{ ...DefaultSelectValueConst }]
     _default.push(...this.countiesOptions)
     return _default
+  }
+
+  get identityVerified(): boolean {
+    if (this.stores.auth.isConsumer) {
+      return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+    } else {
+      return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
+    }
   }
 
   goToIndex() {

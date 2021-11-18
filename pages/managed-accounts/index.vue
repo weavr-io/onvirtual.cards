@@ -1,6 +1,12 @@
 <template>
   <section>
-    <template v-if="accountId === undefined && isVerified">
+    <pre>
+      {{ hasAccount }}
+    </pre>
+    <pre>
+      {{ identityVerified }}
+    </pre>
+    <template v-if="!hasAccount && identityVerified && !$fetchState.pending">
       <b-container class="mb-5 mt-n4">
         <b-row align-v="center">
           <b-col class="text-right">
@@ -27,39 +33,40 @@
         </b-row>
       </b-container>
     </template>
+    <template v-else>
+      <div class="d-flex justify-content-center">
+        <div class="loader-spinner">
+          <b-spinner />
+        </div>
+      </div>
+    </template>
   </section>
 </template>
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore } from '~/utils/store-accessor'
-import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
-import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import AccountsMixin from '~/minixs/AccountsMixin'
 
 @Component({
   layout: 'dashboard',
   middleware: ['kyVerified']
 })
-export default class CardsPage extends mixins(BaseMixin) {
-  async asyncData({ store, redirect }) {
-    let _accountId
-    const _accounts = await accountsStore(store).index()
-
-    if (_accounts.data.count >= 1) {
-      _accountId = _accounts.data.account[0].id.id
-      redirect('/managed-accounts/' + _accountId)
-    }
-
-    return { accountId: _accountId }
+export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
+  fetch() {
+    return this.stores.accounts.index()
   }
 
-  get isVerified() {
-    if (this.stores.auth.isConsumer) {
-      return this.stores.consumers.kyc!.fullDueDiligence === KYCStatusEnum.APPROVED
-    } else {
-      return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
-    }
-  }
+  // async asyncData({ store, redirect }) {
+  //   let _accountId
+  //   const _accounts = await accountsStore(store).index()
+  //
+  //   if (_accounts.data.count >= 1) {
+  //     _accountId = _accounts.data.account[0].id.id
+  //     redirect('/managed-accounts/' + _accountId)
+  //   }
+  //
+  //   return { accountId: _accountId }
+  // }
 }
 </script>

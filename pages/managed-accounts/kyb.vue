@@ -39,7 +39,16 @@
       </b-row>
       <b-row v-else>
         <b-col>
-          <weavr-kyb :reference="reference" :options="kybOptions" @message="handleSumSubMessage" />
+          <template v-if="$fetchState.pending">
+            <div class="d-flex justify-content-center">
+              <div class="loader-spinner">
+                <b-spinner />
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <weavr-kyb :reference="reference" :options="kybOptions" @message="handleSumSubMessage" />
+          </template>
         </b-col>
       </b-row>
     </b-container>
@@ -50,7 +59,6 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
 import config from '~/config'
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore, corporatesStore } from '~/utils/store-accessor'
 
 @Component({
   components: {
@@ -60,7 +68,7 @@ import { authStore, corporatesStore } from '~/utils/store-accessor'
   middleware: ['kyVerified']
 })
 export default class KybPage extends mixins(BaseMixin) {
-  reference!: string
+  reference: string = ''
 
   get kybOptions() {
     return {
@@ -74,13 +82,12 @@ export default class KybPage extends mixins(BaseMixin) {
     return config.app.sumsub_enabled
   }
 
-  async asyncData({ store }) {
-    const _corproateid = authStore(store).identityId
-
+  async fetch() {
     if (config.app.sumsub_enabled) {
       try {
-        const _res = await corporatesStore(store).startKYB(_corproateid)
-        return { reference: _res.data.reference }
+        await this.stores.corporates.startKYB().then((res) => {
+          this.reference = res.data.reference
+        })
       } catch (e) {
         console.log(e)
       }
