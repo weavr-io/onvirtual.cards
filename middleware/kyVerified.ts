@@ -6,9 +6,16 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
   if (authStore(store).isLoggedIn) {
     if (authStore(store).isConsumer) {
       try {
+        if (route.name === 'managed-accounts-kyb') {
+          return redirect('/managed-accounts/kyc')
+        }
+
         await consumersStore(store).get()
-        await consumersStore(store).getKYC()
-        await consumersStore(store).checkKYC()
+        await consumersStore(store)
+          .getKYC()
+          .finally(async () => {
+            await consumersStore(store).checkKYC()
+          })
 
         if (route.name === 'managed-accounts-kyc') {
           return redirect('/managed-accounts/add')
@@ -19,17 +26,24 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
         }
 
         if (route.name === 'managed-accounts-add' || route.name === 'managed-accounts') {
-          return redirect('/managed-accounts/kyc')
+          return redirect('/managed-accounts')
         }
       }
     } else {
       try {
+        if (route.name?.includes('managed-accounts-kyc')) {
+          return redirect('/managed-accounts/kyb')
+        }
+
         await corporatesStore(store).get()
-        await corporatesStore(store).getKyb()
-        await corporatesStore(store).checkKYB()
+        await corporatesStore(store)
+          .getKyb()
+          .finally(async () => {
+            await corporatesStore(store).checkKYB()
+          })
 
         if (route.name === 'managed-accounts-kyb') {
-          return redirect('/managed-accounts/add')
+          return redirect('/managed-accounts')
         }
       } catch (e) {
         if (

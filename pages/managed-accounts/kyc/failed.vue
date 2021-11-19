@@ -9,8 +9,9 @@
                 KYC process cannot start
               </h2>
               <h5 class="font-weight-lighter">
-                We're sorry but you cannot start a new verification process at this time.  This is possibly due to documents which have already 
-                been submitted and are currently under review.  If the issue persists, please contact support@onvirtual.cards for assistance.
+                We're sorry but you cannot start a new verification process at this time. This is possibly due to
+                documents which have already been submitted and are currently under review. If the issue persists,
+                please contact support@onvirtual.cards for assistance.
               </h5>
             </b-col>
           </b-row>
@@ -19,3 +20,11 @@
     </b-container>
   </section>
 </template>
+<script lang="ts">
+import { Component, Vue } from 'nuxt-property-decorator'
+
+@Component({
+  middleware: 'kyVerified'
+})
+export default class failed extends Vue {}
+</script>

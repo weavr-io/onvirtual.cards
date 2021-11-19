@@ -1,6 +1,5 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
-import { ManagedCardStatementRequest } from '~/api/Requests/Statements/ManagedCardStatementRequest'
 import { $api } from '~/utils/api'
 import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
 import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
@@ -134,7 +133,7 @@ export default class Cards extends StoreModule {
 
   @Action({ rawError: true })
   getCards(filters?: GetManagedCardsRequest) {
-    const req = this.store.$apiMulti.managedCards.index(filters || {})
+    const req = this.store.$apiMulti.managedCards.index(filters)
 
     req.then((res) => {
       this.SET_CARDS(res.data)
@@ -155,8 +154,8 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  update(id: IDModel, request: UpdateManagedCardRequest) {
-    const req = this.store.$apiMulti.managedCards.update(id, request)
+  update(params: { id: IDModel; request: UpdateManagedCardRequest }) {
+    const req = this.store.$apiMulti.managedCards.update(params)
 
     req.finally(() => {
       this.SET_IS_LOADING(false)

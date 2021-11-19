@@ -3,15 +3,6 @@
     <b-container>
       <b-row>
         <b-col md="4" offset-md="4">
-          <pre>
-            {{ createManagedAccountRequest }}
-          </pre>
-          <pre>
-            {{ profileId }}
-          </pre>
-          <pre>
-            {{ isConsumer }}
-          </pre>
           <b-card v-if="isCorporate" class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
               Select Account Currency
@@ -125,7 +116,10 @@ export default class AddCardPage extends mixins(BaseMixin, AccountsMixin) {
 
     this.stores.accounts
       .create(this.createManagedAccountRequest)
-      .then(this.goToManagedAccountIndex)
+      .then(async (res) => {
+        await this.stores.accounts.upgradeIban(res.data.id)
+        return this.goToManagedAccountIndex()
+      })
       .catch((err) => {
         const data = err.response.data
 

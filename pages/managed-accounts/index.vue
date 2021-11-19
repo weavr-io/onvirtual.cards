@@ -29,7 +29,6 @@
     </template>
     <template v-else>
       <div class="d-flex flex-column align-items-center">
-        <p>You are being redirected.</p>
         <div class="loader-spinner ">
           <b-spinner />
         </div>

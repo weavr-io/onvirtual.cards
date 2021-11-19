@@ -2,15 +2,11 @@
   <div>
     <section v-if="!hasAlert && !$fetchState.pending">
       <statement :filters="filters" />
-      test
-      <pre>
-        {{ filters }}
-      </pre>
+      <infinite-loading spinner="spiral" @infinite="infiniteScroll">
+        <span slot="no-more" />
+        <div slot="no-results" />
+      </infinite-loading>
     </section>
-    <!--    <infinite-loading spinner="spiral" @infinite="infiniteScroll">-->
-    <!--      <span slot="no-more" />-->
-    <!--      <div slot="no-results" />-->
-    <!--    </infinite-loading>-->
   </div>
 </template>
 <script lang="ts">
@@ -21,16 +17,20 @@ import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
 import AccountsMixin from '~/minixs/AccountsMixin'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import { accountsStore } from '~/utils/store-accessor'
 
 const dot = require('dot-object')
 const moment = require('moment')
 
 @Component({
-  watchQuery: true,
+  watch: {
+    '$route.query': '$fetch'
+  },
   layout: 'dashboard',
   components: {
     Statement: () => import('~/components/accounts/statement/statement.vue')
-  }
+  },
+  middleware: 'kyVerified'
 })
 export default class AccountPage extends mixins(BaseMixin, RouterMixin, AccountsMixin) {
   filters: GetManagedAccountStatementRequest | null = null
@@ -43,6 +43,10 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
 
   get hasAlert() {
     return this.stores.view.hasAlert
+  }
+
+  asyncData({ store }) {
+    accountsStore(store).SET_STATEMENTS(null)
   }
 
   async fetch() {
@@ -68,10 +72,8 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
     const _statementFilters: GetManagedAccountStatementRequest = {
       showFundMovementsOnly: false,
       orderByTimestamp: OrderType.DESC,
-      paging: {
-        limit: 100,
-        offset: 0
-      },
+      limit: 10,
+      offset: 0,
       ..._filters
     }
 
@@ -80,7 +82,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
       filters: _statementFilters
     }
 
-    this.filters = { ..._filters }
+    this.filters = { ..._statementFilters }
 
     await this.stores.accounts.getStatements(_req)
   }
@@ -90,10 +92,11 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
       this.page++
 
       const _request: GetManagedAccountStatementRequest = { ...this.filters }
+
       _request!.offset = (this.page * +_request!.limit!).toString()
 
       this.stores.accounts
-        .getCardStatementPage({
+        .getStatements({
           id: this.$route.params.id,
           filters: _request
         })

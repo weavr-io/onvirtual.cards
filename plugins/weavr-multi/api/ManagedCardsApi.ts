@@ -26,97 +26,94 @@ export class ManagedCardsApi {
   }
 
   show(id: IDModel): Promise<AxiosResponse<ManagedCardModel>> {
-    return $axiosMulti.get<ManagedCardModel>('/managed_cards/' + id)
+    return $axiosMulti.get<ManagedCardModel>(`/managed_cards/${id}`)
   }
 
-  update(id: IDModel, data: UpdateManagedCardRequest): Promise<AxiosResponse<ManagedCardModel>> {
-    return $axiosMulti.patch<ManagedCardModel>('/managed_cards/' + id, data)
+  update(params: { id: IDModel; request: UpdateManagedCardRequest }): Promise<AxiosResponse<ManagedCardModel>> {
+    return $axiosMulti.patch<ManagedCardModel>(`/managed_cards/${params.id}`, params.request)
   }
 
   block(id: IDModel): Promise<AxiosResponse> {
-    return $axiosMulti.post('/managed_cards/' + id + '/block')
+    return $axiosMulti.post(`/managed_cards/${id}/block`)
   }
 
   unblock(id: IDModel): Promise<AxiosResponse> {
-    return $axiosMulti.post('/managed_cards/' + id + '/unblock')
+    return $axiosMulti.post(`/managed_cards/${id}/unblock`)
   }
 
   remove(id: IDModel): Promise<AxiosResponse> {
-    return $axiosMulti.post('/managed_cards/' + id + '/remove')
+    return $axiosMulti.post(`/managed_cards/${id}/remove`)
   }
 
   statement(id: IDModel, filters?: StatementFiltersRequest): Promise<AxiosResponse<StatementResponseModel>> {
-    return $axiosMulti.get<StatementResponseModel>('/managed_cards/' + id + '/statements', {
+    return $axiosMulti.get<StatementResponseModel>(`/managed_cards/${id}/statements`, {
       params: filters
     })
   }
 
   getSpendRules(id: IDModel): Promise<AxiosResponse<ManagedCardsSpendRulesModel>> {
-    return $axiosMulti.get<ManagedCardsSpendRulesModel>('/managed_cards/' + id + '/spend_rules')
+    return $axiosMulti.get<ManagedCardsSpendRulesModel>(`/managed_cards/${id}/spend_rules`)
   }
 
   setSpendRules(params: {
     id: IDModel
     body: ManagedCardsSpendRulesModel
   }): Promise<AxiosResponse<ManagedCardsSpendRulesModel>> {
-    return $axiosMulti.put<ManagedCardsSpendRulesModel>('/managed_cards/' + params.id + '/spend_rules', params.body)
+    return $axiosMulti.put<ManagedCardsSpendRulesModel>(`/managed_cards/${params.id}/spend_rules`, params.body)
   }
 
   upgradeToPhysicalCard(
     id: IDModel,
     body: UpgradeToPhysicalManagedCardRequest
   ): Promise<AxiosResponse<ManagedCardModel>> {
-    return $axiosMulti.post<ManagedCardModel>('/managed_cards/' + id + '/physical', body)
+    return $axiosMulti.post<ManagedCardModel>(`/managed_cards/${id}/physical`, body)
   }
 
   activatePhysicalCard(
     id: IDModel,
     body: ActivatePhysicalManagedCardRequest
   ): Promise<AxiosResponse<ManagedCardModel>> {
-    return $axiosMulti.post<ManagedCardModel>('/managed_cards/' + id + '/physical/activate', body)
+    return $axiosMulti.post<ManagedCardModel>(`/managed_cards/${id}/physical/activate`, body)
   }
 
   getPhysicalCardPin(id: IDModel): Promise<AxiosResponse<PhysicalCardPinResponse>> {
-    return $axiosMulti.get<PhysicalCardPinResponse>('/managed_cards/' + id + '/physical/pin')
+    return $axiosMulti.get<PhysicalCardPinResponse>(`/managed_cards/${id}/physical/pin`)
   }
 
   setPhysicalCardPin(params: {
     id: IDModel
     body: SetPhysicalCardPinRequest
   }): Promise<AxiosResponse<PhysicalCardPinResponse>> {
-    return $axiosMulti.post<PhysicalCardPinResponse>('/managed_cards/' + params.id + '/physical/pin', params.body)
+    return $axiosMulti.post<PhysicalCardPinResponse>(`/managed_cards/${params.id}/physical/pin`, params.body)
   }
 
   unblockPhysicalCardPin(id: IDModel): Promise<AxiosResponse> {
-    return $axiosMulti.patch('/managed_cards/' + id + '/physical/pin/unblock')
+    return $axiosMulti.patch(`/managed_cards/${id}/physical/pin/unblock`)
   }
 
   replaceDamagedPhysicalCard(params: {
     id: IDModel
     body: ReplaceDamagedPhysicalManagedCardRequest
   }): Promise<AxiosResponse> {
-    return $axiosMulti.post('/managed_cards/' + params.id + '/physical/replace_damaged', params.body)
+    return $axiosMulti.post(`/managed_cards/${params.id}/physical/replace_damaged`, params.body)
   }
 
   reportLostPhysicalCard(id: IDModel): Promise<AxiosResponse> {
-    return $axiosMulti.post('/managed_cards/' + id + '/physical/report_lost')
+    return $axiosMulti.post(`/managed_cards/${id}/physical/report_lost`)
   }
 
   reportStolenPhysicalCard(id: IDModel): Promise<AxiosResponse> {
-    return $axiosMulti.post('/managed_cards/' + id + '/physical/report_stolen')
+    return $axiosMulti.post(`/managed_cards/${id}/physical/report_stolen`)
   }
 
   replaceLostStolenPhysicalCard(params: {
     id: IDModel
     body: ReplaceLostStolenPhysicalManagedCardRequest
   }): Promise<AxiosResponse<ManagedCardModel>> {
-    return $axiosMulti.post<ManagedCardModel>(
-      '/managed_cards/' + params.id + '/physical/replace_lost_stolen',
-      params.body
-    )
+    return $axiosMulti.post<ManagedCardModel>(`/managed_cards/${params.id}/physical/replace_lost_stolen`, params.body)
   }
 
   resetPhysicalCardContactlessLimit(id: IDModel): Promise<AxiosResponse> {
-    return $axiosMulti.post('/managed_cards/' + id + '/physical/contactless_limit/reset')
+    return $axiosMulti.post(`/managed_cards/${id}/physical/contactless_limit/reset`)
   }
 }

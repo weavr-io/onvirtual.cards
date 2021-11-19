@@ -35,6 +35,7 @@ export default class KycPage extends mixins(BaseMixin) {
 
   fetch() {
     return this.stores.consumers.startKYC().then((res) => {
+      this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
       this.reference = res.data.reference
     })
   }

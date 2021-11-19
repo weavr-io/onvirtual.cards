@@ -11,6 +11,7 @@ import config from '~/config'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
+import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 @Module({
   name: 'accountsModule',
@@ -45,7 +46,7 @@ export default class Accounts extends StoreModule {
       return []
     }
 
-    let _entries = this.statements.entry
+    let _entries: StatementEntryModel[] = this.statements.entry
 
     _entries = _entries!.filter((transaction) => {
       const DO_NOT_DISPLAY = ['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE']
@@ -93,21 +94,18 @@ export default class Accounts extends StoreModule {
   }
 
   @Mutation
-  SET_STATEMENTS(statement: StatementResponseModel) {
-    this.statements = statement
-  }
-
-  @Mutation
   RESET_STATEMENTS() {
     this.statements = null
   }
 
   @Mutation
-  APPEND_STATEMENTS(_statement: StatementResponseModel) {
-    if (this.statements === null) {
-      this.statements = _statement
-    } else {
-      _statement.entry!.forEach((_statementEntry) => {
+  SET_STATEMENTS(_statements: StatementResponseModel | null) {
+    if (_statements === null) {
+      this.statements = _statements
+    } else if (this.statements === null) {
+      this.statements = _statements
+    } else if (_statements.entry !== undefined) {
+      _statements.entry!.forEach((_statementEntry) => {
         this.statements?.entry!.push(_statementEntry)
       })
     }
@@ -178,17 +176,17 @@ export default class Accounts extends StoreModule {
     return req
   }
 
-  @Action({ rawError: true })
-  getCardStatementPage(request: { id: string; filters: GetManagedAccountStatementRequest }) {
-    // const req = $api.post('/app/api/managed_accounts/' + request.id + '/statements/get', request.body)
-    const req = this.store.$apiMulti.managedAccounts.statement(request)
-
-    req.then((res) => {
-      this.APPEND_STATEMENTS(res.data)
-    })
-
-    return req
-  }
+  // @Action({ rawError: true })
+  // getCardStatementPage(request: { id: string; filters: GetManagedAccountStatementRequest }) {
+  //   // const req = $api.post('/app/api/managed_accounts/' + request.id + '/statements/get', request.body)
+  //   const req = this.store.$apiMulti.managedAccounts.statement(request)
+  //
+  //   req.then((res) => {
+  //     this.APPEND_STATEMENTS(res.data)
+  //   })
+  //
+  //   return req
+  // }
 
   @Action({ rawError: true })
   getIBANDetails(id: IDModel) {

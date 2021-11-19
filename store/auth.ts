@@ -75,9 +75,8 @@ export default class Auth extends StoreModule {
   REMOVE_AUTH(auth: null) {
     this.auth = auth
 
-    Cookie.set('auth-onv', this.auth)
+    Cookie.remove('auth-onv')
 
-    this.store.$weavrSetUserToken(null)
     delete $axiosMulti.defaults.headers.Authorization
   }
 
@@ -97,7 +96,7 @@ export default class Auth extends StoreModule {
   logout() {
     const _req = this.store.$apiMulti.authentication.logout()
 
-    _req.then(() => {
+    _req.finally(() => {
       this.store.$weavrSetUserToken(null)
       this.REMOVE_AUTH(null)
     })

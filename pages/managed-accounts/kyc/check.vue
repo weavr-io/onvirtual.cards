@@ -19,7 +19,9 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
-@Component
+@Component({
+  middleware: ['kyVerified']
+})
 export default class KycPage extends mixins(BaseMixin) {
   private tries: number = 0
 
@@ -28,24 +30,21 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   async KycApproved() {
-    const _id = this.stores.auth.identityId
-    if (_id != null) {
-      const _res = await this.stores.consumers.getKYC()
+    const _res = await this.stores.consumers.getKYC()
 
-      if (
-        _res.data.fullDueDiligence === KYCStatusEnum.APPROVED ||
-        _res.data.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
-      ) {
+    if (
+      _res.data.fullDueDiligence === KYCStatusEnum.APPROVED ||
+      _res.data.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
+    ) {
+      this.redirectToAccountPage()
+    } else {
+      this.tries++
+
+      if (this.tries > 3) {
         this.redirectToAccountPage()
       } else {
-        this.tries++
-
-        if (this.tries > 3) {
-          this.redirectToAccountPage()
-        } else {
-          await this.sleep(5000)
-          this.KycApproved()
-        }
+        await this.sleep(5000)
+        this.KycApproved()
       }
     }
   }
@@ -53,8 +52,8 @@ export default class KycPage extends mixins(BaseMixin) {
   async redirectToAccountPage() {
     const _accounts = await this.stores.accounts.index()
 
-    if (_accounts.data.count >= 1) {
-      const _accountId = _accounts.data.account[0].id.id
+    if (+_accounts.data.count! >= 1) {
+      const _accountId = _accounts.data.accounts[0].id
       this.$router.push('/managed-accounts/' + _accountId)
     } else {
       this.$router.push('/managed-accounts')

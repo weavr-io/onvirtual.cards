@@ -24,7 +24,7 @@ export class ManagedAccountsApi {
   }
 
   update(params: { id: IDModel; data: UpdateManagedAccountRequest }): Promise<AxiosResponse<ManagedAccountModel>> {
-    return $axiosMulti.patch<ManagedAccountModel>('/managed_accounts/' + params.id, params.data)
+    return $axiosMulti.patch<ManagedAccountModel>(`/managed_accounts/${params.id}`, params.data)
   }
 
   remove(id: IDModel): Promise<AxiosResponse> {
@@ -51,8 +51,8 @@ export class ManagedAccountsApi {
     id: IDModel
     filters: GetManagedAccountStatementRequest
   }): Promise<AxiosResponse<StatementResponseModel>> {
-    return $axiosMulti.get<StatementResponseModel>('/managed_accounts/' + params.id + '/statement', {
-      data: params.filters
+    return $axiosMulti.get<StatementResponseModel>(`/managed_accounts/${params.id}/statement`, {
+      params: params.filters
     })
   }
 }

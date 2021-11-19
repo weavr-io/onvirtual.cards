@@ -11,6 +11,9 @@
               <b-alert :show="showError" variant="danger">
                 Error creating new card. Contact support if problem persists.
               </b-alert>
+              <pre>
+                {{ createManagedCardRequest }}
+              </pre>
               <b-form v-if="!showError" @submit="doAdd">
                 <b-form-row v-if="showNameOnCardField">
                   <b-col>
@@ -33,7 +36,7 @@
                   <b-col>
                     <b-form-group label="CARDHOLDER MOBILE NUMBER">
                       <vue-phone-number-input
-                        v-model="createManagedCardRequest.formattedMobileNumber"
+                        :value="createManagedCardRequest.cardholderMobileNumber"
                         :error="numberIsValid === false"
                         :border-radius="0"
                         color="#6C1C5C"
@@ -77,12 +80,16 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
+import { types } from 'node-sass'
 import config from '~/config'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore, authStore, consumersStore } from '~/utils/store-accessor'
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
+import Null = types.Null
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 
 @Component({
   components: {
@@ -95,14 +102,14 @@ import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-in
         required,
         maxLength: maxLength(50)
       },
-      cardholderMobileNumber: {
-        cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/),
-        // eslint-disable-next-line
-        requiredIf: requiredIf(function() {
-          // @ts-ignore
-          return !this.isConsumer
-        })
-      },
+      // cardholderMobileNumber: {
+      //   cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/),
+      //   // eslint-disable-next-line
+      //   requiredIf: requiredIf(function() {
+      //     // @ts-ignore
+      //     return !this.isConsumer
+      //   })
+      // },
       nameOnCard: {
         required,
         maxLength: maxLength(27)
@@ -130,24 +137,8 @@ export default class AddCardPage extends mixins(BaseMixin) {
   ]
 
   numberIsValid: boolean | null = null
-  cardholderMobileNumber = ''
 
-  createManagedCardRequest: CreateManagedCardRequest = {
-    profileId: this.isConsumer ? config.profileId.managed_cards_consumers! : config.profileId.managed_cards_corporates!,
-    friendlyName: '',
-    nameOnCard: '',
-    cardholderMobileNumber: '',
-    billingAddress: {
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      postCode: '',
-      state: '',
-      country: ''
-    },
-    mode: ManagedCardModeEnum.PREPAID_MODE,
-    currency: CurrencyEnum.EUR
-  }
+  createManagedCardRequest!: CreateManagedCardRequest
 
   get auth() {
     return this.stores.auth.auth
@@ -198,38 +189,34 @@ export default class AddCardPage extends mixins(BaseMixin) {
     } catch (e) {}
   }
 
-  async fetch() {
-    const _accounts = await this.stores.accounts.index({})
-
-    if (_accounts.data.count >= 1) {
-      createManagedCardRequest.currency = _accounts.data.account[0].currency
-    }
-  }
-
   async asyncData({ store }) {
     const _accounts = await accountsStore(store).index()
 
-    const createManagedCardRequest: CreateManagedCardRequest = {
+    const createManagedCardRequest: Nullable<CreateManagedCardRequest> = {
       profileId: authStore(store).isConsumer
         ? config.profileId.managed_cards_consumers!
         : config.profileId.managed_cards_corporates!,
-      friendlyName: '',
-      currency: 'EUR',
-      nameOnCard: '',
-      cardholderMobileNumber: ''
+      friendlyName: null,
+      currency: null,
+      nameOnCard: null,
+      cardholderMobileNumber: null,
+      billingAddress: null,
+      mode: ManagedCardModeEnum.PREPAID_MODE
     }
 
-    if (_accounts.data.count >= 1) {
-      createManagedCardRequest.currency = _accounts.data.account[0].currency
+    if (+_accounts.data.count! >= 1) {
+      createManagedCardRequest.currency = _accounts.data.accounts[0].currency as CurrencyEnum
     }
 
     if (authStore(store).isConsumer) {
-      const _consumer = await consumersStore(store).get(authStore(store).identity.id)
-      createManagedCardRequest.nameOnCard = _consumer.data.name + ' ' + _consumer.data.surname
-      createManagedCardRequest.cardholderMobileNumber = _consumer.data.mobileCountryCode + _consumer.data.mobileNumber
+      const _consumer: ConsumerModel = consumersStore(store).consumer as ConsumerModel
+      createManagedCardRequest.nameOnCard = _consumer.rootUser.name + ' ' + _consumer.rootUser.surname
+      createManagedCardRequest.cardholderMobileNumber =
+        _consumer.rootUser.mobile.countryCode + _consumer.rootUser.mobile.number
     }
 
     let _showNameOnCardField: boolean = false
+
     if (!authStore(store).isConsumer) {
       _showNameOnCardField = true
     } else if (createManagedCardRequest.nameOnCard && createManagedCardRequest.nameOnCard.length > 27) {
@@ -245,7 +232,8 @@ export default class AddCardPage extends mixins(BaseMixin) {
   }
 
   phoneUpdate(number) {
-    this.createManagedCardRequest.cardholderMobileNumber = '+' + number.countryCallingCode + number.nationalNumber
+    debugger
+    this.createManagedCardRequest.cardholderMobileNumber = '+' + number.countryCallingCode + number.phoneNumber
     this.numberIsValid = number.isValid
   }
 }

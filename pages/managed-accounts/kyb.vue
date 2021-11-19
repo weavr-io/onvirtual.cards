@@ -87,6 +87,7 @@ export default class KybPage extends mixins(BaseMixin) {
       try {
         await this.stores.corporates.startKYB().then((res) => {
           this.reference = res.data.reference
+          this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
         })
       } catch (e) {
         console.log(e)

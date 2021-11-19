@@ -1,33 +1,33 @@
 <template>
   <div>
-    <template v-if="transaction.txId.type === 'AUTHORISATION'">
+    <template v-if="transaction.transactionId.type === 'AUTHORISATION'">
       <authorisation :transaction="transaction" class="my-3" />
     </template>
-    <template v-else-if="transaction.txId.type === 'CHARGE_FEE'">
+    <template v-else-if="transaction.transactionId.type === 'CHARGE_FEE'">
       <charge-fee :transaction="transaction" class="my-3" />
     </template>
-    <template v-else-if="transaction.txId.type === 'DEPOSIT'">
+    <template v-else-if="transaction.transactionId.type === 'DEPOSIT'">
       <deposit :transaction="transaction" class="my-3" />
     </template>
-    <template v-else-if="transaction.txId.type === 'MANUAL_TRANSACTION'">
+    <template v-else-if="transaction.transactionId.type === 'MANUAL_TRANSACTION'">
       <manual-transaction :transaction="transaction" class="my-3" />
     </template>
-    <template v-else-if="transaction.txId.type === 'MERCHANT_REFUND'">
+    <template v-else-if="transaction.transactionId.type === 'MERCHANT_REFUND'">
       <merchant-refund :transaction="transaction" class="my-3" />
     </template>
-    <template v-else-if="transaction.txId.type === 'SEND'">
+    <template v-else-if="transaction.transactionId.type === 'SEND'">
       <send :transaction="transaction" class="my-3" />
     </template>
-    <template v-else-if="transaction.txId.type === 'SETTLEMENT'">
+    <template v-else-if="transaction.transactionId.type === 'SETTLEMENT'">
       <settlement :transaction="transaction" class="my-3" />
     </template>
-    <template v-else-if="transaction.txId.type === 'TRANSFER'">
+    <template v-else-if="transaction.transactionId.type === 'TRANSFER'">
       <transfer :transaction="transaction" class="my-3" />
     </template>
-    <template v-else-if="transaction.txId.type === 'WITHDRAWAL'">
+    <template v-else-if="transaction.transactionId.type === 'WITHDRAWAL'">
       <withdrawal :transaction="transaction" class="my-3" />
     </template>
-    <template v-else-if="transaction.txId.type === 'FEE_REVERSAL'">
+    <template v-else-if="transaction.transactionId.type === 'FEE_REVERSAL'">
       <fee-reversal :transaction="transaction" class="my-3" />
     </template>
     <template v-else>
@@ -36,7 +36,7 @@
         <b-col>
           <div class="transaction-type">
             <div class="transaction">
-              {{ transaction.txId.type }}
+              {{ transaction.transactionId.type }}
             </div>
           </div>
         </b-col>
@@ -49,19 +49,15 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
-
-import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
+import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 @Component({
   components: {
     Transfer: () => import('~/components/statement/item/transfer.vue'),
     Send: () => import('~/components/statement/item/send.vue'),
-    MerchantRefund: () =>
-      import('~/components/statement/item/merchant_refund.vue'),
-    ManualTransaction: () =>
-      import('~/components/statement/item/manual_transaction.vue'),
-    Authorisation: () =>
-      import('~/components/statement/item/authorisation.vue'),
+    MerchantRefund: () => import('~/components/statement/item/merchant_refund.vue'),
+    ManualTransaction: () => import('~/components/statement/item/manual_transaction.vue'),
+    Authorisation: () => import('~/components/statement/item/authorisation.vue'),
     Settlement: () => import('~/components/statement/item/settlement.vue'),
     Deposit: () => import('~/components/statement/item/deposit.vue'),
     Withdrawal: () => import('~/components/statement/item/withdrawal.vue'),
@@ -72,10 +68,10 @@ import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 })
 export default class StatementItem extends Vue {
   @Prop({ default: '' })
-  readonly transaction!: StatementEntry
+  readonly transaction!: StatementEntryModel
 
   get transactionType(): string {
-    return this.transaction.txId.type.replace('_', ' ')
+    return this.transaction.transactionId.type.replace('_', ' ')
   }
 }
 </script>

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueMoment from 'vue-moment'
 import moment from 'moment'
-import { BvToastOptions } from 'bootstrap-vue'
+import { BvToastOptions } from '~/node_modules/bootstrap-vue'
 
 Vue.use(VueMoment, { moment })
 
@@ -39,7 +39,10 @@ Vue.filter('weavr_currency_symbol', function(_currency) {
 Vue.filter('weavr_currency', function(value, _currency, _fraction) {
   let _amount = ''
   try {
-    if (value.hasOwnProperty('currency') && value.hasOwnProperty('amount')) {
+    if (
+      Object.prototype.hasOwnProperty.call(value, 'currency') &&
+      Object.prototype.hasOwnProperty.call(value, 'amount')
+    ) {
       _currency = value.currency
       _amount = value.amount
     } else {
@@ -66,7 +69,10 @@ Vue.filter('weavr_currency', function(value, _currency, _fraction) {
 Vue.filter('weavr_currency_with_operator', function(value, _currency) {
   let _amount = ''
   try {
-    if (value.currency && value.amount) {
+    if (
+      Object.prototype.hasOwnProperty.call(value, 'currency') &&
+      Object.prototype.hasOwnProperty.call(value, 'amount')
+    ) {
       _currency = value.currency
       _amount = value.amount
     } else {

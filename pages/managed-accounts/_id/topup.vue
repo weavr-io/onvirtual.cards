@@ -29,9 +29,13 @@
                     <b-th>IBAN</b-th>
                     <b-td>{{ bankAccountDetails.details.iban }}</b-td>
                   </b-tr>
-                  <b-tr>
+                  <b-tr v-if="sepaBic">
                     <b-th>BIC</b-th>
-                    <b-td>{{ bic }}</b-td>
+                    <b-td>{{ sepaBic }}</b-td>
+                  </b-tr>
+                  <b-tr v-if="swiftCode">
+                    <b-th>Code</b-th>
+                    <b-td>{{ swiftCode }}</b-td>
                   </b-tr>
                   <b-tr>
                     <b-th>Bank</b-th>
@@ -59,6 +63,13 @@
             </b-col>
           </b-row>
         </b-col>
+        <b-col v-else>
+          <div class="d-flex flex-column align-items-center">
+            <div class="loader-spinner ">
+              <b-spinner />
+            </div>
+          </div>
+        </b-col>
       </b-row>
     </b-container>
   </section>
@@ -71,6 +82,7 @@ import AccountsMixin from '~/minixs/AccountsMixin'
 import { BankAccountDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/BankAccountDetailsModel'
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
 import { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
+import { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SwiftBankDetailsModel'
 
 @Component({
   components: {
@@ -88,13 +100,29 @@ export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
     return this.bankAccountDetails?.beneficiaryBankAddress?.split(',').join(',<br>')
   }
 
-  get bic() {
+  get sepaBic() {
     const i = this.iban?.bankAccountDetails.findIndex((details) => {
       return (details.details as SepaBankDetailsModel).bankIdentifierCode !== undefined
     })
 
-    return ((this.iban?.bankAccountDetails[i!] as BankAccountDetailsModel).details as SepaBankDetailsModel)
-      .bankIdentifierCode
+    if (i! >= 0) {
+      return ((this.iban?.bankAccountDetails[i!] as BankAccountDetailsModel).details as SepaBankDetailsModel)
+        .bankIdentifierCode
+    } else {
+      return false
+    }
+  }
+
+  get swiftCode() {
+    const i = this.iban?.bankAccountDetails.findIndex((details) => {
+      return (details.details as SwiftBankDetailsModel).code !== undefined
+    })
+
+    if (i! >= 0) {
+      return ((this.iban?.bankAccountDetails[i!] as BankAccountDetailsModel).details as SwiftBankDetailsModel).code
+    } else {
+      return false
+    }
   }
 
   get bankAccountDetails(): BankAccountDetailsModel | undefined {
