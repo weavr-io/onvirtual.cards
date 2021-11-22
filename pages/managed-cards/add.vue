@@ -36,7 +36,7 @@
                   <b-col>
                     <b-form-group label="CARDHOLDER MOBILE NUMBER">
                       <vue-phone-number-input
-                        :value="createManagedCardRequest.cardholderMobileNumber"
+                        :value="mobile.number"
                         :error="numberIsValid === false"
                         :border-radius="0"
                         color="#6C1C5C"
@@ -68,7 +68,12 @@
                     </b-form-group>
                   </b-col>
                 </b-form-row>
-                <loader-button :is-loading="isAdding" button-text="next" class="mt-5 text-center" />
+                <loader-button
+                  :is-loading="isAdding"
+                  :disabled="!(!$v.$invalid && !!numberIsValid)"
+                  button-text="next"
+                  class="mt-5 text-center"
+                />
               </b-form>
             </b-card-body>
           </b-card>
@@ -79,17 +84,15 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
-import { types } from 'node-sass'
+import { maxLength, required } from 'vuelidate/lib/validators'
 import config from '~/config'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore, authStore, consumersStore } from '~/utils/store-accessor'
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
-import Null = types.Null
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
+import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 
 @Component({
   components: {
@@ -136,58 +139,17 @@ export default class AddCardPage extends mixins(BaseMixin) {
     }
   ]
 
+  mobile: {
+    countryCode: string
+    number: string
+  } = {
+    countryCode: '',
+    number: ''
+  }
+
   numberIsValid: boolean | null = null
 
   createManagedCardRequest!: CreateManagedCardRequest
-
-  get auth() {
-    return this.stores.auth.auth
-  }
-
-  doAdd(evt) {
-    evt.preventDefault()
-
-    if (this.isAdding) {
-      return
-    }
-
-    if (this.isConsumer) {
-      this.numberIsValid = true
-    }
-
-    if (this.numberIsValid === null) {
-      this.numberIsValid = false
-    }
-
-    if (this.$v.createManagedCardRequest) {
-      this.$v.createManagedCardRequest.$touch()
-      if (this.$v.createManagedCardRequest.$anyError || !this.numberIsValid) {
-        return
-      }
-    }
-
-    this.isAdding = true
-    this.stores.cards.addCard(this.createManagedCardRequest).then(
-      () => {
-        try {
-          this.$segment.track('Card Added', this.createManagedCardRequest)
-        } catch (e) {}
-        this.$router.push('/managed-cards')
-      },
-      (err) => {
-        this.isAdding = false
-        if (err.response.status) {
-          this.showError = true
-        }
-      }
-    )
-  }
-
-  mounted() {
-    try {
-      this.$segment.track('Initiated Add Card', {})
-    } catch (e) {}
-  }
 
   async asyncData({ store }) {
     const _accounts = await accountsStore(store).index()
@@ -231,8 +193,65 @@ export default class AddCardPage extends mixins(BaseMixin) {
     }
   }
 
+  get auth() {
+    return this.stores.auth.auth
+  }
+
+  doAdd(evt) {
+    evt.preventDefault()
+
+    if (this.isAdding) {
+      return
+    }
+
+    if (this.isConsumer) {
+      this.numberIsValid = true
+    }
+
+    if (this.numberIsValid === null) {
+      this.numberIsValid = false
+    }
+
+    if (this.$v.createManagedCardRequest) {
+      this.$v.createManagedCardRequest.$touch()
+      if (this.$v.createManagedCardRequest.$anyError || !this.numberIsValid) {
+        return
+      }
+    }
+
+    this.isAdding = true
+
+    this.createManagedCardRequest.billingAddress = {
+      ...(this.isConsumer
+        ? (this.stores.consumers.consumer?.rootUser.address as AddressModel)
+        : (this.stores.corporates.corporate?.company.businessAddress as AddressModel))
+    }
+
+    this.stores.cards.addCard(this.createManagedCardRequest).then(
+      () => {
+        try {
+          this.$segment.track('Card Added', this.createManagedCardRequest)
+        } catch (e) {}
+        this.$router.push('/managed-cards')
+      },
+      (err) => {
+        this.isAdding = false
+        if (err.response.status) {
+          this.showError = true
+        }
+      }
+    )
+  }
+
+  mounted() {
+    try {
+      this.$segment.track('Initiated Add Card', {})
+    } catch (e) {}
+  }
+
   phoneUpdate(number) {
-    debugger
+    this.mobile.number = number.phoneNumber
+    this.mobile.countryCode = number.countryCallingCode
     this.createManagedCardRequest.cardholderMobileNumber = '+' + number.countryCallingCode + number.phoneNumber
     this.numberIsValid = number.isValid
   }

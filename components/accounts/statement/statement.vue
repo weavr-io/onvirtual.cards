@@ -151,7 +151,10 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin, Fil
       ..._filters
     }
 
-    this.downloadAsCSV(this.account!.id, 'managed_accounts', _req)
+    this.downloadAsCSV({
+      id: this.$route.params.id,
+      filters: _req
+    })
   }
 }
 </script>

@@ -28,6 +28,7 @@ const axiosPlugin: Plugin = (ctxt, inject) => {
   }
 
   function onError(error) {
+    debugger
     const code = parseInt(error.response && error.response.status)
 
     switch (code) {

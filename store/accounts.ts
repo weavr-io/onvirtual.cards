@@ -176,18 +176,6 @@ export default class Accounts extends StoreModule {
     return req
   }
 
-  // @Action({ rawError: true })
-  // getCardStatementPage(request: { id: string; filters: GetManagedAccountStatementRequest }) {
-  //   // const req = $api.post('/app/api/managed_accounts/' + request.id + '/statements/get', request.body)
-  //   const req = this.store.$apiMulti.managedAccounts.statement(request)
-  //
-  //   req.then((res) => {
-  //     this.APPEND_STATEMENTS(res.data)
-  //   })
-  //
-  //   return req
-  // }
-
   @Action({ rawError: true })
   getIBANDetails(id: IDModel) {
     const req = this.store.$apiMulti.managedAccounts.retrieveIban(id)

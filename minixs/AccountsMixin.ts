@@ -1,6 +1,9 @@
 import { Component, mixins } from '~/node_modules/nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+
+const moment = require('moment')
 
 @Component
 export default class AccountsMixin extends mixins(BaseMixin) {
@@ -30,13 +33,26 @@ export default class AccountsMixin extends mixins(BaseMixin) {
       : false
   }
 
-  goToManagedAccountIndex() {
-    return this.$router.push('/managed-accounts')
-  }
-
   get accountId(): IDModel | undefined {
     if (this.hasAccount) {
       return this.account?.id!
     } else return undefined
+  }
+
+  goToManagedAccountIndex() {
+    return this.$router.push('/managed-accounts')
+  }
+
+  downloadAsCSV(params: { id: IDModel; filters: GetManagedAccountStatementRequest }) {
+    const req = this.$apiMulti.managedAccounts.downloadStatement(params)
+
+    req.then((res) => {
+      const url = window.URL.createObjectURL(new Blob([res.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', 'statement_' + moment().format('YYYYMMDDHHmmss') + '.csv')
+      document.body.appendChild(link)
+      link.click()
+    })
   }
 }

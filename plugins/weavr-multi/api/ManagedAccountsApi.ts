@@ -55,4 +55,14 @@ export class ManagedAccountsApi {
       params: params.filters
     })
   }
+
+  downloadStatement(params: { id: IDModel; filters: GetManagedAccountStatementRequest }): Promise<AxiosResponse<Blob>> {
+    return $axiosMulti.get<Blob>(`/managed_accounts/${params.id}/statement`, {
+      params: params.filters,
+      responseType: 'blob',
+      headers: {
+        Accept: 'text/csv'
+      }
+    })
+  }
 }
