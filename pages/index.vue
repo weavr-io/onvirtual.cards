@@ -3,7 +3,7 @@
     <b-container>
       <b-row>
         <b-col class="text-center">
-          Loading
+          Loading...
         </b-col>
       </b-row>
     </b-container>
