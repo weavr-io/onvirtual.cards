@@ -66,9 +66,9 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { UpdateManagedCardRequest } from '~/api/Requests/ManagedCards/UpdateManagedCardRequest'
 import BaseMixin from '~/minixs/BaseMixin'
 import { cardsStore } from '~/utils/store-accessor'
+import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 
 @Component({
   components: {
@@ -117,7 +117,11 @@ export default class AddCardPage extends mixins(BaseMixin) {
     cardholderMobileNumber: ''
   }
 
-  public updateManagedCardRequest!: UpdateManagedCardRequest
+  updateManagedCardRequest!: UpdateManagedCardRequest
+
+  get cardId() {
+    return this.$route.params.id
+  }
 
   doAdd(evt) {
     evt.preventDefault()
@@ -137,12 +141,17 @@ export default class AddCardPage extends mixins(BaseMixin) {
       }
     }
 
-    this.stores.cards.update(this.updateManagedCardRequest).then(() => {
-      try {
-        this.$segment.track('Card Updated', this.updateManagedCardRequest)
-      } catch (e) {}
-      this.$router.push('/managed-cards')
-    })
+    this.stores.cards
+      .update({
+        id: this.cardId,
+        request: this.updateManagedCardRequest
+      })
+      .then(() => {
+        try {
+          this.$segment.track('Card Updated', this.updateManagedCardRequest)
+        } catch (e) {}
+        this.$router.push('/managed-cards')
+      })
   }
 
   async asyncData({ store, route }) {
@@ -152,16 +161,8 @@ export default class AddCardPage extends mixins(BaseMixin) {
 
     const _parsedNumber = parsePhoneNumberFromString(_card.data.cardholderMobileNumber)
 
-    const updateManagedCardRequest: UpdateManagedCardRequest = {
-      id: _cardId,
-      body: {
-        ..._card.data
-      }
-    }
-
     return {
       cardId: _cardId,
-      updateManagedCardRequest,
       mobile: {
         countryCode: _parsedNumber?.country,
         cardholderMobileNumber: _parsedNumber?.nationalNumber
@@ -171,7 +172,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
 
   phoneUpdate(number) {
     this.$set(this.mobile, 'cardholderMobileNumber', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.updateManagedCardRequest.body.cardholderMobileNumber = number.formattedNumber
+    this.updateManagedCardRequest.cardholderMobileNumber = number.formattedNumber
     this.numberIsValid = number.isValid
   }
 }

@@ -10,8 +10,9 @@ import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressMod
 import { ManagedCardTypeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardTypeEnum'
 import { ManagedCardBrandEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardBrandEnum'
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
+import { CreationTimestamp } from '~/plugins/weavr-multi/api/models/common/models/Timestamp'
 
-export interface ManagedCardModel {
+export interface ManagedCardModel extends CreationTimestamp {
   id: IDModel
   profileId: IDModel
   externalHandle: string
@@ -32,7 +33,6 @@ export interface ManagedCardModel {
   cardLevelClassification: IdentityTypeEnum
   expiryPeriodMonths: number
   renewalType: RenewalTypeEnum
-  creationTimestamp: bigint | string
   cardholderMobileNumber: string
   billingAddress?: AddressModel
   physicalCardDetails?: PhysicalCardDetailsModel

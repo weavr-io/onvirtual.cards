@@ -9,6 +9,7 @@ import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/manag
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
+import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 
 @Module({
   name: 'cardsModule',
@@ -165,21 +166,21 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getCardStatement(id: IDModel, filters: StatementFiltersRequest) {
+  getCardStatement(req: ManagedCardStatementRequest) {
     this.SET_IS_LOADING(true)
 
-    const req = this.store.$apiMulti.managedCards.statement(id, filters)
+    const xhr = this.store.$apiMulti.managedCards.statement(req.id, req.request)
 
-    req.then((res) => {
-      this.SET_STATEMENT(res.data)
-      this.SET_FILTERED_STATEMENT()
-    })
+    xhr
+      .then((res) => {
+        this.SET_STATEMENT(res.data)
+        this.SET_FILTERED_STATEMENT()
+      })
+      .finally(() => {
+        this.SET_IS_LOADING(false)
+      })
 
-    req.finally(() => {
-      this.SET_IS_LOADING(false)
-    })
-
-    return req
+    return xhr
   }
 
   @Action({ rawError: true })

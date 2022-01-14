@@ -60,8 +60,6 @@
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required, between } from 'vuelidate/lib/validators'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
-import { namespace } from '~/node_modules/vuex-class'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 
@@ -103,15 +101,15 @@ export default class TopUpForm extends mixins(BaseMixin) {
 
   get accountDetails() {
     if (this.accounts) {
-      return this.accounts.account.find((_a) => {
-        return _a.id.id === this.selectedAccount.id
+      return this.accounts.accounts.find((account) => {
+        return account.id === this.selectedAccount.id
       })
     }
   }
 
   get accountBalance() {
     if (this.accountDetails && this.accountDetails.balances.availableBalance) {
-      return parseInt(this.accountDetails.balances.availableBalance) / 100
+      return this.accountDetails.balances.availableBalance / 100
     } else {
       return 0
     }
