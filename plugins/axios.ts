@@ -3,6 +3,7 @@ import config from '~/config'
 import { authStore, errorsStore } from '~/utils/store-accessor'
 
 const axiosPlugin: Plugin = (ctxt, inject) => {
+  // Todo: remove api
   const api = ctxt.$axios.create({
     headers: {
       common: {
