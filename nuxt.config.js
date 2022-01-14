@@ -1,11 +1,7 @@
-import * as dotenv from 'dotenv'
-
-const env = dotenv.config({ debug: true })
-
 const config = {
   ssr: false,
-  env: env.parsed,
   server: {
+    host: '0.0.0.0',
     port: 5000
   },
   /*
@@ -80,6 +76,7 @@ const config = {
   modules: [
     // Doc: https://bootstrap-vue.js.org/docs/
     'bootstrap-vue/nuxt',
+    '@nuxtjs/dotenv',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     // '@nuxtjs/eslint-module'
