@@ -25,8 +25,7 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import config from '~/config'
+import {Component, mixins} from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
@@ -50,7 +49,7 @@ class AuthLayout extends mixins(BaseMixin) {
   }
 
   get showHeader(): boolean {
-    return config.app.view_register
+    return this.$config.app.view_register
   }
 
   get showRegister(): boolean {

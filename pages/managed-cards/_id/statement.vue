@@ -210,23 +210,28 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import {Component, mixins} from 'nuxt-property-decorator'
 
-import { BIcon, BIconThreeDotsVertical, BModal } from 'bootstrap-vue'
+import {BIcon, BIconThreeDotsVertical, BModal} from 'bootstrap-vue'
 
-import { Schemas } from '~/api/Schemas'
-import config from '~/config'
-import { cardsStore } from '~/utils/store-accessor'
+import {Schemas} from '~/api/Schemas'
+import {cardsStore} from '~/utils/store-accessor'
 import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
 import FiltersMixin from '~/minixs/FiltersMixin'
 import AccountsMixin from '~/minixs/AccountsMixin'
-import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
-import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
-import OrderType = Schemas.OrderType
-import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
-import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import {
+  ManagedInstrumentStateEnum
+} from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import {CreateTransferRequest} from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
+import {InstrumentEnum} from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
+import {
+  StatementFiltersRequest
+} from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import {
+  ManagedCardStatementRequest
+} from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import OrderType = Schemas.OrderType;
 
 const dot = require('dot-object')
 
@@ -380,12 +385,18 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, Fi
   }
 
   async doDeleteCard() {
-    const _accounts = await this.stores.accounts.index()
+    const _accounts = await this.stores.accounts.index(  {
+      profileId: this.stores.auth.isConsumer
+              ? this.$config.profileId.managed_accounts_consumers!
+              : this.$config.profileId.managed_accounts_corporates!,
+      state: ManagedInstrumentStateEnum.ACTIVE,
+      offset: '0'
+    })
 
     if (_accounts.data.count && this.managedCard) {
       if (this.managedCard.balances?.availableBalance && this.managedCard.balances.availableBalance > 0) {
         const _request: CreateTransferRequest = {
-          profileId: config.profileId.transfers!,
+          profileId: this.$config.profileId.transfers!,
           source: {
             type: InstrumentEnum.managedCards,
             id: this.cardId

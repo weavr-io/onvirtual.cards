@@ -18,12 +18,14 @@
   </b-container>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import config from '~/config'
+import {Component, mixins} from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore, cardsStore } from '~/utils/store-accessor'
-import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
-import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
+import {accountsStore, cardsStore} from '~/utils/store-accessor'
+import {CreateTransferRequest} from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
+import {InstrumentEnum} from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
+import {
+  ManagedInstrumentStateEnum
+} from "~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum";
 
 @Component({
   components: {
@@ -98,11 +100,17 @@ export default class TransfersPage extends mixins(BaseMixin) {
       offset: 0,
       limit: 0
     })
-    const accounts = await accountsStore(store).index()
+    const accounts = await accountsStore(store).index(  {
+      profileId: this.stores.auth.isConsumer
+              ? this.$config.profileId.managed_accounts_consumers!
+              : this.$config.profileId.managed_accounts_corporates!,
+      state: ManagedInstrumentStateEnum.ACTIVE,
+      offset: '0'
+    })
     const firstAccount = accounts.data.accounts[0]
 
     const request: CreateTransferRequest = {
-      profileId: config.profileId.transfers!,
+      profileId: this.$config.profileId.transfers!,
       source: {
         type: InstrumentEnum.managedAccounts,
         id: firstAccount.id

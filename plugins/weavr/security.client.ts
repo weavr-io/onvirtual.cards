@@ -7,7 +7,6 @@ import WeavrKyb from '~/plugins/weavr/components/WeavrKyb.vue'
 import WeavrKycBeneficiaries from '~/plugins/weavr/components/WeavrKycBeneficiaries.vue'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 import { Plugin } from '~/node_modules/@nuxt/types'
-import config from '~/config'
 
 
 Vue.component('WeavrPasswordInput', WeavrPasswordInput)

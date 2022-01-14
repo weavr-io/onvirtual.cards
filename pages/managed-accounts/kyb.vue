@@ -55,9 +55,8 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
-import config from '~/config'
+import {Component, mixins} from 'nuxt-property-decorator'
+import {BIcon, BIconBoxArrowUpRight} from 'bootstrap-vue'
 import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({
@@ -79,11 +78,11 @@ export default class KybPage extends mixins(BaseMixin) {
   }
 
   get sumsSubEnabled() {
-    return config.app.sumsub_enabled
+    return this.$config.app.sumsub_enabled
   }
 
   async fetch() {
-    if (config.app.sumsub_enabled) {
+    if (this.$config.app.sumsub_enabled) {
       try {
         await this.stores.corporates.startKYB().then((res) => {
           this.reference = res.data.reference

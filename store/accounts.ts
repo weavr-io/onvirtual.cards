@@ -6,9 +6,6 @@ import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/ma
 import { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountModel'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
-import { authStore } from '~/utils/store-accessor'
-import config from '~/config'
-import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
@@ -122,16 +119,8 @@ export default class Accounts extends StoreModule {
   }
 
   @Action({ rawError: true })
-  index() {
-    const defaultFilter: GetManagedAccountsRequest = {
-      profileId: authStore(this.store).isConsumer
-        ? config.profileId.managed_accounts_consumers!
-        : config.profileId.managed_accounts_corporates!,
-      state: ManagedInstrumentStateEnum.ACTIVE,
-      offset: '0'
-    }
-
-    const req = this.store.$apiMulti.managedAccounts.index(defaultFilter)
+  index(filters: GetManagedAccountsRequest) {
+    const req = this.store.$apiMulti.managedAccounts.index(filters)
 
     req.then((res) => {
       this.SET_ACCOUNTS(res.data)

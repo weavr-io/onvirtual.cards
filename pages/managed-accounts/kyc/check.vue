@@ -18,6 +18,9 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import {
+  ManagedInstrumentStateEnum
+} from "~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum";
 
 @Component({
   middleware: ['kyVerified']
@@ -50,7 +53,13 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   async redirectToAccountPage() {
-    const _accounts = await this.stores.accounts.index()
+    const _accounts = await this.stores.accounts.index(  {
+      profileId: this.stores.auth.isConsumer
+              ? this.$config.profileId.managed_accounts_consumers!
+              : this.$config.profileId.managed_accounts_corporates!,
+      state: ManagedInstrumentStateEnum.ACTIVE,
+      offset: '0'
+    })
 
     if (+_accounts.data.count! >= 1) {
       const _accountId = _accounts.data.accounts[0].id

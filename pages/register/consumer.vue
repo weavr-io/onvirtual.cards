@@ -166,26 +166,33 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
+import {Component, mixins, Ref} from 'nuxt-property-decorator'
+import {email, maxLength, required, sameAs} from 'vuelidate/lib/validators'
 
-import { AxiosResponse } from 'axios'
-import config from '~/config'
+import {AxiosResponse} from 'axios'
 
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import {SecureElementStyleWithPseudoClasses} from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { BooleanString } from '~/api/Generic/BooleanString'
-import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
-import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
-import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
-import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
-import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import {BooleanString} from '~/api/Generic/BooleanString'
+import {IndustryTypeSelectConst} from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
+import {SourceOfFundsSelectConst} from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
+import {
+  CreateConsumerRequest
+} from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
+import {
+  ConsumerSourceOfFundTypeEnum
+} from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
+import {ConsumerModel} from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import {IdentityIdModel} from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
+import {IDModel} from '~/plugins/weavr-multi/api/models/common/IDModel'
+import {
+  CreatePasswordRequestModel
+} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import {
+  LoginWithPasswordRequest
+} from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import {CurrencyEnum} from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -266,7 +273,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
   isLoadingRegistration: boolean = false
 
   public registrationRequest: DeepNullable<RecursivePartial<CreateConsumerRequest> & { password: string }> = {
-    profileId: config.profileId.consumers,
+    profileId: this.$config.profileId.consumers,
     tag: 'tag',
     rootUser: {
       name: null,

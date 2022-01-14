@@ -20,21 +20,28 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { AxiosResponse } from 'axios'
-import config from '~/config'
+import {Component, mixins} from 'nuxt-property-decorator'
+import {AxiosResponse} from 'axios'
 
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore } from '~/utils/store-accessor'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
-import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
-import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import {authStore} from '~/utils/store-accessor'
+import {
+  CreateCorporateRequest
+} from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import {IndustryTypeEnum} from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
+import {
+  CorporateSourceOfFundTypeEnum
+} from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import {CurrencyEnum} from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import {ConsumerModel} from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import {IdentityIdModel} from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
+import {IDModel} from '~/plugins/weavr-multi/api/models/common/IDModel'
+import {
+  CreatePasswordRequestModel
+} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import {
+  LoginWithPasswordRequest
+} from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 
 @Component({
   layout: 'auth',
@@ -50,7 +57,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   screen: number = 0
 
   private registrationRequest: DeepNullable<RecursivePartial<CreateCorporateRequest & { password: string }>> = {
-    profileId: config.profileId.corporates,
+    profileId: this.$config.profileId.corporates,
     tag: 'tag',
     rootUser: {
       name: null,

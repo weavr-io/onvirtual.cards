@@ -4,7 +4,6 @@ import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consu
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
-import config from '~/config'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -65,8 +64,8 @@ export default class BaseMixin extends Vue {
 
   get profileId() {
     return this.isConsumer
-      ? config.profileId.managed_accounts_consumers!
-      : config.profileId.managed_accounts_corporates!
+      ? this.$config.profileId.managed_accounts_consumers!
+      : this.$config.profileId.managed_accounts_corporates!
   }
 
   get consumer(): ConsumerModel | null {
