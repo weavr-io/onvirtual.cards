@@ -23,7 +23,7 @@
       </b-container>
       <b-container v-if="!hasAlert" class="mt-5">
         <b-row v-if="hasCards" cols="1" cols-md="3">
-          <b-col v-for="(card, key) in cards" :key="key">
+          <b-col v-for="card in cards" :key="card.id">
             <weavr-card :card="card" no-body class="mb-5" />
           </b-col>
         </b-row>
@@ -59,7 +59,8 @@ import CardsMixin from '~/minixs/CardsMixin'
   components: {
     WeavrCard: () => import('~/components/cards/card.vue'),
     KybAlert: () => import('~/components/corporates/KYBAlert.vue')
-  }
+  },
+  middleware: ['kyVerified']
 })
 export default class CardsPage extends mixins(BaseMixin, CardsMixin) {
   public showDeleted: boolean = false
@@ -113,11 +114,7 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin) {
   }
 
   get showKybAlert(): boolean {
-    if (this.stores.corporates.kyb) {
-      return this.stores.corporates.kyb.kybStatus !== KYBStatusEnum.APPROVED
-    } else {
-      return false
-    }
+    return !!this.stores.corporates.kyb && this.stores.corporates.kyb.kybStatus !== KYBStatusEnum.APPROVED
   }
 }
 </script>

@@ -1,5 +1,4 @@
 import { Component, Vue } from 'nuxt-property-decorator'
-import { $api } from '~/utils/api'
 import { initialiseStores } from '~/utils/store-accessor'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
@@ -7,7 +6,6 @@ import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consu
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import config from '~/config'
 
-const moment = require('moment')
 const Countries = require('~/static/json/countries.json')
 
 @Component

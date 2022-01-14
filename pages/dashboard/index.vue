@@ -1,9 +1,11 @@
 <template>
-  <section>
-    <pre>
-      {{ $route.name }}
-    </pre>
-  </section>
+  <b-container>
+    <b-row>
+      <b-col>
+        {{ $route.name }}
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script lang="ts">

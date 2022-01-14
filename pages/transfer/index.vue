@@ -35,7 +35,7 @@ import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/In
 })
 export default class TransfersPage extends mixins(BaseMixin) {
   get cards() {
-    return this.stores.cards.cards
+    return this.stores.cards.cards?.cards
   }
 
   get accounts() {
@@ -63,15 +63,17 @@ export default class TransfersPage extends mixins(BaseMixin) {
     }
   }
 
-  public createTransferRequest!: DeepNullable<RecursivePartial<CreateTransferRequest>>
+  public createTransferRequest!: DeepNullable<CreateTransferRequest>
 
   get formattedCards(): { value: number; text: string }[] {
-    return this.cards.map((val) => {
-      return {
-        value: val.id.id,
-        text: val.friendlyName
-      }
-    })
+    return (
+      this.cards?.map((val) => {
+        return {
+          value: +val.id, // Todo: Check if valid conversion - remove need for conversion
+          text: val.friendlyName
+        }
+      }) || []
+    )
   }
 
   public accountTypes = [
@@ -93,22 +95,24 @@ export default class TransfersPage extends mixins(BaseMixin) {
 
   async asyncData({ store, route }) {
     await cardsStore(store).getCards({
-      paging: {
-        offset: 0,
-        limit: 0
-      }
+      offset: 0,
+      limit: 0
     })
-    const _accounts = await accountsStore(store).index()
+    const accounts = await accountsStore(store).index()
+    const firstAccount = accounts.data.accounts[0]
 
     const request: CreateTransferRequest = {
       profileId: config.profileId.transfers!,
-      source: _accounts.data.account[0].id,
+      source: {
+        type: InstrumentEnum.managedAccounts,
+        id: firstAccount.id
+      },
       destination: {
         type: InstrumentEnum.managedCards,
         id: route.query.destination
       },
       destinationAmount: {
-        currency: _accounts.data.account[0].currency,
+        currency: firstAccount.currency,
         amount: 0
       }
     }

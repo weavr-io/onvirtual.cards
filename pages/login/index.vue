@@ -1,5 +1,5 @@
 <template>
-  <b-col lg="6" offset-lg="3">
+  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
     <div class="text-center pb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
@@ -95,8 +95,6 @@ export default class LoginPage extends mixins(BaseMixin) {
   }
 
   login() {
-    console.log('Login Function')
-
     try {
       this.isLoading = true
       this.passwordField.createToken().then(

@@ -36,34 +36,26 @@ Vue.filter('weavr_currency_symbol', function(_currency) {
   return formatter.format(0)[0]
 })
 
-Vue.filter('weavr_currency', function(value, _currency, _fraction) {
-  let _amount = ''
-  try {
-    if (
-      Object.prototype.hasOwnProperty.call(value, 'currency') &&
-      Object.prototype.hasOwnProperty.call(value, 'amount')
-    ) {
-      _currency = value.currency
-      _amount = value.amount
-    } else {
-      _amount = value
-    }
-  } catch (e) {
-    // debugger
+Vue.filter('weavr_currency', function(value, currency, fraction) {
+  let amount = ''
+  if (value && typeof value === 'object' && 'currency' in value && 'amount' in value) {
+    currency = value.currency
+    amount = value.amount
+  } else {
+    amount = value
   }
 
-  if (typeof _fraction === 'undefined') {
-    _fraction = 2
+  if (typeof fraction === 'undefined') {
+    fraction = 2
   }
 
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: _currency,
-    minimumFractionDigits: _fraction,
+    currency,
+    minimumFractionDigits: fraction,
     currencyDisplay: 'symbol'
   })
-
-  return formatter.format(parseInt(_amount) / 100)
+  return formatter.format(parseInt(amount) / 100)
 })
 
 Vue.filter('weavr_currency_with_operator', function(value, _currency) {

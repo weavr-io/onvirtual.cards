@@ -38,11 +38,11 @@ export default class Auth extends StoreModule {
   }
 
   get isConsumer() {
-    return this.auth?.identity ? this.auth?.identity.type === IdentityTypeEnum.CONSUMER : false
+    return this.auth?.identity.type === IdentityTypeEnum.CONSUMER
   }
 
   get isCorporate() {
-    return this.auth?.identity ? this.auth!.identity.type === IdentityTypeEnum.CORPORATE : false
+    return this.auth?.identity.type === IdentityTypeEnum.CORPORATE
   }
 
   get identity() {

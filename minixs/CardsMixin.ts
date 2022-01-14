@@ -12,11 +12,11 @@ export default class CardsMixin extends mixins(BaseMixin) {
   }
 
   get cards() {
-    return this.stores.cards.cards
+    return this.stores.cards.cards?.cards
   }
 
   get hasCards(): boolean {
-    return this.cards?.cards ? this.cards!.cards.length > 0 : false
+    return !!this.cards?.length
   }
 
   get cardsBalance() {

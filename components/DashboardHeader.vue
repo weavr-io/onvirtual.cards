@@ -40,7 +40,7 @@
                 total balance
               </p>
               <p class="mb-0 account-balance-value">
-                {{ cardsBalance | weavr_currency(cardCurrency) }}
+                {{ cardsBalance | weavr_currency(cardCurrency.currency) }}
               </p>
             </div>
           </b-row>

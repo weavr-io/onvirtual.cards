@@ -1,5 +1,5 @@
 <template>
-  <b-col md="6" offset-md="3">
+  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
     <div class="text-center pb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
@@ -352,6 +352,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
 
   async submitForm() {
     try {
+      console.log('groot', this.isRecaptchaEnabled)
       this.$v.$touch()
       if (this.$v.$invalid) {
         return

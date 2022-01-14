@@ -103,8 +103,9 @@
 <script lang="ts">
 import { Component, mixins, Prop } from 'nuxt-property-decorator'
 import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
-import { ManagedCardsSchemas } from '~/api/ManagedCardsSchemas'
 import BaseMixin from '~/minixs/BaseMixin'
+import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Component({
   components: {
@@ -113,7 +114,7 @@ import BaseMixin from '~/minixs/BaseMixin'
   }
 })
 export default class WeavrCard extends mixins(BaseMixin) {
-  @Prop() readonly card!: ManagedCardsSchemas.ManagedCard
+  @Prop() readonly card!: ManagedCardModel
 
   showOptions: boolean = false
 
@@ -126,11 +127,12 @@ export default class WeavrCard extends mixins(BaseMixin) {
   }
 
   get isFrozen() {
-    return Object.entries(this.card.state.blockTypes).length > 0 || this.card.state.destroyType !== ''
+    return false
+    // return Object.entries(this.card.state.state.blockTypes).length > 0 || this.card.state.destroyType !== ''
   }
 
   get isActive() {
-    return this.card.active
+    return this.card.state.state === ManagedInstrumentStateEnum.ACTIVE
   }
 
   toggleFreeze() {
@@ -149,7 +151,7 @@ export default class WeavrCard extends mixins(BaseMixin) {
   }
 
   freezeCard() {
-    this.stores.cards.freeze(this.card.id.id).then(
+    this.stores.cards.freeze(this.card.id).then(
       () => {
         this.getCards()
       },
@@ -162,7 +164,7 @@ export default class WeavrCard extends mixins(BaseMixin) {
   }
 
   unfreezeCard() {
-    this.stores.cards.unfreeze(this.card.id.id).then(
+    this.stores.cards.unfreeze(this.card.id).then(
       () => {
         this.getCards()
       },

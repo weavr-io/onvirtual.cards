@@ -1,5 +1,5 @@
 <template>
-  <b-col md="6" offset-md="3">
+  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
     <div class="text-center pb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
@@ -13,7 +13,7 @@
             <b-img fluid src="/img/email.svg" class="mt-5 mb-2" />
           </b-col>
         </b-row>
-        <form id="contact-form" class="mt-5" @submit="doVerify">
+        <form id="contact-form" class="mt-5" @submit.prevent="doVerify">
           <b-alert :show="showEmailResentSuccessAlert" variant="success">
             The verification code was resent by email.
           </b-alert>
@@ -22,7 +22,7 @@
           </p>
           <error-alert class="mt-3" />
           <b-row>
-            <b-col md="4" offset-md="4">
+            <b-col cols="6" offset="3">
               <b-form-group label="">
                 <b-form-input
                   v-model="verifyEmailRequest.verificationCode"
@@ -180,19 +180,17 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
       })
   }
 
-  doVerify(evt) {
-    evt.preventDefault()
-
+  doVerify() {
     if (this.$v.verifyEmailRequest) {
       this.$v.verifyEmailRequest.$touch()
       if (this.$v.verifyEmailRequest.$anyError) {
-        return null
+        return
       }
     }
 
     this.isConsumer
-      ? this.stores.consumers.verifyEmail(this.verifyEmailRequest).finally(this.nextPage)
-      : this.stores.corporates.verifyEmail(this.verifyEmailRequest).finally(this.nextPage)
+      ? this.stores.consumers.verifyEmail(this.verifyEmailRequest).then(this.nextPage)
+      : this.stores.corporates.verifyEmail(this.verifyEmailRequest).then(this.nextPage)
   }
 
   async nextPage() {

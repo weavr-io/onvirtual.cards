@@ -33,6 +33,17 @@ export default {
       default: null
     }
   },
+  head() {
+    return {
+      title: this.statusCode === 404 ? 'Page Not Found' : 'Oh snap!',
+      meta: [
+        {
+          name: 'viewport',
+          content: 'width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no'
+        }
+      ]
+    }
+  },
   computed: {
     statusCode() {
       return (this.error && this.error.statusCode) || 500
@@ -49,17 +60,6 @@ export default {
       case 403:
         this.$router.replace('/forbidden')
         break
-    }
-  },
-  head() {
-    return {
-      title: this.statusCode === 404 ? 'Page Not Found' : 'Oh snap!',
-      meta: [
-        {
-          name: 'viewport',
-          content: 'width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no'
-        }
-      ]
     }
   }
 }

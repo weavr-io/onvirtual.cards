@@ -78,13 +78,14 @@ export default class Consumers extends StoreModule {
 
     const req = this.store.$apiMulti.consumers.show()
 
-    req.then((_res) => {
-      this.SET_CONSUMER(_res.data)
-    })
-    req.finally(() => {
-      loaderStore(this.store).stop()
-      this.SET_IS_LOADING(false)
-    })
+    req
+      .then((_res) => {
+        this.SET_CONSUMER(_res.data)
+      })
+      .finally(() => {
+        loaderStore(this.store).stop()
+        this.SET_IS_LOADING(false)
+      })
 
     return req
   }
@@ -105,9 +106,9 @@ export default class Consumers extends StoreModule {
       await this.getKYC()
     }
 
-    const _res = this.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+    const approved = this.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
 
-    if (!_res) {
+    if (!approved) {
       return Promise.reject(new Error('KYC not approved'))
     } else {
       return Promise.resolve()

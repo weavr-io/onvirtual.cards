@@ -14,7 +14,7 @@
               <pre>
                 {{ createManagedCardRequest }}
               </pre>
-              <b-form v-if="!showError" @submit="doAdd">
+              <b-form v-if="!showError" @submit.prevent="doAdd">
                 <b-form-row v-if="showNameOnCardField">
                   <b-col>
                     <b-form-group label="Name of Person using Card">
@@ -70,7 +70,7 @@
                 </b-form-row>
                 <loader-button
                   :is-loading="isAdding"
-                  :disabled="!(!$v.$invalid && !!numberIsValid)"
+                  :disabled="$v.$invalid || numberIsValid"
                   button-text="next"
                   class="mt-5 text-center"
                 />
@@ -93,7 +93,6 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
-
 @Component({
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
@@ -128,17 +127,6 @@ export default class AddCardPage extends mixins(BaseMixin) {
 
   isAdding: boolean = false
 
-  currencyOptions = [
-    {
-      value: 'EUR',
-      text: 'EUR'
-    },
-    {
-      value: 'GBP',
-      text: 'GBP'
-    }
-  ]
-
   mobile: {
     countryCode: string
     number: string
@@ -152,7 +140,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
   createManagedCardRequest!: CreateManagedCardRequest
 
   async asyncData({ store }) {
-    const _accounts = await accountsStore(store).index()
+    const accounts = await accountsStore(store).index()
 
     const createManagedCardRequest: Nullable<CreateManagedCardRequest> = {
       profileId: authStore(store).isConsumer
@@ -166,8 +154,8 @@ export default class AddCardPage extends mixins(BaseMixin) {
       mode: ManagedCardModeEnum.PREPAID_MODE
     }
 
-    if (+_accounts.data.count! >= 1) {
-      createManagedCardRequest.currency = _accounts.data.accounts[0].currency as CurrencyEnum
+    if (+accounts.data.count! >= 1) {
+      createManagedCardRequest.currency = accounts.data.accounts[0].currency as CurrencyEnum
     }
 
     if (authStore(store).isConsumer) {
@@ -177,15 +165,9 @@ export default class AddCardPage extends mixins(BaseMixin) {
         _consumer.rootUser.mobile.countryCode + _consumer.rootUser.mobile.number
     }
 
-    let _showNameOnCardField: boolean = false
-
-    if (!authStore(store).isConsumer) {
-      _showNameOnCardField = true
-    } else if (createManagedCardRequest.nameOnCard && createManagedCardRequest.nameOnCard.length > 27) {
-      _showNameOnCardField = true
-    } else {
-      _showNameOnCardField = false
-    }
+    const _showNameOnCardField =
+      !authStore(store).isConsumer ||
+      (createManagedCardRequest.nameOnCard && createManagedCardRequest.nameOnCard.length > 27)
 
     return {
       createManagedCardRequest,
@@ -197,9 +179,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
     return this.stores.auth.auth
   }
 
-  doAdd(evt) {
-    evt.preventDefault()
-
+  doAdd() {
     if (this.isAdding) {
       return
     }
@@ -212,11 +192,9 @@ export default class AddCardPage extends mixins(BaseMixin) {
       this.numberIsValid = false
     }
 
-    if (this.$v.createManagedCardRequest) {
-      this.$v.createManagedCardRequest.$touch()
-      if (this.$v.createManagedCardRequest.$anyError || !this.numberIsValid) {
-        return
-      }
+    this.$v.$touch()
+    if (this.$v.$invalid || !this.numberIsValid) {
+      return
     }
 
     this.isAdding = true
@@ -227,20 +205,20 @@ export default class AddCardPage extends mixins(BaseMixin) {
         : (this.stores.corporates.corporate?.company.businessAddress as AddressModel))
     }
 
-    this.stores.cards.addCard(this.createManagedCardRequest).then(
-      () => {
+    this.stores.cards
+      .addCard(this.createManagedCardRequest)
+      .then(() => {
         try {
           this.$segment.track('Card Added', this.createManagedCardRequest)
         } catch (e) {}
         this.$router.push('/managed-cards')
-      },
-      (err) => {
+      })
+      .catch((err) => {
         this.isAdding = false
         if (err.response.status) {
           this.showError = true
         }
-      }
-    )
+      })
   }
 
   mounted() {

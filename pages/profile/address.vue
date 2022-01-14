@@ -1,5 +1,5 @@
 <template>
-  <b-col md="6" offset-md="3">
+  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
     <b-card no-body class="overflow-hidden">
       <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
         <b-card-body class="p-card">

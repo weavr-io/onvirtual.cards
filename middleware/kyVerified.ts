@@ -3,19 +3,18 @@ import { authStore, consumersStore, corporatesStore } from '~/utils/store-access
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 const kyVerified: Middleware = async ({ store, route, redirect }) => {
-  if (authStore(store).isLoggedIn) {
-    if (authStore(store).isConsumer) {
+  const authStoreInstance = authStore(store)
+  if (authStoreInstance.isLoggedIn) {
+    if (authStoreInstance.isConsumer) {
       try {
         if (route.name === 'managed-accounts-kyb') {
           return redirect('/managed-accounts/kyc')
         }
 
-        await consumersStore(store).get()
-        await consumersStore(store)
-          .getKYC()
-          .finally(async () => {
-            await consumersStore(store).checkKYC()
-          })
+        const consumerStoreInstance = consumersStore(store)
+        await consumerStoreInstance.get()
+        await consumerStoreInstance.getKYC()
+        await consumerStoreInstance.checkKYC()
 
         if (route.name === 'managed-accounts-kyc') {
           return redirect('/managed-accounts/add')
@@ -35,12 +34,10 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
           return redirect('/managed-accounts/kyb')
         }
 
-        await corporatesStore(store).get()
-        await corporatesStore(store)
-          .getKyb()
-          .finally(async () => {
-            await corporatesStore(store).checkKYB()
-          })
+        const corporateStoreInstance = corporatesStore(store)
+        await corporateStoreInstance.get()
+        await corporateStoreInstance.getKyb()
+        await corporateStoreInstance.checkKYB()
 
         if (route.name === 'managed-accounts-kyb') {
           return redirect('/managed-accounts')

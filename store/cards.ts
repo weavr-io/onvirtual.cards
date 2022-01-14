@@ -29,8 +29,8 @@ export default class Cards extends StoreModule {
   get currency() {
     if (this.cards == null) {
       return null
-    } else if (this.cards.cards.length > 0) {
-      return this.cards[0].currency
+    } else if (this.cards.cards?.length) {
+      return this.cards.cards[0].currency
     } else {
       return null
     }
@@ -43,7 +43,7 @@ export default class Cards extends StoreModule {
 
     let total = 0
 
-    this.cards.cards.forEach((card) => {
+    this.cards.cards?.forEach((card) => {
       if (card.balances?.availableBalance) {
         total += card.balances.availableBalance
       }

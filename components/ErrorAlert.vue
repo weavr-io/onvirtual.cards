@@ -24,7 +24,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 
 export interface ErrorLink {
@@ -33,7 +33,7 @@ export interface ErrorLink {
 }
 
 @Component
-class ErrorAlert extends BaseMixin {
+class ErrorAlert extends mixins(BaseMixin) {
   get errors() {
     return this.stores.errors.errors
   }
