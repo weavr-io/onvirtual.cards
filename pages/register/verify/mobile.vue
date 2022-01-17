@@ -1,7 +1,7 @@
 <template>
   <b-col md="8" offset-md="2" lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards"/>
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -10,10 +10,10 @@
         </h3>
         <b-row>
           <b-col md="6" offset-md="3" class="text-center">
-            <b-img fluid src="/img/mobile.svg" class="mt-5 mb-2" />
+            <b-img fluid src="/img/mobile.svg" class="mt-5 mb-2"/>
           </b-col>
         </b-row>
-        <error-alert />
+        <error-alert/>
         <p class="text-center my-5 text-grey">
           We’ve just sent you a verification code by SMS. Enter code below to verify your phone number.
         </p>
@@ -22,29 +22,29 @@
             <b-col cols="6" offset="3">
               <b-form-group label="">
                 <b-form-input
-                  v-model="$v.request.verificationCode.$model"
-                  :state="isInvalid($v.request.verificationCode)"
-                  placeholder="000000"
-                  class="text-center"
+                        v-model="$v.request.verificationCode.$model"
+                        :state="isInvalid($v.request.verificationCode)"
+                        placeholder="000000"
+                        class="text-center"
                 />
                 <b-form-invalid-feedback>This field is required and must be 6 characters.</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
           </b-row>
-          <loader-button :is-loading="isLoading" button-text="verify" class="mt-5 text-center mb-0" />
+          <loader-button :is-loading="isLoading" button-text="verify" class="mt-5 text-center mb-0"/>
         </form>
         <b-alert
-          :show="dismissCountDown"
-          variant="white"
-          class="text-center mt-4 mb-0 text-muted small"
-          @dismiss-count-down="countDownChanged"
+                :show="dismissCountDown"
+                variant="white"
+                class="text-center mt-4 mb-0 text-muted small"
+                @dismiss-count-down="countDownChanged"
         >
           {{ dismissCountDown }} seconds until you can send another verification code
         </b-alert>
         <div v-if="!dismissCountDown" class="mt-4 text-center">
           <template v-if="verificationIssue">
             <small class="text-grey"
-              >We could not verify your mobile number. Please contact support for assistance</small
+            >We could not verify your mobile number. Please contact support for assistance</small
             >
           </template>
           <template v-else>
@@ -61,12 +61,16 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { maxLength, minLength, required } from 'vuelidate/lib/validators'
+import {Component, mixins} from 'nuxt-property-decorator'
+import {maxLength, minLength, required} from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
-import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
-import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
+import {authStore, consumersStore, corporatesStore} from '~/utils/store-accessor'
+import {
+  SCAOtpChannelEnum
+} from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
+import {
+  AuthVerifyEnrolRequest
+} from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
 
 @Component({
   layout: 'auth',
@@ -96,7 +100,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   dismissSecs = 60
   dismissCountDown = 0
 
-  asyncData({ store, redirect }) {
+  asyncData({store, redirect}) {
     let isRootUserMobileVerified: boolean = false
     let isRootUserEmailVerified: boolean = false
 

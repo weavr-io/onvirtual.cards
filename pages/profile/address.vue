@@ -199,7 +199,8 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
     return this.$router.push({
       path: '/register/verify',
       query: {
-        email: this.rootUserEmail
+        email: this.rootUserEmail,
+        send: 'true'
       }
     })
   }

@@ -53,6 +53,13 @@
                 </b-form-row>
                 <b-form-row>
                   <b-col>
+                    <b-form-group :state="isInvalid($v.createManagedCardRequest.currency)" label="Currency">
+                      <b-form-select v-model="$v.createManagedCardRequest.currency.$model" :options="currencyOptions"/>
+                    </b-form-group>
+                  </b-col>
+                </b-form-row>
+                <b-form-row>
+                  <b-col>
                     <b-form-group label="ADD A CUSTOM CARD NAME">
                       <b-form-input
                         v-model="$v.createManagedCardRequest.friendlyName.$model"
@@ -83,22 +90,16 @@
   </section>
 </template>
 <script lang="ts">
-import {Component, mixins} from 'nuxt-property-decorator'
-import {maxLength, required} from 'vuelidate/lib/validators'
+import { Component, mixins } from 'nuxt-property-decorator'
+import { maxLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
-import {accountsStore, authStore, consumersStore} from '~/utils/store-accessor'
-import {
-  CreateManagedCardRequest
-} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
-import {CurrencyEnum} from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import {
-  ManagedCardModeEnum
-} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
-import {ConsumerModel} from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import {AddressModel} from '~/plugins/weavr-multi/api/models/common/AddressModel'
-import {
-  ManagedInstrumentStateEnum
-} from "~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum";
+import { accountsStore, authStore, consumersStore } from '~/utils/store-accessor'
+import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Component({
   components: {
@@ -110,6 +111,9 @@ import {
       friendlyName: {
         required,
         maxLength: maxLength(50)
+      },
+      currency: {
+        required
       },
       // cardholderMobileNumber: {
       //   cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/),
@@ -147,15 +151,13 @@ export default class AddCardPage extends mixins(BaseMixin) {
   createManagedCardRequest!: CreateManagedCardRequest
 
   async asyncData({ store, $config }) {
-    const accounts = await accountsStore(store).index(
-            {
-              profileId: this.stores.auth.isConsumer
-                      ? this.$config.profileId.managed_accounts_consumers!
-                      : this.$config.profileId.managed_accounts_corporates!,
-              state: ManagedInstrumentStateEnum.ACTIVE,
-              offset: '0'
-            }
-    )
+    const accounts = await accountsStore(store).index({
+      profileId: authStore(store).isConsumer
+        ? $config.profileId.managed_accounts_consumers!
+        : $config.profileId.managed_accounts_corporates!,
+      state: ManagedInstrumentStateEnum.ACTIVE,
+      offset: '0'
+    })
 
     const createManagedCardRequest: Nullable<CreateManagedCardRequest> = {
       profileId: authStore(store).isConsumer
@@ -235,6 +237,22 @@ export default class AddCardPage extends mixins(BaseMixin) {
         }
       })
   }
+
+
+  currencyOptions = [
+    {
+      value: 'EUR',
+      text: 'Euro - EUR'
+    },
+    {
+      value: 'GBP',
+      text: 'Great Britain Pound - GBP'
+    },
+    {
+      value: 'USD',
+      text: 'US Dollars - USD'
+    }
+  ]
 
   mounted() {
     try {

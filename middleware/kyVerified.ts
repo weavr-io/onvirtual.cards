@@ -20,12 +20,16 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
           return redirect('/managed-accounts/add')
         }
       } catch (e) {
-        if (consumersStore(store).kyc!.fullDueDiligence! === KYCStatusEnum.PENDING_REVIEW) {
-          return redirect('/managed-accounts')
-        }
+        // if (consumersStore(store).kyc!.fullDueDiligence! === KYCStatusEnum.PENDING_REVIEW) {
+        //   return redirect('/managed-accounts')
+        // }
 
-        if (route.name === 'managed-accounts-add' || route.name === 'managed-accounts') {
-          return redirect('/managed-accounts')
+        if (
+          route.name === 'managed-accounts-add' ||
+          route.name === 'managed-cards-add' ||
+          route.name === 'managed-accounts'
+        ) {
+          return redirect('/managed-accounts/kyc')
         }
       }
     } else {
