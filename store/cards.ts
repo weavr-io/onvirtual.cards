@@ -7,7 +7,6 @@ import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instr
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 
@@ -59,7 +58,7 @@ export default class Cards extends StoreModule {
       return []
     }
 
-    const _entries = this.statement.entry!.filter((transaction) => {
+    const _entries = this.statement.entry?.filter((transaction) => {
       const _shouldDisplay = !['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE'].includes(
         transaction.transactionId.type
       )
@@ -79,7 +78,7 @@ export default class Cards extends StoreModule {
 
     const _out = {}
 
-    _entries.forEach((_entry) => {
+    _entries?.forEach((_entry) => {
       if (_entry.processedTimestamp) {
         const _processedTimestamp = parseInt(_entry.processedTimestamp)
         // @ts-ignore
@@ -130,6 +129,11 @@ export default class Cards extends StoreModule {
   @Mutation
   SET_MANAGED_CARD(_card: ManagedCardModel) {
     this.managedCard = _card
+  }
+
+  @Mutation
+  CLEAR_MANAGED_CARD() {
+    this.managedCard = null
   }
 
   @Action({ rawError: true })
@@ -184,18 +188,6 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getCardStatementPage(request: ManagedCardStatementRequest) {
-    const req = $api.post('/app/api/managed_cards/' + request.id + '/statements/get', request.request)
-
-    req.then((res) => {
-      this.APPEND_STATEMENT(res.data)
-      this.SET_FILTERED_STATEMENT()
-    })
-
-    return req
-  }
-
-  @Action({ rawError: true })
   getManagedCard(id: string) {
     const req = this.store.$apiMulti.managedCards.show(id)
 
@@ -207,14 +199,10 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  freeze(id) {
+  block(id) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post('/app/api/managed_cards/' + id + '/freeze', {})
-
-    req.then((res) => {
-      this.SET_MANAGED_CARD(res.data)
-    })
+    const req = this.store.$apiMulti.managedCards.block(id)
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -224,14 +212,10 @@ export default class Cards extends StoreModule {
   }
 
   @Action({ rawError: true })
-  unfreeze(id) {
+  unblock(id) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post('/app/api/managed_cards/' + id + '/unfreeze', {})
-
-    req.then((res) => {
-      this.SET_MANAGED_CARD(res.data)
-    })
+    const req = this.store.$apiMulti.managedCards.unblock(id)
 
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -246,8 +230,8 @@ export default class Cards extends StoreModule {
 
     const req = this.store.$apiMulti.managedCards.remove(id)
 
-    req.then((res) => {
-      this.SET_MANAGED_CARD(res.data)
+    req.then(() => {
+      this.CLEAR_MANAGED_CARD()
     })
 
     req.finally(() => {

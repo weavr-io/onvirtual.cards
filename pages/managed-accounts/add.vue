@@ -7,15 +7,15 @@
             <b-card-title class="mb-5 text-center font-weight-lighter">
               Select Account Currency
             </b-card-title>
-            <b-form @submit="doAdd">
+            <b-form @submit.prevent="doAdd">
               <b-form-row>
                 <b-col>
                   <b-form-group :state="isInvalid($v.createManagedAccountRequest.currency)" label="Currency">
-                    <b-form-select v-model="createManagedAccountRequest.currency" :options="currencyOptions"/>
+                    <b-form-select v-model="createManagedAccountRequest.currency" :options="currencyOptions" />
                   </b-form-group>
                 </b-col>
               </b-form-row>
-              <loader-button :is-loading="isLoading" button-text="finish" class="mt-5 text-center"/>
+              <loader-button :is-loading="isLoading" button-text="finish" class="mt-5 text-center" />
             </b-form>
           </b-card>
         </b-col>
@@ -24,17 +24,13 @@
   </section>
 </template>
 <script lang="ts">
-import {Component, mixins, Watch} from 'nuxt-property-decorator'
-import {maxLength, required} from 'vuelidate/lib/validators'
+import { Component, mixins, Watch } from 'nuxt-property-decorator'
+import { maxLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
-import {
-  CreateManagedAccountRequest
-} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
-import {CurrencyEnum} from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import AccountsMixin from '~/minixs/AccountsMixin'
-import {
-  ManagedInstrumentStateEnum
-} from "~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum";
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Component({
   components: {
@@ -85,41 +81,39 @@ export default class AddCardPage extends mixins(BaseMixin, AccountsMixin) {
   }
 
   async fetch() {
-    await this.stores.accounts.index(
-            {
-              profileId: this.stores.auth.isConsumer
-                      ? this.$config.profileId.managed_accounts_consumers!
-                      : this.$config.profileId.managed_accounts_corporates!,
-              state: ManagedInstrumentStateEnum.ACTIVE,
-              offset: '0'
-            }
-    ).then(async (res) => {
-      if (parseInt(res.data.count!) < 1) {
-        if (this.isConsumer) {
-          await this.stores.accounts
-                  .create(this.createManagedAccountRequest)
-                  .then(async (res) => {
-                    await this.stores.accounts.upgradeIban(res.data.id)
-                    return this.goToManagedAccountIndex()
-                  })
-                  .catch((err) => {
-                    const data = err.response.data
+    await this.stores.accounts
+      .index({
+        profileId: this.stores.auth.isConsumer
+          ? this.$config.profileId.managed_accounts_consumers!
+          : this.$config.profileId.managed_accounts_corporates!,
+        state: ManagedInstrumentStateEnum.ACTIVE,
+        offset: '0'
+      })
+      .then(async (res) => {
+        if (parseInt(res.data.count!) < 1) {
+          if (this.isConsumer) {
+            await this.stores.accounts
+              .create(this.createManagedAccountRequest)
+              .then(async (res) => {
+                await this.stores.accounts.upgradeIban(res.data.id)
+                return this.goToManagedAccountIndex()
+              })
+              .catch((err) => {
+                const data = err.response.data
 
-                    const error = data.message ? data.message : data.errorCode
+                const error = data.message ? data.message : data.errorCode
 
-                    this.$weavrToastError(error)
-                    this.goToManagedAccountIndex()
-                  })
+                this.$weavrToastError(error)
+                this.goToManagedAccountIndex()
+              })
+          }
+        } else {
+          return this.goToManagedAccountIndex()
         }
-      } else {
-        return this.goToManagedAccountIndex()
-      }
-    })
+      })
   }
 
-  doAdd(evt) {
-    evt.preventDefault()
-
+  doAdd() {
     if (this.$v.createManagedAccountRequest) {
       this.$v.createManagedAccountRequest.$touch()
       if (this.$v.createManagedAccountRequest.$anyError) {
@@ -128,21 +122,21 @@ export default class AddCardPage extends mixins(BaseMixin, AccountsMixin) {
     }
 
     this.stores.accounts
-            .create(this.createManagedAccountRequest)
-            .then(async (res) => {
-              await this.stores.accounts.upgradeIban(res.data.id)
-              return this.goToManagedAccountIndex()
-            })
-            .catch((err) => {
-              const data = err.response.data
+      .create(this.createManagedAccountRequest)
+      .then(async (res) => {
+        await this.stores.accounts.upgradeIban(res.data.id)
+        return this.goToManagedAccountIndex()
+      })
+      .catch((err) => {
+        const data = err.response.data
 
-              const error = data.message ? data.message : data.errorCode
+        const error = data.message ? data.message : data.errorCode
 
-              this.$weavrToastError(error)
-            })
+        this.$weavrToastError(error)
+      })
   }
 
-  @Watch('isConsumer', {immediate: true})
+  @Watch('isConsumer', { immediate: true })
   updateProfileId() {
     this.createManagedAccountRequest.profileId = this.profileId
   }

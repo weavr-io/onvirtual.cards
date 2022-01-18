@@ -1,9 +1,12 @@
 <template>
-  <b-form @submit="submitForm">
+  <b-form @submit.prevent="submitForm">
     <b-row>
       <b-col>
         <h2 class="text-center font-weight-lighter">
-          <template v-if="accountBalance < 0.01">
+          <template v-if="!accountDetails">
+            No account found
+          </template>
+          <template v-else-if="accountBalance < 0.01">
             Not enough funds
           </template>
           <template v-else>
@@ -12,7 +15,29 @@
         </h2>
       </b-col>
     </b-row>
-    <b-row v-if="accountBalance < 0.01" class="py-5 my-5 text-center">
+    <b-row v-if="!accountDetails" class="py-5 my-5 text-center">
+      <b-col>
+        <b-row>
+          <b-col>
+            <h4 class="font-weight-light">
+              You do not have an account to transfer funds from.
+            </h4>
+            <h5 class="font-weight-lighter">
+              Start by creating an account.
+            </h5>
+          </b-col>
+        </b-row>
+        <b-row class="mt-5">
+          <b-col class="text-center">
+            <b-button to="/managed-accounts" variant="secondary">
+              go to accounts
+              <span class="pl-5">-></span>
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-col>
+    </b-row>
+    <b-row v-else-if="accountBalance < 0.01" class="py-5 my-5 text-center">
       <b-col>
         <b-row>
           <b-col>
@@ -26,7 +51,7 @@
         </b-row>
         <b-row class="mt-5">
           <b-col class="text-center">
-            <b-button to="/" variant="secondary">
+            <b-button to="/managed-cards" variant="secondary">
               go to cards
               <span class="pl-5">-></span>
             </b-button>
@@ -68,8 +93,7 @@ import BaseMixin from '~/minixs/BaseMixin'
     request: {
       amount: {
         required,
-        between(value) {
-          // @ts-ignore
+        between(this: TopUpForm, value) {
           return between(0.01, this.accountBalance)(value)
         }
       }
@@ -77,8 +101,6 @@ import BaseMixin from '~/minixs/BaseMixin'
   }
 })
 export default class TopUpForm extends mixins(BaseMixin) {
-  $v
-
   get accounts() {
     return this.stores.accounts.accounts
   }
@@ -86,8 +108,8 @@ export default class TopUpForm extends mixins(BaseMixin) {
   @Prop({ default: '' }) readonly selectedAccount
 
   get invalidMessage() {
-    const _min = this.$v.request.amount.$params.between.min
-    const _max = this.$v.request.amount.$params.between.max
+    const _min = this.$v.request.amount?.$params.between.min
+    const _max = this.$v.request.amount?.$params.between.max
 
     const _currency = this.accountDetails ? this.accountDetails.currency : 'EUR'
     return 'Should be between ' + _currency + ' ' + _min + ' and ' + _currency + ' ' + _max
@@ -101,7 +123,7 @@ export default class TopUpForm extends mixins(BaseMixin) {
 
   get accountDetails() {
     if (this.accounts) {
-      return this.accounts.accounts.find((account) => {
+      return this.accounts.accounts?.find((account) => {
         return account.id === this.selectedAccount.id
       })
     }
@@ -115,14 +137,11 @@ export default class TopUpForm extends mixins(BaseMixin) {
     }
   }
 
-  @Emit() submitForm(e) {
-    e.preventDefault()
-
-    if (this.$v.request) {
-      this.$v.request.$touch()
-      if (this.$v.request.$anyError) {
-        return null
-      }
+  @Emit()
+  submitForm() {
+    this.$v.$touch()
+    if (this.$v.$invalid) {
+      return null
     }
 
     return this.request

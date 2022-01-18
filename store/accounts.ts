@@ -29,7 +29,7 @@ export default class Accounts extends StoreModule {
 
     let total = 0
 
-    this.accounts.accounts.forEach((account) => {
+    this.accounts.accounts?.forEach((account) => {
       if (account.balances.availableBalance) {
         total += account.balances.availableBalance
       }
@@ -124,7 +124,7 @@ export default class Accounts extends StoreModule {
 
     req.then((res) => {
       this.SET_ACCOUNTS(res.data)
-      if (parseInt(res.data.count!) >= 1) {
+      if (res.data.count && res.data.accounts) {
         this.SET_ACCOUNT(res.data.accounts[0])
       }
     })

@@ -33,10 +33,6 @@ import BaseMixin from '~/minixs/BaseMixin'
 
 @Component
 export default class Header extends mixins(BaseMixin) {
-  logout() {
-    return this.stores.auth.logout()
-  }
-
   doLogout() {
     this.logout().then(this.redirectToLogin)
   }

@@ -75,7 +75,7 @@ export default class AccountSelectionForm extends mixins(BaseMixin) {
   }
 
   get formattedAccounts(): { value: string; text: string; html: string }[] {
-    if (!this.accounts) {
+    if (!this.accounts?.accounts) {
       return []
     }
 

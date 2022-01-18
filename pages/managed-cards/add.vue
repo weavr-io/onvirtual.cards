@@ -54,7 +54,7 @@
                 <b-form-row>
                   <b-col>
                     <b-form-group :state="isInvalid($v.createManagedCardRequest.currency)" label="Currency">
-                      <b-form-select v-model="$v.createManagedCardRequest.currency.$model" :options="currencyOptions"/>
+                      <b-form-select v-model="$v.createManagedCardRequest.currency.$model" :options="currencyOptions" />
                     </b-form-group>
                   </b-col>
                 </b-form-row>
@@ -171,7 +171,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
       mode: ManagedCardModeEnum.PREPAID_MODE
     }
 
-    if (+accounts.data.count! >= 1) {
+    if (+accounts.data.count! >= 1 && accounts.data.accounts) {
       createManagedCardRequest.currency = accounts.data.accounts[0].currency as CurrencyEnum
     }
 
@@ -237,7 +237,6 @@ export default class AddCardPage extends mixins(BaseMixin) {
         }
       })
   }
-
 
   currencyOptions = [
     {

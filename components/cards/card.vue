@@ -2,13 +2,13 @@
   <div id="managedCard">
     <b-card
       :bg-variant="bgVariant"
-      :class="{ 'card-frozen': isFrozen }"
+      :class="{ 'card-frozen': isBlocked }"
       no-body
       class="border-0 cards-card shadow-hover-sm"
     >
       <b-card-body class="card-body onvirtual-card">
         <b-aspect :aspect="'1.6:1'" class="overflow-hidden">
-          <b-link :to="'/managed-cards/' + card.id.id + '/statements'">
+          <b-link :to="statementsLink">
             <b-container fluid class="p-0">
               <b-row>
                 <b-col class="card-balance text-right">
@@ -53,35 +53,35 @@
               </b-row>
             </b-container>
           </b-link>
-          <b-button v-if="isActive" class="card-options-button" @click="toggleShowOptions">
+          <b-button v-if="!isDestroyed" class="card-options-button" @click="toggleShowOptions">
             <b-icon icon="three-dots-vertical" />
           </b-button>
         </b-aspect>
       </b-card-body>
     </b-card>
-    <b-row v-if="showOptions && isActive" class="card-options">
+    <b-row v-if="showOptions && !isDestroyed" class="card-options">
       <b-col>
-        <b-link class="mt-3 py-2 d-block text-decoration-none" @click="toggleFreeze">
+        <b-link class="mt-3 py-2 d-block text-decoration-none" @click="toggleBlock">
           <b-row align-v="center">
             <b-col cols="auto">
               <b-img fluid src="/img/freeze-icon.svg" />
             </b-col>
             <b-col>
               <h6 class="m-0 small">
-                <template v-if="!isFrozen">
+                <template v-if="!isBlocked">
                   Freeze card
                 </template>
                 <template v-else>
                   Unfreeze card
                 </template>
               </h6>
-              <p v-if="!isFrozen" class="text-muted m-0 small">
+              <p v-if="!isBlocked" class="text-muted m-0 small">
                 Tap again to unfreeze
               </p>
             </b-col>
           </b-row>
         </b-link>
-        <b-link :to="'/managed-cards/' + card.id.id + '/edit'" class="py-2 d-block text-decoration-none">
+        <b-link :to="editLink" class="py-2 d-block text-decoration-none">
           <b-row align-v="center">
             <b-col cols="auto">
               <b-img fluid src="/img/edit-icon.svg" />
@@ -101,7 +101,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, mixins, Prop } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 import BaseMixin from '~/minixs/BaseMixin'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
@@ -119,65 +119,73 @@ export default class WeavrCard extends mixins(BaseMixin) {
   showOptions: boolean = false
 
   get bgVariant(): string {
-    if (!this.isFrozen) {
+    if (!this.isBlocked) {
       return 'card'
     } else {
       return 'card-disabled'
     }
   }
 
-  get isFrozen() {
-    return false
-    // return Object.entries(this.card.state.state.blockTypes).length > 0 || this.card.state.destroyType !== ''
+  get isBlocked() {
+    return this.card.state.state === ManagedInstrumentStateEnum.BLOCKED
   }
 
   get isActive() {
     return this.card.state.state === ManagedInstrumentStateEnum.ACTIVE
   }
 
-  toggleFreeze() {
-    if (this.isFrozen) {
-      this.unfreezeCard()
+  get isDestroyed() {
+    return this.card.state.state === ManagedInstrumentStateEnum.DESTROYED
+  }
+
+  get editLink() {
+    if (!this.card) return undefined
+    return `/managed-cards/${this.card.id}/edit`
+  }
+
+  get statementsLink() {
+    if (!this.card) return undefined
+    return `/managed-cards/${this.card.id}/statements`
+  }
+
+  toggleBlock() {
+    if (this.isBlocked) {
+      this.unblockCard()
     } else {
-      this.freezeCard()
+      this.blockCard()
     }
   }
 
-  getCards() {
-    return this.$router.push({
-      path: this.$route.path,
-      query: { ...this.$route.query, u: new Date().getTime() + '' }
-    })
-  }
-
-  freezeCard() {
-    this.stores.cards.freeze(this.card.id).then(
-      () => {
-        this.getCards()
-      },
-      (err) => {
+  blockCard() {
+    this.stores.cards
+      .block(this.card.id)
+      .then(this.blocked)
+      .catch((err) => {
         const data = err.response.data
         const error = data.message ? data.message : data.errorCode
         this.$weavrToastError(error)
-      }
-    )
+      })
   }
 
-  unfreezeCard() {
-    this.stores.cards.unfreeze(this.card.id).then(
-      () => {
-        this.getCards()
-      },
-      (err) => {
+  unblockCard() {
+    this.stores.cards
+      .unblock(this.card.id)
+      .then(this.unblocked)
+      .catch((err) => {
         const data = err.response.data
         const error = data.message ? data.message : data.errorCode
         this.$weavrToastError(error)
-      }
-    )
+      })
   }
 
   toggleShowOptions() {
     this.showOptions = !this.showOptions
   }
+
+  @Emit('blocked')
+  blocked() {}
+
+  @Emit('unblocked')
+  unblocked() {}
 }
 </script>

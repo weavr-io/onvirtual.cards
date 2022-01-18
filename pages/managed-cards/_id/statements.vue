@@ -32,8 +32,8 @@
           <b-row align-h="end" align-v="end">
             <b-col class="text-right" col cols="auto">
               <b-button
-                v-if="managedCard.active && !isFrozen"
-                :to="'/transfer?destination=' + managedCard.id.id"
+                v-if="isActive"
+                :to="'/transfer?destination=' + managedCard.id"
                 variant="secondary"
                 class="add-funds"
               >
@@ -82,7 +82,7 @@
               download
             </b-button>
           </div>
-          <div v-if="managedCard.active" class="ml-5">
+          <div v-if="isActive" class="ml-5">
             <b-button
               variant="link"
               class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none"
@@ -126,7 +126,7 @@
     >
       <b-card v-if="managedCard" no-body class="border-0 cards-card" bg-variant="card-purple">
         <b-card-body class="card-body-modal card-body onvirtual-card">
-          <b-link :to="'/managed-cards/' + managedCard.id.id + '/statements'" class="p-5">
+          <b-link :to="'/managed-cards/' + managedCard.id.id + '/statement'" class="p-5">
             <b-container fluid class="p-0">
               <b-row align-h="end">
                 <b-col cols="2" class="text-right">
@@ -210,28 +210,21 @@
 </template>
 
 <script lang="ts">
-import {Component, mixins} from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 
-import {BIcon, BIconThreeDotsVertical, BModal} from 'bootstrap-vue'
+import { BIcon, BIconThreeDotsVertical, BModal } from 'bootstrap-vue'
 
-import {Schemas} from '~/api/Schemas'
-import {cardsStore} from '~/utils/store-accessor'
+import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
 import FiltersMixin from '~/minixs/FiltersMixin'
 import AccountsMixin from '~/minixs/AccountsMixin'
-import {
-  ManagedInstrumentStateEnum
-} from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import {CreateTransferRequest} from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
-import {InstrumentEnum} from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
-import {
-  StatementFiltersRequest
-} from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
-import {
-  ManagedCardStatementRequest
-} from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
-import OrderType = Schemas.OrderType;
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
+import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
+import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import OrderType = Schemas.OrderType
 
 const dot = require('dot-object')
 
@@ -247,7 +240,7 @@ const moment = require('moment')
     BIconThreeDotsVertical
   }
 })
-export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, FiltersMixin, AccountsMixin) {
+export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixin, FiltersMixin, AccountsMixin) {
   $route
 
   // @ts-ignore
@@ -255,11 +248,48 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, Fi
     'card-modal': BModal
   }
 
-  cardId: string = ''
-
   filters!: StatementFiltersRequest
 
   page: number = 0
+
+  async fetch() {
+    const routeQueries = dot.object(this.$route.query)
+    const filters = routeQueries.filters || {}
+
+    if (!filters.fromTimestamp) {
+      filters.fromTimestamp = moment()
+        .startOf('month')
+        .valueOf()
+    }
+
+    if (!filters?.toTimestamp) {
+      filters.toTimestamp = moment()
+        .endOf('month')
+        .valueOf()
+    }
+
+    const statementFilters: StatementFiltersRequest = {
+      showFundMovementsOnly: false,
+      orderByTimestamp: OrderType.DESC,
+      limit: 100,
+      offset: 0,
+      ...filters
+    }
+
+    this.filters = statementFilters
+
+    const _req: ManagedCardStatementRequest = {
+      id: this.cardId,
+      request: statementFilters
+    }
+
+    await this.stores.cards.getCardStatement(_req)
+    await this.stores.cards.getManagedCard(this.cardId)
+  }
+
+  get cardId() {
+    return this.$route.params.id
+  }
 
   get filteredStatement() {
     return this.stores.cards.filteredStatement
@@ -270,6 +300,7 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, Fi
   }
 
   get filterDate() {
+    if (!this.filters) return {}
     return {
       start: this.filters.fromTimestamp,
       end: this.filters.toTimestamp
@@ -284,7 +315,8 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, Fi
   public fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
 
   get months() {
-    return this.monthsFilter(this.managedCard!.creationTimestamp)
+    if (!this.managedCard) return ''
+    return this.monthsFilter(this.managedCard.creationTimestamp)
   }
 
   downloadStatement() {
@@ -318,53 +350,12 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, Fi
     throw new Error('Not yet implemented')
   }
 
-  async asyncData({ store, route }) {
-    const _cardId = route.params.id
-
-    const _routeQueries = dot.object(route.query)
-    const _filters = _routeQueries.filters ? _routeQueries.filters : {}
-
-    if (!_filters.fromTimestamp) {
-      _filters.fromTimestamp = moment()
-        .startOf('month')
-        .valueOf()
-    }
-
-    if (!_filters.toTimestamp) {
-      _filters.toTimestamp = moment()
-        .endOf('month')
-        .valueOf()
-    }
-
-    const _statementFilters: StatementFiltersRequest = {
-      showFundMovementsOnly: false,
-      orderByTimestamp: OrderType.DESC,
-      paging: {
-        limit: 100,
-        offset: 0
-      },
-      ..._filters
-    }
-
-    const _req: ManagedCardStatementRequest = {
-      id: _cardId,
-      request: _statementFilters
-    }
-
-    await cardsStore(store).getCardStatement(_req)
-    await cardsStore(store).getManagedCard(_cardId)
-
-    return { cardId: _cardId, filters: _statementFilters }
-  }
-
   toggleModal() {
     this.$refs['card-modal'].toggle()
   }
 
-  get isFrozen() {
-    // todo: improve frozen state check
-    return this.managedCard && this.managedCard.state.state !== ManagedInstrumentStateEnum.ACTIVE
-    // return Object.entries(this.managedCard!.state.blockTypes).length > 0 || this.managedCard!.state.destroyType !== ''
+  get isActive() {
+    return this.managedCard && this.managedCard.state.state === ManagedInstrumentStateEnum.ACTIVE
   }
 
   confirmDeleteCard() {
@@ -385,15 +376,15 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, Fi
   }
 
   async doDeleteCard() {
-    const _accounts = await this.stores.accounts.index(  {
+    const _accounts = await this.stores.accounts.index({
       profileId: this.stores.auth.isConsumer
-              ? this.$config.profileId.managed_accounts_consumers!
-              : this.$config.profileId.managed_accounts_corporates!,
+        ? this.$config.profileId.managed_accounts_consumers!
+        : this.$config.profileId.managed_accounts_corporates!,
       state: ManagedInstrumentStateEnum.ACTIVE,
       offset: '0'
     })
 
-    if (_accounts.data.count && this.managedCard) {
+    if (_accounts.data.count && _accounts.data.accounts && this.managedCard) {
       if (this.managedCard.balances?.availableBalance && this.managedCard.balances.availableBalance > 0) {
         const _request: CreateTransferRequest = {
           profileId: this.$config.profileId.transfers!,
@@ -414,7 +405,7 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, Fi
       }
       await this.stores.cards.remove(this.cardId)
 
-      this.$router.push('/managed-cards')
+      await this.$router.push('/managed-cards')
     }
   }
 
@@ -422,11 +413,11 @@ export default class ManagedCardsTable extends mixins(BaseMixin, RouterMixin, Fi
     setTimeout(() => {
       this.page++
 
-      const _request: StatementFiltersRequest = { ...this.filters }
-      _request.paging!.offset = this.page * +_request.paging!.limit!
+      const request: StatementFiltersRequest = { ...this.filters }
+      request.offset = this.page * +request.limit!
 
-      this.stores.cards.getCardStatementPage({ id: this.$route.params.id, request: _request }).then((response) => {
-        if (response.data.responseCount < _request.paging!.limit!) {
+      this.stores.cards.getCardStatement({ id: this.$route.params.id, request }).then((response) => {
+        if (!response.data.responseCount || response.data.responseCount < request.limit!) {
           $state.complete()
           console.log('complete')
         } else {

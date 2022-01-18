@@ -41,9 +41,7 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import AccountsMixin from '~/minixs/AccountsMixin'
-import {
-  ManagedInstrumentStateEnum
-} from "~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum";
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Component({
   layout: 'dashboard',
@@ -52,15 +50,15 @@ import {
 export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
   fetch() {
     return this.stores.accounts
-      .index(  {
+      .index({
         profileId: this.stores.auth.isConsumer
-                ? this.$config.profileId.managed_accounts_consumers!
-                : this.$config.profileId.managed_accounts_corporates!,
+          ? this.$config.profileId.managed_accounts_consumers!
+          : this.$config.profileId.managed_accounts_corporates!,
         state: ManagedInstrumentStateEnum.ACTIVE,
         offset: '0'
       })
       .then((res) => {
-        if (parseInt(res.data.count!) >= 1) {
+        if (parseInt(res.data.count!) >= 1 && res.data.accounts) {
           const _accountId = res.data.accounts[0].id
           this.$router.push('/managed-accounts/' + _accountId)
         }

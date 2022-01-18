@@ -46,7 +46,7 @@ export class ManagedCardsApi {
   }
 
   statement(id: IDModel, filters?: StatementFiltersRequest): Promise<AxiosResponse<StatementResponseModel>> {
-    return $axiosMulti.get<StatementResponseModel>(`/managed_cards/${id}/statements`, {
+    return $axiosMulti.get<StatementResponseModel>(`/managed_cards/${id}/statement`, {
       params: filters
     })
   }

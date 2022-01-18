@@ -55,8 +55,8 @@
   </section>
 </template>
 <script lang="ts">
-import {Component, mixins} from 'nuxt-property-decorator'
-import {BIcon, BIconBoxArrowUpRight} from 'bootstrap-vue'
+import { Component, mixins } from 'nuxt-property-decorator'
+import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
 import BaseMixin from '~/minixs/BaseMixin'
 
 @Component({

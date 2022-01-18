@@ -7,7 +7,11 @@
             <account-selection @submit-form="accountSelected" />
           </div>
           <div v-if="screen === 1" class="topup-screen">
-            <top-up :selected-account="createTransferRequest.source" @submit-form="topUpSelected" />
+            <top-up
+              v-if="createTransferRequest"
+              :selected-account="createTransferRequest.source"
+              @submit-form="topUpSelected"
+            />
           </div>
           <div v-if="screen === 2" class="topup-screen">
             <top-up-success />
@@ -18,14 +22,12 @@
   </b-container>
 </template>
 <script lang="ts">
-import {Component, mixins} from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
-import {accountsStore, cardsStore} from '~/utils/store-accessor'
-import {CreateTransferRequest} from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
-import {InstrumentEnum} from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
-import {
-  ManagedInstrumentStateEnum
-} from "~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum";
+import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
+import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
 @Component({
   components: {
@@ -36,6 +38,36 @@ import {
   }
 })
 export default class TransfersPage extends mixins(BaseMixin) {
+  createTransferRequest: DeepNullable<CreateTransferRequest> | null = null
+
+  async fetch() {
+    await this.stores.cards.getCards()
+    const accounts = await this.stores.accounts.index({
+      profileId: this.stores.auth.isConsumer
+        ? this.$config.profileId.managed_accounts_consumers!
+        : this.$config.profileId.managed_accounts_corporates!,
+      state: ManagedInstrumentStateEnum.ACTIVE,
+      offset: '0'
+    })
+    const firstAccount = accounts.data.accounts && accounts.data.accounts[0]
+
+    this.createTransferRequest = {
+      profileId: this.$config.profileId.transfers!,
+      source: {
+        type: InstrumentEnum.managedAccounts,
+        id: firstAccount?.id || ''
+      },
+      destination: {
+        type: InstrumentEnum.managedCards,
+        id: this.$route.query.destination as string
+      },
+      destinationAmount: {
+        currency: firstAccount?.currency || CurrencyEnum.EUR,
+        amount: 0
+      }
+    }
+  }
+
   get cards() {
     return this.stores.cards.cards?.cards
   }
@@ -51,7 +83,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
   }
 
   accountSelected(_data) {
-    if (_data != null) {
+    if (_data != null && this.createTransferRequest) {
       this.createTransferRequest.source!.type = _data.source.type
       this.createTransferRequest.source!.id = _data.source.id
       this.nextScreen()
@@ -59,13 +91,11 @@ export default class TransfersPage extends mixins(BaseMixin) {
   }
 
   topUpSelected(_data) {
-    if (_data != null) {
+    if (_data != null && this.createTransferRequest) {
       this.createTransferRequest.destinationAmount!.amount = _data.amount * 100
       this.doTransfer()
     }
   }
-
-  public createTransferRequest!: DeepNullable<CreateTransferRequest>
 
   get formattedCards(): { value: number; text: string }[] {
     return (
@@ -93,41 +123,6 @@ export default class TransfersPage extends mixins(BaseMixin) {
     try {
       this.$segment.track('Initiated Transfer', {})
     } catch (e) {}
-  }
-
-  async asyncData({ store, route }) {
-    await cardsStore(store).getCards({
-      offset: 0,
-      limit: 0
-    })
-    const accounts = await accountsStore(store).index(  {
-      profileId: this.stores.auth.isConsumer
-              ? this.$config.profileId.managed_accounts_consumers!
-              : this.$config.profileId.managed_accounts_corporates!,
-      state: ManagedInstrumentStateEnum.ACTIVE,
-      offset: '0'
-    })
-    const firstAccount = accounts.data.accounts[0]
-
-    const request: CreateTransferRequest = {
-      profileId: this.$config.profileId.transfers!,
-      source: {
-        type: InstrumentEnum.managedAccounts,
-        id: firstAccount.id
-      },
-      destination: {
-        type: InstrumentEnum.managedCards,
-        id: route.query.destination
-      },
-      destinationAmount: {
-        currency: firstAccount.currency,
-        amount: 0
-      }
-    }
-
-    return {
-      createTransferRequest: request
-    }
   }
 
   doTransfer() {

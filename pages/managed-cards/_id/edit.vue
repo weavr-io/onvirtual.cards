@@ -154,20 +154,12 @@ export default class AddCardPage extends mixins(BaseMixin) {
       })
   }
 
-  async asyncData({ store, route }) {
-    const _cardId = route.params.id
+  async fetch() {
+    const card = await this.stores.cards.getManagedCard(this.cardId)
+    const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
 
-    const _card = await cardsStore(store).getManagedCard(_cardId)
-
-    const _parsedNumber = parsePhoneNumberFromString(_card.data.cardholderMobileNumber)
-
-    return {
-      cardId: _cardId,
-      mobile: {
-        countryCode: _parsedNumber?.country,
-        cardholderMobileNumber: _parsedNumber?.nationalNumber
-      }
-    }
+    this.mobile.countryCode = parsedNumber?.country || ''
+    this.mobile.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
   }
 
   phoneUpdate(number) {
