@@ -1,6 +1,5 @@
 import { Middleware } from '@nuxt/types'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
-import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 const kyVerified: Middleware = async ({ store, route, redirect }) => {
   const authStoreInstance = authStore(store)
@@ -11,10 +10,7 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
           return redirect('/managed-accounts/kyc')
         }
 
-        const consumerStoreInstance = consumersStore(store)
-        await consumerStoreInstance.get()
-        await consumerStoreInstance.getKYC()
-        await consumerStoreInstance.checkKYC()
+        await consumersStore(store).checkKYC()
 
         if (route.name === 'managed-accounts-kyc') {
           return redirect('/managed-accounts/add')
@@ -38,10 +34,7 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
           return redirect('/managed-accounts/kyb')
         }
 
-        const corporateStoreInstance = corporatesStore(store)
-        await corporateStoreInstance.get()
-        await corporateStoreInstance.getKyb()
-        await corporateStoreInstance.checkKYB()
+        await corporatesStore(store).checkKYB()
 
         if (route.name === 'managed-accounts-kyb') {
           return redirect('/managed-accounts')

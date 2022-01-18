@@ -102,13 +102,14 @@ export default class Consumers extends StoreModule {
 
   @Action({ rawError: true })
   async checkKYC() {
-    if (this.kyc === undefined || this.kyc === null) {
+    if (!this.consumer) {
+      await this.get()
+    }
+    if (!this.kyc) {
       await this.getKYC()
     }
 
-    const approved = this.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
-
-    if (!approved) {
+    if (this.kyc?.fullDueDiligence !== KYCStatusEnum.APPROVED) {
       return Promise.reject(new Error('KYC not approved'))
     } else {
       return Promise.resolve()

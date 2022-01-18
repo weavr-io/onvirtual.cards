@@ -116,13 +116,14 @@ export default class Corporates extends StoreModule {
 
   @Action({ rawError: true })
   async checkKYB() {
-    if (this.kyb === undefined || this.kyb === null) {
+    if (!this.corporate) {
+      await this.get()
+    }
+    if (!this.kyb) {
       await this.getKyb
     }
 
-    const _res = this.kyb?.kybStatus === KYBStatusEnum.APPROVED
-
-    if (!_res) {
+    if (this.kyb?.kybStatus !== KYBStatusEnum.APPROVED) {
       return Promise.reject(new Error('KYB not approved'))
     } else {
       return Promise.resolve()
