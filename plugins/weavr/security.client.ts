@@ -9,43 +9,45 @@ import WeavrKycBeneficiaries from '~/plugins/weavr/components/WeavrKycBeneficiar
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 import { Plugin } from '~/node_modules/@nuxt/types'
 
-// @ts-ignore
-const weavrComponents = window.weavr.init(config.api.uiKey, {
-  fonts: [
-    {
-      cssSrc:
-        'https://fonts.googleapis.com/css?family=Be+Vietnam:100,100i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i'
-    }
-  ]
-})
-
-// @ts-ignore
-Vue.prototype.$weavrComponents = weavrComponents
-
-function asyncAssociate(token) {
-  return new Promise((resolve, reject) => {
-    // debugger
-    weavrComponents.setUserToken(
-      token,
-      (res) => {
-        resolve(res)
-      },
-      (e) => {
-        reject(e)
-      }
-    )
-  })
-}
-
-Vue.component('WeavrPasswordInput', WeavrPasswordInput)
-Vue.component('WeavrCardNumberSpan', WeavrCardNumberSpan)
-Vue.component('WeavrCvvSpan', WeavrCVVSpan)
-
-Vue.component('WeavrKyb', WeavrKyb)
-Vue.component('WeavrKycBeneficiaries', WeavrKycBeneficiaries)
-Vue.component('WeavrKyc', WeavrKyc)
 
 const weavrModules: Plugin = (context, inject) => {
+  // @ts-ignore
+  const weavrComponents = window.weavr.init(context.$config.uiKey, {
+    fonts: [
+      {
+        cssSrc:
+          'https://fonts.googleapis.com/css?family=Be+Vietnam:100,100i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i'
+      }
+    ]
+  })
+
+  // @ts-ignore
+  Vue.prototype.$weavrComponents = weavrComponents
+
+  function asyncAssociate(token) {
+    return new Promise((resolve, reject) => {
+      // debugger
+      weavrComponents.setUserToken(
+        token,
+        (res) => {
+          resolve(res)
+        },
+        (e) => {
+          reject(e)
+        }
+      )
+    })
+  }
+
+  Vue.component('WeavrPasswordInput', WeavrPasswordInput)
+  Vue.component('WeavrCardNumberSpan', WeavrCardNumberSpan)
+  Vue.component('WeavrCvvSpan', WeavrCVVSpan)
+
+  Vue.component('WeavrKyb', WeavrKyb)
+  Vue.component('WeavrKycBeneficiaries', WeavrKycBeneficiaries)
+  Vue.component('WeavrKyc', WeavrKyc)
+
+
   inject('weavrSetUserToken', (token) => {
     return asyncAssociate(token)
   })

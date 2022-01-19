@@ -14,6 +14,7 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import config from "~/config";
 
 @Component({})
 export default class IndexPage extends mixins(BaseMixin) {

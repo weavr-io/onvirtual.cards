@@ -4,14 +4,45 @@ const config = {
     host: '0.0.0.0',
     port: 5000
   },
+  publicRuntimeConfig: {
+    multiApi: {
+      baseUrl: process.env.MULTI_BASE_URL,
+      tenantId: process.env.TENANT_ID,
+      programmeId: '' + process.env.APPLICATION_ID,
+      secretKey: process.env.SECRET_KEY,
+      uiKey: process.env.UI_KEY
+    },
+    api: {
+      baseUrl: process.env.BASE_URL,
+      tenantId: process.env.TENANT_ID,
+      programmeId: '' + process.env.APPLICATION_ID,
+      secretKey: process.env.SECRET_KEY,
+      uiKey: process.env.UI_KEY
+    },
+    profileId: {
+      consumers: process.env.CONSUMERS_PROFILE_ID,
+      corporates: process.env.CORPORATES_PROFILE_ID,
+      managed_cards_consumers: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID,
+      managed_cards_corporates: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID,
+      managed_accounts_consumers: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID,
+      managed_accounts_corporates: process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID,
+      transfers: process.env.TRANSFERS_PROFILE_ID,
+      send: process.env.SEND_PROFILE_ID
+    },
+    app: {
+      kyb_required: process.env.KYB_REQUIRED ? JSON.parse(process.env.KYB_REQUIRED) : true,
+      view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true,
+      sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : true
+    }
+  },
   /*
    ** Headers of the page
    */
   head: {
     title: 'onvirtual.cards',
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      {charset: 'utf-8'},
+      {name: 'viewport', content: 'width=device-width, initial-scale=1'},
       {
         hid: 'description',
         name: 'description',
@@ -26,7 +57,7 @@ const config = {
     ],
 
     link: [
-      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+      {rel: 'apple-touch-icon', href: '/apple-touch-icon.png'},
       {
         rel: 'icon',
         type: 'image/png',
@@ -39,8 +70,8 @@ const config = {
         sizes: '16x16',
         href: '/favicon-16x16.png'
       },
-      { rel: 'manifest', href: '/site.webmanifest' },
-      { rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
+      {rel: 'manifest', href: '/site.webmanifest'},
+      {rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5'},
       {
         rel: 'stylesheet',
         href:
@@ -60,15 +91,15 @@ const config = {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    { src: '~/plugins/weavr/security.client.ts', ssr: false },
-    { src: '~/plugins/vuelidate' },
-    { src: '~/plugins/WeavrVueFilters.ts', ssr: false },
-    { src: '~/plugins/PhoneNumberInput.ts', ssr: false },
-    { src: '~/plugins/flatpickr.ts', ssr: false },
-    { src: '~/plugins/InfiniteLoading.ts', ssr: false },
-    { src: '~/plugins/axios.ts' },
-    { src: '~/plugins/axios-accessor.ts' },
-    { src: '~/plugins/weavr-multi/index.ts' }
+    {src: '~/plugins/weavr/security.client.ts', ssr: false},
+    {src: '~/plugins/vuelidate'},
+    {src: '~/plugins/WeavrVueFilters.ts', ssr: false},
+    {src: '~/plugins/PhoneNumberInput.ts', ssr: false},
+    {src: '~/plugins/flatpickr.ts', ssr: false},
+    {src: '~/plugins/InfiniteLoading.ts', ssr: false},
+    {src: '~/plugins/axios.ts'},
+    {src: '~/plugins/axios-accessor.ts'},
+    {src: '~/plugins/weavr-multi/index.ts'}
   ],
   /*
    ** Nuxt.js modules

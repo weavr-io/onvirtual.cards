@@ -1,5 +1,4 @@
 import { Plugin } from '@nuxt/types'
-import config from '~/config'
 import { authStore, errorsStore } from '~/utils/store-accessor'
 
 const axiosPlugin: Plugin = (ctxt, inject) => {
@@ -11,7 +10,7 @@ const axiosPlugin: Plugin = (ctxt, inject) => {
         Accept: 'application/json'
       }
     },
-    baseURL: config.api.baseUrl
+    baseURL: ctxt.$config.api.baseUrl
   })
 
   const axiosMulti = ctxt.$axios.create({
@@ -21,7 +20,7 @@ const axiosPlugin: Plugin = (ctxt, inject) => {
         Accept: 'application/json'
       }
     },
-    baseURL: config.multiApi.baseUrl
+    baseURL: ctxt.$config.multiApi.baseUrl
   })
 
   function onRequest(config) {
