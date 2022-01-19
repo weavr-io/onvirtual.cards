@@ -11,9 +11,6 @@
               <b-alert :show="showError" variant="danger">
                 Error creating new card. Contact support if problem persists.
               </b-alert>
-              <pre>
-                {{ createManagedCardRequest }}
-              </pre>
               <b-form v-if="!showError" @submit.prevent="doAdd">
                 <b-form-row v-if="showNameOnCardField">
                   <b-col>

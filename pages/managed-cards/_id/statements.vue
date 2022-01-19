@@ -1,100 +1,101 @@
 <template>
   <section>
     <b-container>
-      <b-row v-if="managedCard" align-v="end" class="mb-5 border-bottom pb-3">
-        <b-col cols="1">
-          <b-link class="card-view-details" @click="toggleModal">
-            view details
-          </b-link>
-        </b-col>
-        <b-col>
-          <b-row>
-            <b-col>
-              <p class="card-name m-0">
-                {{ managedCard.nameOnCard }}
-              </p>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col>
-              <span class="card-number"> •••• {{ managedCard.cardNumberLastFour }} </span>
-
-              <span class="card-expiry ml-5">
-                <span class="card-expiry-label">EXP</span>
-                <span class="card-expiry-value">
-                  {{ managedCard.expiryMmyy | expiryMmyy }}
-                </span>
-              </span>
-            </b-col>
-          </b-row>
-        </b-col>
-        <b-col>
-          <b-row align-h="end" align-v="end">
-            <b-col class="text-right" col cols="auto">
-              <b-button
-                v-if="isActive"
-                :to="'/transfer?destination=' + managedCard.id"
-                variant="secondary"
-                class="add-funds"
-              >
-                +
-              </b-button>
-            </b-col>
-            <b-col col cols="auto">
-              <div class="card-balance">
-                <div class="card-balance-label text-muted">
-                  balance
-                </div>
-                <div class="card-balance-value">
-                  {{ managedCard.balances.availableBalance | weavr_currency(managedCard.currency) }}
-                </div>
-              </div>
-            </b-col>
-          </b-row>
-        </b-col>
-      </b-row>
-      <b-row class="mb-3" align-v="center">
-        <b-col>
-          <h6 class="font-weight-lighter">
-            <b-row align-v="center">
-              <b-col cols="auto">
-                All Transactions
-              </b-col>
-              <b-col cols="auto">
-                <b-form-select
-                  :options="months"
-                  :value="filterDate"
-                  class="w-auto d-inline-block"
-                  @change="filterMonthChange"
-                />
+      <template v-if="managedCard">
+        <b-row align-v="end" class="mb-5 border-bottom pb-3">
+          <b-col cols="1">
+            <b-link class="card-view-details" @click="toggleModal">
+              view details
+            </b-link>
+          </b-col>
+          <b-col>
+            <b-row>
+              <b-col>
+                <p class="card-name m-0">
+                  {{ managedCard.nameOnCard }}
+                </p>
               </b-col>
             </b-row>
-          </h6>
-        </b-col>
-        <b-col lg="7" xs="14" class="d-flex justify-content-end">
-          <div>
-            <b-button
-              variant="link"
-              class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none"
-              @click="downloadStatement"
-            >
-              <download-icon class="mr-2" />
-              download
-            </b-button>
-          </div>
-          <div v-if="isActive" class="ml-5">
-            <b-button
-              variant="link"
-              class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none"
-              @click="confirmDeleteCard"
-            >
-              <delete-icon class="mr-2" />
-              delete card
-            </b-button>
-          </div>
-        </b-col>
-      </b-row>
+            <b-row>
+              <b-col>
+                <span class="card-number"> •••• {{ managedCard.cardNumberLastFour }} </span>
 
+                <span class="card-expiry ml-5">
+                  <span class="card-expiry-label">EXP</span>
+                  <span class="card-expiry-value">
+                    {{ managedCard.expiryMmyy | expiryMmyy }}
+                  </span>
+                </span>
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col>
+            <b-row align-h="end" align-v="end">
+              <b-col class="text-right" col cols="auto">
+                <b-button
+                  v-if="isActive"
+                  :to="'/transfer?destination=' + managedCard.id"
+                  variant="secondary"
+                  class="add-funds"
+                >
+                  +
+                </b-button>
+              </b-col>
+              <b-col col cols="auto">
+                <div class="card-balance">
+                  <div class="card-balance-label text-muted">
+                    balance
+                  </div>
+                  <div class="card-balance-value">
+                    {{ managedCard.balances.availableBalance | weavr_currency(managedCard.currency) }}
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+          </b-col>
+        </b-row>
+        <b-row class="mb-3" align-v="center">
+          <b-col>
+            <h6 class="font-weight-lighter">
+              <b-row align-v="center">
+                <b-col cols="auto">
+                  All Transactions
+                </b-col>
+                <b-col cols="auto">
+                  <b-form-select
+                    :options="months"
+                    :value="filterDate"
+                    class="w-auto d-inline-block"
+                    @change="filterMonthChange"
+                  />
+                </b-col>
+              </b-row>
+            </h6>
+          </b-col>
+          <b-col lg="7" xs="14" class="d-flex justify-content-end">
+            <div>
+              <b-button
+                variant="link"
+                class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none"
+                @click="downloadStatement"
+              >
+                <download-icon class="mr-2" />
+                download
+              </b-button>
+            </div>
+            <div v-if="isActive" class="ml-5">
+              <b-button
+                variant="link"
+                class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none"
+                @click="confirmDeleteCard"
+              >
+                <delete-icon class="mr-2" />
+                delete card
+              </b-button>
+            </div>
+          </b-col>
+        </b-row>
+      </template>
       <b-row v-if="filteredStatement">
         <b-col>
           <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
@@ -116,7 +117,7 @@
     </b-container>
 
     <b-modal
-      ref="card-modal"
+      id="cardModal"
       hide-footer
       centered
       header-class="border-0"
@@ -126,7 +127,7 @@
     >
       <b-card v-if="managedCard" no-body class="border-0 cards-card" bg-variant="card-purple">
         <b-card-body class="card-body-modal card-body onvirtual-card">
-          <b-link :to="'/managed-cards/' + managedCard.id.id + '/statement'" class="p-5">
+          <b-link :to="'/managed-cards/' + managedCard.id + '/statements'" class="p-5">
             <b-container fluid class="p-0">
               <b-row align-h="end">
                 <b-col cols="2" class="text-right">
@@ -146,7 +147,7 @@
                     <b-col>
                       <div class="card-number">
                         <weavr-card-number-span
-                          :token="managedCard.cardNumber"
+                          :token="managedCard.cardNumber.value"
                           :base-style="{
                             fontFamily: '\'Be Vietnam\', sans-serif',
                             color: '#6C1C5C',
@@ -183,7 +184,7 @@
                     </div>
                     <div class="card-cvv-value">
                       <weavr-cvv-span
-                        :token="managedCard.cvv"
+                        :token="managedCard.cvv.value"
                         :base-style="{
                           fontFamily: '\'Be Vietnam\', sans-serif',
                           color: '#6C1C5C',
@@ -212,7 +213,7 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 
-import { BIcon, BIconThreeDotsVertical, BModal } from 'bootstrap-vue'
+import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
@@ -242,11 +243,6 @@ const moment = require('moment')
 })
 export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixin, FiltersMixin, AccountsMixin) {
   $route
-
-  // @ts-ignore
-  $refs: {
-    'card-modal': BModal
-  }
 
   filters!: StatementFiltersRequest
 
@@ -285,6 +281,8 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
 
     await this.stores.cards.getCardStatement(_req)
     await this.stores.cards.getManagedCard(this.cardId)
+
+    this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
   }
 
   get cardId() {
@@ -351,7 +349,7 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
   }
 
   toggleModal() {
-    this.$refs['card-modal'].toggle()
+    this.$bvModal.show('cardModal')
   }
 
   get isActive() {

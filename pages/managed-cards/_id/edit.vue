@@ -8,20 +8,7 @@
               Update Card
             </b-card-title>
             <b-card-body>
-              <b-form @submit="doAdd">
-                <b-form-row v-if="!isConsumer">
-                  <b-col>
-                    <b-form-group label="Name of Person using Card">
-                      <b-form-input
-                        v-model="$v.updateManagedCardRequest.body.nameOnCard.$model"
-                        :state="isInvalid($v.updateManagedCardRequest.body.nameOnCard)"
-                        placeholder="eg. Elon Musk"
-                        disabled
-                      />
-                      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-                    </b-form-group>
-                  </b-col>
-                </b-form-row>
+              <b-form @submit.prevent="doUpdate">
                 <b-form-row v-if="!isConsumer">
                   <b-col>
                     <b-form-group label="CARDHOLDER MOBILE NUMBER">
@@ -45,8 +32,8 @@
                   <b-col>
                     <b-form-group label="CUSTOM CARD NAME">
                       <b-form-input
-                        v-model="$v.updateManagedCardRequest.body.friendlyName.$model"
-                        :state="isInvalid($v.updateManagedCardRequest.body.friendlyName)"
+                        v-model="$v.updateManagedCardRequest.friendlyName.$model"
+                        :state="isInvalid($v.updateManagedCardRequest.friendlyName)"
                         placeholder="eg. travel expenses"
                       />
                       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -67,7 +54,6 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import BaseMixin from '~/minixs/BaseMixin'
-import { cardsStore } from '~/utils/store-accessor'
 import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 
 @Component({
@@ -77,55 +63,63 @@ import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/manag
   },
   validations: {
     updateManagedCardRequest: {
-      body: {
-        friendlyName: {
-          required,
-          maxLength: maxLength(50)
-        },
-        cardholderMobileNumber: {
-          // eslint-disable-next-line
-          requiredIf: requiredIf(function() {
-            // @ts-ignore
-            return !this.isConsumer
-          }),
-          cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
-        },
-        nameOnCard: {
-          // eslint-disable-next-line
-          requiredIf: requiredIf(function() {
-            // @ts-ignore
-            return !this.isConsumer
-          }),
-          maxLength: maxLength(30)
-        }
+      friendlyName: {
+        required,
+        maxLength: maxLength(50)
+      },
+      cardholderMobileNumber: {
+        // eslint-disable-next-line
+        requiredIf: requiredIf(function() {
+          // @ts-ignore
+          return !this.isConsumer
+        }),
+        cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
+      },
+      nameOnCard: {
+        // eslint-disable-next-line
+        requiredIf: requiredIf(function() {
+          // @ts-ignore
+          return !this.isConsumer
+        }),
+        maxLength: maxLength(30)
       }
     }
   }
 })
-export default class AddCardPage extends mixins(BaseMixin) {
-  get isLoading() {
-    return this.stores.cards.isLoading
-  }
-
-  get auth() {
-    return this.stores.auth.auth
-  }
-
+export default class EditCardPage extends mixins(BaseMixin) {
   numberIsValid: boolean | null = null
   mobile = {
     countryCode: 'GB',
     cardholderMobileNumber: ''
   }
 
-  updateManagedCardRequest!: UpdateManagedCardRequest
+  isUpdating = false
+  updateManagedCardRequest: UpdateManagedCardRequest = {}
+
+  async fetch() {
+    const card = await this.stores.cards.getManagedCard(this.cardId)
+    const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
+
+    this.updateManagedCardRequest = {
+      friendlyName: card.data.friendlyName
+    }
+    this.mobile.countryCode = parsedNumber?.country || ''
+    this.mobile.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
+  }
+
+  get isLoading() {
+    return this.stores.cards.isLoading || this.isUpdating || this.$fetchState.pending
+  }
+
+  get auth() {
+    return this.stores.auth.auth
+  }
 
   get cardId() {
     return this.$route.params.id
   }
 
-  doAdd(evt) {
-    evt.preventDefault()
-
+  doUpdate() {
     if (this.isConsumer) {
       this.numberIsValid = true
     }
@@ -140,6 +134,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
         return
       }
     }
+    this.isUpdating = true
 
     this.stores.cards
       .update({
@@ -152,14 +147,9 @@ export default class AddCardPage extends mixins(BaseMixin) {
         } catch (e) {}
         this.$router.push('/managed-cards')
       })
-  }
-
-  async fetch() {
-    const card = await this.stores.cards.getManagedCard(this.cardId)
-    const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
-
-    this.mobile.countryCode = parsedNumber?.country || ''
-    this.mobile.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
+      .finally(() => {
+        this.isUpdating = false
+      })
   }
 
   phoneUpdate(number) {
