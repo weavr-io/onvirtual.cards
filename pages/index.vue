@@ -11,14 +11,16 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import {Component, mixins} from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import {authStore, consumersStore, corporatesStore} from '~/utils/store-accessor'
 import config from "~/config";
 
 @Component({})
 export default class IndexPage extends mixins(BaseMixin) {
-  async asyncData({ store, redirect }) {
+
+
+  async asyncData({store, redirect}) {
     const isLoggedIn = authStore(store).isLoggedIn
 
     if (isLoggedIn) {
