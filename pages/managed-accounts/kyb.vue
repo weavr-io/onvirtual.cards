@@ -46,8 +46,33 @@
               </div>
             </div>
           </template>
-          <template v-else>
+          <template v-else-if="!kybErrorCode">
             <weavr-kyb :reference="reference" :options="kybOptions" @message="handleSumSubMessage" />
+          </template>
+          <template v-else>
+            <template v-if="isKybApproved">
+              <h3>Necessary due diligence approved</h3>
+              <p>The necessary due diligence has already been approved</p>
+              <div class="text-center">
+                <b-button to="/managed-accounts">
+                  back to accounts
+                </b-button>
+              </div>
+            </template>
+            <template v-else-if="isKybPending">
+              <h3>Due diligence pending</h3>
+              <p>The submitted company documents and information are pending approval.</p>
+              <div class="text-center pt-5">
+                <b-button to="/">
+                  back to dashboard
+                </b-button>
+              </div>
+            </template>
+            <template v-else>
+              <h3>Issues with your due diligence</h3>
+              <p v-if="isKybRejected">The submitted company documents and information were rejected.</p>
+              <small class="text-muted">{{ kybErrorCode }}</small>
+            </template>
           </template>
         </b-col>
       </b-row>
@@ -58,6 +83,7 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
 import BaseMixin from '~/minixs/BaseMixin'
+import { KYBErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBErrorCodeEnum'
 
 @Component({
   components: {
@@ -68,6 +94,7 @@ import BaseMixin from '~/minixs/BaseMixin'
 })
 export default class KybPage extends mixins(BaseMixin) {
   reference: string = ''
+  kybErrorCode: KYBErrorCodeEnum | null = null
 
   get kybOptions() {
     return {
@@ -82,16 +109,34 @@ export default class KybPage extends mixins(BaseMixin) {
   }
 
   async fetch() {
-    if (this.$config.app.sumsub_enabled) {
+    if (this.sumsSubEnabled) {
       try {
-        await this.stores.corporates.startKYB().then((res) => {
-          this.reference = res.data.reference
-          this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
-        })
+        await this.stores.corporates
+          .startKYB()
+          .then((res) => {
+            console.log('START KYB')
+            this.reference = res.data.reference
+            this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+          })
+          .catch((res) => {
+            if (res.response.data.errorCode) this.kybErrorCode = res.response.data.errorCode
+          })
       } catch (e) {
         console.log(e)
       }
     }
+  }
+
+  get isKybPending() {
+    return this.kybErrorCode === KYBErrorCodeEnum.KYB_PENDING_REVIEW
+  }
+
+  get isKybApproved() {
+    return this.kybErrorCode === KYBErrorCodeEnum.KYB_ALREADY_APPROVED
+  }
+
+  get isKybRejected() {
+    return this.kybErrorCode === KYBErrorCodeEnum.KYB_PERMANENTLY_REJECTED
   }
 
   handleSumSubMessage(message) {

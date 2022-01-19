@@ -14,10 +14,12 @@
               deleted cards
             </b-form-checkbox>
           </b-col>
-          <b-col v-if="identityVerified" class="text-right">
-            <b-button to="/managed-cards/add" variant="border-primary">
-              + add new card
-            </b-button>
+          <b-col class="text-right d-flex justify-content-end">
+            <div v-b-tooltip.hover :title="identityVerificationMessage">
+              <b-button to="/managed-cards/add" :disabled="!identityVerified" variant="border-primary">
+                + add new card
+              </b-button>
+            </div>
           </b-col>
         </b-row>
       </b-container>
@@ -115,6 +117,11 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin) {
 
   get showKybAlert(): boolean {
     return !!this.stores.corporates.kyb && this.stores.corporates.kyb.kybStatus !== KYBStatusEnum.APPROVED
+  }
+
+  get identityVerificationMessage() {
+    if (!this.identityVerified) return 'Pending identity verification'
+    return undefined
   }
 }
 </script>
