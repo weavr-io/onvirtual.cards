@@ -119,11 +119,7 @@ export default class WeavrCard extends mixins(BaseMixin) {
   showOptions: boolean = false
 
   get bgVariant(): string {
-    if (!this.isBlocked) {
-      return 'card'
-    } else {
-      return 'card-disabled'
-    }
+    return this.isActive ? 'card' : 'card-disabled'
   }
 
   get isBlocked() {

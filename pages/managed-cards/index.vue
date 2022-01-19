@@ -4,14 +4,20 @@
       <b-container class="mb-5 mt-n4">
         <b-row align-v="center">
           <b-col>
-            <b-form-checkbox v-if="showDeletedSwitch" v-model="showDeleted" name="check-button" switch>
-              <template v-if="showDeleted">
+            <b-form-checkbox
+              v-if="showDestroyedSwitch"
+              :checked="showDestroyed"
+              name="check-button"
+              switch
+              @change="showDestroyedChanged"
+            >
+              <template v-if="showDestroyed">
                 Hide
               </template>
               <template v-else>
                 Show
               </template>
-              deleted cards
+              destroyed cards
             </b-form-checkbox>
           </b-col>
           <b-col class="text-right d-flex justify-content-end">
@@ -54,6 +60,7 @@ import { Component, mixins, Watch } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import CardsMixin from '~/minixs/CardsMixin'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Component({
   layout: 'dashboard',
@@ -65,54 +72,41 @@ import CardsMixin from '~/minixs/CardsMixin'
   middleware: ['kyVerified']
 })
 export default class CardsPage extends mixins(BaseMixin, CardsMixin) {
-  public showDeleted: boolean = false
+  showDestroyedSwitch = true
 
-  public showDeletedSwitch: boolean = false
+  get showDestroyed() {
+    return this.$route.query.showDestroyed === 'true'
+  }
+
+  async fetch() {
+    const state = this.showDestroyed
+      ? undefined
+      : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED].join(',')
+    await this.stores.cards.getCards({
+      state
+    })
+  }
+
+  mounted() {
+    this.stores.cards.hasDestroyedCards().then((res) => {
+      this.showDestroyedSwitch = res
+    })
+  }
 
   get hasAlert() {
     return this.stores.view.hasAlert
   }
 
-  // async asyncData({ store, route }) {
-  // if (route.query.showDeleted) {
-  //   _active = NullableBoolean.FALSE
-  // } else {
-  //   _active = NullableBoolean.TRUE
-  // }
-  //
-  // await cardsStore(store).getCards({
-  //   paging: {
-  //     offset: 0,
-  //     limit: 0
-  //   },
-  //   active: _active
-  // })
-  //
-  // const _showDeletedSwitch = await $api.post('/app/api/managed_cards/get', {
-  //   paging: {
-  //     offset: 0,
-  //     limit: 1
-  //   },
-  //   active: NullableBoolean.FALSE
-  // })
-  //
-  // return {
-  //   showDeleted: route.query.showDeleted,
-  //   showDeletedSwitch: _showDeletedSwitch.data.count > 0
-  // }
-  // }
-
-  fetch() {
-    return this.stores.cards.getCards()
+  async showDestroyedChanged(val) {
+    await this.$router.push({
+      path: this.$route.path,
+      query: { showDestroyed: val }
+    })
   }
 
-  @Watch('showDeleted')
-  showDeletedChanged(val) {
-    this.showDeleted = val
-    this.$router.push({
-      path: this.$route.path,
-      query: { showDeleted: val }
-    })
+  @Watch('showDestroyed')
+  queryParamChanged() {
+    this.$fetch()
   }
 
   get showKybAlert(): boolean {

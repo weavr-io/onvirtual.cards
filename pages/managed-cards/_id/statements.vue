@@ -215,6 +215,7 @@ import { Component, mixins } from 'nuxt-property-decorator'
 
 import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 
+import { AxiosError, AxiosResponse } from 'axios'
 import { Schemas } from '~/api/Schemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
@@ -372,36 +373,41 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
   }
 
   async doDeleteCard() {
-    const _accounts = await this.stores.accounts.index({
-      profileId: this.stores.auth.isConsumer
-        ? this.$config.profileId.managed_accounts_consumers!
-        : this.$config.profileId.managed_accounts_corporates!,
-      state: ManagedInstrumentStateEnum.ACTIVE,
-      offset: '0'
-    })
-
-    if (_accounts.data.count && _accounts.data.accounts && this.managedCard) {
-      if (this.managedCard.balances?.availableBalance && this.managedCard.balances.availableBalance > 0) {
-        const _request: CreateTransferRequest = {
-          profileId: this.$config.profileId.transfers!,
-          source: {
-            type: InstrumentEnum.managedCards,
-            id: this.cardId
-          },
-          destination: {
-            type: InstrumentEnum.managedAccounts,
-            id: _accounts.data.accounts[0].id
-          },
-          destinationAmount: {
-            currency: this.managedCard.currency,
-            amount: this.managedCard.balances.availableBalance
+    try {
+      if (this.managedCard?.balances?.availableBalance && this.managedCard.balances.availableBalance > 0) {
+        const _accounts = await this.stores.accounts.index({
+          profileId: this.stores.auth.isConsumer
+            ? this.$config.profileId.managed_accounts_consumers!
+            : this.$config.profileId.managed_accounts_corporates!,
+          state: ManagedInstrumentStateEnum.ACTIVE,
+          offset: '0'
+        })
+        if (_accounts.data.count && _accounts.data.accounts) {
+          const _request: CreateTransferRequest = {
+            profileId: this.$config.profileId.transfers!,
+            source: {
+              type: InstrumentEnum.managedCards,
+              id: this.cardId
+            },
+            destination: {
+              type: InstrumentEnum.managedAccounts,
+              id: _accounts.data.accounts[0].id
+            },
+            destinationAmount: {
+              currency: this.managedCard.currency,
+              amount: this.managedCard.balances.availableBalance
+            }
           }
+          await this.stores.transfers.execute(_request)
         }
-        await this.stores.transfers.execute(_request)
       }
       await this.stores.cards.remove(this.cardId)
-
       await this.$router.push('/managed-cards')
+    } catch (err) {
+      const data = (err as AxiosError<any>).response?.data
+      const error = data.message ? data.message : data.errorCode
+
+      this.$weavrToastError(error)
     }
   }
 

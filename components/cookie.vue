@@ -27,7 +27,7 @@ const COOKIE_NAME = 'onvirtual-cookie'
 @Component({
   components: {}
 })
-export default class DefaultLayout extends mixins(BaseMixin) {
+export default class Cookies extends mixins(BaseMixin) {
   showCookieAlert: boolean = false
 
   mounted() {

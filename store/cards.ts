@@ -1,6 +1,5 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
-import { $api } from '~/utils/api'
 import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
 import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
@@ -9,6 +8,7 @@ import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/manag
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Module({
   name: 'cardsModule',
@@ -145,6 +145,19 @@ export default class Cards extends StoreModule {
     })
 
     return req
+  }
+
+  @Action({ rawError: true })
+  hasDestroyedCards() {
+    return this.store.$apiMulti.managedCards
+      .index({
+        state: ManagedInstrumentStateEnum.DESTROYED,
+        limit: 1,
+        offset: 0
+      })
+      .then((res) => {
+        return !!res.data.cards?.length
+      })
   }
 
   @Action({ rawError: true })

@@ -10,7 +10,7 @@ import { ManagedInstrumentDestroyedReasonEnum } from '~/plugins/weavr-multi/api/
 export interface GetManagedCardsRequest extends PagingModel {
   profileId?: string
   friendlyName?: string
-  state?: ManagedInstrumentStateEnum
+  state?: string
   ['state.blockedReason']?: ManagedInstrumentBlockedReasonEnum
   ['state.destroyedReason']?: ManagedInstrumentDestroyedReasonEnum
   currency?: CurrencyEnum
