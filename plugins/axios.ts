@@ -1,7 +1,7 @@
-import { Plugin } from '@nuxt/types'
+import { Context, Plugin } from '@nuxt/types'
 import { authStore, errorsStore } from '~/utils/store-accessor'
 
-const axiosPlugin: Plugin = (ctxt, inject) => {
+const axiosPlugin: Plugin = (ctxt: Context, inject) => {
   const axiosMulti = ctxt.$axios.create({
     headers: {
       common: {
@@ -21,7 +21,7 @@ const axiosPlugin: Plugin = (ctxt, inject) => {
         ctxt.redirect('/login')
         return
       case 403:
-        ctxt.redirect('/forbidden')
+        if (ctxt.route.name !== 'login') ctxt.redirect('/forbidden')
         return
       case 409:
         errorsStore(ctxt.store).SET_CONFLICT(error)

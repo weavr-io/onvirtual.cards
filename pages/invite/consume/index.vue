@@ -92,7 +92,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
   fetch() {
     try {
       const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
-        id: this.$route.query.invite_id.toString(),
+        id: this.$route.query.user_id.toString(),
         data: {
           inviteCode: this.$route.query.nonce.toString()
         }

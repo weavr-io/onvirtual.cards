@@ -10,7 +10,7 @@
         <error-alert
           message="The reset password link is invalid or has expired.  Please restart the password reset process."
         />
-        <b-form v-if="noErrors" id="contact-form" class="mt-5" @submit="setPassword">
+        <b-form v-if="noErrors" id="contact-form" class="mt-5" @submit.prevent="setPassword">
           <b-form-group
             id="ig-email"
             :state="isInvalid($v.form.email)"
@@ -38,13 +38,13 @@
                 class-name="sign-in-password"
                 name="password"
                 required="true"
-                @onKeyUp="checkOnKeyUp"
+                @onKeyUp.prevent="checkOnKeyUp"
               />
             </div>
             <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
           </client-only>
           <div class="text-center">
-            <loader-button :is-loading="isLoading" button-text="Set Password" class="mt-5" />
+            <loader-button :is-loading="isLoading" button-text="Set password" class="mt-5" />
           </div>
         </b-form>
       </b-card-body>
@@ -106,21 +106,14 @@ export default class PasswordSentPage extends mixins(BaseMixin) {
     }
   }
 
-  setPassword(evt) {
-    evt.preventDefault()
-
-    if (this.$v.form) {
-      this.$v.form.$touch()
-      if (this.$v.form.$anyError) {
-        return null
-      }
-    }
+  setPassword() {
+    this.$v.$touch()
+    if (this.$v.$invalid) return
 
     this.passwordField.createToken().then(
       (tokens) => {
         if (tokens.tokens.password !== '') {
-          this.form.newPassword.value = tokens.tokens.password
-          this.validatePassword()
+          this.validatePassword(tokens.tokens.password)
         } else {
           return null
         }
@@ -132,10 +125,11 @@ export default class PasswordSentPage extends mixins(BaseMixin) {
     )
   }
 
-  validatePassword() {
+  validatePassword(password: string) {
+    this.form.newPassword.value = password
     const _request: ValidatePasswordRequestModel = {
       password: {
-        value: this.form.newPassword.value ? this.form.newPassword.value : ''
+        value: password
       }
     }
 
@@ -143,15 +137,20 @@ export default class PasswordSentPage extends mixins(BaseMixin) {
   }
 
   submitForm() {
-    this.stores.auth.lostPasswordResume(this.form).then(() => {
-      this.$router.push('/login')
-    })
+    this.stores.auth
+      .lostPasswordResume(this.form)
+      .then(() => {
+        this.$router.push('/login')
+      })
+      .catch((err) => {
+        this.stores.errors.SET_ERROR(err)
+      })
   }
 
   checkOnKeyUp(e) {
     if (e.key === 'Enter') {
       e.preventDefault()
-      this.setPassword(e)
+      this.setPassword()
     }
   }
 

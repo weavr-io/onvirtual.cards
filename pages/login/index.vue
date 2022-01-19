@@ -97,17 +97,18 @@ export default class LoginPage extends mixins(BaseMixin) {
   login() {
     try {
       this.isLoading = true
+      this.stores.errors.SET_ERROR(null)
       this.passwordField.createToken().then(
         (tokens) => {
-          console.log('Password tokenisation success')
           this.loginRequest.password.value = tokens.tokens.password
           this.stores.auth
             .loginWithPassword(this.loginRequest)
             .then((res) => {
               this.goToDashboard(res.data)
             })
-            .finally(() => {
+            .catch((err) => {
               this.isLoading = false
+              this.stores.errors.SET_ERROR(err)
             })
         },
         (e) => {
@@ -120,7 +121,6 @@ export default class LoginPage extends mixins(BaseMixin) {
   }
 
   async goToDashboard(res: LoginWithPasswordResponse) {
-    console.log('auth success')
     const _id = res.credentials.type! + '-' + res.credentials.id
     try {
       this.$segment.identify(_id, {
@@ -133,6 +133,7 @@ export default class LoginPage extends mixins(BaseMixin) {
     }
 
     await this.goToIndex()
+    this.isLoading = false
   }
 
   checkOnKeyUp(e) {

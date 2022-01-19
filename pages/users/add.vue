@@ -140,15 +140,16 @@ export default class AddCardPage extends mixins(BaseMixin) {
       .then((res) => {
         this.userAdded(res.data)
       })
-      .finally(() => {
+      .catch((err) => {
+        this.stores.errors.SET_ERROR(err)
         this.isLoading = false
       })
   }
 
-  userAdded(res: UserModel) {
-    this.stores.users.inviteSend(res.id).then(() => {
-      this.$router.push('/users')
-    })
+  async userAdded(res: UserModel) {
+    await this.stores.users.inviteSend(res.id)
+    await this.$router.push('/users')
+    this.isLoading = false
   }
 
   phoneUpdate(number) {

@@ -14,7 +14,7 @@
         <div class="col-lg-6 offset-lg-3 h-100 modal-div">
           <div class="mx-md-3 px-md-5">
             <error-alert />
-            <b-form id="contact-form" @submit="submitChangePassword">
+            <b-form id="contact-form" @submit.prevent="submitChangePassword">
               <client-only placeholder="Loading...">
                 <div :class="{ 'is-dirty': $v.form.$dirty }">
                   <label class="d-block">OLD PASSWORD:</label>
@@ -25,7 +25,7 @@
                     class-name="sign-in-password"
                     name="old-password"
                     required="true"
-                    @onKeyUp="checkOnKeyUp"
+                    @onKeyUp.prevent="checkOnKeyUp"
                   />
                   <label class="d-block mt-3">NEW PASSWORD:</label>
                   <weavr-password-input
@@ -35,7 +35,7 @@
                     class-name="sign-in-password"
                     name="new-password"
                     required="true"
-                    @onKeyUp="checkOnKeyUp"
+                    @onKeyUp.prevent="checkOnKeyUp"
                   />
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </div>
@@ -77,7 +77,9 @@ export default class BundlesPage extends mixins(BaseMixin) {
   @Ref('newPassword')
   newPassword!: WeavrPasswordInput
 
-  public changePasswordRequest: UpdatePasswordRequestModel = {
+  isLoading = false
+
+  changePasswordRequest: UpdatePasswordRequestModel = {
     oldPassword: {
       value: ''
     },
@@ -89,37 +91,35 @@ export default class BundlesPage extends mixins(BaseMixin) {
   checkOnKeyUp(e) {
     if (e.key === 'Enter') {
       e.preventDefault()
-      this.submitChangePassword(e)
+      this.submitChangePassword()
     }
   }
 
-  submitChangePassword(evt) {
-    evt.preventDefault()
+  async submitChangePassword() {
+    this.$v.$touch()
+    if (this.$v.form.$invalid) return
 
-    if (this.$v.form) {
-      this.$v.form.$touch()
-      if (this.$v.form.$anyError) {
-        return null
-      }
-    }
-
-    const promises: Promise<any>[] = []
-    promises.push(this.oldPassword.createToken())
-    promises.push(this.newPassword.createToken())
-
-    Promise.all(promises).then((values) => {
-      if (values[0].tokens['old-password'] !== '' && values[1].tokens['new-password']) {
-        this.changePasswordRequest.oldPassword.value = values[0].tokens['old-password']
-        this.changePasswordRequest.newPassword.value = values[1].tokens['new-password']
-        this.stores.auth.validatePassword({ password: this.changePasswordRequest.newPassword }).then(() => {
-          this.stores.auth.updatePassword(this.changePasswordRequest).then(() => {
-            this.$router.push('/profile')
-          })
-        })
-      } else {
-        return null
-      }
+    let tokenizedOld = ''
+    let tokenizedNew = ''
+    await this.oldPassword.createToken().then((res) => {
+      tokenizedOld = res.tokens['old-password']
     })
+    await this.newPassword.createToken().then((res) => {
+      tokenizedNew = res.tokens['new-password']
+    })
+
+    if (tokenizedOld && tokenizedNew) {
+      this.changePasswordRequest.oldPassword.value = tokenizedOld
+      this.changePasswordRequest.newPassword.value = tokenizedNew
+      console.debug('ALL Settled', this.changePasswordRequest)
+      this.stores.auth.validatePassword({ password: this.changePasswordRequest.newPassword }).then(() => {
+        this.stores.auth.updatePassword(this.changePasswordRequest).then(() => {
+          this.$router.push('/profile')
+        })
+      })
+    } else {
+      return null
+    }
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {

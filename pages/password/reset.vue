@@ -11,7 +11,7 @@
           </h5>
         </div>
         <error-alert />
-        <b-form id="contact-form" class="mt-5" @submit="resetPassword">
+        <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
           <b-form-group
             id="ig-email"
             :state="isInvalid($v.form.email)"
@@ -50,7 +50,7 @@
               <img src="/img/success.svg" alt="" style="max-width: 100px" />
             </div>
             <div>
-              <b-form id="contact-form" class="mt-5" @submit="resetPassword">
+              <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
                 <loader-button :is-loading="isLoading" button-text="resend" class="text-center" />
               </b-form>
             </div>
@@ -90,20 +90,23 @@ export default class ResetPasswordPage extends mixins(BaseMixin) {
     email: ''
   }
 
-  resetPassword(evt) {
-    evt.preventDefault()
+  resetPassword() {
     this.$v.$touch()
-    if (!this.$v.$invalid) {
-      this.isLoading = true
-      this.stores.auth
-        .lostPasswordInitiate(this.form)
-        .then(() => {
-          this.passwordSent = true
-        })
-        .finally(() => {
-          this.isLoading = false
-        })
-    }
+    if (this.$v.$invalid) return
+
+    this.isLoading = true
+    this.stores.errors.SET_ERROR(null)
+    this.stores.auth
+      .lostPasswordInitiate(this.form)
+      .then(() => {
+        this.passwordSent = true
+      })
+      .catch((err) => {
+        this.stores.errors.SET_ERROR(err)
+      })
+      .finally(() => {
+        this.isLoading = false
+      })
   }
 }
 </script>
