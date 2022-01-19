@@ -20,28 +20,20 @@
   </b-col>
 </template>
 <script lang="ts">
-import {Component, mixins} from 'nuxt-property-decorator'
-import {AxiosResponse} from 'axios'
+import { Component, mixins } from 'nuxt-property-decorator'
+import { AxiosResponse } from 'axios'
 
 import BaseMixin from '~/minixs/BaseMixin'
-import {authStore} from '~/utils/store-accessor'
-import {
-  CreateCorporateRequest
-} from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import {IndustryTypeEnum} from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
-import {
-  CorporateSourceOfFundTypeEnum
-} from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
-import {CurrencyEnum} from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import {ConsumerModel} from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import {IdentityIdModel} from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
-import {IDModel} from '~/plugins/weavr-multi/api/models/common/IDModel'
-import {
-  CreatePasswordRequestModel
-} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import {
-  LoginWithPasswordRequest
-} from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { authStore } from '~/utils/store-accessor'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
+import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 
 @Component({
   layout: 'auth',
@@ -141,11 +133,6 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       .create(this.registrationRequest as CreateCorporateRequest)
       .then(this.onCorporateCreated)
       .catch(this.registrationFailed)
-
-    // this.stores.corporates
-    //         .create(this.registrationRequest as CreateCorporateRequest)
-    //         .then(this.doCreateCorporatePasswordIdentity.bind(this))
-    //         .catch(this.registrationFailed.bind(this))
   }
 
   onCorporateCreated(res: AxiosResponse<ConsumerModel>) {
@@ -195,58 +182,5 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       this.$weavrToastError(_errCode)
     }
   }
-
-  //
-  // doLogin() {
-  //   const _loginRequest: Schemas.LoginRequest = {
-  //     code: this.registrationRequest.rootEmail!,
-  //     password: this.password
-  //   }
-  //
-  //   this.stores.auth
-  //     .authenticate(_loginRequest)
-  //     .then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
-  // }
-
-  // goToVerifyEmail() {
-  //   this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
-  //   this.$router.push({
-  //     path: '/register/verify',
-  //     query: {
-  //       send: 'true',
-  //       corp: this.corporate!.id.id + '',
-  //       email: this.registrationRequest.rootEmail,
-  //       mobileNumber: this.registrationRequest.rootMobileNumber,
-  //       mobileCountryCode: this.registrationRequest.rootMobileCountryCode
-  //     }
-  //   })
-  // }
-
-  // doCreateCorporatePasswordIdentity() {
-  //   const _req: CreatePasswordIdentity = {
-  //     id: this.corporate!.id.id,
-  //     request: {
-  //       profileId: this.registrationRequest.profileId!
-  //     }
-  //   }
-  //   this.stores.auth
-  //     .createPasswordIdentity(_req)
-  //     .then(this.doCreateCorporatePassword.bind(this), this.registrationFailed.bind(this))
-  // }
-  //
-  // doCreateCorporatePassword() {
-  //   const _req: CreatePassword = {
-  //     id: this.corporate!.id.id,
-  //     request: {
-  //       credentialType: 'ROOT',
-  //       identityId: this.corporate!.id.id,
-  //       password: {
-  //         value: this.password
-  //       }
-  //     }
-  //   }
-  //
-  //   this.stores.auth.createPassword(_req).then(this.waitAndDoLogin.bind(this), this.registrationFailed.bind(this))
-  // }
 }
 </script>

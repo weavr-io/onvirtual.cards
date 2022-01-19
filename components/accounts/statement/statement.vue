@@ -71,9 +71,9 @@ import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
 import FiltersMixin from '~/minixs/FiltersMixin'
 
-import { OrderType } from '~/api/Enums/OrderType'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import AccountsMixin from '~/minixs/AccountsMixin'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 
 const moment = require('moment')
 
@@ -147,7 +147,7 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin, Fil
       limit: 100,
       offset: 0,
       showFundMovementsOnly: false,
-      orderByTimestamp: OrderType.DESC,
+      orderByTimestamp: OrderEnum.DESC,
       ..._filters
     }
 

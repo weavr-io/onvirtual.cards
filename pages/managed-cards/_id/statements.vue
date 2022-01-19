@@ -215,20 +215,18 @@ import { Component, mixins } from 'nuxt-property-decorator'
 
 import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 
-import { AxiosError, AxiosResponse } from 'axios'
-import { Schemas } from '~/api/Schemas'
+import { AxiosError } from 'axios'
 import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
 import FiltersMixin from '~/minixs/FiltersMixin'
-import AccountsMixin from '~/minixs/AccountsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
-import OrderType = Schemas.OrderType
 import CardsMixin from '~/minixs/CardsMixin'
 import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 
 const dot = require('dot-object')
 
@@ -269,7 +267,7 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
 
     const statementFilters: StatementFiltersRequest = {
       showFundMovementsOnly: false,
-      orderByTimestamp: OrderType.DESC,
+      orderByTimestamp: OrderEnum.DESC,
       limit: 100,
       offset: 0,
       ...filters
@@ -338,7 +336,7 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
 
     const filters: GetManagedCardStatementRequest = {
       showFundMovementsOnly: false,
-      orderByTimestamp: OrderType.DESC,
+      orderByTimestamp: OrderEnum.DESC,
       limit: 100,
       offset: 0,
       ..._filters

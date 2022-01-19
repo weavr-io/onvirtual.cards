@@ -1,11 +1,12 @@
-import { Action, Module, Mutation } from 'vuex-module-decorators'
+import { Module, Mutation } from 'vuex-module-decorators'
 import { AxiosError } from 'axios'
-import { ConflictResponse } from '~/api/Conflicts/Responses/ConflictResponse'
-import { LoginWithPasswordConflict } from '~/api/Conflicts/Responses/Password/LoginWithPasswordConflict'
-import { ValidatePasswordConflictErrorCode } from '~/api/Conflicts/Codes/Password/ValidatePasswordConflictErrorCode'
-import { VerifyEmailRequestConflictErrorCode } from '~/api/Conflicts/Codes/Corporates/Emails/VerifyEmailRequestConflictErrorCode'
-import { SendMobileRequestConflictErrorCode } from '~/api/Conflicts/Codes/Mobile/SendMobileRequestConflictErrorCode'
+import { ConflictResponse } from '~/plugins/weavr-multi/api/models/error/responses/ConflictResponse'
+import { LoginWithPasswordConflict } from '~/plugins/weavr-multi/api/models/error/responses/LoginWithPasswordConflict'
+
 import { StoreModule } from '~/store/storeModule'
+import { ValidatePasswordConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/passwords/ValidatePasswordConflictsEnum'
+import { VerifyEmailRequestConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/emails/VerifyEmailRequestConflictsEnum'
+import { SendMobileRequestConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/mobile/SendMobileRequestConflictsEnum'
 
 @Module({
   name: 'errorsModule',
@@ -40,21 +41,21 @@ export default class Errors extends StoreModule {
           return 'Incorrect email and password combination. If you do not have an account please click on Register.'
         case 'MOBILE_NOT_UNIQUE':
           return 'Mobile is already in use.'
-        case ValidatePasswordConflictErrorCode.PASSWORD_PROFILE_NOT_CONFIGURED_FOR_CREDENTIAL_TYPE:
+        case ValidatePasswordConflictsEnum.PASSWORD_PROFILE_NOT_CONFIGURED_FOR_CREDENTIAL_TYPE:
           return 'PASSWORD_PROFILE_NOT_CONFIGURED_FOR_CREDENTIAL_TYPE'
-        case ValidatePasswordConflictErrorCode.PASSWORD_TOO_LONG:
+        case ValidatePasswordConflictsEnum.PASSWORD_TOO_LONG:
           return 'Password is too long.'
-        case ValidatePasswordConflictErrorCode.PASSWORD_TOO_SHORT:
+        case ValidatePasswordConflictsEnum.PASSWORD_TOO_SHORT:
           return 'Password is too short.'
-        case ValidatePasswordConflictErrorCode.PASSWORD_TOO_SIMPLE:
+        case ValidatePasswordConflictsEnum.PASSWORD_TOO_SIMPLE:
           return 'Password is too simple.'
-        case ValidatePasswordConflictErrorCode.UNRESOLVED_IDENTITY:
+        case ValidatePasswordConflictsEnum.UNRESOLVED_IDENTITY:
           return 'UNRESOLVED_IDENTITY'
-        case VerifyEmailRequestConflictErrorCode.INVALID_NONCE_OR_EMAIL:
+        case VerifyEmailRequestConflictsEnum.INVALID_NONCE_OR_EMAIL:
           return 'The verification code entered is invalid.'
-        case SendMobileRequestConflictErrorCode.FREQUENCY_EXCEEDED:
+        case SendMobileRequestConflictsEnum.FREQUENCY_EXCEEDED:
           return 'Your verification code has already been sent. Please wait a minute before resubmitting your request.'
-        case SendMobileRequestConflictErrorCode.RETRIES_EXCEEDED:
+        case SendMobileRequestConflictsEnum.RETRIES_EXCEEDED:
           return 'You have exceeded the maximum number of attempts.  Please contact support@onvirtual.cards for assistance.'
         default:
           console.log(this.conflict)

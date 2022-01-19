@@ -12,12 +12,12 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 
-import { OrderType } from '~/api/Enums/OrderType'
 import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
 import AccountsMixin from '~/minixs/AccountsMixin'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { accountsStore } from '~/utils/store-accessor'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 
 const dot = require('dot-object')
 const moment = require('moment')
@@ -71,7 +71,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
 
     const _statementFilters: GetManagedAccountStatementRequest = {
       showFundMovementsOnly: false,
-      orderByTimestamp: OrderType.DESC,
+      orderByTimestamp: OrderEnum.DESC,
       limit: 10,
       offset: 0,
       ..._filters

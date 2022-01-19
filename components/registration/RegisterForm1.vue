@@ -67,7 +67,6 @@ import { email, required, sameAs } from 'vuelidate/lib/validators'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { BooleanString } from '~/api/Generic/BooleanString'
 
 @Component({
   validations: {
@@ -78,7 +77,7 @@ import { BooleanString } from '~/api/Generic/BooleanString'
       },
       acceptedTerms: {
         required,
-        sameAs: sameAs(() => BooleanString.TRUE)
+        sameAs: sameAs(() => true)
       }
     }
   },
@@ -170,7 +169,6 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
 
   @Emit()
   submitForm() {
-    console.log('form success')
     this.stores.errors.RESET_ERROR()
     return this.form
   }
