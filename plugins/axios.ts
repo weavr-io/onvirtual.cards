@@ -32,7 +32,7 @@ const axiosPlugin: Plugin = (ctxt, inject) => {
 
     switch (code) {
       case 401:
-        authStore(ctxt.store).logout()
+        if (error.response.config.url !== '/logout') authStore(ctxt.store).logout()
         ctxt.redirect('/login')
         return
       case 403:

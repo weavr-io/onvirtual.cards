@@ -8,7 +8,6 @@ import WeavrKycBeneficiaries from '~/plugins/weavr/components/WeavrKycBeneficiar
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 import { Plugin } from '~/node_modules/@nuxt/types'
 
-
 Vue.component('WeavrPasswordInput', WeavrPasswordInput)
 Vue.component('WeavrCardNumberSpan', WeavrCardNumberSpan)
 Vue.component('WeavrCvvSpan', WeavrCVVSpan)
@@ -16,7 +15,6 @@ Vue.component('WeavrCvvSpan', WeavrCVVSpan)
 Vue.component('WeavrKyb', WeavrKyb)
 Vue.component('WeavrKycBeneficiaries', WeavrKycBeneficiaries)
 Vue.component('WeavrKyc', WeavrKyc)
-
 
 const weavrModules: Plugin = (context, inject) => {
   // @ts-ignore
@@ -28,7 +26,6 @@ const weavrModules: Plugin = (context, inject) => {
       }
     ]
   })
-
 
   function asyncAssociate(token) {
     return new Promise((resolve, reject) => {
@@ -44,7 +41,6 @@ const weavrModules: Plugin = (context, inject) => {
       )
     })
   }
-
 
   inject('weavrComponents', weavrComponents)
   inject('weavrSetUserToken', (token) => {
