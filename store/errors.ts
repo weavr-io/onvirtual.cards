@@ -7,6 +7,7 @@ import { StoreModule } from '~/store/storeModule'
 import { ValidatePasswordConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/passwords/ValidatePasswordConflictsEnum'
 import { VerifyEmailRequestConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/emails/VerifyEmailRequestConflictsEnum'
 import { SendMobileRequestConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/mobile/SendMobileRequestConflictsEnum'
+import { LoginWithPasswordConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/passwords/LoginWithPasswordConflictsEnum'
 
 @Module({
   name: 'errorsModule',
@@ -37,7 +38,7 @@ export default class Errors extends StoreModule {
           return 'There is something wrong with your verification code.'
         case 'PASSWORD_INCORRECT':
           return 'Password is incorrect.'
-        case 'FAILED_LOGIN':
+        case LoginWithPasswordConflictsEnum.FAILED_LOGIN:
           return 'Incorrect email and password combination. If you do not have an account please click on Register.'
         case 'MOBILE_NOT_UNIQUE':
           return 'Mobile is already in use.'
