@@ -1,6 +1,5 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
-import { $api } from '~/utils/api'
 import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
 import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
@@ -128,11 +127,6 @@ export default class Corporates extends StoreModule {
     } else {
       return Promise.resolve()
     }
-  }
-
-  @Action({ rawError: true })
-  consumeInvite(request: any) {
-    return $api.post('/app/api/auth/invites/' + request.id + '/consume', request.body)
   }
 
   @Action({ rawError: true })

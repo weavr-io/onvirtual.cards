@@ -1,5 +1,4 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { $api } from '~/utils/api'
 import { loaderStore } from '~/utils/store-accessor'
 import { StoreModule } from '~/store/storeModule'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
@@ -124,16 +123,6 @@ export default class Consumers extends StoreModule {
   @Action({ rawError: true })
   sendVerificationCodeEmail(request: SendVerificationCodeRequest) {
     return this.store.$apiMulti.consumers.sendVerificationCode(request)
-  }
-
-  @Action({ rawError: true })
-  sendVerificationCodeMobile(request) {
-    return $api.post('/app/api/consumers/' + request.consumerId + '/mobile/send_verification_code', request.request)
-  }
-
-  @Action({ rawError: true })
-  verifyMobile(request) {
-    return $api.post('/app/api/consumers/' + request.consumerId + '/mobile/verify', request.request)
   }
 
   @Action({ rawError: true })

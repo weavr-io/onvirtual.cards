@@ -11,15 +11,13 @@
 </template>
 
 <script lang="ts">
-import {Component, mixins} from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
-import {authStore, consumersStore, corporatesStore} from '~/utils/store-accessor'
+import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 
 @Component({})
 export default class IndexPage extends mixins(BaseMixin) {
-
-
-  async asyncData({store, redirect}) {
+  async asyncData({ store, redirect }) {
     const isLoggedIn = authStore(store).isLoggedIn
 
     if (isLoggedIn) {
@@ -32,7 +30,8 @@ export default class IndexPage extends mixins(BaseMixin) {
         }
 
         if (_consumer && _consumer.rootUser && !_consumer.rootUser.emailVerified) {
-          redirect(`/register/verify?send=true&email=${_consumer.rootUser.email}`)
+          const email = window.encodeURIComponent(_consumer.rootUser.email)
+          redirect(`/register/verify?send=true&email=${email}`)
         } else if (_consumer && _consumer.rootUser && !_consumer.rootUser.mobileNumberVerified) {
           redirect('/register/verify/mobile')
         } else if (_consumer && typeof _consumer.rootUser === 'undefined') {
@@ -50,7 +49,8 @@ export default class IndexPage extends mixins(BaseMixin) {
         }
 
         if (_corporate && _corporate.rootUser && !_corporate.rootUser.emailVerified) {
-          redirect(`/register/verify?send=true&email=${_corporate.rootUser.email}`)
+          const email = window.encodeURIComponent(_corporate.rootUser.email)
+          redirect(`/register/verify?send=true&email=${email}`)
         } else if (_corporate && _corporate.rootUser && !_corporate.rootUser.mobileNumberVerified) {
           redirect('/register/verify/mobile')
         } else if (_corporate && typeof _corporate.rootUser === 'undefined') {
