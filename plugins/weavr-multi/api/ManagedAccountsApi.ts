@@ -9,6 +9,7 @@ import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/manage
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { GetManagedAccountsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountsRequest'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import { PaginatedManagedAccountStatementResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/responses/PaginatedManagedAccountStatementResponse'
 
 export class ManagedAccountsApi {
   index(filters?: GetManagedAccountsRequest): Promise<AxiosResponse<PaginatedManagedAccountsResponse>> {
@@ -56,8 +57,8 @@ export class ManagedAccountsApi {
     })
   }
 
-  downloadStatement(params: { id: IDModel; filters: GetManagedAccountStatementRequest }): Promise<AxiosResponse<Blob>> {
-    return $axiosMulti.get<Blob>(`/managed_accounts/${params.id}/statement`, {
+  downloadStatement(params: { id: IDModel; filters: GetManagedAccountStatementRequest }) {
+    return $axiosMulti.get<PaginatedManagedAccountStatementResponse>(`/managed_accounts/${params.id}/statement`, {
       params: params.filters,
       responseType: 'blob',
       headers: {

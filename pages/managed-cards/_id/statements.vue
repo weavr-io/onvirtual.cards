@@ -226,6 +226,8 @@ import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/In
 import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import OrderType = Schemas.OrderType
+import CardsMixin from '~/minixs/CardsMixin'
+import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
 
 const dot = require('dot-object')
 
@@ -241,7 +243,7 @@ const moment = require('moment')
     BIconThreeDotsVertical
   }
 })
-export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixin, FiltersMixin, AccountsMixin) {
+export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixin, FiltersMixin, CardsMixin) {
   $route
 
   filters!: StatementFiltersRequest
@@ -333,19 +335,15 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
         .valueOf()
     }
 
-    // const _req: StatementFiltersRequest = {
-    //   showFundMovementsOnly: false,
-    //   orderByTimestamp: OrderType.DESC,
-    //   paging: {
-    //     limit: 100,
-    //     offset: 0
-    //   },
-    //   ..._filters
-    // }
+    const filters: GetManagedCardStatementRequest = {
+      showFundMovementsOnly: false,
+      orderByTimestamp: OrderType.DESC,
+      limit: 100,
+      offset: 0,
+      ..._filters
+    }
 
-    // this.downloadAsCSV(this.cardId, 'managed_cards', _req)
-    // this.downloadAsCSV({ id: this.cardId, filters: _req })
-    throw new Error('Not yet implemented')
+    this.downloadAsCSV({ id: this.cardId, filters })
   }
 
   toggleModal() {

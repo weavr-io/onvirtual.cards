@@ -15,6 +15,9 @@ import { SetPhysicalCardPinRequest } from '~/plugins/weavr-multi/api/models/mana
 import { ReplaceDamagedPhysicalManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/ReplaceDamagedPhysicalManagedCardRequest'
 import { ReplaceLostStolenPhysicalManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/ReplaceLostStolenPhysicalManagedCardRequest'
 import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
+import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
+import { PaginatedManagedCardStatementResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardStatementResponse'
 
 export class ManagedCardsApi {
   index(filters?: GetManagedCardsRequest): Promise<AxiosResponse<PaginatedManagedCardsResponse>> {
@@ -115,5 +118,15 @@ export class ManagedCardsApi {
 
   resetPhysicalCardContactlessLimit(id: IDModel): Promise<AxiosResponse> {
     return $axiosMulti.post(`/managed_cards/${id}/physical/contactless_limit/reset`)
+  }
+
+  downloadStatement(params: { id: IDModel; filters: GetManagedCardStatementRequest }) {
+    return $axiosMulti.get<PaginatedManagedCardStatementResponse>(`/managed_cards/${params.id}/statement`, {
+      params: params.filters,
+      responseType: 'blob',
+      headers: {
+        Accept: 'text/csv'
+      }
+    })
   }
 }

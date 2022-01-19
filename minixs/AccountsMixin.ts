@@ -2,11 +2,12 @@ import { Component, mixins } from '~/node_modules/nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import CsvMixin from '~/minixs/CsvMixin'
 
 const moment = require('moment')
 
 @Component
-export default class AccountsMixin extends mixins(BaseMixin) {
+export default class AccountsMixin extends mixins(BaseMixin, CsvMixin) {
   get isManagedAccounts(): boolean {
     if (this.$route.matched[0].name) {
       return ['managed-accounts', 'managed-accounts-id'].includes(this.$route.matched[0].name)
@@ -47,12 +48,7 @@ export default class AccountsMixin extends mixins(BaseMixin) {
     const req = this.$apiMulti.managedAccounts.downloadStatement(params)
 
     req.then((res) => {
-      const url = window.URL.createObjectURL(new Blob([res.data]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', 'statement_' + moment().format('YYYYMMDDHHmmss') + '.csv')
-      document.body.appendChild(link)
-      link.click()
+      this.downloadBlobToCsv(res.data.entry)
     })
   }
 }
