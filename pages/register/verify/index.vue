@@ -179,6 +179,8 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
   }
 
   doVerify() {
+    this.isLoading = true
+
     if (this.$v.verifyEmailRequest) {
       this.$v.verifyEmailRequest.$touch()
       if (this.$v.verifyEmailRequest.$anyError) {
@@ -187,8 +189,18 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
     }
 
     this.isConsumer
-      ? this.stores.consumers.verifyEmail(this.verifyEmailRequest).then(this.onMobileVerified)
-      : this.stores.corporates.verifyEmail(this.verifyEmailRequest).then(this.onMobileVerified)
+      ? this.stores.consumers
+          .verifyEmail(this.verifyEmailRequest)
+          .then(this.onMobileVerified)
+          .catch(this.removeLoader)
+      : this.stores.corporates
+          .verifyEmail(this.verifyEmailRequest)
+          .then(this.onMobileVerified)
+          .catch(this.removeLoader)
+  }
+
+  removeLoader() {
+    this.isLoading = false
   }
 
   onMobileVerified() {

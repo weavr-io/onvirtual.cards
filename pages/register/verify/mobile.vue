@@ -132,6 +132,8 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
       return null
     }
 
+    this.isLoading = true
+
     const req: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrolRequest } = {
       channel: SCAOtpChannelEnum.SMS,
       body: this.request as AuthVerifyEnrolRequest
@@ -145,6 +147,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
       })
       .catch((e) => {
         this.errorOccurred(e)
+        this.isLoading = false
       })
   }
 
