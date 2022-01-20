@@ -127,8 +127,6 @@
                       <b-form-checkbox
                         v-model="$v.registrationRequest.acceptedTerms.$model"
                         :state="isInvalid($v.registrationRequest.acceptedTerms)"
-                        unchecked-value="FALSE"
-                        value="TRUE"
                       >
                         I accept the
                         <a
