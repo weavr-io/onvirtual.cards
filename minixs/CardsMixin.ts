@@ -1,4 +1,3 @@
-import moment from 'moment'
 import { Component, mixins } from '~/node_modules/nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
@@ -35,7 +34,7 @@ export default class CardsMixin extends mixins(BaseMixin, CsvMixin) {
     const req = this.$apiMulti.managedCards.downloadStatement(params)
 
     req.then((res) => {
-      this.downloadBlobToCsv(res.data.entry)
+      this.downloadBlobToCsv(res.data)
     })
   }
 }

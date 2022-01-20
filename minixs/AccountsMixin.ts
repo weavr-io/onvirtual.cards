@@ -48,7 +48,7 @@ export default class AccountsMixin extends mixins(BaseMixin, CsvMixin) {
     const req = this.$apiMulti.managedAccounts.downloadStatement(params)
 
     req.then((res) => {
-      this.downloadBlobToCsv(res.data.entry)
+      this.downloadBlobToCsv(res.data)
     })
   }
 }

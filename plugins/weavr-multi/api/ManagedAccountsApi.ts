@@ -58,7 +58,7 @@ export class ManagedAccountsApi {
   }
 
   downloadStatement(params: { id: IDModel; filters: GetManagedAccountStatementRequest }) {
-    return $axiosMulti.get<PaginatedManagedAccountStatementResponse>(`/managed_accounts/${params.id}/statement`, {
+    return $axiosMulti.get<Blob>(`/managed_accounts/${params.id}/statement`, {
       params: params.filters,
       responseType: 'blob',
       headers: {

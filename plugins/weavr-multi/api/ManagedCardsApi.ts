@@ -120,7 +120,7 @@ export class ManagedCardsApi {
   }
 
   downloadStatement(params: { id: IDModel; filters: GetManagedCardStatementRequest }) {
-    return $axiosMulti.get<PaginatedManagedCardStatementResponse>(`/managed_cards/${params.id}/statement`, {
+    return $axiosMulti.get<Blob>(`/managed_cards/${params.id}/statement`, {
       params: params.filters,
       responseType: 'blob',
       headers: {

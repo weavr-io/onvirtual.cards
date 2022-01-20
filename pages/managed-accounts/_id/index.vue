@@ -84,6 +84,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
 
     this.filters = { ..._statementFilters }
 
+    this.page = 0
     await this.stores.accounts.getStatements(_req)
   }
 

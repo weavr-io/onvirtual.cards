@@ -22,7 +22,7 @@ export default class Cards extends StoreModule {
 
   managedCard: ManagedCardModel | null = null
 
-  statement: StatementResponseModel | null = null
+  statements: StatementResponseModel | null = null
 
   filteredStatement: any = {}
 
@@ -54,11 +54,11 @@ export default class Cards extends StoreModule {
 
   @Mutation
   SET_FILTERED_STATEMENT() {
-    if (this.statement == null) {
+    if (this.statements == null) {
       return []
     }
 
-    const _entries = this.statement.entry?.filter((transaction) => {
+    const _entries = this.statements.entry?.filter((transaction) => {
       const _shouldDisplay = !['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE'].includes(
         transaction.transactionId.type
       )
@@ -106,22 +106,28 @@ export default class Cards extends StoreModule {
   }
 
   @Mutation
-  SET_STATEMENT(statement: StatementResponseModel) {
-    this.statement = statement
+  SET_STATEMENT(statements: StatementResponseModel | null) {
+    if (!statements) {
+      this.statements = statements
+    } else if (!this.statements?.entry) {
+      this.statements = statements
+    } else if (statements.entry) {
+      this.statements.entry.push(...statements.entry)
+    }
   }
 
   @Mutation
   RESET_STATEMENT() {
-    this.statement = null
+    this.statements = null
   }
 
   @Mutation
   APPEND_STATEMENT(_statement: StatementResponseModel) {
-    if (this.statement === null) {
-      this.statement = _statement
+    if (this.statements === null) {
+      this.statements = _statement
     } else {
       _statement.entry!.forEach((_statementEntry) => {
-        this.statement?.entry!.push(_statementEntry)
+        this.statements?.entry!.push(_statementEntry)
       })
     }
   }
@@ -198,6 +204,11 @@ export default class Cards extends StoreModule {
       })
 
     return xhr
+  }
+
+  @Action({ rawError: true })
+  clearCardStatements() {
+    this.SET_STATEMENT(null)
   }
 
   @Action({ rawError: true })

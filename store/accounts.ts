@@ -96,15 +96,13 @@ export default class Accounts extends StoreModule {
   }
 
   @Mutation
-  SET_STATEMENTS(_statements: StatementResponseModel | null) {
-    if (_statements === null) {
-      this.statements = _statements
-    } else if (this.statements === null) {
-      this.statements = _statements
-    } else if (_statements.entry !== undefined) {
-      _statements.entry!.forEach((_statementEntry) => {
-        this.statements?.entry!.push(_statementEntry)
-      })
+  SET_STATEMENTS(statements: StatementResponseModel | null) {
+    if (!statements) {
+      this.statements = statements
+    } else if (!this.statements?.entry) {
+      this.statements = statements
+    } else if (statements.entry) {
+      this.statements.entry.push(...statements.entry)
     }
   }
 

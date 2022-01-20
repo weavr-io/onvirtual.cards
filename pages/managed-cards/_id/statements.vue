@@ -280,6 +280,8 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
       request: statementFilters
     }
 
+    this.page = 0
+    this.stores.cards.clearCardStatements()
     await this.stores.cards.getCardStatement(_req)
     await this.stores.cards.getManagedCard(this.cardId)
 
@@ -419,9 +421,7 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
       this.stores.cards.getCardStatement({ id: this.$route.params.id, request }).then((response) => {
         if (!response.data.responseCount || response.data.responseCount < request.limit!) {
           $state.complete()
-          console.log('complete')
         } else {
-          console.log('loaded')
           $state.loaded()
         }
       })

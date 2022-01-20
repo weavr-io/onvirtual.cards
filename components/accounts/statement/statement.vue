@@ -124,7 +124,6 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin, Fil
       fromTimestamp: val.start,
       toTimestamp: val.end
     })
-    console.log(val)
   }
 
   downloadStatement() {
