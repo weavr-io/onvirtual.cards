@@ -29,8 +29,6 @@
           <b-form-checkbox
             v-model="$v.form.acceptedTerms.$model"
             :state="isInvalid($v.form.acceptedTerms)"
-            unchecked-value="FALSE"
-            value="TRUE"
           >
             I accept the
             <a

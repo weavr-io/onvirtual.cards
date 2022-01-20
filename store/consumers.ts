@@ -1,5 +1,5 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { loaderStore } from '~/utils/store-accessor'
+import { identitiesStore, loaderStore } from '~/utils/store-accessor'
 import { StoreModule } from '~/store/storeModule'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/identities/consumers/responses/GetConsumerKYCResponse'
@@ -18,6 +18,7 @@ export default class Consumers extends StoreModule {
   isLoading: boolean = false
 
   consumer: ConsumerModel | null = null
+
   kyc: GetConsumerKYCResponse | null = null
 
   @Mutation
@@ -43,6 +44,7 @@ export default class Consumers extends StoreModule {
 
     req.then((_res) => {
       this.SET_CONSUMER(_res.data)
+      identitiesStore(this.store).SET_IDENTITY(_res.data)
     })
 
     req.finally(() => {
@@ -60,6 +62,7 @@ export default class Consumers extends StoreModule {
     const req = this.store.$apiMulti.consumers.update(request)
     req.then((_res) => {
       this.SET_CONSUMER(_res.data)
+      identitiesStore(this.store).SET_IDENTITY(_res.data)
     })
 
     req.finally(() => {
@@ -80,6 +83,7 @@ export default class Consumers extends StoreModule {
     req
       .then((_res) => {
         this.SET_CONSUMER(_res.data)
+        identitiesStore(this.store).SET_IDENTITY(_res.data)
       })
       .finally(() => {
         loaderStore(this.store).stop()

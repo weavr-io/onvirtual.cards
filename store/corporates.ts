@@ -4,7 +4,7 @@ import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corp
 import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import { loaderStore } from '~/utils/store-accessor'
+import { identitiesStore, loaderStore } from '~/utils/store-accessor'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
@@ -34,8 +34,8 @@ export default class Corporates extends StoreModule {
   }
 
   @Mutation
-  SET_CORPORATE(_corporate: CorporateModel) {
-    this.corporate = _corporate
+  SET_CORPORATE(corporate: CorporateModel) {
+    this.corporate = corporate
   }
 
   @Mutation
@@ -50,6 +50,7 @@ export default class Corporates extends StoreModule {
     const req = this.store.$apiMulti.corporates.store(request)
 
     req.then((res) => {
+      identitiesStore(this.store).SET_IDENTITY(res.data)
       this.SET_CORPORATE(res.data)
       this.SET_IS_LOADING(false)
     })
@@ -67,6 +68,7 @@ export default class Corporates extends StoreModule {
     const req = this.store.$apiMulti.corporates.update(request)
     req.then((_res) => {
       this.SET_CORPORATE(_res.data)
+      identitiesStore(this.store).SET_IDENTITY(_res.data)
     })
 
     req.finally(() => {
@@ -85,6 +87,7 @@ export default class Corporates extends StoreModule {
 
     req.then((res) => {
       this.SET_CORPORATE(res.data)
+      identitiesStore(this.store).SET_IDENTITY(res.data)
     })
     req.finally(() => {
       this.SET_IS_LOADING(false)

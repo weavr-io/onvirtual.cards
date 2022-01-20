@@ -1,9 +1,7 @@
 <template>
   <b-container>
     <b-row>
-      <b-col>
-        {{ $route.name }}
-      </b-col>
+      <b-col> </b-col>
     </b-row>
   </b-container>
 </template>
@@ -16,8 +14,8 @@ import BaseMixin from '~/minixs/BaseMixin'
   layout: 'dashboard'
 })
 export default class DashboardPage extends mixins(BaseMixin) {
-  // asyncData({ redirect }) {
-  //   redirect('/managed-cards')
-  // }
+  asyncData({ redirect }) {
+    redirect('/managed-cards')
+  }
 }
 </script>

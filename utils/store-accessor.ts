@@ -6,10 +6,12 @@ import Corporates from '~/store/corporates'
 import Loader from '~/store/loader'
 import Auth from '~/store/auth'
 import Consumers from '~/store/consumers'
+import Identities from '~/store/identity'
 import Transfers from '~/store/transfers'
 import Errors from '~/store/errors'
 import View from '~/store/view'
 import Users from '~/store/users'
+import Identity from '~/store/identity'
 
 export interface Stores {
   cards: Cards
@@ -18,6 +20,7 @@ export interface Stores {
   loader: Loader
   auth: Auth
   consumers: Consumers
+  identities: Identities
   transfers: Transfers
   errors: Errors
   view: View
@@ -35,7 +38,8 @@ function initialiseStores(store: Store<any>): Stores {
     transfers: transfersStore(store),
     errors: errorsStore(store),
     view: viewStore(store),
-    users: usersStore(store)
+    users: usersStore(store),
+    identities: identitiesStore(store)
   }
 }
 
@@ -67,6 +71,10 @@ function corporatesStore(store: Store<any>) {
   return getModule(Corporates, store)
 }
 
+function identitiesStore(store: Store<any>) {
+  return getModule(Identity, store)
+}
+
 function loaderStore(store: Store<any>) {
   return getModule(Loader, store)
 }
@@ -90,5 +98,6 @@ export {
   transfersStore,
   errorsStore,
   viewStore,
-  usersStore
+  usersStore,
+  identitiesStore
 }

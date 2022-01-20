@@ -52,7 +52,7 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 
 @Component({
@@ -78,21 +78,19 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
 
   isLoading: boolean = false
 
-  asyncData({ route, redirect, store }) {
+  async asyncData({ route, redirect, store }) {
+    const identities = identitiesStore(store)
+
+    if (identities.identity === null) {
+      await identities.getIdentity()
+    }
+
     if (!authStore(store).isLoggedIn) {
       redirect('/')
     }
 
-    if (authStore(store).isConsumer) {
-      if (consumersStore(store).consumer?.rootUser.emailVerified) {
-        return redirect('/register/verify/mobile')
-      }
-    }
-
-    if (authStore(store).isCorporate) {
-      if (corporatesStore(store).corporate?.rootUser.emailVerified) {
-        return redirect('/register/verify/mobile')
-      }
+    if (identities.emailVerified) {
+      return redirect('/register/verify/mobile')
     }
 
     const request: VerifyEmailRequest = {
@@ -189,11 +187,13 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
     }
 
     this.isConsumer
-      ? this.stores.consumers.verifyEmail(this.verifyEmailRequest).then(this.goToVerifyMobile)
-      : this.stores.corporates.verifyEmail(this.verifyEmailRequest).then(this.goToVerifyMobile)
+      ? this.stores.consumers.verifyEmail(this.verifyEmailRequest).then(this.onMobileVerified)
+      : this.stores.corporates.verifyEmail(this.verifyEmailRequest).then(this.onMobileVerified)
   }
 
-  goToVerifyMobile() {
+  onMobileVerified() {
+    this.stores.identities.SET_EMAIL_VERIFIED(true)
+
     return this.$router.push({
       path: '/register/verify/mobile',
       query: {
