@@ -69,7 +69,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
   asyncData({ route }) {
     try {
       const _consumeInviteRequest: { id: IDModel; data: InviteConsumeRequestModel } = {
-        id: route.query.invite_id.toString(),
+        id: route.query.user_id.toString(),
         data: {
           inviteCode: route.query.nonce.toString(),
           password: {
