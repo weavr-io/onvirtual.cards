@@ -10,17 +10,25 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
+const defaultState = {
+  isLoading: false,
+  accounts: null,
+  account: null,
+  statements: null,
+  ibanDetails: null
+}
+
 @Module({
   name: 'accountsModule',
   stateFactory: true,
   namespaced: true
 })
 export default class Accounts extends StoreModule {
-  isLoading: boolean = false
-  accounts: PaginatedManagedAccountsResponse | null = null
-  account: ManagedAccountModel | null = null
-  statements: StatementResponseModel | null = null
-  ibanDetails: ManagedAccountIBANModel | null = null
+  isLoading: boolean = defaultState.isLoading
+  accounts: PaginatedManagedAccountsResponse | null = defaultState.accounts
+  account: ManagedAccountModel | null = defaultState.account
+  statements: StatementResponseModel | null = defaultState.statements
+  ibanDetails: ManagedAccountIBANModel | null = defaultState.ibanDetails
 
   get totalAvailableBalance() {
     if (this.accounts == null) {
@@ -104,6 +112,13 @@ export default class Accounts extends StoreModule {
     } else if (statements.entry) {
       this.statements.entry.push(...statements.entry)
     }
+  }
+
+  @Mutation
+  RESET_STATE() {
+    Object.keys(defaultState).forEach((key) => {
+      this[key] = defaultState[key]
+    })
   }
 
   @Mutation

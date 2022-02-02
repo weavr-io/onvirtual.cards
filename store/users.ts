@@ -9,14 +9,26 @@ import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/r
 import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
 
+const defaultState = {
+  users: null,
+  user: null
+}
+
 @Module({
   name: 'usersModule',
   stateFactory: true,
   namespaced: true
 })
 export default class Users extends StoreModule {
-  users: PaginatedUsersResponseModel | null = null
-  user: UserModel | null = null
+  users: PaginatedUsersResponseModel | null = defaultState.users
+  user: UserModel | null = defaultState.user
+
+  @Mutation
+  RESET_STATE() {
+    Object.keys(defaultState).forEach((key) => {
+      this[key] = defaultState[key]
+    })
+  }
 
   @Mutation
   SET_USERS(_users: PaginatedUsersResponseModel) {

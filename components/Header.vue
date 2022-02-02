@@ -8,7 +8,7 @@
         <b-collapse v-if="isLoggedIn" id="nav_collapse" is-nav>
           <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown right toggle-class="border-bottom">
-              <template slot="button-content">
+              <template #button-content>
                 {{ rootFullName }}
               </template>
               <b-dropdown-item to="/profile">

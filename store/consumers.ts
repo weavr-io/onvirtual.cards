@@ -9,17 +9,23 @@ import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/mode
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
+const defaultState = {
+  isLoading: false,
+  consumer: null,
+  kyc: null
+}
+
 @Module({
   name: 'consumersModule',
   namespaced: true,
   stateFactory: true
 })
 export default class Consumers extends StoreModule {
-  isLoading: boolean = false
+  isLoading: boolean = defaultState.isLoading
 
-  consumer: ConsumerModel | null = null
+  consumer: ConsumerModel | null = defaultState.consumer
 
-  kyc: GetConsumerKYCResponse | null = null
+  kyc: GetConsumerKYCResponse | null = defaultState.kyc
 
   @Mutation
   SET_IS_LOADING(isLoading: boolean) {
@@ -34,6 +40,13 @@ export default class Consumers extends StoreModule {
   @Mutation
   SET_KYC(_kyc: GetConsumerKYCResponse) {
     this.kyc = _kyc
+  }
+
+  @Mutation
+  RESET_STATE() {
+    Object.keys(defaultState).forEach((key) => {
+      this[key] = defaultState[key]
+    })
   }
 
   @Action({ rawError: true })

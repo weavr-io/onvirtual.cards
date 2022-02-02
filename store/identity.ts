@@ -5,17 +5,23 @@ import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corp
 import { Action } from '~/node_modules/vuex-module-decorators'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 
+const defaultState = {
+  identity: null,
+  emailVerified: false,
+  mobileNumberVerified: false
+}
+
 @Module({
   name: 'identitiesModule',
   namespaced: true,
   stateFactory: true
 })
 export default class Identity extends StoreModule {
-  identity: ConsumerModel | CorporateModel | null = null
+  identity: ConsumerModel | CorporateModel | null = defaultState.identity
 
-  emailVerified: boolean = false
+  emailVerified: boolean = defaultState.emailVerified
 
-  mobileNumberVerified: boolean = false
+  mobileNumberVerified: boolean = defaultState.mobileNumberVerified
 
   @Mutation
   SET_IDENTITY(identity: ConsumerModel | CorporateModel | null) {
@@ -32,6 +38,13 @@ export default class Identity extends StoreModule {
   @Mutation
   SET_MOBILE_VERIFIED(verified: boolean) {
     this.mobileNumberVerified = verified
+  }
+
+  @Mutation
+  RESET_STATE() {
+    Object.keys(defaultState).forEach((key) => {
+      this[key] = defaultState[key]
+    })
   }
 
   @Action({ rawError: true })

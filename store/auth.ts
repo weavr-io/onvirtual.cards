@@ -12,8 +12,23 @@ import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authent
 import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
+import {
+  accountsStore,
+  cardsStore,
+  consumersStore,
+  corporatesStore,
+  identitiesStore,
+  transfersStore,
+  usersStore
+} from '~/utils/store-accessor'
 
 const Cookie = process.client ? require('js-cookie') : undefined
+
+const defaultState = {
+  auth: null,
+  authFactors: null,
+  isLoading: false
+}
 
 @Module({
   name: 'authModule',
@@ -21,9 +36,9 @@ const Cookie = process.client ? require('js-cookie') : undefined
   stateFactory: true
 })
 export default class Auth extends StoreModule {
-  auth: LoginWithPasswordResponse | null = null
-  authFactors: GetAuthenticationFactorsResponse | null = null
-  isLoading: boolean = false
+  auth: LoginWithPasswordResponse | null = defaultState.auth
+  authFactors: GetAuthenticationFactorsResponse | null = defaultState.authFactors
+  isLoading: boolean = defaultState.isLoading
 
   get isLoggedIn(): boolean {
     return this.auth != null && this.auth.token != null
@@ -80,6 +95,13 @@ export default class Auth extends StoreModule {
     delete $axiosMulti.defaults.headers.Authorization
   }
 
+  @Mutation
+  RESET_STATE() {
+    Object.keys(defaultState).forEach((key) => {
+      this[key] = defaultState[key]
+    })
+  }
+
   @Action({ rawError: true })
   loginWithPassword(request: LoginWithPasswordRequest) {
     const _req = this.store.$apiMulti.authentication.loginWithPassword(request)
@@ -99,6 +121,14 @@ export default class Auth extends StoreModule {
     _req.finally(() => {
       this.store.$weavrSetUserToken(null)
       this.REMOVE_AUTH(null)
+      this.RESET_STATE()
+      corporatesStore(this.store).RESET_STATE()
+      consumersStore(this.store).RESET_STATE()
+      accountsStore(this.store).RESET_STATE()
+      cardsStore(this.store).RESET_STATE()
+      identitiesStore(this.store).RESET_STATE()
+      transfersStore(this.store).RESET_STATE()
+      usersStore(this.store).RESET_STATE()
     })
 
     return _req

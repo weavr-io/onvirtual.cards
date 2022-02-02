@@ -9,19 +9,26 @@ import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identit
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 
+const defaultState = {
+  isLoading: false,
+  isLoadingRegistration: false,
+  corporate: null,
+  kyb: null
+}
+
 @Module({
   name: 'corporatesModule',
   stateFactory: true,
   namespaced: true
 })
 export default class Corporates extends StoreModule {
-  isLoading: boolean = false
+  isLoading: boolean = defaultState.isLoading
 
-  isLoadingRegistration: boolean = false
+  isLoadingRegistration: boolean = defaultState.isLoadingRegistration
 
-  corporate: CorporateModel | null = null
+  corporate: CorporateModel | null = defaultState.corporate
 
-  kyb: GetCorporateKYBResponse | null = null
+  kyb: GetCorporateKYBResponse | null = defaultState.corporate
 
   @Mutation
   SET_IS_LOADING(_isLoading: boolean) {
@@ -31,6 +38,13 @@ export default class Corporates extends StoreModule {
   @Mutation
   SET_IS_LOADING_REGISTRATION(_isLoadingRegistration: boolean) {
     this.isLoadingRegistration = _isLoadingRegistration
+  }
+
+  @Mutation
+  RESET_STATE() {
+    Object.keys(defaultState).forEach((key) => {
+      this[key] = defaultState[key]
+    })
   }
 
   @Mutation

@@ -10,21 +10,29 @@ import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
+const defaultState = {
+  isLoading: false,
+  cards: null,
+  managedCard: null,
+  statements: null,
+  filteredStatement: {}
+}
+
 @Module({
   name: 'cardsModule',
   stateFactory: true,
   namespaced: true
 })
 export default class Cards extends StoreModule {
-  isLoading: boolean = false
+  isLoading: boolean = defaultState.isLoading
 
-  cards: PaginatedManagedCardsResponse | null = null
+  cards: PaginatedManagedCardsResponse | null = defaultState.cards
 
-  managedCard: ManagedCardModel | null = null
+  managedCard: ManagedCardModel | null = defaultState.managedCard
 
-  statements: StatementResponseModel | null = null
+  statements: StatementResponseModel | null = defaultState.statements
 
-  filteredStatement: any = {}
+  filteredStatement: any = defaultState.filteredStatement
 
   get currency() {
     if (this.cards == null) {
@@ -50,6 +58,13 @@ export default class Cards extends StoreModule {
     })
 
     return total
+  }
+
+  @Mutation
+  RESET_STATE() {
+    Object.keys(defaultState).forEach((key) => {
+      this[key] = defaultState[key]
+    })
   }
 
   @Mutation
