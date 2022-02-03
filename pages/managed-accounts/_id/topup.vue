@@ -23,11 +23,11 @@
                 <b-tbody>
                   <b-tr>
                     <b-th>Beneficiary</b-th>
-                    <b-td>{{ bankAccountDetails.beneficiaryNameAndSurname }}</b-td>
+                    <b-td>{{ beneficiaryNameAndSurname }}</b-td>
                   </b-tr>
                   <b-tr>
                     <b-th>IBAN</b-th>
-                    <b-td>{{ bankAccountDetails.details.iban }}</b-td>
+                    <b-td>{{ iban }}</b-td>
                   </b-tr>
                   <b-tr v-if="sepaBic">
                     <b-th>BIC</b-th>
@@ -39,16 +39,16 @@
                   </b-tr>
                   <b-tr>
                     <b-th>Bank</b-th>
-                    <b-td>{{ bankAccountDetails.beneficiaryBank }}</b-td>
+                    <b-td>{{ beneficiaryBank }}</b-td>
                   </b-tr>
                   <b-tr>
                     <b-th>Address</b-th>
                     <b-td v-html="address" />
                   </b-tr>
-                  <b-tr v-if="bankAccountDetails.paymentReference">
+                  <b-tr v-if="paymentReference">
                     <b-th>Payment Reference</b-th>
                     <b-td>
-                      {{ bankAccountDetails.paymentReference }}
+                      {{ paymentReference }}
                     </b-td>
                   </b-tr>
                 </b-tbody>
@@ -101,25 +101,28 @@ export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
   }
 
   get sepaBic() {
-    const i = this.iban?.bankAccountDetails.findIndex((details) => {
+    if (!this.ibanDetails?.bankAccountDetails) return ''
+    const i = this.ibanDetails?.bankAccountDetails.findIndex((details) => {
       return (details.details as SepaBankDetailsModel).bankIdentifierCode !== undefined
     })
 
-    if (i! >= 0) {
-      return ((this.iban?.bankAccountDetails[i!] as BankAccountDetailsModel).details as SepaBankDetailsModel)
+    if (i >= 0) {
+      return ((this.ibanDetails?.bankAccountDetails[i!] as BankAccountDetailsModel).details as SepaBankDetailsModel)
         .bankIdentifierCode
     } else {
-      return false
+      return ''
     }
   }
 
   get swiftCode() {
-    const i = this.iban?.bankAccountDetails.findIndex((details) => {
+    if (!this.ibanDetails?.bankAccountDetails) return ''
+    const i = this.ibanDetails?.bankAccountDetails.findIndex((details) => {
       return (details.details as SwiftBankDetailsModel).code !== undefined
     })
 
     if (i! >= 0) {
-      return ((this.iban?.bankAccountDetails[i!] as BankAccountDetailsModel).details as SwiftBankDetailsModel).code
+      return ((this.ibanDetails?.bankAccountDetails[i!] as BankAccountDetailsModel).details as SwiftBankDetailsModel)
+        .code
     } else {
       return false
     }
@@ -127,14 +130,35 @@ export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
 
   get bankAccountDetails(): BankAccountDetailsModel | undefined {
     try {
-      return this.iban?.bankAccountDetails[0]
+      return this.ibanDetails?.bankAccountDetails[0]
     } catch (e) {
       return undefined
     }
   }
 
-  get iban(): ManagedAccountIBANModel | null {
+  get ibanDetails(): ManagedAccountIBANModel | null {
     return this.stores.accounts.ibanDetails
+  }
+
+  get beneficiaryNameAndSurname() {
+    return this.bankAccountDetails?.beneficiaryNameAndSurname
+  }
+
+  get beneficiaryBank() {
+    return this.bankAccountDetails?.beneficiaryBank
+  }
+
+  get iban() {
+    return (
+      (this.bankAccountDetails?.details &&
+        'iban' in this.bankAccountDetails.details &&
+        this.bankAccountDetails.details.iban) ||
+      ''
+    )
+  }
+
+  get paymentReference() {
+    return this.bankAccountDetails?.paymentReference
   }
 
   mounted() {

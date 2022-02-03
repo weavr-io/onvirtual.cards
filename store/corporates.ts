@@ -122,7 +122,7 @@ export default class Corporates extends StoreModule {
       await this.get()
     }
     if (!this.kyb) {
-      await this.getKyb
+      await this.getKyb()
     }
 
     if (this.kyb?.kybStatus !== KYBStatusEnum.APPROVED) {

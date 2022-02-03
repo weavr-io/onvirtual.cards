@@ -50,7 +50,7 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
   },
   middleware: ['kyVerified']
 })
-export default class AddCardPage extends mixins(BaseMixin, AccountsMixin) {
+export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin) {
   createManagedAccountRequest: CreateManagedAccountRequest = {
     profileId: '',
     friendlyName: 'Main Account',

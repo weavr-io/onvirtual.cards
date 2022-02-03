@@ -74,7 +74,7 @@
                 </b-form-row>
                 <loader-button
                   :is-loading="isAdding"
-                  :disabled="$v.$invalid || numberIsValid"
+                  :disabled="$v.$invalid || numberIsValid === false"
                   button-text="next"
                   class="mt-5 text-center"
                 />
