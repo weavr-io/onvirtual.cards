@@ -64,11 +64,11 @@ export class ManagedCardsApi {
     return $axiosMulti.put<ManagedCardsSpendRulesModel>(`/managed_cards/${params.id}/spend_rules`, params.body)
   }
 
-  upgradeToPhysicalCard(
-    id: IDModel,
+  upgradeToPhysicalCard(params: {
+    id: IDModel
     body: UpgradeToPhysicalManagedCardRequest
-  ): Promise<AxiosResponse<ManagedCardModel>> {
-    return $axiosMulti.post<ManagedCardModel>(`/managed_cards/${id}/physical`, body)
+  }): Promise<AxiosResponse<ManagedCardModel>> {
+    return $axiosMulti.post<ManagedCardModel>(`/managed_cards/${params.id}/physical`, params.body)
   }
 
   activatePhysicalCard(
