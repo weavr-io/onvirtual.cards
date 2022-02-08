@@ -7,16 +7,6 @@ const config = {
   publicRuntimeConfig: {
     multiApi: {
       baseUrl: process.env.MULTI_BASE_URL,
-      tenantId: process.env.TENANT_ID,
-      programmeId: '' + process.env.APPLICATION_ID,
-      secretKey: process.env.SECRET_KEY,
-      uiKey: process.env.UI_KEY
-    },
-    api: {
-      baseUrl: process.env.BASE_URL,
-      tenantId: process.env.TENANT_ID,
-      programmeId: '' + process.env.APPLICATION_ID,
-      secretKey: process.env.SECRET_KEY,
       uiKey: process.env.UI_KEY
     },
     profileId: {
@@ -30,7 +20,6 @@ const config = {
       send: process.env.SEND_PROFILE_ID
     },
     app: {
-      kyb_required: process.env.KYB_REQUIRED ? JSON.parse(process.env.KYB_REQUIRED) : true,
       view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true,
       sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : true
     }

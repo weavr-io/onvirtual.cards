@@ -39,7 +39,7 @@
         </b-row>
         <b-row v-else-if="hasCards" cols="1" cols-md="3">
           <b-col v-for="card in cards" :key="card.id">
-            <weavr-card :card="card" no-body class="mb-5" @blocked="$fetch" @unblocked="$fetch" />
+            <weavr-card :card="card" class="mb-5" @blocked="$fetch" @unblocked="$fetch" />
           </b-col>
         </b-row>
         <b-row v-else>

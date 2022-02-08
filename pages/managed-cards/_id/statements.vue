@@ -2,10 +2,11 @@
   <section>
     <b-container>
       <template v-if="managedCard">
-        <b-row align-v="end" class="mb-5 border-bottom pb-3">
-          <b-col cols="1">
+        <b-row align-v="end" class="mb-5 border-bottom pb-3" align-h="center">
+          <b-col cols="auto">
             <b-link class="card-view-details" @click="toggleModal">
-              view details
+              <div>view</div>
+              <div>details</div>
             </b-link>
           </b-col>
           <b-col>
