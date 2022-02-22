@@ -112,14 +112,6 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
       currency: {
         required
       },
-      // cardholderMobileNumber: {
-      //   cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/),
-      //   // eslint-disable-next-line
-      //   requiredIf: requiredIf(function() {
-      //     // @ts-ignore
-      //     return !this.isConsumer
-      //   })
-      // },
       nameOnCard: {
         required,
         maxLength: maxLength(27)
