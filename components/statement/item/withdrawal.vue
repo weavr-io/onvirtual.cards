@@ -3,7 +3,7 @@
     <b-col cols="1">
       <div class="transaction-type-icon">
         <div class="transaction">
-          <img src="~/assets/svg/statement/withdrawal.svg" alt="">
+          <img src="~/assets/svg/statement/withdrawal.svg" alt="" />
         </div>
       </div>
     </b-col>
@@ -29,7 +29,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
+import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 @Component({
   components: {
@@ -39,7 +39,7 @@ import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 })
 export default class StatementItemAdditionalField extends Vue {
   @Prop()
-  readonly transaction!: StatementEntry
+  readonly transaction!: StatementEntryModel
 
   get isPending(): boolean {
     return this.transaction.additionalFields?.withdrawalState !== 'COMPLETED'

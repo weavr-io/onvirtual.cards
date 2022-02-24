@@ -1,69 +1,60 @@
 <template>
   <div>
-    <section v-if="!hasAlert">
+    <section v-if="!hasAlert && !$fetchState.pending">
       <statement :filters="filters" />
+      <infinite-loading spinner="spiral" @infinite="infiniteScroll">
+        <span slot="no-more" />
+        <div slot="no-results" />
+      </infinite-loading>
     </section>
-    <infinite-loading @infinite="infiniteScroll" spinner="spiral">
-      <span slot="no-more" />
-      <div slot="no-results" />
-    </infinite-loading>
   </div>
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
 
-import { OrderType } from '~/api/Enums/OrderType'
-import * as AuthStore from '~/store/modules/Auth'
-import * as ConsumersStore from '~/store/modules/Consumers'
-import { Consumer } from '~/api/Models/Consumers/Consumer'
-import * as ViewStore from '~/store/modules/View'
 import BaseMixin from '~/minixs/BaseMixin'
-import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import RouterMixin from '~/minixs/RouterMixin'
-import { accountsStore, corporatesStore } from '~/utils/store-accessor'
+import AccountsMixin from '~/minixs/AccountsMixin'
+import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import { accountsStore } from '~/utils/store-accessor'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 
-const Consumers = namespace(ConsumersStore.name)
-const View = namespace(ViewStore.name)
 const dot = require('dot-object')
 const moment = require('moment')
 
 @Component({
-  watchQuery: true,
+  watch: {
+    '$route.query': '$fetch'
+  },
   layout: 'dashboard',
   components: {
     Statement: () => import('~/components/accounts/statement/statement.vue')
-  }
+  },
+  middleware: 'kyVerified'
 })
-export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
-  get account() {
-    return this.stores.accounts.account
-  }
+export default class AccountPage extends mixins(BaseMixin, RouterMixin, AccountsMixin) {
+  filters: GetManagedAccountStatementRequest | null = null
+
+  page: number = 0
 
   get filteredStatement() {
     return this.stores.accounts.filteredStatement
   }
 
-  @Consumers.Getter consumer!: Consumer | null
-
-  get corporate() {
-    return this.stores.corporates.corporate
+  get hasAlert() {
+    return this.stores.view.hasAlert
   }
 
-  @View.Getter hasAlert!: boolean
+  asyncData({ store }) {
+    accountsStore(store).SET_STATEMENTS(null)
+  }
 
-  accountId!: number
+  async fetch() {
+    const _accountId = this.$route.params.id
 
-  filters!: ManagedAccountStatementRequest
+    await this.stores.accounts.get(_accountId)
 
-  page: number = 0
-
-  async asyncData({ store, route }) {
-    const _accountId = route.params.id
-
-    await accountsStore(store).get(_accountId)
-
-    const _routeQueries = dot.object(route.query)
+    const _routeQueries = dot.object(this.$route.query)
     const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
     if (!_filters.fromTimestamp) {
@@ -78,54 +69,47 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin) {
         .valueOf()
     }
 
-    const _statementFilters: ManagedAccountStatementRequest = {
+    const _statementFilters: GetManagedAccountStatementRequest = {
       showFundMovementsOnly: false,
-      orderByTimestamp: OrderType.DESC,
-      paging: {
-        limit: 100,
-        offset: 0
-      },
+      orderByTimestamp: OrderEnum.DESC,
+      limit: 10,
+      offset: 0,
       ..._filters
     }
 
     const _req = {
       id: _accountId,
-      body: _statementFilters
+      filters: _statementFilters
     }
 
-    await accountsStore(store).getStatement(_req)
+    this.filters = { ..._statementFilters }
 
-    if (AuthStore.Helpers.isConsumer(store)) {
-      const _consumerId = AuthStore.Helpers.identityId(store)
-      if (_consumerId) {
-        await ConsumersStore.Helpers.get(store, _consumerId)
-      }
-    } else {
-      const _corporateId = AuthStore.Helpers.identityId(store)
-      if (_corporateId) {
-        await corporatesStore(store).getCorporateDetails(_corporateId)
-      }
-    }
-
-    return { accountId: _accountId, filters: _statementFilters }
+    this.page = 0
+    await this.stores.accounts.getStatements(_req)
   }
 
   infiniteScroll($state) {
     setTimeout(() => {
       this.page++
 
-      const _request: ManagedAccountStatementRequest = { ...this.filters }
-      _request.paging!.offset = this.page * _request.paging!.limit!
+      const _request: GetManagedAccountStatementRequest = { ...this.filters }
 
-      this.stores.accounts.getCardStatementPage({ id: this.$route.params.id, body: _request }).then((response) => {
-        if (response.data.responseCount < _request.paging!.limit!) {
-          $state.complete()
-          console.log('complete')
-        } else {
-          console.log('loaded')
-          $state.loaded()
-        }
-      })
+      _request!.offset = (this.page * +_request!.limit!).toString()
+
+      this.stores.accounts
+        .getStatements({
+          id: this.$route.params.id,
+          filters: _request
+        })
+        .then((res) => {
+          if (res.data.responseCount! < _request.limit!) {
+            $state.complete()
+            console.log('complete')
+          } else {
+            console.log('loaded')
+            $state.loaded()
+          }
+        })
     }, 500)
   }
 }

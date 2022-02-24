@@ -30,8 +30,8 @@
   </b-row>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 @Component({
   components: {
@@ -42,7 +42,6 @@ import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 })
 export default class StatementItemAdditionalField extends Vue {
   @Prop()
-  readonly transaction!: StatementEntry
-
+  readonly transaction!: StatementEntryModel
 }
 </script>

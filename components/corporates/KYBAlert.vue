@@ -48,14 +48,10 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
+import { Component, mixins } from "nuxt-property-decorator";
 
-import * as ViewStore from '~/store/modules/View'
-import { KYBState } from '~/api/Enums/KYBState'
-import BaseMixin from '~/minixs/BaseMixin'
-
-const View = namespace(ViewStore.name)
+import BaseMixin from "~/minixs/BaseMixin";
+import { KYBStatusEnum } from "~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum";
 
 @Component({})
 export default class KYBAlert extends mixins(BaseMixin) {
@@ -65,10 +61,12 @@ export default class KYBAlert extends mixins(BaseMixin) {
 
   accountId!: number
 
-  @View.Getter showKybAlert!: boolean
+  get showKybAlert() {
+    return this.stores.view.showKybAlert
+  }
 
   get isPendingReview(): boolean {
-    return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.PENDING_REVIEW
+    return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.PENDING_REVIEW
   }
 }
 </script>

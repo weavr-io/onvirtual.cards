@@ -1,5 +1,5 @@
 <template>
-  <b-col lg="6" offset-lg="3">
+  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
     <div class="text-center pb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
@@ -8,16 +8,16 @@
         Login
       </h3>
 
-      <form id="contact-form" @submit.prevent="login" class="mt-5">
+      <form id="contact-form" class="mt-5" @submit.prevent="login">
         <error-alert
           message="Incorrect email and password combination. If you do not have an account please click on Register."
         />
-        <b-form-group id="ig-code" label="EMAIL" label-for="form-code">
+        <b-form-group id="login-email" label="EMAIL" label-for="form-email">
           <b-form-input
-            id="from-code"
-            v-model="loginRequest.code"
+            id="from-email"
+            v-model="loginRequest.email"
             class="form-control"
-            name="setCode"
+            name="Email"
             placeholder="Email"
           />
         </b-form-group>
@@ -27,9 +27,9 @@
             ref="passwordField"
             :options="{ placeholder: 'Password' }"
             :base-style="passwordBaseStyle"
-            @onKeyUp="checkOnKeyUp"
             class-name="sign-in-password"
             name="password"
+            @onKeyUp="checkOnKeyUp"
           />
         </client-only>
 
@@ -60,16 +60,13 @@
 </template>
 
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins, Ref, Watch } from 'nuxt-property-decorator'
-import { Schemas } from '~/api/Schemas'
-import * as AuthStore from '~/store/modules/Auth'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-
-const Auth = namespace(AuthStore.name)
+import { authStore } from '~/utils/store-accessor'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
 
 @Component({
   layout: 'auth',
@@ -80,11 +77,7 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class LoginPage extends mixins(BaseMixin) {
-  @Auth.Getter isLoggedIn
-
-  @Auth.Action authenticate
-
-  @Auth.Getter isLoading!: boolean
+  isLoading: boolean = false
 
   @Watch('isLoggedIn')
   isLoggedInChanged(val) {
@@ -94,20 +87,29 @@ export default class LoginPage extends mixins(BaseMixin) {
   @Ref('passwordField')
   passwordField!: WeavrPasswordInput
 
-  public loginRequest: Schemas.LoginRequest = {
-    code: '',
-    password: ''
+  private loginRequest: LoginWithPasswordRequest = {
+    email: '',
+    password: {
+      value: ''
+    }
   }
 
   login() {
-    console.log('Login Function')
-
     try {
+      this.isLoading = true
+      this.stores.errors.SET_ERROR(null)
       this.passwordField.createToken().then(
         (tokens) => {
-          console.log('Password tokenisation success')
-          this.loginRequest.password = tokens.tokens.password
-          this.authenticate(this.loginRequest).then(this.goToDashboard.bind(this))
+          this.loginRequest.password.value = tokens.tokens.password
+          this.stores.auth
+            .loginWithPassword(this.loginRequest)
+            .then((res) => {
+              this.goToDashboard(res.data)
+            })
+            .catch((err) => {
+              this.isLoading = false
+              this.stores.errors.SET_ERROR(err)
+            })
         },
         (e) => {
           console.log('tokenisation failed', e)
@@ -118,20 +120,20 @@ export default class LoginPage extends mixins(BaseMixin) {
     }
   }
 
-  async goToDashboard(res) {
-    console.log('auth success')
-    const _id = res.data.credential.type + '-' + res.data.credential.id
+  async goToDashboard(res: LoginWithPasswordResponse) {
+    const _id = res.credentials.type! + '-' + res.credentials.id
     try {
       this.$segment.identify(_id, {
-        email: this.loginRequest.code
+        email: this.loginRequest.email
       })
     } catch (e) {}
 
-    if (AuthStore.Helpers.isConsumer(this.$store)) {
-      await ConsumersStore.Helpers.get(this.$store, AuthStore.Helpers.identity(this.$store).id)
+    if (this.stores.auth.isConsumer) {
+      await this.stores.consumers.get()
     }
 
-    this.$router.push('/')
+    await this.goToIndex()
+    this.isLoading = false
   }
 
   checkOnKeyUp(e) {
@@ -161,7 +163,7 @@ export default class LoginPage extends mixins(BaseMixin) {
   }
 
   asyncData({ store, redirect }) {
-    const isLoggedIn = store.getters['auth/isLoggedIn']
+    const isLoggedIn = authStore(store).isLoggedIn
 
     if (isLoggedIn) {
       redirect('/')
@@ -172,7 +174,7 @@ export default class LoginPage extends mixins(BaseMixin) {
     console.log('MESSAGE', event.data)
   }
 
-  beforeMount() {
+  created() {
     window.addEventListener('message', this.receiveMessage, false)
   }
 

@@ -1,16 +1,9 @@
 'use strict'
 
 export interface SecureClient {
-  init(
-    publicApiKey: string,
-    options: SecureClientOptions
-  ): void
+  init(publicApiKey: string, options: SecureClientOptions): void
 
-  associate(
-    authToken: string,
-    resolve?: () => void,
-    reject?: (e?: any) => void
-  ): void
+  associate(authToken: string, resolve?: () => void, reject?: (e?: any) => void): void
 
   kyb(): KYB
 
@@ -20,24 +13,13 @@ export interface SecureClient {
 
   form(): SecureForm
 
-  span(
-    field: string,
-    token: string,
-    options?: SecureSpanOptions
-  ): SecureSpan
+  span(field: string, token: string, options?: SecureSpanOptions): SecureSpan
 }
 
 export interface SecureForm {
-  input(
-    name: string,
-    field: string,
-    options?: SecureInputOptions
-  ): SecureInput
+  input(name: string, field: string, options?: SecureInputOptions): SecureInput
 
-  tokenize(
-    resolve?: (tokens: { [key: string]: string }) => void,
-    reject?: (e?: any) => void
-  ): void
+  tokenize(resolve?: (tokens: { [key: string]: string }) => void, reject?: (e?: any) => void): void
 
   destroy(): this
 }
@@ -57,25 +39,13 @@ export interface SecureInput {
 
   destroy(): this
 
-  addListener(
-    event: string,
-    listener: (...args: any[]) => void
-  ): this
+  addListener(event: string, listener: (...args: any[]) => void): this
 
-  on(
-    event: string,
-    listener: (...args: any[]) => void
-  ): this
+  on(event: string, listener: (...args: any[]) => void): this
 
-  removeListener(
-    event: string,
-    listener: (...args: any[]) => void
-  ): this
+  removeListener(event: string, listener: (...args: any[]) => void): this
 
-  off(
-    event: string,
-    listener: (...args: any[]) => void
-  ): this
+  off(event: string, listener: (...args: any[]) => void): this
 
   removeAllListeners(event?: string): this
 }
@@ -89,25 +59,13 @@ export interface SecureSpan {
 
   destroy(): this
 
-  addListener(
-    event: string,
-    listener: (...args: any[]) => void
-  ): this
+  addListener(event: string, listener: (...args: any[]) => void): this
 
-  on(
-    event: string,
-    listener: (...args: any[]) => void
-  ): this
+  on(event: string, listener: (...args: any[]) => void): this
 
-  removeListener(
-    event: string,
-    listener: (...args: any[]) => void
-  ): this
+  removeListener(event: string, listener: (...args: any[]) => void): this
 
-  off(
-    event: string,
-    listener: (...args: any[]) => void
-  ): this
+  off(event: string, listener: (...args: any[]) => void): this
 
   removeAllListeners(event?: string): this
 }
@@ -188,7 +146,6 @@ export interface SecureElementStyleWithPseudoClasses extends SecureElementStyle 
   ':-webkit-autofill'?: SecureElementStyle
 }
 
-
 export interface KYBAuthObject {
   externalUserId?: string
   accessToken?: string
@@ -203,10 +160,7 @@ export interface KYB {
   init(
     selector: string,
     auth: KYBAuthObject,
-    listener: (
-      messageType: any,
-      payload: any
-    ) => void,
+    listener: (messageType: any, payload: any) => void,
     options?: KYBOptions
   ): void
 }
@@ -225,18 +179,12 @@ export interface KYC {
   init(
     selector: string,
     auth: KYCAuthObject,
-    listener: (
-      messageType: any,
-      payload: any
-    ) => void,
+    listener: (messageType: any, payload: any) => void,
     options?: KYCOptions
   ): void
 }
 
-export interface ConsumerKYC {
-
-}
-
+export interface ConsumerKYC {}
 
 export declare type VerificationFlowLoadHandler = () => void
 export declare type VerificationFlowLaunchHandler = (response: CorporateVerificationFlowLoadAndLaunchParams) => void
@@ -244,16 +192,9 @@ export declare type VerificationFlowLaunchHandler = (response: CorporateVerifica
 export interface VerificationFlow {
   getPath(reference: bigint): string
 
-  getParams(
-    authToken: string,
-    reference: bigint,
-    callback: VerificationFlowLaunchHandler
-  ): void
+  getParams(authToken: string, reference: bigint, callback: VerificationFlowLaunchHandler): void
 
-  getParamsLoadAndLaunch(
-    authToken: string,
-    reference: bigint
-  ): void
+  getParamsLoadAndLaunch(authToken: string, reference: bigint): void
 
   loadAndLaunch(
     params: CorporateVerificationFlowLoadAndLaunchParams | ConsumerVerificationFlowLoadAndLaunchParams
@@ -286,33 +227,24 @@ export interface VerificationFlowProvider {
 export interface VerificationFlowOptions {
   selector: string
 
-  onMessage?: (
-    message: string,
-    additionalInfo?: any
-  ) => void
+  onMessage?: (message: string, additionalInfo?: any) => void
   onError?: (message: any) => void
   customCss?: string
   customCssStr?: string
 }
 
-export interface ConsumerVerificationFlowInitOption extends ConsumerVerificationFlowOptions, ConsumerVerificationFlowLaunchParams {
+export interface ConsumerVerificationFlowInitOption
+  extends ConsumerVerificationFlowOptions,
+    ConsumerVerificationFlowLaunchParams {}
 
-}
+export interface ConsumerVerificationFlowOptions extends VerificationFlowOptions {}
 
-export interface ConsumerVerificationFlowOptions extends VerificationFlowOptions {
-
-}
-
-export interface CorporateVerificationFlowOptions extends VerificationFlowOptions {
-
-}
-
+export interface CorporateVerificationFlowOptions extends VerificationFlowOptions {}
 
 export interface LaunchParams {
   email?: string
   mobile?: string
 }
-
 
 export interface SumSubConsumerVerificationFlowLoadAndLaunchParams extends LaunchParams {
   accessToken: string
@@ -321,19 +253,15 @@ export interface SumSubConsumerVerificationFlowLoadAndLaunchParams extends Launc
   kycProviderKey?: VerificationFlowProviders.SUMSUB
 }
 
+export type ConsumerVerificationFlowLoadAndLaunchParams = SumSubConsumerVerificationFlowLoadAndLaunchParams
 
-export type ConsumerVerificationFlowLoadAndLaunchParams =
-  SumSubConsumerVerificationFlowLoadAndLaunchParams
-
-export type CorporateVerificationFlowLoadAndLaunchParams =
-  SumSubConsumerVerificationFlowLoadAndLaunchParams
+export type CorporateVerificationFlowLoadAndLaunchParams = SumSubConsumerVerificationFlowLoadAndLaunchParams
 
 export interface SumSub extends VerificationFlowProvider {
   type: VerificationFlowProviders.SUMSUB
 
   launch(params: ConsumerVerificationFlowLoadAndLaunchParams | CorporateVerificationFlowLoadAndLaunchParams): void
 }
-
 
 export enum VerificationFlowProviders {
   SUMSUB = 'sumsub'

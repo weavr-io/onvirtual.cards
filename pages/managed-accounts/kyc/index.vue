@@ -3,7 +3,16 @@
     <b-container>
       <b-row>
         <b-col>
-          <weavr-kyc :reference="reference" :options="options" />
+          <template v-if="$fetchState.pending">
+            <div class="d-flex justify-content-center">
+              <div class="loader-spinner">
+                <b-spinner />
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <weavr-kyc :reference="reference" :options="options" />
+          </template>
         </b-col>
       </b-row>
     </b-container>
@@ -11,10 +20,7 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as AuthStore from '~/store/modules/Auth'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore } from '~/utils/store-accessor'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 
@@ -27,26 +33,15 @@ export default class KycPage extends mixins(BaseMixin) {
 
   reference!: string
 
-  async asyncData({ store, redirect }) {
-    const _consumerId = AuthStore.Helpers.identityId(store)
-
-    try {
-      const _res = await ConsumersStore.Helpers.startKYC(store, _consumerId)
-      return { reference: _res.data.reference }
-    } catch (e) {
-      if (e.response.data.errorCode === 'KYC_ALREADY_APPROVED') {
-        const _accounts = await accountsStore(store).index()
-
-        if (_accounts.data.count >= 1) {
-          const _accountId = _accounts.data.account[0].id.id
-          redirect('/managed-accounts/' + _accountId + '/topup')
-        }
-      }
-    }
+  fetch() {
+    return this.stores.consumers.startKYC().then((res) => {
+      this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+      this.reference = res.data.reference
+    })
   }
 
   options: Partial<ConsumerVerificationFlowOptions> = {
-    onMessage: this.onMessage,
+    onMessage: this.onMessage
   }
 
   onMessage(message, additionalInfo) {

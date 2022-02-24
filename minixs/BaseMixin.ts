@@ -1,8 +1,11 @@
 import { Component, Vue } from 'nuxt-property-decorator'
-import { $api } from '~/utils/api'
 import { initialiseStores } from '~/utils/store-accessor'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 
-const moment = require('moment')
+const Countries = require('~/static/json/countries.json')
 
 @Component
 export default class BaseMixin extends Vue {
@@ -43,21 +46,88 @@ export default class BaseMixin extends Vue {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
-  downloadAsCSV(_accId, _pathParam, _req) {
-    const req = $api.post('/app/api/' + _pathParam + '/' + _accId + '/statement/download', _req, {
-      responseType: 'blob',
-      headers: {
-        Accept: '*/*'
+  get isConsumer() {
+    return this.stores.auth.isConsumer
+  }
+
+  get isCorporate() {
+    return this.stores.auth.isCorporate
+  }
+
+  get isLoggedIn() {
+    return this.stores.auth.isLoggedIn
+  }
+
+  get identityId() {
+    return this.stores.auth.identityId
+  }
+
+  get profileId() {
+    return this.isConsumer
+      ? this.$config.profileId.managed_accounts_consumers!
+      : this.$config.profileId.managed_accounts_corporates!
+  }
+
+  get consumer(): ConsumerModel | null {
+    return this.stores.consumers.consumer
+  }
+
+  get rootName(): string {
+    if (this.isConsumer) {
+      return this.stores.consumers.consumer!.rootUser.name
+    } else if (this.isCorporate) {
+      return this.stores.corporates.corporate!.rootUser.name
+    } else return 'noname'
+  }
+
+  get rootSurname(): string {
+    if (this.isConsumer) {
+      return this.stores.consumers.consumer!.rootUser.surname
+    } else if (this.isCorporate) {
+      return this.stores.corporates.corporate!.rootUser.surname
+    } else return 'nosurname'
+  }
+
+  get rootFullName(): string {
+    return `${this.rootName} ${this.rootSurname}`
+  }
+
+  get corporate() {
+    return this.stores.corporates.corporate
+  }
+
+  get rootUserEmail() {
+    return this.isConsumer ? this.consumer?.rootUser.email : this.corporate?.rootUser.email
+  }
+
+  get countiesOptions() {
+    return Countries.map((_c) => {
+      return {
+        text: _c.name,
+        value: _c['alpha-2']
       }
     })
+  }
 
-    req.then((res) => {
-      const url = window.URL.createObjectURL(new Blob([res.data]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', 'statement_' + moment().format('YYYYMMDDHHmmss') + '.csv')
-      document.body.appendChild(link)
-      link.click()
-    })
+  get countryOptionsWithDefault() {
+    const _default: [any] = [{ ...DefaultSelectValueConst }]
+    _default.push(...this.countiesOptions)
+    return _default
+  }
+
+  get identityVerified(): boolean {
+    if (this.stores.auth.isConsumer) {
+      return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+    } else {
+      return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
+    }
+  }
+
+  goToIndex() {
+    return this.$router.push('/')
+  }
+
+  logout() {
+    return this.stores.auth.logout()
   }
 }

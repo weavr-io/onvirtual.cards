@@ -18,7 +18,8 @@
           <b-col>
             <span v-if="transaction.sourceAmount">
               {{ 100 | weavr_currency(transaction.transactionAmount.currency) }} =
-              {{ transaction.sourceAmount.currency | weavr_currency_symbol }}{{ transaction.additionalFields.exchangeRate }}
+              {{ transaction.sourceAmount.currency | weavr_currency_symbol
+              }}{{ transaction.additionalFields.exchangeRate }}
             </span>
           </b-col>
           <b-col class="text-right">
@@ -33,8 +34,8 @@
   </b-row>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 @Component({
   components: {
@@ -44,13 +45,13 @@ import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 })
 export default class StatementItemAdditionalField extends Vue {
   @Prop()
-  readonly transaction!: StatementEntry
+  readonly transaction!: StatementEntryModel
 
   get chargeFeeType(): string | undefined {
     return this.transaction.additionalFields?.chargeFeeType
-            .split('_')
-            .join(' ')
-            .toLowerCase()
+      .split('_')
+      .join(' ')
+      .toLowerCase()
   }
 }
 </script>

@@ -1,5 +1,5 @@
-import * as ErrorStore from '~/store/modules/Error'
+import { errorsStore } from '~/utils/store-accessor'
 
 export default function(ctxt) {
-  return ErrorStore.Helpers.resetErrors(ctxt.store)
+  return errorsStore(ctxt.store).RESET_ERROR()
 }

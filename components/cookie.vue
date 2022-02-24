@@ -9,8 +9,8 @@
           </b-link>
         </div>
         <div>
-          <b-link @click="dismissCookie" class="ml-3">
-            <img src="/img/close.svg" width="12px" >
+          <b-link class="ml-3" @click="dismissCookie">
+            <img src="/img/close.svg" width="12px" />
           </b-link>
         </div>
       </div>
@@ -23,21 +23,20 @@ import BaseMixin from '~/minixs/BaseMixin'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
+const COOKIE_NAME = 'onvirtual-cookie'
 @Component({
   components: {}
 })
-export default class DefaultLayout extends mixins(BaseMixin) {
-  cookieName: string = 'onvirtual-cookie'
-
+export default class Cookies extends mixins(BaseMixin) {
   showCookieAlert: boolean = false
 
   mounted() {
-    const _authCookie = Cookie.get(this.cookieName)
+    const _authCookie = Cookie.get(COOKIE_NAME)
     this.showCookieAlert = !_authCookie
   }
 
   dismissCookie() {
-    Cookie.set(this.cookieName, true)
+    Cookie.set(COOKIE_NAME, true)
     this.showCookieAlert = false
   }
 }

@@ -1,46 +1,43 @@
-import config from '~/config'
-import * as Error from '~/store/modules/Error'
+import { Context, Plugin } from '@nuxt/types'
+import { authStore, errorsStore } from '~/utils/store-accessor'
 
-export default function({ $axios, redirect, store }, inject) {
-  const api = $axios.create({
+const axiosPlugin: Plugin = (ctxt: Context, inject) => {
+  const axiosMulti = ctxt.$axios.create({
     headers: {
       common: {
         'Content-Type': 'application/json',
         Accept: 'application/json'
       }
     },
-    baseURL: config.api.baseUrl
+    baseURL: ctxt.$config.multiApi.baseUrl
   })
-
-  function onRequest(config) {
-    // console.log('Making request to: ' + config.url)
-  }
 
   function onError(error) {
     const code = parseInt(error.response && error.response.status)
 
     switch (code) {
       case 401:
-        store.commit('auth/LOGOUT', error.response, { root: true })
-        redirect('/login')
+        if (error.response.config.url !== '/logout') authStore(ctxt.store).logout()
+        ctxt.redirect('/login')
         return
       case 403:
-        redirect('/forbidden')
+        if (ctxt.route.name !== 'login') ctxt.redirect('/forbidden')
         return
       case 409:
-        Error.Helpers.setConflict(store, error)
+        errorsStore(ctxt.store).SET_CONFLICT(error)
         break
       default:
-        Error.Helpers.setError(store, error)
+        errorsStore(ctxt.store).SET_ERROR(error)
         break
     }
 
     return Promise.reject(error)
   }
 
-  api.onRequest(onRequest)
-  api.onError(onError)
+  axiosMulti.interceptors.response.use((res) => res, onError)
 
-  // Inject to context as $api
-  inject('api', api)
+  // Inject to context as $axiosMulti
+  inject('axiosMulti', axiosMulti)
 }
+
+export default axiosPlugin

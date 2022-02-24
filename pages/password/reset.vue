@@ -11,7 +11,7 @@
           </h5>
         </div>
         <error-alert />
-        <b-form id="contact-form" @submit="resetPassword" class="mt-5">
+        <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
           <b-form-group
             id="ig-email"
             :state="isInvalid($v.form.email)"
@@ -50,7 +50,7 @@
               <img src="/img/success.svg" alt="" style="max-width: 100px" />
             </div>
             <div>
-              <b-form id="contact-form" @submit="resetPassword" class="mt-5">
+              <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
                 <loader-button :is-loading="isLoading" button-text="resend" class="text-center" />
               </b-form>
             </div>
@@ -62,14 +62,9 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import { required, email } from 'vuelidate/lib/validators'
-
-import * as AuthStore from '~/store/modules/Auth'
-import { LostPasswordStartRequest } from '~/api/Requests/Auth/LostPasswordStartRequest'
+import { email, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
-
-const Auth = namespace(AuthStore.name)
+import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 
 @Component({
   layout: 'auth',
@@ -87,22 +82,31 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class ResetPasswordPage extends mixins(BaseMixin) {
-  @Auth.Getter isLoading!: boolean
+  isLoading: boolean = false
 
   passwordSent: boolean = false
 
-  protected form: LostPasswordStartRequest = {
+  protected form: InitiateLostPasswordRequestModel = {
     email: ''
   }
 
-  resetPassword(evt) {
-    evt.preventDefault()
+  resetPassword() {
     this.$v.$touch()
-    if (!this.$v.$invalid) {
-      AuthStore.Helpers.lostPasswordStart(this.$store, this.form).then(() => {
+    if (this.$v.$invalid) return
+
+    this.isLoading = true
+    this.stores.errors.SET_ERROR(null)
+    this.stores.auth
+      .lostPasswordInitiate(this.form)
+      .then(() => {
         this.passwordSent = true
       })
-    }
+      .catch((err) => {
+        this.stores.errors.SET_ERROR(err)
+      })
+      .finally(() => {
+        this.isLoading = false
+      })
   }
 }
 </script>

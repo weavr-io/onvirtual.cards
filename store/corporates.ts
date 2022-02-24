@@ -1,29 +1,34 @@
-import { Module, Action, Mutation } from 'vuex-module-decorators'
+import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
-import { Corporate } from '~/api/Models/Corporates/Corporate'
-import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
-import { CreateCorporateUserFullRequest } from '~/api/Requests/Corporates/CreateCorporateUserFullRequest'
-import { KYBState } from '~/api/Enums/KYBState'
-import { ConsumeCorporateUserInviteRequest } from '~/api/Requests/Corporates/ConsumeCorporateUserInviteRequest'
-import { $api } from '~/utils/api'
-import { ValidateCorporateUserInviteRequest } from '~/api/Requests/Corporates/ValidateCorporateUserInviteRequest'
-import { CorporateKybStatus } from '~/api/Models/Corporates/CorporateKybStatus'
+import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
+import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import { identitiesStore, loaderStore } from '~/utils/store-accessor'
+import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
+import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
+
+const defaultState = {
+  isLoading: false,
+  isLoadingRegistration: false,
+  corporate: null,
+  kyb: null
+}
 
 @Module({
-  name: 'corporatesV2',
+  name: 'corporatesModule',
   stateFactory: true,
   namespaced: true
 })
 export default class Corporates extends StoreModule {
-  isLoading: boolean = false
+  isLoading: boolean = defaultState.isLoading
 
-  isLoadingRegistration: boolean = false
+  isLoadingRegistration: boolean = defaultState.isLoadingRegistration
 
-  corporate: Corporate | null = null
+  corporate: CorporateModel | null = defaultState.corporate
 
-  kyb: CorporateKybStatus | null = null
-
-  users: any = null
+  kyb: GetCorporateKYBResponse | null = defaultState.corporate
 
   @Mutation
   SET_IS_LOADING(_isLoading: boolean) {
@@ -36,27 +41,30 @@ export default class Corporates extends StoreModule {
   }
 
   @Mutation
-  SET_CORPORATE(_corporate: Corporate) {
-    this.corporate = _corporate
+  RESET_STATE() {
+    Object.keys(defaultState).forEach((key) => {
+      this[key] = defaultState[key]
+    })
   }
 
   @Mutation
-  SET_KYB(kyb: CorporateKybStatus) {
+  SET_CORPORATE(corporate: CorporateModel) {
+    this.corporate = corporate
+  }
+
+  @Mutation
+  SET_KYB(kyb: GetCorporateKYBResponse) {
     this.kyb = kyb
   }
 
-  @Mutation
-  SET_USERS(_users) {
-    this.users = _users
-  }
-
   @Action({ rawError: true })
-  register(request: CreateCorporateRequest) {
+  create(request: CreateCorporateRequest) {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post<Corporate>('/app/api/corporates/_/create', request)
+    const req = this.store.$apiMulti.corporates.store(request)
 
     req.then((res) => {
+      identitiesStore(this.store).SET_IDENTITY(res.data)
       this.SET_CORPORATE(res.data)
       this.SET_IS_LOADING(false)
     })
@@ -68,16 +76,32 @@ export default class Corporates extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getCorporateDetails(corporateId) {
+  update(request: UpdateCorporateRequest) {
+    loaderStore(this.store).start()
+
+    const req = this.store.$apiMulti.corporates.update(request)
+    req.then((_res) => {
+      this.SET_CORPORATE(_res.data)
+      identitiesStore(this.store).SET_IDENTITY(_res.data)
+    })
+
+    req.finally(() => {
+      loaderStore(this.store).stop()
+      this.SET_IS_LOADING(false)
+    })
+
+    return req
+  }
+
+  @Action({ rawError: true })
+  get() {
     this.SET_IS_LOADING(true)
 
-    const req = $api.post<Corporate>(
-      '/app/api/corporates/' + corporateId + '/get',
-      {}
-    )
+    const req = this.store.$apiMulti.corporates.show()
 
     req.then((res) => {
       this.SET_CORPORATE(res.data)
+      identitiesStore(this.store).SET_IDENTITY(res.data)
     })
     req.finally(() => {
       this.SET_IS_LOADING(false)
@@ -87,12 +111,8 @@ export default class Corporates extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getKyb(corporateId: number) {
-    const req = $api.post<CorporateKybStatus>(
-      '/app/api/corporates/' + corporateId + '/kyb/get',
-      {}
-    )
-
+  getKyb() {
+    const req = this.store.$apiMulti.corporates.getCorporateKYB()
     req.then((res) => {
       this.SET_KYB(res.data)
     })
@@ -101,126 +121,25 @@ export default class Corporates extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getUsers(corporateId) {
-    this.SET_IS_LOADING(true)
-
-    const req = $api.post(
-      '/app/api/corporates/' + corporateId + '/users/get',
-      {}
-    )
-
-    req.then((res) => {
-      this.SET_USERS(res.data)
-    })
-    req.finally(() => {
-      this.SET_IS_LOADING(false)
-    })
-
-    return req
+  verifyEmail(request: VerifyEmailRequest) {
+    return this.store.$apiMulti.corporates.verifyEmail(request)
   }
 
   @Action({ rawError: true })
-  getUser(params) {
-    this.SET_IS_LOADING(true)
-
-    const req = $api.post(
-      '/app/api/corporates/' +
-        params.corporateId +
-        '/users/' +
-        params.userId +
-        '/get',
-      {}
-    )
-
-    req.finally(() => {
-      this.SET_IS_LOADING(false)
-    })
-
-    return req
-  }
-
-  @Action({ rawError: true })
-  updateUser(request) {
-    this.SET_IS_LOADING(true)
-
-    const req = $api.post(
-      '/app/api/corporates/' +
-        request.corporateId +
-        '/users/' +
-        request.userId +
-        '/update',
-      request.body
-    )
-
-    req.finally(() => {
-      this.SET_IS_LOADING(false)
-    })
-
-    return req
-  }
-
-  @Action({ rawError: true })
-  addUser(request: CreateCorporateUserFullRequest) {
-    this.SET_IS_LOADING(true)
-
-    const req = $api.post(
-      '/app/api/corporates/' + request.corporateId + '/users/_/create',
-      request.request
-    )
-
-    req.finally(() => {
-      this.SET_IS_LOADING(false)
-    })
-
-    return req
-  }
-
-  @Action({ rawError: true })
-  sendUserInvite(request: { corporateId: string; inviteId: string }) {
-    this.SET_IS_LOADING(true)
-
-    const req = $api.post(
-      '/app/api/corporates/' +
-        request.corporateId +
-        '/invites/' +
-        request.inviteId +
-        '/send',
-      {}
-    )
-
-    req.finally(() => {
-      this.SET_IS_LOADING(false)
-    })
-
-    return req
-  }
-
-  @Action({ rawError: true })
-  sendVerificationCodeEmail(request) {
-    return $api.post(
-      '/app/api/corporates/' +
-        request.corporateId +
-        '/users/email/send_verification_code',
-      request.body
-    )
+  sendVerificationCodeEmail(request: SendVerificationCodeRequest) {
+    return this.store.$apiMulti.corporates.sendVerificationCode(request)
   }
 
   @Action({ rawError: true })
   async checkKYB() {
-
-    if (this.corporate === null) {
-
-      const _corpId = this.store.getters['auth/auth'].identity.id
-      await this.getKyb(_corpId)
+    if (!this.corporate) {
+      await this.get()
+    }
+    if (!this.kyb) {
+      await this.getKyb()
     }
 
-    if (this.kyb === undefined || this.kyb === null){
-      await this.getKyb(this.corporate!.id.id)
-    }
-
-    const _res = this.kyb!.fullCompanyChecksVerified === KYBState.APPROVED
-
-    if (!_res) {
+    if (this.kyb?.kybStatus !== KYBStatusEnum.APPROVED) {
       return Promise.reject(new Error('KYB not approved'))
     } else {
       return Promise.resolve()
@@ -228,45 +147,7 @@ export default class Corporates extends StoreModule {
   }
 
   @Action({ rawError: true })
-  validateInvite(request: ValidateCorporateUserInviteRequest) {
-    return $api.post(
-      '/app/api/corporates/' +
-        request.id +
-        '/invites/' +
-        request.inviteId +
-        '/validate',
-      request.body
-    )
-  }
-
-  @Action({ rawError: true })
-  consumeInvite(request: ConsumeCorporateUserInviteRequest) {
-    return $api.post(
-      '/app/api/auth/invites/' + request.id + '/consume',
-      request.body
-    )
-  }
-
-  @Action({ rawError: true })
-  startKYB(corporateId) {
-    return $api.post('/app/api/corporates/' + corporateId + '/kyb/start', {})
-  }
-
-  @Action({ rawError: true })
-  sendVerificationCodeMobile(request) {
-    return $api.post(
-      '/app/api/corporates/' +
-        request.corporateId +
-        '/users/mobile/send_verification_code',
-      request.request
-    )
-  }
-
-  @Action({ rawError: true })
-  verifyMobile(request) {
-    return $api.post(
-      '/app/api/corporates/' + request.corporateId + '/users/mobile/verify',
-      request.request
-    )
+  startKYB() {
+    return this.store.$apiMulti.corporates.startKYB()
   }
 }

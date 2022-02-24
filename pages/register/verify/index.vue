@@ -1,7 +1,7 @@
 <template>
-  <b-col md="6" offset-md="3">
+  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
@@ -13,7 +13,7 @@
             <b-img fluid src="/img/email.svg" class="mt-5 mb-2" />
           </b-col>
         </b-row>
-        <form id="contact-form" @submit="doVerify" class="mt-5">
+        <form id="contact-form" class="mt-5" @submit.prevent="doVerify">
           <b-alert :show="showEmailResentSuccessAlert" variant="success">
             The verification code was resent by email.
           </b-alert>
@@ -22,11 +22,11 @@
           </p>
           <error-alert class="mt-3" />
           <b-row>
-            <b-col md="4" offset-md="4">
+            <b-col cols="6" offset="3">
               <b-form-group label="">
                 <b-form-input
-                  v-model="verifyEmailRequest.request.nonce"
-                  :state="isInvalid($v.verifyEmailRequest.request.nonce)"
+                  v-model="verifyEmailRequest.verificationCode"
+                  :state="isInvalid($v.verifyEmailRequest.verificationCode)"
                   placeholder="000000"
                   class="text-center"
                 />
@@ -39,7 +39,7 @@
         <div class="mt-4 text-center">
           <small class="text-grey">
             Didn’t receive a code?
-            <b-link @click="sendVerifyEmail" class="text-decoration-underline text-grey">Send again</b-link>
+            <b-link class="text-decoration-underline text-grey" @click="sendVerifyEmail">Send again</b-link>
             .
           </small>
         </div>
@@ -49,15 +49,11 @@
 </template>
 
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import { Schemas } from '~/api/Schemas'
-import * as AuthStore from '~/store/modules/Auth'
-import * as ConsumersStore from '~/store/modules/Consumers'
 import BaseMixin from '~/minixs/BaseMixin'
-
-const Auth = namespace(AuthStore.name)
+import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
+import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 
 @Component({
   layout: 'auth',
@@ -67,24 +63,70 @@ const Auth = namespace(AuthStore.name)
   },
   validations: {
     verifyEmailRequest: {
-      request: {
-        nonce: {
-          required,
-          minLength: minLength(6),
-          maxLength: maxLength(6)
-        }
+      verificationCode: {
+        required,
+        minLength: minLength(6),
+        maxLength: maxLength(6)
       }
     }
   }
 })
 export default class EmailVerificationPage extends mixins(BaseMixin) {
-  @Auth.Getter isLoggedIn
-
-  @Auth.Getter isLoading
-
   showEmailResentSuccess: boolean = false
 
-  public verifyEmailRequest!: Schemas.verifyEmailRequest
+  private verifyEmailRequest!: VerifyEmailRequest
+
+  isLoading: boolean = false
+
+  async asyncData({ route, redirect, store }) {
+    const identities = identitiesStore(store)
+
+    if (identities.identity === null) {
+      await identities.getIdentity()
+    }
+
+    if (!authStore(store).isLoggedIn) {
+      redirect('/')
+    }
+
+    if (identities.emailVerified) {
+      return redirect('/register/verify/mobile')
+    }
+
+    const request: VerifyEmailRequest = {
+      email: route.query.email + '',
+      verificationCode: route.query.nonce ? route.query.nonce + '' : ''
+    }
+
+    if (request.verificationCode !== '') {
+      if (authStore(store).isConsumer) {
+        consumersStore(store)
+          .verifyEmail(request)
+          .then(() => {
+            if (authStore(store).isLoggedIn) {
+              redirect('/')
+            } else {
+              redirect('/login')
+            }
+          })
+      } else {
+        // else treat as Corporate
+        corporatesStore(store)
+          .verifyEmail(request)
+          .then(() => {
+            if (authStore(store).isLoggedIn) {
+              redirect('/')
+            } else {
+              redirect('/login')
+            }
+          })
+      }
+    }
+
+    return {
+      verifyEmailRequest: request
+    }
+  }
 
   get showEmailResentSuccessAlert(): boolean {
     if (this.$route.query.send === 'true') {
@@ -94,120 +136,77 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
     }
   }
 
-  asyncData({ route, redirect, store }) {
-    const request: Schemas.verifyEmailRequest = {
-      consumerId: route.query.cons,
-      corporateId: route.query.corp,
-      request: {
-        emailAddress: route.query.email + '',
-        nonce: route.query.nonce ? route.query.nonce + '' : ''
-      }
-    }
-
-    if (request.request.nonce !== '') {
-      AuthStore.Helpers.verifyEmail(store, request).then(() => {
-        if (AuthStore.Helpers.isLoggedIn(store)) {
-          redirect('/')
-        } else {
-          redirect('/login')
-        }
-      })
-    }
-
-    return {
-      verifyEmailRequest: request
-    }
-  }
-
   async mounted() {
-    if (this.verifyEmailRequest.corporateId === undefined && this.verifyEmailRequest.consumerId === undefined) {
-      if (AuthStore.Helpers.isConsumer(this.$store)) {
-        await this.getConsumerUser()
-      } else {
-        await this.getCorporateUser()
-      }
-    }
-
     if (this.$route.query.send === 'true') {
-      this.sendVerifyEmail()
+      await this.sendVerifyEmail()
     }
   }
 
-  async getConsumerUser() {
-    const _consumerId = AuthStore.Helpers.identityId(this.$store)
-    if (_consumerId != null) {
-      const res = await ConsumersStore.Helpers.get(this.$store, _consumerId)
-      this.verifyEmailRequest.consumerId = _consumerId
-      this.verifyEmailRequest.request.emailAddress = res.data.email
-    }
-  }
-
-  async getCorporateUser() {
-    const _corporateId = AuthStore.Helpers.identityId(this.$store)
-    const _corporate = AuthStore.Helpers.auth(this.$store)
-
-    if (_corporateId != null && _corporate.credential) {
-      const res = await this.stores.corporates.getUser({
-        corporateId: _corporateId,
-        userId: _corporate.credential.id
+  async sendVerifyEmail() {
+    this.isLoading = true
+    if (this.isConsumer) {
+      await this.sendVerifyEmailConsumers().then(() => {
+        this.isLoading = false
       })
-
-      this.verifyEmailRequest.corporateId = _corporateId
-      this.verifyEmailRequest.request.emailAddress = res.data.email
-    }
-  }
-
-  sendVerifyEmail() {
-    if (this.$route.query.cons || AuthStore.Helpers.isConsumer(this.$store)) {
-      this.sendVerifyEmailConsumers()
     } else {
-      this.sendVerifyEmailCorporates()
+      // else treat as corporate
+      await this.sendVerifyEmailCorporates().then(() => {
+        this.isLoading = false
+      })
     }
+
+    this.isLoading = false
   }
 
-  sendVerifyEmailConsumers() {
-    ConsumersStore.Helpers.sendVerificationCodeEmail(this.$store, {
-      consumerId: this.verifyEmailRequest.consumerId,
-      request: {
-        emailAddress: this.verifyEmailRequest.request.emailAddress
-      }
-    }).then(() => {
-      this.showEmailResentSuccess = true
-    })
-  }
-
-  sendVerifyEmailCorporates() {
-    this.stores.corporates
+  async sendVerifyEmailConsumers() {
+    await this.stores.consumers
       .sendVerificationCodeEmail({
-        corporateId: this.verifyEmailRequest.corporateId,
-        body: {
-          emailAddress: this.verifyEmailRequest.request.emailAddress
-        }
+        email: this.verifyEmailRequest.email
       })
       .then(() => {
         this.showEmailResentSuccess = true
       })
   }
 
-  doVerify(evt) {
-    evt.preventDefault()
+  async sendVerifyEmailCorporates() {
+    await this.stores.corporates
+      .sendVerificationCodeEmail({
+        email: this.verifyEmailRequest.email
+      })
+      .then(() => {
+        this.showEmailResentSuccess = true
+      })
+  }
+
+  doVerify() {
+    this.isLoading = true
 
     if (this.$v.verifyEmailRequest) {
       this.$v.verifyEmailRequest.$touch()
       if (this.$v.verifyEmailRequest.$anyError) {
-        return null
+        return
       }
     }
 
-    AuthStore.Helpers.verifyEmail(this.$store, this.verifyEmailRequest).then(this.nextPage.bind(this))
+    this.isConsumer
+      ? this.stores.consumers
+          .verifyEmail(this.verifyEmailRequest)
+          .then(this.onMobileVerified)
+          .catch(this.removeLoader)
+      : this.stores.corporates
+          .verifyEmail(this.verifyEmailRequest)
+          .then(this.onMobileVerified)
+          .catch(this.removeLoader)
   }
 
-  nextPage() {
-    this.goToVerifyMobile()
+  removeLoader() {
+    this.isLoading = false
   }
 
-  goToVerifyMobile() {
-    this.$router.push({
+  onMobileVerified() {
+    this.stores.identities.SET_EMAIL_VERIFIED(true)
+
+    return this.$router.push({
       path: '/register/verify/mobile',
       query: {
         send: 'true',
@@ -217,10 +216,6 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
         mobileCountryCode: this.$route.query.mobileCountryCode
       }
     })
-  }
-
-  goToLogin() {
-    this.$router.push('/login')
   }
 }
 </script>

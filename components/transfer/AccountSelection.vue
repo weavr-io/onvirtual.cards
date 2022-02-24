@@ -11,10 +11,10 @@
       <b-col>
         <b-form-group class="weavr-account-radio" :state="isInvalid($v.request.source.id)">
           <b-form-radio-group
-                  v-model="request.source.id"
-                  :options="formattedAccounts"
-                  name="source-account-options"
-                  stacked
+            v-model="request.source.id"
+            :options="formattedAccounts"
+            name="source-account-options"
+            stacked
           />
         </b-form-group>
       </b-col>
@@ -32,9 +32,8 @@
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
-import { namespace } from '~/node_modules/vuex-class'
 import BaseMixin from '~/minixs/BaseMixin'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Component({
   validations: {
@@ -76,25 +75,25 @@ export default class AccountSelectionForm extends mixins(BaseMixin) {
   }
 
   get formattedAccounts(): { value: string; text: string; html: string }[] {
-    if (!this.accounts) {
+    if (!this.accounts?.accounts) {
       return []
     }
 
-    const _accounts = this.accounts.account.filter((_account: ManagedAccountsSchemas.ManagedAccount) => {
-      return _account.active
+    const _accounts = this.accounts.accounts.filter((account) => {
+      return account.state.state === ManagedInstrumentStateEnum.ACTIVE
     })
 
-    return _accounts.map((val: ManagedAccountsSchemas.ManagedAccount) => {
+    return _accounts.map((account) => {
       const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: val.currency,
+        currency: account.currency,
         minimumFractionDigits: 2,
         currencyDisplay: 'symbol'
       })
 
       let _availableBalance = 0
-      if (val.balances.availableBalance) {
-        _availableBalance = parseInt(val.balances.availableBalance) / 100
+      if (account.balances.availableBalance) {
+        _availableBalance = account.balances.availableBalance / 100
       }
 
       const isDisabled = _availableBalance < 10
@@ -105,19 +104,19 @@ export default class AccountSelectionForm extends mixins(BaseMixin) {
       }
 
       return {
-        value: val.id.id,
-        text: val.friendlyName,
+        value: account.id,
+        text: account.friendlyName,
         html:
-                '<div class="row w-100">' +
-                '<div class="col col-6 account-name"><p class="m-0">' +
-                val.friendlyName +
-                '</p>' +
-                disabledP +
-                '</div>' +
-                '<div class="col col-6 account-balance text-right">' +
-                formatter.format(_availableBalance) +
-                '</div>' +
-                '</div>',
+          '<div class="row w-100">' +
+          '<div class="col col-6 account-name"><p class="m-0">' +
+          account.friendlyName +
+          '</p>' +
+          disabledP +
+          '</div>' +
+          '<div class="col col-6 account-balance text-right">' +
+          formatter.format(_availableBalance) +
+          '</div>' +
+          '</div>',
         disabled: isDisabled
       }
     })

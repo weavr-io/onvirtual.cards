@@ -5,29 +5,44 @@
         <b-row align-v="center">
           <b-col>
             <b-form-checkbox
-              v-model="showDeleted"
-              v-if="showDeletedSwitch"
+              v-if="showDestroyedSwitch"
+              :checked="showDestroyed"
               name="check-button"
               switch
+              @change="showDestroyedChanged"
             >
-              <template v-if="showDeleted">
+              <template v-if="showDestroyed">
                 Hide
               </template>
               <template v-else>
                 Show
               </template>
-              deleted cards
+              destroyed cards
             </b-form-checkbox>
           </b-col>
-          <b-col v-if="canAddCard" class="text-right">
-            <b-button to="/managed-cards/add" variant="border-primary">
-              + add new card
-            </b-button>
+          <b-col class="text-right d-flex justify-content-end">
+            <div v-b-tooltip.hover :title="identityVerificationMessage">
+              <b-button to="/managed-cards/add" :disabled="!identityVerified" variant="border-primary">
+                + add new card
+              </b-button>
+            </div>
           </b-col>
         </b-row>
       </b-container>
       <b-container v-if="!hasAlert" class="mt-5">
-        <b-row v-if="!hasCards">
+        <b-row v-if="$fetchState.pending">
+          <b-col class="d-flex flex-column align-items-center">
+            <div class="loader-spinner ">
+              <b-spinner />
+            </div>
+          </b-col>
+        </b-row>
+        <b-row v-else-if="hasCards" cols="1" cols-md="3">
+          <b-col v-for="card in cards" :key="card.id">
+            <weavr-card :card="card" class="mb-5" @blocked="$fetch" @unblocked="$fetch" />
+          </b-col>
+        </b-row>
+        <b-row v-else>
           <b-col class="py-5 text-center">
             <h4 class="font-weight-light">
               You have no cards.
@@ -41,11 +56,6 @@
             </h5>
           </b-col>
         </b-row>
-        <b-row v-if="hasCards" cols="1" cols-md="3">
-          <b-col v-for="(card, key) in cards" :key="key">
-            <weavr-card :card="card" no-body class="mb-5" />
-          </b-col>
-        </b-row>
       </b-container>
     </section>
   </div>
@@ -53,18 +63,11 @@
 
 <script lang="ts">
 import { Component, mixins, Watch } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import * as AuthStore from '~/store/modules/Auth'
-import * as ConsumersStore from '~/store/modules/Consumers'
-import { KYBState } from '~/api/Enums/KYBState'
-import * as ViewStore from '~/store/modules/View'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
-import BaseMixin from '~/minixs/BaseMixin'
-import { cardsStore, corporatesStore } from '~/utils/store-accessor'
-import { NullableBoolean } from '~/api/Generic/NullableBoolean'
-import { $api } from '~/utils/api'
 
-const View = namespace(ViewStore.name)
+import BaseMixin from '~/minixs/BaseMixin'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import CardsMixin from '~/minixs/CardsMixin'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Component({
   layout: 'dashboard',
@@ -72,99 +75,54 @@ const View = namespace(ViewStore.name)
   components: {
     WeavrCard: () => import('~/components/cards/card.vue'),
     KybAlert: () => import('~/components/corporates/KYBAlert.vue')
-  }
+  },
+  middleware: ['kyVerified']
 })
-export default class CardsPage extends mixins(BaseMixin) {
-  get corporate() {
-    return this.stores.corporates.corporate
+export default class CardsPage extends mixins(BaseMixin, CardsMixin) {
+  showDestroyedSwitch = true
+
+  get showDestroyed() {
+    return this.$route.query.showDestroyed === 'true'
   }
 
-  get cards() {
-    return this.stores.cards.cards
-  }
-
-  @View.Getter hasAlert!: boolean
-
-  public showDeleted: boolean = false
-
-  public showDeletedSwitch: boolean = false
-
-  async asyncData({ store, route }) {
-    if (AuthStore.Helpers.isConsumer(store)) {
-      const _consumerId = AuthStore.Helpers.identityId(store)
-      if (_consumerId) {
-        await ConsumersStore.Helpers.get(store, _consumerId)
-      }
-    } else {
-      const _corporateId = AuthStore.Helpers.identityId(store)
-      if (_corporateId) {
-        await corporatesStore(store).getCorporateDetails(_corporateId)
-      }
-    }
-
-    let _active: NullableBoolean = NullableBoolean.NULL
-
-    if (route.query.showDeleted) {
-      _active = NullableBoolean.FALSE
-    } else {
-      _active = NullableBoolean.TRUE
-    }
-
-    await cardsStore(store).getCards({
-      paging: {
-        offset: 0,
-        limit: 0
-      },
-      active: _active
+  async fetch() {
+    const state = this.showDestroyed
+      ? undefined
+      : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED].join(',')
+    await this.stores.cards.getCards({
+      state
     })
+  }
 
-    const _showDeletedSwitch = await $api.post('/app/api/managed_cards/get', {
-      paging: {
-        offset: 0,
-        limit: 1
-      },
-      active: NullableBoolean.FALSE
+  mounted() {
+    this.stores.cards.hasDestroyedCards().then((res) => {
+      this.showDestroyedSwitch = res
     })
-
-    return {
-      showDeleted: route.query.showDeleted,
-      showDeletedSwitch: _showDeletedSwitch.data.count > 0
-    }
   }
 
-  @Watch('showDeleted')
-  showDeletedChanged(val) {
-    this.showDeleted = val
-    this.$router.push({ path: this.$route.path, query: { showDeleted: val } })
+  get hasAlert() {
+    return this.stores.view.hasAlert
   }
 
-  get hasCards(): boolean {
-    return this.cards.length > 0
+  async showDestroyedChanged(val) {
+    await this.$router.push({
+      path: this.$route.path,
+      query: { showDestroyed: val }
+    })
+  }
+
+  @Watch('showDestroyed')
+  queryParamChanged() {
+    this.$fetch()
   }
 
   get showKybAlert(): boolean {
-    if (this.stores.corporates.kyb) {
-      return (
-        this.stores.corporates.kyb.fullCompanyChecksVerified !==
-        KYBState.APPROVED
-      )
-    } else {
-      return false
-    }
+    return !!this.stores.corporates.kyb && this.stores.corporates.kyb.kybStatus !== KYBStatusEnum.APPROVED
   }
 
-  get canAddCard(): boolean {
-    if (AuthStore.Helpers.isConsumer(this.$store)) {
-      return (
-        ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence ===
-        FullDueDiligence.APPROVED
-      )
-    } else {
-      return (
-        this.stores.corporates.kyb?.fullCompanyChecksVerified ===
-        KYBState.APPROVED
-      )
-    }
+  get identityVerificationMessage() {
+    if (!this.identityVerified) return 'Pending identity verification'
+    return undefined
   }
 }
 </script>

@@ -15,18 +15,25 @@
           </b-button>
         </b-col>
       </b-row>
-    </b-container>
-    <b-container v-if="users">
-      <b-row v-for="(user, key) in users.user" :key="key" class="mt-3" align-v="center">
-        <b-col cols="1">
-          <b-img v-bind="mainProps" :alt="user.name + ' ' + user.surname" rounded />
-        </b-col>
-        <b-col>{{ user.name }} {{ user.surname }}</b-col>
-        <b-col class="text-muted font-weight-light">
-          {{ user.email }}
-        </b-col>
-        <!-- <b-col class="text-muted font-weight-light">{{user.type}}</b-col> -->
-      </b-row>
+
+      <template v-if="users && !$fetchState.pending">
+        <b-row v-for="(user, key) in users.users" :key="key" class="mt-3" align-v="center">
+          <b-col cols="1">
+            <b-img v-bind="mainProps" :alt="user.name + ' ' + user.surname" rounded />
+          </b-col>
+          <b-col>{{ user.name }} {{ user.surname }}</b-col>
+          <b-col class="text-muted font-weight-light">
+            {{ user.email }}
+          </b-col>
+        </b-row>
+      </template>
+      <template v-else>
+        <div class="d-flex justify-content-center">
+          <div class="loader-spinner">
+            <b-spinner />
+          </div>
+        </div>
+      </template>
     </b-container>
   </section>
 </template>
@@ -34,9 +41,8 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
-import { corporatesStore } from '~/utils/store-accessor'
 
-@Component({})
+@Component
 export default class UsersPage extends mixins(BaseMixin) {
   mainProps = {
     blank: true,
@@ -46,12 +52,11 @@ export default class UsersPage extends mixins(BaseMixin) {
   }
 
   get users() {
-    return this.stores.corporates.users
+    return this.stores.users.users
   }
 
-  asyncData({ store }) {
-    const _corporateId = store.getters['auth/identityId']
-    return corporatesStore(store).getUsers(_corporateId)
+  fetch() {
+    return this.stores.users.index()
   }
 }
 </script>

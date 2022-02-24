@@ -1,9 +1,10 @@
 import { NuxtAxiosInstance } from '~/node_modules/@nuxtjs/axios'
 
-let $api: NuxtAxiosInstance
+// eslint-disable-next-line import/no-mutable-exports
+let $axiosMulti: NuxtAxiosInstance
 
-export function initializeAxios(api: NuxtAxiosInstance) {
-  $api = api
+export function initializeAxios(axiosMulti: NuxtAxiosInstance) {
+  $axiosMulti = axiosMulti
 }
 
-export { $api }
+export { $axiosMulti }

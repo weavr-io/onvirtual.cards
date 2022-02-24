@@ -1,17 +1,17 @@
 <template>
   <b-col lg="6" offset-lg="3">
     <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" >
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card no-body class="overflow-hidden">
       <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
         <b-card-body class="p-card">
           <div class="form-screens">
-            <div :class="{ 'd-none': screen !== 0 }" class="form-screen">
-              <register-form :request="registrationRequest" @submit-form="form1Submit" />
+            <div v-if="screen === 0" class="form-screen">
+              <register-form @submit-form="form1Submit" />
             </div>
-            <div :class="{ 'd-none': screen !== 1 }" class="form-screen">
-              <personal-details-form :request="registrationRequest" @submit-form="form2Submit" @go-back="goBack" />
+            <div v-else class="form-screen">
+              <personal-details-form @submit-form="form2Submit" @go-back="goBack" />
             </div>
           </div>
         </b-card-body>
@@ -20,21 +20,20 @@
   </b-col>
 </template>
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as AuthStore from '~/store/modules/Auth'
-import { Helpers } from '~/store/modules/Auth'
+import { AxiosResponse } from 'axios'
 
-import config from '~/config'
-import { CreatePassword } from '~/api/Requests/Auth/CreatePassword'
-import { CreatePasswordIdentity } from '~/api/Requests/Auth/CreatePasswordIdentity'
-import { Schemas } from '~/api/Schemas'
-import { CompanyType } from '~/api/Enums/Corporates/CompanyType'
-import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
 import BaseMixin from '~/minixs/BaseMixin'
-import { BooleanString } from '~/api/Generic/BooleanString'
-
-const Auth = namespace(AuthStore.name)
+import { authStore } from '~/utils/store-accessor'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
+import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 
 @Component({
   layout: 'auth',
@@ -47,56 +46,60 @@ const Auth = namespace(AuthStore.name)
   }
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
+  screen: number = 0
+
+  private registrationRequest: DeepNullable<RecursivePartial<CreateCorporateRequest & { password: string }>> = {
+    profileId: this.$config.profileId.corporates,
+    tag: 'tag',
+    rootUser: {
+      name: null,
+      surname: null,
+      email: null,
+      mobile: {
+        number: null,
+        countryCode: '+356'
+      },
+      companyPosition: null
+    },
+    company: {
+      type: null,
+      name: '',
+      registrationNumber: '',
+      registrationCountry: ''
+    },
+    industry: IndustryTypeEnum.ACCOUNTING,
+    sourceOfFunds: CorporateSourceOfFundTypeEnum.CIVIL_CONTRACT,
+    acceptedTerms: false,
+    ipAddress: '',
+    baseCurrency: CurrencyEnum.EUR
+  }
+
   get isLoading() {
     return this.stores.corporates.isLoading
-  }
-
-  @Auth.Getter isLoggedIn
-
-  get corporate() {
-    return this.stores.corporates.corporate
-  }
-
-  screen = 0
-
-  public password: string = ''
-
-  nextScreen() {
-    this.screen++
   }
 
   goBack() {
     this.screen--
   }
 
-  public registrationRequest: Nullable<CreateCorporateRequest> = {
-    active: true,
-    acceptedTerms: BooleanString.FALSE,
-    companyName: '',
-    companyRegistrationNumber: '',
-    companyType: CompanyType.LLC,
-    ipAddress: '111.222.333.444',
-    profileId: '0',
-    registrationCountry: 'MT',
-    rootCompanyPosition: '',
-    rootEmail: '',
-    rootMobileCountryCode: '',
-    rootMobileNumber: '',
-    rootName: '',
-    rootSurname: '',
-    supportEmail: '',
-    industry: null,
-    sourceOfFunds: null,
-    sourceOfFundsOther: '',
-    kybProviderKey: 'sumsub'
+  asyncData({ store, redirect }) {
+    const isLoggedIn = authStore(store).isLoggedIn
+
+    if (isLoggedIn) {
+      redirect('/dashboard')
+    }
   }
 
-  form1Submit(_data) {
-    if (_data != null) {
-      this.registrationRequest.rootEmail = _data.rootEmail
-      this.registrationRequest.supportEmail = _data.rootEmail
-      this.password = _data.password
+  fetch() {
+    this.$apiMulti.ipify.get().then((ip) => {
+      this.registrationRequest.ipAddress = ip.data.ip
+    })
+  }
 
+  form1Submit(_data: { email: string | null; password: string | null; acceptedTerms: boolean } | null) {
+    if (_data !== null) {
+      this.registrationRequest.rootUser!.email = _data.email
+      this.registrationRequest.password = _data.password
       this.registrationRequest.acceptedTerms = _data.acceptedTerms
 
       this.screen = 1
@@ -105,15 +108,15 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
   form2Submit(_data) {
     if (_data != null) {
-      this.registrationRequest.rootName = _data.rootName
-      this.registrationRequest.rootSurname = _data.rootSurname
-      this.registrationRequest.rootCompanyPosition = _data.rootCompanyPosition
-      this.registrationRequest.rootMobileCountryCode = _data.rootMobileCountryCode
-      this.registrationRequest.rootMobileNumber = _data.rootMobileNumber
+      this.registrationRequest.rootUser!.name = _data.rootUser.name
+      this.registrationRequest.rootUser!.surname = _data.rootUser.surname
+      this.registrationRequest.rootUser!.companyPosition = _data.rootUser.companyPosition
+      this.registrationRequest.rootUser!.mobile! = { ..._data.rootUser.mobile }
 
-      this.registrationRequest.companyName = _data.companyName
-      this.registrationRequest.companyRegistrationNumber = _data.companyRegistrationNumber
-      this.registrationRequest.registrationCountry = _data.registrationCountry
+      this.registrationRequest.company!.name = _data.company.name
+      this.registrationRequest.company!.type = _data.company.type
+      this.registrationRequest.company!.registrationNumber = _data.company.registrationNumber
+      this.registrationRequest.company!.registrationCountry = _data.company.registrationCountry
 
       this.registrationRequest.industry = _data.industry
       this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
@@ -127,9 +130,46 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
 
     this.stores.corporates
-      .register(this.registrationRequest as CreateCorporateRequest)
-      .then(this.doCreateCorporatePasswordIdentity.bind(this))
-      .catch(this.registrationFailed.bind(this))
+      .create(this.registrationRequest as CreateCorporateRequest)
+      .then(this.onCorporateCreated)
+      .catch(this.registrationFailed)
+  }
+
+  onCorporateCreated(res: AxiosResponse<ConsumerModel>) {
+    this.createPassword(res.data.id, res.data.rootUser.id.id!)
+  }
+
+  createPassword(identity: IdentityIdModel, rootUserId: IDModel) {
+    const passwordRequest: CreatePasswordRequestModel = {
+      password: {
+        value: this.registrationRequest.password as string
+      }
+    }
+    this.$apiMulti.passwords
+      .store({
+        userId: rootUserId,
+        data: passwordRequest
+      })
+      .then(this.onRegisteredSuccessfully.bind(this))
+  }
+
+  onRegisteredSuccessfully() {
+    if (!this.registrationRequest.rootUser) {
+      return
+    }
+
+    const loginRequest: LoginWithPasswordRequest = {
+      email: this.registrationRequest.rootUser.email as string,
+      password: {
+        value: this.registrationRequest.password as string
+      }
+    }
+
+    const _req = this.stores.auth.loginWithPassword(loginRequest)
+
+    _req.then(() => {
+      this.$router.push({ path: '/profile/address' })
+    })
   }
 
   registrationFailed(err) {
@@ -140,95 +180,6 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       this.screen = 0
     } else {
       this.$weavrToastError(_errCode)
-    }
-  }
-
-  doCreateCorporatePasswordIdentity() {
-    const _req: CreatePasswordIdentity = {
-      id: this.corporate!.id.id,
-      request: {
-        profileId: this.registrationRequest.profileId!
-      }
-    }
-    AuthStore.Helpers.createPasswordIdentity(this.$store, _req).then(
-      this.doCreateCorporatePassword.bind(this),
-      this.registrationFailed.bind(this)
-    )
-  }
-
-  doCreateCorporatePassword() {
-    const _req: CreatePassword = {
-      id: this.corporate!.id.id,
-      request: {
-        credentialType: 'ROOT',
-        identityId: this.corporate!.id.id,
-        password: {
-          value: this.password
-        }
-      }
-    }
-
-    AuthStore.Helpers.createPassword(this.$store, _req).then(
-      this.waitAndDoLogin.bind(this),
-      this.registrationFailed.bind(this)
-    )
-  }
-
-  waitAndDoLogin() {
-    this.sleep(2000).then(this.doLogin.bind(this))
-  }
-
-  doLogin() {
-    const _loginRequest: Schemas.LoginRequest = {
-      code: this.registrationRequest.rootEmail!,
-      password: this.password
-    }
-
-    Helpers.authenticate(this.$store, _loginRequest).then(
-      this.goToVerifyEmail.bind(this),
-      this.registrationFailed.bind(this)
-    )
-  }
-
-  // sendVerifyEmail() {
-  //   CorporatesStore.Helpers.sendVerificationCodeEmail(this.$store, {
-  //     corporateId: this.corporate.id.id,
-  //     body: {
-  //       emailAddress: this.registrationRequest.rootEmail
-  //     }
-  //   }).then(this.goToVerifyEmail.bind(this), this.registrationFailed.bind(this))
-  // }
-
-  goToVerifyEmail() {
-    this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
-    this.$router.push({
-      path: '/register/verify',
-      query: {
-        send: 'true',
-        corp: this.corporate!.id.id + '',
-        email: this.registrationRequest.rootEmail,
-        mobileNumber: this.registrationRequest.rootMobileNumber,
-        mobileCountryCode: this.registrationRequest.rootMobileCountryCode
-      }
-    })
-  }
-
-  checkOnKeyUp(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      this.stores.corporates.register(e)
-    }
-  }
-
-  mounted() {
-    this.registrationRequest.profileId = config.profileId.corporates
-  }
-
-  asyncData({ store, redirect }) {
-    const isLoggedIn = store.getters['auth/isLoggedIn']
-
-    if (isLoggedIn) {
-      redirect('/dashboard')
     }
   }
 }

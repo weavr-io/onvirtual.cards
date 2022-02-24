@@ -4,12 +4,8 @@
       Register
     </h3>
     <error-alert />
-    <b-form-group :state="isInvalid($v.form.rootEmail)" label="Email">
-      <b-form-input
-        v-model="$v.form.rootEmail.$model"
-        :state="isInvalid($v.form.rootEmail)"
-        placeholder="name@email.com"
-      />
+    <b-form-group :state="isInvalid($v.form.email)" label="Email">
+      <b-form-input v-model="$v.form.email.$model" :state="isInvalid($v.form.email)" placeholder="name@email.com" />
       <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
     </b-form-group>
     <client-only placeholder="Loading...">
@@ -19,10 +15,10 @@
           ref="passwordField"
           :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
           :base-style="passwordBaseStyle"
-          @onKeyUp="checkOnKeyUp"
           class-name="sign-in-password"
           name="password"
           required="true"
+          @onKeyUp="checkOnKeyUp"
         />
         <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
       </div>
@@ -33,15 +29,14 @@
           <b-form-checkbox
             v-model="$v.form.acceptedTerms.$model"
             :state="isInvalid($v.form.acceptedTerms)"
-            unchecked-value="FALSE"
-            value="TRUE"
           >
             I accept the
             <a
               href="https://www.onvirtual.cards/terms/business"
               target="_blank"
               class="text-decoration-underline text-muted"
-            >terms of use</a>
+              >terms of use</a
+            >
             and
             <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted"
               >privacy policy</a
@@ -67,25 +62,20 @@
 <script lang="ts">
 import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required, sameAs } from 'vuelidate/lib/validators'
-import * as AuthStore from '~/store/modules/Auth'
-import * as ErrorStore from '~/store/modules/Error'
-import { ValidatePasswordRequest } from '~/api/Requests/Auth/ValidatePasswordRequest'
-import config from '~/config'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { BooleanString } from '~/api/Generic/BooleanString'
 
 @Component({
   validations: {
     form: {
-      rootEmail: {
+      email: {
         required,
         email
       },
       acceptedTerms: {
         required,
-        sameAs: sameAs(() => BooleanString.TRUE)
+        sameAs: sameAs(() => true)
       }
     }
   },
@@ -100,80 +90,14 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
   @Ref('passwordField')
   passwordField!: WeavrPasswordInput
 
-  public form: {
-    rootEmail: string
-    password: string
-    acceptedTerms: BooleanString
+  form: {
+    email: string | null
+    password: string | null
+    acceptedTerms: boolean
   } = {
-    rootEmail: '',
-    password: '',
-    acceptedTerms: BooleanString.FALSE
-  }
-
-  async tryToSubmitForm() {
-    try {
-      console.log('submit form checking validation')
-      if (this.$v.form) {
-        this.$v.form.$touch()
-        if (this.$v.form.$anyError) {
-          console.log(this.$v.form)
-          return null
-        }
-      }
-
-      if (this.isRecaptchaEnabled) {
-        const token = await this.$recaptcha.getResponse()
-        console.log('ReCaptcha token:', token)
-        await this.$recaptcha.reset()
-      }
-
-      console.log('submit form validation success')
-
-      this.passwordField.createToken().then(
-        (tokens) => {
-          console.log('password tokenisation')
-          if (tokens.tokens.password !== '') {
-            this.form.password = tokens.tokens.password
-
-            this.validatePassword()
-          } else {
-            return null
-          }
-        },
-        (e) => {
-          console.log('tokenisation failed', e)
-        }
-      )
-    } catch (error) {
-      console.log('Login error:', error)
-    }
-  }
-
-  validatePassword() {
-    console.log('password  validation')
-    const _request: ValidatePasswordRequest = {
-      identityProfileId: config.profileId.corporates ? config.profileId.corporates : '',
-      credentialType: 'ROOT',
-      password: {
-        value: this.form.password
-      }
-    }
-
-    AuthStore.Helpers.validatePassword(this.$store, _request).then(this.submitForm.bind(this))
-  }
-
-  @Emit()
-  submitForm() {
-    console.log('form success')
-    ErrorStore.Helpers.resetErrors(this.$store)
-    return this.form
-  }
-
-  checkOnKeyUp(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      this.tryToSubmitForm()
-    }
+    email: null,
+    password: null,
+    acceptedTerms: false
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -196,6 +120,55 @@ export default class RegisterForm1 extends mixins(BaseMixin) {
 
   get isRecaptchaEnabled(): boolean {
     return typeof process.env.RECAPTCHA !== 'undefined'
+  }
+
+  async tryToSubmitForm() {
+    try {
+      this.$v.$touch()
+
+      if (this.$v.$invalid) {
+        return
+      }
+
+      if (this.isRecaptchaEnabled) {
+        const token = await this.$recaptcha.getResponse()
+        console.log('ReCaptcha token:', token)
+        await this.$recaptcha.reset()
+      }
+
+      console.log('submit form validation success')
+
+      this.passwordField.createToken().then(
+        (tokens) => {
+          console.log('password tokenisation')
+          if (tokens.tokens.password !== '') {
+            this.form.password = tokens.tokens.password
+
+            this.submitForm()
+          } else {
+            return null
+          }
+        },
+        (e) => {
+          console.log('tokenisation failed', e)
+        }
+      )
+    } catch (error) {
+      console.log('Login error:', error)
+    }
+  }
+
+  checkOnKeyUp(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      this.tryToSubmitForm()
+    }
+  }
+
+  @Emit()
+  submitForm() {
+    this.stores.errors.RESET_ERROR()
+    return this.form
   }
 }
 </script>

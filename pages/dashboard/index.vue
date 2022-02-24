@@ -1,12 +1,10 @@
 <template>
-  <section>
-  </section>
+  <div></div>
 </template>
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'dashboard'

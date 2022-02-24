@@ -10,7 +10,7 @@
     <b-col>
       <div class="transaction-type">
         <div class="transaction">
-          {{ transaction.txId.type | weavr_underscore }}
+          {{ transaction.transactionId.type | weavr_underscore }}
         </div>
       </div>
       <div class="text-muted">
@@ -28,7 +28,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
+import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 @Component({
   components: {
@@ -38,6 +38,6 @@ import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 })
 export default class StatementItemAdditionalField extends Vue {
   @Prop()
-  readonly transaction!: StatementEntry
+  readonly transaction!: StatementEntryModel
 }
 </script>

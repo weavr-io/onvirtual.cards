@@ -4,10 +4,7 @@
       <div class="transaction-type-icon">
         <div class="transaction increase">
           <img
-            v-if="
-              transaction.additionalFields.merchantTransactionType ==
-                'CASH_WITHDRAWAL'
-            "
+            v-if="transaction.additionalFields.merchantTransactionType == 'CASH_WITHDRAWAL'"
             src="~/assets/svg/statement/atm_withdrawal.svg"
             alt=""
           />
@@ -24,20 +21,13 @@
       <div class="text-muted">
         <b-row>
           <b-col>
-            <span
-              v-if="
-                transaction.additionalFields.merchantTransactionType ==
-                  'CASH_WITHDRAWAL'
-              "
-              class="mr-2"
+            <span v-if="transaction.additionalFields.merchantTransactionType == 'CASH_WITHDRAWAL'" class="mr-2"
               >ATM Withdrawal,
             </span>
             <span v-else class="mr-2">Purchase, </span>
-            <span
-              v-if="transaction.additionalFields.merchantTerminalCountry"
-              class="mr-2"
-              >{{ transaction.additionalFields.merchantTerminalCountry }}</span
-            >
+            <span v-if="transaction.additionalFields.merchantTerminalCountry" class="mr-2">{{
+              transaction.additionalFields.merchantTerminalCountry
+            }}</span>
             <span v-if="transaction.sourceAmount">
               {{ 100 | weavr_currency(transaction.transactionAmount.currency) }}
               = {{ transaction.sourceAmount.currency | weavr_currency_symbol
@@ -56,8 +46,8 @@
   </b-row>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator'
-import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 @Component({
   components: {
@@ -67,6 +57,6 @@ import { StatementEntry } from '~/api/Models/Statements/StatementEntry'
 })
 export default class StatementItemAdditionalField extends Vue {
   @Prop()
-  readonly transaction!: StatementEntry
+  readonly transaction!: StatementEntryModel
 }
 </script>

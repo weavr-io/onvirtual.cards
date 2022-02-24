@@ -13,8 +13,8 @@
                   <b-form-select
                     :options="months"
                     :value="filterDate"
-                    @change="filterMonthChange"
                     class="w-auto d-inline-block"
+                    @change="filterMonthChange"
                   />
                 </b-col>
               </b-row>
@@ -23,9 +23,9 @@
           <b-col lg="7" xs="14" class="d-flex justify-content-end">
             <div>
               <b-button
-                @click="downloadStatement"
                 variant="link"
                 class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none"
+                @click="downloadStatement"
               >
                 <download-icon class="mr-2" />
                 download
@@ -56,7 +56,7 @@
             <h5 class="font-weight-light">
               Your transactions will appear here.
             </h5>
-            <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="link">
+            <b-button :to="'/managed-accounts/' + account.id + '/topup'" variant="link">
               Start by topping up your account.
             </b-button>
           </b-col>
@@ -69,11 +69,11 @@
 import { Component, mixins, Prop } from 'nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
 import RouterMixin from '~/minixs/RouterMixin'
-import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
 import FiltersMixin from '~/minixs/FiltersMixin'
-import { StatementRequest } from '~/api/Requests/Statements/StatementRequest'
-import { $api } from '~/utils/api'
-import { OrderType } from '~/api/Enums/OrderType'
+
+import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import AccountsMixin from '~/minixs/AccountsMixin'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 
 const moment = require('moment')
 
@@ -85,13 +85,11 @@ const dot = require('dot-object')
     DownloadIcon: () => import('~/assets/svg/download.svg?inline')
   }
 })
-export default class AccountStatement extends mixins(BaseMixin, RouterMixin, FiltersMixin) {
+export default class AccountStatement extends mixins(BaseMixin, RouterMixin, FiltersMixin, AccountsMixin) {
+  @Prop() filters!: GetManagedAccountStatementRequest
+
   get filteredStatement() {
     return this.stores.accounts.filteredStatement
-  }
-
-  get account() {
-    return this.stores.accounts.account
   }
 
   get availableBalance() {
@@ -101,8 +99,6 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin, Fil
       return 0
     }
   }
-
-  @Prop() filters!: ManagedAccountStatementRequest
 
   get filteredStatementLength(): number {
     if (this.filteredStatement) {
@@ -119,13 +115,15 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin, Fil
     }
   }
 
-  filterMonthChange(val) {
-    this.setFilters({ fromTimestamp: val.start, toTimestamp: val.end })
-    console.log(val)
+  get months() {
+    return this.monthsFilter(this.account!.creationTimestamp)
   }
 
-  get months() {
-    return this.monthsFilter(parseInt(this.account!.creationTimestamp))
+  filterMonthChange(val) {
+    this.setFilters({
+      fromTimestamp: val.start,
+      toTimestamp: val.end
+    })
   }
 
   downloadStatement() {
@@ -144,17 +142,18 @@ export default class AccountStatement extends mixins(BaseMixin, RouterMixin, Fil
         .valueOf()
     }
 
-    const _req: ManagedAccountStatementRequest = {
+    const _req: GetManagedAccountStatementRequest = {
+      limit: 100,
+      offset: 0,
       showFundMovementsOnly: false,
-      orderByTimestamp: OrderType.DESC,
-      paging: {
-        limit: 100,
-        offset: 0
-      },
+      orderByTimestamp: OrderEnum.DESC,
       ..._filters
     }
 
-    this.downloadAsCSV(this.account!.id.id, 'managed_accounts', _req)
+    this.downloadAsCSV({
+      id: this.$route.params.id,
+      filters: _req
+    })
   }
 }
 </script>
