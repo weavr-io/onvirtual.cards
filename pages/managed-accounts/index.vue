@@ -36,6 +36,7 @@ import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore } from '~/utils/store-accessor'
 import { KYBState } from '~/api/Enums/KYBState'
 import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
+import * as AuthStore from '~/store/modules/Auth'
 
 @Component({
   layout: 'dashboard',
@@ -44,7 +45,35 @@ import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
 export default class CardsPage extends mixins(BaseMixin) {
   async asyncData({ store, redirect }) {
     let _accountId
-    const _accounts = await accountsStore(store).index()
+
+    const request: {
+      owner: {
+        type: string
+        id: string
+      }
+    } = {
+      owner: {
+        type: '',
+        id: ''
+      }
+    }
+
+    if (AuthStore.Helpers.isConsumer(store)) {
+      const _consumerId = AuthStore.Helpers.identityId(store)
+
+      request.owner = {
+        type: 'consumers',
+        id: _consumerId!.toString() ?? ''
+      }
+    } else {
+      const _corporateId = AuthStore.Helpers.identityId(store)
+      request.owner = {
+        type: 'corporates',
+        id: _corporateId!.toString() ?? ''
+      }
+    }
+
+    const _accounts = await accountsStore(store).index(request)
 
     if (_accounts.data.count >= 1) {
       _accountId = _accounts.data.account[0].id.id

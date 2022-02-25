@@ -112,14 +112,20 @@ export default class Accounts extends StoreModule {
   }
 
   @Action({ rawError: true })
-  index() {
+  index(request: {
+    owner: {
+      type: string
+      id: string
+    }
+  }) {
     const body = {
       active: NullableBoolean.TRUE,
       paging: {
         count: true,
         offset: 0,
         limit: 0
-      }
+      },
+      ...request
     }
 
     const req = $api.post('/app/api/managed_accounts/get', body)

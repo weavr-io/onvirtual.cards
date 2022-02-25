@@ -1,6 +1,8 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import { $api } from '~/utils/api'
-import { initialiseStores } from '~/utils/store-accessor'
+import { corporatesStore, initialiseStores } from '~/utils/store-accessor'
+import * as AuthStore from '~/store/modules/Auth'
+import * as ConsumersStore from '~/store/modules/Consumers'
 
 const moment = require('moment')
 

@@ -55,7 +55,33 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   async redirectToAccountPage() {
-    const _accounts = await this.stores.accounts.index()
+    const request: {
+      owner: {
+        type: string
+        id: string
+      }
+    } = {
+      owner: {
+        type: '',
+        id: ''
+      }
+    }
+
+    if (AuthStore.Helpers.isConsumer(this.$store)) {
+      const _consumerId = AuthStore.Helpers.identityId(this.$store)
+
+      request.owner = {
+        type: 'consumers',
+        id: _consumerId!.toString() ?? ''
+      }
+    } else {
+      const _corporateId = AuthStore.Helpers.identityId(this.$store)
+      request.owner = {
+        type: 'corporates',
+        id: _corporateId!.toString() ?? ''
+      }
+    }
+    const _accounts = await this.stores.accounts.index(request)
 
     if (_accounts.data.count >= 1) {
       const _accountId = _accounts.data.account[0].id.id

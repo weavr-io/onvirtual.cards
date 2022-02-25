@@ -10,22 +10,12 @@
             <b-form @submit="doAdd">
               <b-form-row>
                 <b-col>
-                  <b-form-group
-                    :state="isInvalid($v.createManagedAccountRequest.currency)"
-                    label="Currency"
-                  >
-                    <b-form-select
-                      v-model="createManagedAccountRequest.currency"
-                      :options="currencyOptions"
-                    />
+                  <b-form-group :state="isInvalid($v.createManagedAccountRequest.currency)" label="Currency">
+                    <b-form-select v-model="createManagedAccountRequest.currency" :options="currencyOptions" />
                   </b-form-group>
                 </b-col>
               </b-form-row>
-              <loader-button
-                :is-loading="isLoading"
-                button-text="finish"
-                class="mt-5 text-center"
-              />
+              <loader-button :is-loading="isLoading" button-text="finish" class="mt-5 text-center" />
             </b-form>
           </b-card>
         </b-col>
@@ -115,9 +105,34 @@ export default class AddCardPage extends mixins(BaseMixin) {
       currency: 'EUR'
     }
 
-    const _accounts = await accountsStore(store).index()
+    const request: {
+      owner: {
+        type: string
+        id: string
+      }
+    } = {
+      owner: {
+        type: '',
+        id: ''
+      }
+    }
 
-    console.log(_accounts.data.count)
+    if (AuthStore.Helpers.isConsumer(store)) {
+      const _consumerId = AuthStore.Helpers.identityId(store)
+
+      request.owner = {
+        type: 'consumers',
+        id: _consumerId!.toString() ?? ''
+      }
+    } else {
+      const _corporateId = AuthStore.Helpers.identityId(store)
+      request.owner = {
+        type: 'corporates',
+        id: _corporateId!.toString() ?? ''
+      }
+    }
+
+    const _accounts = await accountsStore(store).index(request)
 
     if (_accounts.data.count < 1) {
       if (AuthStore.Helpers.isConsumer(store)) {
@@ -125,7 +140,7 @@ export default class AddCardPage extends mixins(BaseMixin) {
         redirect('/managed-accounts')
       }
       return {
-        createManagedAccountRequest: createManagedAccountRequest
+        createManagedAccountRequest
       }
     } else {
       redirect('/managed-accounts')
