@@ -1,6 +1,8 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import { $api } from '~/utils/api'
-import { initialiseStores } from '~/utils/store-accessor'
+import { corporatesStore, initialiseStores } from '~/utils/store-accessor'
+import * as AuthStore from '~/store/modules/Auth'
+import * as ConsumersStore from '~/store/modules/Consumers'
 
 const moment = require('moment')
 
@@ -59,5 +61,36 @@ export default class BaseMixin extends Vue {
       document.body.appendChild(link)
       link.click()
     })
+  }
+
+  managedAccountPayload() {
+    const request: {
+      owner: {
+        type: string
+        id: string
+      }
+    } = {
+      owner: {
+        type: '',
+        id: ''
+      }
+    }
+
+    if (AuthStore.Helpers.isConsumer(this.$store)) {
+      const _consumerId = AuthStore.Helpers.identityId(this.$store)
+
+      request.owner = {
+        type: 'consumers',
+        id: _consumerId!.toString() ?? ''
+      }
+    } else {
+      const _corporateId = AuthStore.Helpers.identityId(this.$store)
+      request.owner = {
+        type: 'corporates',
+        id: _corporateId!.toString() ?? ''
+      }
+    }
+
+    return request
   }
 }

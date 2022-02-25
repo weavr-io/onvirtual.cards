@@ -26,6 +26,7 @@ import config from '~/config'
 import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
 import BaseMixin from '~/minixs/BaseMixin'
 import { accountsStore, cardsStore } from '~/utils/store-accessor'
+import * as AuthStore from '~/store/modules/Auth'
 
 const Transfers = namespace(TransfersStore.name)
 
@@ -104,7 +105,35 @@ export default class TransfersPage extends mixins(BaseMixin) {
         limit: 0
       }
     })
-    const _accounts = await accountsStore(store).index()
+
+    const _request: {
+      owner: {
+        type: string
+        id: string
+      }
+    } = {
+      owner: {
+        type: '',
+        id: ''
+      }
+    }
+
+    if (AuthStore.Helpers.isConsumer(store)) {
+      const _consumerId = AuthStore.Helpers.identityId(store)
+
+      _request.owner = {
+        type: 'consumers',
+        id: _consumerId!.toString() ?? ''
+      }
+    } else {
+      const _corporateId = AuthStore.Helpers.identityId(store)
+      _request.owner = {
+        type: 'corporates',
+        id: _corporateId!.toString() ?? ''
+      }
+    }
+
+    const _accounts = await accountsStore(store).index(_request)
 
     const request: TransfersSchemas.CreateTransferRequest = {
       profileId: config.profileId.transfers,

@@ -35,7 +35,34 @@ export default class KycPage extends mixins(BaseMixin) {
       return { reference: _res.data.reference }
     } catch (e) {
       if (e.response.data.errorCode === 'KYC_ALREADY_APPROVED') {
-        const _accounts = await accountsStore(store).index()
+        const request: {
+          owner: {
+            type: string
+            id: string
+          }
+        } = {
+          owner: {
+            type: '',
+            id: ''
+          }
+        }
+
+        if (AuthStore.Helpers.isConsumer(store)) {
+          const _consumerId = AuthStore.Helpers.identityId(store)
+
+          request.owner = {
+            type: 'consumers',
+            id: _consumerId!.toString() ?? ''
+          }
+        } else {
+          const _corporateId = AuthStore.Helpers.identityId(store)
+          request.owner = {
+            type: 'corporates',
+            id: _corporateId!.toString() ?? ''
+          }
+        }
+
+        const _accounts = await accountsStore(store).index(request)
 
         if (_accounts.data.count >= 1) {
           const _accountId = _accounts.data.account[0].id.id
@@ -46,7 +73,7 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   options: Partial<ConsumerVerificationFlowOptions> = {
-    onMessage: this.onMessage,
+    onMessage: this.onMessage
   }
 
   onMessage(message, additionalInfo) {
