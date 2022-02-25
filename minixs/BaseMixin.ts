@@ -62,35 +62,4 @@ export default class BaseMixin extends Vue {
       link.click()
     })
   }
-
-  managedAccountPayload() {
-    const request: {
-      owner: {
-        type: string
-        id: string
-      }
-    } = {
-      owner: {
-        type: '',
-        id: ''
-      }
-    }
-
-    if (AuthStore.Helpers.isConsumer(this.$store)) {
-      const _consumerId = AuthStore.Helpers.identityId(this.$store)
-
-      request.owner = {
-        type: 'consumers',
-        id: _consumerId!.toString() ?? ''
-      }
-    } else {
-      const _corporateId = AuthStore.Helpers.identityId(this.$store)
-      request.owner = {
-        type: 'corporates',
-        id: _corporateId!.toString() ?? ''
-      }
-    }
-
-    return request
-  }
 }
