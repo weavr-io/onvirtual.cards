@@ -78,24 +78,6 @@ export default class DefaultLayout extends mixins(BaseMixin) {
   get accounts() {
     return this.stores.accounts.accounts
   }
-
-  // get allowedLimit(): CurrencyAmount {
-  //   const _out: CurrencyAmount = {
-  //     amount: 10000,
-  //     currency: 'EUR'
-  //   }
-  //
-  //   if (this.accounts) {
-  //     if (this.accounts.account.length > 0) {
-  //       if (this.accounts.account[0].currency === 'GBP') {
-  //         _out.amount = 8000
-  //         _out.currency = 'GBP'
-  //       }
-  //     }
-  //   }
-  //
-  //   return _out
-  // }
 }
 </script>
 <style lang="scss" scoped>

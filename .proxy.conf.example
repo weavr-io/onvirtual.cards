@@ -6,8 +6,8 @@ server {
     #access_log  /var/log/nginx/host.access.log  main;
 
     location / {
-        proxy_set_header programme-key {{API_KEY}};
-        proxy_pass https://build.weavr.io;
+        proxy_set_header api-key {{API_KEY}};
+        proxy_pass https://sandbox.weavr.io;
     }
     
     location /health {
