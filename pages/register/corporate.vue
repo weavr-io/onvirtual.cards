@@ -43,7 +43,8 @@ import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authe
     PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
-  }
+  },
+  middleware: 'accessCodeVerified'
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
   screen: number = 0
@@ -154,6 +155,8 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   }
 
   onRegisteredSuccessfully() {
+    this.stores.accessCodes.DELETE_ACCESS_CODE()
+
     if (!this.registrationRequest.rootUser) {
       return
     }

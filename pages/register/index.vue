@@ -7,8 +7,8 @@
         </div>
       </b-col>
     </b-row>
-    <business-or-personal-component v-if="hasValidAccessCode" />
-    <access-code-component v-else />
+    <access-code-component v-if="!isAccessCodeValid" />
+    <business-or-personal-component v-else />
   </b-col>
 </template>
 <script lang="ts">
@@ -20,11 +20,12 @@ import AccessCodeComponent from '~/components/registration/AccessCodeComponent.v
 
 @Component({
   components: { AccessCodeComponent, BusinessOrPersonalComponent },
-  layout: 'auth'
+  layout: 'auth',
+  middleware: 'accessCodeVerified'
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
-  get hasValidAccessCode() {
-    return localStorage.getItem('access-code')
+  get isAccessCodeValid() {
+    return this.stores.accessCodes.isValid
   }
 
   asyncData({ store, redirect }) {

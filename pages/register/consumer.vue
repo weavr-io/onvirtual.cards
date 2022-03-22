@@ -246,7 +246,8 @@ const touchMap = new WeakMap()
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
     DobPicker: () => import('~/components/fields/dob-picker.vue'),
     WeavrPasswordInput
-  }
+  },
+  middleware: 'accessCodeVerified'
 })
 export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
   // public password: string = ''
@@ -406,6 +407,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
   }
 
   onRegisteredSuccessfully() {
+    this.stores.accessCodes.DELETE_ACCESS_CODE()
+
     if (!this.registrationRequest.rootUser) {
       return
     }

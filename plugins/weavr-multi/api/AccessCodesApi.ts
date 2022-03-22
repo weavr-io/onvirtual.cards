@@ -1,7 +1,9 @@
+import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
+
 const axios = require('axios')
 
 export class AccessCodesApi {
-  verifyAccessCode(code: number) {
-    return axios.post('https://europe-west3-weavr-production-env.cloudfunctions.net/onvirtual-reg-code', code)
+  verifyAccessCode(request: AccessCodeModel) {
+    return axios.post('https://europe-west3-weavr-production-env.cloudfunctions.net/onvirtual-reg-code', request)
   }
 }
