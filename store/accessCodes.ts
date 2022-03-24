@@ -25,7 +25,7 @@ export default class AccessCodes extends StoreModule {
 
   @Action({ rawError: true })
   verifyAccessCode(request: AccessCodeModel) {
-    const req = axios.post('https://europe-west3-weavr-production-env.cloudfunctions.net/onvirtual-reg-code', request)
+    const req = this.store.$apiMulti.accessCodes.verifyAccessCode(request)
 
     req
       .then(() => {
