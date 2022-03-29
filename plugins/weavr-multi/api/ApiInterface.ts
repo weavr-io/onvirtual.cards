@@ -9,6 +9,7 @@ import { OutgoingWireTransferApi } from '~/plugins/weavr-multi/api/OutgoingWireT
 import { UsersApi } from '~/plugins/weavr-multi/api/UsersApi'
 import { ConsumersApi } from '~/plugins/weavr-multi/api/ConsumersApi'
 import { AdditionalFactorsApi } from '~/plugins/weavr-multi/api/AdditionalFactorsApi'
+import { AccessCodesApi } from '~/plugins/weavr-multi/api/AccessCodesApi'
 
 export interface ApiInterface {
   authentication: AuthenticationApi
@@ -22,4 +23,5 @@ export interface ApiInterface {
   outgoingWireTransfers: OutgoingWireTransferApi
   ipify: IpifyApi
   users: UsersApi
+  accessCodes: AccessCodesApi
 }

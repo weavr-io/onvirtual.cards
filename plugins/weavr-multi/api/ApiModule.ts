@@ -10,6 +10,7 @@ import { OutgoingWireTransferApi } from '~/plugins/weavr-multi/api/OutgoingWireT
 import { UsersApi } from '~/plugins/weavr-multi/api/UsersApi'
 import { ConsumersApi } from '~/plugins/weavr-multi/api/ConsumersApi'
 import { AdditionalFactorsApi } from '~/plugins/weavr-multi/api/AdditionalFactorsApi'
+import { AccessCodesApi } from '~/plugins/weavr-multi/api/AccessCodesApi'
 
 export class ApiModule implements ApiInterface {
   authentication: AuthenticationApi
@@ -23,6 +24,7 @@ export class ApiModule implements ApiInterface {
   ipify: IpifyApi
   users: UsersApi
   additionalFactors: AdditionalFactorsApi
+  accessCodes: AccessCodesApi
 
   constructor() {
     this.authentication = new AuthenticationApi()
@@ -36,5 +38,6 @@ export class ApiModule implements ApiInterface {
     this.outgoingWireTransfers = new OutgoingWireTransferApi()
     this.ipify = new IpifyApi()
     this.users = new UsersApi()
+    this.accessCodes = new AccessCodesApi()
   }
 }

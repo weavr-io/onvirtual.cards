@@ -12,6 +12,7 @@ import Errors from '~/store/errors'
 import View from '~/store/view'
 import Users from '~/store/users'
 import Identity from '~/store/identity'
+import AccessCodes from '~/store/accessCodes'
 
 export interface Stores {
   cards: Cards
@@ -25,6 +26,7 @@ export interface Stores {
   errors: Errors
   view: View
   users: Users
+  accessCodes: AccessCodes
 }
 
 function initialiseStores(store: Store<any>): Stores {
@@ -39,7 +41,8 @@ function initialiseStores(store: Store<any>): Stores {
     errors: errorsStore(store),
     view: viewStore(store),
     users: usersStore(store),
-    identities: identitiesStore(store)
+    identities: identitiesStore(store),
+    accessCodes: accessCodesStore(store)
   }
 }
 
@@ -87,6 +90,10 @@ function viewStore(store: Store<any>) {
   return getModule(View, store)
 }
 
+function accessCodesStore(store: Store<any>) {
+  return getModule(AccessCodes, store)
+}
+
 export {
   initialiseStores,
   cardsStore,
@@ -99,5 +106,6 @@ export {
   errorsStore,
   viewStore,
   usersStore,
-  identitiesStore
+  identitiesStore,
+  accessCodesStore
 }
