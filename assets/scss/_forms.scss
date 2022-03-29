@@ -4,7 +4,7 @@
   border-left: 0;
   border-right: 0;
 
-  &:disabled{
+  &:disabled {
     color: $input-border-color;
   }
 }
@@ -26,15 +26,12 @@
 
 .weavr-input {
   border-bottom: 1px solid $input-border-color;
-}
 
-.is-dirty {
-  .weavr-input {
-    &.is-invalid {
-      border-color: $danger;
-    }
+  &.is-invalid {
+    border-color: $danger;
   }
 }
+
 
 .weavr-account-radio {
   .custom-radio {

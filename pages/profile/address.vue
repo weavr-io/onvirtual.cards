@@ -83,12 +83,12 @@ import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identit
       },
       addressLine2: {},
       city: { required },
+      postCode: { required },
+      state: {},
       country: {
         required,
         maxLength: maxLength(2)
-      },
-      postCode: { required },
-      state: {}
+      }
     }
   },
   components: {
@@ -144,29 +144,30 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
   submitForm(e) {
     e.preventDefault()
 
-    if (this.$v.form) {
-      this.$v.form.$touch()
-      if (this.$v.form.$anyError) {
-        return null
+    this.$v.$touch()
+
+    if (this.$v.$invalid) {
+      return
+    }
+
+    if (this.$v.$anyDirty) {
+      this.isLoading = true
+      let xhr
+
+      if (this.isConsumer) {
+        xhr = this.stores.consumers.update({ address: this.address as AddressModel })
+      } else {
+        // treat as corporate
+        xhr = this.stores.corporates.update({ companyBusinessAddress: this.address as AddressModel })
       }
-    }
+      xhr.then(this.addressUpdated)
 
-    this.isLoading = true
-
-    let xhr
-
-    if (this.isConsumer) {
-      xhr = this.stores.consumers.update({ address: this.address as AddressModel })
+      xhr.finally(() => {
+        this.isLoading = false
+      })
     } else {
-      // treat as corporate
-
-      xhr = this.stores.corporates.update({ companyBusinessAddress: this.address as AddressModel })
+      this.addressUpdated()
     }
-    xhr.then(this.addressUpdated)
-
-    xhr.finally(() => {
-      this.isLoading = false
-    })
   }
 
   async addressUpdated() {

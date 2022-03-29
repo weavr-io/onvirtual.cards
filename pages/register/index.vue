@@ -19,7 +19,10 @@ import BusinessOrPersonalComponent from '~/components/registration/BusinessOrPer
 import AccessCodeComponent from '~/components/registration/AccessCodeComponent.vue'
 
 @Component({
-  components: { AccessCodeComponent, BusinessOrPersonalComponent },
+  components: {
+    AccessCodeComponent,
+    BusinessOrPersonalComponent
+  },
   layout: 'auth',
   middleware: 'accessCodeVerified'
 })

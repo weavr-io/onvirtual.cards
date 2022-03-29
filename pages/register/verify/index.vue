@@ -144,6 +144,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin) {
 
   async sendVerifyEmail() {
     this.isLoading = true
+
     if (this.isConsumer) {
       await this.sendVerifyEmailConsumers().then(() => {
         this.isLoading = false

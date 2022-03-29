@@ -1,9 +1,9 @@
 <template>
-  <div :class="className" class="weavr-input"/>
+  <div :class="className" class="weavr-input" />
 </template>
 <script lang="ts">
-import {Vue, Component, Prop, Emit} from 'nuxt-property-decorator'
-import {SecureElementStyleWithPseudoClasses, SecureInputOptions} from '~/plugins/weavr/components/api'
+import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
+import { SecureElementStyleWithPseudoClasses, SecureInputOptions } from '~/plugins/weavr/components/api'
 
 @Component
 export default class WeavrPasswordInput extends Vue {
@@ -27,20 +27,15 @@ export default class WeavrPasswordInput extends Vue {
 
   @Prop() readonly invalidStyle!: SecureElementStyleWithPseudoClasses
 
-  @Emit('onReady') onReady() {
-  }
+  @Emit('onReady') onReady() {}
 
-  @Emit('onChange') onChange() {
-  }
+  @Emit('onChange') onChange() {}
 
-  @Emit('onKeyUp') onKeyUp() {
-  }
+  @Emit('onKeyUp') onKeyUp() {}
 
-  @Emit('onBlur') onBlur() {
-  }
+  @Emit('onBlur') onBlur() {}
 
-  @Emit('onFocus') onFocus() {
-  }
+  @Emit('onFocus') onFocus() {}
 
   protected _input
 
@@ -49,7 +44,6 @@ export default class WeavrPasswordInput extends Vue {
     this._input.mount(this.$el)
     this._addListeners(this._input)
   }
-
 
   createToken() {
     return this._input.createToken()

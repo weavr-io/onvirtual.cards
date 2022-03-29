@@ -12,7 +12,13 @@
         <error-alert
           message="Incorrect email and password combination. If you do not have an account please click on Register."
         />
-        <b-form-group id="login-email" label="EMAIL" label-for="form-email">
+        <b-form-group
+          id="login-email"
+          label="Email"
+          label-for="form-email"
+          :invalid-feedback="invalidFeedback($v.loginRequest.email, 'email')"
+          :state="isInvalid($v.loginRequest.email)"
+        >
           <b-form-input
             id="from-email"
             v-model="loginRequest.email"
@@ -27,10 +33,15 @@
             ref="passwordField"
             :options="{ placeholder: 'Password' }"
             :base-style="passwordBaseStyle"
-            class-name="sign-in-password"
+            :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
             name="password"
+            aria-invalid="true"
             @onKeyUp="checkOnKeyUp"
+            @onChange="passwordInteraction"
           />
+          <b-form-invalid-feedback v-if="isInvalidPassword">
+            Please enter your password
+          </b-form-invalid-feedback>
         </client-only>
 
         <div class="mt-2">
@@ -61,6 +72,7 @@
 
 <script lang="ts">
 import { Component, mixins, Ref, Watch } from 'nuxt-property-decorator'
+import { email, required } from 'vuelidate/lib/validators'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
@@ -74,73 +86,28 @@ import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/auth
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     WeavrPasswordInput
+  },
+  validations: {
+    loginRequest: {
+      email: {
+        required,
+        email
+      },
+      password: {
+        value: {
+          required
+        }
+      }
+    }
   }
 })
 export default class LoginPage extends mixins(BaseMixin) {
   isLoading: boolean = false
 
-  @Watch('isLoggedIn')
-  isLoggedInChanged(val) {
-    console.warn(val)
-  }
-
-  @Ref('passwordField')
-  passwordField!: WeavrPasswordInput
-
   private loginRequest: LoginWithPasswordRequest = {
     email: '',
     password: {
       value: ''
-    }
-  }
-
-  login() {
-    try {
-      this.isLoading = true
-      this.stores.errors.SET_ERROR(null)
-      this.passwordField.createToken().then(
-        (tokens) => {
-          this.loginRequest.password.value = tokens.tokens.password
-          this.stores.auth
-            .loginWithPassword(this.loginRequest)
-            .then((res) => {
-              this.goToDashboard(res.data)
-            })
-            .catch((err) => {
-              this.isLoading = false
-              this.stores.errors.SET_ERROR(err)
-            })
-        },
-        (e) => {
-          console.log('tokenisation failed', e)
-        }
-      )
-    } catch (error) {
-      console.log('Login error:', error)
-    }
-  }
-
-  async goToDashboard(res: LoginWithPasswordResponse) {
-    const _id = res.credentials.type! + '-' + res.credentials.id
-    try {
-      this.$segment.identify(_id, {
-        email: this.loginRequest.email
-      })
-    } catch (e) {}
-
-    if (this.stores.auth.isConsumer) {
-      await this.stores.consumers.get()
-    }
-
-    await this.goToIndex()
-    this.isLoading = false
-  }
-
-  checkOnKeyUp(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      console.log('Submit form throught password enter')
-      this.login()
     }
   }
 
@@ -162,6 +129,59 @@ export default class LoginPage extends mixins(BaseMixin) {
     }
   }
 
+  get isInvalidPassword() {
+    return this.$v.loginRequest?.password?.value.$anyError
+  }
+
+  passwordInteraction(val: { empty: boolean; valid: boolean }) {
+    !val.empty ? (this.loginRequest.password.value = '******') : (this.loginRequest.password.value = '')
+  }
+
+  login() {
+    this.$v.$touch()
+    if (!this.$v.$invalid) {
+      try {
+        this.isLoading = true
+        this.stores.errors.SET_ERROR(null)
+        this.passwordField.createToken().then(
+          (tokens) => {
+            this.loginRequest.password.value = tokens.tokens.password
+            this.stores.auth
+              .loginWithPassword(this.loginRequest)
+              .then((res) => {
+                this.goToDashboard(res.data)
+              })
+              .catch((err) => {
+                this.isLoading = false
+                this.stores.errors.SET_ERROR(err)
+              })
+          },
+          (e) => {
+            this.showErrorToast(e, 'Tokenization Error')
+          }
+        )
+      } catch (error) {
+        this.showErrorToast(error, 'Login Error')
+      }
+    }
+  }
+
+  async goToDashboard(res: LoginWithPasswordResponse) {
+    const _id = res.credentials.type! + '-' + res.credentials.id
+    try {
+      this.$segment.identify(_id, {
+        email: this.loginRequest.email
+      })
+    } catch (e) {}
+
+    if (this.stores.auth.isConsumer) {
+      await this.stores.consumers.get()
+    }
+
+    await this.goToIndex()
+    this.isLoading = false
+  }
+
   asyncData({ store, redirect }) {
     const isLoggedIn = authStore(store).isLoggedIn
 
@@ -170,16 +190,19 @@ export default class LoginPage extends mixins(BaseMixin) {
     }
   }
 
-  receiveMessage(event) {
-    console.log('MESSAGE', event.data)
+  checkOnKeyUp(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      this.login()
+    }
   }
 
-  created() {
-    window.addEventListener('message', this.receiveMessage, false)
+  @Watch('isLoggedIn')
+  isLoggedInChanged(val) {
+    console.warn(val)
   }
 
-  beforeDestroy() {
-    window.removeEventListener('message', this.receiveMessage, false)
-  }
+  @Ref('passwordField')
+  passwordField!: WeavrPasswordInput
 }
 </script>
