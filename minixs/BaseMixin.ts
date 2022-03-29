@@ -168,4 +168,18 @@ export default class BaseMixin extends Vue {
       }
     }
   }
+
+  showSuccessToast(msg?: string, title?: string) {
+    return this.$weavrToast(msg !== undefined ? msg : 'All changes have been saved', {
+      title: title !== undefined ? title : 'Changes saved',
+      variant: 'success'
+    })
+  }
+
+  showErrorToast(msg?: string, title?: string) {
+    return this.$weavrToast(msg !== undefined ? msg : 'An error has occurred while saving', {
+      title: title !== undefined ? title : 'Error',
+      variant: 'danger'
+    })
+  }
 }

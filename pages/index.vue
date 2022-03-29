@@ -35,7 +35,7 @@ export default class IndexPage extends mixins(BaseMixin) {
       redirect(`/register/verify?send=true&email=${email}`)
     } else if (!identities.mobileNumberVerified) {
       redirect('/register/verify/mobile')
-    } else if (identities.identity && typeof identities.identity.rootUser === 'undefined') {
+    } else if (identities.identity && typeof identities.identity?.rootUser === 'undefined') {
       redirect('/profile/address')
     } else {
       redirect('/dashboard')

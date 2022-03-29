@@ -33,7 +33,7 @@
             ref="passwordField"
             :options="{ placeholder: 'Password' }"
             :base-style="passwordBaseStyle"
-            :class-name="isInvalidPassword ? 'sign-in-password is-invalid' : 'sign-in-password'"
+            :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
             name="password"
             aria-invalid="true"
             @onKeyUp="checkOnKeyUp"
@@ -157,11 +157,11 @@ export default class LoginPage extends mixins(BaseMixin) {
               })
           },
           (e) => {
-            console.log('tokenisation failed', e)
+            this.showErrorToast(e, 'Tokenization Error')
           }
         )
       } catch (error) {
-        console.log('Login error:', error)
+        this.showErrorToast(error, 'Login Error')
       }
     }
   }
