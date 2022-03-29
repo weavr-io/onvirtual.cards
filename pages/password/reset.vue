@@ -65,6 +65,7 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
 import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   layout: 'auth',
@@ -81,7 +82,7 @@ import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/mode
     }
   }
 })
-export default class ResetPasswordPage extends mixins(BaseMixin) {
+export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin) {
   isLoading: boolean = false
 
   passwordSent: boolean = false

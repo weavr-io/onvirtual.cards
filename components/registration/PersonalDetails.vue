@@ -149,6 +149,7 @@ import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identit
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -207,7 +208,7 @@ const Countries = require('~/static/json/countries.json')
     LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
-export default class PersonalDetailsForm extends mixins(BaseMixin) {
+export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {
   companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
 
   numberIsValid: boolean | null = null

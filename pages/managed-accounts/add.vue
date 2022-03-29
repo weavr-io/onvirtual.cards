@@ -31,6 +31,7 @@ import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/ma
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import AccountsMixin from '~/minixs/AccountsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   components: {
@@ -50,7 +51,7 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
   },
   middleware: ['kyVerified']
 })
-export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin) {
+export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, ValidationMixin) {
   createManagedAccountRequest: CreateManagedAccountRequest = {
     profileId: '',
     friendlyName: 'Main Account',

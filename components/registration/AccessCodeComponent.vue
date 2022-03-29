@@ -43,6 +43,7 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
 import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   validations: {
@@ -51,7 +52,7 @@ import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/m
     }
   }
 })
-export default class AccessCodeComponent extends mixins(BaseMixin) {
+export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMixin) {
   form: AccessCodeModel = {
     code: null
   }

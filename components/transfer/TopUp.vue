@@ -87,6 +87,7 @@ import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required, between } from 'vuelidate/lib/validators'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
 import BaseMixin from '~/minixs/BaseMixin'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   validations: {
@@ -100,7 +101,7 @@ import BaseMixin from '~/minixs/BaseMixin'
     }
   }
 })
-export default class TopUpForm extends mixins(BaseMixin) {
+export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
   get accounts() {
     return this.stores.accounts.accounts
   }

@@ -10,44 +10,57 @@
                 <h3 class="text-center font-weight-light mb-5">
                   Your address details
                 </h3>
-                <b-form-group label="Address Line 1*">
-                  <b-form-input
-                    v-model="address.addressLine1"
-                    :state="isInvalid($v.address.addressLine1)"
-                    placeholder="Address Line 1"
-                  />
-                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                <b-form-group
+                  label="Address Line 1*"
+                  :state="isInvalid($v.address.addressLine1)"
+                  :invalid-feedback="
+                    invalidFeedback(
+                      $v.address.addressLine1,
+                      validateVParams($v.address.addressLine1.$params, $v.address.addressLine1)
+                    )
+                  "
+                >
+                  <b-form-input v-model="$v.address.addressLine1.$model" placeholder="Address Line 1" />
                 </b-form-group>
                 <b-form-group label="Address Line 2">
-                  <b-form-input
-                    v-model="address.addressLine2"
-                    :state="isInvalid($v.address.addressLine2)"
-                    placeholder="Address Line 2"
-                  />
+                  <b-form-input v-model="address.addressLine2" placeholder="Address Line 2" />
                 </b-form-group>
-                <b-form-group label="City*">
-                  <b-form-input v-model="address.city" :state="isInvalid($v.address.city)" placeholder="City" />
-                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                <b-form-group
+                  label="City*"
+                  :state="isInvalid($v.address.city)"
+                  :invalid-feedback="
+                    invalidFeedback($v.address.city, validateVParams($v.address.city.$params, $v.address.city))
+                  "
+                >
+                  <b-form-input v-model="$v.address.city.$model" placeholder="City" />
                 </b-form-group>
-                <b-form-group label="Country*">
+                <b-form-group
+                  label="Country*"
+                  :state="isInvalid($v.address.country)"
+                  :invalid-feedback="
+                    invalidFeedback($v.address.country, validateVParams($v.address.country.$params, $v.address.country))
+                  "
+                >
                   <b-form-select
-                    v-model="country"
-                    :state="isInvalid($v.address.country)"
+                    v-model="$v.address.country.$model"
                     :options="countryOptionsWithDefault"
                     placeholder="Registration Country"
                   />
-                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
-                <b-form-group label="Post Code*">
-                  <b-form-input
-                    v-model="address.postCode"
-                    :state="isInvalid($v.address.postCode)"
-                    placeholder="Post Code"
-                  />
-                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                <b-form-group
+                  label="Post Code*"
+                  :state="isInvalid($v.address.postCode)"
+                  :invalid-feedback="
+                    invalidFeedback(
+                      $v.address.postCode,
+                      validateVParams($v.address.postCode.$params, $v.address.postCode)
+                    )
+                  "
+                >
+                  <b-form-input v-model="$v.address.postCode.$model" placeholder="Post Code" />
                 </b-form-group>
                 <b-form-group label="State">
-                  <b-form-input v-model="address.state" :state="isInvalid($v.address.state)" placeholder="State" />
+                  <b-form-input v-model="address.state" placeholder="State" />
                 </b-form-group>
                 <b-row class="mt-4" align-v="center">
                   <b-col class="text-center">
@@ -73,6 +86,7 @@ import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/commo
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
 import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   layout: 'auth',
@@ -81,10 +95,8 @@ import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identit
       addressLine1: {
         required
       },
-      addressLine2: {},
       city: { required },
       postCode: { required },
-      state: {},
       country: {
         required,
         maxLength: maxLength(2)
@@ -100,7 +112,7 @@ import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identit
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
   }
 })
-export default class ConsumerAddressPage extends mixins(BaseMixin) {
+export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMixin) {
   address: Nullable<AddressModel | LegalAddressModel> = {
     addressLine1: null,
     addressLine2: null,

@@ -79,6 +79,7 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import { authStore } from '~/utils/store-accessor'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   layout: 'auth',
@@ -101,7 +102,7 @@ import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/auth
     }
   }
 })
-export default class LoginPage extends mixins(BaseMixin) {
+export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
   isLoading: boolean = false
 
   private loginRequest: LoginWithPasswordRequest = {

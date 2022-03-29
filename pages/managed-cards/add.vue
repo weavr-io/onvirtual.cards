@@ -97,6 +97,7 @@ import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-in
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   components: {
@@ -120,7 +121,7 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
   },
   middleware: ['kyVerified']
 })
-export default class AddCardPage extends mixins(BaseMixin) {
+export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
   showNameOnCardField: boolean = false
 
   showError: boolean = false

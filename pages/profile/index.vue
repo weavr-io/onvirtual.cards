@@ -136,6 +136,7 @@ import BaseMixin from '~/minixs/BaseMixin'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   components: {
@@ -169,7 +170,7 @@ import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identit
     }
   }
 })
-export default class Profile extends mixins(BaseMixin) {
+export default class Profile extends mixins(BaseMixin, ValidationMixin) {
   numberIsValid: boolean | null = null
   updateConsumer!: UpdateConsumerRequest
   updateCorporate!: UpdateCorporateRequest

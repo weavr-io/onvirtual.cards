@@ -70,6 +70,7 @@ import BaseMixin from '~/minixs/BaseMixin'
 import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -95,7 +96,7 @@ const Countries = require('~/static/json/countries.json')
     }
   }
 })
-export default class AddCardPage extends mixins(BaseMixin) {
+export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
   isLoading: boolean = false
 
   mobile: Nullable<MobileModel> = {
