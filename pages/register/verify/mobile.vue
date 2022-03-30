@@ -64,9 +64,10 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
-import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
+import { authStore, identitiesStore } from '~/utils/store-accessor'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   layout: 'auth',
@@ -84,7 +85,7 @@ import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authent
     }
   }
 })
-export default class EmailVerificationPage extends mixins(BaseMixin) {
+export default class EmailVerificationPage extends mixins(BaseMixin, ValidationMixin) {
   isLoading: boolean = false
 
   request: Nullable<AuthVerifyEnrolRequest> = {

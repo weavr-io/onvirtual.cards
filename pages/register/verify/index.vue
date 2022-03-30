@@ -54,6 +54,7 @@ import { maxLength, minLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
 import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   layout: 'auth',
@@ -71,7 +72,7 @@ import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/mode
     }
   }
 })
-export default class EmailVerificationPage extends mixins(BaseMixin) {
+export default class EmailVerificationPage extends mixins(BaseMixin, ValidationMixin) {
   showEmailResentSuccess: boolean = false
 
   private verifyEmailRequest!: VerifyEmailRequest

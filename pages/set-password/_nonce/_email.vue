@@ -62,6 +62,7 @@ import BaseMixin from '~/minixs/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   layout: 'auth',
@@ -79,7 +80,7 @@ import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/a
     }
   }
 })
-export default class PasswordSentPage extends mixins(BaseMixin) {
+export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin) {
   @Ref('passwordField')
   passwordField!: WeavrPasswordInput
 

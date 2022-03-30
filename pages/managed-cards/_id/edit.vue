@@ -55,6 +55,7 @@ import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validato
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import BaseMixin from '~/minixs/BaseMixin'
 import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 @Component({
   components: {
@@ -86,7 +87,7 @@ import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/manag
     }
   }
 })
-export default class EditCardPage extends mixins(BaseMixin) {
+export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
   numberIsValid: boolean | null = null
   mobile = {
     countryCode: 'GB',

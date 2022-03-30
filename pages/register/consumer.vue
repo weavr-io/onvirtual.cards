@@ -182,6 +182,7 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -249,7 +250,7 @@ const touchMap = new WeakMap()
   },
   middleware: 'accessCodeVerified'
 })
-export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
+export default class ConsumerRegistrationPage extends mixins(BaseMixin, ValidationMixin) {
   // public password: string = ''
 
   private $recaptcha: any

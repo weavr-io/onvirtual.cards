@@ -43,6 +43,7 @@
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/minixs/BaseMixin'
+import ValidationMixin from '~/minixs/ValidationMixin'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -69,7 +70,7 @@ const Countries = require('~/static/json/countries.json')
     LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
-export default class PersonalDetailsForm extends mixins(BaseMixin) {
+export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {
   $v
 
   rootMobileNumber = ''
