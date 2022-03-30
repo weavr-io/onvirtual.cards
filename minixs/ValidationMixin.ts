@@ -1,4 +1,5 @@
 import { Component, Vue } from 'nuxt-property-decorator'
+import { minLength } from 'vuelidate/lib/validators'
 
 @Component
 export default class ValidationMixin extends Vue {
@@ -48,7 +49,8 @@ export default class ValidationMixin extends Vue {
           return 'Field must be numeric.'
         case 'maxLength':
           return typeof customMessage !== 'undefined' ? customMessage : 'This field should not exceed 50 characters.'
-
+        case 'minLength':
+          return typeof customMessage !== 'undefined' ? customMessage : 'This field requires at least 6 characters.'
         case 'baseRegexValidation':
           return 'This field contains invalid characters.'
         case 'name':

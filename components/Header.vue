@@ -49,7 +49,7 @@ export default class Header extends mixins(BaseMixin) {
       if (this.isConsumer) {
         this.stores.consumers.get()
       } else if (this.isCorporate) {
-        // this.stores.corporates.getCorporateDetails
+        this.stores.corporates.get()
       }
     }
   }
