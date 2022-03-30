@@ -13,21 +13,22 @@
             <b-img fluid src="/img/mobile.svg" class="mt-5 mb-2" />
           </b-col>
         </b-row>
-        <error-alert />
-        <p class="text-center my-5 text-grey">
-          We’ve just sent you a verification code by SMS. Enter code below to verify your phone number.
-        </p>
-        <form id="form-verify" @submit.prevent="doVerify">
+
+        <form id="form-verify" class="mt-5" @submit.prevent="doVerify">
+          <b-alert :show="showSmsResentSuccess" variant="success">
+            The verification code was resent by SMS.
+          </b-alert>
+          <p class="text-center my-5 text-grey">
+            We’ve just sent you a verification code by SMS. Enter code below to verify your phone number.
+          </p>
+          <error-alert class="mt-3" />
           <b-row>
             <b-col cols="6" offset="3">
-              <b-form-group label="">
-                <b-form-input
-                  v-model="$v.request.verificationCode.$model"
-                  :state="isInvalid($v.request.verificationCode)"
-                  placeholder="000000"
-                  class="text-center"
-                />
-                <b-form-invalid-feedback>This field is required and must be 6 characters.</b-form-invalid-feedback>
+              <b-form-group
+                :state="isInvalid($v.request.verificationCode)"
+                invalid-feedback="This field is required and must be 6 characters"
+              >
+                <b-form-input v-model="$v.request.verificationCode.$model" placeholder="000000" class="text-center" />
               </b-form-group>
             </b-col>
           </b-row>
@@ -50,7 +51,7 @@
           <template v-else>
             <small class="text-grey">
               Didn’t receive a code?
-              <b-link class="text-decoration-underline text-grey" @click="sendVerifyPhone">Send again</b-link>
+              <b-link class="text-decoration-underline text-grey" @click="resendSms">Send again</b-link>
               .
             </small>
           </template>
@@ -94,6 +95,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
   verificationIssue: boolean = false
 
+  showSmsResentSuccess: boolean = false
   dismissSecs = 60
   dismissCountDown = 0
 
@@ -116,21 +118,28 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
   }
 
   mounted() {
-    if (this.$route.query.send && this.$route.query.send === 'true') {
+    if (this.$route.query.send === 'true') {
       this.sendVerifyPhone()
     }
+  }
+
+  resendSms() {
+    this.sendVerifyPhone().then(() => {
+      this.showSmsResentSuccess = true
+    })
   }
 
   async sendVerifyPhone() {
     this.showAlert()
     this.isLoading = true
-    await this.stores.auth.enrollAuthFactors(SCAOtpChannelEnum.SMS).then(() => (this.isLoading = false))
+    await this.stores.auth.enrollAuthFactors(SCAOtpChannelEnum.SMS).finally(() => (this.isLoading = false))
   }
 
-  async doVerify() {
+  doVerify() {
     this.$v.$touch()
+
     if (this.$v.$invalid) {
-      return null
+      return
     }
 
     this.isLoading = true
@@ -140,14 +149,13 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
       body: this.request as AuthVerifyEnrolRequest
     }
 
-    await this.stores.auth
+    this.stores.auth
       .verifyAuthFactors(req)
-      .finally(() => {
+      .then(() => {
         this.stores.identities.SET_MOBILE_VERIFIED(true)
         this.goToIndex()
       })
-      .catch((e) => {
-        this.errorOccurred(e)
+      .finally(() => {
         this.isLoading = false
       })
   }
@@ -158,10 +166,6 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
   showAlert() {
     this.dismissCountDown = this.dismissSecs
-  }
-
-  errorOccurred(err) {
-    console.log(err)
   }
 }
 </script>

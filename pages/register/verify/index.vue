@@ -25,7 +25,7 @@
             <b-col cols="6" offset="3">
               <b-form-group
                 :state="isInvalid($v.verifyEmailRequest.verificationCode)"
-                :invalid-feedback="'This field is required and must be 6 characters'"
+                invalid-feedback="This field is required and must be 6 characters"
               >
                 <b-form-input
                   v-model="$v.verifyEmailRequest.verificationCode.$model"
@@ -139,18 +139,17 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
   async sendVerifyEmail() {
     this.isLoading = true
 
-    if (this.isConsumer) {
-      await this.sendVerifyEmailConsumers().then(() => {
-        this.isLoading = false
-      })
-    } else {
-      // else treat as corporate
-      await this.sendVerifyEmailCorporates().then(() => {
-        this.isLoading = false
-      })
+    try {
+      if (this.isConsumer) {
+        await this.sendVerifyEmailConsumers()
+      } else {
+        // else treat as corporate
+        await this.sendVerifyEmailCorporates()
+      }
+      this.isLoading = false
+    } catch (e) {
+      this.isLoading = false
     }
-
-    this.isLoading = false
   }
 
   async sendVerifyEmailConsumers() {
