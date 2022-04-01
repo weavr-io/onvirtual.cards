@@ -1,5 +1,4 @@
 import { Component, Vue } from 'nuxt-property-decorator'
-import { minLength } from 'vuelidate/lib/validators'
 
 @Component
 export default class ValidationMixin extends Vue {
@@ -27,47 +26,30 @@ export default class ValidationMixin extends Vue {
   }
 
   public invalidFeedback(_item, type, customMessage) {
-    if (typeof type === 'undefined') {
-      return 'Not Handled'
-    } else {
-      switch (type) {
-        case 'required':
-          return typeof customMessage !== 'undefined' ? customMessage : 'This is a required field.'
-        case 'url':
-          return 'Please make sure that it is a valid URL.'
-        case 'terms':
-          return 'Please accept terms and conditions.'
-        case 'email':
-          return 'Please enter a valid email address.'
-        case 'password':
-          return 'Please enter a valid password - must be between 8 and 30 characters, and must include lowercase, uppercase, number and special characters.'
-        case 'newPassword':
-          return 'Please enter a valid password - must be between 8 and 30 characters, must be different from the current password and must include lowercase, uppercase, number and special characters.'
-        case 'confirmPassword':
-          return 'Confirmation password should be the same as password.'
-        case 'numeric':
-          return 'Field must be numeric.'
-        case 'maxLength':
-          return typeof customMessage !== 'undefined' ? customMessage : 'This field should not exceed 50 characters.'
-        case 'minLength':
-          return typeof customMessage !== 'undefined' ? customMessage : 'This field requires at least 6 characters.'
-        case 'baseRegexValidation':
-          return 'This field contains invalid characters.'
-        case 'name':
-          return 'This field contains invalid characters.'
-        case 'surname':
-          return 'This field contains invalid characters.'
-        case 'tag':
-          return 'This field contains invalid characters.'
-        case 'mobileNumber':
-          return 'This field contains invalid characters.'
-        case 'feeKey':
-          return 'This field contains invalid characters.'
-        case 'minValue':
-          return 'Please enter a greater value.'
-        default:
-          return 'Not Handled'
-      }
+    const validationMessage: Record<string, string> = {
+      required: 'This is a required field.',
+      url: 'Please make sure that it is a valid URL.',
+      terms: 'Please accept terms and conditions.',
+      email: 'Please enter a valid email address.',
+      password:
+        'Please enter a valid password - must be between 8 and 30 characters, and must include lowercase, uppercase, number and special characters.',
+      newPassword:
+        'Please enter a valid password - must be between 8 and 30 characters, must be different from the current password and must include lowercase, uppercase, number and special characters.',
+      confirmPassword: 'Confirmation password should be the same as password.',
+      numeric: 'Field must be numeric.',
+      maxLength: 'This field should not exceed 50 characters.',
+      minLength: 'This field requires at least 6 characters.',
+      baseRegexValidation: 'This field contains invalid characters.',
+      name: 'This field contains invalid characters.',
+      surname: 'This field contains invalid characters.',
+      tag: 'This field contains invalid characters.',
+      mobileNumber: 'This field contains invalid characters.',
+      feeKey: 'This field contains invalid characters.',
+      minValue: 'Please enter a greater value.'
     }
+
+    const messageResult: string | undefined = customMessage ?? validationMessage[type]
+
+    return messageResult ?? 'Not Handled'
   }
 }
