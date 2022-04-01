@@ -431,13 +431,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   registrationFailed(err) {
     this.isLoadingRegistration = false
     const _errCode = err.response.data.errorCode
-
-    if (_errCode === 'USERNAME_NOT_UNIQUE' || _errCode === 'EMAIL_NOT_UNIQUE') {
-      this.$weavrToastError(_errCode)
-    } else {
-      this.$weavrToastError(_errCode)
-    }
-
+    this.$weavrToastError(_errCode)
     window.scrollTo(0, 0)
   }
 

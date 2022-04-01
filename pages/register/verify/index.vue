@@ -14,7 +14,7 @@
           </b-col>
         </b-row>
         <form id="contact-form" class="mt-5" @submit.prevent="doVerify">
-          <b-alert :show="showEmailResentSuccessAlert" variant="success">
+          <b-alert :show="showEmailResentSuccess" variant="success">
             The verification code was resent by email.
           </b-alert>
           <p class="text-center mb-5 text-grey">
@@ -23,14 +23,15 @@
           <error-alert class="mt-3" />
           <b-row>
             <b-col cols="6" offset="3">
-              <b-form-group label="">
+              <b-form-group
+                :state="isInvalid($v.verifyEmailRequest.verificationCode)"
+                invalid-feedback="This field is required and must be 6 characters"
+              >
                 <b-form-input
-                  v-model="verifyEmailRequest.verificationCode"
-                  :state="isInvalid($v.verifyEmailRequest.verificationCode)"
+                  v-model="$v.verifyEmailRequest.verificationCode.$model"
                   placeholder="000000"
                   class="text-center"
                 />
-                <b-form-invalid-feedback>This field is required and must be 6 characters.</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
           </b-row>
@@ -39,7 +40,7 @@
         <div class="mt-4 text-center">
           <small class="text-grey">
             Didn’t receive a code?
-            <b-link class="text-decoration-underline text-grey" @click="sendVerifyEmail">Send again</b-link>
+            <b-link class="text-decoration-underline text-grey" @click="resendEmail">Send again</b-link>
             .
           </small>
         </div>
@@ -129,14 +130,6 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     }
   }
 
-  get showEmailResentSuccessAlert(): boolean {
-    if (this.$route.query.send === 'true') {
-      return false
-    } else {
-      return this.showEmailResentSuccess
-    }
-  }
-
   async mounted() {
     if (this.$route.query.send === 'true') {
       await this.sendVerifyEmail()
@@ -146,59 +139,61 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
   async sendVerifyEmail() {
     this.isLoading = true
 
-    if (this.isConsumer) {
-      await this.sendVerifyEmailConsumers().then(() => {
-        this.isLoading = false
-      })
-    } else {
-      // else treat as corporate
-      await this.sendVerifyEmailCorporates().then(() => {
-        this.isLoading = false
-      })
+    try {
+      if (this.isConsumer) {
+        await this.sendVerifyEmailConsumers()
+      } else {
+        // else treat as corporate
+        await this.sendVerifyEmailCorporates()
+      }
+      this.isLoading = false
+    } catch (e) {
+      this.isLoading = false
     }
-
-    this.isLoading = false
   }
 
   async sendVerifyEmailConsumers() {
-    await this.stores.consumers
-      .sendVerificationCodeEmail({
-        email: this.verifyEmailRequest.email
-      })
-      .then(() => {
-        this.showEmailResentSuccess = true
-      })
+    await this.stores.consumers.sendVerificationCodeEmail({
+      email: this.verifyEmailRequest.email
+    })
   }
 
   async sendVerifyEmailCorporates() {
-    await this.stores.corporates
-      .sendVerificationCodeEmail({
-        email: this.verifyEmailRequest.email
-      })
-      .then(() => {
-        this.showEmailResentSuccess = true
-      })
+    await this.stores.corporates.sendVerificationCodeEmail({
+      email: this.verifyEmailRequest.email
+    })
+  }
+
+  resendEmail() {
+    this.sendVerifyEmail().then(() => {
+      this.showEmailResentSuccess = true
+    })
   }
 
   doVerify() {
-    this.isLoading = true
+    this.$v.$touch()
 
-    if (this.$v.verifyEmailRequest) {
-      this.$v.verifyEmailRequest.$touch()
-      if (this.$v.verifyEmailRequest.$anyError) {
-        return
-      }
+    if (this.$v.$invalid) {
+      return
     }
+
+    this.isLoading = true
 
     this.isConsumer
       ? this.stores.consumers
           .verifyEmail(this.verifyEmailRequest)
           .then(this.onMobileVerified)
-          .catch(this.removeLoader)
+          .catch((e) => {
+            this.removeLoader()
+            this.stores.errors.SET_CONFLICT(e)
+          })
       : this.stores.corporates
           .verifyEmail(this.verifyEmailRequest)
           .then(this.onMobileVerified)
-          .catch(this.removeLoader)
+          .catch((e) => {
+            this.removeLoader()
+            this.stores.errors.SET_CONFLICT(e)
+          })
   }
 
   removeLoader() {

@@ -4,21 +4,25 @@
       Register
     </h3>
     <error-alert />
-    <b-form-group :state="isInvalid($v.form.email)" label="Email">
-      <b-form-input v-model="$v.form.email.$model" :state="isInvalid($v.form.email)" placeholder="name@email.com" />
-      <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
+    <b-form-group
+      :state="isInvalid($v.form.email)"
+      :invalid-feedback="invalidFeedback($v.form.email, validateVParams($v.form.email.$params, $v.form.email))"
+      label="Email"
+    >
+      <b-form-input v-model="$v.form.email.$model" placeholder="name@email.com" />
     </b-form-group>
     <client-only placeholder="Loading...">
-      <div :class="{ 'is-dirty': $v.form.$dirty }">
+      <div>
         <label class="d-block">PASSWORD</label>
         <weavr-password-input
           ref="passwordField"
-          :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+          :options="{ placeholder: '****' }"
           :base-style="passwordBaseStyle"
-          class-name="sign-in-password"
+          :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
           name="password"
           required="true"
           @onKeyUp="checkOnKeyUp"
+          @onChange="passwordInteraction"
         />
         <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
       </div>
@@ -71,6 +75,11 @@ import ValidationMixin from '~/minixs/ValidationMixin'
         required,
         email
       },
+      password: {
+        value: {
+          required
+        }
+      },
       acceptedTerms: {
         required,
         sameAs: sameAs(() => true)
@@ -90,11 +99,13 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
 
   form: {
     email: string | null
-    password: string | null
+    password: {
+      value: string | null
+    }
     acceptedTerms: boolean
   } = {
     email: null,
-    password: null,
+    password: { value: null },
     acceptedTerms: false
   }
 
@@ -120,6 +131,10 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
     return typeof process.env.RECAPTCHA !== 'undefined'
   }
 
+  get isInvalidPassword() {
+    return this.$v.form?.password?.value.$anyError
+  }
+
   async tryToSubmitForm() {
     try {
       this.$v.$touch()
@@ -138,7 +153,6 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
 
       this.passwordField.createToken().then(
         (tokens) => {
-          console.log('password tokenisation')
           if (tokens.tokens.password !== '') {
             this.form.password = tokens.tokens.password
 
@@ -148,11 +162,11 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
           }
         },
         (e) => {
-          console.log('tokenisation failed', e)
+          this.showErrorToast(e, 'Tokenization Error')
         }
       )
     } catch (error) {
-      console.log('Login error:', error)
+      this.showErrorToast(error, 'Registration Error')
     }
   }
 
@@ -161,6 +175,10 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
       e.preventDefault()
       this.tryToSubmitForm()
     }
+  }
+
+  passwordInteraction(val: { empty: boolean; valid: boolean }) {
+    !val.empty ? (this.form.password.value = '******') : (this.form.password.value = '')
   }
 
   @Emit()
