@@ -1,31 +1,46 @@
 <template>
   <section>
     <b-container>
-      <b-row>
+      <b-row v-if="pendingDataOrError">
+        <b-col>
+          <div class="d-flex flex-column align-items-center">
+            <div class="loader-spinner ">
+              <b-spinner />
+            </div>
+          </div>
+        </b-col>
+      </b-row>
+      <b-row v-else>
         <b-col md="6" offset-md="3">
           <b-card class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
               Create Card
             </b-card-title>
             <b-card-body>
-              <b-alert :show="showError" variant="danger">
-                Error creating new card. Contact support if problem persists.
+              <b-alert :show="showError" variant="danger" class="text-center">
+                Error creating new card. <br />Contact support if problem persists.
               </b-alert>
               <b-form v-if="!showError" @submit.prevent="doAdd">
                 <b-form-row v-if="showNameOnCardField">
                   <b-col>
-                    <b-form-group label="Name of Person using Card">
+                    <b-form-group
+                      label="Name of Person using Card"
+                      :state="isInvalid($v.createManagedCardRequest.nameOnCard)"
+                      :invalid-feedback="
+                        invalidFeedback(
+                          $v.createManagedCardRequest.nameOnCard,
+                          validateVParams(
+                            $v.createManagedCardRequest.nameOnCard.$params,
+                            $v.createManagedCardRequest.nameOnCard
+                          ),
+                          'Name is required and should not exceed 27 characters.'
+                        )
+                      "
+                    >
                       <b-form-input
                         v-model="$v.createManagedCardRequest.nameOnCard.$model"
-                        :state="isInvalid($v.createManagedCardRequest.nameOnCard)"
                         placeholder="eg. Elon Musk"
                       />
-                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.nameOnCard.required">
-                        Name on Card is required.
-                      </b-form-invalid-feedback>
-                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.nameOnCard.maxLength">
-                        Name on Card too long.
-                      </b-form-invalid-feedback>
                     </b-form-group>
                   </b-col>
                 </b-form-row>
@@ -57,23 +72,28 @@
                 </b-form-row>
                 <b-form-row>
                   <b-col>
-                    <b-form-group label="ADD A CUSTOM CARD NAME">
+                    <b-form-group
+                      label="ADD A CUSTOM CARD NAME"
+                      :invalid-feedback="
+                        invalidFeedback(
+                          $v.createManagedCardRequest.friendlyName,
+                          validateVParams(
+                            $v.createManagedCardRequest.friendlyName.$params,
+                            $v.createManagedCardRequest.friendlyName
+                          )
+                        )
+                      "
+                      :state="isInvalid($v.createManagedCardRequest.friendlyName)"
+                    >
                       <b-form-input
                         v-model="$v.createManagedCardRequest.friendlyName.$model"
-                        :state="isInvalid($v.createManagedCardRequest.friendlyName)"
                         placeholder="eg. travel expenses"
                       />
-                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.friendlyName.required">
-                        Friendly Name is required.
-                      </b-form-invalid-feedback>
-                      <b-form-invalid-feedback v-if="!$v.createManagedCardRequest.friendlyName.maxLength">
-                        Friendly Name too long.
-                      </b-form-invalid-feedback>
                     </b-form-group>
                   </b-col>
                 </b-form-row>
                 <loader-button
-                  :is-loading="isAdding"
+                  :is-loading="localIsBusy"
                   :disabled="$v.$invalid || numberIsValid === false"
                   button-text="next"
                   class="mt-5 text-center"
@@ -90,14 +110,12 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/mixins/BaseMixin'
-import { accountsStore, authStore, consumersStore } from '~/utils/store-accessor'
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
-import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
-import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 
 @Component({
   components: {
@@ -126,7 +144,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
 
   showError: boolean = false
 
-  isAdding: boolean = false
+  localIsBusy: boolean = false
 
   mobile: {
     countryCode: string
@@ -138,56 +156,45 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
 
   numberIsValid: boolean | null = null
 
-  createManagedCardRequest!: CreateManagedCardRequest
+  createManagedCardRequest: Nullable<CreateManagedCardRequest> = {
+    profileId: null,
+    friendlyName: null,
+    currency: null,
+    nameOnCard: null,
+    cardholderMobileNumber: null,
+    billingAddress: null,
+    mode: ManagedCardModeEnum.PREPAID_MODE
+  }
 
-  async asyncData({ store, $config }) {
-    const accounts = await accountsStore(store).index({
-      profileId: authStore(store).isConsumer
-        ? $config.profileId.managed_accounts_consumers!
-        : $config.profileId.managed_accounts_corporates!,
-      state: ManagedInstrumentStateEnum.ACTIVE,
-      offset: '0'
+  get currencyOptions() {
+    return CurrencySelectConst.filter((item) => {
+      return item.value === this.profileBaseCurrency
     })
+  }
 
-    const createManagedCardRequest: Nullable<CreateManagedCardRequest> = {
-      profileId: authStore(store).isConsumer
-        ? $config.profileId.managed_cards_consumers!
-        : $config.profileId.managed_cards_corporates!,
-      friendlyName: null,
-      currency: null,
-      nameOnCard: null,
-      cardholderMobileNumber: null,
-      billingAddress: null,
-      mode: ManagedCardModeEnum.PREPAID_MODE
-    }
-
-    if (+accounts.data.count! >= 1 && accounts.data.accounts) {
-      createManagedCardRequest.currency = accounts.data.accounts[0].currency as CurrencyEnum
-    }
-
-    if (authStore(store).isConsumer) {
-      const _consumer: ConsumerModel = consumersStore(store).consumer as ConsumerModel
-      createManagedCardRequest.nameOnCard = _consumer.rootUser.name + ' ' + _consumer.rootUser.surname
-      createManagedCardRequest.cardholderMobileNumber =
+  fetch() {
+    if (this.stores.auth.isConsumer) {
+      const _consumer: ConsumerModel = this.stores.consumers.consumer as ConsumerModel
+      this.createManagedCardRequest.nameOnCard = _consumer.rootUser.name + ' ' + _consumer.rootUser.surname
+      this.createManagedCardRequest.cardholderMobileNumber =
         _consumer.rootUser.mobile.countryCode + _consumer.rootUser.mobile.number
     }
 
-    const _showNameOnCardField =
-      !authStore(store).isConsumer ||
-      (createManagedCardRequest.nameOnCard && createManagedCardRequest.nameOnCard.length > 27)
+    this.showNameOnCardField =
+      !this.stores.auth.isConsumer ||
+      (!!this.createManagedCardRequest.nameOnCard && this.createManagedCardRequest.nameOnCard.length > 27)
 
-    return {
-      createManagedCardRequest,
-      showNameOnCardField: _showNameOnCardField
-    }
+    this.createManagedCardRequest.currency = this.profileBaseCurrency
   }
 
-  get auth() {
-    return this.stores.auth.auth
+  mounted() {
+    try {
+      this.$segment.track('Initiated Add Card', {})
+    } catch (e) {}
   }
 
-  doAdd() {
-    if (this.isAdding) {
+  async doAdd() {
+    if (this.localIsBusy) {
       return
     }
 
@@ -204,16 +211,20 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
       return
     }
 
-    this.isAdding = true
+    this.localIsBusy = true
 
-    this.createManagedCardRequest.billingAddress = {
-      ...(this.isConsumer
-        ? (this.stores.consumers.consumer?.rootUser.address as AddressModel)
-        : (this.stores.corporates.corporate?.company.businessAddress as AddressModel))
+    this.createManagedCardRequest = {
+      ...this.createManagedCardRequest,
+      profileId: this.cardProfileId,
+      billingAddress: {
+        ...(this.isConsumer
+          ? (this.stores.consumers.consumer?.rootUser.address as AddressModel)
+          : (this.stores.corporates.corporate?.company.businessAddress as AddressModel))
+      }
     }
 
-    this.stores.cards
-      .addCard(this.createManagedCardRequest)
+    await this.stores.cards
+      .addCard(this.createManagedCardRequest as CreateManagedCardRequest)
       .then(() => {
         try {
           this.$segment.track('Card Added', this.createManagedCardRequest)
@@ -221,32 +232,12 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         this.$router.push('/managed-cards')
       })
       .catch((err) => {
-        this.isAdding = false
         if (err.response.status) {
           this.showError = true
         }
       })
-  }
 
-  currencyOptions = [
-    {
-      value: 'EUR',
-      text: 'Euro - EUR'
-    },
-    {
-      value: 'GBP',
-      text: 'Great Britain Pound - GBP'
-    },
-    {
-      value: 'USD',
-      text: 'US Dollars - USD'
-    }
-  ]
-
-  mounted() {
-    try {
-      this.$segment.track('Initiated Add Card', {})
-    } catch (e) {}
+    this.localIsBusy = false
   }
 
   phoneUpdate(number) {
