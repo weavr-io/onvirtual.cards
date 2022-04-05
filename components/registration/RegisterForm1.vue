@@ -64,9 +64,9 @@
 import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required, sameAs } from 'vuelidate/lib/validators'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import ValidationMixin from '~/minixs/ValidationMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 @Component({
   validations: {

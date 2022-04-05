@@ -64,10 +64,11 @@
 <script lang="ts">
 import { Component, mixins, Watch } from 'nuxt-property-decorator'
 
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
-import CardsMixin from '~/minixs/CardsMixin'
+import CardsMixin from '~/mixins/CardsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import KyVerified from '~/mixins/kyVerified'
 
 @Component({
   layout: 'dashboard',
@@ -78,8 +79,8 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
   },
   middleware: ['kyVerified']
 })
-export default class CardsPage extends mixins(BaseMixin, CardsMixin) {
-  showDestroyedSwitch = true
+export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified) {
+  showDestroyedSwitch = false
 
   get showDestroyed() {
     return this.$route.query.showDestroyed === 'true'
@@ -89,19 +90,15 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin) {
     const state = this.showDestroyed
       ? undefined
       : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED].join(',')
-    await this.stores.cards.getCards({
-      state
-    })
-  }
-
-  mounted() {
-    this.stores.cards.hasDestroyedCards().then((res) => {
-      this.showDestroyedSwitch = res
-    })
-  }
-
-  get hasAlert() {
-    return this.stores.view.hasAlert
+    await this.stores.cards
+      .getCards({
+        state
+      })
+      .then(() => {
+        this.stores.cards.hasDestroyedCards().then((res) => {
+          this.showDestroyedSwitch = res
+        })
+      })
   }
 
   async showDestroyedChanged(val) {
@@ -114,10 +111,6 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin) {
   @Watch('showDestroyed')
   queryParamChanged() {
     this.$fetch()
-  }
-
-  get showKybAlert(): boolean {
-    return !!this.stores.corporates.kyb && this.stores.corporates.kyb.kybStatus !== KYBStatusEnum.APPROVED
   }
 
   get identityVerificationMessage() {

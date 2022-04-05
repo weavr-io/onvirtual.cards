@@ -32,9 +32,9 @@
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import ValidationMixin from '~/minixs/ValidationMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 @Component({
   validations: {

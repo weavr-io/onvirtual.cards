@@ -13,7 +13,7 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import { authStore } from '~/utils/store-accessor'
 import BusinessOrPersonalComponent from '~/components/registration/BusinessOrPersonalComponent.vue'
 import AccessCodeComponent from '~/components/registration/AccessCodeComponent.vue'

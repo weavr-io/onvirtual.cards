@@ -170,7 +170,7 @@ import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 import { AxiosResponse } from 'axios'
 
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
@@ -182,7 +182,7 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import ValidationMixin from '~/minixs/ValidationMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 const Countries = require('~/static/json/countries.json')
 

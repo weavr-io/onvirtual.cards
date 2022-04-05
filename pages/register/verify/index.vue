@@ -52,10 +52,10 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
-import ValidationMixin from '~/minixs/ValidationMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 @Component({
   layout: 'auth',

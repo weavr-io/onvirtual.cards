@@ -44,7 +44,7 @@
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'

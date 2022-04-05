@@ -3,8 +3,8 @@
     <app-header />
     <dashboard-header />
     <Nuxt />
-    <kyb-alert />
-    <kyc-alert />
+    <kyb-alert v-if="showKybAlert" />
+    <kyc-alert v-if="showKycAlert" />
     <b-alert
       id="verify-mobile"
       :show="showVerifyMobileAlert && !showVerifyEmailAlert"
@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/minixs/BaseMixin'
+import KyVerified from '~/mixins/kyVerified'
 
 @Component({
   components: {
@@ -50,29 +50,9 @@ import BaseMixin from '~/minixs/BaseMixin'
     cookiePolicy: () => import('~/components/cookie.vue')
   }
 })
-export default class DefaultLayout extends mixins(BaseMixin) {
+export default class DefaultLayout extends mixins(KyVerified) {
   get isLoading() {
     return this.stores.loader.isLoading
-  }
-
-  get hasAlert() {
-    return this.stores.view.hasAlert
-  }
-
-  get showKybAlert() {
-    return this.stores.view.showKybAlert
-  }
-
-  get showKycAlert() {
-    return this.stores.view.showKycAlert
-  }
-
-  get showVerifyMobileAlert() {
-    return this.stores.view.showVerifyMobileAlert
-  }
-
-  get showVerifyEmailAlert() {
-    return this.stores.view.showVerifyEmailAlert
   }
 
   get accounts() {

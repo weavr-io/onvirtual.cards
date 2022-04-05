@@ -58,11 +58,11 @@ import { email, required } from 'vuelidate/lib/validators'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/LoaderButton.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
-import ValidationMixin from '~/minixs/ValidationMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 @Component({
   layout: 'auth',

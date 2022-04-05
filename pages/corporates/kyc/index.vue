@@ -25,7 +25,7 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
 import { KYBOptions } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
   components: {

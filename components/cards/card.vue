@@ -103,7 +103,7 @@
 <script lang="ts">
 import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 

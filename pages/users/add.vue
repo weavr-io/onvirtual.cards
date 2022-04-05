@@ -66,11 +66,11 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import ValidationMixin from '~/minixs/ValidationMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 const Countries = require('~/static/json/countries.json')
 

@@ -56,7 +56,7 @@
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import LoaderButton from '~/components/LoaderButton.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 

@@ -1,8 +1,8 @@
 import { Component, mixins } from '~/node_modules/nuxt-property-decorator'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
-import CsvMixin from '~/minixs/CsvMixin'
+import CsvMixin from '~/mixins/CsvMixin'
 
 const moment = require('moment')
 

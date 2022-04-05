@@ -89,7 +89,7 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import { accountsStore, authStore, consumersStore } from '~/utils/store-accessor'
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
@@ -97,7 +97,7 @@ import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-in
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import ValidationMixin from '~/minixs/ValidationMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 @Component({
   components: {

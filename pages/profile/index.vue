@@ -132,11 +132,11 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { email, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
-import ValidationMixin from '~/minixs/ValidationMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 @Component({
   components: {

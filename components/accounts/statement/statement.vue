@@ -67,12 +67,12 @@
 </template>
 <script lang="ts">
 import { Component, mixins, Prop } from 'nuxt-property-decorator'
-import BaseMixin from '~/minixs/BaseMixin'
-import RouterMixin from '~/minixs/RouterMixin'
-import FiltersMixin from '~/minixs/FiltersMixin'
+import BaseMixin from '~/mixins/BaseMixin'
+import RouterMixin from '~/mixins/RouterMixin'
+import FiltersMixin from '~/mixins/FiltersMixin'
 
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
-import AccountsMixin from '~/minixs/AccountsMixin'
+import AccountsMixin from '~/mixins/AccountsMixin'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 
 const moment = require('moment')
