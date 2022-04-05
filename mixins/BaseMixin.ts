@@ -33,10 +33,24 @@ export default class BaseMixin extends Vue {
     return this.stores.auth.identityId
   }
 
-  get profileId() {
+  get accountProfileId() {
     return this.isConsumer
       ? this.$config.profileId.managed_accounts_consumers!
       : this.$config.profileId.managed_accounts_corporates!
+  }
+
+  get cardProfileId() {
+    return this.isConsumer
+      ? this.$config.profileId.managed_cards_consumers!
+      : this.$config.profileId.managed_cards_corporates!
+  }
+
+  get profileBaseCurrency() {
+    return (
+      (this.isConsumer
+        ? this.stores.consumers.consumer?.baseCurrency
+        : this.stores.corporates.corporate?.baseCurrency) || null
+    )
   }
 
   get consumer(): ConsumerModel | null {
@@ -114,5 +128,24 @@ export default class BaseMixin extends Vue {
       title: title !== undefined ? title : 'Error',
       variant: 'danger'
     })
+  }
+
+  get pendingData() {
+    /**
+     * Flag to show we are waiting for
+     * application programme data and any pending $fetch
+     */
+    return !this.$fetchState || this.$fetchState.pending
+  }
+
+  get fetchHasError() {
+    /**
+     * Flag to show if $fetch has error
+     */
+    return this.$fetchState?.error !== null
+  }
+
+  get pendingDataOrError() {
+    return this.pendingData || this.fetchHasError
   }
 }
