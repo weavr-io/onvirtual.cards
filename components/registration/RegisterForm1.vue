@@ -144,12 +144,8 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
       }
 
       if (this.isRecaptchaEnabled) {
-        const token = await this.$recaptcha.getResponse()
-        console.log('ReCaptcha token:', token)
         await this.$recaptcha.reset()
       }
-
-      console.log('submit form validation success')
 
       this.passwordField.createToken().then(
         (tokens) => {

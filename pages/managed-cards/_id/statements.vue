@@ -314,7 +314,6 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
       fromTimestamp: val.start,
       toTimestamp: val.end
     })
-    console.log(val)
   }
 
   public fields = ['processedTimestamp', 'adjustment', 'balanceAfter']

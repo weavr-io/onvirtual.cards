@@ -61,7 +61,6 @@ export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMi
 
   @Emit()
   submitForm(e) {
-    console.log('here')
     e.preventDefault()
 
     if (this.$v.request) {

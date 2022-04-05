@@ -101,9 +101,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
         .then((res) => {
           if (res.data.responseCount! < _request.limit!) {
             $state.complete()
-            console.log('complete')
           } else {
-            console.log('loaded')
             $state.loaded()
           }
         })

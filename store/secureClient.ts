@@ -33,7 +33,6 @@ export default class SecureClient extends StoreModule {
   @Action
   tokenize() {
     return new Promise((resolve, reject) => {
-      console.log('Tokenising form: ' + this.form?._id)
       this.form?.tokenize(
         (res) => {
           resolve(res)
