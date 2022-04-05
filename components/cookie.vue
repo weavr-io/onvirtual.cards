@@ -23,6 +23,7 @@ import BaseMixin from '~/mixins/BaseMixin'
 import config from '~/config'
 
 const Cookie = process.client ? require('js-cookie') : undefined
+const COOKIE_NAME = 'auth-onv'
 
 @Component
 export default class Cookies extends mixins(BaseMixin) {
