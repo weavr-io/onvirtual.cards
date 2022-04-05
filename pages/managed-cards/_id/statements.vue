@@ -408,7 +408,7 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
       const data = (err as AxiosError<any>).response?.data
       const error = data.message ? data.message : data.errorCode
 
-      this.$weavrToastError(error)
+      this.showErrorToast(error)
     }
   }
 

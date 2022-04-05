@@ -161,7 +161,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
           error = 'Amount is higher than available balance'
         }
 
-        this.$weavrToastError(error)
+        this.showErrorToast(error)
       })
   }
 }

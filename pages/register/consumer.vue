@@ -431,7 +431,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   registrationFailed(err) {
     this.isLoadingRegistration = false
     const _errCode = err.response.data.errorCode
-    this.$weavrToastError(_errCode)
+    this.showErrorToast(_errCode)
     window.scrollTo(0, 0)
   }
 

@@ -182,7 +182,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
       this.screen = 0
     } else {
-      this.$weavrToastError(_errCode)
+      this.showErrorToast(_errCode)
     }
   }
 }

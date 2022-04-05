@@ -68,7 +68,7 @@ export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
 
         const error = data.message ? data.message : data.errorCode
 
-        this.$weavrToastError(error)
+        this.showErrorToast(error)
       })
   }
 }

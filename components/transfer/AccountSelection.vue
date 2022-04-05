@@ -67,7 +67,7 @@ export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMi
     if (this.$v.request) {
       this.$v.request.$touch()
       if (this.$v.request.$anyError) {
-        this.$weavrToastError('Please select an account to top up from.')
+        this.showErrorToast('Please select an account to top up from.')
         return null
       }
     }
