@@ -53,6 +53,11 @@
       color: $input-placeholder-color;
     }
   }
+
+  &.card-destroyed{
+    opacity: 0.4;
+
+  }
 }
 
 

@@ -52,9 +52,7 @@ export default class KycPage extends mixins(BaseMixin) {
 
   async redirectToAccountPage() {
     const _accounts = await this.stores.accounts.index({
-      profileId: this.stores.auth.isConsumer
-        ? this.$config.profileId.managed_accounts_consumers!
-        : this.$config.profileId.managed_accounts_corporates!,
+      profileId: this.accountProfileId,
       state: ManagedInstrumentStateEnum.ACTIVE,
       offset: '0'
     })

@@ -310,7 +310,10 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
   }
 
   filterMonthChange(val) {
-    this.setFilters({ fromTimestamp: val.start, toTimestamp: val.end })
+    this.setFilters({
+      fromTimestamp: val.start,
+      toTimestamp: val.end
+    })
     console.log(val)
   }
 
@@ -345,7 +348,10 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
       ..._filters
     }
 
-    this.downloadAsCSV({ id: this.cardId, filters })
+    this.downloadAsCSV({
+      id: this.cardId,
+      filters
+    })
   }
 
   toggleModal() {
@@ -375,11 +381,10 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
 
   async doDeleteCard() {
     try {
+      this.showSuccessToast('Preparing card for deletion', 'Card Action')
       if (this.managedCard?.balances?.availableBalance && this.managedCard.balances.availableBalance > 0) {
         const _accounts = await this.stores.accounts.index({
-          profileId: this.stores.auth.isConsumer
-            ? this.$config.profileId.managed_accounts_consumers!
-            : this.$config.profileId.managed_accounts_corporates!,
+          profileId: this.accountProfileId,
           state: ManagedInstrumentStateEnum.ACTIVE,
           offset: '0'
         })
@@ -402,7 +407,9 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
           await this.stores.transfers.execute(_request)
         }
       }
-      await this.stores.cards.remove(this.cardId)
+      await this.stores.cards.remove(this.cardId).then(() => {
+        this.showSuccessToast('Card has been deleted', 'Card Action')
+      })
       await this.$router.push('/managed-cards')
     } catch (err) {
       const data = (err as AxiosError<any>).response?.data
@@ -419,13 +426,18 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
       const request: StatementFiltersRequest = { ...this.filters }
       request.offset = this.page * +request.limit!
 
-      this.stores.cards.getCardStatement({ id: this.$route.params.id, request }).then((response) => {
-        if (!response.data.responseCount || response.data.responseCount < request.limit!) {
-          $state.complete()
-        } else {
-          $state.loaded()
-        }
-      })
+      this.stores.cards
+        .getCardStatement({
+          id: this.$route.params.id,
+          request
+        })
+        .then((response) => {
+          if (!response.data.responseCount || response.data.responseCount < request.limit!) {
+            $state.complete()
+          } else {
+            $state.loaded()
+          }
+        })
     }, 500)
   }
 }

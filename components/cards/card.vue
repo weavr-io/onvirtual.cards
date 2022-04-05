@@ -1,8 +1,7 @@
 <template>
   <div id="managedCard">
     <b-card
-      :bg-variant="bgVariant"
-      :class="{ 'card-frozen': isBlocked }"
+      :class="[{ 'card-frozen': isBlocked }, { 'card-destroyed': isDestroyed }]"
       no-body
       class="border-0 cards-card shadow-hover-sm"
     >
@@ -121,10 +120,6 @@ export default class WeavrCard extends mixins(BaseMixin) {
   showOptions: boolean = false
 
   localIsBusy: boolean = false
-
-  get bgVariant(): string {
-    return this.isActive ? 'card' : 'card-disabled'
-  }
 
   get isBlocked() {
     return this.card.state.state === ManagedInstrumentStateEnum.BLOCKED

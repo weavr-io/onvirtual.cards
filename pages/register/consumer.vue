@@ -447,7 +447,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     this.registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
     this.registrationRequest.rootUser!.mobile!.number = number.nationalNumber
     this.numberIsValid = number.isValid
-    console.log(number)
   }
 
   delayTouch($v) {
