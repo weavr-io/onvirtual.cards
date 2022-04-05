@@ -20,21 +20,21 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
+import config from '~/config'
 
 const Cookie = process.client ? require('js-cookie') : undefined
-const COOKIE_NAME = 'auth-onv'
 
 @Component
 export default class Cookies extends mixins(BaseMixin) {
   showCookieAlert: boolean = false
 
   created() {
-    const _authCookie = Cookie.get(COOKIE_NAME)
+    const _authCookie = Cookie.get(config.ONV_COOKIE_NAME)
     this.showCookieAlert = !_authCookie
   }
 
   dismissCookie() {
-    Cookie.set(COOKIE_NAME, true)
+    Cookie.set(config.ONV_COOKIE_NAME, true)
     this.showCookieAlert = false
   }
 }

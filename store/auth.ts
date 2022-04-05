@@ -21,6 +21,7 @@ import {
   transfersStore,
   usersStore
 } from '~/utils/store-accessor'
+import config from '~/config'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -67,7 +68,7 @@ export default class Auth extends StoreModule {
   @Mutation
   SET_AUTH(auth: LoginWithPasswordResponse | null) {
     this.auth = auth
-    Cookie.set('auth-onv', this.auth)
+    Cookie.set(config.ONV_COOKIE_NAME, this.auth)
 
     $axiosMulti.defaults.headers.Authorization = 'Bearer ' + this.auth?.token
   }
@@ -76,7 +77,7 @@ export default class Auth extends StoreModule {
   SET_TOKEN(res: CreatePasswordResponseModel) {
     this.auth!.token = res.token!
 
-    Cookie.set('auth-onv', this.auth)
+    Cookie.set(config.ONV_COOKIE_NAME, this.auth)
 
     $axiosMulti.defaults.headers.Authorization = 'Bearer ' + this.auth?.token
   }
@@ -90,7 +91,7 @@ export default class Auth extends StoreModule {
   REMOVE_AUTH(auth: null) {
     this.auth = auth
 
-    Cookie.remove('auth-onv')
+    Cookie.remove(config.ONV_COOKIE_NAME)
 
     delete $axiosMulti.defaults.headers.Authorization
   }
