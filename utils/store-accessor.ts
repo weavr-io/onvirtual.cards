@@ -7,7 +7,6 @@ import Loader from '~/store/loader'
 import Auth from '~/store/auth'
 import Consumers from '~/store/consumers'
 import Identities from '~/store/identity'
-import Identity from '~/store/identity'
 import Transfers from '~/store/transfers'
 import Errors from '~/store/errors'
 import Users from '~/store/users'
@@ -72,7 +71,7 @@ function corporatesStore(store: Store<any>) {
 }
 
 function identitiesStore(store: Store<any>) {
-  return getModule(Identity, store)
+  return getModule(Identities, store)
 }
 
 function loaderStore(store: Store<any>) {

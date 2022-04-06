@@ -62,17 +62,15 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Watch } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 
 import BaseMixin from '~/mixins/BaseMixin'
-import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import CardsMixin from '~/mixins/CardsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import KyVerified from '~/mixins/kyVerified'
 
 @Component({
   layout: 'dashboard',
-  watchQuery: true,
   components: {
     WeavrCard: () => import('~/components/cards/card.vue'),
     KybAlert: () => import('~/components/corporates/KYBAlert.vue')
@@ -106,10 +104,7 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified)
       path: this.$route.path,
       query: { showDestroyed: val }
     })
-  }
 
-  @Watch('showDestroyed')
-  queryParamChanged() {
     this.$fetch()
   }
 
