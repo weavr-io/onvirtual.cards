@@ -94,7 +94,6 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified)
         this.showDestroyedSwitch = res
       })
     })
-  }
 
   async getCards() {
     const state = this.showDestroyed
