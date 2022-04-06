@@ -63,7 +63,6 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-
 import BaseMixin from '~/mixins/BaseMixin'
 import CardsMixin from '~/mixins/CardsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
@@ -84,33 +83,36 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified)
     return this.$route.query.showDestroyed === 'true'
   }
 
-  async fetch() {
-    const state = this.showDestroyed
-      ? undefined
-      : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED].join(',')
-    await this.stores.cards
-      .getCards({
-        state
-      })
-      .then(() => {
-        this.stores.cards.hasDestroyedCards().then((res) => {
-          this.showDestroyedSwitch = res
-        })
-      })
-  }
-
-  async showDestroyedChanged(val) {
-    await this.$router.push({
-      path: this.$route.path,
-      query: { showDestroyed: val }
-    })
-
-    this.$fetch()
-  }
-
   get identityVerificationMessage() {
     if (!this.identityVerified) return 'Pending identity verification'
     return undefined
+  }
+
+  fetch() {
+    return this.getCards().then(() => {
+      this.stores.cards.hasDestroyedCards().then((res) => {
+        this.showDestroyedSwitch = res
+      })
+    })
+  }
+
+  async getCards() {
+    const state = this.showDestroyed
+      ? ''
+      : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED].join(',')
+
+    await this.stores.cards.getCards({
+      state
+    })
+  }
+
+  async showDestroyedChanged(val) {
+    await this.$router
+      .push({
+        path: this.$route.path,
+        query: { showDestroyed: val }
+      })
+      .then(this.getCards)
   }
 }
 </script>
