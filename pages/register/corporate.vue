@@ -34,6 +34,7 @@ import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/Identit
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { DeepNullable, RecursivePartial } from '~/global'
 
 @Component({
   layout: 'auth',

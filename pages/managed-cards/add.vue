@@ -114,8 +114,9 @@ import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/manag
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import ValidationMixin from '~/minixs/ValidationMixin'
+import { Nullable } from '~/global'
 
 @Component({
   components: {

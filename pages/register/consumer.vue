@@ -182,7 +182,8 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import ValidationMixin from '~/minixs/ValidationMixin'
+import { DeepNullable, RecursivePartial } from '~/global'
 
 const Countries = require('~/static/json/countries.json')
 
