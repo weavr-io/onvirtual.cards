@@ -15,7 +15,7 @@
                   </b-form-group>
                 </b-col>
               </b-form-row>
-              <loader-button :is-loading="isLoading" button-text="finish" class="mt-5 text-center" />
+              <loader-button :is-loading="localIsBusy" button-text="finish" class="mt-5 text-center" />
             </b-form>
           </b-card>
         </b-col>
@@ -32,6 +32,7 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
 import AccountsMixin from '~/mixins/AccountsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 
 @Component({
   components: {
@@ -52,41 +53,24 @@ import ValidationMixin from '~/mixins/ValidationMixin'
   middleware: ['kyVerified']
 })
 export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, ValidationMixin) {
+  localIsBusy: boolean = false
+
   createManagedAccountRequest: CreateManagedAccountRequest = {
     profileId: '',
     friendlyName: 'Main Account',
     currency: CurrencyEnum.EUR
   }
 
-  currencyOptions = [
-    {
-      value: 'EUR',
-      text: 'Euro - EUR'
-    },
-    {
-      value: 'GBP',
-      text: 'Great Britain Pound - GBP'
-    },
-    {
-      value: 'USD',
-      text: 'US Dollars - USD'
-    }
-  ]
-
-  get isLoading() {
-    return this.stores.accounts.isLoading
-  }
-
-  get auth() {
-    return this.stores.auth.isLoading
+  get currencyOptions() {
+    return CurrencySelectConst.filter((item) => {
+      return item.value === this.profileBaseCurrency
+    })
   }
 
   async fetch() {
     await this.stores.accounts
       .index({
-        profileId: this.stores.auth.isConsumer
-          ? this.$config.profileId.managed_accounts_consumers!
-          : this.$config.profileId.managed_accounts_corporates!,
+        profileId: this.accountProfileId,
         state: ManagedInstrumentStateEnum.ACTIVE,
         offset: '0'
       })
@@ -101,10 +85,9 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
               })
               .catch((err) => {
                 const data = err.response.data
-
                 const error = data.message ? data.message : data.errorCode
 
-                this.$weavrToastError(error)
+                this.showErrorToast(error)
                 this.goToManagedAccountIndex()
               })
           }
@@ -114,7 +97,7 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
       })
   }
 
-  doAdd() {
+  async doAdd() {
     if (this.$v.createManagedAccountRequest) {
       this.$v.createManagedAccountRequest.$touch()
       if (this.$v.createManagedAccountRequest.$anyError) {
@@ -122,7 +105,9 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
       }
     }
 
-    this.stores.accounts
+    this.localIsBusy = true
+
+    await this.stores.accounts
       .create(this.createManagedAccountRequest)
       .then(async (res) => {
         await this.stores.accounts.upgradeIban(res.data.id)
@@ -130,16 +115,17 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
       })
       .catch((err) => {
         const data = err.response.data
-
         const error = data.message ? data.message : data.errorCode
 
-        this.$weavrToastError(error)
+        this.showErrorToast(error)
       })
+
+    this.localIsBusy = false
   }
 
   @Watch('isConsumer', { immediate: true })
   updateProfileId() {
-    this.createManagedAccountRequest.profileId = this.profileId
+    this.createManagedAccountRequest.profileId = this.accountProfileId
   }
 }
 </script>

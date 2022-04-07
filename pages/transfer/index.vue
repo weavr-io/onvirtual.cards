@@ -43,9 +43,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
   async fetch() {
     await this.stores.cards.getCards()
     const accounts = await this.stores.accounts.index({
-      profileId: this.stores.auth.isConsumer
-        ? this.$config.profileId.managed_accounts_consumers!
-        : this.$config.profileId.managed_accounts_corporates!,
+      profileId: this.accountProfileId,
       state: ManagedInstrumentStateEnum.ACTIVE,
       offset: '0'
     })
@@ -161,7 +159,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
           error = 'Amount is higher than available balance'
         }
 
-        this.$weavrToastError(error)
+        this.showErrorToast(error)
       })
   }
 }

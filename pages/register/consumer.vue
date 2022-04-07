@@ -350,7 +350,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
 
   async submitForm() {
     try {
-      console.log('groot', this.isRecaptchaEnabled)
       this.$v.$touch()
       if (this.$v.$invalid) {
         return
@@ -358,7 +357,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
 
       if (this.isRecaptchaEnabled) {
         const token = await this.$recaptcha.getResponse()
-        console.log('ReCaptcha token:', token)
         await this.$recaptcha.reset()
       }
 
@@ -377,7 +375,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         }
       )
     } catch (error) {
-      console.log('Login error:', error)
+      this.showErrorToast(error)
     }
   }
 
@@ -431,12 +429,11 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   registrationFailed(err) {
     this.isLoadingRegistration = false
     const _errCode = err.response.data.errorCode
-    this.$weavrToastError(_errCode)
+    this.showErrorToast(_errCode)
     window.scrollTo(0, 0)
   }
 
   checkOnKeyUp(e) {
-    console.log('checkOnKeyUp')
     if (e.key === 'Enter') {
       e.preventDefault()
       this.submitForm()
@@ -447,7 +444,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     this.registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
     this.registrationRequest.rootUser!.mobile!.number = number.nationalNumber
     this.numberIsValid = number.isValid
-    console.log(number)
   }
 
   delayTouch($v) {

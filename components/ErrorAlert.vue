@@ -68,7 +68,6 @@ class ErrorAlert extends mixins(BaseMixin) {
     } else if (this.message !== '') {
       return this.message
     } else if (this.errors && this.errors.data && this.errors.data.errorCode) {
-      console.log(this.errors.data)
       switch (this.errors.data.errorCode) {
         case 'ROOT_EMAIL_NOT_UNIQUE':
         case 'EMAIL_NOT_UNIQUE':

@@ -114,7 +114,6 @@ export default class KybPage extends mixins(BaseMixin) {
         await this.stores.corporates
           .startKYB()
           .then((res) => {
-            console.log('START KYB')
             this.reference = res.data.reference
             this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
           })
@@ -122,7 +121,7 @@ export default class KybPage extends mixins(BaseMixin) {
             if (res.response.data.errorCode) this.kybErrorCode = res.response.data.errorCode
           })
       } catch (e) {
-        console.log(e)
+        this.showErrorToast(e)
       }
     }
   }

@@ -1,7 +1,16 @@
 <template>
   <section>
     <b-container>
-      <b-row>
+      <b-row v-if="pendingDataOrError">
+        <b-col>
+          <div class="d-flex flex-column align-items-center">
+            <div class="loader-spinner ">
+              <b-spinner />
+            </div>
+          </div>
+        </b-col>
+      </b-row>
+      <b-row v-else>
         <b-col md="6" offset-md="3">
           <b-card class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
@@ -69,20 +78,10 @@ import ValidationMixin from '~/mixins/ValidationMixin'
         maxLength: maxLength(50)
       },
       cardholderMobileNumber: {
-        // eslint-disable-next-line
-        requiredIf: requiredIf(function() {
-          // @ts-ignore
-          return !this.isConsumer
+        required: requiredIf(function(this: EditCardPage) {
+          return this.isCorporate
         }),
-        cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
-      },
-      nameOnCard: {
-        // eslint-disable-next-line
-        requiredIf: requiredIf(function() {
-          // @ts-ignore
-          return !this.isConsumer
-        }),
-        maxLength: maxLength(30)
+        cardholderMobileNumberReg: helpers.regex('cardholderMobileNumberReg', /^\+[0-9]+$/)
       }
     }
   }
@@ -95,15 +94,17 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
   }
 
   isUpdating = false
-  updateManagedCardRequest: UpdateManagedCardRequest = {}
+  updateManagedCardRequest: UpdateManagedCardRequest | null = null
 
   async fetch() {
     const card = await this.stores.cards.getManagedCard(this.cardId)
     const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
 
     this.updateManagedCardRequest = {
-      friendlyName: card.data.friendlyName
+      friendlyName: card.data.friendlyName,
+      cardholderMobileNumber: ''
     }
+
     this.mobile.countryCode = parsedNumber?.country || ''
     this.mobile.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
   }
@@ -129,18 +130,17 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
       this.numberIsValid = false
     }
 
-    if (this.$v.updateManagedCardRequest) {
-      this.$v.updateManagedCardRequest.$touch()
-      if (this.$v.updateManagedCardRequest.$anyError || !this.numberIsValid) {
-        return
-      }
+    this.$v.$touch()
+    if (this.$v.$anyError || !this.numberIsValid) {
+      return
     }
+
     this.isUpdating = true
 
     this.stores.cards
       .update({
         id: this.cardId,
-        request: this.updateManagedCardRequest
+        request: this.updateManagedCardRequest as UpdateManagedCardRequest
       })
       .then(() => {
         try {
@@ -155,8 +155,10 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
 
   phoneUpdate(number) {
     this.$set(this.mobile, 'cardholderMobileNumber', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.updateManagedCardRequest.cardholderMobileNumber = number.formattedNumber
+    this.updateManagedCardRequest!.cardholderMobileNumber = number.formattedNumber
     this.numberIsValid = number.isValid
+
+    this.$v.$touch()
   }
 }
 </script>

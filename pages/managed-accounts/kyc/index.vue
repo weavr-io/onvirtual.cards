@@ -45,14 +45,12 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   onMessage(message, additionalInfo) {
-    console.log(message, additionalInfo)
     if (message === 'kycSubmitted') {
       this.$router.push('/managed-accounts/kyc/check')
     }
   }
 
   receiveMessage(event) {
-    console.log(event)
     switch (event.data.status) {
       case 'failed':
         this.$router.push('/managed-accounts/kyc/failed')

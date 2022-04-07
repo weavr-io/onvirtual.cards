@@ -11,7 +11,6 @@ import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/manage
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 const defaultState = {
-  isLoading: false,
   accounts: null,
   account: null,
   statements: null,
@@ -24,7 +23,6 @@ const defaultState = {
   namespaced: true
 })
 export default class Accounts extends StoreModule {
-  isLoading: boolean = defaultState.isLoading
   accounts: PaginatedManagedAccountsResponse | null = defaultState.accounts
   account: ManagedAccountModel | null = defaultState.account
   statements: StatementResponseModel | null = defaultState.statements
@@ -122,11 +120,6 @@ export default class Accounts extends StoreModule {
   }
 
   @Mutation
-  SET_IS_LOADING(isLoading: boolean) {
-    this.isLoading = isLoading
-  }
-
-  @Mutation
   SET_IBAN(_res: ManagedAccountIBANModel) {
     this.ibanDetails = _res
   }
@@ -148,10 +141,6 @@ export default class Accounts extends StoreModule {
   @Action({ rawError: true })
   create(request: CreateManagedAccountRequest) {
     const req = this.store.$apiMulti.managedAccounts.store(request)
-
-    req.finally(() => {
-      this.SET_IS_LOADING(false)
-    })
 
     return req
   }

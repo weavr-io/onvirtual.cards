@@ -52,11 +52,7 @@ export default class KybPage extends mixins(BaseMixin) {
     if (message.messageType === 'idCheck.onError') {
       if (message.payload.error === 'Access token required') {
         this.accessTokenError = true
-      } else {
-        console.log(message)
       }
-    } else {
-      console.log(message)
     }
   }
 }
