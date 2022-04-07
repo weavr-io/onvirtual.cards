@@ -12,12 +12,13 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 
-import BaseMixin from '~/minixs/BaseMixin'
-import RouterMixin from '~/minixs/RouterMixin'
-import AccountsMixin from '~/minixs/AccountsMixin'
+import BaseMixin from '~/mixins/BaseMixin'
+import RouterMixin from '~/mixins/RouterMixin'
+import AccountsMixin from '~/mixins/AccountsMixin'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { accountsStore } from '~/utils/store-accessor'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
+import KyVerified from '~/mixins/kyVerified'
 
 const dot = require('dot-object')
 const moment = require('moment')
@@ -32,17 +33,13 @@ const moment = require('moment')
   },
   middleware: 'kyVerified'
 })
-export default class AccountPage extends mixins(BaseMixin, RouterMixin, AccountsMixin) {
+export default class AccountPage extends mixins(BaseMixin, RouterMixin, AccountsMixin, KyVerified) {
   filters: GetManagedAccountStatementRequest | null = null
 
   page: number = 0
 
   get filteredStatement() {
     return this.stores.accounts.filteredStatement
-  }
-
-  get hasAlert() {
-    return this.stores.view.hasAlert
   }
 
   asyncData({ store }) {

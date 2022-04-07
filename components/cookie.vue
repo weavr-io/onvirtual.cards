@@ -19,24 +19,22 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
+import config from '~/config'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
-const COOKIE_NAME = 'onvirtual-cookie'
-@Component({
-  components: {}
-})
+@Component
 export default class Cookies extends mixins(BaseMixin) {
   showCookieAlert: boolean = false
 
-  mounted() {
-    const _authCookie = Cookie.get(COOKIE_NAME)
+  created() {
+    const _authCookie = Cookie.get(config.ONV_COOKIE_NAME)
     this.showCookieAlert = !_authCookie
   }
 
   dismissCookie() {
-    Cookie.set(COOKIE_NAME, true)
+    Cookie.set(config.ONV_COOKIE_NAME, true)
     this.showCookieAlert = false
   }
 }

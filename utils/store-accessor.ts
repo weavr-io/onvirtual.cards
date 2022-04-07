@@ -9,9 +9,7 @@ import Consumers from '~/store/consumers'
 import Identities from '~/store/identity'
 import Transfers from '~/store/transfers'
 import Errors from '~/store/errors'
-import View from '~/store/view'
 import Users from '~/store/users'
-import Identity from '~/store/identity'
 import AccessCodes from '~/store/accessCodes'
 
 export interface Stores {
@@ -24,7 +22,6 @@ export interface Stores {
   identities: Identities
   transfers: Transfers
   errors: Errors
-  view: View
   users: Users
   accessCodes: AccessCodes
 }
@@ -39,7 +36,6 @@ function initialiseStores(store: Store<any>): Stores {
     consumers: consumersStore(store),
     transfers: transfersStore(store),
     errors: errorsStore(store),
-    view: viewStore(store),
     users: usersStore(store),
     identities: identitiesStore(store),
     accessCodes: accessCodesStore(store)
@@ -75,7 +71,7 @@ function corporatesStore(store: Store<any>) {
 }
 
 function identitiesStore(store: Store<any>) {
-  return getModule(Identity, store)
+  return getModule(Identities, store)
 }
 
 function loaderStore(store: Store<any>) {
@@ -84,10 +80,6 @@ function loaderStore(store: Store<any>) {
 
 function errorsStore(store: Store<any>) {
   return getModule(Errors, store)
-}
-
-function viewStore(store: Store<any>) {
-  return getModule(View, store)
 }
 
 function accessCodesStore(store: Store<any>) {
@@ -104,7 +96,6 @@ export {
   consumersStore,
   transfersStore,
   errorsStore,
-  viewStore,
   usersStore,
   identitiesStore,
   accessCodesStore

@@ -14,7 +14,6 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
 
   function onError(error) {
     const code = parseInt(error.response && error.response.status)
-
     switch (code) {
       case 401:
         if (error.response.config.url !== '/logout') authStore(ctxt.store).logout()

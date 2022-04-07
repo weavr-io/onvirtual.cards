@@ -1,5 +1,5 @@
 <template>
-  <section v-if="showKycAlert">
+  <section>
     <b-container>
       <b-row v-if="isPendingReview">
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter text-center">
@@ -14,7 +14,6 @@
       </b-row>
       <b-row v-else>
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter">
-          <!-- <b-col class="py-5 text-center"> -->
           <div>
             <h3 class="text-center font-weight-lighter mb-4">
               We need some documents
@@ -45,16 +44,11 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-
-import BaseMixin from '~/minixs/BaseMixin'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import KyVerified from '~/mixins/kyVerified'
 
 @Component
-export default class KYCAlert extends mixins(BaseMixin) {
-  get showKycAlert() {
-    return this.stores.view.showKycAlert
-  }
-
+export default class KYCAlert extends mixins(KyVerified) {
   get isPendingReview(): boolean {
     return this.stores.consumers?.kyc?.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
   }

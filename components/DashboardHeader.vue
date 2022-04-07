@@ -51,9 +51,9 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/minixs/BaseMixin'
-import CardsMixin from '~/minixs/CardsMixin'
-import AccountsMixin from '~/minixs/AccountsMixin'
+import BaseMixin from '~/mixins/BaseMixin'
+import CardsMixin from '~/mixins/CardsMixin'
+import AccountsMixin from '~/mixins/AccountsMixin'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 

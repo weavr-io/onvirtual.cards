@@ -25,7 +25,7 @@
 </template>
 <script lang="ts">
 import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 
 export interface ErrorLink {
   text: string

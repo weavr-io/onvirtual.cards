@@ -2,7 +2,7 @@
   <div>
     <app-header />
     <Nuxt />
-    <div id="loader" v-if="isLoading">
+    <div v-if="isLoading" id="loader">
       <div class="loader-spinner">
         <b-spinner />
       </div>
@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
   components: {

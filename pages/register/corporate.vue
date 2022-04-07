@@ -23,7 +23,7 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { AxiosResponse } from 'axios'
 
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import { authStore } from '~/utils/store-accessor'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
