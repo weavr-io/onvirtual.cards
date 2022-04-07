@@ -148,7 +148,7 @@ import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
-import ValidationMixin from '~/minixs/ValidationMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
 
 const Countries = require('~/static/json/countries.json')

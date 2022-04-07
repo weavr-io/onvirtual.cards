@@ -70,7 +70,7 @@ import BaseMixin from '~/mixins/BaseMixin'
 import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import ValidationMixin from '~/minixs/ValidationMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
 
 const Countries = require('~/static/json/countries.json')
