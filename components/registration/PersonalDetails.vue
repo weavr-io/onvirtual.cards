@@ -146,10 +146,10 @@ import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import { DeepNullable, RecursivePartial } from '~/global'
 
 const Countries = require('~/static/json/countries.json')
 

@@ -87,6 +87,7 @@ import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common
 import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
 import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import { Nullable } from '~/global'
 
 @Component({
   layout: 'auth',

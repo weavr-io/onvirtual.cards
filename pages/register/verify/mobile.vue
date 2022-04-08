@@ -69,6 +69,7 @@ import { authStore, identitiesStore } from '~/utils/store-accessor'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import { Nullable } from '~/global'
 
 @Component({
   layout: 'auth',

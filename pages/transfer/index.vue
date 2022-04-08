@@ -28,6 +28,7 @@ import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfer
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { DeepNullable } from '~/global'
 
 @Component({
   components: {

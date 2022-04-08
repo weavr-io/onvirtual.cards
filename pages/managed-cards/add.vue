@@ -115,6 +115,7 @@ import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-in
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import { Nullable } from '~/global'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 
 @Component({
