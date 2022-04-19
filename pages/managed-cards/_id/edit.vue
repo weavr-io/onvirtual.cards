@@ -100,9 +100,10 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
     const card = await this.stores.cards.getManagedCard(this.cardId)
     const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
 
+    // add key cardholderMobileNumber only if isCorporate
     this.updateManagedCardRequest = {
       friendlyName: card.data.friendlyName,
-      cardholderMobileNumber: ''
+      ...(this.isCorporate && { cardholderMobileNumber: '' })
     }
 
     this.mobile.countryCode = parsedNumber?.country || ''
