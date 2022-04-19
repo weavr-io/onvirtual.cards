@@ -1,4 +1,4 @@
-import { CreateIdentityConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/identities/CreateIdentityConflictsEnum'
+import { CreateIdentityConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/identities/common/CreateIdentityConflictsEnum'
 import { ValidatePasswordConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/passwords/ValidatePasswordConflictsEnum'
 import { LoginWithPasswordConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/passwords/LoginWithPasswordConflictsEnum'
 import { VerifyTokenConflictsEnum } from '~/plugins/weavr-multi/api/models/error/conflicts/access/VerifyTokenConflictsEnum'

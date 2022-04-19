@@ -88,7 +88,8 @@ const config = {
     { src: '~/plugins/InfiniteLoading.ts', ssr: false },
     { src: '~/plugins/axios.ts' },
     { src: '~/plugins/axios-accessor.ts' },
-    { src: '~/plugins/weavr-multi/index.ts' }
+    { src: '~/plugins/weavr-multi/index.ts' },
+    { src: '~/plugins/formattingFilters/index.ts' }
   ],
   /*
    ** Nuxt.js modules
