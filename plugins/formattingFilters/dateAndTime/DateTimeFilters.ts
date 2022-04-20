@@ -5,36 +5,36 @@ import moment from 'moment'
 Vue.use(VueMoment, { moment })
 
 export class DateTimeFilters {
-    formatMilliToDateTime(value) {
-        if (value == null) {
-            // since null == undefined
-            return '-'
-        }
-
-        const _m = moment(parseInt(value))
-        return _m.format('YYYY-MM-DD HH:mm')
+  formatMilliToDateTime(value) {
+    if (value === null) {
+      // since null == undefined
+      return '-'
     }
 
-    formatMilliToDate(value) {
-        if (value == null) {
-            // since null == undefined
-            return '-'
-        }
+    const _m = moment(parseInt(value))
+    return _m.format('YYYY-MM-DD HH:mm')
+  }
 
-        const _m = moment(parseInt(value))
-        return _m.format('YYYY-MM-DD')
+  formatMilliToDate(value) {
+    if (value === null) {
+      // since null == undefined
+      return '-'
     }
 
-    formatToDate(value) {
-        if (value == null) {
-            // since null == undefined
-            return '-'
-        }
-        try {
-            const _m = moment()
-            _m.set({ year: value.year, month: value.month - 1, date: value.day })
+    const _m = moment(parseInt(value))
+    return _m.format('YYYY-MM-DD')
+  }
 
-            return _m.format('YYYY-MM-DD')
-        } catch (e) {}
+  formatToDate(value) {
+    if (value === null) {
+      // since null == undefined
+      return '-'
     }
+    try {
+      const _m = moment()
+      _m.set({ year: value.year, month: value.month - 1, date: value.day })
+
+      return _m.format('YYYY-MM-DD')
+    } catch (e) {}
+  }
 }
