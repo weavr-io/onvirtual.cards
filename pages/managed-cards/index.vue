@@ -89,30 +89,28 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified)
   }
 
   fetch() {
-    return this.getCards().then(() => {
-      this.stores.cards.hasDestroyedCards().then((res) => {
+    return this.getCards([ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]).then(() => {
+      return this.stores.cards.hasDestroyedCards().then((res) => {
         this.showDestroyedSwitch = res
       })
     })
   }
 
-  async getCards() {
-    const state = this.showDestroyed
-      ? ''
-      : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED].join(',')
-
+  async getCards(_state: ManagedInstrumentStateEnum[]) {
     await this.stores.cards.getCards({
-      state
+      state: _state.join(',')
     })
   }
 
   async showDestroyedChanged(val) {
-    await this.$router
-      .push({
-        path: this.$route.path,
-        query: { showDestroyed: val }
-      })
-      .then(this.getCards)
+    await this.$router.push({
+      path: this.$route.path,
+      query: { showDestroyed: val }
+    })
+
+    const state = val ? [] : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
+
+    await this.getCards(state)
   }
 }
 </script>

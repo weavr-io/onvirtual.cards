@@ -16,7 +16,6 @@ import { ReplaceDamagedPhysicalManagedCardRequest } from '~/plugins/weavr-multi/
 import { ReplaceLostStolenPhysicalManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/ReplaceLostStolenPhysicalManagedCardRequest'
 import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
 import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
-import { PaginatedManagedCardStatementResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardStatementResponse'
 
 export class ManagedCardsApi {
   index(filters?: GetManagedCardsRequest): Promise<AxiosResponse<PaginatedManagedCardsResponse>> {
