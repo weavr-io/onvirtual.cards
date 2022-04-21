@@ -77,8 +77,6 @@ export default class Corporates extends StoreModule {
 
   @Action({ rawError: true })
   update(request: UpdateCorporateRequest) {
-    loaderStore(this.store).start()
-
     const req = this.store.$apiMulti.corporates.update(request)
     req.then((_res) => {
       this.SET_CORPORATE(_res.data)
@@ -86,7 +84,6 @@ export default class Corporates extends StoreModule {
     })
 
     req.finally(() => {
-      loaderStore(this.store).stop()
       this.SET_IS_LOADING(false)
     })
 

@@ -70,8 +70,6 @@ export default class Consumers extends StoreModule {
 
   @Action({ rawError: true })
   update(request: UpdateConsumerRequest) {
-    loaderStore(this.store).start()
-
     const req = this.store.$apiMulti.consumers.update(request)
     req.then((_res) => {
       this.SET_CONSUMER(_res.data)
@@ -79,7 +77,6 @@ export default class Consumers extends StoreModule {
     })
 
     req.finally(() => {
-      loaderStore(this.store).stop()
       this.SET_IS_LOADING(false)
     })
 
