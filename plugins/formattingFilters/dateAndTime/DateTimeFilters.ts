@@ -6,8 +6,7 @@ Vue.use(VueMoment, { moment })
 
 export class DateTimeFilters {
   formatMilliToDateTime(value) {
-    if (value === null) {
-      // since null == undefined
+    if (value === null || value === undefined) {
       return '-'
     }
 
@@ -16,8 +15,7 @@ export class DateTimeFilters {
   }
 
   formatMilliToDate(value) {
-    if (value === null) {
-      // since null == undefined
+    if (value === null || value === undefined) {
       return '-'
     }
 
@@ -26,8 +24,7 @@ export class DateTimeFilters {
   }
 
   formatToDate(value) {
-    if (value === null) {
-      // since null == undefined
+    if (value === null || value === undefined) {
       return '-'
     }
     try {
