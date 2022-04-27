@@ -9,6 +9,7 @@ const config = {
       baseUrl: process.env.MULTI_BASE_URL,
       uiKey: process.env.UI_KEY
     },
+    production: process.env.ENVIRONMENT === 'production',
     profileId: {
       consumers: process.env.CONSUMERS_PROFILE_ID,
       corporates: process.env.CORPORATES_PROFILE_ID,

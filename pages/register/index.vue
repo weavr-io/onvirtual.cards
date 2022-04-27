@@ -7,7 +7,7 @@
         </div>
       </b-col>
     </b-row>
-    <access-code-component v-if="!isAccessCodeValid" />
+    <access-code-component v-if="$config.production && !isAccessCodeValid" />
     <business-or-personal-component v-else />
   </b-col>
 </template>
