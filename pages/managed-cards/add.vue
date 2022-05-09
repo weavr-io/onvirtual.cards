@@ -39,6 +39,7 @@
                     >
                       <b-form-input
                         v-model="$v.createManagedCardRequest.nameOnCard.$model"
+                        :state="isInvalid($v.createManagedCardRequest.nameOnCard)"
                         placeholder="eg. Elon Musk"
                       />
                     </b-form-group>
