@@ -1,5 +1,5 @@
 <template>
-  <section v-if="showKybAlert">
+  <section>
     <b-container>
       <b-row v-if="isPendingReview">
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter text-center">
@@ -27,8 +27,11 @@
             <li>Copy of the Certificate of Incorporation</li>
             <li>Copy of the Articles of Association (last amendment)</li>
             <li>Proof of Business Address (e.g. lease agreement)</li>
-            <li>UBO Declaration Form downloadable from <a href="https://storage.cloud.google.com/weavr-cdn/UBO-a.pdf">here.</a></li>
-            <li>Commercial registry extract showing shareholders and directors</a></li>
+            <li>
+              UBO Declaration Form downloadable from
+              <a href="https://storage.cloud.google.com/weavr-cdn/UBO-a.pdf">here.</a>
+            </li>
+            <li>Commercial registry extract showing shareholders and directors</li>
           </ul>
           <p>
             You will also need to provide the following information:
@@ -49,26 +52,15 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
 
-import * as ViewStore from '~/store/modules/View'
-import { KYBState } from '~/api/Enums/KYBState'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import KyVerified from '~/mixins/kyVerified'
 
-const View = namespace(ViewStore.name)
-
-@Component({})
-export default class KYBAlert extends mixins(BaseMixin) {
-  get corporate() {
-    return this.stores.corporates.corporate
-  }
-
-  accountId!: number
-
-  @View.Getter showKybAlert!: boolean
-
+@Component
+export default class KYBAlert extends mixins(BaseMixin, KyVerified) {
   get isPendingReview(): boolean {
-    return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.PENDING_REVIEW
+    return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.PENDING_REVIEW
   }
 }
 </script>

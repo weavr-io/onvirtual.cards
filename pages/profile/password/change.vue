@@ -14,7 +14,7 @@
         <div class="col-lg-6 offset-lg-3 h-100 modal-div">
           <div class="mx-md-3 px-md-5">
             <error-alert />
-            <b-form id="contact-form" @submit="submitChangePassword">
+            <b-form id="contact-form" @submit.prevent="submitChangePassword">
               <client-only placeholder="Loading...">
                 <div :class="{ 'is-dirty': $v.form.$dirty }">
                   <label class="d-block">OLD PASSWORD:</label>
@@ -22,20 +22,20 @@
                     ref="oldPassword"
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
                     :base-style="passwordBaseStyle"
-                    @onKeyUp="checkOnKeyUp"
                     class-name="sign-in-password"
                     name="old-password"
                     required="true"
+                    @onKeyUp.prevent="checkOnKeyUp"
                   />
                   <label class="d-block mt-3">NEW PASSWORD:</label>
                   <weavr-password-input
                     ref="newPassword"
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
                     :base-style="passwordBaseStyle"
-                    @onKeyUp="checkOnKeyUp"
                     class-name="sign-in-password"
                     name="new-password"
                     required="true"
+                    @onKeyUp.prevent="checkOnKeyUp"
                   />
                   <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
                 </div>
@@ -55,11 +55,10 @@
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import LoaderButton from '~/components/LoaderButton.vue'
-import * as AuthStore from '~/store/modules/Auth'
-import { UpdatePassword } from '~/api/Requests/Auth/UpdatePassword'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 
 @Component({
   components: {
@@ -78,57 +77,49 @@ export default class BundlesPage extends mixins(BaseMixin) {
   @Ref('newPassword')
   newPassword!: WeavrPasswordInput
 
-  public changePasswordRequest: UpdatePassword = {
-    id: 0,
-    request: {
-      oldPassword: {
-        value: ''
-      },
-      password: {
-        value: ''
-      }
-    }
-  }
+  isLoading = false
 
-  mounted() {
-    const _id = AuthStore.Helpers.identityId(this.$store)
-    if (_id) {
-      this.changePasswordRequest.id = _id
+  changePasswordRequest: UpdatePasswordRequestModel = {
+    oldPassword: {
+      value: ''
+    },
+    newPassword: {
+      value: ''
     }
   }
 
   checkOnKeyUp(e) {
     if (e.key === 'Enter') {
       e.preventDefault()
-      this.submitChangePassword(e)
+      this.submitChangePassword()
     }
   }
 
-  submitChangePassword(evt) {
-    evt.preventDefault()
+  async submitChangePassword() {
+    this.$v.$touch()
+    if (this.$v.form.$invalid) return
 
-    if (this.$v.form) {
-      this.$v.form.$touch()
-      if (this.$v.form.$anyError) {
-        return null
-      }
-    }
+    let tokenizedOld = ''
+    let tokenizedNew = ''
+    await this.oldPassword.createToken().then((res) => {
+      tokenizedOld = res.tokens['old-password']
+    })
+    await this.newPassword.createToken().then((res) => {
+      tokenizedNew = res.tokens['new-password']
+    })
 
-    const promises: Promise<any>[] = []
-    promises.push(this.oldPassword.createToken())
-    promises.push(this.newPassword.createToken())
-
-    Promise.all(promises).then((values) => {
-      if (values[0].tokens['old-password'] !== '' && values[1].tokens['new-password']) {
-        this.changePasswordRequest.request.oldPassword.value = values[0].tokens['old-password']
-        this.changePasswordRequest.request.password.value = values[1].tokens['new-password']
-        AuthStore.Helpers.updatePassword(this.$store, this.changePasswordRequest).then(() => {
+    if (tokenizedOld && tokenizedNew) {
+      this.changePasswordRequest.oldPassword.value = tokenizedOld
+      this.changePasswordRequest.newPassword.value = tokenizedNew
+      console.debug('ALL Settled', this.changePasswordRequest)
+      this.stores.auth.validatePassword({ password: this.changePasswordRequest.newPassword }).then(() => {
+        this.stores.auth.updatePassword(this.changePasswordRequest).then(() => {
           this.$router.push('/profile')
         })
-      } else {
-        return null
-      }
-    })
+      })
+    } else {
+      return null
+    }
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {

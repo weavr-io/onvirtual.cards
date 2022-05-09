@@ -1,10 +1,9 @@
 import { Plugin } from '@nuxt/types'
 import { initializeAxios } from '~/utils/api'
 
-// @ts-ignore
-const accessor: Plugin = (ctxt) => {
+const accessor: Plugin = ({ store }) => {
   // @ts-ignore
-  initializeAxios(ctxt.store.$api)
+  initializeAxios(store.$axiosMulti)
 }
 
 export default accessor

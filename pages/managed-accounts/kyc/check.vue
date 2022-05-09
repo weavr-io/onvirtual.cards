@@ -16,13 +16,12 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as AuthStore from '../../../store/modules/Auth'
-import * as ConsumersStore from '../../../store/modules/Consumers'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Component({
-  components: {}
+  middleware: ['kyVerified']
 })
 export default class KycPage extends mixins(BaseMixin) {
   private tries: number = 0
@@ -32,59 +31,34 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   async KycApproved() {
-    const _id = AuthStore.Helpers.identityId(this.$store)
-    if (_id != null) {
-      const _consumer = await ConsumersStore.Helpers.get(this.$store, _id)
+    const _res = await this.stores.consumers.getKYC()
 
-      if (
-        _consumer.data.kyc?.fullDueDiligence === FullDueDiligence.APPROVED ||
-        _consumer.data.kyc?.fullDueDiligence === FullDueDiligence.PENDING_REVIEW
-      ) {
+    if (
+      _res.data.fullDueDiligence === KYCStatusEnum.APPROVED ||
+      _res.data.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
+    ) {
+      this.redirectToAccountPage()
+    } else {
+      this.tries++
+
+      if (this.tries > 3) {
         this.redirectToAccountPage()
       } else {
-        this.tries++
-
-        if (this.tries > 3) {
-          this.redirectToAccountPage()
-        } else {
-          await this.sleep(5000)
-          this.KycApproved()
-        }
+        await this.sleep(5000)
+        this.KycApproved()
       }
     }
   }
 
   async redirectToAccountPage() {
-    const request: {
-      owner: {
-        type: string
-        id: string
-      }
-    } = {
-      owner: {
-        type: '',
-        id: ''
-      }
-    }
+    const _accounts = await this.stores.accounts.index({
+      profileId: this.accountProfileId,
+      state: ManagedInstrumentStateEnum.ACTIVE,
+      offset: '0'
+    })
 
-    if (AuthStore.Helpers.isConsumer(this.$store)) {
-      const _consumerId = AuthStore.Helpers.identityId(this.$store)
-
-      request.owner = {
-        type: 'consumers',
-        id: _consumerId!.toString() ?? ''
-      }
-    } else {
-      const _corporateId = AuthStore.Helpers.identityId(this.$store)
-      request.owner = {
-        type: 'corporates',
-        id: _corporateId!.toString() ?? ''
-      }
-    }
-    const _accounts = await this.stores.accounts.index(request)
-
-    if (_accounts.data.count >= 1) {
-      const _accountId = _accounts.data.account[0].id.id
+    if (+_accounts.data.count! >= 1 && _accounts.data.accounts) {
+      const _accountId = _accounts.data.accounts[0].id
       this.$router.push('/managed-accounts/' + _accountId)
     } else {
       this.$router.push('/managed-accounts')

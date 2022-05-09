@@ -3,11 +3,11 @@
     <b-container>
       <b-row>
         <b-col md="4" offset-md="4">
-          <b-card class="border-0">
+          <b-card v-if="isCorporate" class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
               Select Account Currency
             </b-card-title>
-            <b-form @submit="doAdd">
+            <b-form @submit.prevent="doAdd">
               <b-form-row>
                 <b-col>
                   <b-form-group :state="isInvalid($v.createManagedAccountRequest.currency)" label="Currency">
@@ -15,7 +15,7 @@
                   </b-form-group>
                 </b-col>
               </b-form-row>
-              <loader-button :is-loading="isLoading" button-text="finish" class="mt-5 text-center" />
+              <loader-button :is-loading="localIsBusy" button-text="finish" class="mt-5 text-center" />
             </b-form>
           </b-card>
         </b-col>
@@ -24,20 +24,15 @@
   </section>
 </template>
 <script lang="ts">
-import { namespace } from 'vuex-class'
-import { Component, mixins } from 'nuxt-property-decorator'
-import { required, maxLength } from 'vuelidate/lib/validators'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
-
-import * as AuthStore from '~/store/modules/Auth'
-import config from '~/config'
-import { Schemas } from '~/api/Schemas'
-import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore } from '~/utils/store-accessor'
-import * as ConsumersStore from '~/store/modules/Consumers'
-import LoginResult = Schemas.LoginResult
-
-const Auth = namespace(AuthStore.name)
+import { Component, mixins, Watch } from 'nuxt-property-decorator'
+import { maxLength, required } from 'vuelidate/lib/validators'
+import BaseMixin from '~/mixins/BaseMixin'
+import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import AccountsMixin from '~/mixins/AccountsMixin'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import ValidationMixin from '~/mixins/ValidationMixin'
+import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 
 @Component({
   components: {
@@ -57,24 +52,52 @@ const Auth = namespace(AuthStore.name)
   },
   middleware: ['kyVerified']
 })
-export default class AddCardPage extends mixins(BaseMixin) {
-  get isLoading() {
-    return this.stores.accounts.isLoading
+export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, ValidationMixin) {
+  localIsBusy: boolean = false
+
+  createManagedAccountRequest: CreateManagedAccountRequest = {
+    profileId: '',
+    friendlyName: 'Main Account',
+    currency: CurrencyEnum.EUR
   }
 
-  @Auth.Getter auth!: LoginResult
+  get currencyOptions() {
+    return CurrencySelectConst.filter((item) => {
+      return item.value === this.profileBaseCurrency
+    })
+  }
 
-  currencyOptions = [
-    { value: 'EUR', text: 'Euro - EUR' },
-    { value: 'GBP', text: 'Great Britain Pound - GBP' },
-    { value: 'USD', text: 'US Dollars - USD' }
-  ]
+  async fetch() {
+    await this.stores.accounts
+      .index({
+        profileId: this.accountProfileId,
+        state: ManagedInstrumentStateEnum.ACTIVE,
+        offset: '0'
+      })
+      .then(async (res) => {
+        if (parseInt(res.data.count!) < 1) {
+          if (this.isConsumer) {
+            await this.stores.accounts
+              .create(this.createManagedAccountRequest)
+              .then(async (res) => {
+                await this.stores.accounts.upgradeIban(res.data.id)
+                return this.goToManagedAccountIndex()
+              })
+              .catch((err) => {
+                const data = err.response.data
+                const error = data.message ? data.message : data.errorCode
 
-  public createManagedAccountRequest!: ManagedAccountsSchemas.CreateManagedAccountRequest
+                this.showErrorToast(error)
+                this.goToManagedAccountIndex()
+              })
+          }
+        } else {
+          return this.goToManagedAccountIndex()
+        }
+      })
+  }
 
-  doAdd(evt) {
-    evt.preventDefault()
-
+  async doAdd() {
     if (this.$v.createManagedAccountRequest) {
       this.$v.createManagedAccountRequest.$touch()
       if (this.$v.createManagedAccountRequest.$anyError) {
@@ -82,69 +105,27 @@ export default class AddCardPage extends mixins(BaseMixin) {
       }
     }
 
-    this.stores.accounts
-      .add(this.createManagedAccountRequest)
-      .then(() => {
-        this.$router.push('/managed-accounts')
+    this.localIsBusy = true
+
+    await this.stores.accounts
+      .create(this.createManagedAccountRequest)
+      .then(async (res) => {
+        await this.stores.accounts.upgradeIban(res.data.id)
+        return this.goToManagedAccountIndex()
       })
       .catch((err) => {
         const data = err.response.data
-
         const error = data.message ? data.message : data.errorCode
 
-        this.$weavrToastError(error)
+        this.showErrorToast(error)
       })
+
+    this.localIsBusy = false
   }
 
-  async asyncData({ store, redirect }) {
-    const createManagedAccountRequest: ManagedAccountsSchemas.CreateManagedAccountRequest = {
-      profileId: AuthStore.Helpers.isConsumer(store)
-        ? config.profileId.managed_accounts_consumers
-        : config.profileId.managed_accounts_corporates,
-      friendlyName: 'Main Account',
-      currency: 'EUR'
-    }
-
-    const request: {
-      owner: {
-        type: string
-        id: string
-      }
-    } = {
-      owner: {
-        type: '',
-        id: ''
-      }
-    }
-
-    if (AuthStore.Helpers.isConsumer(store)) {
-      const _consumerId = AuthStore.Helpers.identityId(store)
-
-      request.owner = {
-        type: 'consumers',
-        id: _consumerId!.toString() ?? ''
-      }
-    } else {
-      const _corporateId = AuthStore.Helpers.identityId(store)
-      request.owner = {
-        type: 'corporates',
-        id: _corporateId!.toString() ?? ''
-      }
-    }
-
-    const _accounts = await accountsStore(store).index(request)
-
-    if (_accounts.data.count < 1) {
-      if (AuthStore.Helpers.isConsumer(store)) {
-        await accountsStore(store).add(createManagedAccountRequest)
-        redirect('/managed-accounts')
-      }
-      return {
-        createManagedAccountRequest
-      }
-    } else {
-      redirect('/managed-accounts')
-    }
+  @Watch('isConsumer', { immediate: true })
+  updateProfileId() {
+    this.createManagedAccountRequest.profileId = this.accountProfileId
   }
 }
 </script>

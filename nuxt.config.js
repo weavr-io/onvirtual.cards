@@ -1,12 +1,29 @@
-import * as dotenv from 'dotenv'
-
-const env = dotenv.config({debug: true})
-
 const config = {
-  mode: 'spa',
-  env: env.parsed,
+  ssr: false,
   server: {
+    host: '0.0.0.0',
     port: 5000
+  },
+  publicRuntimeConfig: {
+    multiApi: {
+      baseUrl: process.env.MULTI_BASE_URL,
+      uiKey: process.env.UI_KEY
+    },
+    production: process.env.ENVIRONMENT === 'production',
+    profileId: {
+      consumers: process.env.CONSUMERS_PROFILE_ID,
+      corporates: process.env.CORPORATES_PROFILE_ID,
+      managed_cards_consumers: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID,
+      managed_cards_corporates: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID,
+      managed_accounts_consumers: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID,
+      managed_accounts_corporates: process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID,
+      transfers: process.env.TRANSFERS_PROFILE_ID,
+      send: process.env.SEND_PROFILE_ID
+    },
+    app: {
+      view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true,
+      sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : true
+    }
   },
   /*
    ** Headers of the page
@@ -14,8 +31,8 @@ const config = {
   head: {
     title: 'onvirtual.cards',
     meta: [
-      {charset: 'utf-8'},
-      {name: 'viewport', content: 'width=device-width, initial-scale=1'},
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       {
         hid: 'description',
         name: 'description',
@@ -30,7 +47,7 @@ const config = {
     ],
 
     link: [
-      {rel: 'apple-touch-icon', href: '/apple-touch-icon.png'},
+      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       {
         rel: 'icon',
         type: 'image/png',
@@ -43,8 +60,8 @@ const config = {
         sizes: '16x16',
         href: '/favicon-16x16.png'
       },
-      {rel: 'manifest', href: '/site.webmanifest'},
-      {rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5'},
+      { rel: 'manifest', href: '/site.webmanifest' },
+      { rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
       {
         rel: 'stylesheet',
         href:
@@ -55,7 +72,7 @@ const config = {
   /*
    ** Customize the progress-bar color
    */
-  loading: {color: '#6C1C5C'},
+  loading: false,
   /*
    ** Global CSS
    */
@@ -64,14 +81,16 @@ const config = {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    {src: '~/plugins/vuelidate'},
-    {src: '~/plugins/weavr/security.client.ts', ssr: false},
-    {src: '~/plugins/WeavrVueFilters.ts', ssr: false},
-    {src: '~/plugins/PhoneNumberInput.ts', ssr: false},
-    {src: '~/plugins/flatpickr.ts', ssr: false},
-    {src: '~/plugins/InfiniteLoading.ts', ssr: false},
-    {src: '~/plugins/axios.ts'},
-    {src: '~/plugins/axios-accessor.ts'}
+    { src: '~/plugins/weavr/security.client.ts', ssr: false },
+    { src: '~/plugins/vuelidate' },
+    { src: '~/plugins/WeavrVueFilters.ts', ssr: false },
+    { src: '~/plugins/PhoneNumberInput.ts', ssr: false },
+    { src: '~/plugins/flatpickr.ts', ssr: false },
+    { src: '~/plugins/InfiniteLoading.ts', ssr: false },
+    { src: '~/plugins/axios.ts' },
+    { src: '~/plugins/axios-accessor.ts' },
+    { src: '~/plugins/weavr-multi/index.ts' },
+    { src: '~/plugins/formattingFilters/index.ts' }
   ],
   /*
    ** Nuxt.js modules
@@ -79,6 +98,7 @@ const config = {
   modules: [
     // Doc: https://bootstrap-vue.js.org/docs/
     'bootstrap-vue/nuxt',
+    '@nuxtjs/dotenv',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     // '@nuxtjs/eslint-module'
@@ -99,7 +119,7 @@ const config = {
    */
   axios: {},
   router: {
-    middleware: ['authCookie', 'errorReset'],
+    middleware: ['authCookie', 'errorReset', 'identities'],
     linkActiveClass: 'active'
   },
   buildModules: ['@nuxt/typescript-build'],
@@ -108,7 +128,7 @@ const config = {
     ignoreNotFoundWarnings: true
   }
 }
-console.log(process.env.RECAPTCHA, 're')
+
 if (process.env.RECAPTCHA) {
   config.modules.push('@nuxtjs/recaptcha')
 }

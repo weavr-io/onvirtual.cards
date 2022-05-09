@@ -1,6 +1,6 @@
 <template>
   <section>
-    <template v-if="accountId === undefined && isVerified">
+    <template v-if="!hasAccount && identityVerified && !$fetchState.pending">
       <b-container class="mb-5 mt-n4">
         <b-row align-v="center">
           <b-col class="text-right">
@@ -27,68 +27,47 @@
         </b-row>
       </b-container>
     </template>
+    <template v-else>
+      <div class="d-flex flex-column align-items-center">
+        <div class="loader-spinner ">
+          <b-spinner />
+        </div>
+      </div>
+    </template>
   </section>
 </template>
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore } from '~/utils/store-accessor'
-import { KYBState } from '~/api/Enums/KYBState'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
-import * as AuthStore from '~/store/modules/Auth'
+import BaseMixin from '~/mixins/BaseMixin'
+import AccountsMixin from '~/mixins/AccountsMixin'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Component({
   layout: 'dashboard',
   middleware: ['kyVerified']
 })
-export default class CardsPage extends mixins(BaseMixin) {
-  async asyncData({ store, redirect }) {
-    let _accountId
+export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
+  fetch() {
+    return this.stores.accounts
+      .index({
+        profileId: this.accountProfileId,
+        state: ManagedInstrumentStateEnum.ACTIVE,
+        offset: '0'
+      })
+      .then((res) => {
+        if (parseInt(res.data.count!) >= 1 && res.data.accounts) {
+          const _accountId = res.data.accounts[0].id
+          this.$router.push('/managed-accounts/' + _accountId)
+        }
+      })
+      .catch((err) => {
+        const data = err.response.data
 
-    const request: {
-      owner: {
-        type: string
-        id: string
-      }
-    } = {
-      owner: {
-        type: '',
-        id: ''
-      }
-    }
+        const error = data.message ? data.message : data.errorCode
 
-    if (AuthStore.Helpers.isConsumer(store)) {
-      const _consumerId = AuthStore.Helpers.identityId(store)
-
-      request.owner = {
-        type: 'consumers',
-        id: _consumerId!.toString() ?? ''
-      }
-    } else {
-      const _corporateId = AuthStore.Helpers.identityId(store)
-      request.owner = {
-        type: 'corporates',
-        id: _corporateId!.toString() ?? ''
-      }
-    }
-
-    const _accounts = await accountsStore(store).index(request)
-
-    if (_accounts.data.count >= 1) {
-      _accountId = _accounts.data.account[0].id.id
-      redirect('/managed-accounts/' + _accountId)
-    }
-
-    return { accountId: _accountId }
-  }
-
-  get isVerified() {
-    if (this.$store.getters['auth/isConsumer']) {
-      return this.$store.getters['consumers/consumer'].kyc.fullDueDiligence === FullDueDiligence.APPROVED
-    } else {
-      return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
-    }
+        this.showErrorToast(error)
+      })
   }
 }
 </script>

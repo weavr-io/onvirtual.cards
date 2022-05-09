@@ -1,35 +1,38 @@
 <template>
-  <b-form @submit="submitForm" novalidate>
+  <b-form novalidate @submit="submitForm">
     <h3 class="text-center font-weight-light mb-5">
       A few more steps
     </h3>
     <error-alert />
     <b-form-group label="First Name*">
-      <b-form-input v-model="$v.form.rootName.$model" :state="isInvalid($v.form.rootName)" placeholder="Name" />
-      <b-form-invalid-feedback v-if="!$v.form.rootName.required">
+      <b-form-input
+        v-model="$v.form.rootUser.name.$model"
+        :state="isInvalid($v.form.rootUser.name)"
+        placeholder="Name"
+      />
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.required">
         This field is required
       </b-form-invalid-feedback>
-      <b-form-invalid-feedback v-if="!$v.form.rootName.maxLength">
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.maxLength">
         Name is too long.
       </b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Last Name*">
       <b-form-input
-        :state="isInvalid($v.form.rootSurname)"
-        v-model="$v.form.rootSurname.$model"
+        v-model="$v.form.rootUser.surname.$model"
+        :state="isInvalid($v.form.rootUser.surname)"
         placeholder="Last Name"
       />
-      <b-form-invalid-feedback v-if="!$v.form.rootSurname.required">
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.required">
         This field is required
       </b-form-invalid-feedback>
-      <b-form-invalid-feedback v-if="!$v.form.rootSurname.maxLength">
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.maxLength">
         Surname is too long.
       </b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="MOBILE NUMBER*">
       <vue-phone-number-input
-        v-model="rootMobileNumber"
-        @update="phoneUpdate"
+        :value="form.rootUser.mobile.number"
         :only-countries="mobileCountries"
         :border-radius="0"
         :error="numberIsValid === false"
@@ -37,6 +40,7 @@
         error-color="#F50E4C"
         valid-color="#6D7490"
         default-country-code="GB"
+        @update="phoneUpdate"
       />
       <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
         This field must be a valid mobile number.
@@ -44,25 +48,34 @@
     </b-form-group>
     <b-form-group label="Company Name*">
       <b-form-input
-        :state="isInvalid($v.form.companyName)"
-        v-model="$v.form.companyName.$model"
+        v-model="$v.form.company.name.$model"
+        :state="isInvalid($v.form.company.name)"
         placeholder="Company Name"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Company Registration Number*">
       <b-form-input
-        :state="isInvalid($v.form.companyRegistrationNumber)"
-        v-model="$v.form.companyRegistrationNumber.$model"
+        v-model="$v.form.company.registrationNumber.$model"
+        :state="isInvalid($v.form.company.registrationNumber)"
         placeholder="C00000"
+      />
+      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+    </b-form-group>
+    <b-form-group label="Company Type">
+      <b-form-select
+        v-model="$v.form.company.type.$model"
+        :state="isInvalid($v.form.company.type)"
+        :options="companyTypeOptionsWithDefault"
+        placeholder="Company Type"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Registration Country*">
       <b-form-select
-        :state="isInvalid($v.form.registrationCountry)"
-        v-model="$v.form.registrationCountry.$model"
-        :options="countiesOptions"
+        v-model="$v.form.company.registrationCountry.$model"
+        :state="isInvalid($v.form.company.registrationCountry)"
+        :options="countryOptionsWithDefault"
         placeholder="Registration Country"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -85,23 +98,23 @@
     </b-form-group>
     <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
       <b-form-input
-        :state="isInvalid($v.form.sourceOfFundsOther)"
         v-model="form.sourceOfFundsOther"
+        :state="isInvalid($v.form.sourceOfFundsOther)"
         placeholder="Specify Other Source of Funds"
       />
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootCompanyPosition)" label="My position within the company is*">
+    <b-form-group :state="isInvalid($v.form.rootUser.companyPosition)" label="My position within the company is*">
       <b-form-radio
-        v-model="$v.form.rootCompanyPosition.$model"
-        :state="isInvalid($v.form.rootCompanyPosition)"
+        v-model="$v.form.rootUser.companyPosition.$model"
+        :state="isInvalid($v.form.rootUser.companyPosition)"
         name="company-position"
         value="AUTHORISED_REPRESENTATIVE"
       >
         I am a representative (with the relevant power of attorney)
       </b-form-radio>
       <b-form-radio
-        v-model="$v.form.rootCompanyPosition.$model"
-        :state="isInvalid($v.form.rootCompanyPosition)"
+        v-model="$v.form.rootUser.companyPosition.$model"
+        :state="isInvalid($v.form.rootUser.companyPosition)"
         name="company-position"
         value="DIRECTOR"
       >
@@ -116,9 +129,7 @@
 
     <b-form-row class="mt-5">
       <b-col md="4">
-        <b-button @click="goBack" variant="outline">
-          <-
-        </b-button>
+        <b-button variant="outline" @click="goBack"></b-button>
       </b-col>
       <b-col class="text-right">
         <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-right" />
@@ -128,45 +139,60 @@
 </template>
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
-import { required, maxLength } from 'vuelidate/lib/validators'
-import { IndustryOccupationOptions } from '~/api/Enums/Corporates/IndustryOccupation'
-import { SourceOfFunds, SourceOfFundsOptions } from '~/api/Enums/Corporates/SourceOfFunds'
-import BaseMixin from '~/minixs/BaseMixin'
-import { CreateCorporateRequest } from '~/api/Requests/Corporates/CreateCorporateRequest'
+import { maxLength, required } from 'vuelidate/lib/validators'
+
+import BaseMixin from '~/mixins/BaseMixin'
+import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
+import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
+import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
+import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
+import ValidationMixin from '~/mixins/ValidationMixin'
+import { DeepNullable, RecursivePartial } from '~/global'
 
 const Countries = require('~/static/json/countries.json')
 
 @Component({
   validations: {
     form: {
-      rootName: {
-        required,
-        maxLength: maxLength(20)
+      rootUser: {
+        name: {
+          required,
+          maxLength: maxLength(20)
+        },
+        surname: {
+          required,
+          maxLength: maxLength(20)
+        },
+        mobile: {
+          number: {
+            required
+          },
+          countryCode: {
+            required
+          }
+        },
+        companyPosition: {
+          required
+        }
       },
-      rootSurname: {
-        required,
-        maxLength: maxLength(20)
-      },
-      rootCompanyPosition: {
-        required
-      },
-      rootMobileCountryCode: {
-        required
-      },
-      rootMobileNumber: {
-        required
-      },
-      companyName: {
-        required,
-        maxLength: maxLength(100)
-      },
-      companyRegistrationNumber: {
-        required,
-        maxLength: maxLength(20)
-      },
-      registrationCountry: {
-        required,
-        maxLength: maxLength(2)
+      company: {
+        type: {
+          required
+        },
+        name: {
+          required,
+          maxLength: maxLength(100)
+        },
+        registrationNumber: {
+          required,
+          maxLength: maxLength(20)
+        },
+        registrationCountry: {
+          required,
+          maxLength: maxLength(2)
+        }
       },
       industry: {
         required
@@ -182,15 +208,31 @@ const Countries = require('~/static/json/countries.json')
     LoaderButton: () => import('~/components/LoaderButton.vue')
   }
 })
-export default class PersonalDetailsForm extends mixins(BaseMixin) {
-  $v
+export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {
+  companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
 
-  get isLoadingRegistration() {
-    return this.stores.corporates.isLoadingRegistration
-  }
-
-  rootMobileNumber = ''
   numberIsValid: boolean | null = null
+
+  public form: DeepNullable<RecursivePartial<CreateCorporateRequest>> = {
+    rootUser: {
+      name: null,
+      surname: null,
+      mobile: {
+        number: null,
+        countryCode: ''
+      },
+      companyPosition: null
+    },
+    company: {
+      type: null,
+      name: null,
+      registrationNumber: null,
+      registrationCountry: null
+    },
+    industry: null,
+    sourceOfFunds: null,
+    sourceOfFundsOther: null
+  }
 
   get mobileCountries(): string[] {
     return Countries.map((_c) => {
@@ -198,27 +240,27 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
     })
   }
 
-  public form: Partial<Nullable<CreateCorporateRequest>> = {
-    rootName: '',
-    rootSurname: '',
-    rootCompanyPosition: '',
-    rootMobileCountryCode: '',
-    rootMobileNumber: '',
-    companyName: '',
-    companyRegistrationNumber: '',
-    registrationCountry: '',
-    sourceOfFunds: null,
-    sourceOfFundsOther: '',
-    industry: null
+  get isLoadingRegistration() {
+    return this.stores.corporates.isLoadingRegistration
   }
 
-  get countiesOptions() {
-    return Countries.map((_c) => {
-      return {
-        text: _c.name,
-        value: _c['alpha-2']
-      }
-    })
+  get industryOccupationOptions() {
+    return IndustryTypeSelectConst
+  }
+
+  get sourceOfFundsOptions() {
+    return SourceOfFundsSelectConst
+  }
+
+  get shouldShowOtherSourceOfFunds(): boolean {
+    return this.form.sourceOfFunds === CorporateSourceOfFundTypeEnum.OTHER
+  }
+
+  phoneUpdate(number) {
+    this.$v.form.rootUser!.mobile.number.$touch()
+    this.$set(this.form.rootUser!.mobile!, 'countryCode', '+' + number.countryCallingCode)
+    this.$set(this.form.rootUser!.mobile!, 'number', number.phoneNumber)
+    this.numberIsValid = number.isValid
   }
 
   @Emit()
@@ -242,24 +284,6 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
   @Emit()
   goBack(e) {
     e.preventDefault()
-  }
-
-  phoneUpdate(number) {
-    this.form.rootMobileCountryCode = '+' + number.countryCallingCode
-    this.form.rootMobileNumber = number.nationalNumber
-    this.numberIsValid = number.isValid
-  }
-
-  get industryOccupationOptions() {
-    return IndustryOccupationOptions
-  }
-
-  get sourceOfFundsOptions() {
-    return SourceOfFundsOptions
-  }
-
-  get shouldShowOtherSourceOfFunds(): boolean {
-    return this.form.sourceOfFunds === SourceOfFunds.OTHER
   }
 }
 </script>

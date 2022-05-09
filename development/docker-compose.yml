@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+    proxy:
+        container_name: proxy-multi-ov
+        build:
+            context: ../
+            dockerfile: ./development/Dockerfile
+        ports:
+            - '81:80'

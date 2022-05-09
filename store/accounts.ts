@@ -1,21 +1,32 @@
-import { Module, Action, Mutation } from 'vuex-module-decorators'
+import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
-import { Statement } from '~/api/Models/Statements/Statement'
-import { ManagedAccountStatementRequest } from '~/api/Requests/ManagedAccountStatementRequest'
-import { $api } from '~/utils/api'
-import { NullableBoolean } from '~/api/Generic/NullableBoolean'
+import { GetManagedAccountsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountsRequest'
+import { PaginatedManagedAccountsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/responses/PaginatedManagedAccountsResponse'
+import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
+import { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountModel'
+import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
+import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+
+const defaultState = {
+  accounts: null,
+  account: null,
+  statements: null,
+  ibanDetails: null
+}
 
 @Module({
-  name: 'accountsV2',
+  name: 'accountsModule',
   stateFactory: true,
   namespaced: true
 })
 export default class Accounts extends StoreModule {
-  isLoading: boolean = false
-  accounts: ManagedAccountsSchemas.ManagedAccounts | null = null
-  account: ManagedAccountsSchemas.ManagedAccount | null = null
-  statement: Statement | null = null
+  accounts: PaginatedManagedAccountsResponse | null = defaultState.accounts
+  account: ManagedAccountModel | null = defaultState.account
+  statements: StatementResponseModel | null = defaultState.statements
+  ibanDetails: ManagedAccountIBANModel | null = defaultState.ibanDetails
 
   get totalAvailableBalance() {
     if (this.accounts == null) {
@@ -24,9 +35,9 @@ export default class Accounts extends StoreModule {
 
     let total = 0
 
-    this.accounts.account.forEach((account: ManagedAccountsSchemas.ManagedAccount) => {
+    this.accounts.accounts?.forEach((account) => {
       if (account.balances.availableBalance) {
-        total += parseInt(account.balances.availableBalance)
+        total += account.balances.availableBalance
       }
     })
 
@@ -34,20 +45,20 @@ export default class Accounts extends StoreModule {
   }
 
   get filteredStatement() {
-    if (this.statement == null) {
+    if (this.statements?.entry === undefined) {
       return []
     }
 
-    let _entries = this.statement.entry
+    let _entries: StatementEntryModel[] = this.statements.entry
 
-    _entries = _entries.filter((transaction) => {
+    _entries = _entries!.filter((transaction) => {
       const DO_NOT_DISPLAY = ['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE']
 
-      if (DO_NOT_DISPLAY.includes(transaction.txId.type)) {
+      if (DO_NOT_DISPLAY.includes(transaction.transactionId.type)) {
         return false
       }
 
-      if (transaction.txId.type === 'AUTHORISATION') {
+      if (transaction.transactionId.type === 'AUTHORISATION') {
         if (transaction.additionalFields?.authorisationState === 'COMPLETED') {
           return false
         }
@@ -76,81 +87,67 @@ export default class Accounts extends StoreModule {
   }
 
   @Mutation
-  SET_ACCOUNTS(accounts: ManagedAccountsSchemas.ManagedAccounts) {
+  SET_ACCOUNTS(accounts: PaginatedManagedAccountsResponse) {
     this.accounts = accounts
   }
 
   @Mutation
-  SET_ACCOUNT(account: ManagedAccountsSchemas.ManagedAccount) {
+  SET_ACCOUNT(account: ManagedAccountModel) {
     this.account = account
   }
 
   @Mutation
-  SET_STATEMENT(statement: Statement) {
-    this.statement = statement
+  RESET_STATEMENTS() {
+    this.statements = null
   }
 
   @Mutation
-  RESET_STATEMENT() {
-    this.statement = null
-  }
-
-  @Mutation
-  APPEND_STATEMENT(_statement: Statement) {
-    if (this.statement === null) {
-      this.statement = _statement
-    } else {
-      _statement.entry.forEach((_statementEntry) => {
-        this.statement?.entry.push(_statementEntry)
-      })
+  SET_STATEMENTS(statements: StatementResponseModel | null) {
+    if (!statements) {
+      this.statements = statements
+    } else if (!this.statements?.entry) {
+      this.statements = statements
+    } else if (statements.entry) {
+      this.statements.entry.push(...statements.entry)
     }
   }
 
   @Mutation
-  SET_IS_LOADING(isLoading: boolean) {
-    this.isLoading = isLoading
+  RESET_STATE() {
+    Object.keys(defaultState).forEach((key) => {
+      this[key] = defaultState[key]
+    })
+  }
+
+  @Mutation
+  SET_IBAN(_res: ManagedAccountIBANModel) {
+    this.ibanDetails = _res
   }
 
   @Action({ rawError: true })
-  index(request: {
-    owner: {
-      type: string
-      id: string
-    }
-  }) {
-    const body = {
-      active: NullableBoolean.TRUE,
-      paging: {
-        count: true,
-        offset: 0,
-        limit: 0
-      },
-      ...request
-    }
-
-    const req = $api.post('/app/api/managed_accounts/get', body)
+  index(filters: GetManagedAccountsRequest) {
+    const req = this.store.$apiMulti.managedAccounts.index(filters)
 
     req.then((res) => {
       this.SET_ACCOUNTS(res.data)
+      if (res.data.count && res.data.accounts) {
+        this.SET_ACCOUNT(res.data.accounts[0])
+      }
     })
 
     return req
   }
 
   @Action({ rawError: true })
-  add(request: ManagedAccountsSchemas.CreateManagedAccountRequest) {
-    const req = $api.post('/app/api/managed_accounts/_/create', request)
-
-    req.finally(() => {
-      this.SET_IS_LOADING(false)
-    })
+  create(request: CreateManagedAccountRequest) {
+    const req = this.store.$apiMulti.managedAccounts.store(request)
 
     return req
   }
 
   @Action({ rawError: true })
   get(id: string) {
-    const req = $api.post('/app/api/managed_accounts/' + id + '/get', {})
+    const req = this.store.$apiMulti.managedAccounts.show(id)
 
     req.then((res) => {
       this.SET_ACCOUNT(res.data)
@@ -160,22 +157,30 @@ export default class Accounts extends StoreModule {
   }
 
   @Action({ rawError: true })
-  getStatement(request: { id: string; body: ManagedAccountStatementRequest }) {
-    const req = $api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
+  getStatements(request: { id: string; filters: GetManagedAccountStatementRequest }) {
+    const req = this.store.$apiMulti.managedAccounts.statement(request)
 
     req.then((res) => {
-      this.SET_STATEMENT(res.data)
+      this.SET_STATEMENTS(res.data)
     })
 
     return req
   }
 
   @Action({ rawError: true })
-  getCardStatementPage(request: { id: string; body: ManagedAccountStatementRequest }) {
-    const req = $api.post('/app/api/managed_accounts/' + request.id + '/statement/get', request.body)
-
+  getIBANDetails(id: IDModel) {
+    const req = this.store.$apiMulti.managedAccounts.retrieveIban(id)
     req.then((res) => {
-      this.APPEND_STATEMENT(res.data)
+      this.SET_IBAN(res.data)
+    })
+    return req
+  }
+
+  @Action({ rawError: true })
+  upgradeIban(id: IDModel) {
+    const req = this.store.$apiMulti.managedAccounts.assignIban(id)
+    req.then((res) => {
+      this.SET_IBAN(res.data)
     })
 
     return req

@@ -7,21 +7,12 @@ module.exports = {
   parserOptions: {
     parser: '@typescript-eslint/parser'
   },
-  extends: [
-    'prettier',
-    'prettier/vue',
-    'plugin:prettier/recommended',
-    '@nuxtjs',
-    'plugin:nuxt/recommended'
-  ],
-  plugins: [
-    'prettier',
-    '@typescript-eslint'
-  ],
+  extends: ['@nuxtjs', 'plugin:nuxt/recommended', 'plugin:prettier/recommended', 'prettier', 'prettier/vue'],
+  plugins: ['prettier', '@typescript-eslint'],
   // add your custom rules here
   rules: {
     '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/no-console': 0,
-    "no-console": 0
+    'no-console': 0
   }
 }

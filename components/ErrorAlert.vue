@@ -4,7 +4,7 @@
       <div class="error-alert" role="alert">
         <p>{{ conflictMessage }}</p>
         <button @click="onClose">
-          <img src="/img/close.svg" width="16" alt="">
+          <img src="/img/close.svg" width="16" alt="" />
         </button>
       </div>
     </div>
@@ -17,19 +17,15 @@
           </b-link>
         </p>
         <button @click="onClose">
-          <img src="/img/close.svg" width="16" alt>
+          <img src="/img/close.svg" width="16" alt />
         </button>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-
-import * as ErrorStore from '~/store/modules/Error'
-
-const Error = namespace(ErrorStore.name)
+import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
+import BaseMixin from '~/mixins/BaseMixin'
 
 export interface ErrorLink {
   text: string
@@ -37,21 +33,25 @@ export interface ErrorLink {
 }
 
 @Component
-class ErrorAlert extends Vue {
-  @Error.Getter errors: any
+class ErrorAlert extends mixins(BaseMixin) {
+  get errors() {
+    return this.stores.errors.errors
+  }
 
-  @Error.Getter conflict: any
+  get conflict() {
+    return this.stores.errors.conflict
+  }
 
-  @Error.Getter conflictMessage?: string
-
-  @Error.Action resetErrors
+  get conflictMessage() {
+    return this.stores.errors.conflictMessage
+  }
 
   @Prop({ default: '' }) readonly message!: string
 
   @Prop({ default: null }) readonly errorLink!: ErrorLink | null
 
   @Emit('close') onClose() {
-    this.resetErrors()
+    this.stores.errors.RESET_ERROR()
   }
 
   get hasError(): boolean {
@@ -68,7 +68,6 @@ class ErrorAlert extends Vue {
     } else if (this.message !== '') {
       return this.message
     } else if (this.errors && this.errors.data && this.errors.data.errorCode) {
-      console.log(this.errors.data)
       switch (this.errors.data.errorCode) {
         case 'ROOT_EMAIL_NOT_UNIQUE':
         case 'EMAIL_NOT_UNIQUE':

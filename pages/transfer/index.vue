@@ -7,7 +7,11 @@
             <account-selection @submit-form="accountSelected" />
           </div>
           <div v-if="screen === 1" class="topup-screen">
-            <top-up :selected-account="createTransferRequest.source" @submit-form="topUpSelected" />
+            <top-up
+              v-if="createTransferRequest"
+              :selected-account="createTransferRequest.source"
+              @submit-form="topUpSelected"
+            />
           </div>
           <div v-if="screen === 2" class="topup-screen">
             <top-up-success />
@@ -19,16 +23,12 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-import * as TransfersStore from '~/store/modules/Transfers'
-import { TransfersSchemas } from '~/api/TransfersSchemas'
-import config from '~/config'
-import { ManagedAccountsSchemas } from '~/api/ManagedAccountsSchemas'
-import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore, cardsStore } from '~/utils/store-accessor'
-import * as AuthStore from '~/store/modules/Auth'
-
-const Transfers = namespace(TransfersStore.name)
+import BaseMixin from '~/mixins/BaseMixin'
+import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
+import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { DeepNullable } from '~/global'
 
 @Component({
   components: {
@@ -39,15 +39,41 @@ const Transfers = namespace(TransfersStore.name)
   }
 })
 export default class TransfersPage extends mixins(BaseMixin) {
+  createTransferRequest: DeepNullable<CreateTransferRequest> | null = null
+
+  async fetch() {
+    await this.stores.cards.getCards()
+    const accounts = await this.stores.accounts.index({
+      profileId: this.accountProfileId,
+      state: ManagedInstrumentStateEnum.ACTIVE,
+      offset: '0'
+    })
+    const firstAccount = accounts.data.accounts && accounts.data.accounts[0]
+
+    this.createTransferRequest = {
+      profileId: this.$config.profileId.transfers!,
+      source: {
+        type: InstrumentEnum.managedAccounts,
+        id: firstAccount?.id || ''
+      },
+      destination: {
+        type: InstrumentEnum.managedCards,
+        id: this.$route.query.destination as string
+      },
+      destinationAmount: {
+        currency: firstAccount?.currency || CurrencyEnum.EUR,
+        amount: 0
+      }
+    }
+  }
+
   get cards() {
-    return this.stores.cards.cards
+    return this.stores.cards.cards?.cards
   }
 
   get accounts() {
     return this.stores.accounts.accounts
   }
-
-  @Transfers.Action execute
 
   screen: number = 1
 
@@ -56,29 +82,29 @@ export default class TransfersPage extends mixins(BaseMixin) {
   }
 
   accountSelected(_data) {
-    if (_data != null) {
-      this.createTransferRequest.source.type = _data.source.type
-      this.createTransferRequest.source.id = _data.source.id
+    if (_data != null && this.createTransferRequest) {
+      this.createTransferRequest.source!.type = _data.source.type
+      this.createTransferRequest.source!.id = _data.source.id
       this.nextScreen()
     }
   }
 
   topUpSelected(_data) {
-    if (_data != null) {
-      this.createTransferRequest.destinationAmount.amount = _data.amount * 100
+    if (_data != null && this.createTransferRequest) {
+      this.createTransferRequest.destinationAmount!.amount = _data.amount * 100
       this.doTransfer()
     }
   }
 
-  public createTransferRequest!: TransfersSchemas.CreateTransferRequest
-
   get formattedCards(): { value: number; text: string }[] {
-    return this.cards.map((val) => {
-      return {
-        value: val.id.id,
-        text: val.friendlyName
-      }
-    })
+    return (
+      this.cards?.map((val) => {
+        return {
+          value: +val.id, // Todo: Check if valid conversion - remove need for conversion
+          text: val.friendlyName
+        }
+      }) || []
+    )
   }
 
   public accountTypes = [
@@ -98,72 +124,18 @@ export default class TransfersPage extends mixins(BaseMixin) {
     } catch (e) {}
   }
 
-  async asyncData({ store, route }) {
-    await cardsStore(store).getCards({
-      paging: {
-        offset: 0,
-        limit: 0
-      }
-    })
-
-    const _request: {
-      owner: {
-        type: string
-        id: string
-      }
-    } = {
-      owner: {
-        type: '',
-        id: ''
-      }
-    }
-
-    if (AuthStore.Helpers.isConsumer(store)) {
-      const _consumerId = AuthStore.Helpers.identityId(store)
-
-      _request.owner = {
-        type: 'consumers',
-        id: _consumerId!.toString() ?? ''
-      }
-    } else {
-      const _corporateId = AuthStore.Helpers.identityId(store)
-      _request.owner = {
-        type: 'corporates',
-        id: _corporateId!.toString() ?? ''
-      }
-    }
-
-    const _accounts = await accountsStore(store).index(_request)
-
-    const request: TransfersSchemas.CreateTransferRequest = {
-      profileId: config.profileId.transfers,
-      source: _accounts.data.account[0].id,
-      destination: {
-        type: 'managed_cards',
-        id: route.query.destination
-      },
-      destinationAmount: {
-        currency: _accounts.data.account[0].currency,
-        amount: 0
-      }
-    }
-
-    return {
-      createTransferRequest: request
-    }
-  }
-
   doTransfer() {
-    this.execute(this.createTransferRequest)
+    this.stores.transfers
+      .execute(this.createTransferRequest as CreateTransferRequest)
       .then(() => {
         this.createTransferRequest = {
           profileId: null,
           source: {
-            type: 'managed_accounts',
+            type: InstrumentEnum.managedAccounts,
             id: null
           },
           destination: {
-            type: 'managed_cards',
+            type: InstrumentEnum.managedCards,
             id: null
           },
           destinationAmount: {
@@ -188,7 +160,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
           error = 'Amount is higher than available balance'
         }
 
-        this.$weavrToastError(error)
+        this.showErrorToast(error)
       })
   }
 }

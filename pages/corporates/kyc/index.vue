@@ -25,7 +25,7 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
 import { KYBOptions } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
   components: {
@@ -52,11 +52,7 @@ export default class KybPage extends mixins(BaseMixin) {
     if (message.messageType === 'idCheck.onError') {
       if (message.payload.error === 'Access token required') {
         this.accessTokenError = true
-      } else {
-        console.log(message)
       }
-    } else {
-      console.log(message)
     }
   }
 }

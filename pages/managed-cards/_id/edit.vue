@@ -1,39 +1,35 @@
 <template>
   <section>
     <b-container>
-      <b-row>
+      <b-row v-if="pendingDataOrError">
+        <b-col>
+          <div class="d-flex flex-column align-items-center">
+            <div class="loader-spinner ">
+              <b-spinner />
+            </div>
+          </div>
+        </b-col>
+      </b-row>
+      <b-row v-else>
         <b-col md="6" offset-md="3">
           <b-card class="border-0">
             <b-card-title class="mb-5 text-center font-weight-lighter">
               Update Card
             </b-card-title>
             <b-card-body>
-              <b-form @submit="doAdd">
-                <b-form-row v-if="!isConsumer">
-                  <b-col>
-                    <b-form-group label="Name of Person using Card">
-                      <b-form-input
-                        :state="isInvalid($v.updateManagedCardRequest.body.nameOnCard)"
-                        v-model="$v.updateManagedCardRequest.body.nameOnCard.$model"
-                        placeholder="eg. Elon Musk"
-                        disabled
-                      />
-                      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-                    </b-form-group>
-                  </b-col>
-                </b-form-row>
+              <b-form @submit.prevent="doUpdate">
                 <b-form-row v-if="!isConsumer">
                   <b-col>
                     <b-form-group label="CARDHOLDER MOBILE NUMBER">
                       <vue-phone-number-input
                         :value="mobile.cardholderMobileNumber"
-                        @update="phoneUpdate"
                         :error="numberIsValid === false"
                         :border-radius="0"
-                        :defaultCountryCode="mobile.countryCode"
+                        :default-country-code="mobile.countryCode"
                         color="#6C1C5C"
                         error-color="#F50E4C"
                         valid-color="#6D7490"
+                        @update="phoneUpdate"
                       />
                       <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                         This field must be a valid mobile number.
@@ -45,8 +41,8 @@
                   <b-col>
                     <b-form-group label="CUSTOM CARD NAME">
                       <b-form-input
-                        :state="isInvalid($v.updateManagedCardRequest.body.friendlyName)"
-                        v-model="$v.updateManagedCardRequest.body.friendlyName.$model"
+                        v-model="$v.updateManagedCardRequest.friendlyName.$model"
+                        :state="isInvalid($v.updateManagedCardRequest.friendlyName)"
                         placeholder="eg. travel expenses"
                       />
                       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -63,18 +59,12 @@
   </section>
 </template>
 <script lang="ts">
-import { namespace } from 'vuex-class'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import * as AuthStore from '~/store/modules/Auth'
-import { Schemas } from '~/api/Schemas'
-import { UpdateManagedCardRequest } from '~/api/Requests/ManagedCards/UpdateManagedCardRequest'
-import BaseMixin from '~/minixs/BaseMixin'
-import { cardsStore } from '~/utils/store-accessor'
-import LoginResult = Schemas.LoginResult
-
-const Auth = namespace(AuthStore.name)
+import BaseMixin from '~/mixins/BaseMixin'
+import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 @Component({
   components: {
@@ -83,49 +73,56 @@ const Auth = namespace(AuthStore.name)
   },
   validations: {
     updateManagedCardRequest: {
-      body: {
-        friendlyName: {
-          required,
-          maxLength: maxLength(50)
-        },
-        cardholderMobileNumber: {
-          requiredIf: requiredIf(function() {
-            // @ts-ignore
-            return !this.isConsumer
-          }),
-          cardholderMobileNumber: helpers.regex('cardholderMobileNumber', /^\+[0-9]+$/)
-        },
-        nameOnCard: {
-          requiredIf: requiredIf(function() {
-            // @ts-ignore
-            return !this.isConsumer
-          }),
-          maxLength: maxLength(30)
-        }
+      friendlyName: {
+        required,
+        maxLength: maxLength(50)
+      },
+      cardholderMobileNumber: {
+        required: requiredIf(function(this: EditCardPage) {
+          return this.isCorporate
+        }),
+        cardholderMobileNumberReg: helpers.regex('cardholderMobileNumberReg', /^\+[0-9]+$/)
       }
     }
   }
 })
-export default class AddCardPage extends mixins(BaseMixin) {
-  get isLoading() {
-    return this.stores.cards.isLoading
-  }
-
-  @Auth.Getter auth!: LoginResult
-
-  @Auth.Getter isConsumer!: boolean
-
+export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
   numberIsValid: boolean | null = null
   mobile = {
     countryCode: 'GB',
     cardholderMobileNumber: ''
   }
 
-  public updateManagedCardRequest!: UpdateManagedCardRequest
+  isUpdating = false
+  updateManagedCardRequest: UpdateManagedCardRequest | null = null
 
-  doAdd(evt) {
-    evt.preventDefault()
+  async fetch() {
+    const card = await this.stores.cards.getManagedCard(this.cardId)
+    const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
 
+    // add key cardholderMobileNumber only if isCorporate
+    this.updateManagedCardRequest = {
+      friendlyName: card.data.friendlyName,
+      ...(this.isCorporate && { cardholderMobileNumber: '' })
+    }
+
+    this.mobile.countryCode = parsedNumber?.country || ''
+    this.mobile.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
+  }
+
+  get isLoading() {
+    return this.stores.cards.isLoading || this.isUpdating || this.$fetchState.pending
+  }
+
+  get auth() {
+    return this.stores.auth.auth
+  }
+
+  get cardId() {
+    return this.$route.params.id
+  }
+
+  doUpdate() {
     if (this.isConsumer) {
       this.numberIsValid = true
     }
@@ -134,49 +131,35 @@ export default class AddCardPage extends mixins(BaseMixin) {
       this.numberIsValid = false
     }
 
-    if (this.$v.updateManagedCardRequest) {
-      this.$v.updateManagedCardRequest.$touch()
-      if (this.$v.updateManagedCardRequest.$anyError || !this.numberIsValid) {
-        return
-      }
+    this.$v.$touch()
+    if (this.$v.$anyError || !this.numberIsValid) {
+      return
     }
 
-    this.stores.cards.update(this.updateManagedCardRequest).then(() => {
-      try {
-        this.$segment.track('Card Updated', this.updateManagedCardRequest)
-      } catch (e) {}
-      this.$router.push('/managed-cards')
-    })
-  }
+    this.isUpdating = true
 
-  async asyncData({ store, route }) {
-    const _cardId = route.params.id
-
-    const _card = await cardsStore(store).getManagedCard(_cardId)
-
-    const _parsedNumber = parsePhoneNumberFromString(_card.data.cardholderMobileNumber)
-
-    const updateManagedCardRequest: UpdateManagedCardRequest = {
-      id: _cardId,
-      body: {
-        ..._card.data
-      }
-    }
-
-    return {
-      cardId: _cardId,
-      updateManagedCardRequest: updateManagedCardRequest,
-      mobile: {
-        countryCode: _parsedNumber?.country,
-        cardholderMobileNumber: _parsedNumber?.nationalNumber
-      }
-    }
+    this.stores.cards
+      .update({
+        id: this.cardId,
+        request: this.updateManagedCardRequest as UpdateManagedCardRequest
+      })
+      .then(() => {
+        try {
+          this.$segment.track('Card Updated', this.updateManagedCardRequest)
+        } catch (e) {}
+        this.$router.push('/managed-cards')
+      })
+      .finally(() => {
+        this.isUpdating = false
+      })
   }
 
   phoneUpdate(number) {
     this.$set(this.mobile, 'cardholderMobileNumber', number.formatNational ? number.formatNational : number.phoneNumber)
-    this.updateManagedCardRequest.body.cardholderMobileNumber = number.formattedNumber
+    this.updateManagedCardRequest!.cardholderMobileNumber = number.formattedNumber
     this.numberIsValid = number.isValid
+
+    this.$v.$touch()
   }
 }
 </script>

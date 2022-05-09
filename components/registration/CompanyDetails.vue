@@ -1,28 +1,28 @@
 <template>
-  <b-form @submit="submitForm" novalidate>
+  <b-form novalidate @submit="submitForm">
     <h3 class="text-center font-weight-light mb-5">
       Company Details
     </h3>
-    <error-alert/>
+    <error-alert />
     <b-form-group label="Company Name">
       <b-form-input
-        :state="isInvalid($v.form.companyName)"
         v-model="$v.form.companyName.$model"
+        :state="isInvalid($v.form.companyName)"
         placeholder="Company Name"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Company Registration Number">
       <b-form-input
-        :state="isInvalid($v.form.companyRegistrationNumber)"
         v-model="$v.form.companyRegistrationNumber.$model"
+        :state="isInvalid($v.form.companyRegistrationNumber)"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Company Registration Address">
       <b-form-textarea
-        :state="isInvalid($v.form.companyRegistrationAddress)"
         v-model="$v.form.companyRegistrationAddress.$model"
+        :state="isInvalid($v.form.companyRegistrationAddress)"
         rows="4"
         placeholder="Street Name, City"
       />
@@ -30,8 +30,8 @@
     </b-form-group>
     <b-form-group label="Registration Country">
       <b-form-select
-        :state="isInvalid($v.form.registrationCountry)"
         v-model="$v.form.registrationCountry.$model"
+        :state="isInvalid($v.form.registrationCountry)"
         :options="countiesOptions"
         placeholder="Registration Country"
       />
@@ -41,8 +41,8 @@
       <flat-pickr
         v-model="companyRegistrationDate"
         :config="config"
-        @on-close="updatedCompanyRegistrationDate"
         class="form-control bg-transparent"
+        @on-close="updatedCompanyRegistrationDate"
       />
       <b-form-invalid-feedback :state="isInvalid($v.form.companyRegistrationDate)">
         This field is required.
@@ -52,7 +52,17 @@
       <b-col>
         <b-form-group>
           <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
-            I accept the <a href="https://www.onvirtual.cards/terms/business" target="_blank" class="text-decoration-underline text-muted">terms of use</a> and <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted">privacy policy</a>
+            I accept the
+            <a
+              href="https://www.onvirtual.cards/terms/business"
+              target="_blank"
+              class="text-decoration-underline text-muted"
+              >terms of use</a
+            >
+            and
+            <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted"
+              >privacy policy</a
+            >
           </b-form-checkbox>
           <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
@@ -60,7 +70,7 @@
     </b-form-row>
     <b-form-row class="mt-5">
       <b-col md="4">
-        <b-button @click="goBack" variant="outline">
+        <b-button variant="outline" @click="goBack">
           <-
         </b-button>
       </b-col>
@@ -71,9 +81,10 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins, namespace } from 'nuxt-property-decorator'
-import { required, maxLength, sameAs, maxValue } from 'vuelidate/lib/validators'
-import BaseMixin from '~/minixs/BaseMixin'
+import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { maxLength, maxValue, required, sameAs } from 'vuelidate/lib/validators'
+import BaseMixin from '~/mixins/BaseMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 const Countries = require('~/static/json/countries.json')
 @Component({
@@ -107,16 +118,15 @@ const Countries = require('~/static/json/countries.json')
   },
   components: {
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-
+    ErrorAlert: () => import('~/components/ErrorAlert.vue')
   }
 })
-export default class CompanyDetailsForm extends mixins(BaseMixin) {
+export default class CompanyDetailsForm extends mixins(BaseMixin, ValidationMixin) {
   $v
 
   public maxDate = new Date()
 
-  get isLoadingRegistration(){
+  get isLoadingRegistration() {
     return this.stores.corporates.isLoadingRegistration
   }
 

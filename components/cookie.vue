@@ -9,8 +9,8 @@
           </b-link>
         </div>
         <div>
-          <b-link @click="dismissCookie" class="ml-3">
-            <img src="/img/close.svg" width="12px" >
+          <b-link class="ml-3" @click="dismissCookie">
+            <img src="/img/close.svg" width="12px" />
           </b-link>
         </div>
       </div>
@@ -19,25 +19,22 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
+import config from '~/config'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
-@Component({
-  components: {}
-})
-export default class DefaultLayout extends mixins(BaseMixin) {
-  cookieName: string = 'onvirtual-cookie'
-
+@Component
+export default class Cookies extends mixins(BaseMixin) {
   showCookieAlert: boolean = false
 
-  mounted() {
-    const _authCookie = Cookie.get(this.cookieName)
+  created() {
+    const _authCookie = Cookie.get(config.ONV_COOKIE_NAME)
     this.showCookieAlert = !_authCookie
   }
 
   dismissCookie() {
-    Cookie.set(this.cookieName, true)
+    Cookie.set(config.ONV_COOKIE_NAME, true)
     this.showCookieAlert = false
   }
 }

@@ -3,7 +3,16 @@
     <b-container>
       <b-row>
         <b-col>
-          <weavr-kyc :reference="reference" :options="options" />
+          <template v-if="$fetchState.pending">
+            <div class="d-flex justify-content-center">
+              <div class="loader-spinner">
+                <b-spinner />
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <weavr-kyc :reference="reference" :options="options" />
+          </template>
         </b-col>
       </b-row>
     </b-container>
@@ -11,10 +20,7 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as AuthStore from '~/store/modules/Auth'
-import * as ConsumersStore from '~/store/modules/Consumers'
-import BaseMixin from '~/minixs/BaseMixin'
-import { accountsStore } from '~/utils/store-accessor'
+import BaseMixin from '~/mixins/BaseMixin'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 
@@ -27,49 +33,11 @@ export default class KycPage extends mixins(BaseMixin) {
 
   reference!: string
 
-  async asyncData({ store, redirect }) {
-    const _consumerId = AuthStore.Helpers.identityId(store)
-
-    try {
-      const _res = await ConsumersStore.Helpers.startKYC(store, _consumerId)
-      return { reference: _res.data.reference }
-    } catch (e) {
-      if (e.response.data.errorCode === 'KYC_ALREADY_APPROVED') {
-        const request: {
-          owner: {
-            type: string
-            id: string
-          }
-        } = {
-          owner: {
-            type: '',
-            id: ''
-          }
-        }
-
-        if (AuthStore.Helpers.isConsumer(store)) {
-          const _consumerId = AuthStore.Helpers.identityId(store)
-
-          request.owner = {
-            type: 'consumers',
-            id: _consumerId!.toString() ?? ''
-          }
-        } else {
-          const _corporateId = AuthStore.Helpers.identityId(store)
-          request.owner = {
-            type: 'corporates',
-            id: _corporateId!.toString() ?? ''
-          }
-        }
-
-        const _accounts = await accountsStore(store).index(request)
-
-        if (_accounts.data.count >= 1) {
-          const _accountId = _accounts.data.account[0].id.id
-          redirect('/managed-accounts/' + _accountId + '/topup')
-        }
-      }
-    }
+  fetch() {
+    return this.stores.consumers.startKYC().then((res) => {
+      this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+      this.reference = res.data.reference
+    })
   }
 
   options: Partial<ConsumerVerificationFlowOptions> = {
@@ -77,14 +45,12 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   onMessage(message, additionalInfo) {
-    console.log(message, additionalInfo)
     if (message === 'kycSubmitted') {
       this.$router.push('/managed-accounts/kyc/check')
     }
   }
 
   receiveMessage(event) {
-    console.log(event)
     switch (event.data.status) {
       case 'failed':
         this.$router.push('/managed-accounts/kyc/failed')

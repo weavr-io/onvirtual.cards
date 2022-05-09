@@ -15,7 +15,7 @@
         <b-col class="pb-2">
           <b-row v-if="account" align-h="end" align-v="end">
             <b-col v-if="canAddFunds" cols="2" lg="1" class="text-right">
-              <b-button :to="'/managed-accounts/' + account.id.id + '/topup'" variant="secondary" class="add-funds">
+              <b-button :to="'/managed-accounts/' + account.id + '/topup'" variant="secondary" class="add-funds">
                 +
               </b-button>
             </b-col>
@@ -35,12 +35,12 @@
       <b-col v-if="isManagedCards">
         <b-col class="pb-2">
           <b-row align-h="end" align-v="end">
-            <div v-if="cardCurrency" class="account-balance">
+            <div v-if="hasCards" class="account-balance">
               <p class="mb-0 text-muted account-balance-label">
                 total balance
               </p>
               <p class="mb-0 account-balance-value">
-                {{ cardsBalance | weavr_currency(cardCurrency) }}
+                {{ cardsBalance | weavr_currency(cardCurrency.currency) }}
               </p>
             </div>
           </b-row>
@@ -51,51 +51,21 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import * as AuthStore from '~/store/modules/Auth'
-import * as ConsumersStore from '~/store/modules/Consumers'
-import { FullDueDiligence } from '~/api/Enums/Consumers/FullDueDiligence'
-import { KYBState } from '~/api/Enums/KYBState'
-import BaseMixin from '~/minixs/BaseMixin'
+import BaseMixin from '~/mixins/BaseMixin'
+import CardsMixin from '~/mixins/CardsMixin'
+import AccountsMixin from '~/mixins/AccountsMixin'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 @Component
-export default class DashboardHeader extends mixins(BaseMixin) {
-  get account() {
-    return this.stores.accounts.account
-  }
-
-  get accountsBalance() {
-    return this.stores.accounts.totalAvailableBalance
-  }
-
-  get cardCurrency() {
-    return this.stores.cards.currency
-  }
-
-  get cardsBalance() {
-    return this.stores.cards.totalAvailableBalance
-  }
-
-  get isManagedCards(): boolean {
-    if (this.$route.matched[0].name) {
-      return ['managed-cards', 'managed-cards-id-statement'].indexOf(this.$route.matched[0].name) !== -1
-    } else {
-      return false
-    }
-  }
-
-  get isManagedAccounts(): boolean {
-    if (this.$route.matched[0].name) {
-      return ['managed-accounts', 'managed-accounts-id'].indexOf(this.$route.matched[0].name) !== -1
-    } else {
-      return false
-    }
-  }
-
+export default class DashboardHeader extends mixins(BaseMixin, CardsMixin, AccountsMixin) {
   get canAddFunds(): boolean {
-    if (AuthStore.Helpers.isConsumer(this.$store)) {
-      return ConsumersStore.Helpers.consumer(this.$store)?.kyc?.fullDueDiligence === FullDueDiligence.APPROVED
+    if (this.isConsumer) {
+      return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+    } else if (this.isCorporate) {
+      return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
     } else {
-      return this.stores.corporates.kyb?.fullCompanyChecksVerified === KYBState.APPROVED
+      return false
     }
   }
 }

@@ -3,13 +3,13 @@
     <app-header />
     <dashboard-header />
     <Nuxt />
-    <kyb-alert />
-    <kyc-alert />
+    <kyb-alert v-if="showKybAlert" />
+    <kyc-alert v-if="showKycAlert" />
     <b-alert
-            id="verify-mobile"
-            :show="showVerifyMobileAlert && !showVerifyEmailAlert"
-            class="fixed-bottom bottom-left-alert m-4 p-4"
-            variant="bg-colored"
+      id="verify-mobile"
+      :show="showVerifyMobileAlert && !showVerifyEmailAlert"
+      class="fixed-bottom bottom-left-alert m-4 p-4"
+      variant="bg-colored"
     >
       We need to verify your mobile number. Please click
       <b-link to="/register/verify/mobile" class="link">
@@ -17,47 +17,28 @@
       </b-link>
     </b-alert>
     <b-alert
-            id="verify-email"
-            :show="showVerifyEmailAlert"
-            class="fixed-bottom bottom-left-alert m-4 p-4"
-            variant="bg-colored"
+      id="verify-email"
+      :show="showVerifyEmailAlert"
+      class="fixed-bottom bottom-left-alert m-4 p-4"
+      variant="bg-colored"
     >
       We need to verify your email address. Please click
       <b-link to="/register/verify" class="link">
         here.
       </b-link>
     </b-alert>
-    <!--    <b-alert id="account-kyc" v-if="showKycAlert" :show="true" class="fixed-bottom m-4 p-4" variant="bg-colored">-->
-    <!--      Your account is currently restricted to {{ allowedLimit | weavr_currency }}. You can lift this restriction-->
-    <!--      <b-link to="/managed-accounts/kyc" class="link">-->
-    <!--        here.-->
-    <!--      </b-link>-->
-    <!--    </b-alert>-->
-    <div id="loader" v-if="isLoading">
+    <div v-if="isLoading" id="loader">
       <div class="loader-spinner">
         <b-spinner />
       </div>
     </div>
-    <!-- <app-footer /> -->
     <cookie-policy />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { namespace } from 'vuex-class'
-
-import * as LoaderStore from '~/store/modules/Loader'
-import { Consumer } from '~/api/Models/Consumers/Consumer'
-import * as ConsumersStore from '~/store/modules/Consumers'
-import * as ViewStore from '~/store/modules/View'
-import { Schemas } from '~/api/Schemas'
-import CurrencyAmount = Schemas.CurrencyAmount
-import BaseMixin from '~/minixs/BaseMixin'
-
-const Loader = namespace(LoaderStore.name)
-const Consumers = namespace(ConsumersStore.name)
-const View = namespace(ViewStore.name)
+import KyVerified from '~/mixins/kyVerified'
 
 @Component({
   components: {
@@ -69,43 +50,13 @@ const View = namespace(ViewStore.name)
     cookiePolicy: () => import('~/components/cookie.vue')
   }
 })
-export default class DefaultLayout extends mixins(BaseMixin) {
-  @Loader.Getter isLoading
-
-  @View.Getter showKybAlert!: boolean
-
-  @View.Getter showKycAlert!: boolean
-
-  @View.Getter showVerifyMobileAlert!: boolean
-
-  @View.Getter showVerifyEmailAlert!: boolean
+export default class DefaultLayout extends mixins(KyVerified) {
+  get isLoading() {
+    return this.stores.loader.isLoading
+  }
 
   get accounts() {
     return this.stores.accounts.accounts
-  }
-
-  @Consumers.Getter consumer!: Consumer | null
-
-  get corporate() {
-    return this.stores.corporates.corporate
-  }
-
-  get allowedLimit(): CurrencyAmount {
-    const _out: CurrencyAmount = {
-      amount: 10000,
-      currency: 'EUR'
-    }
-
-    if (this.accounts) {
-      if (this.accounts.account.length > 0) {
-        if (this.accounts.account[0].currency === 'GBP') {
-          _out.amount = 8000
-          _out.currency = 'GBP'
-        }
-      }
-    }
-
-    return _out
   }
 }
 </script>

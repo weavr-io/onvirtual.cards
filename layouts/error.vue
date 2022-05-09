@@ -24,33 +24,22 @@
   </b-container>
 </template>
 
-<script>
-export default {
-  name: 'NuxtError',
-  props: {
-    error: {
-      type: Object,
-      default: null
-    }
-  },
-  computed: {
-    statusCode() {
-      return (this.error && this.error.statusCode) || 500
-    },
-    is404() {
-      return this.statusCode === 404
-    }
-  },
-  mounted() {
-    switch (this.error.statusCode) {
-      case 401:
-        this.$router.replace('/login')
-        break
-      case 403:
-        this.$router.replace('/forbidden')
-        break
-    }
-  },
+<script lang="ts">
+import { Component, mixins, Prop } from 'nuxt-property-decorator'
+import BaseMixin from '~/mixins/BaseMixin'
+
+@Component
+export default class NuxtError extends mixins(BaseMixin) {
+  @Prop(Object) error!: any
+
+  get statusCode() {
+    return (this.error && this.error.statusCode) || 500
+  }
+
+  get is404() {
+    return this.statusCode === 404
+  }
+
   head() {
     return {
       title: this.statusCode === 404 ? 'Page Not Found' : 'Oh snap!',
@@ -60,6 +49,17 @@ export default {
           content: 'width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no'
         }
       ]
+    }
+  }
+
+  mounted() {
+    switch (this.error.statusCode) {
+      case 401:
+        this.$router.replace('/login')
+        break
+      case 403:
+        this.$router.replace('/forbidden')
+        break
     }
   }
 }
