@@ -1,22 +1,12 @@
-upstream api_backend {
-        zone upstreams 64K;
-        server sandbox.weavr.io:443;
-        keepalive 8;
-}
-
 server {
     listen       80;
     server_name  localhost;
 
     location / {
         proxy_set_header api-key {{API_KEY}};
-        proxy_pass https://api_backend;
-        proxy_http_version 1.1;
-        proxy_set_header  "Connection" "";
-        proxy_set_header Host sandbox.weavr.io;
-        proxy_set_header X_FORWARDED_PROTO https;
-        proxy_ssl_server_name on;
-        proxy_ssl_name sandbox.weavr.io;
+        resolver 8.8.8.8;
+        set $upstream_endpoint https://sandbox.weavr.io;
+        proxy_pass $upstream_endpoint$request_uri;
     }
     
     location /health {
