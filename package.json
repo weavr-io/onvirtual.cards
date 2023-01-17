@@ -20,7 +20,7 @@
     "bootstrap-vue": "^2.23.1",
     "dot-object": "^2.1.4",
     "js-cookie": "^2.2.1",
-    "nuxt": "^2.15.8",
+    "nuxt": "^3.0.0",
     "ts-node": "^10.9.1",
     "vue-flatpickr-component": "^8.1.7",
     "vue-infinite-loading": "^2.4.5",
