@@ -11,12 +11,8 @@
               switch
               @change="showDestroyedChanged"
             >
-              <template v-if="showDestroyed">
-                Hide
-              </template>
-              <template v-else>
-                Show
-              </template>
+              <template v-if="showDestroyed"> Hide</template>
+              <template v-else> Show</template>
               destroyed cards
             </b-form-checkbox>
           </b-col>
@@ -32,7 +28,7 @@
       <b-container v-if="!hasAlert" class="mt-5">
         <b-row v-if="$fetchState.pending">
           <b-col class="d-flex flex-column align-items-center">
-            <div class="loader-spinner ">
+            <div class="loader-spinner">
               <b-spinner />
             </div>
           </b-col>
@@ -44,14 +40,10 @@
         </b-row>
         <b-row v-else>
           <b-col class="py-5 text-center">
-            <h4 class="font-weight-light">
-              You have no cards.
-            </h4>
+            <h4 class="font-weight-light">You have no cards.</h4>
             <h5 class="font-weight-lighter">
               Click
-              <b-link to="/managed-cards/add">
-                add new card
-              </b-link>
+              <b-link to="/managed-cards/add"> add new card</b-link>
               to create your first card.
             </h5>
           </b-col>
@@ -72,9 +64,9 @@ import KyVerified from '~/mixins/kyVerified'
   layout: 'dashboard',
   components: {
     WeavrCard: () => import('~/components/cards/card.vue'),
-    KybAlert: () => import('~/components/corporates/KYBAlert.vue')
+    KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
   },
-  middleware: ['kyVerified']
+  middleware: ['kyVerified'],
 })
 export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified) {
   showDestroyedSwitch = false
@@ -88,8 +80,12 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified)
     return undefined
   }
 
+  get cardStateFilters() {
+    return this.showDestroyed ? [] : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
+  }
+
   fetch() {
-    return this.getCards([ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]).then(() => {
+    return this.getCards(this.cardStateFilters).then(() => {
       return this.stores.cards.hasDestroyedCards().then((res) => {
         this.showDestroyedSwitch = res
       })
@@ -98,14 +94,14 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified)
 
   async getCards(_state: ManagedInstrumentStateEnum[]) {
     await this.stores.cards.getCards({
-      state: _state.join(',')
+      state: _state.join(','),
     })
   }
 
   async showDestroyedChanged(val) {
     await this.$router.push({
       path: this.$route.path,
-      query: { showDestroyed: val }
+      query: { showDestroyed: val },
     })
 
     const state = val ? [] : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
