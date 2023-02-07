@@ -5,9 +5,7 @@
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
-        <h3 class="font-weight-light text-center">
-          Let's also verify your phone number
-        </h3>
+        <h3 class="font-weight-light text-center">Let's also verify your phone number</h3>
         <b-row>
           <b-col md="6" offset-md="3" class="text-center">
             <b-img fluid src="/img/mobile.svg" class="mt-5 mb-2" />
@@ -15,9 +13,7 @@
         </b-row>
 
         <form id="form-verify" class="mt-5" @submit.prevent="doVerify">
-          <b-alert :show="showSmsResentSuccess" variant="success">
-            The verification code was resent by SMS.
-          </b-alert>
+          <b-alert :show="showSmsResentSuccess" variant="success"> The verification code was resent by SMS.</b-alert>
           <p class="text-center my-5 text-grey">
             We’ve just sent you a verification code by SMS. Enter code below to verify your phone number.
           </p>
@@ -75,23 +71,23 @@ import { Nullable } from '~/global'
   layout: 'auth',
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     request: {
       verificationCode: {
         required,
         minLength: minLength(6),
-        maxLength: maxLength(6)
-      }
-    }
-  }
+        maxLength: maxLength(6),
+      },
+    },
+  },
 })
 export default class EmailVerificationPage extends mixins(BaseMixin, ValidationMixin) {
   isLoading: boolean = false
 
   request: Nullable<AuthVerifyEnrolRequest> = {
-    verificationCode: null
+    verificationCode: null,
   }
 
   verificationIssue: boolean = false
@@ -147,18 +143,23 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
     const req: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrolRequest } = {
       channel: SCAOtpChannelEnum.SMS,
-      body: this.request as AuthVerifyEnrolRequest
+      body: this.request as AuthVerifyEnrolRequest,
     }
 
     this.stores.auth
       .verifyAuthFactors(req)
       .then(() => {
         this.stores.identities.SET_MOBILE_VERIFIED(true)
+        this.getConsumersOrCorporates()
         this.goToIndex()
       })
       .finally(() => {
         this.isLoading = false
       })
+  }
+
+  getConsumersOrCorporates() {
+    return this.isConsumer ? this.stores.consumers.get() : this.stores.corporates.get()
   }
 
   countDownChanged(dismissCountDown) {
