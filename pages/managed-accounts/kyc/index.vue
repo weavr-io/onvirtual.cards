@@ -51,7 +51,6 @@ export default class KycPage extends mixins(BaseMixin) {
 
   get isKycPending() {
     return this.kycErrorCode === KYCErrorCodeEnum.KYC_PENDING_REVIEW
-    // return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
   }
 
   get isKycRejected() {
