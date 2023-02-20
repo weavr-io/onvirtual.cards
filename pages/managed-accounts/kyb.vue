@@ -28,7 +28,7 @@
           </p>
           <ul class="my-3 font-weight-normal">
             <li>Directors: name, date of birth, nationality, email address, contact number</li>
-            <li>Ultimate Beneficiary Owners (UBOs) holding a stake of 25% or more: name, date of birth, nationality</li>
+            <li>Ultimate Beneficial Owners (UBOs) holding a stake of 25% or more: name, date of birth, nationality</li>
           </ul>
           <div class="text-center">
             <b-button to="/managed-accounts/kyb">
