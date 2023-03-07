@@ -14,7 +14,7 @@
           <b-form @submit="doAdd">
             <b-form-row>
               <b-col>
-                <b-form-group label="Name:">
+                <b-form-group label="Name*">
                   <b-form-input v-model="$v.request.name.$model" :state="isInvalid($v.request.name)" />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
@@ -22,7 +22,7 @@
             </b-form-row>
             <b-form-row>
               <b-col>
-                <b-form-group label="Surname:">
+                <b-form-group label="Surname*">
                   <b-form-input v-model="$v.request.surname.$model" :state="isInvalid($v.request.surname)" />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
@@ -30,7 +30,7 @@
             </b-form-row>
             <b-form-row>
               <b-col>
-                <b-form-group label="Email:">
+                <b-form-group label="Email*">
                   <b-form-input v-model="$v.request.email.$model" :state="isInvalid($v.request.email)" type="email" />
                   <b-form-invalid-feedback>This field is required and must be a valid email.</b-form-invalid-feedback>
                 </b-form-group>
@@ -38,7 +38,7 @@
             </b-form-row>
             <b-form-row>
               <b-col>
-                <b-form-group label="MOBILE NUMBER:">
+                <b-form-group label="MOBILE NUMBER*">
                   <vue-phone-number-input
                     :value="mobile.number"
                     :only-countries="mobileCountries"
