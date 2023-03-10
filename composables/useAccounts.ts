@@ -3,10 +3,13 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { useCsv } from '~/composables/useCsv'
 import { useBase } from '~/composables/useBase'
+import { useNuxtApp } from '~/.nuxt/imports'
 
 export function useAccounts() {
   const { downloadBlobToCsv } = useCsv()
   const { stores, router } = useBase()
+
+  const { $apiMulti } = useNuxtApp()
 
   const accountsBalance = computed<boolean>(() => {
     if (router.matched[0].name) {
@@ -35,7 +38,7 @@ export function useAccounts() {
   }
 
   function downloadAsCSV(params: { id: IDModel; filters: GetManagedAccountStatementRequest }) {
-    const req = $attrs.$apiMulti.managedAccounts.downloadStatement(params)
+    const req = $apiMulti.managedAccounts.downloadStatement(params)
 
     req.then((res) => {
       downloadBlobToCsv(res.data)
