@@ -12,24 +12,22 @@ const Countries = require('~/static/json/countries.json')
 export function useBase() {
   const router = useRouter()
 
-  const stores = computed(() => {
-    return initialiseStores(useStore())
-  })
+  const stores = initialiseStores(useStore())
 
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
   const isConsumer = computed(() => {
-    return stores.value.auth.isConsumer
+    return stores.auth.isConsumer
   })
 
   const isCorporate = computed(() => {
-    return stores.value.auth.isCorporate
+    return stores.auth.isCorporate
   })
 
   const isLoggedIn = computed(() => {
-    return stores.value.auth.isLoggedIn
+    return stores.auth.isLoggedIn
   })
 
   const accountProfileId = computed(() => {
@@ -46,29 +44,27 @@ export function useBase() {
 
   const profileBaseCurrency = computed(() => {
     return (
-      (isConsumer.value
-        ? stores.value.consumers.consumer?.baseCurrency
-        : stores.value.corporates.corporate?.baseCurrency) || null
+      (isConsumer.value ? stores.consumers.consumer?.baseCurrency : stores.corporates.corporate?.baseCurrency) || null
     )
   })
 
   const consumer = computed<ConsumerModel | null>(() => {
-    return stores.value.consumers.consumer
+    return stores.consumers.consumer
   })
 
   const rootName = computed<string>(() => {
     if (isConsumer.value) {
-      return stores.value.consumers.consumer!.rootUser.name
+      return stores.consumers.consumer!.rootUser.name
     } else if (isCorporate.value) {
-      return stores.value.corporates.corporate!.rootUser.name
+      return stores.corporates.corporate!.rootUser.name
     } else return 'noname'
   })
 
   const rootSurname = computed<string>(() => {
     if (isConsumer.value) {
-      return stores.value.consumers.consumer!.rootUser.surname
+      return stores.consumers.consumer!.rootUser.surname
     } else if (isCorporate.value) {
-      return stores.value.corporates.corporate!.rootUser.surname
+      return stores.corporates.corporate!.rootUser.surname
     } else return 'nosurname'
   })
 
@@ -77,7 +73,7 @@ export function useBase() {
   })
 
   const corporate = computed(() => {
-    return stores.value.corporates.corporate
+    return stores.corporates.corporate
   })
 
   const rootUserEmail = computed(() => {
@@ -100,10 +96,10 @@ export function useBase() {
   })
 
   const identityVerified = computed<boolean>(() => {
-    if (stores.value.auth.isConsumer) {
-      return stores.value.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+    if (stores.auth.isConsumer) {
+      return stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
     } else {
-      return stores.value.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
+      return stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
     }
   })
 
@@ -112,7 +108,7 @@ export function useBase() {
   }
 
   function logout() {
-    return stores.value.auth.logout()
+    return stores.auth.logout()
   }
 
   function showSuccessToast(msg?: string, title?: string) {

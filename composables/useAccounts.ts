@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+import { computed, getCurrentInstance } from 'vue'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { useCsv } from '~/composables/useCsv'
@@ -17,13 +17,11 @@ export function useAccounts() {
   })
 
   const account = computed(() => {
-    return stores.value.accounts.account
+    return stores.accounts.account
   })
 
   const hasAccount = computed(() => {
-    return stores.value.accounts.accounts?.accounts !== undefined
-      ? stores.value.accounts.accounts.accounts.length > 0
-      : false
+    return stores.accounts.accounts?.accounts !== undefined ? stores.accounts.accounts.accounts.length > 0 : false
   })
 
   const accountId = computed<IDModel | undefined>(() => {
@@ -37,7 +35,7 @@ export function useAccounts() {
   }
 
   function downloadAsCSV(params: { id: IDModel; filters: GetManagedAccountStatementRequest }) {
-    const req = this.$apiMulti.managedAccounts.downloadStatement(params)
+    const req = $attrs.$apiMulti.managedAccounts.downloadStatement(params)
 
     req.then((res) => {
       downloadBlobToCsv(res.data)

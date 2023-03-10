@@ -4,7 +4,8 @@ import { computed } from '~/node_modules/vue'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
-import $apiMulti from '~/plugins/weavr-multi'
+import weavrMultiPlugin from '~/plugins/weavr-multi'
+import { ApiModule } from '~/plugins/weavr-multi/api/ApiModule'
 
 export function useCards() {
   const { downloadBlobToCsv } = useCsv()
@@ -19,7 +20,7 @@ export function useCards() {
   })
 
   const managedCard = computed(() => {
-    return stores.value.cards.managedCard
+    return stores.cards.managedCard
   })
 
   const cardId = computed(() => {
@@ -27,7 +28,7 @@ export function useCards() {
   })
 
   const cards = computed(() => {
-    return stores.value.cards.cards?.cards
+    return stores.cards.cards?.cards
   })
 
   const hasCards = computed(() => {
@@ -35,11 +36,11 @@ export function useCards() {
   })
 
   const cardsBalance = computed(() => {
-    return stores.value.cards.totalAvailableBalance
+    return stores.cards.totalAvailableBalance
   })
 
   const cardCurrency = computed(() => {
-    return stores.value.cards
+    return stores.cards
   })
 
   const isCardActive = computed(() => {
@@ -47,7 +48,7 @@ export function useCards() {
   })
 
   function downloadAsCSV(params: { id: IDModel; filters: GetManagedCardStatementRequest }) {
-    const req = $apiMulti.managedCards.downloadStatement(params)
+    const req = ApiModule.managedCards.downloadStatement(params)
 
     req.then((res) => {
       downloadBlobToCsv(res.data)

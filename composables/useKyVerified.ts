@@ -11,14 +11,14 @@ export function useKyVerified() {
   })
 
   const showKybAlert = computed(() => {
-    const _isCorporate = stores.value.auth.isCorporate
+    const _isCorporate = stores.auth.isCorporate
 
     if (!_isCorporate) {
       return false
     }
 
-    const _corporate = stores.value.corporates.corporate
-    const _corporateKyb = stores.value.corporates.kyb
+    const _corporate = stores.corporates.corporate
+    const _corporateKyb = stores.corporates.kyb
 
     if (_corporate && _corporateKyb) {
       return _corporateKyb.kybStatus !== KYBStatusEnum.APPROVED
@@ -28,14 +28,14 @@ export function useKyVerified() {
   })
 
   const showKycAlert = computed(() => {
-    const _isConsumer = stores.value.auth.isConsumer
+    const _isConsumer = stores.auth.isConsumer
 
     if (!_isConsumer) {
       return false
     }
 
-    const _consumer = stores.value.consumers.consumer
-    const _consumerKyc = stores.value.consumers.kyc
+    const _consumer = stores.consumers.consumer
+    const _consumerKyc = stores.consumers.kyc
 
     if (showVerifyMobileAlert.value) {
       return false
@@ -47,11 +47,11 @@ export function useKyVerified() {
   })
 
   const showVerifyMobileAlert = computed(() => {
-    return stores.value.identities.mobileNumberVerified === false
+    return stores.identities.mobileNumberVerified === false
   })
 
   const showVerifyEmailAlert = computed(() => {
-    return stores.value.identities.emailVerified === false
+    return stores.identities.emailVerified === false
   })
 
   return {
