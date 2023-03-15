@@ -22,69 +22,37 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { getCurrentInstance } from 'vue'
+<script lang="ts">
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { useBase } from '~/composables/useBase'
 
-const proxy = getCurrentInstance()?.proxy
+@Component
+export default class Header extends Vue {
+  base = useBase(this)
 
-const base = useBase(proxy)
+  doLogout() {
+    this.base.logout().then(this.redirectToLogin)
+  }
 
-function doLogout() {
-  base.logout().then(redirectToLogin)
-}
+  redirectToLogin() {
+    try {
+      this.$segment.reset()
+    } catch (e) {}
+    this.$router.push('/login')
+  }
 
-function redirectToLogin() {
-  try {
-    proxy?.$segment.reset()
-  } catch (e) {}
-  proxy?.$router.push('/login')
-}
-
-function fetch() {
-  if (base.unRefs.consumer === null && base.unRefs.corporate === null) {
-    if (base.unRefs.isConsumer) {
-      base.stores.consumers.get()
-    } else if (base.unRefs.isCorporate) {
-      base.stores.corporates.get()
+  fetch() {
+    if (this.base.unRefs.consumer === null && this.base.unRefs.corporate === null) {
+      if (this.base.unRefs.isConsumer) {
+        this.base.stores.consumers.get()
+      } else if (this.base.unRefs.isCorporate) {
+        this.base.stores.corporates.get()
+      }
     }
   }
 }
-
-fetch()
 </script>
-
-<!--<script lang="ts">-->
-<!--import { Component } from 'nuxt-property-decorator'-->
-<!--import Vue from 'vue'-->
-<!--import { useBase } from '~/composables/useBase'-->
-
-<!--@Component-->
-<!--export default class Header extends Vue {-->
-<!--  base = useBase(this)-->
-
-<!--  doLogout() {-->
-<!--    this.base.logout().then(this.redirectToLogin)-->
-<!--  }-->
-
-<!--  redirectToLogin() {-->
-<!--    try {-->
-<!--      this.$segment.reset()-->
-<!--    } catch (e) {}-->
-<!--    this.$router.push('/login')-->
-<!--  }-->
-
-<!--  fetch() {-->
-<!--    if (this.base.unRefs.consumer === null && this.base.unRefs.corporate === null) {-->
-<!--      if (this.base.unRefs.isConsumer) {-->
-<!--        this.base.stores.consumers.get()-->
-<!--      } else if (this.base.unRefs.isCorporate) {-->
-<!--        this.base.stores.corporates.get()-->
-<!--      }-->
-<!--    }-->
-<!--  }-->
-<!--}-->
-<!--</script>-->
 
 <style lang="scss" scoped>
 .dropdown-toggle {
