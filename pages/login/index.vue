@@ -4,9 +4,7 @@
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card body-class="p-card">
-      <h3 class="text-center font-weight-light mb-5">
-        Login
-      </h3>
+      <h3 class="text-center font-weight-light mb-5">Login</h3>
 
       <form id="contact-form" class="mt-5" @submit.prevent="login">
         <error-alert
@@ -16,8 +14,8 @@
           id="login-email"
           label="Email"
           label-for="form-email"
-          :invalid-feedback="invalidFeedback($v.loginRequest.email, 'email')"
-          :state="isInvalid($v.loginRequest.email)"
+          :invalid-feedback="validation.invalidFeedback($v.loginRequest.email, 'email')"
+          :state="validation.isInvalid($v.loginRequest.email)"
         >
           <b-form-input
             id="from-email"
@@ -39,15 +37,11 @@
             @onKeyUp="checkOnKeyUp"
             @onChange="passwordInteraction"
           />
-          <b-form-invalid-feedback v-if="isInvalidPassword">
-            Please enter your password
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback v-if="isInvalidPassword"> Please enter your password </b-form-invalid-feedback>
         </client-only>
 
         <div class="mt-2">
-          <b-link to="/password/reset" class="small text-decoration-underline text-grey">
-            Forgot password?
-          </b-link>
+          <b-link to="/password/reset" class="small text-decoration-underline text-grey"> Forgot password? </b-link>
         </div>
 
         <b-form-group class="mt-5 text-center">
@@ -71,45 +65,49 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Ref, Watch } from 'nuxt-property-decorator'
+import { Component, Ref, Watch } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
+import Vue from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { authStore } from '~/utils/store-accessor'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
   layout: 'auth',
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    WeavrPasswordInput
+    WeavrPasswordInput,
   },
   validations: {
     loginRequest: {
       email: {
         required,
-        email
+        email,
       },
       password: {
         value: {
-          required
-        }
-      }
-    }
-  }
+          required,
+        },
+      },
+    },
+  },
 })
-export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
+export default class LoginPage extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   isLoading: boolean = false
 
   private loginRequest: LoginWithPasswordRequest = {
     email: '',
     password: {
-      value: ''
-    }
+      value: '',
+    },
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -125,8 +123,8 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 
@@ -143,26 +141,26 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
     if (!this.$v.$invalid) {
       try {
         this.isLoading = true
-        this.stores.errors.SET_ERROR(null)
+        this.base.stores.errors.SET_ERROR(null)
         this.passwordField.createToken().then(
           (tokens) => {
             this.loginRequest.password.value = tokens.tokens.password
-            this.stores.auth
+            this.base.stores.auth
               .loginWithPassword(this.loginRequest)
               .then((res) => {
                 this.goToDashboard(res.data)
               })
               .catch((err) => {
                 this.isLoading = false
-                this.stores.errors.SET_ERROR(err)
+                this.base.stores.errors.SET_ERROR(err)
               })
           },
           (e) => {
-            this.showErrorToast(e, 'Tokenization Error')
+            this.base.showErrorToast(e, 'Tokenization Error')
           }
         )
       } catch (error) {
-        this.showErrorToast(error, 'Login Error')
+        this.base.showErrorToast(error, 'Login Error')
       }
     }
   }
@@ -171,15 +169,15 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
     const _id = res.credentials.type! + '-' + res.credentials.id
     try {
       this.$segment.identify(_id, {
-        email: this.loginRequest.email
+        email: this.loginRequest.email,
       })
     } catch (e) {}
 
-    if (this.stores.auth.isConsumer) {
-      await this.stores.consumers.get()
+    if (this.base.stores.auth.isConsumer) {
+      await this.base.stores.consumers.get()
     }
 
-    await this.goToIndex()
+    await this.base.goToIndex()
     this.isLoading = false
   }
 

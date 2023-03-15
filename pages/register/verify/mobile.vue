@@ -21,7 +21,7 @@
           <b-row>
             <b-col cols="6" offset="3">
               <b-form-group
-                :state="isInvalid($v.request.verificationCode)"
+                :state="validation.isInvalid($v.request.verificationCode)"
                 invalid-feedback="This field is required and must be 6 characters"
               >
                 <b-form-input v-model="$v.request.verificationCode.$model" placeholder="000000" class="text-center" />
@@ -58,14 +58,15 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { authStore, identitiesStore } from '~/utils/store-accessor'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
   layout: 'auth',
@@ -83,7 +84,10 @@ import { Nullable } from '~/global'
     },
   },
 })
-export default class EmailVerificationPage extends mixins(BaseMixin, ValidationMixin) {
+export default class EmailVerificationPage extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   isLoading: boolean = false
 
   request: Nullable<AuthVerifyEnrolRequest> = {
@@ -129,7 +133,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
   async sendVerifyPhone() {
     this.showAlert()
     this.isLoading = true
-    await this.stores.auth.enrollAuthFactors(SCAOtpChannelEnum.SMS).finally(() => (this.isLoading = false))
+    await this.base.stores.auth.enrollAuthFactors(SCAOtpChannelEnum.SMS).finally(() => (this.isLoading = false))
   }
 
   doVerify() {
@@ -146,12 +150,12 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
       body: this.request as AuthVerifyEnrolRequest,
     }
 
-    this.stores.auth
+    this.base.stores.auth
       .verifyAuthFactors(req)
       .then(() => {
-        this.stores.identities.SET_MOBILE_VERIFIED(true)
+        this.base.stores.identities.SET_MOBILE_VERIFIED(true)
         this.getConsumersOrCorporates()
-        this.goToIndex()
+        this.base.goToIndex()
       })
       .finally(() => {
         this.isLoading = false
@@ -159,7 +163,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
   }
 
   getConsumersOrCorporates() {
-    return this.isConsumer ? this.stores.consumers.get() : this.stores.corporates.get()
+    return this.base.unRefs.isConsumer ? this.base.stores.consumers.get() : this.base.stores.corporates.get()
   }
 
   countDownChanged(dismissCountDown) {

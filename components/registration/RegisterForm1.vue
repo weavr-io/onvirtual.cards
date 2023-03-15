@@ -1,12 +1,12 @@
 <template>
   <b-form @submit.prevent="tryToSubmitForm">
-    <h3 class="text-center font-weight-light mb-5">
-      Register
-    </h3>
+    <h3 class="text-center font-weight-light mb-5">Register</h3>
     <error-alert />
     <b-form-group
-      :state="isInvalid($v.form.email)"
-      :invalid-feedback="invalidFeedback($v.form.email, validateVParams($v.form.email.$params, $v.form.email))"
+      :state="validation.isInvalid($v.form.email)"
+      :invalid-feedback="
+        validation.invalidFeedback($v.form.email, validation.validateVParams($v.form.email.$params, $v.form.email))
+      "
       label="Email"
     >
       <b-form-input v-model="$v.form.email.$model" placeholder="name@email.com" />
@@ -30,7 +30,7 @@
     <b-form-row class="small mt-3 text-muted">
       <b-col>
         <b-form-group>
-          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
+          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="validation.isInvalid($v.form.acceptedTerms)">
             I accept the
             <a
               href="https://www.onvirtual.cards/terms/business"
@@ -61,37 +61,41 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Emit, Ref } from 'nuxt-property-decorator'
 import { email, required, sameAs } from 'vuelidate/lib/validators'
+import Vue from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
   validations: {
     form: {
       email: {
         required,
-        email
+        email,
       },
       password: {
         value: {
-          required
-        }
+          required,
+        },
       },
       acceptedTerms: {
         required,
-        sameAs: sameAs(() => true)
-      }
-    }
+        sameAs: sameAs(() => true),
+      },
+    },
   },
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    WeavrPasswordInput
-  }
+    WeavrPasswordInput,
+  },
 })
-export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
+export default class RegisterForm1 extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   private $recaptcha: any
 
   @Ref('passwordField')
@@ -106,7 +110,7 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
   } = {
     email: null,
     password: { value: null },
-    acceptedTerms: false
+    acceptedTerms: false,
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -122,8 +126,8 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 
@@ -158,11 +162,11 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
           }
         },
         (e) => {
-          this.showErrorToast(e, 'Tokenization Error')
+          this.base.showErrorToast(e, 'Tokenization Error')
         }
       )
     } catch (error) {
-      this.showErrorToast(error, 'Registration Error')
+      this.base.showErrorToast(error, 'Registration Error')
     }
   }
 
@@ -179,7 +183,7 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
 
   @Emit()
   submitForm() {
-    this.stores.errors.RESET_ERROR()
+    this.base.stores.errors.RESET_ERROR()
     return this.form
   }
 }

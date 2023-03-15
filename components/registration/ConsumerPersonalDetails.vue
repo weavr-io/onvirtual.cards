@@ -1,14 +1,12 @@
 <template>
   <b-form novalidate @submit="submitForm">
-    <h3 class="text-center font-weight-light mb-5">
-      Personal Details
-    </h3>
+    <h3 class="text-center font-weight-light mb-5">Personal Details</h3>
     <b-form-group label="First Name">
-      <b-form-input v-model="form.name" :state="isInvalid($v.form.rootName)" placeholder="First Name" />
+      <b-form-input v-model="form.name" :state="validation.isInvalid($v.form.rootName)" placeholder="First Name" />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Last Name">
-      <b-form-input v-model="form.surname" :state="isInvalid($v.form.rootSurname)" placeholder="Last Name" />
+      <b-form-input v-model="form.surname" :state="validation.isInvalid($v.form.rootSurname)" placeholder="Last Name" />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="MOBILE NUMBER">
@@ -29,9 +27,7 @@
     </b-form-group>
     <b-row class="mt-6" align-v="center">
       <b-col md="4">
-        <b-button variant="outline" class="pl-0" @click="goBack">
-          <-
-        </b-button>
+        <b-button variant="outline" class="pl-0" @click="goBack"> <- </b-button>
       </b-col>
       <b-col class="text-right">
         <loader-button :is-loading="isLoading" button-text="finish" class="text-right" />
@@ -40,10 +36,11 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { Component, Emit } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import Vue from 'vue'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -52,32 +49,35 @@ const Countries = require('~/static/json/countries.json')
     form: {
       name: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(100),
       },
       surname: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(100),
       },
       rootMobileCountryCode: {
-        required
+        required,
       },
       rootMobileNumber: {
-        required
-      }
-    }
+        required,
+      },
+    },
   },
   components: {
-    LoaderButton: () => import('~/components/LoaderButton.vue')
-  }
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
+  },
 })
-export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {
+export default class PersonalDetailsForm extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   $v
 
   rootMobileNumber = ''
   numberIsValid: boolean | null = null
 
   get isLoading() {
-    return this.stores.consumers.isLoading
+    return this.base.stores.consumers.isLoading
   }
 
   get mobileCountries(): string[] {
@@ -91,7 +91,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     surname: '',
     companyPosition: '',
     rootMobileCountryCode: '',
-    rootMobileNumber: ''
+    rootMobileNumber: '',
   }
 
   @Emit()

@@ -12,23 +12,26 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { authStore } from '~/utils/store-accessor'
 import BusinessOrPersonalComponent from '~/components/registration/BusinessOrPersonalComponent.vue'
 import AccessCodeComponent from '~/components/registration/AccessCodeComponent.vue'
+import { useBase } from '~/composables/useBase'
 
 @Component({
   components: {
     AccessCodeComponent,
-    BusinessOrPersonalComponent
+    BusinessOrPersonalComponent,
   },
   layout: 'auth',
-  middleware: 'accessCodeVerified'
+  middleware: 'accessCodeVerified',
 })
-export default class RegistrationPage extends mixins(BaseMixin) {
+export default class RegistrationPage extends Vue {
+  base = useBase(this)
+
   get isAccessCodeValid() {
-    return this.stores.accessCodes.isValid
+    return this.base.stores.accessCodes.isValid
   }
 
   asyncData({ store, redirect }) {

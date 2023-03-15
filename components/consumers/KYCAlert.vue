@@ -3,9 +3,7 @@
     <b-container>
       <b-row v-if="isPendingReview">
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter text-center">
-          <h3 class="font-weight-lighter mb-4">
-            Your documentation is currently under review.
-          </h3>
+          <h3 class="font-weight-lighter mb-4">Your documentation is currently under review.</h3>
           <p>
             This process normally takes a few minutes. During busy times, review of documentation may take a bit longer
             up to 24 hours.
@@ -15,16 +13,12 @@
       <b-row v-else>
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter">
           <div>
-            <h3 class="text-center font-weight-lighter mb-4">
-              We need some documents
-            </h3>
+            <h3 class="text-center font-weight-lighter mb-4">We need some documents</h3>
             <p>
               We are required by financial services regulations to perform due diligence before allowing you to transact
               with your account.
             </p>
-            <p>
-              Kindly prepare to submit and upload the following information:
-            </p>
+            <p>Kindly prepare to submit and upload the following information:</p>
             <ul class="my-3 font-weight-normal">
               <li>An ID document (Passport or National ID Card)</li>
               <li>Take a selfie</li>
@@ -32,9 +26,7 @@
             </ul>
 
             <h5 class="mt-4 text-center">
-              <b-link to="/managed-accounts/kyc" class="link pb-2">
-                Start verification process
-              </b-link>
+              <b-link to="/managed-accounts/kyc" class="link pb-2"> Start verification process </b-link>
             </h5>
           </div>
         </b-col>
@@ -43,14 +35,17 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
-import KyVerified from '~/mixins/kyVerified'
+import { useBase } from '~/composables/useBase'
 
 @Component
-export default class KYCAlert extends mixins(KyVerified) {
+export default class KYCAlert extends Vue {
+  base = useBase(this)
+
   get isPendingReview(): boolean {
-    return this.stores.consumers?.kyc?.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
+    return this.base.stores.consumers?.kyc?.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
   }
 }
 </script>

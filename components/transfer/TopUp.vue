@@ -3,15 +3,9 @@
     <b-row>
       <b-col>
         <h2 class="text-center font-weight-lighter">
-          <template v-if="!accountDetails">
-            No account found
-          </template>
-          <template v-else-if="accountBalance < 0.01">
-            Not enough funds
-          </template>
-          <template v-else>
-            Top up amount
-          </template>
+          <template v-if="!accountDetails"> No account found </template>
+          <template v-else-if="accountBalance < 0.01"> Not enough funds </template>
+          <template v-else> Top up amount </template>
         </h2>
       </b-col>
     </b-row>
@@ -19,12 +13,8 @@
       <b-col>
         <b-row>
           <b-col>
-            <h4 class="font-weight-light">
-              You do not have an account to transfer funds from.
-            </h4>
-            <h5 class="font-weight-lighter">
-              Start by creating an account.
-            </h5>
+            <h4 class="font-weight-light">You do not have an account to transfer funds from.</h4>
+            <h5 class="font-weight-lighter">Start by creating an account.</h5>
           </b-col>
         </b-row>
         <b-row class="mt-5">
@@ -41,12 +31,8 @@
       <b-col>
         <b-row>
           <b-col>
-            <h4 class="font-weight-light">
-              You do not have enough funds in your account.
-            </h4>
-            <h5 class="font-weight-lighter">
-              Start by topping up.
-            </h5>
+            <h4 class="font-weight-light">You do not have enough funds in your account.</h4>
+            <h5 class="font-weight-lighter">Start by topping up.</h5>
           </b-col>
         </b-row>
         <b-row class="mt-5">
@@ -63,7 +49,11 @@
       <b-col>
         <b-row>
           <b-col>
-            <b-form-group :state="isInvalid($v.request.amount)" :invalid-feedback="invalidMessage" label="Amount:">
+            <b-form-group
+              :state="validation.isInvalid($v.request.amount)"
+              :invalid-feedback="invalidMessage"
+              label="Amount:"
+            >
               <b-input-group :prepend="accountDetails.currency">
                 <b-form-input v-model="$v.request.amount.$model" type="number" step="0.01" min="0.01" />
               </b-input-group>
@@ -83,11 +73,12 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { Component, Emit } from 'nuxt-property-decorator'
 import { required, between } from 'vuelidate/lib/validators'
+import Vue from 'vue'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
   validations: {
@@ -96,14 +87,17 @@ import ValidationMixin from '~/mixins/ValidationMixin'
         required,
         between(this: TopUpForm, value) {
           return between(0.01, this.accountBalance)(value)
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 })
-export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
+export default class TopUpForm extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   get accounts() {
-    return this.stores.accounts.accounts
+    return this.base.stores.accounts.accounts
   }
 
   @Prop({ default: '' }) readonly selectedAccount
@@ -119,7 +113,7 @@ export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
   public request: {
     amount: number | null
   } = {
-    amount: null
+    amount: null,
   }
 
   get accountDetails() {

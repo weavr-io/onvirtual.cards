@@ -7,16 +7,14 @@
             <error-alert />
             <div class="form-screen">
               <b-form novalidate @submit="submitForm">
-                <h3 class="text-center font-weight-light mb-5">
-                  Your address details
-                </h3>
+                <h3 class="text-center font-weight-light mb-5">Your address details</h3>
                 <b-form-group
                   label="Address Line 1*"
-                  :state="isInvalid($v.address.addressLine1)"
+                  :state="validation.isInvalid($v.address.addressLine1)"
                   :invalid-feedback="
-                    invalidFeedback(
+                    validation.invalidFeedback(
                       $v.address.addressLine1,
-                      validateVParams($v.address.addressLine1.$params, $v.address.addressLine1)
+                      validation.validateVParams($v.address.addressLine1.$params, $v.address.addressLine1)
                     )
                   "
                 >
@@ -27,33 +25,39 @@
                 </b-form-group>
                 <b-form-group
                   label="City*"
-                  :state="isInvalid($v.address.city)"
+                  :state="validation.isInvalid($v.address.city)"
                   :invalid-feedback="
-                    invalidFeedback($v.address.city, validateVParams($v.address.city.$params, $v.address.city))
+                    validation.invalidFeedback(
+                      $v.address.city,
+                      validation.validateVParams($v.address.city.$params, $v.address.city)
+                    )
                   "
                 >
                   <b-form-input v-model="$v.address.city.$model" placeholder="City" />
                 </b-form-group>
                 <b-form-group
                   label="Country*"
-                  :state="isInvalid($v.address.country)"
+                  :state="validation.isInvalid($v.address.country)"
                   :invalid-feedback="
-                    invalidFeedback($v.address.country, validateVParams($v.address.country.$params, $v.address.country))
+                    validation.invalidFeedback(
+                      $v.address.country,
+                      validation.validateVParams($v.address.country.$params, $v.address.country)
+                    )
                   "
                 >
                   <b-form-select
                     v-model="$v.address.country.$model"
-                    :options="countryOptionsWithDefault"
+                    :options="base.unRefs.countryOptionsWithDefault"
                     placeholder="Registration Country"
                   />
                 </b-form-group>
                 <b-form-group
                   label="Post Code*"
-                  :state="isInvalid($v.address.postCode)"
+                  :state="validation.isInvalid($v.address.postCode)"
                   :invalid-feedback="
-                    invalidFeedback(
+                    validation.invalidFeedback(
                       $v.address.postCode,
-                      validateVParams($v.address.postCode.$params, $v.address.postCode)
+                      validation.validateVParams($v.address.postCode.$params, $v.address.postCode)
                     )
                   "
                 >
@@ -77,32 +81,33 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 import { LegalAddressModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/LegalAddressModel'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
 import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
   layout: 'auth',
   validations: {
     address: {
       addressLine1: {
-        required
+        required,
       },
       city: { required },
       postCode: { required },
       country: {
         required,
-        maxLength: maxLength(2)
-      }
-    }
+        maxLength: maxLength(2),
+      },
+    },
   },
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
@@ -110,30 +115,33 @@ import { Nullable } from '~/global'
     RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
     ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
-    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
-  }
+    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
+  },
 })
-export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMixin) {
+export default class ConsumerAddressPage extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   address: Nullable<AddressModel | LegalAddressModel> = {
     addressLine1: null,
     addressLine2: null,
     city: null,
     postCode: null,
     state: null,
-    country: null
+    country: null,
   }
 
   isLoading: boolean = false
 
   fetch() {
-    if (this.isConsumer && this.consumer) {
-      if (Object.keys(this.consumer.rootUser.address as AddressModel).length !== 0) {
-        this.address = { ...this.consumer?.rootUser.address! }
+    if (this.base.unRefs.isConsumer && this.base.unRefs.consumer) {
+      if (Object.keys(this.base.unRefs.consumer.rootUser.address as AddressModel).length !== 0) {
+        this.address = { ...this.base.unRefs.consumer?.rootUser.address! }
       }
-    } else if (this.isCorporate && this.corporate) {
-      if (Object.keys(this.corporate.company.registeredAddress as LegalAddressModel).length !== 0) {
+    } else if (this.base.unRefs.isCorporate && this.base.unRefs.corporate) {
+      if (Object.keys(this.base.unRefs.corporate.company.registeredAddress as LegalAddressModel).length !== 0) {
         // treat as corporate
-        this.address = { ...this.corporate?.company.registeredAddress! }
+        this.address = { ...this.base.unRefs.corporate?.company.registeredAddress! }
       }
     }
   }
@@ -167,11 +175,11 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
       this.isLoading = true
       let xhr
 
-      if (this.isConsumer) {
-        xhr = this.stores.consumers.update({ address: this.address as AddressModel })
+      if (this.base.unRefs.isConsumer) {
+        xhr = this.base.stores.consumers.update({ address: this.address as AddressModel })
       } else {
         // treat as corporate
-        xhr = this.stores.corporates.update({ companyBusinessAddress: this.address as AddressModel })
+        xhr = this.base.stores.corporates.update({ companyBusinessAddress: this.address as AddressModel })
       }
       xhr.then(this.addressUpdated)
 
@@ -186,24 +194,24 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
   async addressUpdated() {
     let identityRootVerified: CorporatesRootUserModel | ConsumersRootUserModel
 
-    if (this.isConsumer) {
-      await this.stores.consumers.get().then((res) => {
+    if (this.base.unRefs.isConsumer) {
+      await this.base.stores.consumers.get().then((res) => {
         identityRootVerified = res.data.rootUser
 
         if (identityRootVerified && !(identityRootVerified as ConsumersRootUserModel).emailVerified) {
           this.goToRegisterVerify()
         } else {
-          this.goToIndex()
+          this.base.goToIndex()
         }
       })
-    } else if (this.isCorporate) {
-      await this.stores.corporates.get().then((res) => {
+    } else if (this.base.unRefs.isCorporate) {
+      await this.base.stores.corporates.get().then((res) => {
         identityRootVerified = res.data.rootUser
 
         if (identityRootVerified && !(identityRootVerified as CorporatesRootUserModel).emailVerified) {
           this.goToRegisterVerify()
         } else {
-          this.goToIndex()
+          this.base.goToIndex()
         }
       })
     }
@@ -213,9 +221,9 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
     return this.$router.push({
       path: '/register/verify',
       query: {
-        email: this.rootUserEmail,
-        send: 'true'
-      }
+        email: this.base.unRefs.rootUserEmail,
+        send: 'true',
+      },
     })
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <section>
     <b-container>
-      <template v-if="managedCard && !pendingDataOrError">
+      <template v-if="cards.unRefs.managedCard && !base.unRefs.pendingDataOrError">
         <b-row align-v="end" class="mb-5 border-bottom pb-3" align-h="center">
           <b-col cols="auto">
             <b-link class="card-view-details" @click="toggleModal">
@@ -13,18 +13,18 @@
             <b-row>
               <b-col>
                 <p class="card-name m-0">
-                  {{ managedCard.nameOnCard }}
+                  {{ cards.unRefs.managedCard.nameOnCard }}
                 </p>
               </b-col>
             </b-row>
             <b-row>
               <b-col>
-                <span class="card-number"> •••• {{ managedCard.cardNumberLastFour }} </span>
+                <span class="card-number"> •••• {{ cards.unRefs.managedCard.cardNumberLastFour }} </span>
 
                 <span class="card-expiry ml-5">
                   <span class="card-expiry-label">EXP</span>
                   <span class="card-expiry-value">
-                    {{ managedCard.expiryMmyy | expiryMmyy }}
+                    {{ cards.unRefs.managedCard.expiryMmyy | expiryMmyy }}
                   </span>
                 </span>
               </b-col>
@@ -34,8 +34,8 @@
             <b-row align-h="end" align-v="end">
               <b-col class="text-right" col cols="auto">
                 <b-button
-                  v-if="isCardActive"
-                  :to="'/transfer?destination=' + managedCard.id"
+                  v-if="cards.unRefs.isCardActive"
+                  :to="'/transfer?destination=' + cards.unRefs.managedCard.id"
                   variant="secondary"
                   class="add-funds"
                 >
@@ -44,11 +44,12 @@
               </b-col>
               <b-col col cols="auto">
                 <div class="card-balance">
-                  <div class="card-balance-label text-muted">
-                    balance
-                  </div>
+                  <div class="card-balance-label text-muted">balance</div>
                   <div class="card-balance-value">
-                    {{ managedCard.balances.availableBalance | weavr_currency(managedCard.currency) }}
+                    {{
+                      cards.unRefs.managedCard.balances.availableBalance |
+                        weavr_currency(cards.unRefs.managedCard.currency)
+                    }}
                   </div>
                 </div>
               </b-col>
@@ -68,9 +69,9 @@
       content-class="transparent-modal"
       size="md"
     >
-      <b-card v-if="managedCard" no-body class="border-0 cards-card" bg-variant="card-purple">
+      <b-card v-if="cards.unRefs.managedCard" no-body class="border-0 cards-card" bg-variant="card-purple">
         <b-card-body class="card-body-modal card-body onvirtual-card">
-          <b-link :to="'/managed-cards/' + managedCard.id + '/statements'" class="p-5">
+          <b-link :to="'/managed-cards/' + cards.unRefs.managedCard.id + '/statements'" class="p-5">
             <b-container fluid class="p-0">
               <b-row align-h="end">
                 <b-col cols="2" class="text-right">
@@ -82,7 +83,7 @@
                   <b-row>
                     <b-col>
                       <div class="card-name">
-                        {{ managedCard.friendlyName }}
+                        {{ cards.unRefs.managedCard.friendlyName }}
                       </div>
                     </b-col>
                   </b-row>
@@ -90,12 +91,12 @@
                     <b-col>
                       <div class="card-number">
                         <weavr-card-number-span
-                          :token="managedCard.cardNumber.value"
+                          :token="cards.unRefs.managedCard.cardNumber.value"
                           :base-style="{
                             fontFamily: '\'Be Vietnam\', sans-serif',
                             color: '#6C1C5C',
                             lineHeight: '1',
-                            fontSize: '20px'
+                            fontSize: '20px',
                           }"
                           class="card-select-number"
                         />
@@ -107,33 +108,29 @@
               <b-row align-v="end">
                 <b-col cols="6">
                   <div class="card-name-on-card text-truncate">
-                    {{ managedCard.nameOnCard }}
+                    {{ cards.unRefs.managedCard.nameOnCard }}
                   </div>
                 </b-col>
                 <b-col cols="3">
                   <div class="card-expiry">
-                    <div class="card-expiry-label">
-                      EXP
-                    </div>
+                    <div class="card-expiry-label">EXP</div>
                     <div class="card-expiry-value">
-                      {{ managedCard.expiryMmyy | expiryMmyy }}
+                      {{ cards.unRefs.managedCard.expiryMmyy | expiryMmyy }}
                     </div>
                   </div>
                 </b-col>
                 <b-col cols="3">
                   <div class="card-cvv">
-                    <div class="card-cvv-label">
-                      CVV
-                    </div>
+                    <div class="card-cvv-label">CVV</div>
                     <div class="card-cvv-value">
                       <weavr-cvv-span
-                        :token="managedCard.cvv.value"
+                        :token="cards.unRefs.managedCard.cvv.value"
                         :base-style="{
                           fontFamily: '\'Be Vietnam\', sans-serif',
                           color: '#6C1C5C',
                           lineHeight: '14.4px',
                           fontSize: '14.4px',
-                          fontWeight: 300
+                          fontWeight: 300,
                         }"
                         class="card-select-number"
                       />
@@ -154,29 +151,31 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import RouterMixin from '~/mixins/RouterMixin'
-import FiltersMixin from '~/mixins/FiltersMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
-import CardsMixin from '~/mixins/CardsMixin'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import Statement from '~/components/cards/statement/statement.vue'
+import { useBase } from '~/composables/useBase'
+import { useCards } from '~/composables/useCards'
 
 const dot = require('dot-object')
 const moment = require('moment')
 
 @Component({
   watch: {
-    '$route.query': 'fetchCardStatements'
+    '$route.query': 'fetchCardStatements',
   },
   components: {
     Statement,
-    StatementItem: () => import('~/components/statement/item.vue')
-  }
+    StatementItem: () => import('~/components/statement/item.vue'),
+  },
 })
-export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixin, FiltersMixin, CardsMixin) {
+export default class ManagedCardsStatements extends Vue {
+  base = useBase(this)
+  cards = useCards(this)
+
   filters: StatementFiltersRequest | null = null
 
   page: number = 0
@@ -185,9 +184,9 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
 
   async fetch() {
     this.page = 0
-    this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+    this.$weavrSetUserToken('Bearer ' + this.base.stores.auth.token)
 
-    await this.stores.cards.getManagedCard(this.cardId)
+    await this.base.stores.cards.getManagedCard(this.cards.unRefs.cardId)
     await this.fetchCardStatements()
   }
 
@@ -196,15 +195,11 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
     const filters = routeQueries.filters || {}
 
     if (!filters?.fromTimestamp) {
-      filters.fromTimestamp = moment()
-        .startOf('month')
-        .valueOf()
+      filters.fromTimestamp = moment().startOf('month').valueOf()
     }
 
     if (!filters?.toTimestamp) {
-      filters.toTimestamp = moment()
-        .endOf('month')
-        .valueOf()
+      filters.toTimestamp = moment().endOf('month').valueOf()
     }
 
     const statementFilters: StatementFiltersRequest = {
@@ -212,18 +207,18 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
       orderByTimestamp: OrderEnum.DESC,
       limit: 100,
       offset: 0,
-      ...filters
+      ...filters,
     }
 
     const _req: ManagedCardStatementRequest = {
-      id: this.cardId,
-      request: statementFilters
+      id: this.cards.unRefs.cardId,
+      request: statementFilters,
     }
 
     this.filters = statementFilters
 
-    this.stores.cards.clearCardStatements()
-    await this.stores.cards.getCardStatement(_req)
+    this.base.stores.cards.clearCardStatements()
+    await this.base.stores.cards.getCardStatement(_req)
   }
 
   toggleModal() {
@@ -237,10 +232,10 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
       const request: StatementFiltersRequest = { ...this.filters }
       request.offset = this.page * +request.limit!
 
-      this.stores.cards
+      this.base.stores.cards
         .getCardStatement({
           id: this.$route.params.id,
-          request
+          request,
         })
         .then((response) => {
           if (!response.data.responseCount || response.data.responseCount < request.limit!) {

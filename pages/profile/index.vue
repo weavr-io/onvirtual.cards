@@ -8,12 +8,24 @@
             <b-form-row>
               <b-col>
                 <b-form-group label="FIRST NAME">
-                  <b-form-input :value="rootName" class="form-control" placeholder="John" readonly disabled />
+                  <b-form-input
+                    :value="base.unRefs.rootName"
+                    class="form-control"
+                    placeholder="John"
+                    readonly
+                    disabled
+                  />
                 </b-form-group>
               </b-col>
               <b-col>
                 <b-form-group label="LAST NAME">
-                  <b-form-input :value="rootSurname" class="form-control" placeholder="Doe" readonly disabled />
+                  <b-form-input
+                    :value="base.unRefs.rootSurname"
+                    class="form-control"
+                    placeholder="Doe"
+                    readonly
+                    disabled
+                  />
                 </b-form-group>
               </b-col>
             </b-form-row>
@@ -21,11 +33,14 @@
               <b-col>
                 <b-form-group
                   label="E-Mail"
-                  :state="isInvalid($v.updateIdentityRootUser.email)"
+                  :state="validation.isInvalid($v.updateIdentityRootUser.email)"
                   :invalid-feedback="
-                    invalidFeedback(
+                    validation.invalidFeedback(
                       $v.updateIdentityRootUser.email,
-                      validateVParams($v.updateIdentityRootUser.email.$params, $v.updateIdentityRootUser.email)
+                      validation.validateVParams(
+                        $v.updateIdentityRootUser.email.$params,
+                        $v.updateIdentityRootUser.email
+                      )
                     )
                   "
                 >
@@ -64,9 +79,7 @@
             </div>
             <b-form-row class="my-4">
               <b-col class="text-center">
-                <b-link to="/profile/password/change" class="link">
-                  Change password
-                </b-link>
+                <b-link to="/profile/password/change" class="link"> Change password </b-link>
               </b-col>
             </b-form-row>
             <b-row class="mt-5" align-v="center">
@@ -85,45 +98,49 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import Vue from 'vue'
 import { DeepNullable } from '~/global'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     updateIdentityRootUser: {
       mobile: {
         number: {
-          required
+          required,
         },
-        countryCode: { required }
+        countryCode: { required },
       },
       email: {
         required,
-        email
-      }
-    }
-  }
+        email,
+      },
+    },
+  },
 })
-export default class Profile extends mixins(BaseMixin, ValidationMixin) {
+export default class Profile extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   numberIsValid: boolean | null = null
 
   updateIdentityRootUser: DeepNullable<{ mobile: MobileModel; email: string }> = {
     mobile: {
       number: null,
-      countryCode: null
+      countryCode: null,
     },
-    email: null
+    email: null,
   }
 
   isLoading: boolean = false
@@ -133,20 +150,22 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
     number: string
   } = {
     countryCode: '',
-    number: ''
+    number: '',
   }
 
   fetch() {
     this.updateIdentityRootUser = {
       mobile: {
-        countryCode: this.isConsumer
-          ? this.consumer?.rootUser?.mobile.countryCode ?? null
-          : this.corporate?.rootUser?.mobile.countryCode ?? null,
-        number: this.isConsumer
-          ? this.consumer?.rootUser?.mobile.number ?? null
-          : this.corporate?.rootUser?.mobile.number ?? null
+        countryCode: this.base.unRefs.isConsumer
+          ? this.base.unRefs.consumer?.rootUser?.mobile.countryCode ?? null
+          : this.base.unRefs.corporate?.rootUser?.mobile.countryCode ?? null,
+        number: this.base.unRefs.isConsumer
+          ? this.base.unRefs.consumer?.rootUser?.mobile.number ?? null
+          : this.base.unRefs.corporate?.rootUser?.mobile.number ?? null,
       },
-      email: this.isConsumer ? this.consumer?.rootUser?.email ?? null : this.corporate?.rootUser?.email ?? null
+      email: this.base.unRefs.isConsumer
+        ? this.base.unRefs.consumer?.rootUser?.email ?? null
+        : this.base.unRefs.corporate?.rootUser?.email ?? null,
     }
 
     if (!(this.updateIdentityRootUser.mobile?.countryCode && this.updateIdentityRootUser.mobile.number)) {
@@ -159,18 +178,20 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
 
     this.mobile = {
       countryCode: _parsedNumber?.country ?? '',
-      number: this.updateIdentityRootUser.mobile?.number ?? ''
+      number: this.updateIdentityRootUser.mobile?.number ?? '',
     }
   }
 
   get isMobileVerified() {
-    return this.isConsumer
-      ? this.consumer?.rootUser.mobileNumberVerified
-      : this.corporate?.rootUser.mobileNumberVerified
+    return this.base.unRefs.isConsumer
+      ? this.base.unRefs.consumer?.rootUser.mobileNumberVerified
+      : this.base.unRefs.corporate?.rootUser.mobileNumberVerified
   }
 
   get isEmailVerified() {
-    return this.isConsumer ? this.consumer?.rootUser.emailVerified : this.corporate?.rootUser.emailVerified
+    return this.base.unRefs.isConsumer
+      ? this.base.unRefs.consumer?.rootUser.emailVerified
+      : this.base.unRefs.corporate?.rootUser.emailVerified
   }
 
   phoneUpdate(number) {
@@ -197,9 +218,9 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
 
     const xhr: Promise<any>[] = []
 
-    this.isConsumer
-      ? xhr.push(this.stores.consumers.update(this.updateIdentityRootUser as UpdateConsumerRequest))
-      : xhr.push(this.stores.corporates.update(this.updateIdentityRootUser as UpdateCorporateRequest))
+    this.base.unRefs.isConsumer
+      ? xhr.push(this.base.stores.consumers.update(this.updateIdentityRootUser as UpdateConsumerRequest))
+      : xhr.push(this.base.stores.corporates.update(this.updateIdentityRootUser as UpdateCorporateRequest))
 
     Promise.all(xhr).finally(() => {
       this.isLoading = false

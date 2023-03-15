@@ -30,19 +30,22 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 import KYCAlert from '~/components/consumers/KYCAlert.vue'
 import DashboardHeader from '~/components/DashboardHeader.vue'
 import { KYCErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCErrorCodeEnum'
+import { useBase } from '~/composables/useBase'
 
 @Component({
   components: { DashboardHeader, KYCAlert, WeavrKyc },
   middleware: ['kyVerified'],
 })
-export default class KycPage extends mixins(BaseMixin) {
+export default class KycPage extends Vue {
+  base = useBase(this)
+
   redirectUrl!: string
 
   reference!: string
@@ -58,10 +61,10 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   fetch() {
-    return this.stores.consumers
+    return this.base.stores.consumers
       .startKYC()
       .then((res) => {
-        this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+        this.$weavrSetUserToken('Bearer ' + this.base.stores.auth.token)
         this.reference = res.data.reference
       })
       .catch((res) => {

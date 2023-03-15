@@ -3,9 +3,7 @@
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-6">
         <div class="text-center">
-          <h2 class="font-weight-lighter">
-            Set password
-          </h2>
+          <h2 class="font-weight-lighter">Set password</h2>
         </div>
         <error-alert
           message="The reset password link is invalid or has expired.  Please restart the password reset process."
@@ -13,15 +11,15 @@
         <b-form v-if="noErrors" id="contact-form" class="mt-5" @submit.prevent="setPassword">
           <b-form-group
             id="ig-email"
-            :state="isInvalid($v.form.email)"
-            :invalid-feedback="invalidFeedback($v.form.email, 'email')"
+            :state="validation.isInvalid($v.form.email)"
+            :invalid-feedback="validation.invalidFeedback($v.form.email, 'email')"
             label="Email"
             label-for="setEmail"
           >
             <b-form-input
               id="setEmail"
               v-model="form.email"
-              :state="isInvalid($v.form.email)"
+              :state="validation.isInvalid($v.form.email)"
               class="form-control"
               type="text"
               name="setEmail"
@@ -53,49 +51,53 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Ref } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
+import Vue from 'vue'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/LoaderButton.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
   layout: 'auth',
   components: {
     ErrorAlert,
     LoaderButton,
-    WeavrPasswordInput
+    WeavrPasswordInput,
   },
   validations: {
     form: {
       email: {
         required,
-        email
-      }
-    }
-  }
+        email,
+      },
+    },
+  },
 })
-export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin) {
+export default class PasswordSentPage extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   @Ref('passwordField')
   passwordField!: WeavrPasswordInput
 
   isLoading: boolean = false
 
   get noErrors() {
-    return !this.stores.errors.errors
+    return !this.base.stores.errors.errors
   }
 
   protected form: ResumeLostPasswordRequestModel = {
     nonce: '',
     email: '',
     newPassword: {
-      value: ''
-    }
+      value: '',
+    },
   }
 
   fetch() {
@@ -103,7 +105,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
       this.form.nonce = this.$route.params.nonce.toString()
       this.form.email = this.$route.params.email.toString()
     } catch (e) {
-      this.stores.errors.SET_ERROR(e)
+      this.base.stores.errors.SET_ERROR(e)
     }
   }
 
@@ -130,21 +132,21 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
     this.form.newPassword.value = password
     const _request: ValidatePasswordRequestModel = {
       password: {
-        value: password
-      }
+        value: password,
+      },
     }
 
-    this.stores.auth.validatePassword(_request).then(this.submitForm)
+    this.base.stores.auth.validatePassword(_request).then(this.submitForm)
   }
 
   submitForm() {
-    this.stores.auth
+    this.base.stores.auth
       .lostPasswordResume(this.form)
       .then(() => {
         this.$router.push('/login')
       })
       .catch((err) => {
-        this.stores.errors.SET_ERROR(err)
+        this.base.stores.errors.SET_ERROR(err)
       })
   }
 
@@ -168,8 +170,8 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 }

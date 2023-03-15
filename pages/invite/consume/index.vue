@@ -5,14 +5,10 @@
     </div>
     <b-card body-class="p-6">
       <template v-if="showError">
-        <b-alert show variant="danger">
-          Some information is missing. Please make sure you copy the whole URL.
-        </b-alert>
+        <b-alert show variant="danger"> Some information is missing. Please make sure you copy the whole URL. </b-alert>
       </template>
       <template v-else>
-        <h3 class="text-center font-weight-light mb-6">
-          Accept Invite
-        </h3>
+        <h3 class="text-center font-weight-light mb-6">Accept Invite</h3>
         <error-alert />
         <b-form @submit="tryToSubmitForm">
           <client-only placeholder="Loading...">
@@ -42,23 +38,26 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Ref } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
+import { useBase } from '~/composables/useBase'
 
 @Component({
   layout: 'auth',
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    WeavrPasswordInput
-  }
+    WeavrPasswordInput,
+  },
 })
-export default class IniteConsume extends mixins(BaseMixin) {
+export default class IniteConsume extends Vue {
+  base = useBase(this)
+
   protected form!: { id: IDModel; data: InviteConsumeRequestModel }
 
   showError: boolean = false
@@ -73,18 +72,18 @@ export default class IniteConsume extends mixins(BaseMixin) {
         data: {
           inviteCode: route.query.nonce.toString(),
           password: {
-            value: ''
-          }
-        }
+            value: '',
+          },
+        },
       }
 
       return {
         form: _consumeInviteRequest,
-        showError: false
+        showError: false,
       }
     } catch (e) {
       return {
-        showError: true
+        showError: true,
       }
     }
   }
@@ -94,16 +93,16 @@ export default class IniteConsume extends mixins(BaseMixin) {
       const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
         id: this.$route.query.user_id.toString(),
         data: {
-          inviteCode: this.$route.query.nonce.toString()
-        }
+          inviteCode: this.$route.query.nonce.toString(),
+        },
       }
 
-      return this.stores.users.inviteValidate(_validateRequest).catch(this.handleError)
+      return this.base.stores.users.inviteValidate(_validateRequest).catch(this.handleError)
     } catch (e) {}
   }
 
   handleError(e) {
-    this.stores.errors.SET_ERROR(e.response)
+    this.base.stores.errors.SET_ERROR(e.response)
   }
 
   tryToSubmitForm(e) {
@@ -113,7 +112,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
       (tokens) => {
         if (tokens.tokens.password !== '') {
           this.form.data.password!.value = tokens.tokens.password
-          this.stores.users.inviteConsume(this.form).then(() => {
+          this.base.stores.users.inviteConsume(this.form).then(() => {
             this.$router.push('/login')
           })
         } else {
@@ -147,8 +146,8 @@ export default class IniteConsume extends mixins(BaseMixin) {
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 }

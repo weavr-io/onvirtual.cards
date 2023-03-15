@@ -1,19 +1,16 @@
-import { computed, getCurrentInstance } from 'vue'
+import { computed, reactive } from 'vue'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { useCsv } from '~/composables/useCsv'
 import { useBase } from '~/composables/useBase'
-import { useNuxtApp } from '~/.nuxt/imports'
 
-export function useAccounts() {
+export function useAccounts(root) {
   const { downloadBlobToCsv } = useCsv()
-  const { stores, router } = useBase()
+  const { stores } = useBase(root)
 
-  const { $apiMulti } = useNuxtApp()
-
-  const accountsBalance = computed<boolean>(() => {
-    if (router.matched[0].name) {
-      return ['managed-accounts', 'managed-accounts-id'].includes(router.matched[0].name)
+  const isManagedAccounts = computed<boolean>(() => {
+    if (root.$route.matched[0].name) {
+      return ['managed-accounts', 'managed-accounts-id'].includes(root.$route.matched[0].name)
     } else {
       return false
     }
@@ -34,16 +31,18 @@ export function useAccounts() {
   })
 
   function goToManagedAccountIndex() {
-    return router.push('/managed-accounts')
+    return root.$router.push('/managed-accounts')
   }
 
   function downloadAsCSV(params: { id: IDModel; filters: GetManagedAccountStatementRequest }) {
-    const req = $apiMulti.managedAccounts.downloadStatement(params)
+    const req = root.$apiMulti.managedAccounts.downloadStatement(params)
 
     req.then((res) => {
       downloadBlobToCsv(res.data)
     })
   }
 
-  return { account, accountsBalance, accountId, hasAccount, goToManagedAccountIndex, downloadAsCSV }
+  const unRefs = reactive({ isManagedAccounts, account, hasAccount, accountId })
+
+  return { isManagedAccounts, account, accountId, hasAccount, goToManagedAccountIndex, downloadAsCSV, unRefs }
 }

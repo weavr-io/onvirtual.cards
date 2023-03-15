@@ -3,9 +3,7 @@
     <b-card no-body class="overflow-hidden">
       <b-card-body v-if="!passwordSent" class="p-card">
         <div class="text-center">
-          <h2 class="font-weight-lighter">
-            Reset Password
-          </h2>
+          <h2 class="font-weight-lighter">Reset Password</h2>
           <h5 class="font-weight-lighter mt-4">
             Insert the email you created the account with and we’ll send instructions to reset your password.
           </h5>
@@ -14,15 +12,15 @@
         <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
           <b-form-group
             id="ig-email"
-            :state="isInvalid($v.form.email)"
-            :invalid-feedback="invalidFeedback($v.form.email, 'email')"
+            :state="validation.isInvalid($v.form.email)"
+            :invalid-feedback="validation.invalidFeedback($v.form.email, 'email')"
             label="Email:"
             label-for="from-email"
           >
             <b-form-input
               id="from-email"
               v-model="form.email"
-              :state="isInvalid($v.form.email)"
+              :state="validation.isInvalid($v.form.email)"
               class="form-control"
               type="email"
               name="setEmail"
@@ -37,9 +35,7 @@
       <b-card v-else no-body class="overflow-hidden">
         <b-card-body class="p-card">
           <div class="text-center">
-            <h2 class="font-weight-lighter">
-              Email sent
-            </h2>
+            <h2 class="font-weight-lighter">Email sent</h2>
             <h5 class="font-weight-lighter mt-4">
               Check your email for a reset link. If you don’t receive this within 5 minutes, click the link below to
               resend.
@@ -61,34 +57,38 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
   layout: 'auth',
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     form: {
       email: {
         required,
-        email
-      }
-    }
-  }
+        email,
+      },
+    },
+  },
 })
-export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin) {
+export default class ResetPasswordPage extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   isLoading: boolean = false
 
   passwordSent: boolean = false
 
   protected form: InitiateLostPasswordRequestModel = {
-    email: ''
+    email: '',
   }
 
   resetPassword() {
@@ -96,14 +96,14 @@ export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin
     if (this.$v.$invalid) return
 
     this.isLoading = true
-    this.stores.errors.SET_ERROR(null)
-    this.stores.auth
+    this.base.stores.errors.SET_ERROR(null)
+    this.base.stores.auth
       .lostPasswordInitiate(this.form)
       .then(() => {
         this.passwordSent = true
       })
       .catch((err) => {
-        this.stores.errors.SET_ERROR(err)
+        this.base.stores.errors.SET_ERROR(err)
       })
       .finally(() => {
         this.isLoading = false

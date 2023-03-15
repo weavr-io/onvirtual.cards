@@ -3,9 +3,7 @@
     <b-row class="my-5">
       <b-card body-class="p-6">
         <b-form @submit.prevent="tryToSubmitAccessCode">
-          <h3 class="text-center font-weight-light mb-6">
-            Enter the access code for registration
-          </h3>
+          <h3 class="text-center font-weight-light mb-6">Enter the access code for registration</h3>
           <template v-if="inviteCodeError.showMsg">
             <b-alert show variant="danger" class="mb-4">
               {{ inviteCodeError.errorMsg }}
@@ -17,7 +15,7 @@
           <b-form-group>
             <b-form-input
               v-model="$v.form.code.$model"
-              :state="isInvalid($v.form.code)"
+              :state="validation.isInvalid($v.form.code)"
               placeholder="Enter your access code"
             />
             <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -39,30 +37,34 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
 import { AxiosError } from 'axios'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
   validations: {
     form: {
-      code: { required }
-    }
-  }
+      code: { required },
+    },
+  },
 })
-export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMixin) {
+export default class AccessCodeComponent extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   form: AccessCodeModel = {
-    code: null
+    code: null,
   }
 
   isLoading: boolean = false
 
   inviteCodeError: { errorMsg: string; showMsg: boolean } = {
     errorMsg: '',
-    showMsg: false
+    showMsg: false,
   }
 
   tryToSubmitAccessCode() {
@@ -76,17 +78,17 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
 
     if (this.form.code) {
       this.form = {
-        code: +this.form.code
+        code: +this.form.code,
       }
 
-      return this.stores.accessCodes
+      return this.base.stores.accessCodes
         .verifyAccessCode(this.form)
         .catch((err: AxiosError) => {
           const is403: boolean = err.response?.status === 403
 
           this.inviteCodeError = {
             errorMsg: is403 ? 'Invite code is invalid.' : 'An error occurred. Please try again.',
-            showMsg: true
+            showMsg: true,
           }
 
           this.form.code = null

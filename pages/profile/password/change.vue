@@ -5,9 +5,7 @@
         <div class="col-lg-6 offset-lg-3 my-5 text-center">
           <div class="p-relative">
             <div class="text-md d-inline-block text-center">
-              <h1 class="font-weight-light">
-                Change Password
-              </h1>
+              <h1 class="font-weight-light">Change Password</h1>
             </div>
           </div>
         </div>
@@ -53,24 +51,27 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Ref } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import LoaderButton from '~/components/LoaderButton.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
+import { useBase } from '~/composables/useBase'
 
 @Component({
   components: {
     LoaderButton,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    WeavrPasswordInput
+    WeavrPasswordInput,
   },
   validations: {
-    form: {}
-  }
+    form: {},
+  },
 })
-export default class BundlesPage extends mixins(BaseMixin) {
+export default class BundlesPage extends Vue {
+  base = useBase(this)
+
   @Ref('oldPassword')
   oldPassword!: WeavrPasswordInput
 
@@ -81,11 +82,11 @@ export default class BundlesPage extends mixins(BaseMixin) {
 
   changePasswordRequest: UpdatePasswordRequestModel = {
     oldPassword: {
-      value: ''
+      value: '',
     },
     newPassword: {
-      value: ''
-    }
+      value: '',
+    },
   }
 
   checkOnKeyUp(e) {
@@ -112,8 +113,8 @@ export default class BundlesPage extends mixins(BaseMixin) {
       this.changePasswordRequest.oldPassword.value = tokenizedOld
       this.changePasswordRequest.newPassword.value = tokenizedNew
       console.debug('ALL Settled', this.changePasswordRequest)
-      this.stores.auth.validatePassword({ password: this.changePasswordRequest.newPassword }).then(() => {
-        this.stores.auth.updatePassword(this.changePasswordRequest).then(() => {
+      this.base.stores.auth.validatePassword({ password: this.changePasswordRequest.newPassword }).then(() => {
+        this.base.stores.auth.updatePassword(this.changePasswordRequest).then(() => {
           this.$router.push('/profile')
         })
       })
@@ -135,8 +136,8 @@ export default class BundlesPage extends mixins(BaseMixin) {
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 }

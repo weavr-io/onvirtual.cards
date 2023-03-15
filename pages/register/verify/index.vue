@@ -5,9 +5,7 @@
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
-        <h3 class="font-weight-light text-center">
-          Check your inbox!
-        </h3>
+        <h3 class="font-weight-light text-center">Check your inbox!</h3>
         <b-row>
           <b-col md="6" offset-md="3" class="text-center">
             <b-img fluid src="/img/email.svg" class="mt-5 mb-2" />
@@ -24,7 +22,7 @@
           <b-row>
             <b-col cols="6" offset="3">
               <b-form-group
-                :state="isInvalid($v.verifyEmailRequest.verificationCode)"
+                :state="validation.isInvalid($v.verifyEmailRequest.verificationCode)"
                 invalid-feedback="This field is required and must be 6 characters"
               >
                 <b-form-input
@@ -50,30 +48,34 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
   layout: 'auth',
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     verifyEmailRequest: {
       verificationCode: {
         required,
         minLength: minLength(6),
-        maxLength: maxLength(6)
-      }
-    }
-  }
+        maxLength: maxLength(6),
+      },
+    },
+  },
 })
-export default class EmailVerificationPage extends mixins(BaseMixin, ValidationMixin) {
+export default class EmailVerificationPage extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   showEmailResentSuccess: boolean = false
 
   private verifyEmailRequest!: VerifyEmailRequest
@@ -97,7 +99,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
     const request: VerifyEmailRequest = {
       email: route.query.email + '',
-      verificationCode: route.query.nonce ? route.query.nonce + '' : ''
+      verificationCode: route.query.nonce ? route.query.nonce + '' : '',
     }
 
     if (request.verificationCode !== '') {
@@ -126,7 +128,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     }
 
     return {
-      verifyEmailRequest: request
+      verifyEmailRequest: request,
     }
   }
 
@@ -140,7 +142,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     this.isLoading = true
 
     try {
-      if (this.isConsumer) {
+      if (this.base.unRefs.isConsumer) {
         await this.sendVerifyEmailConsumers()
       } else {
         // else treat as corporate
@@ -153,14 +155,14 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
   }
 
   async sendVerifyEmailConsumers() {
-    await this.stores.consumers.sendVerificationCodeEmail({
-      email: this.verifyEmailRequest.email
+    await this.base.stores.consumers.sendVerificationCodeEmail({
+      email: this.verifyEmailRequest.email,
     })
   }
 
   async sendVerifyEmailCorporates() {
-    await this.stores.corporates.sendVerificationCodeEmail({
-      email: this.verifyEmailRequest.email
+    await this.base.stores.corporates.sendVerificationCodeEmail({
+      email: this.verifyEmailRequest.email,
     })
   }
 
@@ -179,20 +181,20 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
     this.isLoading = true
 
-    this.isConsumer
-      ? this.stores.consumers
+    this.base.unRefs.isConsumer
+      ? this.base.stores.consumers
           .verifyEmail(this.verifyEmailRequest)
           .then(this.onMobileVerified)
           .catch((e) => {
             this.removeLoader()
-            this.stores.errors.SET_CONFLICT(e)
+            this.base.stores.errors.SET_CONFLICT(e)
           })
-      : this.stores.corporates
+      : this.base.stores.corporates
           .verifyEmail(this.verifyEmailRequest)
           .then(this.onMobileVerified)
           .catch((e) => {
             this.removeLoader()
-            this.stores.errors.SET_CONFLICT(e)
+            this.base.stores.errors.SET_CONFLICT(e)
           })
   }
 
@@ -201,7 +203,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
   }
 
   onMobileVerified() {
-    this.stores.identities.SET_EMAIL_VERIFIED(true)
+    this.base.stores.identities.SET_EMAIL_VERIFIED(true)
 
     return this.$router.push({
       path: '/register/verify/mobile',
@@ -210,8 +212,8 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
         cons: this.$route.query.cons,
         corp: this.$route.query.corp,
         mobileNumber: this.$route.query.mobileNumber,
-        mobileCountryCode: this.$route.query.mobileCountryCode
-      }
+        mobileCountryCode: this.$route.query.mobileCountryCode,
+      },
     })
   }
 }

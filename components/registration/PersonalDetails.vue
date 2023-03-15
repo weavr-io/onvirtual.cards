@@ -1,26 +1,20 @@
 <template>
   <b-form novalidate @submit="submitForm">
-    <h3 class="text-center font-weight-light mb-5">
-      A few more steps
-    </h3>
+    <h3 class="text-center font-weight-light mb-5">A few more steps</h3>
     <error-alert />
     <b-form-group label="First Name*">
       <b-form-input
         v-model="$v.form.rootUser.name.$model"
-        :state="isInvalid($v.form.rootUser.name)"
+        :state="validation.isInvalid($v.form.rootUser.name)"
         placeholder="Name"
       />
-      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.required">
-        This field is required
-      </b-form-invalid-feedback>
-      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.maxLength">
-        Name is too long.
-      </b-form-invalid-feedback>
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.required"> This field is required </b-form-invalid-feedback>
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.maxLength"> Name is too long. </b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Last Name*">
       <b-form-input
         v-model="$v.form.rootUser.surname.$model"
-        :state="isInvalid($v.form.rootUser.surname)"
+        :state="validation.isInvalid($v.form.rootUser.surname)"
         placeholder="Last Name"
       />
       <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.required">
@@ -49,7 +43,7 @@
     <b-form-group label="Company Name*">
       <b-form-input
         v-model="$v.form.company.name.$model"
-        :state="isInvalid($v.form.company.name)"
+        :state="validation.isInvalid($v.form.company.name)"
         placeholder="Company Name"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -57,7 +51,7 @@
     <b-form-group label="Company Registration Number*">
       <b-form-input
         v-model="$v.form.company.registrationNumber.$model"
-        :state="isInvalid($v.form.company.registrationNumber)"
+        :state="validation.isInvalid($v.form.company.registrationNumber)"
         placeholder="C00000"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -65,7 +59,7 @@
     <b-form-group label="Company Type">
       <b-form-select
         v-model="$v.form.company.type.$model"
-        :state="isInvalid($v.form.company.type)"
+        :state="validation.isInvalid($v.form.company.type)"
         :options="companyTypeOptionsWithDefault"
         placeholder="Company Type"
       />
@@ -74,24 +68,24 @@
     <b-form-group label="Registration Country*">
       <b-form-select
         v-model="$v.form.company.registrationCountry.$model"
-        :state="isInvalid($v.form.company.registrationCountry)"
-        :options="countryOptionsWithDefault"
+        :state="validation.isInvalid($v.form.company.registrationCountry)"
+        :options="base.unRefs.countryOptionsWithDefault"
         placeholder="Registration Country"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.industry)" label="Industry*">
+    <b-form-group :state="validation.isInvalid($v.form.industry)" label="Industry*">
       <b-form-select
         v-model="$v.form.industry.$model"
-        :state="isInvalid($v.form.industry)"
+        :state="validation.isInvalid($v.form.industry)"
         :options="industryOccupationOptions"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.sourceOfFunds)" label="Source of Funds*">
+    <b-form-group :state="validation.isInvalid($v.form.sourceOfFunds)" label="Source of Funds*">
       <b-form-select
         v-model="$v.form.sourceOfFunds.$model"
-        :state="isInvalid($v.form.sourceOfFunds)"
+        :state="validation.isInvalid($v.form.sourceOfFunds)"
         :options="sourceOfFundsOptions"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -99,14 +93,17 @@
     <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
       <b-form-input
         v-model="form.sourceOfFundsOther"
-        :state="isInvalid($v.form.sourceOfFundsOther)"
+        :state="validation.isInvalid($v.form.sourceOfFundsOther)"
         placeholder="Specify Other Source of Funds"
       />
     </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootUser.companyPosition)" label="My position within the company is*">
+    <b-form-group
+      :state="validation.isInvalid($v.form.rootUser.companyPosition)"
+      label="My position within the company is*"
+    >
       <b-form-radio
         v-model="$v.form.rootUser.companyPosition.$model"
-        :state="isInvalid($v.form.rootUser.companyPosition)"
+        :state="validation.isInvalid($v.form.rootUser.companyPosition)"
         name="company-position"
         value="AUTHORISED_REPRESENTATIVE"
       >
@@ -114,7 +111,7 @@
       </b-form-radio>
       <b-form-radio
         v-model="$v.form.rootUser.companyPosition.$model"
-        :state="isInvalid($v.form.rootUser.companyPosition)"
+        :state="validation.isInvalid($v.form.rootUser.companyPosition)"
         name="company-position"
         value="DIRECTOR"
       >
@@ -138,18 +135,19 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { Component, Emit } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
 
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -159,56 +157,59 @@ const Countries = require('~/static/json/countries.json')
       rootUser: {
         name: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
         },
         surname: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
         },
         mobile: {
           number: {
-            required
+            required,
           },
           countryCode: {
-            required
-          }
+            required,
+          },
         },
         companyPosition: {
-          required
-        }
+          required,
+        },
       },
       company: {
         type: {
-          required
+          required,
         },
         name: {
           required,
-          maxLength: maxLength(100)
+          maxLength: maxLength(100),
         },
         registrationNumber: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
         },
         registrationCountry: {
           required,
-          maxLength: maxLength(2)
-        }
+          maxLength: maxLength(2),
+        },
       },
       industry: {
-        required
+        required,
       },
       sourceOfFunds: {
-        required
+        required,
       },
-      sourceOfFundsOther: {}
-    }
+      sourceOfFundsOther: {},
+    },
   },
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
-  }
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
+  },
 })
-export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {
+export default class PersonalDetailsForm extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
 
   numberIsValid: boolean | null = null
@@ -219,19 +220,19 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
       surname: null,
       mobile: {
         number: null,
-        countryCode: ''
+        countryCode: '',
       },
-      companyPosition: null
+      companyPosition: null,
     },
     company: {
       type: null,
       name: null,
       registrationNumber: null,
-      registrationCountry: null
+      registrationCountry: null,
     },
     industry: null,
     sourceOfFunds: null,
-    sourceOfFundsOther: null
+    sourceOfFundsOther: null,
   }
 
   get mobileCountries(): string[] {
@@ -241,7 +242,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
   }
 
   get isLoadingRegistration() {
-    return this.stores.corporates.isLoadingRegistration
+    return this.base.stores.corporates.isLoadingRegistration
   }
 
   get industryOccupationOptions() {

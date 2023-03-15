@@ -3,29 +3,25 @@
     <app-header />
     <dashboard-header />
     <Nuxt />
-    <kyb-alert v-if="showKybAlert" />
-    <kyc-alert v-if="showKycAlert" />
+    <kyb-alert v-if="kyVerified.unRefs.showKybAlert" />
+    <kyc-alert v-if="kyVerified.unRefs.showKycAlert" />
     <b-alert
       id="verify-mobile"
-      :show="showVerifyMobileAlert && !showVerifyEmailAlert"
+      :show="kyVerified.unRefs.showVerifyMobileAlert && !kyVerified.unRefs.showVerifyEmailAlert"
       class="fixed-bottom bottom-left-alert m-4 p-4"
       variant="bg-colored"
     >
       We need to verify your mobile number. Please click
-      <b-link to="/register/verify/mobile" class="link">
-        here.
-      </b-link>
+      <b-link to="/register/verify/mobile" class="link"> here. </b-link>
     </b-alert>
     <b-alert
       id="verify-email"
-      :show="showVerifyEmailAlert"
+      :show="kyVerified.unRefs.showVerifyEmailAlert"
       class="fixed-bottom bottom-left-alert m-4 p-4"
       variant="bg-colored"
     >
       We need to verify your email address. Please click
-      <b-link to="/register/verify" class="link">
-        here.
-      </b-link>
+      <b-link to="/register/verify" class="link"> here. </b-link>
     </b-alert>
     <div v-if="isLoading" id="loader">
       <div class="loader-spinner">
@@ -37,8 +33,10 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import KyVerified from '~/mixins/kyVerified'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
+import { useKyVerified } from '~/composables/useKyVerified'
+import { useBase } from '~/composables/useBase'
 
 @Component({
   components: {
@@ -47,16 +45,19 @@ import KyVerified from '~/mixins/kyVerified'
     DashboardHeader: () => import('~/components/DashboardHeader.vue'),
     KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
     KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
-    cookiePolicy: () => import('~/components/cookie.vue')
-  }
+    cookiePolicy: () => import('~/components/cookie.vue'),
+  },
 })
-export default class DefaultLayout extends mixins(KyVerified) {
+export default class DefaultLayout extends Vue {
+  base = useBase(this)
+  kyVerified = useKyVerified(this)
+
   get isLoading() {
-    return this.stores.loader.isLoading
+    return this.base.stores.loader.isLoading
   }
 
   get accounts() {
-    return this.stores.accounts.accounts
+    return this.base.stores.accounts.accounts
   }
 }
 </script>

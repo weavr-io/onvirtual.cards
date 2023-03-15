@@ -1,7 +1,5 @@
-import { useStore } from 'vuex'
-import { computed } from '~/node_modules/vue'
+import { computed, reactive } from '~/node_modules/vue'
 import { initialiseStores } from '~/utils/store-accessor'
-import { useRouter } from '~/node_modules/vue-router'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
@@ -9,10 +7,8 @@ import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corpo
 
 const Countries = require('~/static/json/countries.json')
 
-export function useBase() {
-  const router = useRouter()
-
-  const stores = initialiseStores(useStore())
+export function useBase(root) {
+  const stores = initialiseStores(root.$store)
 
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms))
@@ -32,14 +28,14 @@ export function useBase() {
 
   const accountProfileId = computed(() => {
     return isConsumer.value
-      ? this.$config.profileId.managed_accounts_consumers!
-      : this.$config.profileId.managed_accounts_corporates!
+      ? root.$config.profileId.managed_accounts_consumers!
+      : root.$config.profileId.managed_accounts_corporates!
   })
 
   const cardProfileId = computed(() => {
     return isConsumer.value
-      ? this.$config.profileId.managed_cards_consumers!
-      : this.$config.profileId.managed_cards_corporates!
+      ? root.$config.profileId.managed_cards_consumers!
+      : root.$config.profileId.managed_cards_corporates!
   })
 
   const profileBaseCurrency = computed(() => {
@@ -104,7 +100,7 @@ export function useBase() {
   })
 
   function goToIndex() {
-    return router.push('/')
+    return root.$router.push('/')
   }
 
   function logout() {
@@ -112,14 +108,14 @@ export function useBase() {
   }
 
   function showSuccessToast(msg?: string, title?: string) {
-    return this.$weavrToast(msg !== undefined ? msg : 'All changes have been saved', {
+    return root.$weavrToast(msg !== undefined ? msg : 'All changes have been saved', {
       title: title !== undefined ? title : 'Changes saved',
       variant: 'success',
     })
   }
 
   function showErrorToast(msg?: string, title?: string) {
-    return this.$weavrToast(msg !== undefined ? msg : 'An error has occurred while saving', {
+    return root.$weavrToast(msg !== undefined ? msg : 'An error has occurred while saving', {
       title: title !== undefined ? title : 'Error',
       variant: 'danger',
     })
@@ -130,20 +126,38 @@ export function useBase() {
      * Flag to show we are waiting for
      * application programme data and any pending $fetch
      */
-    return !this.$fetchState || this.$fetchState.pending
+    return !root.$fetchState || root.$fetchState.pending
   })
 
   const fetchHasError = computed(() => {
-    return this.$fetchState?.error !== null
+    return root.$fetchState?.error !== null
   })
 
   const pendingDataOrError = computed(() => {
     return pendingData.value || fetchHasError.value
   })
 
+  const unRefs = reactive({
+    isConsumer,
+    isCorporate,
+    isLoggedIn,
+    accountProfileId,
+    cardProfileId,
+    profileBaseCurrency,
+    consumer,
+    rootName,
+    rootSurname,
+    rootFullName,
+    corporate,
+    rootUserEmail,
+    countiesOptions,
+    countryOptionsWithDefault,
+    identityVerified,
+    pendingDataOrError,
+  })
+
   return {
     stores,
-    router,
     sleep,
     isConsumer,
     isCorporate,
@@ -165,5 +179,6 @@ export function useBase() {
     showSuccessToast,
     showErrorToast,
     pendingDataOrError,
+    unRefs,
   }
 }

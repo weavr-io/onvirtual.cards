@@ -12,14 +12,12 @@
             <error-alert />
             <div class="form-screen">
               <b-form novalidate @submit.prevent="submitForm">
-                <h3 class="text-center font-weight-light mb-5">
-                  Register
-                </h3>
+                <h3 class="text-center font-weight-light mb-5">Register</h3>
 
                 <b-form-group label="First Name">
                   <b-form-input
                     v-model="registrationRequest.rootUser.name"
-                    :state="isInvalid($v.registrationRequest.rootUser.name)"
+                    :state="validation.isInvalid($v.registrationRequest.rootUser.name)"
                     placeholder="First Name"
                   />
                   <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.name.required">
@@ -32,7 +30,7 @@
                 <b-form-group label="Last Name">
                   <b-form-input
                     v-model="registrationRequest.rootUser.surname"
-                    :state="isInvalid($v.registrationRequest.rootUser.surname)"
+                    :state="validation.isInvalid($v.registrationRequest.rootUser.surname)"
                     placeholder="Last Name"
                   />
                   <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.surname.required">
@@ -54,14 +52,14 @@
                     @input="updateDOB"
                     @change="updateDOB"
                   />
-                  <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.rootUser.dateOfBirth)">
+                  <b-form-invalid-feedback :state="validation.isInvalid($v.registrationRequest.rootUser.dateOfBirth)">
                     This field is required.
                   </b-form-invalid-feedback>
                 </b-form-group>
-                <b-form-group :state="isInvalid($v.registrationRequest.rootUser.email)" label="Email">
+                <b-form-group :state="validation.isInvalid($v.registrationRequest.rootUser.email)" label="Email">
                   <b-form-input
                     v-model="$v.registrationRequest.rootUser.email.$model"
-                    :state="isInvalid($v.registrationRequest.rootUser.email)"
+                    :state="validation.isInvalid($v.registrationRequest.rootUser.email)"
                     placeholder="name@email.com"
                     @input="delayTouch($v.registrationRequest.rootUser.email)"
                   />
@@ -83,18 +81,24 @@
                     This field must be a valid mobile number.
                   </b-form-invalid-feedback>
                 </b-form-group>
-                <b-form-group :state="isInvalid($v.registrationRequest.rootUser.occupation)" label="Industry*">
+                <b-form-group
+                  :state="validation.isInvalid($v.registrationRequest.rootUser.occupation)"
+                  label="Industry*"
+                >
                   <b-form-select
                     v-model="$v.registrationRequest.rootUser.occupation.$model"
-                    :state="isInvalid($v.registrationRequest.rootUser.occupation)"
+                    :state="validation.isInvalid($v.registrationRequest.rootUser.occupation)"
                     :options="industryOccupationOptions"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
-                <b-form-group :state="isInvalid($v.registrationRequest.sourceOfFunds)" label="Source of Funds*">
+                <b-form-group
+                  :state="validation.isInvalid($v.registrationRequest.sourceOfFunds)"
+                  label="Source of Funds*"
+                >
                   <b-form-select
                     v-model="$v.registrationRequest.sourceOfFunds.$model"
-                    :state="isInvalid($v.registrationRequest.sourceOfFunds)"
+                    :state="validation.isInvalid($v.registrationRequest.sourceOfFunds)"
                     :options="sourceOfFundsOptions"
                   />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -102,7 +106,7 @@
                 <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
                   <b-form-input
                     v-model="registrationRequest.sourceOfFundsOther"
-                    :state="isInvalid($v.registrationRequest.sourceOfFundsOther)"
+                    :state="validation.isInvalid($v.registrationRequest.sourceOfFundsOther)"
                     placeholder="Specify Other Source of Funds"
                   />
                 </b-form-group>
@@ -126,7 +130,7 @@
                     <b-form-group>
                       <b-form-checkbox
                         v-model="$v.registrationRequest.acceptedTerms.$model"
-                        :state="isInvalid($v.registrationRequest.acceptedTerms)"
+                        :state="validation.isInvalid($v.registrationRequest.acceptedTerms)"
                       >
                         I accept the
                         <a
@@ -164,13 +168,13 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Ref } from 'nuxt-property-decorator'
 import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import { AxiosResponse } from 'axios'
 
+import Vue from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
@@ -182,8 +186,9 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -196,48 +201,48 @@ const touchMap = new WeakMap()
       rootUser: {
         name: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
         },
         surname: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
         },
         email: {
           required,
-          email
+          email,
         },
         mobile: {
           countryCode: {
-            required
+            required,
           },
           number: {
-            required
-          }
+            required,
+          },
         },
         occupation: {
-          required
+          required,
         },
         dateOfBirth: {
           day: {
-            required
+            required,
           },
           month: {
-            required
+            required,
           },
           year: {
-            required
-          }
-        }
+            required,
+          },
+        },
       },
       acceptedTerms: {
         required,
-        sameAs: sameAs(() => true)
+        sameAs: sameAs(() => true),
       },
       sourceOfFunds: {
-        required
+        required,
       },
-      sourceOfFundsOther: {}
-    }
+      sourceOfFundsOther: {},
+    },
   },
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
@@ -247,12 +252,13 @@ const touchMap = new WeakMap()
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
     DobPicker: () => import('~/components/fields/dob-picker.vue'),
-    WeavrPasswordInput
+    WeavrPasswordInput,
   },
-  middleware: 'accessCodeVerified'
+  middleware: 'accessCodeVerified',
 })
-export default class ConsumerRegistrationPage extends mixins(BaseMixin, ValidationMixin) {
-  // public password: string = ''
+export default class ConsumerRegistrationPage extends Vue {
+  base = useBase(this)
+  validation = useValidation()
 
   private $recaptcha: any
 
@@ -273,21 +279,21 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
       email: null,
       mobile: {
         number: null,
-        countryCode: '+356'
+        countryCode: '+356',
       },
       dateOfBirth: {
         day: null,
         month: null,
-        year: null
+        year: null,
       },
-      occupation: null
+      occupation: null,
     },
     baseCurrency: CurrencyEnum.EUR,
     ipAddress: null,
     acceptedTerms: false,
     sourceOfFunds: null,
     sourceOfFundsOther: null,
-    password: null
+    password: null,
   }
 
   get industryOccupationOptions() {
@@ -315,8 +321,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 
@@ -334,8 +340,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
       altFormat: 'd/m/Y',
       maxDate: new Date(),
       locale: {
-        firstDayOfWeek: 1
-      }
+        firstDayOfWeek: 1,
+      },
     }
   }
 
@@ -376,13 +382,13 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         }
       )
     } catch (error) {
-      this.showErrorToast(error)
+      this.base.showErrorToast(error)
     }
   }
 
   doRegister() {
     this.isLoadingRegistration = true
-    this.stores.consumers
+    this.base.stores.consumers
       .create(this.registrationRequest as CreateConsumerRequest)
       .then(this.onConsumerCreated)
       .catch(this.registrationFailed)
@@ -395,19 +401,19 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   createPassword(identity: IdentityIdModel, rootUserId: IDModel) {
     const passwordRequest: CreatePasswordRequestModel = {
       password: {
-        value: this.registrationRequest.password as string
-      }
+        value: this.registrationRequest.password as string,
+      },
     }
     this.$apiMulti.passwords
       .store({
         userId: rootUserId,
-        data: passwordRequest
+        data: passwordRequest,
       })
       .then(this.onRegisteredSuccessfully.bind(this))
   }
 
   onRegisteredSuccessfully() {
-    this.stores.accessCodes.DELETE_ACCESS_CODE()
+    this.base.stores.accessCodes.DELETE_ACCESS_CODE()
 
     if (!this.registrationRequest.rootUser) {
       return
@@ -416,11 +422,11 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     const loginRequest: LoginWithPasswordRequest = {
       email: this.registrationRequest.rootUser.email as string,
       password: {
-        value: this.registrationRequest.password as string
-      }
+        value: this.registrationRequest.password as string,
+      },
     }
 
-    const _req = this.stores.auth.loginWithPassword(loginRequest)
+    const _req = this.base.stores.auth.loginWithPassword(loginRequest)
 
     _req.then(() => {
       this.$router.push({ path: '/profile/address' })
@@ -430,7 +436,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   registrationFailed(err) {
     this.isLoadingRegistration = false
     const _errCode = err.response.data.errorCode
-    this.showErrorToast(_errCode)
+    this.base.showErrorToast(_errCode)
     window.scrollTo(0, 0)
   }
 
@@ -459,7 +465,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     this.registrationRequest.rootUser!.dateOfBirth = {
       year: val.getFullYear(),
       month: val.getMonth() + 1,
-      day: val.getDate()
+      day: val.getDate(),
     }
   }
 }

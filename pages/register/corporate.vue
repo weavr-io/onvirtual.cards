@@ -20,10 +20,10 @@
   </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { AxiosResponse } from 'axios'
 
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { authStore } from '~/utils/store-accessor'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
@@ -35,6 +35,7 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { DeepNullable, RecursivePartial } from '~/global'
+import { useBase } from '~/composables/useBase'
 
 @Component({
   layout: 'auth',
@@ -43,11 +44,13 @@ import { DeepNullable, RecursivePartial } from '~/global'
     RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
     PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
-    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
+    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
   },
-  middleware: 'accessCodeVerified'
+  middleware: 'accessCodeVerified',
 })
-export default class RegistrationPage extends mixins(BaseMixin) {
+export default class RegistrationPage extends Vue {
+  base = useBase(this)
+
   screen: number = 0
 
   private registrationRequest: DeepNullable<RecursivePartial<CreateCorporateRequest & { password: string }>> = {
@@ -59,25 +62,25 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       email: null,
       mobile: {
         number: null,
-        countryCode: '+356'
+        countryCode: '+356',
       },
-      companyPosition: null
+      companyPosition: null,
     },
     company: {
       type: null,
       name: '',
       registrationNumber: '',
-      registrationCountry: ''
+      registrationCountry: '',
     },
     industry: IndustryTypeEnum.ACCOUNTING,
     sourceOfFunds: CorporateSourceOfFundTypeEnum.CIVIL_CONTRACT,
     acceptedTerms: false,
     ipAddress: '',
-    baseCurrency: CurrencyEnum.EUR
+    baseCurrency: CurrencyEnum.EUR,
   }
 
   get isLoading() {
-    return this.stores.corporates.isLoading
+    return this.base.stores.corporates.isLoading
   }
 
   goBack() {
@@ -129,9 +132,9 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   }
 
   doRegister() {
-    this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
+    this.base.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
 
-    this.stores.corporates
+    this.base.stores.corporates
       .create(this.registrationRequest as CreateCorporateRequest)
       .then(this.onCorporateCreated)
       .catch(this.registrationFailed)
@@ -144,19 +147,19 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   createPassword(identity: IdentityIdModel, rootUserId: IDModel) {
     const passwordRequest: CreatePasswordRequestModel = {
       password: {
-        value: this.registrationRequest.password as string
-      }
+        value: this.registrationRequest.password as string,
+      },
     }
     this.$apiMulti.passwords
       .store({
         userId: rootUserId,
-        data: passwordRequest
+        data: passwordRequest,
       })
       .then(this.onRegisteredSuccessfully.bind(this))
   }
 
   onRegisteredSuccessfully() {
-    this.stores.accessCodes.DELETE_ACCESS_CODE()
+    this.base.stores.accessCodes.DELETE_ACCESS_CODE()
 
     if (!this.registrationRequest.rootUser) {
       return
@@ -165,11 +168,11 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     const loginRequest: LoginWithPasswordRequest = {
       email: this.registrationRequest.rootUser.email as string,
       password: {
-        value: this.registrationRequest.password as string
-      }
+        value: this.registrationRequest.password as string,
+      },
     }
 
-    const _req = this.stores.auth.loginWithPassword(loginRequest)
+    const _req = this.base.stores.auth.loginWithPassword(loginRequest)
 
     _req.then(() => {
       this.$router.push({ path: '/profile/address' })
@@ -177,13 +180,13 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   }
 
   registrationFailed(err) {
-    this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
+    this.base.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
     const _errCode = err.response.data.errorCode
 
     if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
       this.screen = 0
     } else {
-      this.showErrorToast(_errCode)
+      this.base.showErrorToast(_errCode)
     }
   }
 }

@@ -22,31 +22,34 @@
   </b-container>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { DeepNullable } from '~/global'
+import { useBase } from '~/composables/useBase'
 
 @Component({
   components: {
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     AccountSelection: () => import('~/components/transfer/AccountSelection.vue'),
     TopUp: () => import('~/components/transfer/TopUp.vue'),
-    TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue')
-  }
+    TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue'),
+  },
 })
-export default class TransfersPage extends mixins(BaseMixin) {
+export default class TransfersPage extends Vue {
+  base = useBase(this)
+
   createTransferRequest: DeepNullable<CreateTransferRequest> | null = null
 
   async fetch() {
-    await this.stores.cards.getCards()
-    const accounts = await this.stores.accounts.index({
-      profileId: this.accountProfileId,
+    await this.base.stores.cards.getCards()
+    const accounts = await this.base.stores.accounts.index({
+      profileId: this.base.unRefs.accountProfileId,
       state: ManagedInstrumentStateEnum.ACTIVE,
-      offset: '0'
+      offset: '0',
     })
     const firstAccount = accounts.data.accounts && accounts.data.accounts[0]
 
@@ -54,25 +57,25 @@ export default class TransfersPage extends mixins(BaseMixin) {
       profileId: this.$config.profileId.transfers!,
       source: {
         type: InstrumentEnum.managedAccounts,
-        id: firstAccount?.id || ''
+        id: firstAccount?.id || '',
       },
       destination: {
         type: InstrumentEnum.managedCards,
-        id: this.$route.query.destination as string
+        id: this.$route.query.destination as string,
       },
       destinationAmount: {
         currency: firstAccount?.currency || CurrencyEnum.EUR,
-        amount: 0
-      }
+        amount: 0,
+      },
     }
   }
 
   get cards() {
-    return this.stores.cards.cards?.cards
+    return this.base.stores.cards.cards?.cards
   }
 
   get accounts() {
-    return this.stores.accounts.accounts
+    return this.base.stores.accounts.accounts
   }
 
   screen: number = 1
@@ -101,7 +104,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
       this.cards?.map((val) => {
         return {
           value: +val.id, // Todo: Check if valid conversion - remove need for conversion
-          text: val.friendlyName
+          text: val.friendlyName,
         }
       }) || []
     )
@@ -110,12 +113,12 @@ export default class TransfersPage extends mixins(BaseMixin) {
   public accountTypes = [
     {
       value: 'managed_accounts',
-      text: 'Managed Accounts'
+      text: 'Managed Accounts',
     },
     {
       value: 'managed_cards',
-      text: 'Managed Cards'
-    }
+      text: 'Managed Cards',
+    },
   ]
 
   mounted() {
@@ -125,23 +128,23 @@ export default class TransfersPage extends mixins(BaseMixin) {
   }
 
   doTransfer() {
-    this.stores.transfers
+    this.base.stores.transfers
       .execute(this.createTransferRequest as CreateTransferRequest)
       .then(() => {
         this.createTransferRequest = {
           profileId: null,
           source: {
             type: InstrumentEnum.managedAccounts,
-            id: null
+            id: null,
           },
           destination: {
             type: InstrumentEnum.managedCards,
-            id: null
+            id: null,
           },
           destinationAmount: {
             currency: 'EUR',
-            amount: 0
-          }
+            amount: 0,
+          },
         }
         this.screen = 2
 
@@ -160,7 +163,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
           error = 'Amount is higher than available balance'
         }
 
-        this.showErrorToast(error)
+        this.base.showErrorToast(error)
       })
   }
 }

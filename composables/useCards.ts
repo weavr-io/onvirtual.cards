@@ -1,19 +1,17 @@
+import { reactive, computed } from 'vue'
 import { useCsv } from '~/composables/useCsv'
 import { useBase } from '~/composables/useBase'
-import { computed } from '~/node_modules/vue'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
-import weavrMultiPlugin from '~/plugins/weavr-multi'
-import { ApiModule } from '~/plugins/weavr-multi/api/ApiModule'
 
-export function useCards() {
+export function useCards(root) {
   const { downloadBlobToCsv } = useCsv()
-  const { stores, router } = useBase()
+  const { stores } = useBase(root)
 
   const isManagedCards = computed<boolean>(() => {
-    if (router.matched[0].name) {
-      return ['managed-cards', 'managed-cards-id-statements'].includes(router.matched[0].name)
+    if (root.$route.matched[0].name) {
+      return ['managed-cards', 'managed-cards-id-statements'].includes(root.$route.matched[0].name)
     } else {
       return false
     }
@@ -24,7 +22,7 @@ export function useCards() {
   })
 
   const cardId = computed(() => {
-    return router.params.id
+    return root.$route.params.id
   })
 
   const cards = computed(() => {
@@ -48,12 +46,23 @@ export function useCards() {
   })
 
   function downloadAsCSV(params: { id: IDModel; filters: GetManagedCardStatementRequest }) {
-    const req = ApiModule.managedCards.downloadStatement(params)
+    const req = root.$apiMulti.managedCards.downloadStatement(params)
 
     req.then((res) => {
       downloadBlobToCsv(res.data)
     })
   }
+
+  const unRefs = reactive({
+    isManagedCards,
+    managedCard,
+    cardId,
+    cards,
+    hasCards,
+    cardsBalance,
+    cardCurrency,
+    isCardActive,
+  })
 
   return {
     isManagedCards,
@@ -65,5 +74,6 @@ export function useCards() {
     cardCurrency,
     isCardActive,
     downloadAsCSV,
+    unRefs,
   }
 }

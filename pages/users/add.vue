@@ -3,9 +3,7 @@
     <b-container>
       <b-row>
         <b-col>
-          <h2 class="text-center font-weight-lighter mb-5">
-            Invite User
-          </h2>
+          <h2 class="text-center font-weight-lighter mb-5">Invite User</h2>
         </b-col>
       </b-row>
       <b-row>
@@ -15,7 +13,7 @@
             <b-form-row>
               <b-col>
                 <b-form-group label="Name*">
-                  <b-form-input v-model="$v.request.name.$model" :state="isInvalid($v.request.name)" />
+                  <b-form-input v-model="$v.request.name.$model" :state="validation.isInvalid($v.request.name)" />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
               </b-col>
@@ -23,7 +21,7 @@
             <b-form-row>
               <b-col>
                 <b-form-group label="Surname*">
-                  <b-form-input v-model="$v.request.surname.$model" :state="isInvalid($v.request.surname)" />
+                  <b-form-input v-model="$v.request.surname.$model" :state="validation.isInvalid($v.request.surname)" />
                   <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
               </b-col>
@@ -31,7 +29,11 @@
             <b-form-row>
               <b-col>
                 <b-form-group label="Email*">
-                  <b-form-input v-model="$v.request.email.$model" :state="isInvalid($v.request.email)" type="email" />
+                  <b-form-input
+                    v-model="$v.request.email.$model"
+                    :state="validation.isInvalid($v.request.email)"
+                    type="email"
+                  />
                   <b-form-invalid-feedback>This field is required and must be a valid email.</b-form-invalid-feedback>
                 </b-form-group>
               </b-col>
@@ -64,45 +66,49 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
-import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
+import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 
 const Countries = require('~/static/json/countries.json')
 
 @Component({
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     request: {
       name: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(100),
       },
       surname: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(100),
       },
       email: {
         required,
-        email
-      }
-    }
-  }
+        email,
+      },
+    },
+  },
 })
-export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
+export default class AddCardPage extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   isLoading: boolean = false
 
   mobile: Nullable<MobileModel> = {
     countryCode: null,
-    number: null
+    number: null,
   }
 
   numberIsValid: boolean | null = null
@@ -112,7 +118,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
     surname: null,
     email: null,
     mobile: null,
-    dateOfBirth: null
+    dateOfBirth: null,
   }
 
   get mobileCountries(): string[] {
@@ -137,19 +143,19 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
 
     this.isLoading = true
 
-    await this.stores.users
+    await this.base.stores.users
       .add(this.request as CreateUserRequestModel)
       .then((res) => {
         this.userAdded(res.data)
       })
       .catch((err) => {
-        this.stores.errors.SET_ERROR(err)
+        this.base.stores.errors.SET_ERROR(err)
         this.isLoading = false
       })
   }
 
   async userAdded(res: UserModel) {
-    await this.stores.users.inviteSend(res.id)
+    await this.base.stores.users.inviteSend(res.id)
     await this.$router.push('/users')
     this.isLoading = false
   }
@@ -157,7 +163,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
   phoneUpdate(number) {
     this.mobile = {
       countryCode: '+' + number.countryCallingCode,
-      number: number.phoneNumber
+      number: number.phoneNumber,
     }
 
     this.request.mobile = { ...this.mobile }

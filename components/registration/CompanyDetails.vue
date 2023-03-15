@@ -1,13 +1,11 @@
 <template>
   <b-form novalidate @submit="submitForm">
-    <h3 class="text-center font-weight-light mb-5">
-      Company Details
-    </h3>
+    <h3 class="text-center font-weight-light mb-5">Company Details</h3>
     <error-alert />
     <b-form-group label="Company Name">
       <b-form-input
         v-model="$v.form.companyName.$model"
-        :state="isInvalid($v.form.companyName)"
+        :state="validation.isInvalid($v.form.companyName)"
         placeholder="Company Name"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -15,14 +13,14 @@
     <b-form-group label="Company Registration Number">
       <b-form-input
         v-model="$v.form.companyRegistrationNumber.$model"
-        :state="isInvalid($v.form.companyRegistrationNumber)"
+        :state="validation.isInvalid($v.form.companyRegistrationNumber)"
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Company Registration Address">
       <b-form-textarea
         v-model="$v.form.companyRegistrationAddress.$model"
-        :state="isInvalid($v.form.companyRegistrationAddress)"
+        :state="validation.isInvalid($v.form.companyRegistrationAddress)"
         rows="4"
         placeholder="Street Name, City"
       />
@@ -31,7 +29,7 @@
     <b-form-group label="Registration Country">
       <b-form-select
         v-model="$v.form.registrationCountry.$model"
-        :state="isInvalid($v.form.registrationCountry)"
+        :state="validation.isInvalid($v.form.registrationCountry)"
         :options="countiesOptions"
         placeholder="Registration Country"
       />
@@ -44,14 +42,14 @@
         class="form-control bg-transparent"
         @on-close="updatedCompanyRegistrationDate"
       />
-      <b-form-invalid-feedback :state="isInvalid($v.form.companyRegistrationDate)">
+      <b-form-invalid-feedback :state="validation.isInvalid($v.form.companyRegistrationDate)">
         This field is required.
       </b-form-invalid-feedback>
     </b-form-group>
     <b-form-row>
       <b-col>
         <b-form-group>
-          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
+          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="validation.isInvalid($v.form.acceptedTerms)">
             I accept the
             <a
               href="https://www.onvirtual.cards/terms/business"
@@ -70,9 +68,7 @@
     </b-form-row>
     <b-form-row class="mt-5">
       <b-col md="4">
-        <b-button variant="outline" @click="goBack">
-          <-
-        </b-button>
+        <b-button variant="outline" @click="goBack"> <- </b-button>
       </b-col>
       <b-col>
         <loader-button :is-loading="isLoadingRegistration" button-text="Finish" class="text-right" />
@@ -81,10 +77,11 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { Component, Emit } from 'nuxt-property-decorator'
 import { maxLength, maxValue, required, sameAs } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import Vue from 'vue'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 const Countries = require('~/static/json/countries.json')
 @Component({
@@ -92,42 +89,45 @@ const Countries = require('~/static/json/countries.json')
     form: {
       companyName: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(100),
       },
       companyRegistrationNumber: {
         required,
-        maxLength: maxLength(20)
+        maxLength: maxLength(20),
       },
       companyRegistrationAddress: {
         required,
-        maxLength: maxLength(150)
+        maxLength: maxLength(150),
       },
       registrationCountry: {
         required,
-        maxLength: maxLength(2)
+        maxLength: maxLength(2),
       },
       companyRegistrationDate: {
         required,
-        maxValue: maxValue(new Date())
+        maxValue: maxValue(new Date()),
       },
       acceptedTerms: {
         required,
-        sameAs: sameAs(() => true)
-      }
-    }
+        sameAs: sameAs(() => true),
+      },
+    },
   },
   components: {
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    ErrorAlert: () => import('~/components/ErrorAlert.vue')
-  }
+    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+  },
 })
-export default class CompanyDetailsForm extends mixins(BaseMixin, ValidationMixin) {
+export default class CompanyDetailsForm extends Vue {
+  base = useBase(this)
+  validation = useValidation()
+
   $v
 
   public maxDate = new Date()
 
   get isLoadingRegistration() {
-    return this.stores.corporates.isLoadingRegistration
+    return this.base.stores.corporates.isLoadingRegistration
   }
 
   public companyRegistrationDate = ''
@@ -140,8 +140,8 @@ export default class CompanyDetailsForm extends mixins(BaseMixin, ValidationMixi
       altFormat: 'd/m/Y',
       maxDate: new Date(),
       locale: {
-        firstDayOfWeek: 1
-      }
+        firstDayOfWeek: 1,
+      },
     }
   }
 
@@ -149,7 +149,7 @@ export default class CompanyDetailsForm extends mixins(BaseMixin, ValidationMixi
     return Countries.map((_c) => {
       return {
         text: _c.name,
-        value: _c['alpha-2']
+        value: _c['alpha-2'],
       }
     })
   }
@@ -167,7 +167,7 @@ export default class CompanyDetailsForm extends mixins(BaseMixin, ValidationMixi
     companyRegistrationAddress: '',
     registrationCountry: '',
     companyRegistrationDate: null,
-    acceptedTerms: false
+    acceptedTerms: false,
   }
 
   @Emit()

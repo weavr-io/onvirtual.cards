@@ -1,17 +1,14 @@
-import { useBase } from '~/composables/useBase'
-import { computed } from '~/node_modules/vue'
+import { computed, reactive } from '~/node_modules/vue'
 
-export function useRouter() {
+export function useRouter(root) {
   const _dot = require('dot-object')
 
-  const { router } = useBase()
-
   const path = computed(() => {
-    return router.path
+    return root.$route.path
   })
 
   const query = computed(() => {
-    return router.query
+    return root.$route.query
   })
 
   function dot(_queries) {
@@ -31,15 +28,18 @@ export function useRouter() {
       _query = { ..._query, ...dotFilters(_filters) }
     }
 
-    router.push({
+    root.$router.push({
       path: path.value,
       query: _query,
     })
   }
 
+  const unRefs = reactive({ path, query })
+
   return {
     path,
     query,
     setFilters,
+    unRefs,
   }
 }

@@ -33,15 +33,13 @@
                 </b-row>
                 <b-row align-v="end">
                   <b-col cols="6">
-                    <div class="card-name-on-card text-truncate ">
+                    <div class="card-name-on-card text-truncate">
                       {{ card.nameOnCard }}
                     </div>
                   </b-col>
                   <b-col cols="3">
                     <div class="card-expiry">
-                      <div class="card-expiry-label">
-                        EXP
-                      </div>
+                      <div class="card-expiry-label">EXP</div>
                       <div class="card-expiry-value">
                         {{ card.expiryMmyy | expiryMmyy }}
                       </div>
@@ -69,16 +67,10 @@
             </b-col>
             <b-col>
               <h6 class="m-0 small">
-                <template v-if="!isBlocked">
-                  Freeze card
-                </template>
-                <template v-else>
-                  Unfreeze card
-                </template>
+                <template v-if="!isBlocked"> Freeze card </template>
+                <template v-else> Unfreeze card </template>
               </h6>
-              <p v-if="!isBlocked" class="text-muted m-0 small">
-                Tap again to unfreeze
-              </p>
+              <p v-if="!isBlocked" class="text-muted m-0 small">Tap again to unfreeze</p>
             </b-col>
           </b-row>
         </b-link>
@@ -88,12 +80,8 @@
               <b-img fluid src="/img/edit-icon.svg" />
             </b-col>
             <b-col>
-              <h6 class="m-0 small">
-                Edit card
-              </h6>
-              <p class="text-muted m-0 small">
-                Change name and other details
-              </p>
+              <h6 class="m-0 small">Edit card</h6>
+              <p class="text-muted m-0 small">Change name and other details</p>
             </b-col>
           </b-row>
         </b-link>
@@ -102,19 +90,22 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
+import { Component, Emit, Prop } from 'nuxt-property-decorator'
 import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { useBase } from '~/composables/useBase'
 
 @Component({
   components: {
     BIcon,
-    BIconThreeDotsVertical
-  }
+    BIconThreeDotsVertical,
+  },
 })
-export default class WeavrCard extends mixins(BaseMixin) {
+export default class WeavrCard extends Vue {
+  base = useBase(this)
+
   @Prop() readonly card!: ManagedCardModel
 
   showOptions: boolean = false
@@ -154,24 +145,24 @@ export default class WeavrCard extends mixins(BaseMixin) {
   }
 
   async blockCard() {
-    await this.stores.cards
+    await this.base.stores.cards
       .block(this.card.id)
       .then(this.blocked)
       .catch((err) => {
         const data = err.response.data
         const error = data.message ? data.message : data.errorCode
-        this.showErrorToast(error)
+        this.base.showErrorToast(error)
       })
   }
 
   async unblockCard() {
-    await this.stores.cards
+    await this.base.stores.cards
       .unblock(this.card.id)
       .then(this.unblocked)
       .catch((err) => {
         const data = err.response.data
         const error = data.message ? data.message : data.errorCode
-        this.showErrorToast(error)
+        this.base.showErrorToast(error)
       })
   }
 

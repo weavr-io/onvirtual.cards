@@ -3,13 +3,13 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 
 @Component({
-  layout: 'dashboard'
+  layout: 'dashboard',
 })
-export default class DashboardPage extends mixins(BaseMixin) {
+export default class DashboardPage extends Vue {
   asyncData({ redirect }) {
     redirect('/managed-cards')
   }

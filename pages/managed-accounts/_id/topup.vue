@@ -2,19 +2,15 @@
   <section>
     <b-container>
       <b-row>
-        <b-col v-if="account && !$fetchState.pending" md="6" offset-md="3">
+        <b-col v-if="accounts.unRefs.account && !$fetchState.pending" md="6" offset-md="3">
           <b-row>
             <b-col>
-              <h2 class="text-center font-weight-lighter">
-                Transfer funds from your bank account to
-              </h2>
+              <h2 class="text-center font-weight-lighter">Transfer funds from your bank account to</h2>
             </b-col>
           </b-row>
           <b-row v-if="bankAccountDetails" class="pt-4">
             <b-col>
-              <b-alert show variant="warning">
-                Please remember to include payment reference.
-              </b-alert>
+              <b-alert show variant="warning"> Please remember to include payment reference. </b-alert>
             </b-col>
           </b-row>
           <b-row class="pt-4">
@@ -57,7 +53,7 @@
           </b-row>
           <b-row>
             <b-col class="text-center mt-5">
-              <b-button :to="'/managed-accounts/' + accountId" variant="secondary" class="px-5">
+              <b-button :to="'/managed-accounts/' + accounts.unRefs.accountId" variant="secondary" class="px-5">
                 close
               </b-button>
             </b-col>
@@ -65,7 +61,7 @@
         </b-col>
         <b-col v-else>
           <div class="d-flex flex-column align-items-center">
-            <div class="loader-spinner ">
+            <div class="loader-spinner">
               <b-spinner />
             </div>
           </div>
@@ -75,25 +71,29 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
-import BaseMixin from '~/mixins/BaseMixin'
-import AccountsMixin from '~/mixins/AccountsMixin'
+import Vue from 'vue'
 import { BankAccountDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/BankAccountDetailsModel'
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
 import { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
 import { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SwiftBankDetailsModel'
+import { useBase } from '~/composables/useBase'
+import { useAccounts } from '~/composables/useAccounts'
 
 @Component({
   components: {
     BIcon,
-    BIconBoxArrowUpRight
+    BIconBoxArrowUpRight,
   },
-  middleware: ['kyVerified', 'instruments']
+  middleware: ['kyVerified', 'instruments'],
 })
-export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
+export default class AccountTopupPage extends Vue {
+  base = useBase(this)
+  accounts = useAccounts(this)
+
   fetch() {
-    return this.stores.accounts.getIBANDetails(this.$route.params.id)
+    return this.base.stores.accounts.getIBANDetails(this.$route.params.id)
   }
 
   get address() {
@@ -137,7 +137,7 @@ export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
   }
 
   get ibanDetails(): ManagedAccountIBANModel | null {
-    return this.stores.accounts.ibanDetails
+    return this.base.stores.accounts.ibanDetails
   }
 
   get beneficiaryNameAndSurname() {

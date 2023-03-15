@@ -3,26 +3,18 @@
     <b-container>
       <b-row v-if="isPendingReview">
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter text-center">
-          <h3 class="font-weight-lighter mb-4">
-            Your account is currently under review.
-          </h3>
-          <p>
-            This process normally takes a few days.
-          </p>
+          <h3 class="font-weight-lighter mb-4">Your account is currently under review.</h3>
+          <p>This process normally takes a few days.</p>
         </b-col>
       </b-row>
       <b-row v-else>
         <b-col md="6" offset-md="3" class="py-3 font-weight-lighter">
-          <h3 class="text-center font-weight-lighter mb-4">
-            We need some documents
-          </h3>
+          <h3 class="text-center font-weight-lighter mb-4">We need some documents</h3>
           <p>
             We are required by financial services regulations to perform due diligence on your company before allowing
             you to transact with your account.
           </p>
-          <p>
-            Kindly prepare to submit and upload the following documents:
-          </p>
+          <p>Kindly prepare to submit and upload the following documents:</p>
           <ul class="my-3 font-weight-normal">
             <li>Copy of the Certificate of Incorporation</li>
             <li>Copy of the Articles of Association (last amendment)</li>
@@ -33,17 +25,13 @@
             </li>
             <li>Commercial registry extract showing shareholders and directors</li>
           </ul>
-          <p>
-            You will also need to provide the following information:
-          </p>
+          <p>You will also need to provide the following information:</p>
           <ul class="my-3 font-weight-normal">
             <li>Directors: name, date of birth, nationality, email address, contact number</li>
             <li>Ultimate Beneficial Owners (UBOs) holding a stake of 25% or more: name, date of birth, nationality</li>
           </ul>
           <div class="text-center">
-            <b-button to="/managed-accounts/kyb">
-              start the verification process
-            </b-button>
+            <b-button to="/managed-accounts/kyb"> start the verification process </b-button>
           </div>
         </b-col>
       </b-row>
@@ -51,16 +39,17 @@
   </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
-import KyVerified from '~/mixins/kyVerified'
+import { useBase } from '~/composables/useBase'
 
 @Component
-export default class KYBAlert extends mixins(BaseMixin, KyVerified) {
+export default class KYBAlert extends Vue {
+  base = useBase(this)
+
   get isPendingReview(): boolean {
-    return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.PENDING_REVIEW
+    return this.base.stores.corporates.kyb?.kybStatus === KYBStatusEnum.PENDING_REVIEW
   }
 }
 </script>

@@ -5,12 +5,8 @@
         <b-container>
           <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav v-if="showLinks" class="ml-auto">
-              <b-nav-item v-if="showRegister" to="/register">
-                Register
-              </b-nav-item>
-              <b-nav-item v-if="showLogin" to="/login">
-                Sign In
-              </b-nav-item>
+              <b-nav-item v-if="showRegister" to="/register"> Register </b-nav-item>
+              <b-nav-item v-if="showLogin" to="/login"> Sign In </b-nav-item>
             </b-navbar-nav>
           </b-collapse>
         </b-container>
@@ -25,23 +21,26 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
+import { useBase } from '~/composables/useBase'
 
 @Component({
   components: {
     AppFooter: () => import('~/components/Footer.vue'),
-    cookiePolicy: () => import('~/components/cookie.vue')
+    cookiePolicy: () => import('~/components/cookie.vue'),
   },
   head: {
     bodyAttrs: {
-      class: 'bg-bg-colored'
-    }
-  }
+      class: 'bg-bg-colored',
+    },
+  },
 })
-class AuthLayout extends mixins(BaseMixin) {
+class AuthLayout extends Vue {
+  base = useBase(this)
+
   get isLoggedIn() {
-    return this.stores.auth.isLoggedIn
+    return this.base.stores.auth.isLoggedIn
   }
 
   get isLogin(): boolean {

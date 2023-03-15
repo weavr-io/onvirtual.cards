@@ -1,26 +1,20 @@
 <template>
   <section>
-    <template v-if="!hasAccount && identityVerified && !$fetchState.pending">
+    <template v-if="!accounts.unRefs.hasAccount && base.unRefs.identityVerified && !$fetchState.pending">
       <b-container class="mb-5 mt-n4">
         <b-row align-v="center">
           <b-col class="text-right">
-            <b-button to="/managed-accounts/add" variant="border-primary">
-              + add new account
-            </b-button>
+            <b-button to="/managed-accounts/add" variant="border-primary"> + add new account </b-button>
           </b-col>
         </b-row>
       </b-container>
       <b-container class="mt-5">
         <b-row>
           <b-col class="py-5 text-center">
-            <h4 class="font-weight-light">
-              You do not have an account.
-            </h4>
+            <h4 class="font-weight-light">You do not have an account.</h4>
             <h5 class="font-weight-lighter">
               Click
-              <b-link to="/managed-accounts/add">
-                add new account
-              </b-link>
+              <b-link to="/managed-accounts/add"> add new account </b-link>
               to create your first account.
             </h5>
           </b-col>
@@ -29,7 +23,7 @@
     </template>
     <template v-else>
       <div class="d-flex flex-column align-items-center">
-        <div class="loader-spinner ">
+        <div class="loader-spinner">
           <b-spinner />
         </div>
       </div>
@@ -38,22 +32,26 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import AccountsMixin from '~/mixins/AccountsMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { useBase } from '~/composables/useBase'
+import { useAccounts } from '~/composables/useAccounts'
 
 @Component({
   layout: 'dashboard',
-  middleware: ['kyVerified']
+  middleware: ['kyVerified'],
 })
-export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
+export default class IndexPage extends Vue {
+  base = useBase(this)
+  accounts = useAccounts(this)
+
   fetch() {
-    return this.stores.accounts
+    return this.base.stores.accounts
       .index({
-        profileId: this.accountProfileId,
+        profileId: this.base.unRefs.accountProfileId,
         state: ManagedInstrumentStateEnum.ACTIVE,
-        offset: '0'
+        offset: '0',
       })
       .then((res) => {
         if (parseInt(res.data.count!) >= 1 && res.data.accounts) {
@@ -66,7 +64,7 @@ export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
 
         const error = data.message ? data.message : data.errorCode
 
-        this.showErrorToast(error)
+        this.base.showErrorToast(error)
       })
   }
 }

@@ -2,21 +2,19 @@
   <section>
     <b-container>
       <b-row>
-        <b-col class="text-center">
-          Loading...
-        </b-col>
+        <b-col class="text-center"> Loading... </b-col>
       </b-row>
     </b-container>
   </section>
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { authStore, identitiesStore } from '~/utils/store-accessor'
 
 @Component({})
-export default class IndexPage extends mixins(BaseMixin) {
+export default class IndexPage extends Vue {
   async asyncData({ store, redirect }) {
     const isLoggedIn = authStore(store).isLoggedIn
 

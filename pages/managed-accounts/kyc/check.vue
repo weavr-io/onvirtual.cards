@@ -5,9 +5,7 @@
         <b-col class="text-center" md="6" offset-md="3">
           <b-spinner label="Loading..." />
 
-          <h2 class="mt-4">
-            Please wait a moment.
-          </h2>
+          <h2 class="mt-4">Please wait a moment.</h2>
           <p>We are updating your account status.</p>
         </b-col>
       </b-row>
@@ -15,15 +13,18 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { useBase } from '~/composables/useBase'
 
 @Component({
-  middleware: ['kyVerified']
+  middleware: ['kyVerified'],
 })
-export default class KycPage extends mixins(BaseMixin) {
+export default class KycPage extends Vue {
+  base = useBase(this)
+
   private tries: number = 0
 
   mounted() {
@@ -31,7 +32,7 @@ export default class KycPage extends mixins(BaseMixin) {
   }
 
   async KycApproved() {
-    const _res = await this.stores.consumers.getKYC()
+    const _res = await this.base.stores.consumers.getKYC()
 
     if (
       _res.data.fullDueDiligence === KYCStatusEnum.APPROVED ||
@@ -44,17 +45,17 @@ export default class KycPage extends mixins(BaseMixin) {
       if (this.tries > 3) {
         this.redirectToAccountPage()
       } else {
-        await this.sleep(5000)
+        await this.base.sleep(5000)
         this.KycApproved()
       }
     }
   }
 
   async redirectToAccountPage() {
-    const _accounts = await this.stores.accounts.index({
-      profileId: this.accountProfileId,
+    const _accounts = await this.base.stores.accounts.index({
+      profileId: this.base.unRefs.accountProfileId,
       state: ManagedInstrumentStateEnum.ACTIVE,
-      offset: '0'
+      offset: '0',
     })
 
     if (+_accounts.data.count! >= 1 && _accounts.data.accounts) {

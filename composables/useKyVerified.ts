@@ -1,10 +1,10 @@
 import { useBase } from '~/composables/useBase'
-import { computed } from '~/node_modules/vue'
+import { computed, reactive } from '~/node_modules/vue'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
-export function useKyVerified() {
-  const { stores } = useBase()
+export function useKyVerified(root) {
+  const { stores } = useBase(root)
 
   const hasAlert = computed(() => {
     return showKybAlert.value || showKycAlert.value
@@ -54,11 +54,14 @@ export function useKyVerified() {
     return stores.identities.emailVerified === false
   })
 
+  const unRefs = reactive({ hasAlert, showKybAlert, showKycAlert, showVerifyMobileAlert, showVerifyEmailAlert })
+
   return {
     hasAlert,
     showKybAlert,
     showKycAlert,
     showVerifyMobileAlert,
     showVerifyEmailAlert,
+    unRefs,
   }
 }
