@@ -36,26 +36,6 @@
                 </b-form-group>
               </b-col>
             </b-form-row>
-            <b-form-row>
-              <b-col>
-                <b-form-group label="MOBILE NUMBER*">
-                  <vue-phone-number-input
-                    :value="mobile.number"
-                    :only-countries="mobileCountries"
-                    :border-radius="0"
-                    :error="numberIsValid === false"
-                    color="#6C1C5C"
-                    error-color="#F50E4C"
-                    valid-color="#6D7490"
-                    default-country-code="GB"
-                    @update="phoneUpdate"
-                  />
-                  <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
-                    This field must be a valid mobile number.
-                  </b-form-invalid-feedback>
-                </b-form-group>
-              </b-col>
-            </b-form-row>
             <loader-button :is-loading="isLoading" button-text="send invite" class="mt-5 text-center" />
           </b-form>
         </b-col>
@@ -69,11 +49,8 @@ import { email, maxLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/mixins/BaseMixin'
 import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
-
-const Countries = require('~/static/json/countries.json')
 
 @Component({
   components: {
@@ -100,37 +77,20 @@ const Countries = require('~/static/json/countries.json')
 export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
   isLoading: boolean = false
 
-  mobile: Nullable<MobileModel> = {
-    countryCode: null,
-    number: null
-  }
-
-  numberIsValid: boolean | null = null
-
   request: Nullable<CreateUserRequestModel> = {
     name: null,
     surname: null,
     email: null,
     mobile: null,
-    dateOfBirth: null
-  }
-
-  get mobileCountries(): string[] {
-    return Countries.map((_c) => {
-      return _c['alpha-2']
-    })
+    dateOfBirth: null,
   }
 
   async doAdd(evt) {
     evt.preventDefault()
 
-    if (this.numberIsValid === null) {
-      this.numberIsValid = false
-    }
-
     if (this.$v.request) {
       this.$v.request.$touch()
-      if (this.$v.request.$anyError || !this.numberIsValid) {
+      if (this.$v.request.$anyError) {
         return null
       }
     }
@@ -152,16 +112,6 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
     await this.stores.users.inviteSend(res.id)
     await this.$router.push('/users')
     this.isLoading = false
-  }
-
-  phoneUpdate(number) {
-    this.mobile = {
-      countryCode: '+' + number.countryCallingCode,
-      number: number.phoneNumber
-    }
-
-    this.request.mobile = { ...this.mobile }
-    this.numberIsValid = number.isValid
   }
 }
 </script>
