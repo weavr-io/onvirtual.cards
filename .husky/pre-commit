@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+local_branch_name="$(git rev-parse --abbrev-ref HEAD)"
+lower_local_branch_name=$(echo $local_branch_name | tr '[:upper:]' '[:lower:]')
+
+invalid_branch_regex='(dev-[0-9]+)'
+
+message="There is something wrong with your branch name. Branch names in this project must adhere to the contract.\nYour commit will be rejected. You should rename your branch to a valid name and try again."
+
+if [[ $lower_local_branch_name =~ $invalid_branch_regex ]]; then
+    echo ""
+    echo "###### ERR Pre-Commit ######"
+    echo ""
+    echo "Current Branch Name - $local_branch_name"
+    echo "$message"
+    echo ""
+    exit 1
+fi
+
+exit 0
+
