@@ -47,7 +47,6 @@
           :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
           name="password"
           required="true"
-          @onKeyUp="checkOnKeyUp"
           @onChange="passwordInteraction"
         />
         <small class="form-text text-muted mb-3">Minimum 8, Maximum 50 characters.</small>
@@ -350,13 +349,6 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     this.$set(this.form.rootUser!.mobile!, 'countryCode', '+' + number.countryCallingCode)
     this.$set(this.form.rootUser!.mobile!, 'number', number.phoneNumber)
     this.numberIsValid = number.isValid
-  }
-
-  checkOnKeyUp(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      this.tryToSubmitForm(e)
-    }
   }
 
   passwordInteraction(val: { empty: boolean; valid: boolean }) {
