@@ -4,14 +4,11 @@
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card no-body class="overflow-hidden">
-      <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
+      <b-overlay :show="isLoadingRegistration" rounded opacity="0.6" spinner-small spinner-variant="primary">
         <b-card-body class="p-card">
           <div class="form-screens">
-            <div v-if="screen === 0" class="form-screen">
-              <register-form @submit-form="form1Submit" />
-            </div>
-            <div v-else class="form-screen">
-              <personal-details-form @submit-form="form2Submit" @go-back="goBack" />
+            <div class="form-screen">
+              <personal-details-form @submit-form="formSubmit" />
             </div>
           </div>
         </b-card-body>
@@ -40,7 +37,6 @@ import { DeepNullable, RecursivePartial } from '~/global'
   layout: 'auth',
   components: {
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
     PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
@@ -80,8 +76,8 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     return this.stores.corporates.isLoading
   }
 
-  goBack() {
-    this.screen--
+  get isLoadingRegistration() {
+    return this.stores.corporates.isLoadingRegistration
   }
 
   asyncData({ store, redirect }) {
@@ -98,17 +94,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     })
   }
 
-  form1Submit(_data: { email: string | null; password: string | null; acceptedTerms: boolean } | null) {
-    if (_data !== null) {
-      this.registrationRequest.rootUser!.email = _data.email
-      this.registrationRequest.password = _data.password
-      this.registrationRequest.acceptedTerms = _data.acceptedTerms
-
-      this.screen = 1
-    }
-  }
-
-  form2Submit(_data) {
+  formSubmit(_data) {
     if (_data != null) {
       this.registrationRequest.rootUser!.name = _data.rootUser.name
       this.registrationRequest.rootUser!.surname = _data.rootUser.surname
@@ -123,6 +109,10 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       this.registrationRequest.industry = _data.industry
       this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
       this.registrationRequest.sourceOfFundsOther = _data.sourceOfFundsOther
+
+      this.registrationRequest.rootUser!.email = _data.rootUser.email
+      this.registrationRequest.password = _data.password
+      this.registrationRequest.acceptedTerms = _data.acceptedTerms
 
       this.doRegister()
     }
@@ -181,8 +171,6 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     const _errCode = err.response.data.errorCode
 
     if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
-      this.screen = 0
-    } else {
       this.showErrorToast(_errCode)
     }
   }

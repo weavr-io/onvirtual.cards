@@ -1,8 +1,6 @@
 <template>
-  <b-form novalidate @submit="submitForm">
-    <h3 class="text-center font-weight-light mb-5">
-      A few more steps
-    </h3>
+  <b-form @submit.prevent="tryToSubmitForm">
+    <h3 class="text-center font-weight-light mb-5">Register</h3>
     <error-alert />
     <b-form-group label="First Name*">
       <b-form-input
@@ -30,6 +28,31 @@
         Surname is too long.
       </b-form-invalid-feedback>
     </b-form-group>
+    <b-form-group
+      :state="isInvalid($v.form.rootUser.email)"
+      :invalid-feedback="
+        invalidFeedback($v.form.rootUser.email, validateVParams($v.form.rootUser.email.$params, $v.form.rootUser.email))
+      "
+      label="Email*"
+    >
+      <b-form-input v-model="$v.form.rootUser.email.$model" placeholder="name@email.com" />
+    </b-form-group>
+    <client-only placeholder="Loading...">
+      <div>
+        <label class="d-block">PASSWORD*</label>
+        <weavr-password-input
+          ref="passwordField"
+          :options="{ placeholder: '****' }"
+          :base-style="passwordBaseStyle"
+          :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
+          name="password"
+          required="true"
+          @onKeyUp="checkOnKeyUp"
+          @onChange="passwordInteraction"
+        />
+        <small class="form-text text-muted mb-3">Minimum 8, Maximum 50 characters.</small>
+      </div>
+    </client-only>
     <b-form-group label="MOBILE NUMBER*">
       <vue-phone-number-input
         :value="form.rootUser.mobile.number"
@@ -126,11 +149,30 @@
       verify your identity, role and authorisation as part of our customer due diligence process, we will later ask you
       to upload the relevant ID and power of attorney documents.
     </p>
-
-    <b-form-row class="mt-5">
-      <b-col md="4">
-        <b-button variant="outline" @click="goBack"></b-button>
+    <b-form-row class="small mt-3 text-muted">
+      <b-col>
+        <b-form-group>
+          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
+            I accept the
+            <a
+              href="https://www.onvirtual.cards/terms/business"
+              target="_blank"
+              class="text-decoration-underline text-muted"
+              >terms of use</a
+            >
+            and
+            <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted"
+              >privacy policy</a
+            >
+          </b-form-checkbox>
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        </b-form-group>
       </b-col>
+    </b-form-row>
+    <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
+      <recaptcha />
+    </div>
+    <b-form-row class="mt-5">
       <b-col class="text-right">
         <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-right" />
       </b-col>
@@ -138,8 +180,8 @@
   </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
-import { maxLength, required } from 'vuelidate/lib/validators'
+import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
+import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import BaseMixin from '~/mixins/BaseMixin'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
@@ -150,6 +192,8 @@ import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identit
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 
 const Countries = require('~/static/json/countries.json')
 
@@ -163,7 +207,11 @@ const Countries = require('~/static/json/countries.json')
         },
         surname: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
+        },
+        email: {
+          required,
+          email,
         },
         mobile: {
           number: {
@@ -198,10 +246,17 @@ const Countries = require('~/static/json/countries.json')
         required
       },
       sourceOfFunds: {
-        required
+        required,
       },
-      sourceOfFundsOther: {}
-    }
+      sourceOfFundsOther: {},
+      acceptedTerms: {
+        required,
+        sameAs: sameAs(() => true),
+      },
+      password: {
+        required,
+      },
+    },
   },
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
@@ -209,14 +264,20 @@ const Countries = require('~/static/json/countries.json')
   }
 })
 export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {
+  private $recaptcha: any
+
+  @Ref('passwordField')
+  passwordField!: WeavrPasswordInput
+
   companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
 
   numberIsValid: boolean | null = null
 
-  public form: DeepNullable<RecursivePartial<CreateCorporateRequest>> = {
+  public form: DeepNullable<RecursivePartial<CreateCorporateRequest & { password: string }>> = {
     rootUser: {
       name: null,
       surname: null,
+      email: null,
       mobile: {
         number: null,
         countryCode: ''
@@ -231,7 +292,31 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     },
     industry: null,
     sourceOfFunds: null,
-    sourceOfFundsOther: null
+    acceptedTerms: false,
+    sourceOfFundsOther: null,
+    password: null,
+  }
+
+  get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
+    return {
+      color: '#495057',
+      fontSize: '16px',
+      fontSmoothing: 'antialiased',
+      fontFamily: "'Be Vietnam', sans-serif",
+      fontWeight: '400',
+      lineHeight: '24px',
+      margin: '0',
+      padding: '6px 12px',
+      textIndent: '0px',
+      '::placeholder': {
+        color: '#B6B9C7',
+        fontWeight: '400',
+      },
+    }
+  }
+
+  get isInvalidPassword() {
+    return this.$v.form.password?.$anyError
   }
 
   get mobileCountries(): string[] {
@@ -256,6 +341,10 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     return this.form.sourceOfFunds === CorporateSourceOfFundTypeEnum.OTHER
   }
 
+  get isRecaptchaEnabled(): boolean {
+    return typeof process.env.RECAPTCHA !== 'undefined'
+  }
+
   phoneUpdate(number) {
     this.$v.form.rootUser!.mobile.number.$touch()
     this.$set(this.form.rootUser!.mobile!, 'countryCode', '+' + number.countryCallingCode)
@@ -263,27 +352,58 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     this.numberIsValid = number.isValid
   }
 
-  @Emit()
-  submitForm(e) {
-    e.preventDefault()
-
-    if (this.numberIsValid === null) {
-      this.numberIsValid = false
+  checkOnKeyUp(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      this.tryToSubmitForm(e)
     }
+  }
 
-    if (this.$v.form) {
-      this.$v.form.$touch()
-      if (this.$v.form.$anyError || !this.numberIsValid) {
-        return null
+  passwordInteraction(val: { empty: boolean; valid: boolean }) {
+    !val.empty ? (this.form.password = '******') : (this.form.password = '')
+  }
+
+  async tryToSubmitForm(e) {
+    try {
+      e.preventDefault()
+
+      this.$v.$touch()
+
+      if (this.numberIsValid === null) {
+        this.numberIsValid = false
       }
-    }
 
-    return this.form
+      if (this.$v.$invalid || !this.numberIsValid) {
+        return
+      }
+
+      if (this.isRecaptchaEnabled) {
+        await this.$recaptcha.reset()
+      }
+
+      this.passwordField.createToken().then(
+        (tokens) => {
+          if (tokens.tokens.password !== '') {
+            this.form.password = tokens.tokens.password
+
+            this.submitForm()
+          } else {
+            return null
+          }
+        },
+        (e) => {
+          this.showErrorToast(e, 'Tokenization Error')
+        }
+      )
+    } catch (error) {
+      this.showErrorToast(error, 'Registration Error')
+    }
   }
 
   @Emit()
-  goBack(e) {
-    e.preventDefault()
+  submitForm() {
+    this.stores.errors.RESET_ERROR()
+    return this.form
   }
 }
 </script>
