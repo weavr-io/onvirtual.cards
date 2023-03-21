@@ -10,6 +10,7 @@ import { UsersApi } from '~/plugins/weavr-multi/api/UsersApi'
 import { ConsumersApi } from '~/plugins/weavr-multi/api/ConsumersApi'
 import { AdditionalFactorsApi } from '~/plugins/weavr-multi/api/AdditionalFactorsApi'
 import { AccessCodesApi } from '~/plugins/weavr-multi/api/AccessCodesApi'
+import { StepUpApi } from '~/plugins/weavr-multi/api/StepUpApi'
 
 export interface ApiInterface {
   authentication: AuthenticationApi
@@ -24,4 +25,5 @@ export interface ApiInterface {
   ipify: IpifyApi
   users: UsersApi
   accessCodes: AccessCodesApi
+  stepUp: StepUpApi
 }

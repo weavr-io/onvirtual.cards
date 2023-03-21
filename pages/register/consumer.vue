@@ -455,6 +455,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     const _req = this.stores.auth.loginWithPassword(loginRequest)
 
     _req.then(() => {
+      localStorage.setItem('stepUp', 'FALSE')
       this.$router.push({ path: '/profile/address' })
     })
   }

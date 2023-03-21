@@ -6,10 +6,10 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
     headers: {
       common: {
         'Content-Type': 'application/json',
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+      },
     },
-    baseURL: ctxt.$config.multiApi.baseUrl
+    baseURL: ctxt.$config.multiApi.baseUrl,
   })
 
   function onError(error) {
@@ -20,7 +20,9 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
         ctxt.redirect('/login')
         return
       case 403:
-        if (ctxt.route.name !== 'login') ctxt.redirect('/forbidden')
+        if (ctxt.route.name !== 'login' && error.response.data.message === 'STEP_UP_REQUIRED') {
+          ctxt.redirect('/login/sca')
+        } else if (ctxt.route.name !== 'login') ctxt.redirect('/forbidden')
         return
       case 409:
         errorsStore(ctxt.store).SET_CONFLICT(error)
