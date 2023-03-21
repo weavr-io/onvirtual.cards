@@ -35,8 +35,8 @@ import { DeepNullable } from '~/global'
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     AccountSelection: () => import('~/components/transfer/AccountSelection.vue'),
     TopUp: () => import('~/components/transfer/TopUp.vue'),
-    TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue')
-  }
+    TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue'),
+  },
 })
 export default class TransfersPage extends mixins(BaseMixin) {
   createTransferRequest: DeepNullable<CreateTransferRequest> | null = null
@@ -46,7 +46,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
     const accounts = await this.stores.accounts.index({
       profileId: this.accountProfileId,
       state: ManagedInstrumentStateEnum.ACTIVE,
-      offset: '0'
+      offset: '0',
     })
     const firstAccount = accounts.data.accounts && accounts.data.accounts[0]
 
@@ -54,16 +54,16 @@ export default class TransfersPage extends mixins(BaseMixin) {
       profileId: this.$config.profileId.transfers!,
       source: {
         type: InstrumentEnum.managedAccounts,
-        id: firstAccount?.id || ''
+        id: firstAccount?.id || '',
       },
       destination: {
         type: InstrumentEnum.managedCards,
-        id: this.$route.query.destination as string
+        id: this.$route.query.destination as string,
       },
       destinationAmount: {
         currency: firstAccount?.currency || CurrencyEnum.EUR,
-        amount: 0
-      }
+        amount: 0,
+      },
     }
   }
 
@@ -101,7 +101,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
       this.cards?.map((val) => {
         return {
           value: +val.id, // Todo: Check if valid conversion - remove need for conversion
-          text: val.friendlyName
+          text: val.friendlyName,
         }
       }) || []
     )
@@ -110,19 +110,13 @@ export default class TransfersPage extends mixins(BaseMixin) {
   public accountTypes = [
     {
       value: 'managed_accounts',
-      text: 'Managed Accounts'
+      text: 'Managed Accounts',
     },
     {
       value: 'managed_cards',
-      text: 'Managed Cards'
-    }
+      text: 'Managed Cards',
+    },
   ]
-
-  mounted() {
-    try {
-      this.$segment.track('Initiated Transfer', {})
-    } catch (e) {}
-  }
 
   doTransfer() {
     this.stores.transfers
@@ -132,22 +126,18 @@ export default class TransfersPage extends mixins(BaseMixin) {
           profileId: null,
           source: {
             type: InstrumentEnum.managedAccounts,
-            id: null
+            id: null,
           },
           destination: {
             type: InstrumentEnum.managedCards,
-            id: null
+            id: null,
           },
           destinationAmount: {
             currency: 'EUR',
-            amount: 0
-          }
+            amount: 0,
+          },
         }
         this.screen = 2
-
-        try {
-          this.$segment.track('Transfer Success', this.createTransferRequest)
-        } catch (e) {}
       })
       .catch((err) => {
         this.screen = 1
