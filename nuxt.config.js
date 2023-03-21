@@ -2,12 +2,12 @@ const config = {
   ssr: false,
   server: {
     host: '0.0.0.0',
-    port: 5000
+    port: 5000,
   },
   publicRuntimeConfig: {
     multiApi: {
       baseUrl: process.env.MULTI_BASE_URL,
-      uiKey: process.env.UI_KEY
+      uiKey: process.env.UI_KEY,
     },
     production: process.env.ENVIRONMENT === 'production',
     profileId: {
@@ -18,12 +18,12 @@ const config = {
       managed_accounts_consumers: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID,
       managed_accounts_corporates: process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID,
       transfers: process.env.TRANSFERS_PROFILE_ID,
-      send: process.env.SEND_PROFILE_ID
+      send: process.env.SEND_PROFILE_ID,
     },
     app: {
       view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true,
-      sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : true
-    }
+      sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : true,
+    },
   },
   /*
    ** Headers of the page
@@ -36,14 +36,14 @@ const config = {
       {
         hid: 'description',
         name: 'description',
-        content: process.env.npm_package_description || ''
-      }
+        content: process.env.npm_package_description || '',
+      },
     ],
     script: [
       {
         src: process.env.BASE_URL_SCRIPT,
-        type: 'application/javascript'
-      }
+        type: 'application/javascript',
+      },
     ],
 
     link: [
@@ -52,22 +52,21 @@ const config = {
         rel: 'icon',
         type: 'image/png',
         sizes: '32x32',
-        href: '/favicon-32x32.png'
+        href: '/favicon-32x32.png',
       },
       {
         rel: 'icon',
         type: 'image/png',
         sizes: '16x16',
-        href: '/favicon-16x16.png'
+        href: '/favicon-16x16.png',
       },
       { rel: 'manifest', href: '/site.webmanifest' },
       { rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
       {
         rel: 'stylesheet',
-        href:
-          'https://fonts.googleapis.com/css?family=Be+Vietnam:100,100i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i&display=swap'
-      }
-    ]
+        href: 'https://fonts.googleapis.com/css?family=Be+Vietnam:100,100i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i&display=swap',
+      },
+    ],
   },
   /*
    ** Customize the progress-bar color
@@ -90,7 +89,7 @@ const config = {
     { src: '~/plugins/axios.ts' },
     { src: '~/plugins/axios-accessor.ts' },
     { src: '~/plugins/weavr-multi/index.ts' },
-    { src: '~/plugins/formattingFilters/index.ts' }
+    { src: '~/plugins/formattingFilters/index.ts' },
   ],
   /*
    ** Nuxt.js modules
@@ -102,16 +101,15 @@ const config = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     // '@nuxtjs/eslint-module'
-    '@dansmaculotte/nuxt-segment',
-    '@nuxtjs/svg'
+    '@nuxtjs/svg',
   ],
   bootstrapVue: {
     bootstrapCSS: false, // Or `css: false`
-    bootstrapVueCSS: false // Or `bvCSS: false`
+    bootstrapVueCSS: false, // Or `bvCSS: false`
   },
   recaptcha: {
     siteKey: process.env.RECAPTCHA,
-    version: 2
+    version: 2,
   },
   /*
    ** Axios module configuration
@@ -120,13 +118,13 @@ const config = {
   axios: {},
   router: {
     middleware: ['authCookie', 'errorReset', 'identities'],
-    linkActiveClass: 'active'
+    linkActiveClass: 'active',
   },
   buildModules: ['@nuxt/typescript-build'],
   typescript: {
     typeCheck: true,
-    ignoreNotFoundWarnings: true
-  }
+    ignoreNotFoundWarnings: true,
+  },
 }
 
 if (process.env.RECAPTCHA) {

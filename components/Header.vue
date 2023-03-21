@@ -11,15 +11,9 @@
               <template #button-content>
                 {{ rootFullName }}
               </template>
-              <b-dropdown-item to="/profile">
-                Profile
-              </b-dropdown-item>
-              <b-dropdown-item v-if="isCorporate" to="/users">
-                Users
-              </b-dropdown-item>
-              <b-dropdown-item @click="doLogout">
-                Sign out
-              </b-dropdown-item>
+              <b-dropdown-item to="/profile"> Profile </b-dropdown-item>
+              <b-dropdown-item v-if="isCorporate" to="/users"> Users </b-dropdown-item>
+              <b-dropdown-item @click="doLogout"> Sign out </b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
@@ -38,9 +32,6 @@ export default class Header extends mixins(BaseMixin) {
   }
 
   redirectToLogin() {
-    try {
-      this.$segment.reset()
-    } catch (e) {}
     this.$router.push('/login')
   }
 
