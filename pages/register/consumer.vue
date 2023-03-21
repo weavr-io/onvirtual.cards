@@ -456,7 +456,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
 
     _req.then(() => {
       localStorage.setItem('stepUp', 'FALSE')
-      localStorage.setItem('scaSmsSent', 'FALSE')
       this.$router.push({ path: '/profile/address' })
     })
   }

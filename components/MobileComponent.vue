@@ -30,25 +30,23 @@
         </b-row>
         <loader-button :is-loading="isLoading" button-text="verify" class="mt-5 text-center mb-0" />
       </form>
-      <div v-if="verifyPhone">
-        <b-alert
-          :show="dismissCountDown"
-          variant="white"
-          class="text-center mt-4 mb-0 text-muted small"
-          @dismiss-count-down="countDownChanged"
-        >
-          {{ dismissCountDown }}
-          <slot name="countdown"></slot>
-        </b-alert>
-        <div v-if="!dismissCountDown" class="mt-4 text-center">
-          <template>
-            <small class="text-grey">
-              Didn’t receive a code?
-              <b-link class="text-decoration-underline text-grey" @click="resendSms">Send again</b-link>
-              .
-            </small>
-          </template>
-        </div>
+      <b-alert
+        :show="dismissCountDown"
+        variant="white"
+        class="text-center mt-4 mb-0 text-muted small"
+        @dismiss-count-down="countDownChanged"
+      >
+        {{ dismissCountDown }}
+        <slot name="countdown"></slot>
+      </b-alert>
+      <div v-if="!dismissCountDown" class="mt-4 text-center">
+        <template>
+          <small class="text-grey">
+            Didn’t receive a code?
+            <b-link class="text-decoration-underline text-grey" @click="resendSms">Send again</b-link>
+            .
+          </small>
+        </template>
       </div>
     </b-card>
   </div>
@@ -95,7 +93,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
   dismissCountDown = 0
 
   mounted() {
-    if (this.$route.query.send === 'true' && (this.verifyPhone || localStorage.getItem('scaSmsSent') === 'FALSE')) {
+    if (this.$route.query.send === 'true') {
       this.sendSms()
     }
   }
@@ -112,10 +110,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
     if (this.verifyPhone) {
       await this.stores.auth.enrollAuthFactors(SCAOtpChannelEnum.SMS).finally(() => (this.isLoading = false))
     } else {
-      await this.stores.auth
-        .enrollStepUp(SCAOtpChannelEnum.SMS)
-        .then(() => localStorage.setItem('scaSmsSent', 'TRUE'))
-        .finally(() => (this.isLoading = false))
+      await this.stores.auth.enrollStepUp(SCAOtpChannelEnum.SMS).finally(() => (this.isLoading = false))
     }
   }
 

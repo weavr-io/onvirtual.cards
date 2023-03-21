@@ -176,7 +176,6 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
     _req.then(() => {
       localStorage.setItem('stepUp', 'FALSE')
-      localStorage.setItem('scaSmsSent', 'FALSE')
       this.$router.push({ path: '/profile/address' })
     })
   }
