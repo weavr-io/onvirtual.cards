@@ -44,8 +44,6 @@ import { DeepNullable, RecursivePartial } from '~/global'
   middleware: 'accessCodeVerified'
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
-  screen: number = 0
-
   private registrationRequest: DeepNullable<RecursivePartial<CreateCorporateRequest & { password: string }>> = {
     profileId: this.$config.profileId.corporates,
     tag: 'tag',
@@ -98,6 +96,8 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     if (_data != null) {
       this.registrationRequest.rootUser!.name = _data.rootUser.name
       this.registrationRequest.rootUser!.surname = _data.rootUser.surname
+      this.registrationRequest.rootUser!.email = _data.rootUser.email
+      this.registrationRequest.password = _data.password
       this.registrationRequest.rootUser!.companyPosition = _data.rootUser.companyPosition
       this.registrationRequest.rootUser!.mobile! = { ..._data.rootUser.mobile }
 
@@ -110,8 +110,6 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
       this.registrationRequest.sourceOfFundsOther = _data.sourceOfFundsOther
 
-      this.registrationRequest.rootUser!.email = _data.rootUser.email
-      this.registrationRequest.password = _data.password
       this.registrationRequest.acceptedTerms = _data.acceptedTerms
 
       this.doRegister()
@@ -125,6 +123,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       .create(this.registrationRequest as CreateCorporateRequest)
       .then(this.onCorporateCreated)
       .catch(this.registrationFailed)
+      .finally(this.stopRegistrationLoading)
   }
 
   onCorporateCreated(res: AxiosResponse<ConsumerModel>) {
@@ -167,12 +166,16 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   }
 
   registrationFailed(err) {
-    this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
+    this.stopRegistrationLoading()
     const _errCode = err.response.data.errorCode
 
     if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
       this.showErrorToast(_errCode)
     }
+  }
+
+  stopRegistrationLoading() {
+    this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
   }
 }
 </script>
