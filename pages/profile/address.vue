@@ -207,15 +207,5 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
       })
     }
   }
-
-  goToRegisterVerify() {
-    return this.$router.push({
-      path: '/register/verify',
-      query: {
-        email: this.rootUserEmail,
-        send: 'true'
-      }
-    })
-  }
 }
 </script>
