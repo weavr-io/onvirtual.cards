@@ -14,11 +14,11 @@
               <b-form novalidate @submit.prevent="submitForm">
                 <h3 class="text-center font-weight-light mb-5">Register</h3>
 
-                <b-form-group label="First Name">
+                <b-form-group label="First Name*">
                   <b-form-input
                     v-model="registrationRequest.rootUser.name"
                     :state="isInvalid($v.registrationRequest.rootUser.name)"
-                    placeholder="First Name*"
+                    placeholder="First Name"
                   />
                   <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.name.required">
                     This field is required
@@ -350,6 +350,11 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   async submitForm() {
     try {
       this.$v.$touch()
+
+      if (this.numberIsValid === null) {
+        this.numberIsValid = false
+      }
+
       if (this.$v.$invalid) {
         return
       }
