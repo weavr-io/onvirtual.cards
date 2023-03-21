@@ -12,7 +12,8 @@
 @import 'account';
 @import 'card';
 @import 'shadow';
-@import "cookie";
+@import 'cookie';
+@import 'border';
 
 .transparent-modal {
   background: transparent !important;
@@ -50,12 +51,11 @@
   }
 }
 
-
 .error-alert {
   width: 100%;
   min-height: 50px;
   background-color: $red;
-  border-radius: .6em;
+  border-radius: 0.6em;
   position: relative;
   margin: 2em 0;
 
@@ -63,7 +63,7 @@
     vertical-align: middle;
     padding: 14px 54px 14px 20px;
     margin: 0;
-    color: #FFFFFF;
+    color: #ffffff;
   }
 
   button {
@@ -106,7 +106,6 @@ a {
   }
 }
 
-
 .text-decoration {
   &-underline {
     text-decoration: underline;
@@ -124,16 +123,16 @@ a {
 }
 
 .transaction-type-icon {
-  background: #EAEDF6;
+  background: #eaedf6;
   text-align: center;
   border-radius: 10px;
   font-size: 30px;
-  color: #6D7490;
+  color: #6d7490;
   font-weight: 100;
   padding: 16px 0px;
   line-height: 0;
 }
 
 .smaller {
-  font-size: 0.8* $small-font-size
+  font-size: 0.8 * $small-font-size;
 }
