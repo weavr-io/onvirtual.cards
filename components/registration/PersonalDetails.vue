@@ -2,178 +2,188 @@
   <b-form @submit.prevent="tryToSubmitForm">
     <h3 class="text-center font-weight-light mb-5">Register</h3>
     <error-alert />
-    <b-form-group label="First Name*">
-      <b-form-input
-        v-model="$v.form.rootUser.name.$model"
-        :state="isInvalid($v.form.rootUser.name)"
-        placeholder="Name"
-      />
-      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.required">
-        This field is required
-      </b-form-invalid-feedback>
-      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.maxLength">
-        Name is too long.
-      </b-form-invalid-feedback>
-    </b-form-group>
-    <b-form-group label="Last Name*">
-      <b-form-input
-        v-model="$v.form.rootUser.surname.$model"
-        :state="isInvalid($v.form.rootUser.surname)"
-        placeholder="Last Name"
-      />
-      <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.required">
-        This field is required
-      </b-form-invalid-feedback>
-      <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.maxLength">
-        Surname is too long.
-      </b-form-invalid-feedback>
-    </b-form-group>
-    <b-form-group
-      :state="isInvalid($v.form.rootUser.email)"
-      :invalid-feedback="
-        invalidFeedback($v.form.rootUser.email, validateVParams($v.form.rootUser.email.$params, $v.form.rootUser.email))
-      "
-      label="Email*"
-    >
-      <b-form-input v-model="$v.form.rootUser.email.$model" placeholder="name@email.com" />
-    </b-form-group>
-    <client-only placeholder="Loading...">
-      <div>
-        <label class="d-block">PASSWORD*</label>
-        <weavr-password-input
-          ref="passwordField"
-          :options="{ placeholder: '****' }"
-          :base-style="passwordBaseStyle"
-          :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
-          name="password"
-          required="true"
-          @onChange="passwordInteraction"
-        />
-        <small class="form-text text-muted mb-3">Minimum 8, Maximum 50 characters.</small>
-      </div>
-    </client-only>
-    <b-form-group label="MOBILE NUMBER*">
-      <vue-phone-number-input
-        :value="form.rootUser.mobile.number"
-        :only-countries="mobileCountries"
-        :border-radius="0"
-        :error="numberIsValid === false"
-        color="#6C1C5C"
-        error-color="#F50E4C"
-        valid-color="#6D7490"
-        default-country-code="GB"
-        @update="phoneUpdate"
-      />
-      <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
-        This field must be a valid mobile number.
-      </b-form-invalid-feedback>
-    </b-form-group>
-    <b-form-group label="Company Name*">
-      <b-form-input
-        v-model="$v.form.company.name.$model"
-        :state="isInvalid($v.form.company.name)"
-        placeholder="Company Name"
-      />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-    </b-form-group>
-    <b-form-group label="Company Registration Number*">
-      <b-form-input
-        v-model="$v.form.company.registrationNumber.$model"
-        :state="isInvalid($v.form.company.registrationNumber)"
-        placeholder="C00000"
-      />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-    </b-form-group>
-    <b-form-group label="Company Type">
-      <b-form-select
-        v-model="$v.form.company.type.$model"
-        :state="isInvalid($v.form.company.type)"
-        :options="companyTypeOptionsWithDefault"
-        placeholder="Company Type"
-      />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-    </b-form-group>
-    <b-form-group label="Registration Country*">
-      <b-form-select
-        v-model="$v.form.company.registrationCountry.$model"
-        :state="isInvalid($v.form.company.registrationCountry)"
-        :options="countryOptionsWithDefault"
-        placeholder="Registration Country"
-      />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-    </b-form-group>
-    <b-form-group :state="isInvalid($v.form.industry)" label="Industry*">
-      <b-form-select
-        v-model="$v.form.industry.$model"
-        :state="isInvalid($v.form.industry)"
-        :options="industryOccupationOptions"
-      />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-    </b-form-group>
-    <b-form-group :state="isInvalid($v.form.sourceOfFunds)" label="Source of Funds*">
-      <b-form-select
-        v-model="$v.form.sourceOfFunds.$model"
-        :state="isInvalid($v.form.sourceOfFunds)"
-        :options="sourceOfFundsOptions"
-      />
-      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-    </b-form-group>
-    <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
-      <b-form-input
-        v-model="form.sourceOfFundsOther"
-        :state="isInvalid($v.form.sourceOfFundsOther)"
-        placeholder="Specify Other Source of Funds"
-      />
-    </b-form-group>
-    <b-form-group :state="isInvalid($v.form.rootUser.companyPosition)" label="My position within the company is*">
-      <b-form-radio
-        v-model="$v.form.rootUser.companyPosition.$model"
-        :state="isInvalid($v.form.rootUser.companyPosition)"
-        name="company-position"
-        value="AUTHORISED_REPRESENTATIVE"
-      >
-        I am a representative (with the relevant power of attorney)
-      </b-form-radio>
-      <b-form-radio
-        v-model="$v.form.rootUser.companyPosition.$model"
-        :state="isInvalid($v.form.rootUser.companyPosition)"
-        name="company-position"
-        value="DIRECTOR"
-      >
-        I am a director
-      </b-form-radio>
-    </b-form-group>
-    <p class="smaller text-muted">
-      To open account on behalf of the company you need to be a director or authorised representative. To enable us to
-      verify your identity, role and authorisation as part of our customer due diligence process, we will later ask you
-      to upload the relevant ID and power of attorney documents.
-    </p>
-    <b-form-row class="small mt-3 text-muted">
-      <b-col>
-        <b-form-group>
-          <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
-            I accept the
-            <a
-              href="https://www.onvirtual.cards/terms/business"
-              target="_blank"
-              class="text-decoration-underline text-muted"
-              >terms of use</a
-            >
-            and
-            <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted"
-              >privacy policy</a
-            >
-          </b-form-checkbox>
+    <b-row>
+      <b-col lg="6" class="border-lg-right pr-lg-4">
+        <b-form-group label="First Name*">
+          <b-form-input
+            v-model="$v.form.rootUser.name.$model"
+            :state="isInvalid($v.form.rootUser.name)"
+            placeholder="Name"
+          />
+          <b-form-invalid-feedback v-if="!$v.form.rootUser.name.required">
+            This field is required
+          </b-form-invalid-feedback>
+          <b-form-invalid-feedback v-if="!$v.form.rootUser.name.maxLength"> Name is too long.</b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group label="Last Name*">
+          <b-form-input
+            v-model="$v.form.rootUser.surname.$model"
+            :state="isInvalid($v.form.rootUser.surname)"
+            placeholder="Last Name"
+          />
+          <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.required">
+            This field is required
+          </b-form-invalid-feedback>
+          <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.maxLength">
+            Surname is too long.
+          </b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group
+          :state="isInvalid($v.form.rootUser.email)"
+          :invalid-feedback="
+            invalidFeedback(
+              $v.form.rootUser.email,
+              validateVParams($v.form.rootUser.email.$params, $v.form.rootUser.email)
+            )
+          "
+          label="Email*"
+        >
+          <b-form-input v-model="$v.form.rootUser.email.$model" placeholder="name@email.com" />
+        </b-form-group>
+        <client-only placeholder="Loading...">
+          <div>
+            <label class="d-block">PASSWORD*</label>
+            <weavr-password-input
+              ref="passwordField"
+              :options="{ placeholder: '****' }"
+              :base-style="passwordBaseStyle"
+              :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
+              name="password"
+              required="true"
+              @onChange="passwordInteraction"
+            />
+            <small class="form-text text-muted mb-3">Minimum 8, Maximum 50 characters.</small>
+          </div>
+        </client-only>
+        <b-form-group label="MOBILE NUMBER*">
+          <vue-phone-number-input
+            :value="form.rootUser.mobile.number"
+            :only-countries="mobileCountries"
+            :border-radius="0"
+            :error="numberIsValid === false"
+            color="#6C1C5C"
+            error-color="#F50E4C"
+            valid-color="#6D7490"
+            default-country-code="GB"
+            @update="phoneUpdate"
+          />
+          <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
+            This field must be a valid mobile number.
+          </b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group label="Company Name*">
+          <b-form-input
+            v-model="$v.form.company.name.$model"
+            :state="isInvalid($v.form.company.name)"
+            placeholder="Company Name"
+          />
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group label="Company Registration Number*">
+          <b-form-input
+            v-model="$v.form.company.registrationNumber.$model"
+            :state="isInvalid($v.form.company.registrationNumber)"
+            placeholder="C00000"
+          />
           <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
       </b-col>
-    </b-form-row>
-    <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
-      <recaptcha />
-    </div>
+      <b-col lg="6" class="pl-lg-4">
+        <b-form-group label="Company Type*">
+          <b-form-select
+            v-model="$v.form.company.type.$model"
+            :state="isInvalid($v.form.company.type)"
+            :options="companyTypeOptionsWithDefault"
+            placeholder="Company Type"
+          />
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group label="Registration Country*">
+          <b-form-select
+            v-model="$v.form.company.registrationCountry.$model"
+            :state="isInvalid($v.form.company.registrationCountry)"
+            :options="countryOptionsWithDefault"
+            placeholder="Registration Country"
+          />
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group :state="isInvalid($v.form.industry)" label="Industry*">
+          <b-form-select
+            v-model="$v.form.industry.$model"
+            :state="isInvalid($v.form.industry)"
+            :options="industryOccupationOptions"
+          />
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group :state="isInvalid($v.form.sourceOfFunds)" label="Source of Funds*">
+          <b-form-select
+            v-model="$v.form.sourceOfFunds.$model"
+            :state="isInvalid($v.form.sourceOfFunds)"
+            :options="sourceOfFundsOptions"
+          />
+          <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
+          <b-form-input
+            v-model="form.sourceOfFundsOther"
+            :state="isInvalid($v.form.sourceOfFundsOther)"
+            placeholder="Specify Other Source of Funds"
+          />
+        </b-form-group>
+        <b-form-group :state="isInvalid($v.form.rootUser.companyPosition)" label="My position within the company is*">
+          <b-form-radio
+            v-model="$v.form.rootUser.companyPosition.$model"
+            :state="isInvalid($v.form.rootUser.companyPosition)"
+            name="company-position"
+            value="AUTHORISED_REPRESENTATIVE"
+          >
+            I am a representative (with the relevant power of attorney)
+          </b-form-radio>
+          <b-form-radio
+            v-model="$v.form.rootUser.companyPosition.$model"
+            :state="isInvalid($v.form.rootUser.companyPosition)"
+            name="company-position"
+            value="DIRECTOR"
+          >
+            I am a director
+          </b-form-radio>
+        </b-form-group>
+        <p class="smaller text-muted">
+          To open account on behalf of the company you need to be a director or authorised representative. To enable us
+          to verify your identity, role and authorisation as part of our customer due diligence process, we will later
+          ask you to upload the relevant ID and power of attorney documents.
+        </p>
+        <b-form-row class="small mt-3 text-muted">
+          <b-col>
+            <b-form-group>
+              <b-form-checkbox v-model="$v.form.acceptedTerms.$model" :state="isInvalid($v.form.acceptedTerms)">
+                I accept the
+                <a
+                  href="https://www.onvirtual.cards/terms/business"
+                  target="_blank"
+                  class="text-decoration-underline text-muted"
+                  >terms of use</a
+                >
+                and
+                <a
+                  href="https://www.onvirtual.cards/policy/"
+                  target="_blank"
+                  class="text-decoration-underline text-muted"
+                  >privacy policy</a
+                >
+              </b-form-checkbox>
+              <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
+        <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
+          <recaptcha />
+        </div>
+      </b-col>
+    </b-row>
     <b-form-row class="mt-5">
-      <b-col class="text-right">
-        <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-right" />
+      <b-col class="text-center">
+        <loader-button :is-loading="isLoadingRegistration" button-text="continue" />
       </b-col>
     </b-form-row>
   </b-form>
