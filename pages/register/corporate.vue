@@ -67,11 +67,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     sourceOfFunds: CorporateSourceOfFundTypeEnum.CIVIL_CONTRACT,
     acceptedTerms: false,
     ipAddress: '',
-    baseCurrency: CurrencyEnum.EUR
-  }
-
-  get isLoading() {
-    return this.stores.corporates.isLoading
+    baseCurrency: CurrencyEnum.EUR,
   }
 
   get isLoadingRegistration() {

@@ -10,6 +10,7 @@ import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/co
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 const defaultState = {
+  isLoadingRegistration: false,
   isLoading: false,
   consumer: null,
   kyc: null
@@ -23,6 +24,8 @@ const defaultState = {
 export default class Consumers extends StoreModule {
   isLoading: boolean = defaultState.isLoading
 
+  isLoadingRegistration: boolean = defaultState.isLoadingRegistration
+
   consumer: ConsumerModel | null = defaultState.consumer
 
   kyc: GetConsumerKYCResponse | null = defaultState.kyc
@@ -30,6 +33,11 @@ export default class Consumers extends StoreModule {
   @Mutation
   SET_IS_LOADING(isLoading: boolean) {
     this.isLoading = isLoading
+  }
+
+  @Mutation
+  SET_IS_LOADING_REGISTRATION(isLoadingRegistration: boolean) {
+    this.isLoadingRegistration = isLoadingRegistration
   }
 
   @Mutation
