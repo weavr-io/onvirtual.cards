@@ -12,15 +12,13 @@
             <error-alert />
             <div class="form-screen">
               <b-form novalidate @submit.prevent="submitForm">
-                <h3 class="text-center font-weight-light mb-5">
-                  Register
-                </h3>
+                <h3 class="text-center font-weight-light mb-5">Register</h3>
 
                 <b-form-group label="First Name">
                   <b-form-input
                     v-model="registrationRequest.rootUser.name"
                     :state="isInvalid($v.registrationRequest.rootUser.name)"
-                    placeholder="First Name"
+                    placeholder="First Name*"
                   />
                   <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.name.required">
                     This field is required
@@ -29,7 +27,7 @@
                     Name is too long.
                   </b-form-invalid-feedback>
                 </b-form-group>
-                <b-form-group label="Last Name">
+                <b-form-group label="Last Name*">
                   <b-form-input
                     v-model="registrationRequest.rootUser.surname"
                     :state="isInvalid($v.registrationRequest.rootUser.surname)"
@@ -43,7 +41,7 @@
                   </b-form-invalid-feedback>
                 </b-form-group>
 
-                <b-form-group label="Date of Birth">
+                <b-form-group label="Date of Birth*">
                   <dob-picker
                     :placeholders="['Day', 'Month', 'Year']"
                     month-format="long"
@@ -58,7 +56,7 @@
                     This field is required.
                   </b-form-invalid-feedback>
                 </b-form-group>
-                <b-form-group :state="isInvalid($v.registrationRequest.rootUser.email)" label="Email">
+                <b-form-group :state="isInvalid($v.registrationRequest.rootUser.email)" label="Email*">
                   <b-form-input
                     v-model="$v.registrationRequest.rootUser.email.$model"
                     :state="isInvalid($v.registrationRequest.rootUser.email)"
@@ -67,7 +65,7 @@
                   />
                   <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
                 </b-form-group>
-                <b-form-group label="MOBILE NUMBER">
+                <b-form-group label="MOBILE NUMBER*">
                   <vue-phone-number-input
                     v-model="rootMobileNumber"
                     :only-countries="mobileCountries"
@@ -108,7 +106,7 @@
                 </b-form-group>
                 <client-only placeholder="Loading...">
                   <div :class="{ 'is-dirty': $v.registrationRequest.$dirty }">
-                    <label class="d-block">PASSWORD</label>
+                    <label class="d-block">PASSWORD*</label>
                     <weavr-password-input
                       ref="passwordField"
                       :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
@@ -196,48 +194,48 @@ const touchMap = new WeakMap()
       rootUser: {
         name: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
         },
         surname: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
         },
         email: {
           required,
-          email
+          email,
         },
         mobile: {
           countryCode: {
-            required
+            required,
           },
           number: {
-            required
-          }
+            required,
+          },
         },
         occupation: {
-          required
+          required,
         },
         dateOfBirth: {
           day: {
-            required
+            required,
           },
           month: {
-            required
+            required,
           },
           year: {
-            required
-          }
-        }
+            required,
+          },
+        },
       },
       acceptedTerms: {
         required,
-        sameAs: sameAs(() => true)
+        sameAs: sameAs(() => true),
       },
       sourceOfFunds: {
-        required
+        required,
       },
-      sourceOfFundsOther: {}
-    }
+      sourceOfFundsOther: {},
+    },
   },
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
@@ -247,9 +245,9 @@ const touchMap = new WeakMap()
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
     DobPicker: () => import('~/components/fields/dob-picker.vue'),
-    WeavrPasswordInput
+    WeavrPasswordInput,
   },
-  middleware: 'accessCodeVerified'
+  middleware: 'accessCodeVerified',
 })
 export default class ConsumerRegistrationPage extends mixins(BaseMixin, ValidationMixin) {
   // public password: string = ''
@@ -273,21 +271,21 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
       email: null,
       mobile: {
         number: null,
-        countryCode: '+356'
+        countryCode: '+356',
       },
       dateOfBirth: {
         day: null,
         month: null,
-        year: null
+        year: null,
       },
-      occupation: null
+      occupation: null,
     },
     baseCurrency: CurrencyEnum.EUR,
     ipAddress: null,
     acceptedTerms: false,
     sourceOfFunds: null,
     sourceOfFundsOther: null,
-    password: null
+    password: null,
   }
 
   get industryOccupationOptions() {
@@ -315,8 +313,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 
@@ -334,8 +332,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
       altFormat: 'd/m/Y',
       maxDate: new Date(),
       locale: {
-        firstDayOfWeek: 1
-      }
+        firstDayOfWeek: 1,
+      },
     }
   }
 
@@ -395,13 +393,13 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   createPassword(identity: IdentityIdModel, rootUserId: IDModel) {
     const passwordRequest: CreatePasswordRequestModel = {
       password: {
-        value: this.registrationRequest.password as string
-      }
+        value: this.registrationRequest.password as string,
+      },
     }
     this.$apiMulti.passwords
       .store({
         userId: rootUserId,
-        data: passwordRequest
+        data: passwordRequest,
       })
       .then(this.onRegisteredSuccessfully.bind(this))
   }
@@ -416,8 +414,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     const loginRequest: LoginWithPasswordRequest = {
       email: this.registrationRequest.rootUser.email as string,
       password: {
-        value: this.registrationRequest.password as string
-      }
+        value: this.registrationRequest.password as string,
+      },
     }
 
     const _req = this.stores.auth.loginWithPassword(loginRequest)
@@ -459,7 +457,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     this.registrationRequest.rootUser!.dateOfBirth = {
       year: val.getFullYear(),
       month: val.getMonth() + 1,
-      day: val.getDate()
+      day: val.getDate(),
     }
   }
 }
