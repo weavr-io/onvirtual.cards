@@ -43,9 +43,9 @@ import { DeepNullable, RecursivePartial } from '~/global'
     RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
     PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
-    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
+    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
   },
-  middleware: 'accessCodeVerified'
+  middleware: 'accessCodeVerified',
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
   screen: number = 0
@@ -59,21 +59,21 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       email: null,
       mobile: {
         number: null,
-        countryCode: '+356'
+        countryCode: '+356',
       },
-      companyPosition: null
+      companyPosition: null,
     },
     company: {
       type: null,
       name: '',
       registrationNumber: '',
-      registrationCountry: ''
+      registrationCountry: '',
     },
     industry: IndustryTypeEnum.ACCOUNTING,
     sourceOfFunds: CorporateSourceOfFundTypeEnum.CIVIL_CONTRACT,
     acceptedTerms: false,
     ipAddress: '',
-    baseCurrency: CurrencyEnum.EUR
+    baseCurrency: CurrencyEnum.EUR,
   }
 
   get isLoading() {
@@ -144,13 +144,13 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   createPassword(identity: IdentityIdModel, rootUserId: IDModel) {
     const passwordRequest: CreatePasswordRequestModel = {
       password: {
-        value: this.registrationRequest.password as string
-      }
+        value: this.registrationRequest.password as string,
+      },
     }
     this.$apiMulti.passwords
       .store({
         userId: rootUserId,
-        data: passwordRequest
+        data: passwordRequest,
       })
       .then(this.onRegisteredSuccessfully.bind(this))
   }
@@ -165,13 +165,14 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     const loginRequest: LoginWithPasswordRequest = {
       email: this.registrationRequest.rootUser.email as string,
       password: {
-        value: this.registrationRequest.password as string
-      }
+        value: this.registrationRequest.password as string,
+      },
     }
 
     const _req = this.stores.auth.loginWithPassword(loginRequest)
 
     _req.then(() => {
+      localStorage.setItem('stepUp', 'FALSE')
       this.$router.push({ path: '/profile/address' })
     })
   }
