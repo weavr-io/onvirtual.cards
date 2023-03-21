@@ -18,7 +18,8 @@
 
     &:hover {
       text-decoration: none;
-      border-color: $primary;
+      border-bottom-color: $primary;
+      outline: none;
     }
   }
 }
