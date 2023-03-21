@@ -112,6 +112,16 @@ export default class BaseMixin extends Vue {
     return this.$router.push('/')
   }
 
+  goToRegisterVerify() {
+    return this.$router.push({
+      path: '/register/verify',
+      query: {
+        email: this.rootUserEmail,
+        send: 'true',
+      },
+    })
+  }
+
   logout() {
     return this.stores.auth.logout()
   }
