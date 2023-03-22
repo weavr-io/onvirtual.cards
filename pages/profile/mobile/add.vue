@@ -25,14 +25,7 @@
             This field must be a valid mobile number.
           </b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group class="mt-5 text-center">
-          <b-overlay :show="isLoading" class="d-inline-block" rounded="pill" spinner-small>
-            <b-button type="submit" variant="secondary">
-              save number
-              <span class="pl-5">-></span>
-            </b-button>
-          </b-overlay>
-        </b-form-group>
+        <loader-button :is-loading="isLoading" button-text="save number" class="text-center mt-5" />
       </b-form>
     </b-card>
   </b-col>
@@ -64,6 +57,9 @@ import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/Mobi
       },
     },
   },
+  components: {
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
+  },
 })
 export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
   isLoading: boolean = false
@@ -84,6 +80,7 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
 
   submitForm(e) {
     this.isLoading = true
+
     try {
       e.preventDefault()
 
@@ -92,14 +89,15 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
       }
 
       if (this.$v.$anyError || !this.numberIsValid) {
+        this.isLoading = false
         return null
       }
-
-      console.log('submit')
 
       this.isConsumer
         ? this.stores.consumers.update(this.updateRequest as UpdateConsumerRequest)
         : this.stores.corporates.update(this.updateRequest as UpdateCorporateRequest)
+
+      this.$router.push('/register/verify/mobile')
     } catch (error) {
       this.showErrorToast(error)
     } finally {
@@ -108,7 +106,7 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
   }
 
   phoneUpdate(number) {
-    this.updateRequest.mobile!.countryCode = `+ ${number.countryCallingCode}`
+    this.updateRequest.mobile!.countryCode = `+${number.countryCallingCode}`
     this.updateRequest.mobile!.number = number.nationalNumber
     this.numberIsValid = number.isValid
   }
