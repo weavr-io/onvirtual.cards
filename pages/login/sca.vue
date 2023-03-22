@@ -18,6 +18,7 @@
 import { Component } from 'nuxt-property-decorator'
 import Vue from 'vue'
 import MobileComponent from '~/components/MobileComponent.vue'
+import { identitiesStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'auth',
@@ -27,5 +28,13 @@ import MobileComponent from '~/components/MobileComponent.vue'
     LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
 })
-export default class Sca extends Vue {}
+export default class Sca extends Vue {
+  asyncData({ store, redirect }) {
+    const identities = identitiesStore(store)
+
+    if (!identities.mobileNumberVerified) {
+      return redirect('/register/verify/mobile')
+    }
+  }
+}
 </script>
