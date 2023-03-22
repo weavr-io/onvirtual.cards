@@ -16,9 +16,9 @@
 
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
-import Vue from 'vue'
 import MobileComponent from '~/components/MobileComponent.vue'
 import { identitiesStore } from '~/utils/store-accessor'
+import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
   layout: 'auth',
@@ -28,12 +28,14 @@ import { identitiesStore } from '~/utils/store-accessor'
     LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
 })
-export default class Sca extends Vue {
+export default class Sca extends BaseMixin {
   asyncData({ store, redirect }) {
     const identities = identitiesStore(store)
 
     if (!identities.mobileNumberVerified) {
       return redirect('/register/verify/mobile')
+    } else if (localStorage.getItem('stepUp') === 'TRUE') {
+      return redirect('/')
     }
   }
 }
