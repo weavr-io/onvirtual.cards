@@ -94,6 +94,12 @@ export default class BaseMixin extends Vue {
     })
   }
 
+  get mobileCountries(): string[] {
+    return Countries.map((_c) => {
+      return _c['alpha-2']
+    })
+  }
+
   get countryOptionsWithDefault() {
     const _default: [any] = [{ ...DefaultSelectValueConst }]
     _default.push(...this.countiesOptions)
