@@ -315,12 +315,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
   }
 
-  get mobileCountries(): string[] {
-    return Countries.map((_c) => {
-      return _c['alpha-2']
-    })
-  }
-
   get config() {
     return {
       wrap: false,
