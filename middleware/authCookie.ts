@@ -29,6 +29,13 @@ const cookieMiddleware: Middleware = async ({ store, route, redirect }) => {
       // No valid cookie found
       await authStore(store).logout()
     }
+  } else {
+    if (localStorage.getItem('stepUp')) {
+      localStorage.removeItem('stepUp')
+    }
+    if (localStorage.getItem('scaSmsSent')) {
+      localStorage.removeItem('scaSmsSent')
+    }
   }
 }
 
