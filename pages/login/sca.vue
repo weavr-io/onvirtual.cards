@@ -33,7 +33,7 @@ export default class Sca extends BaseMixin {
     const identities = identitiesStore(store)
 
     if (!identities.mobileNumberVerified) {
-      return redirect('/register/verify/mobile')
+      return redirect('/profile/mobile/add')
     } else if (localStorage.getItem('stepUp') === 'TRUE') {
       return redirect('/')
     }

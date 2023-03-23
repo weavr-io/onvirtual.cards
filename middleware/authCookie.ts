@@ -10,6 +10,7 @@ function scaCheck(route, redirect) {
     !route.name?.startsWith('register') &&
     !route.name?.startsWith('profile-address') &&
     !route.name?.startsWith('login') &&
+    !route.name?.startsWith('profile-mobile-add') &&
     localStorage.getItem('stepUp') === 'FALSE'
   ) {
     return redirect('/login/sca')
@@ -20,6 +21,7 @@ const cookieMiddleware: Middleware = async ({ store, route, redirect }) => {
   let auth: LoginWithPasswordResponse | null = null
 
   const authCookie = Cookie.get(config.ONV_COOKIE_NAME)
+
   if (authCookie) {
     try {
       auth = JSON.parse(authCookie)
