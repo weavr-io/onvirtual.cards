@@ -4,12 +4,12 @@
 
 <script>
 import { Component, Vue } from 'nuxt-property-decorator'
-import { identitiesStore } from '@/utils/store-accessor'
+import { authStore, identitiesStore } from '@/utils/store-accessor'
 
 @Component({})
 export default class Mobile extends Vue {
   asyncData({ redirect, store }) {
-    if (identitiesStore(store).mobileNumberVerified) {
+    if (identitiesStore(store).mobileNumberVerified || !authStore(store).isLoggedIn) {
       return redirect('/dashboard')
     }
   }

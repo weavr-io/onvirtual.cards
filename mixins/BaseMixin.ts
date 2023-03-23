@@ -128,8 +128,12 @@ export default class BaseMixin extends Vue {
     })
   }
 
-  logout() {
-    return this.stores.auth.logout()
+  doLogout() {
+    return this.stores.auth.logout().then(this.redirectToLogin)
+  }
+
+  redirectToLogin() {
+    this.$router.push('/login')
   }
 
   showSuccessToast(msg?: string, title?: string) {
