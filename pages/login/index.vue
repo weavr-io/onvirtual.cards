@@ -144,6 +144,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
               .loginWithPassword(this.loginRequest)
               .then(() => {
                 localStorage.setItem('stepUp', 'FALSE')
+                localStorage.setItem('scaSmsSent', 'FALSE')
                 this.goToDashboard()
               })
               .catch((err) => {
