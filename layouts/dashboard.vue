@@ -23,9 +23,7 @@
       variant="bg-colored"
     >
       We need to verify your email address. Please click
-      <b-link to="/register/verify" class="link">
-        here.
-      </b-link>
+      <b-button variant="transparent" class="link mb-1" @click="goToRegisterVerify">here.</b-button>
     </b-alert>
     <div v-if="isLoading" id="loader">
       <div class="loader-spinner">
@@ -39,6 +37,7 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import KyVerified from '~/mixins/kyVerified'
+import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
   components: {
@@ -50,7 +49,7 @@ import KyVerified from '~/mixins/kyVerified'
     cookiePolicy: () => import('~/components/cookie.vue')
   }
 })
-export default class DefaultLayout extends mixins(KyVerified) {
+export default class DefaultLayout extends mixins(KyVerified, BaseMixin) {
   get isLoading() {
     return this.stores.loader.isLoading
   }

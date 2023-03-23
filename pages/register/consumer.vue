@@ -240,7 +240,6 @@ const touchMap = new WeakMap()
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
     ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
@@ -259,8 +258,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
 
   rootMobileNumber = ''
   numberIsValid: boolean | null = null
-
-  isLoadingRegistration: boolean = false
 
   public registrationRequest: DeepNullable<RecursivePartial<CreateConsumerRequest> & { password: string }> = {
     profileId: this.$config.profileId.consumers,
@@ -341,6 +338,10 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     return typeof process.env.RECAPTCHA !== 'undefined'
   }
 
+  get isLoadingRegistration(): boolean {
+    return this.stores.consumers.isLoadingRegistration
+  }
+
   fetch() {
     this.$apiMulti.ipify.get().then((ip) => {
       this.registrationRequest.ipAddress = ip.data.ip
@@ -348,6 +349,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   }
 
   async submitForm() {
+    this.stores.errors.RESET_ERROR()
     try {
       this.$v.$touch()
 
@@ -384,11 +386,12 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   }
 
   doRegister() {
-    this.isLoadingRegistration = true
+    this.stores.consumers.SET_IS_LOADING_REGISTRATION(true)
     this.stores.consumers
       .create(this.registrationRequest as CreateConsumerRequest)
       .then(this.onConsumerCreated)
       .catch(this.registrationFailed)
+      .finally(this.stopRegistrationLoading)
   }
 
   onConsumerCreated(res: AxiosResponse<ConsumerModel>) {
@@ -431,10 +434,9 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   }
 
   registrationFailed(err) {
-    this.isLoadingRegistration = false
+    this.stopRegistrationLoading()
     const _errCode = err.response.data.errorCode
     this.showErrorToast(_errCode)
-    window.scrollTo(0, 0)
   }
 
   checkOnKeyUp(e) {
@@ -464,6 +466,10 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
       month: val.getMonth() + 1,
       day: val.getDate(),
     }
+  }
+
+  stopRegistrationLoading() {
+    this.stores.consumers.SET_IS_LOADING_REGISTRATION(false)
   }
 }
 </script>

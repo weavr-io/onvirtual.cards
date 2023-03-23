@@ -7,4 +7,19 @@
     padding: 0;
     font-weight: 600;
   }
+
+  &.link {
+    color: $primary;
+    padding: 0;
+    border-radius: 0;
+    font-weight: 400;
+    border-bottom: 3px solid $secondary;
+    transition: 0.3s border;
+
+    &:hover {
+      text-decoration: none;
+      border-bottom-color: $primary;
+      outline: none;
+    }
+  }
 }

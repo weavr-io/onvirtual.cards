@@ -107,7 +107,6 @@ import { Nullable } from '~/global'
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    RegisterForm: () => import('~/components/registration/RegisterForm1.vue'),
     ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
@@ -207,16 +206,6 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
         }
       })
     }
-  }
-
-  goToRegisterVerify() {
-    return this.$router.push({
-      path: '/register/verify',
-      query: {
-        email: this.rootUserEmail,
-        send: 'true'
-      }
-    })
   }
 }
 </script>
