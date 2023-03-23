@@ -11,9 +11,9 @@
               <template #button-content>
                 {{ rootFullName }}
               </template>
-              <b-dropdown-item to="/profile"> Profile </b-dropdown-item>
-              <b-dropdown-item v-if="isCorporate" to="/users"> Users </b-dropdown-item>
-              <b-dropdown-item @click="doLogout"> Sign out </b-dropdown-item>
+              <b-dropdown-item to="/profile"> Profile</b-dropdown-item>
+              <b-dropdown-item v-if="isCorporate" to="/users"> Users</b-dropdown-item>
+              <b-dropdown-item @click="doLogout"> Sign out</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
@@ -27,14 +27,6 @@ import BaseMixin from '~/mixins/BaseMixin'
 
 @Component
 export default class Header extends mixins(BaseMixin) {
-  doLogout() {
-    this.logout().then(this.redirectToLogin)
-  }
-
-  redirectToLogin() {
-    this.$router.push('/login')
-  }
-
   fetch() {
     if (this.consumer === null && this.corporate === null) {
       if (this.isConsumer) {

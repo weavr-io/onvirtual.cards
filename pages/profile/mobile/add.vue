@@ -4,7 +4,6 @@
       <img alt="onvirtual.cards" class="d-inline-block align-top" src="/img/logo.svg" width="200" />
     </div>
     <b-card body-class="p-card">
-      <pre>{{ stores.consumers.consumer?.rootUser.mobileNumberVerified }}</pre>
       <h3 class="text-center font-weight-light mb-4">Add your phone number</h3>
       <p class="text-center mb-5">
         We need your phone number to send you one-time passwords when logging in. we will not share this with anyone.
@@ -41,7 +40,7 @@ import { DeepNullable } from '~/global'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import { identitiesStore } from '~/utils/store-accessor'
+import { authStore, identitiesStore } from '~/utils/store-accessor'
 
 @Component({
   layout: 'auth',
@@ -77,7 +76,7 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
   }
 
   asyncData({ redirect, store }) {
-    if (identitiesStore(store).mobileNumberVerified) {
+    if (identitiesStore(store).mobileNumberVerified || !authStore(store).isLoggedIn) {
       return redirect('/dashboard')
     }
   }

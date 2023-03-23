@@ -4,12 +4,11 @@
       <b-navbar type="light" fixed="top" variant="transparent" class="">
         <b-container>
           <b-collapse id="nav_collapse" is-nav>
-            <b-navbar-nav v-if="showLinks" class="ml-auto">
-              <b-nav-item v-if="showRegister" to="/register">
-                Register
-              </b-nav-item>
-              <b-nav-item v-if="showLogin" to="/login">
-                Sign In
+            <b-navbar-nav class="ml-auto">
+              <b-nav-item v-if="showRegister && !isLoggedIn" to="/register"> Register</b-nav-item>
+              <b-nav-item v-if="showLogin && !isLoggedIn" to="/login"> Sign In</b-nav-item>
+              <b-nav-item v-if="isLoggedIn">
+                <b-button class="nav-item" @click="doLogout">log out</b-button>
               </b-nav-item>
             </b-navbar-nav>
           </b-collapse>
@@ -54,10 +53,6 @@ class AuthLayout extends mixins(BaseMixin) {
 
   get showRegister(): boolean {
     return !this.showLogin
-  }
-
-  get showLinks(): boolean {
-    return !this.isLoggedIn
   }
 
   get showLogin(): boolean {
