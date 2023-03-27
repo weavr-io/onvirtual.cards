@@ -350,7 +350,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     return this.stores.consumers.isLoadingRegistration
   }
 
-  get doesPasswordMeetCriteria() {
+  get doesPasswordMeetCriteria(): boolean {
     return this.passwordStrength >= 2
   }
 

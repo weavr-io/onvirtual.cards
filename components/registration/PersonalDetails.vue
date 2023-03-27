@@ -329,11 +329,11 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     }
   }
 
-  get isPasswordValid() {
+  get isPasswordValid(): boolean {
     return !this.$v.form.password?.$dirty ? true : this.doesPasswordMeetCriteria
   }
 
-  get doesPasswordMeetCriteria() {
+  get doesPasswordMeetCriteria(): boolean {
     return this.passwordStrength >= 2
   }
 
@@ -343,7 +343,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     })
   }
 
-  get isLoadingRegistration() {
+  get isLoadingRegistration(): boolean {
     return this.stores.corporates.isLoadingRegistration
   }
 

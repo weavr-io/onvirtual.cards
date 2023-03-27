@@ -72,11 +72,11 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
   passwordStrength: number = 0
 
-  get isPasswordValid() {
+  get isPasswordValid(): boolean {
     return this.passwordStrength >= 2
   }
 
-  get isLoadingRegistration() {
+  get isLoadingRegistration(): boolean {
     return this.stores.corporates.isLoadingRegistration
   }
 
