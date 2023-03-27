@@ -8,7 +8,7 @@
         <b-card-body class="p-card">
           <div class="form-screens">
             <div class="form-screen">
-              <personal-details-form @submit-form="formSubmit" />
+              <personal-details-form @submit-form="formSubmit" @strength-check="strengthCheck" />
             </div>
           </div>
         </b-card-body>
@@ -70,6 +70,12 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     baseCurrency: CurrencyEnum.EUR,
   }
 
+  passwordStrength: number = 0
+
+  get isPasswordValid() {
+    return this.passwordStrength >= 2
+  }
+
   get isLoadingRegistration() {
     return this.stores.corporates.isLoadingRegistration
   }
@@ -90,36 +96,48 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
   formSubmit(_data) {
     if (_data != null) {
-      this.registrationRequest.rootUser!.name = _data.rootUser.name
-      this.registrationRequest.rootUser!.surname = _data.rootUser.surname
-      this.registrationRequest.rootUser!.email = _data.rootUser.email
-      this.registrationRequest.password = _data.password
-      this.registrationRequest.rootUser!.companyPosition = _data.rootUser.companyPosition
-      this.registrationRequest.rootUser!.mobile! = { ..._data.rootUser.mobile }
+      this.updateRegistrationRequest(_data)
 
-      this.registrationRequest.company!.name = _data.company.name
-      this.registrationRequest.company!.type = _data.company.type
-      this.registrationRequest.company!.registrationNumber = _data.company.registrationNumber
-      this.registrationRequest.company!.registrationCountry = _data.company.registrationCountry
-
-      this.registrationRequest.industry = _data.industry
-      this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
-      this.registrationRequest.sourceOfFundsOther = _data.sourceOfFundsOther
-
-      this.registrationRequest.acceptedTerms = _data.acceptedTerms
-
-      this.doRegister()
+      if (this.isPasswordValid) {
+        this.doRegister()
+      }
     }
+  }
+
+  updateRegistrationRequest(_data) {
+    this.registrationRequest.rootUser!.name = _data.rootUser.name
+    this.registrationRequest.rootUser!.surname = _data.rootUser.surname
+    this.registrationRequest.rootUser!.email = _data.rootUser.email
+    this.registrationRequest.password = _data.password
+    this.registrationRequest.rootUser!.companyPosition = _data.rootUser.companyPosition
+    this.registrationRequest.rootUser!.mobile! = { ..._data.rootUser.mobile }
+
+    this.registrationRequest.company!.name = _data.company.name
+    this.registrationRequest.company!.type = _data.company.type
+    this.registrationRequest.company!.registrationNumber = _data.company.registrationNumber
+    this.registrationRequest.company!.registrationCountry = _data.company.registrationCountry
+
+    this.registrationRequest.industry = _data.industry
+    this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
+    this.registrationRequest.sourceOfFundsOther = _data.sourceOfFundsOther
+
+    this.registrationRequest.acceptedTerms = _data.acceptedTerms
+  }
+
+  strengthCheck(val) {
+    this.passwordStrength = val.id
   }
 
   doRegister() {
     this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
 
-    this.stores.corporates
-      .create(this.registrationRequest as CreateCorporateRequest)
-      .then(this.onCorporateCreated)
-      .catch(this.registrationFailed)
-      .finally(this.stopRegistrationLoading)
+    if (this.isPasswordValid) {
+      this.stores.corporates
+        .create(this.registrationRequest as CreateCorporateRequest)
+        .then(this.onCorporateCreated)
+        .catch(this.registrationFailed)
+        .finally(this.stopRegistrationLoading)
+    }
   }
 
   onCorporateCreated(res: AxiosResponse<ConsumerModel>) {
@@ -129,8 +147,8 @@ export default class RegistrationPage extends mixins(BaseMixin) {
   createPassword(identity: IdentityIdModel, rootUserId: IDModel) {
     const passwordRequest: CreatePasswordRequestModel = {
       password: {
-        value: this.registrationRequest.password as string
-      }
+        value: this.registrationRequest.password as string,
+      },
     }
     this.$apiMulti.passwords
       .store({
