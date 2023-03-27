@@ -116,7 +116,7 @@
                       @onChange="passwordInteraction"
                       @onStrength="strengthCheck"
                     />
-                    <small class="form-text mb-3" :class="!isPasswordValid ? 'text-danger' : 'text-muted'"
+                    <small class="form-text mb-3" :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
                       >- min 8 characters <br />- uppercase letter <br />- digit and a special character</small
                     >
                   </div>
@@ -289,8 +289,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     password: null,
   }
 
-  get isPasswordValid() {
-    return !this.$v.registrationRequest.password?.$dirty ? true : this.doesPasswordMeetCriteria
+  get isPasswordValidAndDirty() {
+    return !this.$v.registrationRequest.password?.$dirty ? true : this.isPasswordValid
   }
 
   get industryOccupationOptions() {
@@ -350,7 +350,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     return this.stores.consumers.isLoadingRegistration
   }
 
-  get doesPasswordMeetCriteria(): boolean {
+  get isPasswordValid(): boolean {
     return this.passwordStrength >= 2
   }
 
@@ -380,7 +380,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         await this.$recaptcha.reset()
       }
 
-      if (this.doesPasswordMeetCriteria) {
+      if (this.isPasswordValid) {
         this.passwordField.createToken().then(
           (tokens) => {
             if (tokens.tokens.password !== '') {

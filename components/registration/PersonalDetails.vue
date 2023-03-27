@@ -53,7 +53,7 @@
               @onChange="passwordInteraction"
               @onStrength="strengthCheck"
             />
-            <small class="form-text mb-3" :class="!isPasswordValid ? 'text-danger' : 'text-muted'"
+            <small class="form-text mb-3" :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
               >- min 8 characters <br />- uppercase letter <br />- digit and a special character</small
             >
           </div>
@@ -329,11 +329,11 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     }
   }
 
-  get isPasswordValid(): boolean {
-    return !this.$v.form.password?.$dirty ? true : this.doesPasswordMeetCriteria
+  get isPasswordValidAndDirty(): boolean {
+    return !this.$v.form.password?.$dirty ? true : this.isPasswordValid
   }
 
-  get doesPasswordMeetCriteria(): boolean {
+  get isPasswordValid(): boolean {
     return this.passwordStrength >= 2
   }
 
@@ -394,7 +394,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
         await this.$recaptcha.reset()
       }
 
-      if (this.doesPasswordMeetCriteria) {
+      if (this.isPasswordValid) {
         this.passwordField.createToken().then(
           (tokens) => {
             if (tokens.tokens.password !== '') {
