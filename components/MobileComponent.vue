@@ -119,7 +119,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
     }
   }
 
-  doVerify() {
+  async doVerify() {
     this.$v.$touch()
 
     if (this.$v.$invalid) {
@@ -134,21 +134,22 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
     }
 
     if (this.verifyPhone) {
-      this.stores.auth
+      await this.stores.auth
         .verifyAuthFactors(req)
         .then(() => {
           this.stores.identities.SET_MOBILE_VERIFIED(true)
           this.getConsumersOrCorporates()
-          this.$router.push({
-            path: '/login/sca',
-            query: {
-              send: 'true',
-            },
-          })
         })
         .finally(() => {
           this.isLoading = false
         })
+      await this.stores.auth.indexAuthFactors()
+      await this.$router.push({
+        path: '/login/sca',
+        query: {
+          send: 'true',
+        },
+      })
     } else {
       this.stores.auth
         .verifyStepUp(req)
