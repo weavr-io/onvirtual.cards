@@ -100,7 +100,7 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
         ? this.stores.consumers.update(this.updateRequest as UpdateConsumerRequest)
         : this.stores.corporates.update(this.updateRequest as UpdateCorporateRequest)
 
-      this.$router.push('/register/verify/mobile')
+      this.$router.push('/login/verify/mobile')
     } catch (error) {
       this.showErrorToast(error)
     } finally {

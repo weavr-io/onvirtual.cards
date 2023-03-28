@@ -175,9 +175,8 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     const _req = this.stores.auth.loginWithPassword(loginRequest)
 
     _req.then(() => {
-      localStorage.setItem('stepUp', 'FALSE')
-      localStorage.setItem('scaSmsSent', 'FALSE')
-      this.$router.push({ path: '/profile/address' })
+      this.setSCAstorage()
+      return this.$router.push({ path: '/profile/address' })
     })
   }
 
