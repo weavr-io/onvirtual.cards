@@ -167,6 +167,8 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
       await this.stores.consumers.get()
     }
 
+    await this.stores.auth.indexAuthFactors()
+
     await this.$router.push({
       path: '/login/sca',
       query: {

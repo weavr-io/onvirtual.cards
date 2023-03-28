@@ -16,7 +16,10 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import MobileComponent from '~/components/MobileComponent.vue'
-import { identitiesStore } from '~/utils/store-accessor'
+import { authStore, identitiesStore } from '~/utils/store-accessor'
+import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
+import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
+import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
 
 @Component({
   layout: 'auth',
@@ -29,8 +32,13 @@ import { identitiesStore } from '~/utils/store-accessor'
 export default class Sca extends Vue {
   asyncData({ store, redirect }) {
     const identities = identitiesStore(store)
+    const auth = authStore(store)
 
-    if (!identities.mobileNumberVerified) {
+    const smsAuthFactors = auth.authFactors?.factors?.filter((factor) => factor.channel === SCAOtpChannelEnum.SMS)
+
+    if (auth.auth?.credentials.type === CredentialTypeEnum.ROOT && !identities.emailVerified) {
+      return redirect('/login/verify')
+    } else if (!smsAuthFactors || smsAuthFactors[0].status === SCAFactorStatusEnum.PENDING_VERIFICATION) {
       return redirect('/profile/mobile/add')
     } else if (localStorage.getItem('stepUp') === 'TRUE') {
       return redirect('/')

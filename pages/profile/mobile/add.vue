@@ -40,7 +40,11 @@ import { DeepNullable } from '~/global'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import { authStore, identitiesStore } from '~/utils/store-accessor'
+import { authStore } from '~/utils/store-accessor'
+import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
+import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
+import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
+import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 
 @Component({
   layout: 'auth',
@@ -75,13 +79,19 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
     },
   }
 
-  asyncData({ redirect, store }) {
-    if (identitiesStore(store).mobileNumberVerified || !authStore(store).isLoggedIn) {
+  async asyncData({ redirect, store }) {
+    const auth = authStore(store)
+
+    await auth.indexAuthFactors()
+
+    const smsAuthFactors = auth.authFactors?.factors?.filter((factor) => factor.channel === SCAOtpChannelEnum.SMS)
+
+    if (smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION) {
       return redirect('/dashboard')
     }
   }
 
-  submitForm(e) {
+  async submitForm(e) {
     this.isLoading = true
 
     try {
@@ -96,11 +106,22 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
         return null
       }
 
-      this.isConsumer
-        ? this.stores.consumers.update(this.updateRequest as UpdateConsumerRequest)
-        : this.stores.corporates.update(this.updateRequest as UpdateCorporateRequest)
-
-      this.$router.push('/login/verify/mobile')
+      if (this.stores.auth.auth?.credentials.type === CredentialTypeEnum.ROOT) {
+        this.isConsumer
+          ? await this.stores.consumers.update(this.updateRequest as UpdateConsumerRequest)
+          : await this.stores.corporates.update(this.updateRequest as UpdateCorporateRequest)
+      } else {
+        await this.stores.users.update({
+          id: this.stores.auth.auth!.credentials.id,
+          data: this.updateRequest as UpdateUserRequestModel,
+        })
+      }
+      await this.$router.push({
+        path: '/login/verify/mobile',
+        query: {
+          send: 'true',
+        },
+      })
     } catch (error) {
       this.showErrorToast(error)
     } finally {

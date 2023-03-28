@@ -15,10 +15,13 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, mixins } from 'nuxt-property-decorator'
 import Vue from 'vue'
-import { identitiesStore } from '~/utils/store-accessor'
+import { authStore, identitiesStore } from '~/utils/store-accessor'
 import MobileComponent from '~/components/MobileComponent.vue'
+import BaseMixin from '~/mixins/BaseMixin'
+import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
+import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 
 @Component({
   layout: 'auth',
@@ -28,13 +31,15 @@ import MobileComponent from '~/components/MobileComponent.vue'
     LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
 })
-export default class Mobile extends Vue {
-  asyncData({ store, redirect }) {
-    const identities = identitiesStore(store)
+export default class Mobile extends mixins(BaseMixin) {
+  async asyncData({ store, redirect }) {
+    const auth = authStore(store)
 
-    if (!identities.emailVerified) {
-      return redirect('/login/verify')
-    } else if (identities.mobileNumberVerified) {
+    await auth.indexAuthFactors()
+
+    const smsAuthFactors = auth.authFactors?.factors?.filter((factor) => factor.channel === SCAOtpChannelEnum.SMS)
+
+    if (smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION) {
       return redirect('/')
     }
   }
