@@ -32,12 +32,8 @@ const cookieMiddleware: Middleware = async ({ store, route, redirect }) => {
       await authStore(store).logout()
     }
   } else {
-    if (localStorage.getItem('stepUp')) {
-      localStorage.removeItem('stepUp')
-    }
-    if (localStorage.getItem('scaSmsSent')) {
-      localStorage.removeItem('scaSmsSent')
-    }
+    localStorage.removeItem('stepUp')
+    localStorage.removeItem('scaSmsSent')
   }
 }
 

@@ -54,6 +54,7 @@ import BaseMixin from '~/mixins/BaseMixin'
 import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
 
 @Component({
   layout: 'auth',
@@ -80,6 +81,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
   async asyncData({ route, redirect, store }) {
     const identities = identitiesStore(store)
+    const auth = authStore(store)
 
     if (identities.identity === null) {
       await identities.getIdentity()
@@ -90,7 +92,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
       return
     }
 
-    if (identities.emailVerified) {
+    if (identities.emailVerified || auth.auth?.credentials.type === CredentialTypeEnum.USER) {
       return redirect('/login/verify/mobile')
     }
 

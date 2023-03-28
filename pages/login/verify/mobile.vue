@@ -15,11 +15,10 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import Vue from 'vue'
-import { authStore, identitiesStore } from '~/utils/store-accessor'
+import { authStore } from '~/utils/store-accessor'
 import MobileComponent from '~/components/MobileComponent.vue'
-import BaseMixin from '~/mixins/BaseMixin'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 
@@ -31,7 +30,7 @@ import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentica
     LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
 })
-export default class Mobile extends mixins(BaseMixin) {
+export default class Mobile extends Vue {
   async asyncData({ store, redirect }) {
     const auth = authStore(store)
 
