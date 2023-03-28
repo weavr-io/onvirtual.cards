@@ -87,15 +87,16 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
     if (!authStore(store).isLoggedIn) {
       redirect('/')
+      return
     }
 
     if (identities.emailVerified) {
-      return redirect('/register/verify/mobile')
+      return redirect('/login/verify/mobile')
     }
 
     const request: VerifyEmailRequest = {
       email: identities.identity!.rootUser?.email,
-      verificationCode: route.query.nonce ? route.query.nonce + '' : '',
+      verificationCode: route.query.nonce ? `${route.query.nonce}` : '',
     }
 
     if (request.verificationCode !== '') {
@@ -202,7 +203,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     this.stores.identities.SET_EMAIL_VERIFIED(true)
 
     return this.$router.push({
-      path: '/register/verify/mobile',
+      path: '/login/verify/mobile',
       query: {
         send: 'true',
         cons: this.$route.query.cons,

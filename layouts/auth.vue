@@ -8,7 +8,7 @@
               <b-nav-item v-if="showRegister && !isLoggedIn" to="/register"> Register</b-nav-item>
               <b-nav-item v-if="showLogin && !isLoggedIn" to="/login"> Sign In</b-nav-item>
               <b-nav-item v-if="isLoggedIn">
-                <b-button class="nav-item" @click="doLogout">log out</b-button>
+                <b-button class="nav-item" @click="doLogout">Sign out</b-button>
               </b-nav-item>
             </b-navbar-nav>
           </b-collapse>
@@ -30,23 +30,15 @@ import BaseMixin from '~/mixins/BaseMixin'
 @Component({
   components: {
     AppFooter: () => import('~/components/Footer.vue'),
-    cookiePolicy: () => import('~/components/cookie.vue')
+    cookiePolicy: () => import('~/components/cookie.vue'),
   },
   head: {
     bodyAttrs: {
-      class: 'bg-bg-colored'
-    }
-  }
+      class: 'bg-bg-colored',
+    },
+  },
 })
 class AuthLayout extends mixins(BaseMixin) {
-  get isLoggedIn() {
-    return this.stores.auth.isLoggedIn
-  }
-
-  get isLogin(): boolean {
-    return this.$route.path === '/login'
-  }
-
   get showHeader(): boolean {
     return this.$config.app.view_register
   }

@@ -18,12 +18,12 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
       case 401:
         if (error.response.config.url !== '/logout') authStore(ctxt.store).logout()
         ctxt.redirect('/login')
-        return
+        break
       case 403:
         if (ctxt.route.name !== 'login' && error.response.data.message === 'STEP_UP_REQUIRED') {
           ctxt.redirect('/login/sca')
-        } else if (ctxt.route.name !== 'login') ctxt.redirect('/forbidden')
-        return
+        }
+        break
       case 409:
         errorsStore(ctxt.store).SET_CONFLICT(error)
         break

@@ -183,8 +183,6 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
 
-const Countries = require('~/static/json/countries.json')
-
 const touchMap = new WeakMap()
 
 @Component({
@@ -356,7 +354,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
       }
 
       if (this.isRecaptchaEnabled) {
-        const token = await this.$recaptcha.getResponse()
         await this.$recaptcha.reset()
       }
 
@@ -423,9 +420,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     const _req = this.stores.auth.loginWithPassword(loginRequest)
 
     _req.then(() => {
-      localStorage.setItem('stepUp', 'FALSE')
-      localStorage.setItem('scaSmsSent', 'FALSE')
-      this.$router.push({ path: '/profile/address' })
+      this.setSCAstorage()
+      return this.$router.push({ path: '/profile/address' })
     })
   }
 

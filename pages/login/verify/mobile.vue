@@ -33,7 +33,7 @@ export default class Mobile extends Vue {
     const identities = identitiesStore(store)
 
     if (!identities.emailVerified) {
-      return redirect('/register/verify')
+      return redirect('/login/verify')
     } else if (identities.mobileNumberVerified) {
       return redirect('/')
     }

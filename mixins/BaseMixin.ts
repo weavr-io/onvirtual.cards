@@ -89,7 +89,7 @@ export default class BaseMixin extends Vue {
     return Countries.map((_c) => {
       return {
         text: _c.name,
-        value: _c['alpha-2']
+        value: _c['alpha-2'],
       }
     })
   }
@@ -118,9 +118,9 @@ export default class BaseMixin extends Vue {
     return this.$router.push('/')
   }
 
-  goToRegisterVerify() {
+  goToVerify() {
     return this.$router.push({
-      path: '/register/verify',
+      path: '/login/verify',
       query: {
         email: this.rootUserEmail,
         send: 'true',
@@ -139,14 +139,14 @@ export default class BaseMixin extends Vue {
   showSuccessToast(msg?: string, title?: string) {
     return this.$weavrToast(msg !== undefined ? msg : 'All changes have been saved', {
       title: title !== undefined ? title : 'Changes saved',
-      variant: 'success'
+      variant: 'success',
     })
   }
 
   showErrorToast(msg?: string, title?: string) {
     return this.$weavrToast(msg !== undefined ? msg : 'An error has occurred while saving', {
       title: title !== undefined ? title : 'Error',
-      variant: 'danger'
+      variant: 'danger',
     })
   }
 
@@ -167,5 +167,10 @@ export default class BaseMixin extends Vue {
 
   get pendingDataOrError() {
     return this.pendingData || this.fetchHasError
+  }
+
+  setSCAstorage() {
+    localStorage.setItem('stepUp', 'FALSE')
+    localStorage.setItem('scaSmsSent', 'FALSE')
   }
 }
