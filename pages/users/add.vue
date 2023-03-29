@@ -3,9 +3,7 @@
     <b-container>
       <b-row>
         <b-col>
-          <h2 class="text-center font-weight-lighter mb-5">
-            Invite User
-          </h2>
+          <h2 class="text-center font-weight-lighter mb-5">Invite User</h2>
         </b-col>
       </b-row>
       <b-row>
@@ -55,24 +53,25 @@ import { Nullable } from '~/global'
 @Component({
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     request: {
       name: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(100),
       },
       surname: {
         required,
-        maxLength: maxLength(100)
+        maxLength: maxLength(100),
       },
       email: {
         required,
-        email
-      }
-    }
-  }
+        email,
+      },
+    },
+  },
+  middleware: ['kyVerified'],
 })
 export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
   isLoading: boolean = false
