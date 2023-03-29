@@ -94,7 +94,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
   dismissSecs = 60
   dismissCountDown = 0
 
-  mounted() {
+  created() {
     if (this.$route.query.send === 'true' && (this.verifyPhone || localStorage.getItem('scaSmsSent') === 'FALSE')) {
       this.sendSms()
     }
@@ -133,35 +133,37 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
       body: this.request as AuthVerifyEnrolRequest,
     }
 
-    if (this.verifyPhone) {
-      await this.stores.auth
-        .verifyAuthFactors(req)
-        .then(() => {
-          this.stores.identities.SET_MOBILE_VERIFIED(true)
-          this.getConsumersOrCorporates()
+    try {
+      if (this.verifyPhone) {
+        await this.stores.auth
+          .verifyAuthFactors(req)
+          .then(() => {
+            this.stores.identities.SET_MOBILE_VERIFIED(true)
+            this.getConsumersOrCorporates()
+          })
+          .finally(() => {
+            this.isLoading = false
+          })
+        await this.stores.auth.indexAuthFactors()
+        await this.$router.push({
+          path: '/login/sca',
+          query: {
+            send: 'true',
+          },
         })
-        .finally(() => {
-          this.isLoading = false
-        })
-      await this.stores.auth.indexAuthFactors()
-      await this.$router.push({
-        path: '/login/sca',
-        query: {
-          send: 'true',
-        },
-      })
-    } else {
-      this.stores.auth
-        .verifyStepUp(req)
-        .then(() => {
-          localStorage.setItem('stepUp', 'TRUE')
-          this.getConsumersOrCorporates()
-          this.goToIndex()
-        })
-        .finally(() => {
-          this.isLoading = false
-        })
-    }
+      } else {
+        await this.stores.auth
+          .verifyStepUp(req)
+          .then(() => {
+            localStorage.setItem('stepUp', 'TRUE')
+            this.getConsumersOrCorporates()
+            this.goToIndex()
+          })
+          .finally(() => {
+            this.isLoading = false
+          })
+      }
+    } catch (e) {}
   }
 
   getConsumersOrCorporates() {
