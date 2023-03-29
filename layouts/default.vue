@@ -25,10 +25,6 @@ import BaseMixin from '~/mixins/BaseMixin'
   middleware: ['authRouteGuard'],
 })
 export default class DefaultLayout extends mixins(BaseMixin) {
-  fetch() {
-    console.log('logged', this.isLoggedIn)
-  }
-
   get isLoading() {
     return this.stores.loader.isLoading
   }
