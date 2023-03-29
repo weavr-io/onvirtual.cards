@@ -47,12 +47,15 @@
               ref="passwordField"
               :options="{ placeholder: '****' }"
               :base-style="passwordBaseStyle"
-              :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
+              class-name="sign-in-password"
               name="password"
               required="true"
               @onChange="passwordInteraction"
+              @onStrength="strengthCheck"
             />
-            <small class="form-text text-muted mb-3">Minimum 8, Maximum 50 characters.</small>
+            <small class="form-text mb-3" :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
+              >- min 8 characters <br />- uppercase letter <br />- digit and a special character</small
+            >
           </div>
         </client-only>
         <b-form-group label="MOBILE NUMBER*">
@@ -170,7 +173,7 @@
                   target="_blank"
                   class="text-decoration-underline text-muted"
                   >privacy policy</a
-                >
+                >*
               </b-form-checkbox>
               <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
             </b-form-group>
@@ -306,6 +309,8 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     password: null,
   }
 
+  passwordStrength: number = 0
+
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
     return {
       color: '#495057',
@@ -324,8 +329,12 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     }
   }
 
-  get isInvalidPassword() {
-    return this.$v.form.password?.$anyError
+  get isPasswordValidAndDirty(): boolean {
+    return !this.$v.form.password?.$dirty ? true : this.isPasswordValid
+  }
+
+  get isPasswordValid(): boolean {
+    return this.passwordStrength >= 2
   }
 
   get mobileCountries(): string[] {
@@ -334,7 +343,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     })
   }
 
-  get isLoadingRegistration() {
+  get isLoadingRegistration(): boolean {
     return this.stores.corporates.isLoadingRegistration
   }
 
@@ -363,9 +372,11 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
 
   passwordInteraction(val: { empty: boolean; valid: boolean }) {
     !val.empty ? (this.form.password = '******') : (this.form.password = '')
+    this.$v.form.password?.$touch()
   }
 
   async tryToSubmitForm(e) {
+    this.stores.errors.RESET_ERROR()
     try {
       e.preventDefault()
 
@@ -383,20 +394,22 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
         await this.$recaptcha.reset()
       }
 
-      this.passwordField.createToken().then(
-        (tokens) => {
-          if (tokens.tokens.password !== '') {
-            this.form.password = tokens.tokens.password
+      if (this.isPasswordValid) {
+        this.passwordField.createToken().then(
+          (tokens) => {
+            if (tokens.tokens.password !== '') {
+              this.form.password = tokens.tokens.password
 
-            this.submitForm()
-          } else {
-            return null
+              this.submitForm()
+            } else {
+              return null
+            }
+          },
+          (e) => {
+            this.showErrorToast(e, 'Tokenization Error')
           }
-        },
-        (e) => {
-          this.showErrorToast(e, 'Tokenization Error')
-        }
-      )
+        )
+      }
     } catch (error) {
       this.showErrorToast(error, 'Registration Error')
     }
@@ -406,6 +419,11 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
   submitForm() {
     this.stores.errors.RESET_ERROR()
     return this.form
+  }
+
+  @Emit()
+  strengthCheck(val) {
+    this.passwordStrength = val.id
   }
 }
 </script>

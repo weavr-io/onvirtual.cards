@@ -13,7 +13,6 @@
             <div class="form-screen">
               <b-form novalidate @submit.prevent="submitForm">
                 <h3 class="text-center font-weight-light mb-5">Register</h3>
-
                 <b-form-group label="First Name*">
                   <b-form-input
                     v-model="registrationRequest.rootUser.name"
@@ -105,18 +104,21 @@
                   />
                 </b-form-group>
                 <client-only placeholder="Loading...">
-                  <div :class="{ 'is-dirty': $v.registrationRequest.$dirty }">
+                  <div>
                     <label class="d-block">PASSWORD*</label>
                     <weavr-password-input
                       ref="passwordField"
-                      :options="{ placeholder: '****', classNames: { empty: 'is-invalid' } }"
+                      :options="{ placeholder: '****' }"
                       :base-style="passwordBaseStyle"
                       class-name="sign-in-password"
                       name="password"
                       required="true"
-                      @onKeyUp="checkOnKeyUp"
+                      @onChange="passwordInteraction"
+                      @onStrength="strengthCheck"
                     />
-                    <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
+                    <small class="form-text mb-3" :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
+                      >- min 8 characters <br />- uppercase letter <br />- digit and a special character</small
+                    >
                   </div>
                 </client-only>
                 <b-form-row class="small mt-3 text-muted">
@@ -139,7 +141,7 @@
                           target="_blank"
                           class="text-decoration-underline text-muted"
                           >privacy policy</a
-                        >
+                        >*
                       </b-form-checkbox>
                       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                     </b-form-group>
@@ -235,6 +237,9 @@ const touchMap = new WeakMap()
         required,
       },
       sourceOfFundsOther: {},
+      password: {
+        required,
+      },
     },
   },
   components: {
@@ -249,8 +254,6 @@ const touchMap = new WeakMap()
   middleware: 'accessCodeVerified',
 })
 export default class ConsumerRegistrationPage extends mixins(BaseMixin, ValidationMixin) {
-  // public password: string = ''
-
   private $recaptcha: any
 
   @Ref('passwordField')
@@ -258,6 +261,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
 
   rootMobileNumber = ''
   numberIsValid: boolean | null = null
+  passwordStrength: number = 0
 
   public registrationRequest: DeepNullable<RecursivePartial<CreateConsumerRequest> & { password: string }> = {
     profileId: this.$config.profileId.consumers,
@@ -283,6 +287,10 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     sourceOfFunds: null,
     sourceOfFundsOther: null,
     password: null,
+  }
+
+  get isPasswordValidAndDirty() {
+    return !this.$v.registrationRequest.password?.$dirty ? true : this.isPasswordValid
   }
 
   get industryOccupationOptions() {
@@ -342,22 +350,28 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     return this.stores.consumers.isLoadingRegistration
   }
 
+  get isPasswordValid(): boolean {
+    return this.passwordStrength >= 2
+  }
+
   fetch() {
     this.$apiMulti.ipify.get().then((ip) => {
       this.registrationRequest.ipAddress = ip.data.ip
     })
   }
 
-  async submitForm() {
+  async submitForm(e) {
     this.stores.errors.RESET_ERROR()
     try {
+      e.preventDefault()
+
       this.$v.$touch()
 
       if (this.numberIsValid === null) {
         this.numberIsValid = false
       }
 
-      if (this.$v.$invalid) {
+      if (this.$v.$invalid || !this.numberIsValid) {
         return
       }
 
@@ -366,27 +380,39 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         await this.$recaptcha.reset()
       }
 
-      this.passwordField.createToken().then(
-        (tokens) => {
-          if (tokens.tokens.password !== '') {
-            this.registrationRequest.password = tokens.tokens.password
-            this.doRegister()
-          } else {
+      if (this.isPasswordValid) {
+        this.passwordField.createToken().then(
+          (tokens) => {
+            if (tokens.tokens.password !== '') {
+              this.registrationRequest.password = tokens.tokens.password
+              this.doRegister()
+            } else {
+              return null
+            }
+          },
+          (e) => {
+            console.error(e)
             return null
           }
-        },
-        (e) => {
-          console.error(e)
-          return null
-        }
-      )
+        )
+      }
     } catch (error) {
       this.showErrorToast(error)
     }
   }
 
+  strengthCheck(val) {
+    this.passwordStrength = val.id
+  }
+
+  passwordInteraction(val: { empty: boolean; valid: boolean }) {
+    !val.empty ? (this.registrationRequest.password = '******') : (this.registrationRequest.password = '')
+    this.$v.registrationRequest.password?.$touch()
+  }
+
   doRegister() {
     this.stores.consumers.SET_IS_LOADING_REGISTRATION(true)
+
     this.stores.consumers
       .create(this.registrationRequest as CreateConsumerRequest)
       .then(this.onConsumerCreated)
@@ -437,13 +463,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     this.stopRegistrationLoading()
     const _errCode = err.response.data.errorCode
     this.showErrorToast(_errCode)
-  }
-
-  checkOnKeyUp(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      this.submitForm()
-    }
   }
 
   phoneUpdate(number) {

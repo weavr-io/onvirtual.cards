@@ -62,7 +62,7 @@
             and
             <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted"
               >privacy policy</a
-            >
+            >*
           </b-form-checkbox>
           <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
