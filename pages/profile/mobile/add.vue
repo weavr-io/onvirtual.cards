@@ -65,6 +65,7 @@ import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentica
   components: {
     LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
+  middleware: ['kyVerified'],
 })
 export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
   isLoading: boolean = false
