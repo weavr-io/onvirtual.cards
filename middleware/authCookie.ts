@@ -19,7 +19,7 @@ function scaCheck(route, redirect) {
 
 const cookieMiddleware: Middleware = async ({ store, route, redirect }) => {
   let auth: LoginWithPasswordResponse | null = null
-  debugger
+
   const authCookie = Cookie.get(config.ONV_COOKIE_NAME)
 
   if (authCookie) {
