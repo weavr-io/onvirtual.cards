@@ -37,6 +37,7 @@ import { DeepNullable } from '~/global'
     TopUp: () => import('~/components/transfer/TopUp.vue'),
     TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue'),
   },
+  middleware: ['kyVerified'],
 })
 export default class TransfersPage extends mixins(BaseMixin) {
   createTransferRequest: DeepNullable<CreateTransferRequest> | null = null

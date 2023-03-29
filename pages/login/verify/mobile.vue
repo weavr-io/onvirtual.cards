@@ -29,6 +29,7 @@ import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentica
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
+  middleware: ['kyVerified'],
 })
 export default class Mobile extends Vue {
   async asyncData({ store, redirect }) {
