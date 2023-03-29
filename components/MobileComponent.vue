@@ -28,7 +28,12 @@
             </b-form-group>
           </b-col>
         </b-row>
-        <loader-button :is-loading="isLoading" button-text="verify" class="mt-5 text-center mb-0" />
+        <div v-if="verifyPhone" class="text-center mt-3">
+          <small class="text-grey font-italic">
+            Once this step is complete, we will send you another SMS that should be used for login on the next screen.
+          </small>
+        </div>
+        <loader-button :is-loading="isLoading" button-text="verify" class="mt-4 text-center mb-0" />
       </form>
       <div v-if="verifyPhone">
         <b-alert
