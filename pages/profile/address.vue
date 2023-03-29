@@ -109,6 +109,7 @@ import { Nullable } from '~/global'
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
     ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
   },
+  middleware: ['authRouteGuard'],
 })
 export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMixin) {
   address: Nullable<AddressModel | LegalAddressModel> = {
