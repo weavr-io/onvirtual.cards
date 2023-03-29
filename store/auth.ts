@@ -42,7 +42,7 @@ export default class Auth extends StoreModule {
   isLoading: boolean = defaultState.isLoading
 
   get isLoggedIn(): boolean {
-    return this.auth != null && this.auth.token != null
+    return this.auth !== null && this.auth.token !== null
   }
 
   get token() {
