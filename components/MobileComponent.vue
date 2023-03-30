@@ -28,9 +28,16 @@
             </b-form-group>
           </b-col>
         </b-row>
-        <div v-if="verifyPhone" class="text-center mt-3">
-          <small class="text-grey font-italic">
+        <div class="text-center mt-3 text-grey font-italic">
+          <small v-if="verifyPhone">
             Once this step is complete, we will send you another SMS that should be used for login on the next screen.
+          </small>
+          <small v-else>
+            Please contact our
+            <a href="https://support.weavr.io/support/login" class="text-primary text-decoration-none" target="_blank"
+              >customer support</a
+            >
+            if you have difficulties signing in.
           </small>
         </div>
         <loader-button :is-loading="isLoading" button-text="verify" class="mt-4 text-center mb-0" />
