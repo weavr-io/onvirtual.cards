@@ -5,13 +5,13 @@
     <b-form-group
       :state="isInvalid($v.form.email)"
       :invalid-feedback="invalidFeedback($v.form.email, validateVParams($v.form.email.$params, $v.form.email))"
-      label="Email"
+      label="Email*"
     >
       <b-form-input v-model="$v.form.email.$model" placeholder="name@email.com" />
     </b-form-group>
     <client-only placeholder="Loading...">
       <div>
-        <label class="d-block">PASSWORD</label>
+        <label class="d-block">PASSWORD*</label>
         <weavr-password-input
           ref="passwordField"
           :options="{ placeholder: '****' }"

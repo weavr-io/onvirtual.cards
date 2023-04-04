@@ -56,7 +56,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Type">
+    <b-form-group label="Company Type*">
       <b-form-select
         v-model="$v.form.company.type.$model"
         :state="isInvalid($v.form.company.type)"
