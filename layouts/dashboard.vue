@@ -12,9 +12,7 @@
       variant="bg-colored"
     >
       We need to verify your mobile number. Please click
-      <b-link to="/register/verify/mobile" class="link">
-        here.
-      </b-link>
+      <b-link to="/login/verify/mobile" class="link"> here. </b-link>
     </b-alert>
     <b-alert
       id="verify-email"
@@ -23,7 +21,7 @@
       variant="bg-colored"
     >
       We need to verify your email address. Please click
-      <b-button variant="transparent" class="link mb-1" @click="goToRegisterVerify">here.</b-button>
+      <b-button variant="transparent" class="link mb-1" @click="goToVerify">here.</b-button>
     </b-alert>
     <div v-if="isLoading" id="loader">
       <div class="loader-spinner">
@@ -46,8 +44,8 @@ import BaseMixin from '~/mixins/BaseMixin'
     DashboardHeader: () => import('~/components/DashboardHeader.vue'),
     KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
     KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
-    cookiePolicy: () => import('~/components/cookie.vue')
-  }
+    cookiePolicy: () => import('~/components/cookie.vue'),
+  },
 })
 export default class DefaultLayout extends mixins(KyVerified, BaseMixin) {
   get isLoading() {

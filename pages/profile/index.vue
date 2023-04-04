@@ -64,9 +64,7 @@
             </div>
             <b-form-row class="my-4">
               <b-col class="text-center">
-                <b-link to="/profile/password/change" class="link">
-                  Change password
-                </b-link>
+                <b-link to="/profile/password/change" class="link"> Change password </b-link>
               </b-col>
             </b-form-row>
             <b-row class="mt-5" align-v="center">
@@ -98,22 +96,23 @@ import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identit
 @Component({
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     updateIdentityRootUser: {
       mobile: {
         number: {
-          required
+          required,
         },
-        countryCode: { required }
+        countryCode: { required },
       },
       email: {
         required,
-        email
-      }
-    }
-  }
+        email,
+      },
+    },
+  },
+  middleware: ['kyVerified'],
 })
 export default class Profile extends mixins(BaseMixin, ValidationMixin) {
   numberIsValid: boolean | null = null
@@ -121,9 +120,9 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
   updateIdentityRootUser: DeepNullable<{ mobile: MobileModel; email: string }> = {
     mobile: {
       number: null,
-      countryCode: null
+      countryCode: null,
     },
-    email: null
+    email: null,
   }
 
   isLoading: boolean = false
@@ -133,7 +132,7 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
     number: string
   } = {
     countryCode: '',
-    number: ''
+    number: '',
   }
 
   fetch() {
@@ -144,9 +143,9 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
           : this.corporate?.rootUser?.mobile.countryCode ?? null,
         number: this.isConsumer
           ? this.consumer?.rootUser?.mobile.number ?? null
-          : this.corporate?.rootUser?.mobile.number ?? null
+          : this.corporate?.rootUser?.mobile.number ?? null,
       },
-      email: this.isConsumer ? this.consumer?.rootUser?.email ?? null : this.corporate?.rootUser?.email ?? null
+      email: this.isConsumer ? this.consumer?.rootUser?.email ?? null : this.corporate?.rootUser?.email ?? null,
     }
 
     if (!(this.updateIdentityRootUser.mobile?.countryCode && this.updateIdentityRootUser.mobile.number)) {
@@ -159,7 +158,7 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
 
     this.mobile = {
       countryCode: _parsedNumber?.country ?? '',
-      number: this.updateIdentityRootUser.mobile?.number ?? ''
+      number: this.updateIdentityRootUser.mobile?.number ?? '',
     }
   }
 

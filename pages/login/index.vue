@@ -4,9 +4,7 @@
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card body-class="p-card">
-      <h3 class="text-center font-weight-light mb-5">
-        Login
-      </h3>
+      <h3 class="text-center font-weight-light mb-5">Login</h3>
 
       <form id="contact-form" class="mt-5" @submit.prevent="login">
         <error-alert
@@ -39,15 +37,11 @@
             @onKeyUp="checkOnKeyUp"
             @onChange="passwordInteraction"
           />
-          <b-form-invalid-feedback v-if="isInvalidPassword">
-            Please enter your password
-          </b-form-invalid-feedback>
+          <b-form-invalid-feedback v-if="isInvalidPassword"> Please enter your password </b-form-invalid-feedback>
         </client-only>
 
         <div class="mt-2">
-          <b-link to="/password/reset" class="small text-decoration-underline text-grey">
-            Forgot password?
-          </b-link>
+          <b-link to="/password/reset" class="small text-decoration-underline text-grey"> Forgot password? </b-link>
         </div>
 
         <b-form-group class="mt-5 text-center">
@@ -78,7 +72,6 @@ import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { authStore } from '~/utils/store-accessor'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
-import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
 import ValidationMixin from '~/mixins/ValidationMixin'
 
 @Component({
@@ -86,21 +79,21 @@ import ValidationMixin from '~/mixins/ValidationMixin'
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    WeavrPasswordInput
+    WeavrPasswordInput,
   },
   validations: {
     loginRequest: {
       email: {
         required,
-        email
+        email,
       },
       password: {
         value: {
-          required
-        }
-      }
-    }
-  }
+          required,
+        },
+      },
+    },
+  },
 })
 export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
   isLoading: boolean = false
@@ -108,8 +101,8 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
   private loginRequest: LoginWithPasswordRequest = {
     email: '',
     password: {
-      value: ''
-    }
+      value: '',
+    },
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -125,8 +118,8 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 
@@ -149,8 +142,10 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
             this.loginRequest.password.value = tokens.tokens.password
             this.stores.auth
               .loginWithPassword(this.loginRequest)
-              .then((res) => {
-                this.goToDashboard(res.data)
+              .then(() => {
+                localStorage.setItem('stepUp', 'FALSE')
+                localStorage.setItem('scaSmsSent', 'FALSE')
+                this.goToDashboard()
               })
               .catch((err) => {
                 this.isLoading = false
@@ -167,19 +162,19 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
     }
   }
 
-  async goToDashboard(res: LoginWithPasswordResponse) {
-    const _id = res.credentials.type! + '-' + res.credentials.id
-    try {
-      this.$segment.identify(_id, {
-        email: this.loginRequest.email
-      })
-    } catch (e) {}
-
+  async goToDashboard() {
     if (this.stores.auth.isConsumer) {
       await this.stores.consumers.get()
     }
 
-    await this.goToIndex()
+    await this.stores.auth.indexAuthFactors()
+
+    await this.$router.push({
+      path: '/login/sca',
+      query: {
+        send: 'true',
+      },
+    })
     this.isLoading = false
   }
 

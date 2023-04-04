@@ -4,7 +4,7 @@
       <b-row v-if="pendingDataOrError">
         <b-col>
           <div class="d-flex flex-column align-items-center">
-            <div class="loader-spinner ">
+            <div class="loader-spinner">
               <b-spinner />
             </div>
           </div>
@@ -13,9 +13,7 @@
       <b-row v-else>
         <b-col md="6" offset-md="3">
           <b-card class="border-0">
-            <b-card-title class="mb-5 text-center font-weight-lighter">
-              Create Card
-            </b-card-title>
+            <b-card-title class="mb-5 text-center font-weight-lighter"> Create Card </b-card-title>
             <b-card-body>
               <b-alert :show="showError" variant="danger" class="text-center">
                 Error creating new card. <br />Contact support if problem persists.
@@ -122,24 +120,24 @@ import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/con
 @Component({
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     createManagedCardRequest: {
       friendlyName: {
         required,
-        maxLength: maxLength(50)
+        maxLength: maxLength(50),
       },
       currency: {
-        required
+        required,
       },
       nameOnCard: {
         required,
-        maxLength: maxLength(27)
-      }
-    }
+        maxLength: maxLength(27),
+      },
+    },
   },
-  middleware: ['kyVerified']
+  middleware: ['kyVerified'],
 })
 export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
   showNameOnCardField: boolean = false
@@ -153,7 +151,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
     number: string
   } = {
     countryCode: '',
-    number: ''
+    number: '',
   }
 
   numberIsValid: boolean | null = null
@@ -165,7 +163,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
     nameOnCard: null,
     cardholderMobileNumber: null,
     billingAddress: null,
-    mode: ManagedCardModeEnum.PREPAID_MODE
+    mode: ManagedCardModeEnum.PREPAID_MODE,
   }
 
   get currencyOptions() {
@@ -187,12 +185,6 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
       (!!this.createManagedCardRequest.nameOnCard && this.createManagedCardRequest.nameOnCard.length > 27)
 
     this.createManagedCardRequest.currency = this.profileBaseCurrency
-  }
-
-  mounted() {
-    try {
-      this.$segment.track('Initiated Add Card', {})
-    } catch (e) {}
   }
 
   async doAdd() {
@@ -221,16 +213,13 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
       billingAddress: {
         ...(this.isConsumer
           ? (this.stores.consumers.consumer?.rootUser.address as AddressModel)
-          : (this.stores.corporates.corporate?.company.businessAddress as AddressModel))
-      }
+          : (this.stores.corporates.corporate?.company.businessAddress as AddressModel)),
+      },
     }
 
     await this.stores.cards
       .addCard(this.createManagedCardRequest as CreateManagedCardRequest)
       .then(() => {
-        try {
-          this.$segment.track('Card Added', this.createManagedCardRequest)
-        } catch (e) {}
         this.$router.push('/managed-cards')
       })
       .catch((err) => {

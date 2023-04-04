@@ -22,4 +22,15 @@
       outline: none;
     }
   }
+
+  &.nav-item,
+  .nav-item:active,
+  .nav-item:focus {
+    padding: 0;
+    background-color: transparent !important;
+    border: 0 !important;
+    font-weight: bold !important;
+    color: $primary !important;
+    box-shadow: none !important;
+  }
 }

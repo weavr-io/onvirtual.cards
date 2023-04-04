@@ -20,8 +20,9 @@ import BaseMixin from '~/mixins/BaseMixin'
   components: {
     AppFooter: () => import('~/components/Footer.vue'),
     AppHeader: () => import('~/components/Header.vue'),
-    cookiePolicy: () => import('~/components/cookie.vue')
-  }
+    cookiePolicy: () => import('~/components/cookie.vue'),
+  },
+  middleware: ['authRouteGuard'],
 })
 export default class DefaultLayout extends mixins(BaseMixin) {
   get isLoading() {

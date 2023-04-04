@@ -80,12 +80,6 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     return this.stores.consumers.isLoading
   }
 
-  get mobileCountries(): string[] {
-    return Countries.map((_c) => {
-      return _c['alpha-2']
-    })
-  }
-
   public form = {
     name: '',
     surname: '',

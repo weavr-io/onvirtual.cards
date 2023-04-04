@@ -2,9 +2,7 @@
   <section>
     <b-container>
       <b-row>
-        <b-col class="text-center">
-          Loading...
-        </b-col>
+        <b-col class="text-center"> Loading... </b-col>
       </b-row>
     </b-container>
   </section>
@@ -31,9 +29,9 @@ export default class IndexPage extends mixins(BaseMixin) {
 
       if (!identities.emailVerified) {
         const email = window.encodeURIComponent(identities.identity!.rootUser?.email)
-        redirect(`/register/verify?send=true&email=${email}`)
+        redirect(`/login/verify?send=true&email=${email}`)
       } else if (!identities.mobileNumberVerified) {
-        redirect('/register/verify/mobile')
+        redirect('/login/verify/mobile')
       } else if (identities.identity && typeof identities.identity.rootUser === 'undefined') {
         redirect('/profile/address')
       } else {

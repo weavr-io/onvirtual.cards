@@ -1,15 +1,14 @@
 <template>
   <div id="main-header">
     <div v-if="showHeader" class="container-fluid">
-      <b-navbar type="light" fixed="top" variant="transparent" class="">
+      <b-navbar type="light" variant="transparent" class="">
         <b-container>
           <b-collapse id="nav_collapse" is-nav>
-            <b-navbar-nav v-if="showLinks" class="ml-auto">
-              <b-nav-item v-if="showRegister" to="/register">
-                Register
-              </b-nav-item>
-              <b-nav-item v-if="showLogin" to="/login">
-                Sign In
+            <b-navbar-nav class="ml-auto">
+              <b-nav-item v-if="showRegister && !isLoggedIn" to="/register"> Register</b-nav-item>
+              <b-nav-item v-if="showLogin && !isLoggedIn" to="/login"> Sign In</b-nav-item>
+              <b-nav-item v-if="isLoggedIn">
+                <b-button class="nav-item" @click="doLogout">Sign out</b-button>
               </b-nav-item>
             </b-navbar-nav>
           </b-collapse>
@@ -18,7 +17,7 @@
     </div>
     <b-container>
       <b-row class="min-vh-100" align-v="center">
-        <nuxt class="my-6" />
+        <nuxt class="mb-6 mt-4" />
       </b-row>
     </b-container>
   </div>
@@ -31,33 +30,21 @@ import BaseMixin from '~/mixins/BaseMixin'
 @Component({
   components: {
     AppFooter: () => import('~/components/Footer.vue'),
-    cookiePolicy: () => import('~/components/cookie.vue')
+    cookiePolicy: () => import('~/components/cookie.vue'),
   },
   head: {
     bodyAttrs: {
-      class: 'bg-bg-colored'
-    }
-  }
+      class: 'bg-bg-colored',
+    },
+  },
 })
 class AuthLayout extends mixins(BaseMixin) {
-  get isLoggedIn() {
-    return this.stores.auth.isLoggedIn
-  }
-
-  get isLogin(): boolean {
-    return this.$route.path === '/login'
-  }
-
   get showHeader(): boolean {
     return this.$config.app.view_register
   }
 
   get showRegister(): boolean {
     return !this.showLogin
-  }
-
-  get showLinks(): boolean {
-    return !this.isLoggedIn
   }
 
   get showLogin(): boolean {

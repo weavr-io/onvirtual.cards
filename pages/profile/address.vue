@@ -7,9 +7,7 @@
             <error-alert />
             <div class="form-screen">
               <b-form novalidate @submit="submitForm">
-                <h3 class="text-center font-weight-light mb-5">
-                  Your address details
-                </h3>
+                <h3 class="text-center font-weight-light mb-5">Your address details</h3>
                 <b-form-group
                   label="Address Line 1*"
                   :state="isInvalid($v.address.addressLine1)"
@@ -94,23 +92,24 @@ import { Nullable } from '~/global'
   validations: {
     address: {
       addressLine1: {
-        required
+        required,
       },
       city: { required },
       postCode: { required },
       country: {
         required,
-        maxLength: maxLength(2)
-      }
-    }
+        maxLength: maxLength(2),
+      },
+    },
   },
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),
     RegistrationNav: () => import('~/components/registration/Nav.vue'),
-    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue')
-  }
+    ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
+  },
+  middleware: ['authRouteGuard'],
 })
 export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMixin) {
   address: Nullable<AddressModel | LegalAddressModel> = {
@@ -119,7 +118,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
     city: null,
     postCode: null,
     state: null,
-    country: null
+    country: null,
   }
 
   isLoading: boolean = false
@@ -190,7 +189,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
         identityRootVerified = res.data.rootUser
 
         if (identityRootVerified && !(identityRootVerified as ConsumersRootUserModel).emailVerified) {
-          this.goToRegisterVerify()
+          this.goToVerify()
         } else {
           this.goToIndex()
         }
@@ -200,7 +199,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
         identityRootVerified = res.data.rootUser
 
         if (identityRootVerified && !(identityRootVerified as CorporatesRootUserModel).emailVerified) {
-          this.goToRegisterVerify()
+          this.goToVerify()
         } else {
           this.goToIndex()
         }

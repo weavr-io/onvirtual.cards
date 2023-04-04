@@ -4,7 +4,7 @@
       <b-row v-if="pendingDataOrError">
         <b-col>
           <div class="d-flex flex-column align-items-center">
-            <div class="loader-spinner ">
+            <div class="loader-spinner">
               <b-spinner />
             </div>
           </div>
@@ -13,9 +13,7 @@
       <b-row v-else>
         <b-col md="6" offset-md="3">
           <b-card class="border-0">
-            <b-card-title class="mb-5 text-center font-weight-lighter">
-              Update Card
-            </b-card-title>
+            <b-card-title class="mb-5 text-center font-weight-lighter"> Update Card </b-card-title>
             <b-card-body>
               <b-form @submit.prevent="doUpdate">
                 <b-form-row v-if="!isConsumer">
@@ -69,28 +67,28 @@ import ValidationMixin from '~/mixins/ValidationMixin'
 @Component({
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     updateManagedCardRequest: {
       friendlyName: {
         required,
-        maxLength: maxLength(50)
+        maxLength: maxLength(50),
       },
       cardholderMobileNumber: {
-        required: requiredIf(function(this: EditCardPage) {
+        required: requiredIf(function (this: EditCardPage) {
           return this.isCorporate
         }),
-        cardholderMobileNumberReg: helpers.regex('cardholderMobileNumberReg', /^\+[0-9]+$/)
-      }
-    }
-  }
+        cardholderMobileNumberReg: helpers.regex('cardholderMobileNumberReg', /^\+[0-9]+$/),
+      },
+    },
+  },
 })
 export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
   numberIsValid: boolean | null = null
   mobile = {
     countryCode: 'GB',
-    cardholderMobileNumber: ''
+    cardholderMobileNumber: '',
   }
 
   isUpdating = false
@@ -103,7 +101,7 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
     // add key cardholderMobileNumber only if isCorporate
     this.updateManagedCardRequest = {
       friendlyName: card.data.friendlyName,
-      ...(this.isCorporate && { cardholderMobileNumber: '' })
+      ...(this.isCorporate && { cardholderMobileNumber: '' }),
     }
 
     this.mobile.countryCode = parsedNumber?.country || ''
@@ -141,12 +139,9 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
     this.stores.cards
       .update({
         id: this.cardId,
-        request: this.updateManagedCardRequest as UpdateManagedCardRequest
+        request: this.updateManagedCardRequest as UpdateManagedCardRequest,
       })
       .then(() => {
-        try {
-          this.$segment.track('Card Updated', this.updateManagedCardRequest)
-        } catch (e) {}
         this.$router.push('/managed-cards')
       })
       .finally(() => {
