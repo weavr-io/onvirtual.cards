@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card class="py-5 px-5 mt-5">
+    <b-card class="py-5 px-3 px-lg-5 mt-5">
       <h3 class="font-weight-light text-center">
         <slot name="title"></slot>
       </h3>

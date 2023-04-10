@@ -1,16 +1,16 @@
 <template>
-  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
+  <b-col md="9" lg="6">
     <div class="text-center pb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
-    <MobileComponent :verify-phone="true"
-      ><template #title>Let's also verify your phone number</template
-      ><template #alert>The verification code was resent by SMS.</template>
+    <MobileComponent :verify-phone="true">
+      <template #title>Let's also verify your phone number </template>
+      <template #alert>The verification code was resent by SMS.</template>
       <template #description
-        >We’ve just sent you a verification code by SMS. Enter code below to verify your phone number.</template
-      >
-      <template #countdown> seconds until you can send another verification code</template></MobileComponent
-    >
+        >We’ve just sent you a verification code by SMS. Enter code below to verify your phone number.
+      </template>
+      <template #countdown> seconds until you can send another verification code</template>
+    </MobileComponent>
   </b-col>
 </template>
 
