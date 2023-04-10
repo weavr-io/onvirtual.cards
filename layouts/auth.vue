@@ -5,8 +5,8 @@
         <b-container>
           <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav class="ml-auto">
-              <b-nav-item v-if="showRegister && !isLoggedIn" to="/register"> Register</b-nav-item>
-              <b-nav-item v-if="showLogin && !isLoggedIn" to="/login"> Sign In</b-nav-item>
+              <b-nav-item v-if="showRegister && !isLoggedIn" to="/register">Register</b-nav-item>
+              <b-nav-item v-if="showLogin && !isLoggedIn" to="/login">Sign In</b-nav-item>
               <b-nav-item v-if="isLoggedIn">
                 <b-button class="nav-item" @click="doLogout">Sign out</b-button>
               </b-nav-item>
@@ -16,8 +16,8 @@
       </b-navbar>
     </div>
     <b-container>
-      <b-row class="min-vh-100" align-v="center">
-        <nuxt class="mb-6 mt-4" />
+      <b-row style="min-height: calc(100vh - 56px)" align-v="center" align-h="center">
+        <nuxt class="d-flex flex-column" />
       </b-row>
     </b-container>
   </div>

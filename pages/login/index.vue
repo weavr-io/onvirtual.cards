@@ -1,9 +1,9 @@
 <template>
-  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
-    <div class="text-center pb-5">
+  <b-col md="8">
+    <div class="text-center mb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
-    <b-card body-class="p-card">
+    <b-card body-class="p-5 p-xl-card">
       <h3 class="text-center font-weight-light mb-5">Login</h3>
 
       <form id="contact-form" class="mt-5" @submit.prevent="login">
