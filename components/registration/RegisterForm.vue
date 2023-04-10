@@ -53,7 +53,7 @@
     </div>
     <b-form-row class="mt-5">
       <b-col class="text-center">
-        <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-right" />
+        <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-center" />
       </b-col>
     </b-form-row>
   </b-form>

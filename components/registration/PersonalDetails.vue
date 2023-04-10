@@ -120,13 +120,9 @@
       verify your identity, role and authorisation as part of our customer due diligence process, we will later ask you
       to upload the relevant ID and power of attorney documents.
     </p>
-
     <b-form-row class="mt-5">
-      <b-col md="4">
-        <b-button variant="outline" @click="goBack"></b-button>
-      </b-col>
-      <b-col class="text-right">
-        <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-right" />
+      <b-col class="text-center">
+        <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-center" />
       </b-col>
     </b-form-row>
   </b-form>
