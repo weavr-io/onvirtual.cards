@@ -1,21 +1,21 @@
 <template>
-  <b-col lg="6">
+  <b-col md="9" lg="6">
     <div class="text-center pb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <b-card no-body class="overflow-hidden">
-      <b-overlay :show="isLoadingRegistration" rounded opacity="0.6" spinner-small spinner-variant="primary">
-        <b-card-body class="p-card">
-          <div class="form-screens">
-            <div v-if="screen === 0" class="form-screen">
+      <b-card-body class="p-5 p-xl-card">
+        <div class="form-screens">
+          <transition name="fade" mode="out-in">
+            <div v-if="screen === 0" key="1" class="form-screen">
               <register-form @submit-form="form1Submit" />
             </div>
-            <div v-else class="form-screen">
+            <div v-else key="2" class="form-screen">
               <personal-details-form @submit-form="form2Submit" @strength-check="strengthCheck" @go-back="goBack" />
             </div>
-          </div>
-        </b-card-body>
-      </b-overlay>
+          </transition>
+        </div>
+      </b-card-body>
     </b-card>
   </b-col>
 </template>
@@ -107,6 +107,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       this.registrationRequest.password = _data.password
       this.registrationRequest.acceptedTerms = _data.acceptedTerms
       this.screen = 1
+      this.stopRegistrationLoading()
     }
   }
 
@@ -133,9 +134,6 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       .create(this.registrationRequest as CreateCorporateRequest)
       .then(this.onCorporateCreated)
       .catch(this.registrationFailed)
-      .finally(() => {
-        this.stopRegistrationLoading()
-      })
   }
 
   stopRegistrationLoading() {
@@ -174,6 +172,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     const _req = this.stores.auth.loginWithPassword(loginRequest)
     _req.then(() => {
       this.setSCAstorage()
+      this.stopRegistrationLoading()
       this.$router.push({ path: '/profile/address' })
     })
   }

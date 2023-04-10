@@ -1,75 +1,73 @@
 <template>
   <b-col md="8" offset-md="2" lg="6" offset-lg="3">
     <b-card no-body class="overflow-hidden">
-      <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
-        <b-card-body class="p-card">
-          <div class="form-screens">
-            <error-alert />
-            <div class="form-screen">
-              <b-form novalidate @submit="submitForm">
-                <h3 class="text-center font-weight-light mb-5">Your address details</h3>
-                <b-form-group
-                  label="Address Line 1*"
-                  :state="isInvalid($v.address.addressLine1)"
-                  :invalid-feedback="
-                    invalidFeedback(
-                      $v.address.addressLine1,
-                      validateVParams($v.address.addressLine1.$params, $v.address.addressLine1)
-                    )
-                  "
-                >
-                  <b-form-input v-model="$v.address.addressLine1.$model" placeholder="Address Line 1" />
-                </b-form-group>
-                <b-form-group label="Address Line 2">
-                  <b-form-input v-model="address.addressLine2" placeholder="Address Line 2" />
-                </b-form-group>
-                <b-form-group
-                  label="City*"
-                  :state="isInvalid($v.address.city)"
-                  :invalid-feedback="
-                    invalidFeedback($v.address.city, validateVParams($v.address.city.$params, $v.address.city))
-                  "
-                >
-                  <b-form-input v-model="$v.address.city.$model" placeholder="City" />
-                </b-form-group>
-                <b-form-group
-                  label="Country*"
-                  :state="isInvalid($v.address.country)"
-                  :invalid-feedback="
-                    invalidFeedback($v.address.country, validateVParams($v.address.country.$params, $v.address.country))
-                  "
-                >
-                  <b-form-select
-                    v-model="$v.address.country.$model"
-                    :options="countryOptionsWithDefault"
-                    placeholder="Registration Country"
-                  />
-                </b-form-group>
-                <b-form-group
-                  label="Post Code*"
-                  :state="isInvalid($v.address.postCode)"
-                  :invalid-feedback="
-                    invalidFeedback(
-                      $v.address.postCode,
-                      validateVParams($v.address.postCode.$params, $v.address.postCode)
-                    )
-                  "
-                >
-                  <b-form-input v-model="$v.address.postCode.$model" placeholder="Post Code" />
-                </b-form-group>
-                <b-form-group label="State">
-                  <b-form-input v-model="address.state" placeholder="State" />
-                </b-form-group>
-                <b-row class="mt-4" align-v="center">
-                  <b-col class="text-center">
-                    <loader-button :is-loading="isLoading" button-text="continue" />
-                  </b-col>
-                </b-row>
-              </b-form>
-            </div>
+      <b-card-body class="p-card">
+        <div class="form-screens">
+          <error-alert />
+          <div class="form-screen">
+            <b-form novalidate @submit="submitForm">
+              <h3 class="text-center font-weight-light mb-5">Your address details</h3>
+              <b-form-group
+                label="Address Line 1*"
+                :state="isInvalid($v.address.addressLine1)"
+                :invalid-feedback="
+                  invalidFeedback(
+                    $v.address.addressLine1,
+                    validateVParams($v.address.addressLine1.$params, $v.address.addressLine1)
+                  )
+                "
+              >
+                <b-form-input v-model="$v.address.addressLine1.$model" placeholder="Address Line 1" />
+              </b-form-group>
+              <b-form-group label="Address Line 2">
+                <b-form-input v-model="address.addressLine2" placeholder="Address Line 2" />
+              </b-form-group>
+              <b-form-group
+                label="City*"
+                :state="isInvalid($v.address.city)"
+                :invalid-feedback="
+                  invalidFeedback($v.address.city, validateVParams($v.address.city.$params, $v.address.city))
+                "
+              >
+                <b-form-input v-model="$v.address.city.$model" placeholder="City" />
+              </b-form-group>
+              <b-form-group
+                label="Country*"
+                :state="isInvalid($v.address.country)"
+                :invalid-feedback="
+                  invalidFeedback($v.address.country, validateVParams($v.address.country.$params, $v.address.country))
+                "
+              >
+                <b-form-select
+                  v-model="$v.address.country.$model"
+                  :options="countryOptionsWithDefault"
+                  placeholder="Registration Country"
+                />
+              </b-form-group>
+              <b-form-group
+                label="Post Code*"
+                :state="isInvalid($v.address.postCode)"
+                :invalid-feedback="
+                  invalidFeedback(
+                    $v.address.postCode,
+                    validateVParams($v.address.postCode.$params, $v.address.postCode)
+                  )
+                "
+              >
+                <b-form-input v-model="$v.address.postCode.$model" placeholder="Post Code" />
+              </b-form-group>
+              <b-form-group label="State">
+                <b-form-input v-model="address.state" placeholder="State" />
+              </b-form-group>
+              <b-row class="mt-4" align-v="center">
+                <b-col class="text-center">
+                  <loader-button :is-loading="isLoading" button-text="continue" />
+                </b-col>
+              </b-row>
+            </b-form>
           </div>
-        </b-card-body>
-      </b-overlay>
+        </div>
+      </b-card-body>
     </b-card>
   </b-col>
 </template>
@@ -171,9 +169,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
         // treat as corporate
         xhr = this.stores.corporates.update({ companyBusinessAddress: this.address as AddressModel })
       }
-      xhr.then(this.addressUpdated)
-
-      xhr.finally(() => {
+      xhr.then(this.addressUpdated).finally(() => {
         this.isLoading = false
       })
     } else {
