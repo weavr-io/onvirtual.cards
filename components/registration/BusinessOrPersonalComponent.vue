@@ -10,28 +10,24 @@
     <b-row class="justify-content-center">
       <b-col md="9">
         <b-card-group deck>
-          <b-card class="" no-body>
-            <b-card-body class="p-5">
-              <b-card-title title-tag="h3" class="font-weight-light">
-                Business
-              </b-card-title>
+          <b-card no-body>
+            <b-card-body class="p-5 px-sm-4 py-sm-5 p-lg-5">
+              <b-card-title title-tag="h3" class="font-weight-light"> Business</b-card-title>
               <b-card-text class="mt-4 mb-5">
                 Issue cards and assign them to employees. You decide when to stop cards or add more funds.
               </b-card-text>
               <b-img src="/img/large-arrow.svg" />
-              <b-link to="/register/corporate" class=" stretched-link" />
+              <b-link to="/register/corporate" class="stretched-link" />
             </b-card-body>
           </b-card>
-          <b-card class="" no-body>
-            <b-card-body class="p-5">
-              <b-card-title title-tag="h3" class="font-weight-light">
-                Personal
-              </b-card-title>
+          <b-card no-body>
+            <b-card-body class="p-5 px-sm-4 py-sm-5 p-lg-5">
+              <b-card-title title-tag="h3" class="font-weight-light"> Personal</b-card-title>
               <b-card-text class="mt-4 mb-5">
                 Take control of your online purchases and shop securely without exposing your bank card.
               </b-card-text>
               <b-img src="/img/large-arrow.svg" />
-              <b-link to="/register/consumer" class=" stretched-link" />
+              <b-link to="/register/consumer" class="stretched-link" />
             </b-card-body>
           </b-card>
         </b-card-group>

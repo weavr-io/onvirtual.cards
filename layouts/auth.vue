@@ -1,7 +1,7 @@
 <template>
   <div id="main-header">
     <div v-if="showHeader" class="container-fluid">
-      <b-navbar type="light" variant="transparent" class="">
+      <b-navbar type="light" variant="card" class="fixed-top nav-bar-height">
         <b-container>
           <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav class="ml-auto">
@@ -16,8 +16,8 @@
       </b-navbar>
     </div>
     <b-container>
-      <b-row style="min-height: calc(100vh - 56px)" align-v="center" align-h="center">
-        <nuxt class="d-flex flex-column" />
+      <b-row style="min-height: calc(100vh - var(--navbar-height))" align-v="center" align-h="center">
+        <nuxt class="d-flex flex-column pt-2" style="margin-top: var(--navbar-height)" />
       </b-row>
     </b-container>
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <b-col md="8">
+  <b-col md="9" lg="7">
     <div class="text-center mb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
@@ -37,11 +37,11 @@
             @onKeyUp="checkOnKeyUp"
             @onChange="passwordInteraction"
           />
-          <b-form-invalid-feedback v-if="isInvalidPassword"> Please enter your password </b-form-invalid-feedback>
+          <b-form-invalid-feedback v-if="isInvalidPassword"> Please enter your password</b-form-invalid-feedback>
         </client-only>
 
         <div class="mt-2">
-          <b-link to="/password/reset" class="small text-decoration-underline text-grey"> Forgot password? </b-link>
+          <b-link to="/password/reset" class="small text-decoration-underline text-grey"> Forgot password?</b-link>
         </div>
 
         <b-form-group class="mt-5 text-center">

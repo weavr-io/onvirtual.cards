@@ -1,5 +1,5 @@
 <template>
-  <b-col lg="6" offset-lg="3">
+  <b-col lg="6">
     <div class="text-center pb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
@@ -34,6 +34,7 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { DeepNullable, RecursivePartial } from '~/global'
+
 @Component({
   layout: 'auth',
   components: {
