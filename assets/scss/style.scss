@@ -136,3 +136,15 @@ a {
 .smaller {
   font-size: 0.8 * $small-font-size;
 }
+
+//Transition Style
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s;
+}
+
+.fade-enter,
+.fade-leave-active {
+  transition: all 0.2s;
+  opacity: 0;
+}

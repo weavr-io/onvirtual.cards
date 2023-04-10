@@ -68,6 +68,10 @@ const config = {
       },
     ],
   },
+  transition: {
+    name: 'fade',
+    mode: 'out-in',
+  },
   /*
    ** Customize the progress-bar color
    */
