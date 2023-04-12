@@ -1,8 +1,8 @@
 <template>
   <section class="py-5">
     <b-container>
-      <b-row>
-        <b-col md="6" offset-md="3">
+      <b-row align-h="center">
+        <b-col md="6">
           <b-form @submit.prevent="doUpdateIdentityRoot">
             <error-alert />
             <b-form-row>
@@ -64,7 +64,7 @@
             </div>
             <b-form-row class="my-4">
               <b-col class="text-center">
-                <b-link to="/profile/password/change" class="link"> Change password </b-link>
+                <b-link to="/profile/password/change" class="link"> Change password</b-link>
               </b-col>
             </b-form-row>
             <b-row class="mt-5" align-v="center">

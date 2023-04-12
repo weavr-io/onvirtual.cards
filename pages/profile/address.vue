@@ -1,7 +1,7 @@
 <template>
-  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
+  <b-col md="9" lg="6">
     <b-card no-body class="overflow-hidden">
-      <b-card-body class="p-card">
+      <b-card-body class="p-5 p-xl-card">
         <div class="form-screens">
           <error-alert />
           <div class="form-screen">
