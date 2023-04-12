@@ -33,15 +33,13 @@
                 </b-row>
                 <b-row align-v="end">
                   <b-col cols="6">
-                    <div class="card-name-on-card text-truncate ">
+                    <div class="card-name-on-card text-truncate">
                       {{ card.nameOnCard }}
                     </div>
                   </b-col>
                   <b-col cols="3">
                     <div class="card-expiry">
-                      <div class="card-expiry-label">
-                        EXP
-                      </div>
+                      <div class="card-expiry-label">EXP</div>
                       <div class="card-expiry-value">
                         {{ card.expiryMmyy | expiryMmyy }}
                       </div>
@@ -60,45 +58,31 @@
         </b-aspect>
       </b-card-body>
     </b-card>
-    <b-row v-if="showOptions && !isDestroyed" class="card-options">
-      <b-col>
-        <b-link class="mt-3 py-2 d-block text-decoration-none" @click="toggleBlock">
-          <b-row align-v="center">
-            <b-col cols="auto">
-              <b-img fluid src="/img/freeze-icon.svg" />
-            </b-col>
-            <b-col>
+    <transition name="fade" mode="out-in">
+      <b-row v-if="showOptions && !isDestroyed">
+        <b-link class="mt-3 py-2 ml-3 d-block text-decoration-none" @click="toggleBlock">
+          <div class="d-flex align-items-center">
+            <b-img fluid src="/img/freeze-icon.svg" />
+            <div class="ml-3">
               <h6 class="m-0 small">
-                <template v-if="!isBlocked">
-                  Freeze card
-                </template>
-                <template v-else>
-                  Unfreeze card
-                </template>
+                <template v-if="!isBlocked"> Freeze card</template>
+                <template v-else> Unfreeze card</template>
               </h6>
-              <p v-if="!isBlocked" class="text-muted m-0 small">
-                Tap again to unfreeze
-              </p>
-            </b-col>
-          </b-row>
+              <p v-if="!isBlocked" class="text-muted m-0 small">Tap again to unfreeze</p>
+            </div>
+          </div>
         </b-link>
-        <b-link :to="editLink" class="py-2 d-block text-decoration-none">
-          <b-row align-v="center">
-            <b-col cols="auto">
-              <b-img fluid src="/img/edit-icon.svg" />
-            </b-col>
-            <b-col>
-              <h6 class="m-0 small">
-                Edit card
-              </h6>
-              <p class="text-muted m-0 small">
-                Change name and other details
-              </p>
-            </b-col>
-          </b-row>
+        <b-link :to="editLink" class="py-2 mt-3 mt-md-0 ml-3 d-block text-decoration-none">
+          <div class="d-flex align-items-center">
+            <b-img fluid src="/img/edit-icon.svg" />
+            <div class="ml-3">
+              <h6 class="m-0 small">Edit card</h6>
+              <p class="text-muted m-0 small">Change name and other details</p>
+            </div>
+          </div>
         </b-link>
-      </b-col>
-    </b-row>
+      </b-row>
+    </transition>
   </div>
 </template>
 <script lang="ts">
@@ -111,8 +95,8 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
 @Component({
   components: {
     BIcon,
-    BIconThreeDotsVertical
-  }
+    BIconThreeDotsVertical,
+  },
 })
 export default class WeavrCard extends mixins(BaseMixin) {
   @Prop() readonly card!: ManagedCardModel
