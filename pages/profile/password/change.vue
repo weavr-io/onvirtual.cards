@@ -1,23 +1,17 @@
 <template>
   <section class="register-section">
-    <div class="container">
-      <div class="row mx-0">
-        <div class="col-lg-6 offset-lg-3 my-5 text-center">
-          <div class="p-relative">
-            <div class="text-md d-inline-block text-center">
-              <h1 class="font-weight-light">
-                Change Password
-              </h1>
-            </div>
+    <b-container>
+      <b-row align-h="center">
+        <b-col md="9" lg="6" class="my-5 text-center">
+          <div class="text-md d-inline-block text-center mb-6">
+            <h1 class="font-weight-light">Change Password</h1>
           </div>
-        </div>
-        <div class="col-lg-6 offset-lg-3 h-100 modal-div">
           <div class="mx-md-3 px-md-5">
             <error-alert />
             <b-form id="contact-form" @submit.prevent="submitChangePassword">
               <client-only placeholder="Loading...">
                 <div :class="{ 'is-dirty': $v.form.$dirty }">
-                  <label class="d-block">OLD PASSWORD:</label>
+                  <label class="d-block text-left">OLD PASSWORD:</label>
                   <weavr-password-input
                     ref="oldPassword"
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
@@ -27,7 +21,7 @@
                     required="true"
                     @onKeyUp.prevent="checkOnKeyUp"
                   />
-                  <label class="d-block mt-3">NEW PASSWORD:</label>
+                  <label class="d-block text-left mt-3">NEW PASSWORD:</label>
                   <weavr-password-input
                     ref="newPassword"
                     :options="{ placeholder: '****', classNames: { empty: 'is-invalid', invalid: 'is-invalid' } }"
@@ -37,7 +31,7 @@
                     required="true"
                     @onKeyUp.prevent="checkOnKeyUp"
                   />
-                  <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
+                  <small class="form-text text-muted text-left">Minimum 8, Maximum 50 characters.</small>
                 </div>
               </client-only>
 
@@ -46,9 +40,9 @@
               </div>
             </b-form>
           </div>
-        </div>
-      </div>
-    </div>
+        </b-col>
+      </b-row>
+    </b-container>
   </section>
 </template>
 
@@ -64,11 +58,11 @@ import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/aut
   components: {
     LoaderButton,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    WeavrPasswordInput
+    WeavrPasswordInput,
   },
   validations: {
-    form: {}
-  }
+    form: {},
+  },
 })
 export default class BundlesPage extends mixins(BaseMixin) {
   @Ref('oldPassword')
@@ -81,11 +75,11 @@ export default class BundlesPage extends mixins(BaseMixin) {
 
   changePasswordRequest: UpdatePasswordRequestModel = {
     oldPassword: {
-      value: ''
+      value: '',
     },
     newPassword: {
-      value: ''
-    }
+      value: '',
+    },
   }
 
   checkOnKeyUp(e) {
@@ -135,8 +129,8 @@ export default class BundlesPage extends mixins(BaseMixin) {
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 }
