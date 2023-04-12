@@ -7,7 +7,7 @@
       :invalid-feedback="invalidFeedback($v.form.email, validateVParams($v.form.email.$params, $v.form.email))"
       label="Email*"
     >
-      <b-form-input v-model="$v.form.email.$model" placeholder="name@email.com" />
+      <b-form-input v-model="$v.form.email.$model" lazy placeholder="name@email.com" />
     </b-form-group>
     <client-only placeholder="Loading...">
       <div>
@@ -150,8 +150,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
       this.$v.$touch()
       if (this.$v.$invalid || !this.isPasswordValid) {
         return
-      }
-      if (this.isRecaptchaEnabled) {
+      } else {
         this.startRegistrationLoading()
         this.passwordField.createToken().then(
           (tokens) => {
