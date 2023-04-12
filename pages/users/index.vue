@@ -8,13 +8,13 @@
       </b-row>
       <b-row class="mb-5">
         <b-col class="text-right">
-          <b-button to="/users/add" variant="border-primary"> + invite user </b-button>
+          <b-button to="/users/add" variant="border-primary"> + invite user</b-button>
         </b-col>
       </b-row>
 
       <template v-if="users && !$fetchState.pending">
         <b-row v-for="(user, key) in users.users" :key="key" class="mt-3" align-v="center">
-          <b-col cols="1">
+          <b-col cols="2" md="1">
             <b-img v-bind="mainProps" :alt="user.name + ' ' + user.surname" rounded />
           </b-col>
           <b-col>{{ user.name }} {{ user.surname }}</b-col>

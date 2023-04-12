@@ -6,8 +6,8 @@
           <h2 class="text-center font-weight-lighter mb-5">Invite User</h2>
         </b-col>
       </b-row>
-      <b-row>
-        <b-col md="6" offset-md="3">
+      <b-row align-h="center">
+        <b-col md="9" lg="6">
           <error-alert />
           <b-form @submit="doAdd">
             <b-form-row>
@@ -29,7 +29,12 @@
             <b-form-row>
               <b-col>
                 <b-form-group label="Email*">
-                  <b-form-input v-model="$v.request.email.$model" :state="isInvalid($v.request.email)" type="email" />
+                  <b-form-input
+                    v-model="$v.request.email.$model"
+                    lazy
+                    :state="isInvalid($v.request.email)"
+                    type="email"
+                  />
                   <b-form-invalid-feedback>This field is required and must be a valid email.</b-form-invalid-feedback>
                 </b-form-group>
               </b-col>
