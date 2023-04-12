@@ -1,10 +1,9 @@
 <template>
-  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
+  <b-col md="9" lg="6">
     <div class="text-center pb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <coming-soon-currencies />
-
     <b-card no-body class="overflow-hidden">
       <b-card-body class="p-card">
         <div class="form-screens">
@@ -350,7 +349,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     })
   }
 
-  async submitForm(e) {
+  submitForm(e) {
     this.stores.errors.RESET_ERROR()
     try {
       e.preventDefault()
@@ -363,10 +362,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
 
       if (this.$v.$invalid || !this.numberIsValid) {
         return
-      }
-
-      if (this.isRecaptchaEnabled) {
-        await this.$recaptcha.reset()
       }
 
       if (this.isPasswordValid) {
