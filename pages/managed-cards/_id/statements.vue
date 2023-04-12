@@ -44,9 +44,7 @@
               </b-col>
               <b-col col cols="auto">
                 <div class="card-balance">
-                  <div class="card-balance-label text-muted">
-                    balance
-                  </div>
+                  <div class="card-balance-label text-muted">balance</div>
                   <div class="card-balance-value">
                     {{ managedCard.balances.availableBalance | weavr_currency(managedCard.currency) }}
                   </div>
@@ -95,7 +93,7 @@
                             fontFamily: '\'Be Vietnam\', sans-serif',
                             color: '#6C1C5C',
                             lineHeight: '1',
-                            fontSize: '20px'
+                            fontSize: '20px',
                           }"
                           class="card-select-number"
                         />
@@ -112,9 +110,7 @@
                 </b-col>
                 <b-col cols="3">
                   <div class="card-expiry">
-                    <div class="card-expiry-label">
-                      EXP
-                    </div>
+                    <div class="card-expiry-label">EXP</div>
                     <div class="card-expiry-value">
                       {{ managedCard.expiryMmyy | expiryMmyy }}
                     </div>
@@ -122,9 +118,7 @@
                 </b-col>
                 <b-col cols="3">
                   <div class="card-cvv">
-                    <div class="card-cvv-label">
-                      CVV
-                    </div>
+                    <div class="card-cvv-label">CVV</div>
                     <div class="card-cvv-value">
                       <weavr-cvv-span
                         :token="managedCard.cvv.value"
@@ -133,7 +127,7 @@
                           color: '#6C1C5C',
                           lineHeight: '14.4px',
                           fontSize: '14.4px',
-                          fontWeight: 300
+                          fontWeight: 300,
                         }"
                         class="card-select-number"
                       />
@@ -169,12 +163,12 @@ const moment = require('moment')
 
 @Component({
   watch: {
-    '$route.query': 'fetchCardStatements'
+    '$route.query': 'fetchCardStatements',
   },
   components: {
     Statement,
-    StatementItem: () => import('~/components/statement/item.vue')
-  }
+    StatementItem: () => import('~/components/statement/item.vue'),
+  },
 })
 export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixin, FiltersMixin, CardsMixin) {
   filters: StatementFiltersRequest | null = null
@@ -196,15 +190,11 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
     const filters = routeQueries.filters || {}
 
     if (!filters?.fromTimestamp) {
-      filters.fromTimestamp = moment()
-        .startOf('month')
-        .valueOf()
+      filters.fromTimestamp = moment().startOf('month').valueOf()
     }
 
     if (!filters?.toTimestamp) {
-      filters.toTimestamp = moment()
-        .endOf('month')
-        .valueOf()
+      filters.toTimestamp = moment().endOf('month').valueOf()
     }
 
     const statementFilters: StatementFiltersRequest = {
@@ -212,12 +202,12 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
       orderByTimestamp: OrderEnum.DESC,
       limit: 100,
       offset: 0,
-      ...filters
+      ...filters,
     }
 
     const _req: ManagedCardStatementRequest = {
       id: this.cardId,
-      request: statementFilters
+      request: statementFilters,
     }
 
     this.filters = statementFilters
@@ -240,7 +230,7 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
       this.stores.cards
         .getCardStatement({
           id: this.$route.params.id,
-          request
+          request,
         })
         .then((response) => {
           if (!response.data.responseCount || response.data.responseCount < request.limit!) {
