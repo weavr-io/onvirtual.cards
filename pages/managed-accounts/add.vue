@@ -2,11 +2,9 @@
   <section>
     <b-container>
       <b-row>
-        <b-col md="4" offset-md="4">
+        <b-col md="9" lg="4">
           <b-card v-if="isCorporate" class="border-0">
-            <b-card-title class="mb-5 text-center font-weight-lighter">
-              Select Account Currency
-            </b-card-title>
+            <b-card-title class="mb-5 text-center font-weight-lighter"> Select Account Currency </b-card-title>
             <b-form @submit.prevent="doAdd">
               <b-form-row>
                 <b-col>
@@ -37,20 +35,20 @@ import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/con
 @Component({
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     createManagedAccountRequest: {
       friendlyName: {
         required,
-        maxLength: maxLength(50)
+        maxLength: maxLength(50),
       },
       currency: {
-        required
-      }
-    }
+        required,
+      },
+    },
   },
-  middleware: ['kyVerified']
+  middleware: ['kyVerified'],
 })
 export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, ValidationMixin) {
   localIsBusy: boolean = false
@@ -58,7 +56,7 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
   createManagedAccountRequest: CreateManagedAccountRequest = {
     profileId: '',
     friendlyName: 'Main Account',
-    currency: CurrencyEnum.EUR
+    currency: CurrencyEnum.EUR,
   }
 
   get currencyOptions() {
@@ -72,7 +70,7 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
       .index({
         profileId: this.accountProfileId,
         state: ManagedInstrumentStateEnum.ACTIVE,
-        offset: '0'
+        offset: '0',
       })
       .then(async (res) => {
         if (parseInt(res.data.count!) < 1) {

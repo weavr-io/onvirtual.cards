@@ -1,8 +1,8 @@
 <template>
   <section>
     <b-container>
-      <b-row>
-        <b-col v-if="account && !$fetchState.pending" md="6" offset-md="3">
+      <b-row align-h="center">
+        <b-col v-if="account && !$fetchState.pending" md="9" lg="6">
           <b-row>
             <b-col>
               <h2 class="text-center font-weight-lighter">Transfer funds from your bank account to</h2>
@@ -10,7 +10,7 @@
           </b-row>
           <b-row v-if="bankAccountDetails" class="pt-4">
             <b-col>
-              <b-alert show variant="warning"> Please remember to include payment reference. </b-alert>
+              <b-alert show variant="warning"> Please remember to include payment reference.</b-alert>
             </b-col>
           </b-row>
           <b-row class="pt-4">
@@ -52,8 +52,8 @@
             </b-col>
           </b-row>
           <b-row>
-            <b-col class="text-center mt-5">
-              <b-button :to="'/managed-accounts/' + accountId" variant="secondary" class="px-5"> close </b-button>
+            <b-col class="text-center my-5">
+              <b-button :to="'/managed-accounts/' + accountId" variant="secondary" class="px-5"> close</b-button>
             </b-col>
           </b-row>
         </b-col>
