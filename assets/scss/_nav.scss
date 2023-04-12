@@ -32,3 +32,8 @@
   max-height: var(--navbar-height);
   min-height: var(--navbar-height);
 }
+
+.dashboard-header-height {
+  min-height: $dashboard-header-height;
+  max-height: $dashboard-header-height;
+}

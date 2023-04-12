@@ -1,28 +1,33 @@
-$primary: #6C1C5C;
-$secondary: #3CF7CA;
-$text-muted: #B6B9C7;
-$card: #F0EDDE;
-$body-color: #232A47;
+$primary: #6c1c5c;
+$secondary: #3cf7ca;
+$text-muted: #b6b9c7;
+$card: #f0edde;
+$body-color: #232a47;
 $link-color: $body-color;
-$grey: #6D7490;
+$grey: #6d7490;
 
-$success: #3CF7CA;
+$success: #3cf7ca;
 
-$danger: #F50E4C;
+$danger: #f50e4c;
 
-$card-disabled: #E9EDF6;
+$card-disabled: #e9edf6;
 
-$shadow-color: #5768FF4D;
+$shadow-color: #5768ff4d;
 
-$body-bg: #FFFFFF;
-$body-bg-colored: #F0EDDE;
+$body-bg: #ffffff;
+$body-bg-colored: #f0edde;
 
-$grey-light: #EAEDF6;
+$grey-light: #eaedf6;
 
-$theme-colors: ("card": $card, "grey": $grey, "grey-light": $grey-light, "card-disabled": $card-disabled, 'bg-colored': $body-bg-colored);
+$theme-colors: (
+  'card': $card,
+  'grey': $grey,
+  'grey-light': $grey-light,
+  'card-disabled': $card-disabled,
+  'bg-colored': $body-bg-colored,
+);
 
-
-$btn-padding-y-sm: .5rem;
+$btn-padding-y-sm: 0.5rem;
 $btn-padding-x-sm: 1rem;
 
 $btn-padding-y: 0.7rem;
@@ -31,21 +36,18 @@ $btn-padding-x: 1.9rem;
 $btn-padding-y-lg: 1rem !default;
 $btn-padding-x-lg: 1.9rem !default;
 
-
 $btn-border-radius: 100px;
 $btn-font-weight: 300;
 
-$font-family-sans-serif: 'Be Vietnam',
-sans-serif;
-
+$font-family-sans-serif: 'Be Vietnam', sans-serif;
 
 $btn-box-shadow: 0px 7px 14px $shadow-color;
 
 $enable-validation-icons: false;
 
-$input-placeholder-color: #B6B9C7;
+$input-placeholder-color: #b6b9c7;
 $input-focus-box-shadow: none;
-$input-border-color: #6D7490;
+$input-border-color: #6d7490;
 $input-border-radius: 0;
 $input-border-width: 1px;
 $input-focus-width: 0;
@@ -57,21 +59,25 @@ $custom-select-border-color: $input-border-color;
 $custom-select-border-radius: 0;
 $custom-select-border-width: 1px;
 
-
-$box-shadow-sm: 0 .125rem .25rem $shadow-color;
-$box-shadow: 0 .5rem 1rem $shadow-color;
+$box-shadow-sm: 0 0.125rem 0.25rem $shadow-color;
+$box-shadow: 0 0.5rem 1rem $shadow-color;
 $box-shadow-lg: 0 1rem 3rem $shadow-color;
-
 
 $spacer: 1rem;
 
 $spacers: (
-        6: ($spacer * 6),
-        7: ($spacer * 12),
-        8: ($spacer * 18),
-        'card': 4rem
+  6: (
+    $spacer * 6,
+  ),
+  7: (
+    $spacer * 12,
+  ),
+  8: (
+    $spacer * 18,
+  ),
+  'card': 4rem,
 );
 
 $card-border-width: 0;
 $card-border-radius: 2rem;
-
+$dashboard-header-height: 68px;
