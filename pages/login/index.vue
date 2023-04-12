@@ -1,8 +1,6 @@
 <template>
   <b-col md="9" lg="6">
-    <div class="text-center mb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
-    </div>
+    <logo />
     <b-card body-class="p-5 p-xl-card">
       <h3 class="text-center font-weight-light mb-5">Login</h3>
 
@@ -73,10 +71,12 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import { authStore } from '~/utils/store-accessor'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import Logo from '~/components/Logo.vue'
 
 @Component({
   layout: 'auth',
   components: {
+    Logo,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     WeavrPasswordInput,

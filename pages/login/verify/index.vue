@@ -6,8 +6,8 @@
     <div>
       <b-card class="py-5 px-5 mt-5">
         <h3 class="font-weight-light text-center">Check your inbox!</h3>
-        <b-row>
-          <b-col md="6" offset-md="3" class="text-center">
+        <b-row align-h="center">
+          <b-col md="6" class="text-center">
             <b-img fluid src="/img/email.svg" class="mt-5 mb-2" />
           </b-col>
         </b-row>
@@ -19,8 +19,8 @@
             We’ve just sent you a verification code by email. Enter code below to verify your email address.
           </p>
           <error-alert class="mt-3" />
-          <b-row>
-            <b-col cols="6" offset="3">
+          <b-row align-h="center">
+            <b-col cols="6">
               <b-form-group
                 :state="isInvalid($v.verifyEmailRequest.verificationCode)"
                 invalid-feedback="This field is required and must be 6 characters"
@@ -29,6 +29,7 @@
                   v-model="$v.verifyEmailRequest.verificationCode.$model"
                   placeholder="000000"
                   class="text-center"
+                  lazy
                 />
               </b-form-group>
             </b-col>
