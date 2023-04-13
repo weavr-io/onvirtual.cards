@@ -1,5 +1,5 @@
 <template>
-  <b-col lg="6" md="8" offset-lg="3" offset-md="2">
+  <b-col md="9" lg="6">
     <div class="text-center pb-5">
       <img alt="onvirtual.cards" class="d-inline-block align-top" src="/img/logo.svg" width="200" />
     </div>

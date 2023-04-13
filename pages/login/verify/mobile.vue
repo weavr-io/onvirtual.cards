@@ -4,7 +4,7 @@
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
     <MobileComponent :verify-phone="true">
-      <template #title>Let's also verify your phone number </template>
+      <template #title>Let's also verify your phone number</template>
       <template #alert>The verification code was resent by SMS.</template>
       <template #description
         >We’ve just sent you a verification code by SMS. Enter code below to verify your phone number.

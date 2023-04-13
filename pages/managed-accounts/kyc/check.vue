@@ -1,13 +1,11 @@
 <template>
   <div>
     <b-container>
-      <b-row class="py-5">
-        <b-col class="text-center" md="6" offset-md="3">
+      <b-row class="py-5" align-h="center">
+        <b-col class="text-center" md="9" lg="6">
           <b-spinner label="Loading..." />
 
-          <h2 class="mt-4">
-            Please wait a moment.
-          </h2>
+          <h2 class="mt-4">Please wait a moment.</h2>
           <p>We are updating your account status.</p>
         </b-col>
       </b-row>
@@ -21,7 +19,7 @@ import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consu
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 
 @Component({
-  middleware: ['kyVerified']
+  middleware: ['kyVerified'],
 })
 export default class KycPage extends mixins(BaseMixin) {
   private tries: number = 0
@@ -54,7 +52,7 @@ export default class KycPage extends mixins(BaseMixin) {
     const _accounts = await this.stores.accounts.index({
       profileId: this.accountProfileId,
       state: ManagedInstrumentStateEnum.ACTIVE,
-      offset: '0'
+      offset: '0',
     })
 
     if (+_accounts.data.count! >= 1 && _accounts.data.accounts) {

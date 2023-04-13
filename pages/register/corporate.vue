@@ -1,22 +1,22 @@
 <template>
   <b-col md="9" lg="6">
-    <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+    <div class="mb-5">
+      <logo base-class="mb-5" />
+      <b-card no-body class="overflow-hidden">
+        <b-card-body class="px-4 mx-3 py-5 p-sm-card">
+          <div class="form-screens">
+            <transition name="fade" mode="out-in">
+              <div v-if="screen === 0" key="1" class="form-screen">
+                <register-form @submit-form="form1Submit" />
+              </div>
+              <div v-else key="2" class="form-screen">
+                <personal-details-form @submit-form="form2Submit" @strength-check="strengthCheck" @go-back="goBack" />
+              </div>
+            </transition>
+          </div>
+        </b-card-body>
+      </b-card>
     </div>
-    <b-card no-body class="overflow-hidden">
-      <b-card-body class="p-5 p-xl-card">
-        <div class="form-screens">
-          <transition name="fade" mode="out-in">
-            <div v-if="screen === 0" key="1" class="form-screen">
-              <register-form @submit-form="form1Submit" />
-            </div>
-            <div v-else key="2" class="form-screen">
-              <personal-details-form @submit-form="form2Submit" @strength-check="strengthCheck" @go-back="goBack" />
-            </div>
-          </transition>
-        </div>
-      </b-card-body>
-    </b-card>
   </b-col>
 </template>
 <script lang="ts">
@@ -34,10 +34,12 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { DeepNullable, RecursivePartial } from '~/global'
+import Logo from '~/components/Logo.vue'
 
 @Component({
   layout: 'auth',
   components: {
+    Logo,
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     RegisterForm: () => import('~/components/registration/RegisterForm.vue'),
     PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
@@ -156,6 +158,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         data: passwordRequest,
       })
       .then(this.onRegisteredSuccessfully.bind(this))
+      .catch(this.stopRegistrationLoading)
   }
 
   onRegisteredSuccessfully() {

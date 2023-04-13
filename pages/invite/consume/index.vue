@@ -1,18 +1,12 @@
 <template>
-  <b-col lg="6" offset-lg="3">
-    <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
-    </div>
+  <b-col md="9" lg="6">
+    <logo class="pb-5" />
     <b-card body-class="p-6">
       <template v-if="showError">
-        <b-alert show variant="danger">
-          Some information is missing. Please make sure you copy the whole URL.
-        </b-alert>
+        <b-alert show variant="danger"> Some information is missing. Please make sure you copy the whole URL.</b-alert>
       </template>
       <template v-else>
-        <h3 class="text-center font-weight-light mb-6">
-          Accept Invite
-        </h3>
+        <h3 class="text-center font-weight-light mb-6">Accept Invite</h3>
         <error-alert />
         <b-form @submit="tryToSubmitForm">
           <client-only placeholder="Loading...">
@@ -49,14 +43,16 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
+import Logo from '~/components/Logo.vue'
 
 @Component({
   layout: 'auth',
   components: {
+    Logo,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
-    WeavrPasswordInput
-  }
+    WeavrPasswordInput,
+  },
 })
 export default class IniteConsume extends mixins(BaseMixin) {
   protected form!: { id: IDModel; data: InviteConsumeRequestModel }
@@ -73,18 +69,18 @@ export default class IniteConsume extends mixins(BaseMixin) {
         data: {
           inviteCode: route.query.nonce.toString(),
           password: {
-            value: ''
-          }
-        }
+            value: '',
+          },
+        },
       }
 
       return {
         form: _consumeInviteRequest,
-        showError: false
+        showError: false,
       }
     } catch (e) {
       return {
-        showError: true
+        showError: true,
       }
     }
   }
@@ -94,8 +90,8 @@ export default class IniteConsume extends mixins(BaseMixin) {
       const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
         id: this.$route.query.user_id.toString(),
         data: {
-          inviteCode: this.$route.query.nonce.toString()
-        }
+          inviteCode: this.$route.query.nonce.toString(),
+        },
       }
 
       return this.stores.users.inviteValidate(_validateRequest).catch(this.handleError)
@@ -147,8 +143,8 @@ export default class IniteConsume extends mixins(BaseMixin) {
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 }

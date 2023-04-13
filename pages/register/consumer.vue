@@ -1,163 +1,163 @@
 <template>
   <b-col md="9" lg="6">
-    <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
-    </div>
-    <coming-soon-currencies />
-    <b-card no-body class="overflow-hidden">
-      <b-card-body class="p-card">
-        <div class="form-screens">
-          <error-alert />
-          <div class="form-screen">
-            <b-form novalidate @submit.prevent="submitForm">
-              <h3 class="text-center font-weight-light mb-5">Register</h3>
-              <b-form-group label="First Name*">
-                <b-form-input
-                  v-model="registrationRequest.rootUser.name"
-                  :state="isInvalid($v.registrationRequest.rootUser.name)"
-                  placeholder="First Name"
-                />
-                <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.name.required">
-                  This field is required
-                </b-form-invalid-feedback>
-                <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.name.maxLength">
-                  Name is too long.
-                </b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group label="Last Name*">
-                <b-form-input
-                  v-model="registrationRequest.rootUser.surname"
-                  :state="isInvalid($v.registrationRequest.rootUser.surname)"
-                  placeholder="Last Name"
-                />
-                <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.surname.required">
-                  This field is required
-                </b-form-invalid-feedback>
-                <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.surname.maxLength">
-                  Surname is too long.
-                </b-form-invalid-feedback>
-              </b-form-group>
-
-              <b-form-group label="Date of Birth*">
-                <dob-picker
-                  :placeholders="['Day', 'Month', 'Year']"
-                  month-format="long"
-                  show-labels="false"
-                  select-class="form-control"
-                  label-class="small flex-fill"
-                  class="d-flex"
-                  @input="updateDOB"
-                  @change="updateDOB"
-                />
-                <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.rootUser.dateOfBirth)">
-                  This field is required.
-                </b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group :state="isInvalid($v.registrationRequest.rootUser.email)" label="Email*">
-                <b-form-input
-                  v-model="$v.registrationRequest.rootUser.email.$model"
-                  :state="isInvalid($v.registrationRequest.rootUser.email)"
-                  placeholder="name@email.com"
-                  @input="delayTouch($v.registrationRequest.rootUser.email)"
-                />
-                <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group label="MOBILE NUMBER*">
-                <vue-phone-number-input
-                  v-model="rootMobileNumber"
-                  :only-countries="mobileCountries"
-                  :border-radius="0"
-                  :error="numberIsValid === false"
-                  color="#6C1C5C"
-                  error-color="#F50E4C"
-                  valid-color="#6D7490"
-                  default-country-code="GB"
-                  @update="phoneUpdate"
-                />
-                <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
-                  This field must be a valid mobile number.
-                </b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group :state="isInvalid($v.registrationRequest.rootUser.occupation)" label="Industry*">
-                <b-form-select
-                  v-model="$v.registrationRequest.rootUser.occupation.$model"
-                  :state="isInvalid($v.registrationRequest.rootUser.occupation)"
-                  :options="industryOccupationOptions"
-                />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group :state="isInvalid($v.registrationRequest.sourceOfFunds)" label="Source of Funds*">
-                <b-form-select
-                  v-model="$v.registrationRequest.sourceOfFunds.$model"
-                  :state="isInvalid($v.registrationRequest.sourceOfFunds)"
-                  :options="sourceOfFundsOptions"
-                />
-                <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
-                <b-form-input
-                  v-model="registrationRequest.sourceOfFundsOther"
-                  :state="isInvalid($v.registrationRequest.sourceOfFundsOther)"
-                  placeholder="Specify Other Source of Funds"
-                />
-              </b-form-group>
-              <client-only placeholder="Loading...">
-                <div>
-                  <label class="d-block">PASSWORD*</label>
-                  <weavr-password-input
-                    ref="passwordField"
-                    :options="{ placeholder: '****' }"
-                    :base-style="passwordBaseStyle"
-                    class-name="sign-in-password"
-                    name="password"
-                    required="true"
-                    @onChange="passwordInteraction"
-                    @onStrength="strengthCheck"
+    <div class="mb-5">
+      <logo class="pb-5" />
+      <coming-soon-currencies />
+      <b-card no-body class="overflow-hidden">
+        <b-card-body class="px-4 mx-3 py-5 p-sm-card">
+          <div class="form-screens">
+            <error-alert />
+            <div class="form-screen">
+              <b-form novalidate @submit.prevent="submitForm">
+                <h3 class="text-center font-weight-light mb-5">Register</h3>
+                <b-form-group label="First Name*">
+                  <b-form-input
+                    v-model="registrationRequest.rootUser.name"
+                    :state="isInvalid($v.registrationRequest.rootUser.name)"
+                    placeholder="First Name"
                   />
-                  <small class="form-text mb-3" :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
-                    >- min 8 characters <br />- uppercase letter <br />- digit and a special character</small
-                  >
-                </div>
-              </client-only>
-              <b-form-row class="small mt-3 text-muted">
-                <b-col>
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="$v.registrationRequest.acceptedTerms.$model"
-                      :state="isInvalid($v.registrationRequest.acceptedTerms)"
+                  <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.name.required">
+                    This field is required
+                  </b-form-invalid-feedback>
+                  <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.name.maxLength">
+                    Name is too long.
+                  </b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group label="Last Name*">
+                  <b-form-input
+                    v-model="registrationRequest.rootUser.surname"
+                    :state="isInvalid($v.registrationRequest.rootUser.surname)"
+                    placeholder="Last Name"
+                  />
+                  <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.surname.required">
+                    This field is required
+                  </b-form-invalid-feedback>
+                  <b-form-invalid-feedback v-if="!$v.registrationRequest.rootUser.surname.maxLength">
+                    Surname is too long.
+                  </b-form-invalid-feedback>
+                </b-form-group>
+
+                <b-form-group label="Date of Birth*">
+                  <dob-picker
+                    :placeholders="['Day', 'Month', 'Year']"
+                    month-format="long"
+                    show-labels="false"
+                    select-class="form-control"
+                    label-class="small flex-fill"
+                    class="d-flex"
+                    @input="updateDOB"
+                    @change="updateDOB"
+                  />
+                  <b-form-invalid-feedback :state="isInvalid($v.registrationRequest.rootUser.dateOfBirth)">
+                    This field is required.
+                  </b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group :state="isInvalid($v.registrationRequest.rootUser.email)" label="Email*">
+                  <b-form-input
+                    v-model="$v.registrationRequest.rootUser.email.$model"
+                    :state="isInvalid($v.registrationRequest.rootUser.email)"
+                    placeholder="name@email.com"
+                    @input="delayTouch($v.registrationRequest.rootUser.email)"
+                  />
+                  <b-form-invalid-feedback>Email address invalid.</b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group label="MOBILE NUMBER*">
+                  <vue-phone-number-input
+                    v-model="rootMobileNumber"
+                    :only-countries="mobileCountries"
+                    :border-radius="0"
+                    :error="numberIsValid === false"
+                    color="#6C1C5C"
+                    error-color="#F50E4C"
+                    valid-color="#6D7490"
+                    default-country-code="GB"
+                    @update="phoneUpdate"
+                  />
+                  <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
+                    This field must be a valid mobile number.
+                  </b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group :state="isInvalid($v.registrationRequest.rootUser.occupation)" label="Industry*">
+                  <b-form-select
+                    v-model="$v.registrationRequest.rootUser.occupation.$model"
+                    :state="isInvalid($v.registrationRequest.rootUser.occupation)"
+                    :options="industryOccupationOptions"
+                  />
+                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group :state="isInvalid($v.registrationRequest.sourceOfFunds)" label="Source of Funds*">
+                  <b-form-select
+                    v-model="$v.registrationRequest.sourceOfFunds.$model"
+                    :state="isInvalid($v.registrationRequest.sourceOfFunds)"
+                    :options="sourceOfFundsOptions"
+                  />
+                  <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
+                  <b-form-input
+                    v-model="registrationRequest.sourceOfFundsOther"
+                    :state="isInvalid($v.registrationRequest.sourceOfFundsOther)"
+                    placeholder="Specify Other Source of Funds"
+                  />
+                </b-form-group>
+                <client-only placeholder="Loading...">
+                  <div>
+                    <label class="d-block">PASSWORD*</label>
+                    <weavr-password-input
+                      ref="passwordField"
+                      :options="{ placeholder: '****' }"
+                      :base-style="passwordBaseStyle"
+                      class-name="sign-in-password"
+                      name="password"
+                      required="true"
+                      @onChange="passwordInteraction"
+                      @onStrength="strengthCheck"
+                    />
+                    <small class="form-text mb-3" :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
+                      >- min 8 characters <br />- uppercase letter <br />- digit and a special character</small
                     >
-                      I accept the
-                      <a
-                        href="https://www.onvirtual.cards/terms/consumer"
-                        target="_blank"
-                        class="text-decoration-underline text-muted"
-                        >terms of use</a
+                  </div>
+                </client-only>
+                <b-form-row class="small mt-3 text-muted">
+                  <b-col>
+                    <b-form-group>
+                      <b-form-checkbox
+                        v-model="$v.registrationRequest.acceptedTerms.$model"
+                        :state="isInvalid($v.registrationRequest.acceptedTerms)"
                       >
-                      and
-                      <a
-                        href="https://www.onvirtual.cards/policy/"
-                        target="_blank"
-                        class="text-decoration-underline text-muted"
-                        >privacy policy</a
-                      >*
-                    </b-form-checkbox>
-                    <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-form-row>
-              <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
-                <recaptcha class="mx-auto" />
-              </div>
-              <b-row class="mt-4" align-v="center">
-                <b-col class="text-center">
-                  <loader-button :is-loading="isLoadingRegistration" button-text="continue" />
-                </b-col>
-              </b-row>
-            </b-form>
+                        I accept the
+                        <a
+                          href="https://www.onvirtual.cards/terms/consumer"
+                          target="_blank"
+                          class="text-decoration-underline text-muted"
+                          >terms of use</a
+                        >
+                        and
+                        <a
+                          href="https://www.onvirtual.cards/policy/"
+                          target="_blank"
+                          class="text-decoration-underline text-muted"
+                          >privacy policy</a
+                        >*
+                      </b-form-checkbox>
+                      <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+                    </b-form-group>
+                  </b-col>
+                </b-form-row>
+                <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
+                  <recaptcha class="mx-auto" />
+                </div>
+                <b-row class="mt-4" align-v="center">
+                  <b-col class="text-center">
+                    <loader-button :is-loading="isLoadingRegistration" button-text="continue" />
+                  </b-col>
+                </b-row>
+              </b-form>
+            </div>
           </div>
-        </div>
-      </b-card-body>
-    </b-card>
+        </b-card-body>
+      </b-card>
+    </div>
   </b-col>
 </template>
 <script lang="ts">
@@ -181,6 +181,7 @@ import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authe
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
+import Logo from '~/components/Logo.vue'
 
 const touchMap = new WeakMap()
 
@@ -238,6 +239,7 @@ const touchMap = new WeakMap()
     },
   },
   components: {
+    Logo,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),

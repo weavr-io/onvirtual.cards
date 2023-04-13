@@ -1,7 +1,7 @@
 <template>
   <b-col md="9" lg="6">
-    <logo />
-    <b-card no-body class="overflow-hidden">
+    <logo class="pb-5" />
+    <b-card no-body>
       <b-card-body v-if="!passwordSent" class="px-4 mx-2 py-5 p-md-card">
         <div class="text-center">
           <h2 class="font-weight-lighter">Reset Password</h2>
@@ -34,7 +34,7 @@
         </b-form>
       </b-card-body>
       <b-card v-else no-body class="overflow-hidden">
-        <b-card-body class="p-card">
+        <b-card-body class="px-4 mx-2 py-5 p-md-card">
           <div class="text-center">
             <h2 class="font-weight-lighter">Email sent</h2>
             <h5 class="font-weight-lighter mt-4">

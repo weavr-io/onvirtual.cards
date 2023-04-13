@@ -1,10 +1,7 @@
 <template>
   <b-col md="9" lg="6">
-    <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
-    </div>
-    <div>
-      <b-card class="py-5 px-5 mt-5">
+    <div class="mb-5">
+      <b-card class="px-4 py-5 p-md-card">
         <h3 class="font-weight-light text-center">Check your inbox!</h3>
         <b-row align-h="center">
           <b-col md="6" class="text-center">
@@ -56,10 +53,12 @@ import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/u
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
+import Logo from '~/components/Logo.vue'
 
 @Component({
   layout: 'auth',
   components: {
+    Logo,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
