@@ -95,6 +95,9 @@ export default class BundlesPage extends mixins(BaseMixin) {
 
     let tokenizedOld = ''
     let tokenizedNew = ''
+
+    this.isLoading = true
+
     await this.oldPassword.createToken().then((res) => {
       tokenizedOld = res.tokens['old-password']
     })
@@ -107,9 +110,21 @@ export default class BundlesPage extends mixins(BaseMixin) {
       this.changePasswordRequest.newPassword.value = tokenizedNew
       console.debug('ALL Settled', this.changePasswordRequest)
       this.stores.auth.validatePassword({ password: this.changePasswordRequest.newPassword }).then(() => {
-        this.stores.auth.updatePassword(this.changePasswordRequest).then(() => {
-          this.$router.push('/profile')
-        })
+        this.stores.auth
+          .updatePassword(this.changePasswordRequest)
+          .then(() => {
+            this.showSuccessToast('Password changed successfully')
+            this.$router.push('/profile')
+          })
+          .catch((err) => {
+            const data = err.response.data
+            const error = data.message ? data.message : data.errorCode
+
+            this.showErrorToast(error)
+          })
+          .finally(() => {
+            this.isLoading = false
+          })
       })
     } else {
       return null
