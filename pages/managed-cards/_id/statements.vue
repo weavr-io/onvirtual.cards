@@ -109,8 +109,8 @@
                   </div>
                 </b-col>
                 <b-col cols="3">
-                  <div class="card-cvv">
-                    <div class="card-cvv-label">CVV</div>
+                  <div class="card-cvv mb-1">
+                    <div class="card-cvv-label mb-2">CVV</div>
                     <div class="card-cvv-value">
                       <weavr-cvv-span
                         :token="managedCard.cvv.value"

@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-row class="px-0 mb-5 border-bottom dashboard-header-height" align-v="end" align-h="between">
+    <b-row class="px-0 mb-4 border-bottom dashboard-header-height" align-v="end" align-h="between">
       <b-col cols="7">
         <b-nav class="dashboard-header">
           <b-nav-item to="/managed-cards" active-class="active"> Cards</b-nav-item>

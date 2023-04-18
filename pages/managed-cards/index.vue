@@ -1,17 +1,17 @@
 <template>
   <div>
     <section>
-      <b-container class="mb-5 mt-n4">
-        <b-row align-v="center">
-          <b-col>
+      <b-container class="mb-5">
+        <b-row align-v="end">
+          <b-col cols="auto" class="pr-0">
             <div v-if="showDestroyedSwitch" class="d-flex align-items-center">
               <b-form-checkbox :checked="showDestroyed" name="check-button" switch @change="showDestroyedChanged" />
-              <template v-if="showDestroyed"> Hide</template>
-              <template v-else> Show</template>
+              <template v-if="showDestroyed">Hide</template>
+              <template v-else>Show</template>
               destroyed cards
             </div>
           </b-col>
-          <b-col cols="5" class="text-right d-flex justify-content-end">
+          <b-col class="text-right d-flex justify-content-end pl-0">
             <div v-b-tooltip.hover :title="identityVerificationMessage">
               <b-button to="/managed-cards/add" :disabled="!identityVerified" variant="border-primary">
                 + add new card

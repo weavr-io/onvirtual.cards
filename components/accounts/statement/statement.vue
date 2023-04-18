@@ -6,12 +6,13 @@
           <b-col cols="10" sm="8">
             <h6 class="font-weight-lighter">
               <b-row align-v="center">
-                <b-col cols="auto"> All Transactions</b-col>
-                <b-col cols="auto">
+                <b-col class="pr-0" cols="auto"> All Transactions</b-col>
+                <b-col cols="auto" class="pl-2">
                   <b-form-select
                     :options="months"
                     :value="filterDate"
                     class="w-auto d-inline-block"
+                    size="sm"
                     @change="filterMonthChange"
                   />
                 </b-col>
