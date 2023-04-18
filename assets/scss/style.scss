@@ -64,7 +64,7 @@
     vertical-align: middle;
     padding: 14px 54px 14px 20px;
     margin: 0;
-    color: #ffffff;
+    color: $body-bg;
   }
 
   button {
@@ -124,11 +124,11 @@ a {
 }
 
 .transaction-type-icon {
-  background: #eaedf6;
+  background: $grey-light;
   text-align: center;
   border-radius: 10px;
   font-size: 30px;
-  color: #6d7490;
+  color: $grey;
   font-weight: 100;
   padding: 16px 0px;
   line-height: 0;

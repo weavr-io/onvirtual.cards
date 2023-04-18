@@ -36,7 +36,7 @@
     &-expiry {
       &-label {
         font-size: 0.7rem;
-        color: #6d7490;
+        color: $grey;
       }
 
       &-value {
@@ -63,7 +63,7 @@
     border-radius: 100px;
     padding: 9px 11px;
     border: 0;
-    box-shadow: 0 0 6px #232a472b;
+    box-shadow: 0 0 6px $shadow-color;
     position: absolute;
     right: 15px;
     bottom: -21px;
@@ -71,7 +71,7 @@
     color: $primary;
 
     &:hover {
-      box-shadow: 0 3px 6px #232a472b;
+      box-shadow: 0 3px 6px $shadow-color;
     }
   }
 }
@@ -105,7 +105,7 @@
     border-radius: 20px;
 
     &:hover {
-      background-color: #eaedf6;
+      background-color: $grey-light;
     }
   }
 }
