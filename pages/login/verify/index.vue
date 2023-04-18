@@ -1,5 +1,8 @@
 <template>
   <b-col md="9" lg="6">
+    <div class="text-center pb-5">
+      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+    </div>
     <div class="mb-5">
       <b-card class="px-4 py-5 p-md-card">
         <h3 class="font-weight-light text-center">Check your inbox!</h3>
