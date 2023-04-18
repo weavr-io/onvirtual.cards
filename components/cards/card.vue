@@ -1,11 +1,12 @@
 <template>
-  <div id="managedCard">
+  <div>
     <b-card
+      id="managedCard"
       :class="[{ 'card-frozen': isBlocked }, { 'card-destroyed': isDestroyed }]"
       no-body
-      class="border-0 cards-card shadow-hover-sm"
+      class="border-0 cards-card"
     >
-      <b-card-body class="card-body onvirtual-card overflow-hidden">
+      <b-card-body class="card-body onvirtual-card overflow-hidden shadow-hover-sm">
         <b-aspect :aspect="'1.6:1'" class="overflow-hidden">
           <b-overlay spinner-small :show="localIsBusy" class="overflow-hidden">
             <b-link :to="statementsLink">

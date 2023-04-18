@@ -14,7 +14,6 @@
   }
 
   .card {
-
     &-name {
       font-weight: 300;
       font-size: 1.3rem;
@@ -37,7 +36,7 @@
     &-expiry {
       &-label {
         font-size: 0.7rem;
-        color: #6D7490;
+        color: #6d7490;
       }
 
       &-value {
@@ -45,7 +44,6 @@
         font-size: 0.9rem;
       }
     }
-
   }
 
   &.card-frozen {
@@ -54,12 +52,10 @@
     }
   }
 
-  &.card-destroyed{
+  &.card-destroyed {
     opacity: 0.4;
-
   }
 }
-
 
 #managedCard {
   .card-options-button {
@@ -67,18 +63,21 @@
     border-radius: 100px;
     padding: 9px 11px;
     border: 0;
-    box-shadow: 0 3px 6px #232A472B;
+    box-shadow: 0 0 6px #232a472b;
     position: absolute;
     right: 15px;
     bottom: -21px;
     z-index: 10;
     color: $primary;
-  }
 
+    &:hover {
+      box-shadow: 0 3px 6px #232a472b;
+    }
+  }
 }
 
 .onvirtual-card {
-  background: url("/img/card-background.svg") no-repeat no-repeat;
+  background: url('/img/card-background.svg') no-repeat no-repeat;
   background-size: cover;
   border-radius: 20px;
 }
