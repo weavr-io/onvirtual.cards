@@ -19,8 +19,12 @@
               name="password"
               required="true"
               @onKeyUp="checkOnKeyUp"
+              @onChange="passwordInteraction"
+              @onStrength="strengthCheck"
             />
-            <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
+            <small class="form-text mb-3" :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
+              >- min 8 characters <br />- uppercase letter <br />- digit and a special character</small
+            >
           </client-only>
           <b-form-row class="mt-6">
             <b-col class="text-center">
@@ -37,6 +41,7 @@
 </template>
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { required } from 'vuelidate/lib/validators'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
@@ -47,6 +52,13 @@ import Logo from '~/components/Logo.vue'
 
 @Component({
   layout: 'auth',
+  validations: {
+    inviteForm: {
+      password: {
+        required,
+      },
+    },
+  },
   components: {
     Logo,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
@@ -59,8 +71,24 @@ export default class IniteConsume extends mixins(BaseMixin) {
 
   showError: boolean = false
 
+  private inviteForm = {
+    password: {
+      value: '',
+    },
+  }
+
   @Ref('passwordField')
   passwordField!: WeavrPasswordInput
+
+  passwordStrength: number = 0
+
+  get isPasswordValidAndDirty() {
+    return !this.$v.inviteForm.password?.$dirty ? true : this.isPasswordValid
+  }
+
+  get isPasswordValid(): boolean {
+    return this.passwordStrength >= 2
+  }
 
   asyncData({ route }) {
     try {
@@ -98,29 +126,39 @@ export default class IniteConsume extends mixins(BaseMixin) {
     } catch (e) {}
   }
 
+  strengthCheck(val) {
+    this.passwordStrength = val.id
+  }
+
+  passwordInteraction(val: { empty: boolean; valid: boolean }) {
+    !val.empty ? (this.inviteForm.password.value = '******') : (this.inviteForm.password.value = '')
+    this.$v.inviteForm.password?.$touch()
+  }
+
   handleError(e) {
     this.stores.errors.SET_ERROR(e.response)
   }
 
   tryToSubmitForm(e) {
     e.preventDefault()
-
-    this.passwordField.createToken().then(
-      (tokens) => {
-        if (tokens.tokens.password !== '') {
-          this.form.data.password!.value = tokens.tokens.password
-          this.stores.users.inviteConsume(this.form).then(() => {
-            this.$router.push('/login')
-          })
-        } else {
+    if (this.isPasswordValid) {
+      this.passwordField.createToken().then(
+        (tokens) => {
+          if (tokens.tokens.password !== '') {
+            this.form.data.password!.value = tokens.tokens.password
+            this.stores.users.inviteConsume(this.form).then(() => {
+              this.$router.push('/login')
+            })
+          } else {
+            return null
+          }
+        },
+        (e) => {
+          console.error(e)
           return null
         }
-      },
-      (e) => {
-        console.error(e)
-        return null
-      }
-    )
+      )
+    }
   }
 
   checkOnKeyUp(e) {
