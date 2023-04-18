@@ -142,10 +142,14 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
         request: this.updateManagedCardRequest as UpdateManagedCardRequest,
       })
       .then(() => {
+        this.showSuccessToast('Card name changed')
         this.$router.push('/managed-cards')
       })
       .finally(() => {
         this.isUpdating = false
+      })
+      .catch(() => {
+        this.showErrorToast('Card name change error')
       })
   }
 
