@@ -28,9 +28,13 @@
   }
 }
 
-.nav-bar-height {
+.auth-nav-bar {
   max-height: var(--navbar-height);
   min-height: var(--navbar-height);
+
+  background-color: rgba($card, 0.7) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .dashboard-header-height {
