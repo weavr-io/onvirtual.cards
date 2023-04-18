@@ -4,14 +4,8 @@
       <b-container class="mb-5 mt-n4">
         <b-row align-v="center">
           <b-col>
-            <div class="d-flex align-items-center">
-              <b-form-checkbox
-                v-if="showDestroyedSwitch"
-                :checked="showDestroyed"
-                name="check-button"
-                switch
-                @change="showDestroyedChanged"
-              />
+            <div v-if="showDestroyedSwitch" class="d-flex align-items-center">
+              <b-form-checkbox :checked="showDestroyed" name="check-button" switch @change="showDestroyedChanged" />
               <template v-if="showDestroyed"> Hide</template>
               <template v-else> Show</template>
               destroyed cards
