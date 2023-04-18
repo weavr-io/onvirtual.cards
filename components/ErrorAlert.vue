@@ -4,7 +4,7 @@
       <div class="error-alert" role="alert">
         <p>{{ conflictMessage }}</p>
         <button @click="onClose">
-          <img src="/img/close.svg" width="16" alt="" />
+          <img src="/img/close.svg" width="16" alt="close" />
         </button>
       </div>
     </div>
@@ -16,8 +16,8 @@
             {{ errorLink.text }}
           </b-link>
         </p>
-        <button @click="onClose">
-          <img src="/img/close.svg" width="16" alt />
+        <button class="z-index-0" @click="onClose">
+          <img src="/img/close.svg" width="16" alt="close" />
         </button>
       </div>
     </div>

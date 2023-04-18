@@ -2,7 +2,7 @@
   <section>
     <b-container>
       <b-row v-if="isPendingReview" align-h="center">
-        <b-col §class="py-3 font-weight-lighter text-center">
+        <b-col class="py-3 font-weight-lighter text-center">
           <h3 class="font-weight-lighter mb-4">Your account is currently under review.</h3>
           <p>This process normally takes a few days.</p>
         </b-col>
@@ -30,7 +30,7 @@
             <li>Directors: name, date of birth, nationality, email address, contact number</li>
             <li>Ultimate Beneficial Owners (UBOs) holding a stake of 25% or more: name, date of birth, nationality</li>
           </ul>
-          <div class="text-center mt-5">
+          <div class="text-center my-5">
             <b-button to="/managed-accounts/kyb"> start the verification process</b-button>
           </div>
         </b-col>
