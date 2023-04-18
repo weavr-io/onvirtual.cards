@@ -89,8 +89,14 @@ export default class BaseMixin extends Vue {
     return Countries.map((_c) => {
       return {
         text: _c.name,
-        value: _c['alpha-2']
+        value: _c['alpha-2'],
       }
+    })
+  }
+
+  get mobileCountries(): string[] {
+    return Countries.map((_c) => {
+      return _c['alpha-2']
     })
   }
 
@@ -112,21 +118,35 @@ export default class BaseMixin extends Vue {
     return this.$router.push('/')
   }
 
-  logout() {
-    return this.stores.auth.logout()
+  goToVerify() {
+    return this.$router.push({
+      path: '/login/verify',
+      query: {
+        email: this.rootUserEmail,
+        send: 'true',
+      },
+    })
+  }
+
+  doLogout() {
+    return this.stores.auth.logout().then(this.redirectToLogin)
+  }
+
+  redirectToLogin() {
+    this.$router.push('/login')
   }
 
   showSuccessToast(msg?: string, title?: string) {
     return this.$weavrToast(msg !== undefined ? msg : 'All changes have been saved', {
       title: title !== undefined ? title : 'Changes saved',
-      variant: 'success'
+      variant: 'success',
     })
   }
 
   showErrorToast(msg?: string, title?: string) {
     return this.$weavrToast(msg !== undefined ? msg : 'An error has occurred while saving', {
       title: title !== undefined ? title : 'Error',
-      variant: 'danger'
+      variant: 'danger',
     })
   }
 
@@ -147,5 +167,10 @@ export default class BaseMixin extends Vue {
 
   get pendingDataOrError() {
     return this.pendingData || this.fetchHasError
+  }
+
+  setSCAstorage() {
+    localStorage.setItem('stepUp', 'FALSE')
+    localStorage.setItem('scaSmsSent', 'FALSE')
   }
 }

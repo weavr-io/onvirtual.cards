@@ -1,30 +1,31 @@
 <template>
   <b-form @submit.prevent="tryToSubmitForm">
-    <h3 class="text-center font-weight-light mb-5">
-      Register
-    </h3>
+    <h3 class="text-center font-weight-light mb-5">Register</h3>
     <error-alert />
     <b-form-group
       :state="isInvalid($v.form.email)"
       :invalid-feedback="invalidFeedback($v.form.email, validateVParams($v.form.email.$params, $v.form.email))"
-      label="Email"
+      label="Email*"
     >
       <b-form-input v-model="$v.form.email.$model" placeholder="name@email.com" />
     </b-form-group>
     <client-only placeholder="Loading...">
       <div>
-        <label class="d-block">PASSWORD</label>
+        <label class="d-block">PASSWORD*</label>
         <weavr-password-input
           ref="passwordField"
           :options="{ placeholder: '****' }"
           :base-style="passwordBaseStyle"
-          :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
+          class-name="sign-in-password"
           name="password"
           required="true"
           @onKeyUp="checkOnKeyUp"
           @onChange="passwordInteraction"
+          @onStrength="strengthCheck"
         />
-        <small class="form-text text-muted">Minimum 8, Maximum 50 characters.</small>
+        <small class="form-text mb-3" :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
+          >- min 8 characters <br />- uppercase letter <br />- digit and a special character</small
+        >
       </div>
     </client-only>
     <b-form-row class="small mt-3 text-muted">
@@ -41,7 +42,7 @@
             and
             <a href="https://www.onvirtual.cards/policy/" target="_blank" class="text-decoration-underline text-muted"
               >privacy policy</a
-            >
+            >*
           </b-form-checkbox>
           <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
@@ -67,33 +68,31 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
 import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import ValidationMixin from '~/mixins/ValidationMixin'
-
 @Component({
   validations: {
     form: {
       email: {
         required,
-        email
+        email,
       },
       password: {
         value: {
-          required
-        }
+          required,
+        },
       },
       acceptedTerms: {
         required,
-        sameAs: sameAs(() => true)
-      }
-    }
+        sameAs: sameAs(() => true),
+      },
+    },
   },
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    WeavrPasswordInput
-  }
+    WeavrPasswordInput,
+  },
 })
-export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
+export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
   private $recaptcha: any
-
   @Ref('passwordField')
   passwordField!: WeavrPasswordInput
 
@@ -106,7 +105,17 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
   } = {
     email: null,
     password: { value: null },
-    acceptedTerms: false
+    acceptedTerms: false,
+  }
+
+  passwordStrength: number = 0
+
+  get isPasswordValidAndDirty(): boolean {
+    return !this.$v.form.password?.$dirty ? true : this.isPasswordValid
+  }
+
+  get isPasswordValid(): boolean {
+    return this.passwordStrength >= 2
   }
 
   get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -122,8 +131,8 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 
@@ -131,27 +140,20 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
     return typeof process.env.RECAPTCHA !== 'undefined'
   }
 
-  get isInvalidPassword() {
-    return this.$v.form?.password?.value.$anyError
-  }
-
   async tryToSubmitForm() {
+    this.stores.errors.RESET_ERROR()
     try {
       this.$v.$touch()
-
-      if (this.$v.$invalid) {
+      if (this.$v.$invalid || !this.isPasswordValid) {
         return
       }
-
       if (this.isRecaptchaEnabled) {
         await this.$recaptcha.reset()
       }
-
       this.passwordField.createToken().then(
         (tokens) => {
           if (tokens.tokens.password !== '') {
             this.form.password = tokens.tokens.password
-
             this.submitForm()
           } else {
             return null
@@ -175,12 +177,18 @@ export default class RegisterForm1 extends mixins(BaseMixin, ValidationMixin) {
 
   passwordInteraction(val: { empty: boolean; valid: boolean }) {
     !val.empty ? (this.form.password.value = '******') : (this.form.password.value = '')
+    this.$v.form.password?.$touch()
   }
 
   @Emit()
   submitForm() {
     this.stores.errors.RESET_ERROR()
     return this.form
+  }
+
+  @Emit()
+  strengthCheck(val) {
+    this.passwordStrength = val.id
   }
 }
 </script>

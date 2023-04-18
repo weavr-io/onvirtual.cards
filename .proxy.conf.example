@@ -8,7 +8,7 @@ server {
         set $upstream_endpoint https://sandbox.weavr.io;
         proxy_pass $upstream_endpoint$request_uri;
     }
-    
+
     location /health {
         return 200;
     }

@@ -2,7 +2,7 @@
   <div :class="className" class="weavr-input" />
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
+import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
 import { SecureElementStyleWithPseudoClasses, SecureInputOptions } from '~/plugins/weavr/components/api'
 
 @Component
@@ -37,6 +37,8 @@ export default class WeavrPasswordInput extends Vue {
 
   @Emit('onFocus') onFocus() {}
 
+  @Emit('onStrength') onStrength() {}
+
   protected _input
 
   mounted() {
@@ -60,6 +62,7 @@ export default class WeavrPasswordInput extends Vue {
     this.onKeyUp && input.on('keyup', this.onKeyUp)
     this.onBlur && input.on('blur', this.onBlur)
     this.onFocus && input.on('focus', this.onFocus)
+    this.onStrength && input.on('strength', this.onStrength)
   }
 
   _removeListeners(input) {
@@ -68,6 +71,7 @@ export default class WeavrPasswordInput extends Vue {
     this.onKeyUp && input.off('keyup', this.onKeyUp)
     this.onBlur && input.off('blur', this.onBlur)
     this.onFocus && input.off('focus', this.onFocus)
+    this.onStrength && input.on('strength', this.onStrength)
   }
 
   get inputOptions() {
@@ -77,8 +81,8 @@ export default class WeavrPasswordInput extends Vue {
         base: this.baseStyle,
         empty: this.emptyStyle,
         valid: this.validStyle,
-        invalid: this.invalidStyle
-      }
+        invalid: this.invalidStyle,
+      },
     }
   }
 }

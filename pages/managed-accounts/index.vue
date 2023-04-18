@@ -18,7 +18,7 @@
             </h4>
             <h5 class="font-weight-lighter">
               Click
-              <b-link to="/managed-cards/add">
+              <b-link to="/managed-accounts/add">
                 add new account
               </b-link>
               to create your first account.

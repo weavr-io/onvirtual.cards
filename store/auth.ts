@@ -19,7 +19,7 @@ import {
   corporatesStore,
   identitiesStore,
   transfersStore,
-  usersStore
+  usersStore,
 } from '~/utils/store-accessor'
 import config from '~/config'
 
@@ -28,13 +28,13 @@ const Cookie = process.client ? require('js-cookie') : undefined
 const defaultState = {
   auth: null,
   authFactors: null,
-  isLoading: false
+  isLoading: false,
 }
 
 @Module({
   name: 'authModule',
   namespaced: true,
-  stateFactory: true
+  stateFactory: true,
 })
 export default class Auth extends StoreModule {
   auth: LoginWithPasswordResponse | null = defaultState.auth
@@ -42,7 +42,7 @@ export default class Auth extends StoreModule {
   isLoading: boolean = defaultState.isLoading
 
   get isLoggedIn(): boolean {
-    return this.auth != null && this.auth.token != null
+    return this.auth !== null && this.auth.token !== null
   }
 
   get token() {
@@ -165,8 +165,22 @@ export default class Auth extends StoreModule {
   }
 
   @Action({ rawError: true })
+  enrollStepUp(channel: SCAOtpChannelEnum) {
+    const _req = this.store.$apiMulti.stepUp.enroll(channel)
+
+    return _req
+  }
+
+  @Action({ rawError: true })
   verifyAuthFactors(request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrolRequest }) {
     const _req = this.store.$apiMulti.additionalFactors.verify(request)
+
+    return _req
+  }
+
+  @Action({ rawError: true })
+  verifyStepUp(request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrolRequest }) {
+    const _req = this.store.$apiMulti.stepUp.verify(request)
 
     return _req
   }

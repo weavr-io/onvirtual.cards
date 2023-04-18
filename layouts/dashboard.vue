@@ -12,9 +12,7 @@
       variant="bg-colored"
     >
       We need to verify your mobile number. Please click
-      <b-link to="/register/verify/mobile" class="link">
-        here.
-      </b-link>
+      <b-link to="/login/verify/mobile" class="link"> here. </b-link>
     </b-alert>
     <b-alert
       id="verify-email"
@@ -23,9 +21,7 @@
       variant="bg-colored"
     >
       We need to verify your email address. Please click
-      <b-link to="/register/verify" class="link">
-        here.
-      </b-link>
+      <b-button variant="transparent" class="link mb-1" @click="goToVerify">here.</b-button>
     </b-alert>
     <div v-if="isLoading" id="loader">
       <div class="loader-spinner">
@@ -39,6 +35,7 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import KyVerified from '~/mixins/kyVerified'
+import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
   components: {
@@ -47,10 +44,10 @@ import KyVerified from '~/mixins/kyVerified'
     DashboardHeader: () => import('~/components/DashboardHeader.vue'),
     KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
     KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
-    cookiePolicy: () => import('~/components/cookie.vue')
-  }
+    cookiePolicy: () => import('~/components/cookie.vue'),
+  },
 })
-export default class DefaultLayout extends mixins(KyVerified) {
+export default class DefaultLayout extends mixins(KyVerified, BaseMixin) {
   get isLoading() {
     return this.stores.loader.isLoading
   }

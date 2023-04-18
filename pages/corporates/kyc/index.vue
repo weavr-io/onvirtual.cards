@@ -30,8 +30,8 @@ import BaseMixin from '~/mixins/BaseMixin'
 @Component({
   components: {
     BIcon,
-    BIconBoxArrowUpRight
-  }
+    BIconBoxArrowUpRight,
+  },
 })
 export default class KybPage extends mixins(BaseMixin) {
   reference!: string
@@ -40,7 +40,7 @@ export default class KybPage extends mixins(BaseMixin) {
 
   get kybOptions(): KYBOptions {
     return {
-      customCss: ''
+      customCss: '',
     }
   }
 

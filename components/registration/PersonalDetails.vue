@@ -1,8 +1,6 @@
 <template>
   <b-form novalidate @submit="submitForm">
-    <h3 class="text-center font-weight-light mb-5">
-      A few more steps
-    </h3>
+    <h3 class="text-center font-weight-light mb-5">A few more steps</h3>
     <error-alert />
     <b-form-group label="First Name*">
       <b-form-input
@@ -10,12 +8,8 @@
         :state="isInvalid($v.form.rootUser.name)"
         placeholder="Name"
       />
-      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.required">
-        This field is required
-      </b-form-invalid-feedback>
-      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.maxLength">
-        Name is too long.
-      </b-form-invalid-feedback>
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.required"> This field is required </b-form-invalid-feedback>
+      <b-form-invalid-feedback v-if="!$v.form.rootUser.name.maxLength"> Name is too long. </b-form-invalid-feedback>
     </b-form-group>
     <b-form-group label="Last Name*">
       <b-form-input
@@ -62,7 +56,7 @@
       />
       <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
     </b-form-group>
-    <b-form-group label="Company Type">
+    <b-form-group label="Company Type*">
       <b-form-select
         v-model="$v.form.company.type.$model"
         :state="isInvalid($v.form.company.type)"
@@ -140,7 +134,6 @@
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
-
 import BaseMixin from '~/mixins/BaseMixin'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
@@ -150,88 +143,84 @@ import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identit
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
-
 const Countries = require('~/static/json/countries.json')
-
 @Component({
   validations: {
     form: {
       rootUser: {
         name: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
         },
         surname: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
         },
         mobile: {
           number: {
-            required
+            required,
           },
           countryCode: {
-            required
-          }
+            required,
+          },
         },
         companyPosition: {
-          required
-        }
+          required,
+        },
       },
       company: {
         type: {
-          required
+          required,
         },
         name: {
           required,
-          maxLength: maxLength(100)
+          maxLength: maxLength(100),
         },
         registrationNumber: {
           required,
-          maxLength: maxLength(20)
+          maxLength: maxLength(20),
         },
         registrationCountry: {
           required,
-          maxLength: maxLength(2)
-        }
+          maxLength: maxLength(2),
+        },
       },
       industry: {
-        required
+        required,
       },
       sourceOfFunds: {
-        required
+        required,
       },
-      sourceOfFundsOther: {}
-    }
+      sourceOfFundsOther: {},
+    },
   },
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
-  }
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
+  },
 })
 export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {
   companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
-
   numberIsValid: boolean | null = null
-
   public form: DeepNullable<RecursivePartial<CreateCorporateRequest>> = {
     rootUser: {
       name: null,
       surname: null,
       mobile: {
         number: null,
-        countryCode: ''
+        countryCode: '',
       },
-      companyPosition: null
+      companyPosition: null,
     },
     company: {
       type: null,
       name: null,
       registrationNumber: null,
-      registrationCountry: null
+      registrationCountry: null,
     },
     industry: null,
     sourceOfFunds: null,
-    sourceOfFundsOther: null
+    sourceOfFundsOther: null,
   }
 
   get mobileCountries(): string[] {
@@ -266,18 +255,15 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
   @Emit()
   submitForm(e) {
     e.preventDefault()
-
     if (this.numberIsValid === null) {
       this.numberIsValid = false
     }
-
     if (this.$v.form) {
       this.$v.form.$touch()
       if (this.$v.form.$anyError || !this.numberIsValid) {
         return null
       }
     }
-
     return this.form
   }
 

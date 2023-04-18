@@ -5,9 +5,7 @@
     </div>
     <div>
       <b-card class="py-5 px-5 mt-5">
-        <h3 class="font-weight-light text-center">
-          Check your inbox!
-        </h3>
+        <h3 class="font-weight-light text-center">Check your inbox!</h3>
         <b-row>
           <b-col md="6" offset-md="3" class="text-center">
             <b-img fluid src="/img/email.svg" class="mt-5 mb-2" />
@@ -56,22 +54,23 @@ import BaseMixin from '~/mixins/BaseMixin'
 import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
 
 @Component({
   layout: 'auth',
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue')
+    LoaderButton: () => import('~/components/LoaderButton.vue'),
   },
   validations: {
     verifyEmailRequest: {
       verificationCode: {
         required,
         minLength: minLength(6),
-        maxLength: maxLength(6)
-      }
-    }
-  }
+        maxLength: maxLength(6),
+      },
+    },
+  },
 })
 export default class EmailVerificationPage extends mixins(BaseMixin, ValidationMixin) {
   showEmailResentSuccess: boolean = false
@@ -82,6 +81,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
   async asyncData({ route, redirect, store }) {
     const identities = identitiesStore(store)
+    const auth = authStore(store)
 
     if (identities.identity === null) {
       await identities.getIdentity()
@@ -89,15 +89,16 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
     if (!authStore(store).isLoggedIn) {
       redirect('/')
+      return
     }
 
-    if (identities.emailVerified) {
-      return redirect('/register/verify/mobile')
+    if (identities.emailVerified || auth.auth?.credentials.type === CredentialTypeEnum.USER) {
+      return redirect('/login/verify/mobile')
     }
 
     const request: VerifyEmailRequest = {
-      email: route.query.email + '',
-      verificationCode: route.query.nonce ? route.query.nonce + '' : ''
+      email: identities.identity!.rootUser?.email,
+      verificationCode: route.query.nonce ? `${route.query.nonce}` : '',
     }
 
     if (request.verificationCode !== '') {
@@ -126,7 +127,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     }
 
     return {
-      verifyEmailRequest: request
+      verifyEmailRequest: request,
     }
   }
 
@@ -154,13 +155,13 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
   async sendVerifyEmailConsumers() {
     await this.stores.consumers.sendVerificationCodeEmail({
-      email: this.verifyEmailRequest.email
+      email: this.verifyEmailRequest.email,
     })
   }
 
   async sendVerifyEmailCorporates() {
     await this.stores.corporates.sendVerificationCodeEmail({
-      email: this.verifyEmailRequest.email
+      email: this.verifyEmailRequest.email,
     })
   }
 
@@ -204,14 +205,14 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     this.stores.identities.SET_EMAIL_VERIFIED(true)
 
     return this.$router.push({
-      path: '/register/verify/mobile',
+      path: '/login/verify/mobile',
       query: {
         send: 'true',
         cons: this.$route.query.cons,
         corp: this.$route.query.corp,
         mobileNumber: this.$route.query.mobileNumber,
-        mobileCountryCode: this.$route.query.mobileCountryCode
-      }
+        mobileCountryCode: this.$route.query.mobileCountryCode,
+      },
     })
   }
 }
