@@ -1,10 +1,10 @@
 <template>
   <section>
     <b-container>
-      <b-row>
+      <b-row align-h="center">
         <b-col md="9" lg="4">
           <b-card v-if="isCorporate" class="border-0">
-            <b-card-title class="mb-5 text-center font-weight-lighter"> Select Account Currency </b-card-title>
+            <b-card-title class="mb-5 text-center font-weight-lighter"> Select Account Currency</b-card-title>
             <b-form @submit.prevent="doAdd">
               <b-form-row>
                 <b-col>

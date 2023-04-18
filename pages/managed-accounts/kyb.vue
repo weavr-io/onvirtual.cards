@@ -24,7 +24,7 @@
             <li>Directors: name, date of birth, nationality, email address, contact number</li>
             <li>Ultimate Beneficial Owners (UBOs) holding a stake of 25% or more: name, date of birth, nationality</li>
           </ul>
-          <div class="text-center mt-5">
+          <div class="text-center my-5">
             <b-button to="/managed-accounts/kyb"> start the verification process</b-button>
           </div>
         </b-col>
