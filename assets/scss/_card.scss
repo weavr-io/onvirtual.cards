@@ -63,7 +63,7 @@
     border-radius: 100px;
     padding: 9px 11px;
     border: 0;
-    box-shadow: 0 0 6px $shadow-color;
+    box-shadow: 0 0 6px $shadow;
     position: absolute;
     right: 15px;
     bottom: -21px;
@@ -71,7 +71,7 @@
     color: $primary;
 
     &:hover {
-      box-shadow: 0 3px 6px $shadow-color;
+      box-shadow: 0 3px 6px $shadow;
     }
   }
 }
