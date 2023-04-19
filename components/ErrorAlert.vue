@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="hasConflict">
-      <div class="error-alert" role="alert">
+      <div class="error-alert" :class="baseClass" role="alert">
         <p>{{ conflictMessage }}</p>
         <button @click="onClose">
           <img src="/img/close.svg" width="16" alt="close" />
@@ -9,14 +9,14 @@
       </div>
     </div>
     <div v-else-if="hasError">
-      <div class="error-alert" role="alert">
+      <div class="error-alert" :class="baseClass" role="alert">
         <p>
           {{ errorMessage }}
           <b-link v-if="errorLink != null" :to="errorLink.link" class="error-alert-link">
             {{ errorLink.text }}
           </b-link>
         </p>
-        <button class="z-index-0" @click="onClose">
+        <button class="z-index-0 my-4" @click="onClose">
           <img src="/img/close.svg" width="16" alt="close" />
         </button>
       </div>
@@ -34,6 +34,8 @@ export interface ErrorLink {
 
 @Component
 class ErrorAlert extends mixins(BaseMixin) {
+  @Prop({ type: String, default: 'my-5' }) baseClass?: string
+
   get errors() {
     return this.stores.errors.errors
   }
