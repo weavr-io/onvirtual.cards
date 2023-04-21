@@ -116,20 +116,25 @@ export default class Auth extends StoreModule {
   }
 
   @Action({ rawError: true })
+  resetTokenAndStates() {
+    this.store.$weavrSetUserToken(null)
+    this.REMOVE_AUTH(null)
+    this.RESET_STATE()
+    corporatesStore(this.store).RESET_STATE()
+    consumersStore(this.store).RESET_STATE()
+    accountsStore(this.store).RESET_STATE()
+    cardsStore(this.store).RESET_STATE()
+    identitiesStore(this.store).RESET_STATE()
+    transfersStore(this.store).RESET_STATE()
+    usersStore(this.store).RESET_STATE()
+  }
+
+  @Action({ rawError: true })
   logout() {
     const _req = this.store.$apiMulti.authentication.logout()
 
     _req.finally(() => {
-      this.store.$weavrSetUserToken(null)
-      this.REMOVE_AUTH(null)
-      this.RESET_STATE()
-      corporatesStore(this.store).RESET_STATE()
-      consumersStore(this.store).RESET_STATE()
-      accountsStore(this.store).RESET_STATE()
-      cardsStore(this.store).RESET_STATE()
-      identitiesStore(this.store).RESET_STATE()
-      transfersStore(this.store).RESET_STATE()
-      usersStore(this.store).RESET_STATE()
+      this.resetTokenAndStates()
     })
 
     return _req
