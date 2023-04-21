@@ -106,7 +106,7 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified)
 
     const state = val ? [] : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
 
-    await this.getCards(state)
+    await this.getCards(state).catch(() => {})
   }
 }
 </script>

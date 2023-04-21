@@ -58,17 +58,17 @@ export default class BaseMixin extends Vue {
   }
 
   get rootName(): string {
-    if (this.isConsumer) {
+    if (this.consumer && this.isConsumer) {
       return this.stores.consumers.consumer!.rootUser.name
-    } else if (this.isCorporate) {
+    } else if (this.corporate && this.isCorporate) {
       return this.stores.corporates.corporate!.rootUser.name
     } else return 'noname'
   }
 
   get rootSurname(): string {
-    if (this.isConsumer) {
+    if (this.consumer && this.isConsumer) {
       return this.stores.consumers.consumer!.rootUser.surname
-    } else if (this.isCorporate) {
+    } else if (this.corporate && this.isCorporate) {
       return this.stores.corporates.corporate!.rootUser.surname
     } else return 'nosurname'
   }
