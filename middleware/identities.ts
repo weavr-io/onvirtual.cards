@@ -5,11 +5,15 @@ const identitiesMiddleware: Middleware = async ({ store }) => {
   // this will run in async before every route change in order to populate identities respectively
 
   if (authStore(store).isConsumer && consumersStore(store).consumer === null) {
-    await consumersStore(store).get()
+    await consumersStore(store)
+      .get()
+      .catch(() => {})
   }
 
   if (authStore(store).isCorporate && corporatesStore(store).corporate === null) {
-    await corporatesStore(store).get()
+    await corporatesStore(store)
+      .get()
+      .catch(() => {})
   }
 }
 
