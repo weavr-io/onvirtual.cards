@@ -1,5 +1,18 @@
 {
-    "semi": false,
-    "arrowParens": "always",
-    "singleQuote": true
+  "endOfLine" : "lf",
+  "semi" : false,
+  "singleQuote" : true,
+  "arrowParens" : "always",
+  "tabWidth" : 4,
+  "bracketSpacing" : true,
+  "useTabs" : false,
+  "overrides" : [
+    {
+      "files" : "*.html",
+      "options" : {
+        "parser" : "html"
+      }
+    }
+  ]
 }
+
