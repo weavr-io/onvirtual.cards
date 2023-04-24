@@ -57,6 +57,7 @@
       content-class="transparent-modal"
       size="md"
       hide-header-close
+      @hidden="toggleIsLoading"
     >
       <b-card v-if="managedCard" no-body class="border-0 cards-card" bg-variant="card-purple">
         <b-card-body class="card-body-modal card-body onvirtual-card">
@@ -79,7 +80,9 @@
                   <b-row class="mt-2">
                     <b-col>
                       <div class="card-number">
+                        <b-skeleton v-if="isLoading" width="30ch" class="mb-1" />
                         <weavr-card-number-span
+                          v-show="!isLoading"
                           :token="managedCard.cardNumber.value"
                           :base-style="{
                             fontFamily: '\'Be Vietnam\', sans-serif',
@@ -88,6 +91,7 @@
                             fontSize: '20px',
                           }"
                           class="card-select-number"
+                          @onChange="toggleIsLoading"
                         />
                       </div>
                     </b-col>
@@ -112,7 +116,9 @@
                   <div class="card-cvv mb-1">
                     <div class="card-cvv-label mb-2">CVV</div>
                     <div class="card-cvv-value">
+                      <b-skeleton v-if="isLoading" width="5ch" class="m-0" />
                       <weavr-cvv-span
+                        v-show="!isLoading"
                         :token="managedCard.cvv.value"
                         :base-style="{
                           fontFamily: '\'Be Vietnam\', sans-serif',
@@ -149,6 +155,8 @@ import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/ma
 import CardsMixin from '~/mixins/CardsMixin'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import Statement from '~/components/cards/statement/statement.vue'
+import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
+import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
 
 const dot = require('dot-object')
 const moment = require('moment')
@@ -158,6 +166,8 @@ const moment = require('moment')
     '$route.query': 'fetchCardStatements',
   },
   components: {
+    WeavrCardNumberSpan,
+    WeavrCvvSpan,
     Statement,
     StatementItem: () => import('~/components/statement/item.vue'),
   },
@@ -166,6 +176,8 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
   filters: StatementFiltersRequest | null = null
 
   page: number = 0
+
+  isLoading: boolean | null = true
 
   fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
 
@@ -206,6 +218,10 @@ export default class ManagedCardsStatements extends mixins(BaseMixin, RouterMixi
 
     this.stores.cards.clearCardStatements()
     await this.stores.cards.getCardStatement(_req)
+  }
+
+  toggleIsLoading() {
+    this.isLoading = !this.isLoading
   }
 
   toggleModal() {

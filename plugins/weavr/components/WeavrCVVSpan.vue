@@ -2,10 +2,10 @@
   <div :class="className" :style="baseStyle" />
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
+import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-class WeavrSpan extends Vue {
+export default class WeavrCvvSpan extends Vue {
   @Prop() readonly token!: string
 
   @Prop() readonly options!: object
@@ -14,19 +14,14 @@ class WeavrSpan extends Vue {
 
   @Prop() readonly baseStyle!: object
 
-  @Emit('onReady') onReady() {
-  }
+  @Emit('onReady') onReady() {}
 
-  @Emit('onChange') onChange() {
-  }
+  @Emit('onChange') onChange() {}
 
   protected _span
 
   mounted() {
-    this._span = this.$weavrComponents.display.cvv(
-            this.token,
-            this.spanOptions
-    )
+    this._span = this.$weavrComponents.display.cvv(this.token, this.spanOptions)
     this._span.mount(this.$el)
     this._addListeners(this._span)
   }
@@ -49,12 +44,10 @@ class WeavrSpan extends Vue {
   get spanOptions() {
     return {
       ...this.options,
-      style: this.baseStyle
+      style: this.baseStyle,
     }
   }
 }
-
-export default WeavrSpan
 </script>
 
 <style lang="scss" scoped></style>
