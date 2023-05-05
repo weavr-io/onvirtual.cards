@@ -4,7 +4,7 @@
     <b-container>
       <b-row>
         <b-col>
-          <template v-if="$fetchState.pending">
+          <template v-if="pendingDataOrError">
             <div class="d-flex justify-content-center">
               <div class="loader-spinner">
                 <b-spinner />

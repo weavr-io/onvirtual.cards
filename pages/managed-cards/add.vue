@@ -10,10 +10,10 @@
           </div>
         </b-col>
       </b-row>
-      <b-row v-else>
-        <b-col md="6" offset-md="3">
+      <b-row v-else align-h="center">
+        <b-col md="9" lg="6">
           <b-card class="border-0">
-            <b-card-title class="mb-5 text-center font-weight-lighter"> Create Card </b-card-title>
+            <b-card-title class="mb-5 text-center font-weight-lighter"> Create Card</b-card-title>
             <b-card-body>
               <b-alert :show="showError" variant="danger" class="text-center">
                 Error creating new card. <br />Contact support if problem persists.

@@ -1,66 +1,66 @@
 <template>
-  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
-    <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
+  <b-col md="9" lg="6">
+    <logo base-class="mb-5" />
+    <div class="mb-3">
+      <b-card body-class="px-4 mx-2 py-5 p-md-card">
+        <h3 class="text-center font-weight-light mb-5">Login</h3>
+
+        <form id="contact-form" class="mt-5" @submit.prevent="login">
+          <error-alert
+            message="Incorrect email and password combination. If you do not have an account please click on Register."
+          />
+          <b-form-group
+            id="login-email"
+            label="Email"
+            label-for="form-email"
+            :invalid-feedback="invalidFeedback($v.loginRequest.email, 'email')"
+            :state="isInvalid($v.loginRequest.email)"
+          >
+            <b-form-input
+              id="from-email"
+              v-model="loginRequest.email"
+              class="form-control"
+              name="Email"
+              placeholder="Email"
+            />
+          </b-form-group>
+          <client-only placeholder="Loading...">
+            <label class="d-block">PASSWORD</label>
+            <weavr-password-input
+              ref="passwordField"
+              :options="{ placeholder: 'Password' }"
+              :base-style="passwordBaseStyle"
+              :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
+              name="password"
+              aria-invalid="true"
+              @onKeyUp="checkOnKeyUp"
+              @onChange="passwordInteraction"
+            />
+            <b-form-invalid-feedback v-if="isInvalidPassword"> Please enter your password</b-form-invalid-feedback>
+          </client-only>
+
+          <div class="mt-2">
+            <b-link to="/password/reset" class="small text-decoration-underline text-grey"> Forgot password?</b-link>
+          </div>
+
+          <b-form-group class="mt-5 text-center">
+            <b-overlay :show="isLoading" rounded="pill" class="d-inline-block" spinner-small>
+              <b-button type="submit" variant="secondary">
+                sign in
+                <span class="pl-5">-></span>
+              </b-button>
+            </b-overlay>
+          </b-form-group>
+          <div class="mt-4 text-center">
+            <small class="text-grey">
+              Not yet registered? Register
+              <b-link to="/register" class="text-decoration-underline text-grey">here</b-link>
+              .
+            </small>
+          </div>
+        </form>
+      </b-card>
     </div>
-    <b-card body-class="p-card">
-      <h3 class="text-center font-weight-light mb-5">Login</h3>
-
-      <form id="contact-form" class="mt-5" @submit.prevent="login">
-        <error-alert
-          message="Incorrect email and password combination. If you do not have an account please click on Register."
-        />
-        <b-form-group
-          id="login-email"
-          label="Email"
-          label-for="form-email"
-          :invalid-feedback="invalidFeedback($v.loginRequest.email, 'email')"
-          :state="isInvalid($v.loginRequest.email)"
-        >
-          <b-form-input
-            id="from-email"
-            v-model="loginRequest.email"
-            class="form-control"
-            name="Email"
-            placeholder="Email"
-          />
-        </b-form-group>
-        <client-only placeholder="Loading...">
-          <label class="d-block">PASSWORD</label>
-          <weavr-password-input
-            ref="passwordField"
-            :options="{ placeholder: 'Password' }"
-            :base-style="passwordBaseStyle"
-            :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
-            name="password"
-            aria-invalid="true"
-            @onKeyUp="checkOnKeyUp"
-            @onChange="passwordInteraction"
-          />
-          <b-form-invalid-feedback v-if="isInvalidPassword"> Please enter your password </b-form-invalid-feedback>
-        </client-only>
-
-        <div class="mt-2">
-          <b-link to="/password/reset" class="small text-decoration-underline text-grey"> Forgot password? </b-link>
-        </div>
-
-        <b-form-group class="mt-5 text-center">
-          <b-overlay :show="isLoading" rounded="pill" class="d-inline-block" spinner-small>
-            <b-button type="submit" variant="secondary">
-              sign in
-              <span class="pl-5">-></span>
-            </b-button>
-          </b-overlay>
-        </b-form-group>
-        <div class="mt-4 text-center">
-          <small class="text-grey">
-            Not yet registered? Register
-            <b-link to="/register" class="text-decoration-underline text-grey">here</b-link>
-            .
-          </small>
-        </div>
-      </form>
-    </b-card>
   </b-col>
 </template>
 
@@ -73,10 +73,12 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import { authStore } from '~/utils/store-accessor'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import Logo from '~/components/Logo.vue'
 
 @Component({
   layout: 'auth',
   components: {
+    Logo,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     WeavrPasswordInput,

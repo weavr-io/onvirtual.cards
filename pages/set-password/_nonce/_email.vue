@@ -1,11 +1,10 @@
 <template>
-  <b-col lg="6" offset-lg="3">
+  <b-col md="9" lg="6">
+    <logo class="pb-5" />
     <b-card no-body class="overflow-hidden">
-      <b-card-body class="p-6">
+      <b-card-body class="px-4 mx-3 py-5 p-md-card">
         <div class="text-center">
-          <h2 class="font-weight-lighter">
-            Set password
-          </h2>
+          <h2 class="font-weight-lighter">Set password</h2>
         </div>
         <error-alert
           message="The reset password link is invalid or has expired.  Please restart the password reset process."
@@ -26,6 +25,7 @@
               type="text"
               name="setEmail"
               autocomplete="email"
+              placeholder="Email"
             />
           </b-form-group>
           <client-only placeholder="Loading...">
@@ -63,22 +63,24 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import Logo from '~/components/Logo.vue'
 
 @Component({
   layout: 'auth',
   components: {
+    Logo,
     ErrorAlert,
     LoaderButton,
-    WeavrPasswordInput
+    WeavrPasswordInput,
   },
   validations: {
     form: {
       email: {
         required,
-        email
-      }
-    }
-  }
+        email,
+      },
+    },
+  },
 })
 export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin) {
   @Ref('passwordField')
@@ -94,8 +96,8 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
     nonce: '',
     email: '',
     newPassword: {
-      value: ''
-    }
+      value: '',
+    },
   }
 
   fetch() {
@@ -130,8 +132,8 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
     this.form.newPassword.value = password
     const _request: ValidatePasswordRequestModel = {
       password: {
-        value: password
-      }
+        value: password,
+      },
     }
 
     this.stores.auth.validatePassword(_request).then(this.submitForm)
@@ -168,8 +170,8 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
       textIndent: '0px',
       '::placeholder': {
         color: '#B6B9C7',
-        fontWeight: '400'
-      }
+        fontWeight: '400',
+      },
     }
   }
 }

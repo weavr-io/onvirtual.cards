@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <b-card class="py-5 px-5 mt-5">
+  <div class="mb-5">
+    <b-card class="px-4 py-5 p-md-card">
       <h3 class="font-weight-light text-center">
         <slot name="title"></slot>
       </h3>
-      <b-row>
-        <b-col md="6" offset-md="3" class="text-center">
+      <b-row align-h="center">
+        <b-col md="6" class="text-center">
           <b-img fluid src="/img/mobile.svg" class="mt-5 mb-2" />
         </b-col>
       </b-row>
@@ -18,13 +18,18 @@
           <slot name="description"></slot>
         </p>
         <error-alert class="mt-3" />
-        <b-row>
-          <b-col cols="6" offset="3">
+        <b-row align-h="center">
+          <b-col cols="6">
             <b-form-group
               :state="isInvalid($v.request.verificationCode)"
               invalid-feedback="This field is required and must be 6 characters"
             >
-              <b-form-input v-model="$v.request.verificationCode.$model" placeholder="000000" class="text-center" />
+              <b-form-input
+                v-model="$v.request.verificationCode.$model"
+                lazy
+                placeholder="000000"
+                class="text-center"
+              />
             </b-form-group>
           </b-col>
         </b-row>

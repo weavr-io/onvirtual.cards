@@ -1,22 +1,22 @@
 <template>
-  <b-col lg="6" offset-lg="3">
-    <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
-    </div>
-    <b-card no-body class="overflow-hidden">
-      <b-overlay :show="isLoadingRegistration" rounded opacity="0.6" spinner-small spinner-variant="primary">
-        <b-card-body class="p-card">
+  <b-col md="9" lg="6">
+    <div class="mb-5">
+      <logo base-class="mb-5" />
+      <b-card no-body class="overflow-hidden">
+        <b-card-body class="px-4 mx-3 py-5 p-sm-card">
           <div class="form-screens">
-            <div v-if="screen === 0" class="form-screen">
-              <register-form @submit-form="form1Submit" />
-            </div>
-            <div v-else class="form-screen">
-              <personal-details-form @submit-form="form2Submit" @strength-check="strengthCheck" @go-back="goBack" />
-            </div>
+            <transition name="fade" mode="out-in">
+              <div v-if="screen === 0" key="1" class="form-screen">
+                <register-form @submit-form="form1Submit" />
+              </div>
+              <div v-else key="2" class="form-screen">
+                <personal-details-form @submit-form="form2Submit" @strength-check="strengthCheck" @go-back="goBack" />
+              </div>
+            </transition>
           </div>
         </b-card-body>
-      </b-overlay>
-    </b-card>
+      </b-card>
+    </div>
   </b-col>
 </template>
 <script lang="ts">
@@ -34,9 +34,12 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { DeepNullable, RecursivePartial } from '~/global'
+import Logo from '~/components/Logo.vue'
+
 @Component({
   layout: 'auth',
   components: {
+    Logo,
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     RegisterForm: () => import('~/components/registration/RegisterForm.vue'),
     PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
@@ -106,6 +109,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       this.registrationRequest.password = _data.password
       this.registrationRequest.acceptedTerms = _data.acceptedTerms
       this.screen = 1
+      this.stopRegistrationLoading()
     }
   }
 
@@ -132,9 +136,6 @@ export default class RegistrationPage extends mixins(BaseMixin) {
       .create(this.registrationRequest as CreateCorporateRequest)
       .then(this.onCorporateCreated)
       .catch(this.registrationFailed)
-      .finally(() => {
-        this.stopRegistrationLoading()
-      })
   }
 
   stopRegistrationLoading() {
@@ -157,6 +158,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         data: passwordRequest,
       })
       .then(this.onRegisteredSuccessfully.bind(this))
+      .catch(this.stopRegistrationLoading)
   }
 
   onRegisteredSuccessfully() {
@@ -173,6 +175,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     const _req = this.stores.auth.loginWithPassword(loginRequest)
     _req.then(() => {
       this.setSCAstorage()
+      this.stopRegistrationLoading()
       this.$router.push({ path: '/profile/address' })
     })
   }

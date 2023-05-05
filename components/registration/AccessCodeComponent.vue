@@ -1,11 +1,9 @@
 <template>
-  <b-col lg="6" offset-lg="3">
+  <b-col md="9" lg="6">
     <b-row class="my-5">
       <b-card body-class="p-6">
         <b-form @submit.prevent="tryToSubmitAccessCode">
-          <h3 class="text-center font-weight-light mb-6">
-            Enter the access code for registration
-          </h3>
+          <h3 class="text-center font-weight-light mb-6">Enter the access code for registration</h3>
           <template v-if="inviteCodeError.showMsg">
             <b-alert show variant="danger" class="mb-4">
               {{ inviteCodeError.errorMsg }}
@@ -49,20 +47,20 @@ import ValidationMixin from '~/mixins/ValidationMixin'
 @Component({
   validations: {
     form: {
-      code: { required }
-    }
-  }
+      code: { required },
+    },
+  },
 })
 export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMixin) {
   form: AccessCodeModel = {
-    code: null
+    code: null,
   }
 
   isLoading: boolean = false
 
   inviteCodeError: { errorMsg: string; showMsg: boolean } = {
     errorMsg: '',
-    showMsg: false
+    showMsg: false,
   }
 
   tryToSubmitAccessCode() {
@@ -76,7 +74,7 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
 
     if (this.form.code) {
       this.form = {
-        code: +this.form.code
+        code: +this.form.code,
       }
 
       return this.stores.accessCodes
@@ -86,7 +84,7 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
 
           this.inviteCodeError = {
             errorMsg: is403 ? 'Invite code is invalid.' : 'An error occurred. Please try again.',
-            showMsg: true
+            showMsg: true,
           }
 
           this.form.code = null

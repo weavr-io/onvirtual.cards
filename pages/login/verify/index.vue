@@ -1,13 +1,13 @@
 <template>
-  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
+  <b-col md="9" lg="6">
     <div class="text-center pb-5">
       <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
     </div>
-    <div>
-      <b-card class="py-5 px-5 mt-5">
+    <div class="mb-5">
+      <b-card class="px-4 py-5 p-md-card">
         <h3 class="font-weight-light text-center">Check your inbox!</h3>
-        <b-row>
-          <b-col md="6" offset-md="3" class="text-center">
+        <b-row align-h="center">
+          <b-col md="6" class="text-center">
             <b-img fluid src="/img/email.svg" class="mt-5 mb-2" />
           </b-col>
         </b-row>
@@ -19,8 +19,8 @@
             We’ve just sent you a verification code by email. Enter code below to verify your email address.
           </p>
           <error-alert class="mt-3" />
-          <b-row>
-            <b-col cols="6" offset="3">
+          <b-row align-h="center">
+            <b-col cols="6">
               <b-form-group
                 :state="isInvalid($v.verifyEmailRequest.verificationCode)"
                 invalid-feedback="This field is required and must be 6 characters"
@@ -29,6 +29,7 @@
                   v-model="$v.verifyEmailRequest.verificationCode.$model"
                   placeholder="000000"
                   class="text-center"
+                  lazy
                 />
               </b-form-group>
             </b-col>
@@ -55,10 +56,12 @@ import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/u
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
+import Logo from '~/components/Logo.vue'
 
 @Component({
   layout: 'auth',
   components: {
+    Logo,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
   },

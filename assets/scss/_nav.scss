@@ -1,3 +1,7 @@
+:root {
+  --navbar-height: 56px;
+}
+
 .dashboard-header {
   .nav-item {
     padding: 0;
@@ -5,7 +9,6 @@
     .nav-link {
       padding: 1rem 0rem;
       margin: 0rem 1rem;
-
 
       &.active {
         border-bottom: 2px solid $primary;
@@ -23,4 +26,18 @@
       }
     }
   }
+}
+
+.auth-nav-bar {
+  max-height: var(--navbar-height);
+  min-height: var(--navbar-height);
+
+  background-color: rgba($card, 0.7) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.dashboard-header-height {
+  min-height: $dashboard-header-height;
+  max-height: $dashboard-header-height;
 }

@@ -1,13 +1,10 @@
 <template>
-  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
-    <div class="text-center pb-5">
-      <img src="/img/logo.svg" width="200" class="d-inline-block align-top" alt="onvirtual.cards" />
-    </div>
-    <coming-soon-currencies />
-
-    <b-card no-body class="overflow-hidden">
-      <b-overlay :show="isLoadingRegistration" rounded opacity="0.6" spinner-small spinner-variant="primary">
-        <b-card-body class="p-card">
+  <b-col md="9" lg="6">
+    <div class="mb-5">
+      <logo class="pb-5" />
+      <coming-soon-currencies />
+      <b-card no-body class="overflow-hidden">
+        <b-card-body class="px-4 mx-3 py-5 p-sm-card">
           <div class="form-screens">
             <error-alert />
             <div class="form-screen">
@@ -159,8 +156,8 @@
             </div>
           </div>
         </b-card-body>
-      </b-overlay>
-    </b-card>
+      </b-card>
+    </div>
   </b-col>
 </template>
 <script lang="ts">
@@ -184,6 +181,7 @@ import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authe
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
+import Logo from '~/components/Logo.vue'
 
 const touchMap = new WeakMap()
 
@@ -241,6 +239,7 @@ const touchMap = new WeakMap()
     },
   },
   components: {
+    Logo,
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     LoaderButton: () => import('~/components/LoaderButton.vue'),
     ConsumerPersonalDetailsForm: () => import('~/components/registration/ConsumerPersonalDetails.vue'),
@@ -352,7 +351,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     })
   }
 
-  async submitForm(e) {
+  submitForm(e) {
     this.stores.errors.RESET_ERROR()
     try {
       e.preventDefault()
@@ -367,11 +366,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         return
       }
 
-      if (this.isRecaptchaEnabled) {
-        await this.$recaptcha.reset()
-      }
-
       if (this.isPasswordValid) {
+        this.stores.consumers.SET_IS_LOADING_REGISTRATION(true)
         this.passwordField.createToken().then(
           (tokens) => {
             if (tokens.tokens.password !== '') {
@@ -388,6 +384,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         )
       }
     } catch (error) {
+      this.stopRegistrationLoading()
       this.showErrorToast(error)
     }
   }
@@ -402,13 +399,10 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
   }
 
   doRegister() {
-    this.stores.consumers.SET_IS_LOADING_REGISTRATION(true)
-
     this.stores.consumers
       .create(this.registrationRequest as CreateConsumerRequest)
       .then(this.onConsumerCreated)
       .catch(this.registrationFailed)
-      .finally(this.stopRegistrationLoading)
   }
 
   onConsumerCreated(res: AxiosResponse<ConsumerModel>) {
@@ -447,6 +441,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
 
     _req.then(() => {
       this.setSCAstorage()
+      this.stopRegistrationLoading()
       return this.$router.push({ path: '/profile/address' })
     })
   }

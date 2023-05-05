@@ -1,7 +1,7 @@
 <template>
   <b-container class="py-5">
-    <b-row>
-      <b-col md="6" offset-md="3">
+    <b-row align-h="center">
+      <b-col md="9" lg="6">
         <div class="topup-screens">
           <div v-if="screen === 0" class="topup-screen">
             <account-selection @submit-form="accountSelected" />

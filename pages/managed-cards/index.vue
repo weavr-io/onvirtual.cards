@@ -1,22 +1,17 @@
 <template>
   <div>
     <section>
-      <b-container class="mb-5 mt-n4">
-        <b-row align-v="center">
-          <b-col>
-            <b-form-checkbox
-              v-if="showDestroyedSwitch"
-              :checked="showDestroyed"
-              name="check-button"
-              switch
-              @change="showDestroyedChanged"
-            >
-              <template v-if="showDestroyed"> Hide</template>
-              <template v-else> Show</template>
+      <b-container class="mb-5">
+        <b-row align-v="end">
+          <b-col cols="auto" class="pr-0">
+            <div v-if="showDestroyedSwitch" class="d-flex align-items-center">
+              <b-form-checkbox :checked="showDestroyed" name="check-button" switch @change="showDestroyedChanged" />
+              <template v-if="showDestroyed">Hide</template>
+              <template v-else>Show</template>
               destroyed cards
-            </b-form-checkbox>
+            </div>
           </b-col>
-          <b-col class="text-right d-flex justify-content-end">
+          <b-col class="text-right d-flex justify-content-end pl-0">
             <div v-b-tooltip.hover :title="identityVerificationMessage">
               <b-button to="/managed-cards/add" :disabled="!identityVerified" variant="border-primary">
                 + add new card
@@ -26,14 +21,14 @@
         </b-row>
       </b-container>
       <b-container v-if="!hasAlert" class="mt-5">
-        <b-row v-if="$fetchState.pending">
+        <b-row v-if="pendingDataOrError">
           <b-col class="d-flex flex-column align-items-center">
             <div class="loader-spinner">
               <b-spinner />
             </div>
           </b-col>
         </b-row>
-        <b-row v-else-if="hasCards" cols="1" cols-md="3">
+        <b-row v-else-if="hasCards" cols="1" cols-md="2" cols-lg="3">
           <b-col v-for="card in cards" :key="card.id">
             <weavr-card :card="card" class="mb-5" @blocked="$fetch" @unblocked="$fetch" />
           </b-col>

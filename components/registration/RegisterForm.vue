@@ -7,7 +7,7 @@
       :invalid-feedback="invalidFeedback($v.form.email, validateVParams($v.form.email.$params, $v.form.email))"
       label="Email*"
     >
-      <b-form-input v-model="$v.form.email.$model" placeholder="name@email.com" />
+      <b-form-input v-model="$v.form.email.$model" lazy placeholder="name@email.com" />
     </b-form-group>
     <client-only placeholder="Loading...">
       <div>
@@ -53,10 +53,7 @@
     </div>
     <b-form-row class="mt-5">
       <b-col class="text-center">
-        <b-button variant="secondary" type="submit">
-          continue
-          <span class="pl-5">-></span>
-        </b-button>
+        <loader-button :is-loading="isLoadingRegistration" button-text="continue" class="text-center" />
       </b-col>
     </b-form-row>
   </b-form>
@@ -68,6 +65,8 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
 import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import LoaderButton from '~/components/LoaderButton.vue'
+
 @Component({
   validations: {
     form: {
@@ -89,6 +88,7 @@ import ValidationMixin from '~/mixins/ValidationMixin'
   components: {
     ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     WeavrPasswordInput,
+    LoaderButton,
   },
 })
 export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
@@ -140,29 +140,32 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     return typeof process.env.RECAPTCHA !== 'undefined'
   }
 
-  async tryToSubmitForm() {
+  get isLoadingRegistration() {
+    return this.stores.corporates.isLoadingRegistration
+  }
+
+  tryToSubmitForm() {
     this.stores.errors.RESET_ERROR()
     try {
       this.$v.$touch()
       if (this.$v.$invalid || !this.isPasswordValid) {
         return
-      }
-      if (this.isRecaptchaEnabled) {
-        await this.$recaptcha.reset()
-      }
-      this.passwordField.createToken().then(
-        (tokens) => {
-          if (tokens.tokens.password !== '') {
-            this.form.password = tokens.tokens.password
-            this.submitForm()
-          } else {
-            return null
+      } else {
+        this.startRegistrationLoading()
+        this.passwordField.createToken().then(
+          (tokens) => {
+            if (tokens.tokens.password !== '') {
+              this.form.password = tokens.tokens.password
+              this.submitForm()
+            } else {
+              return null
+            }
+          },
+          (e) => {
+            this.showErrorToast(e, 'Tokenization Error')
           }
-        },
-        (e) => {
-          this.showErrorToast(e, 'Tokenization Error')
-        }
-      )
+        )
+      }
     } catch (error) {
       this.showErrorToast(error, 'Registration Error')
     }
@@ -178,6 +181,10 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
   passwordInteraction(val: { empty: boolean; valid: boolean }) {
     !val.empty ? (this.form.password.value = '******') : (this.form.password.value = '')
     this.$v.form.password?.$touch()
+  }
+
+  startRegistrationLoading() {
+    this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
   }
 
   @Emit()

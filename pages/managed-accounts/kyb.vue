@@ -1,8 +1,8 @@
 <template>
   <section>
     <b-container>
-      <b-row v-if="!sumsSubEnabled">
-        <b-col md="6" offset-md="3" class="py-5 font-weight-lighter">
+      <b-row v-if="!sumsSubEnabled" align-h="center">
+        <b-col md="9" lg="6" class="py-5 font-weight-lighter">
           <h3 class="text-center font-weight-lighter mb-4">We need some documents</h3>
           <p>
             We are required by financial services regulations to perform due diligence on your company before allowing
@@ -24,14 +24,14 @@
             <li>Directors: name, date of birth, nationality, email address, contact number</li>
             <li>Ultimate Beneficial Owners (UBOs) holding a stake of 25% or more: name, date of birth, nationality</li>
           </ul>
-          <div class="text-center">
-            <b-button to="/managed-accounts/kyb"> start the verification process </b-button>
+          <div class="text-center my-5">
+            <b-button to="/managed-accounts/kyb"> start the verification process</b-button>
           </div>
         </b-col>
       </b-row>
       <b-row v-else>
         <b-col>
-          <template v-if="$fetchState.pending">
+          <template v-if="pendingDataOrError">
             <div class="d-flex justify-content-center">
               <div class="loader-spinner">
                 <b-spinner />
@@ -46,14 +46,14 @@
               <h3>Necessary due diligence approved</h3>
               <p>The necessary due diligence has already been approved</p>
               <div class="text-center">
-                <b-button to="/managed-accounts"> back to accounts </b-button>
+                <b-button to="/managed-accounts"> back to accounts</b-button>
               </div>
             </template>
             <template v-else-if="isKybPending">
               <h3>Due diligence pending</h3>
               <p>The submitted company documents and information are pending approval.</p>
               <div class="text-center pt-5">
-                <b-button to="/"> back to dashboard </b-button>
+                <b-button to="/"> back to dashboard</b-button>
               </div>
             </template>
             <template v-else>

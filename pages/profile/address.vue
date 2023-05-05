@@ -1,8 +1,8 @@
 <template>
-  <b-col md="8" offset-md="2" lg="6" offset-lg="3">
-    <b-card no-body class="overflow-hidden">
-      <b-overlay :show="isLoading" rounded opacity="0.6" spinner-small spinner-variant="primary">
-        <b-card-body class="p-card">
+  <b-col md="9" lg="6">
+    <div class="mb-5">
+      <b-card no-body class="overflow-hidden">
+        <b-card-body class="px-4 mx-3 py-5 p-md-card">
           <div class="form-screens">
             <error-alert />
             <div class="form-screen">
@@ -69,8 +69,8 @@
             </div>
           </div>
         </b-card-body>
-      </b-overlay>
-    </b-card>
+      </b-card>
+    </div>
   </b-col>
 </template>
 
@@ -171,9 +171,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
         // treat as corporate
         xhr = this.stores.corporates.update({ companyBusinessAddress: this.address as AddressModel })
       }
-      xhr.then(this.addressUpdated)
-
-      xhr.finally(() => {
+      xhr.then(this.addressUpdated).finally(() => {
         this.isLoading = false
       })
     } else {

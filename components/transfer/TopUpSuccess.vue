@@ -2,13 +2,11 @@
   <div>
     <b-row>
       <b-col>
-        <h2 class="text-center font-weight-lighter">
-          Card topped up
-        </h2>
+        <h2 class="text-center font-weight-lighter">Card topped up</h2>
       </b-col>
     </b-row>
-    <b-row class="py-5 my-5">
-      <b-col md="4" offset-md="4">
+    <b-row class="py-5 my-5" align-h="center">
+      <b-col md="9" lg="6">
         <b-img src="/img/success.svg" />
       </b-col>
     </b-row>

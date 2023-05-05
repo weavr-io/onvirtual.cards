@@ -10,10 +10,10 @@
           </div>
         </b-col>
       </b-row>
-      <b-row v-else>
-        <b-col md="6" offset-md="3">
+      <b-row v-else align-h="center">
+        <b-col md="9" lg="6">
           <b-card class="border-0">
-            <b-card-title class="mb-5 text-center font-weight-lighter"> Update Card </b-card-title>
+            <b-card-title class="mb-5 text-center font-weight-lighter"> Update Card</b-card-title>
             <b-card-body>
               <b-form @submit.prevent="doUpdate">
                 <b-form-row v-if="!isConsumer">
@@ -142,10 +142,14 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
         request: this.updateManagedCardRequest as UpdateManagedCardRequest,
       })
       .then(() => {
+        this.showSuccessToast('Card name changed')
         this.$router.push('/managed-cards')
       })
       .finally(() => {
         this.isUpdating = false
+      })
+      .catch(() => {
+        this.showErrorToast('Card name change error')
       })
   }
 
