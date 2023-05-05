@@ -1,6 +1,6 @@
 <template>
   <section>
-    <template v-if="!hasAccount && identityVerified && !$fetchState.pending">
+    <template v-if="!hasAccount && identityVerified && !pendingDataOrError">
       <b-container class="mb-5">
         <b-row align-v="center">
           <b-col class="text-right">

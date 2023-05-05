@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section v-if="!hasAlert && !$fetchState.pending">
+    <section v-if="!hasAlert && !pendingDataOrError">
       <statement :filters="filters" />
       <infinite-loading spinner="spiral" @infinite="infiniteScroll">
         <span slot="no-more" />
@@ -25,13 +25,13 @@ const moment = require('moment')
 
 @Component({
   watch: {
-    '$route.query': '$fetch'
+    '$route.query': '$fetch',
   },
   layout: 'dashboard',
   components: {
-    Statement: () => import('~/components/accounts/statement/statement.vue')
+    Statement: () => import('~/components/accounts/statement/statement.vue'),
   },
-  middleware: 'kyVerified'
+  middleware: 'kyVerified',
 })
 export default class AccountPage extends mixins(BaseMixin, RouterMixin, AccountsMixin, KyVerified) {
   filters: GetManagedAccountStatementRequest | null = null
@@ -55,15 +55,11 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
     const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
     if (!_filters.fromTimestamp) {
-      _filters.fromTimestamp = moment()
-        .startOf('month')
-        .valueOf()
+      _filters.fromTimestamp = moment().startOf('month').valueOf()
     }
 
     if (!_filters.toTimestamp) {
-      _filters.toTimestamp = moment()
-        .endOf('month')
-        .valueOf()
+      _filters.toTimestamp = moment().endOf('month').valueOf()
     }
 
     const _statementFilters: GetManagedAccountStatementRequest = {
@@ -71,12 +67,12 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
       orderByTimestamp: OrderEnum.DESC,
       limit: 10,
       offset: 0,
-      ..._filters
+      ..._filters,
     }
 
     const _req = {
       id: _accountId,
-      filters: _statementFilters
+      filters: _statementFilters,
     }
 
     this.filters = { ..._statementFilters }
@@ -96,7 +92,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
       this.stores.accounts
         .getStatements({
           id: this.$route.params.id,
-          filters: _request
+          filters: _request,
         })
         .then((res) => {
           if (res.data.responseCount! < _request.limit!) {

@@ -2,7 +2,7 @@
   <section>
     <b-container>
       <b-row align-h="center">
-        <b-col v-if="account && !$fetchState.pending" md="9" lg="6">
+        <b-col v-if="account && !pendingDataOrError" md="9" lg="6">
           <b-row>
             <b-col>
               <h2 class="text-center font-weight-lighter">Transfer funds from your bank account to</h2>

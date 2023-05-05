@@ -12,7 +12,7 @@
         </b-col>
       </b-row>
 
-      <template v-if="users && !$fetchState.pending">
+      <template v-if="users && !pendingDataOrError">
         <b-row v-for="(user, key) in users.users" :key="key" class="mt-3" align-v="center">
           <b-col cols="2" md="1">
             <b-img v-bind="mainProps" :alt="user.name + ' ' + user.surname" rounded />
