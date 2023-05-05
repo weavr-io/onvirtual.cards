@@ -1,4 +1,4 @@
 export interface ManagedInstrumentBalanceModel {
-  availableBalance?: number
-  actualBalance?: number
+    availableBalance?: number
+    actualBalance?: number
 }

@@ -12,29 +12,29 @@ import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-in
 import { ManagedInstrumentBalanceModel } from '~/plugins/weavr-multi/api/models/managed-instruments/models/ManagedInstrumentBalanceModel'
 
 export interface CreateManagedCardResponse {
-  id: string
-  profileId: string
-  externalHandle: string
-  tag?: string
-  friendlyName: string
-  currency: CurrencyEnum
-  state: ManagedInstrumentStateModel
-  type: ManagedCardTypeEnum
-  cardBrand: ManagedCardBrandEnum
-  cardNumber?: SensitiveCardNumberModel
-  cvv?: SensitiveCvvModel
-  cardNumberFirstSix?: string
-  cardNumberLastFour?: string
-  nameOnCard: string
-  startMmyy?: string
-  expiryMmyy?: string
-  cardLevelClassification: CardLevelClassificationEnum
-  expiryPeriodMonths: number
-  renewalType: RenewalTypeEnum
-  creationTimestamp: number
-  cardholderMobileNumber: string
-  billingAddress?: AddressModel
-  physicalCardDetails?: PhysicalCardDetailsModel
-  mode: ManagedCardModeEnum
-  balances?: ManagedInstrumentBalanceModel
+    id: string
+    profileId: string
+    externalHandle: string
+    tag?: string
+    friendlyName: string
+    currency: CurrencyEnum
+    state: ManagedInstrumentStateModel
+    type: ManagedCardTypeEnum
+    cardBrand: ManagedCardBrandEnum
+    cardNumber?: SensitiveCardNumberModel
+    cvv?: SensitiveCvvModel
+    cardNumberFirstSix?: string
+    cardNumberLastFour?: string
+    nameOnCard: string
+    startMmyy?: string
+    expiryMmyy?: string
+    cardLevelClassification: CardLevelClassificationEnum
+    expiryPeriodMonths: number
+    renewalType: RenewalTypeEnum
+    creationTimestamp: number
+    cardholderMobileNumber: string
+    billingAddress?: AddressModel
+    physicalCardDetails?: PhysicalCardDetailsModel
+    mode: ManagedCardModeEnum
+    balances?: ManagedInstrumentBalanceModel
 }

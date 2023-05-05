@@ -7,17 +7,17 @@ import { CompanyModel } from '~/plugins/weavr-multi/api/models/identities/corpor
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
 export interface CorporateModel {
-  id: IdentityIdModel
-  profileId: IDModel
-  tag?: string
-  rootUser: CorporatesRootUserModel
-  company: CompanyModel
-  industry: IndustryTypeEnum
-  sourceOfFunds: CorporateSourceOfFundTypeEnum
-  sourceOfFundsOther?: string
-  acceptedTerms: boolean
-  ipAddress: string
-  baseCurrency: CurrencyEnum
-  feeGroup?: string
-  creationTimestamp: number
+    id: IdentityIdModel
+    profileId: IDModel
+    tag?: string
+    rootUser: CorporatesRootUserModel
+    company: CompanyModel
+    industry: IndustryTypeEnum
+    sourceOfFunds: CorporateSourceOfFundTypeEnum
+    sourceOfFundsOther?: string
+    acceptedTerms: boolean
+    ipAddress: string
+    baseCurrency: CurrencyEnum
+    feeGroup?: string
+    creationTimestamp: number
 }

@@ -4,12 +4,12 @@ import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/trans
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 
 export interface TransferModel {
-  id: string
-  profileId: IDModel
-  tag?: string
-  source: InstrumentIdModel
-  destination: InstrumentIdModel
-  destinationAmount: CurrencyAmountModel
-  state: TransactionStateTypeEnum
-  creationTimestamp: string | bigint
+    id: string
+    profileId: IDModel
+    tag?: string
+    source: InstrumentIdModel
+    destination: InstrumentIdModel
+    destinationAmount: CurrencyAmountModel
+    state: TransactionStateTypeEnum
+    creationTimestamp: string | bigint
 }

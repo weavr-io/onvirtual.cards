@@ -7,15 +7,21 @@ import { OutgoingWiretransferModel } from '~/plugins/weavr-multi/api/models/outg
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 
 export class OutgoingWireTransferApi {
-  index(filters?: OutgoingWireTransfersFilterRequest): Promise<AxiosResponse<PaginatedOutgoingWireTransferResponse>> {
-    return $axiosMulti.get<PaginatedOutgoingWireTransferResponse>('/outgoing_wire_transfers', { data: filters })
-  }
+    index(
+        filters?: OutgoingWireTransfersFilterRequest
+    ): Promise<AxiosResponse<PaginatedOutgoingWireTransferResponse>> {
+        return $axiosMulti.get<PaginatedOutgoingWireTransferResponse>('/outgoing_wire_transfers', {
+            data: filters,
+        })
+    }
 
-  store(request: CreateOutGoingWireTransferRequest): Promise<AxiosResponse<OutgoingWiretransferModel>> {
-    return $axiosMulti.post<OutgoingWiretransferModel>('/outgoing_wire_transfers', request)
-  }
+    store(
+        request: CreateOutGoingWireTransferRequest
+    ): Promise<AxiosResponse<OutgoingWiretransferModel>> {
+        return $axiosMulti.post<OutgoingWiretransferModel>('/outgoing_wire_transfers', request)
+    }
 
-  show(id: IDModel): Promise<AxiosResponse<OutgoingWiretransferModel>> {
-    return $axiosMulti.get<OutgoingWiretransferModel>('/outgoing_wire_transfers/' + id)
-  }
+    show(id: IDModel): Promise<AxiosResponse<OutgoingWiretransferModel>> {
+        return $axiosMulti.get<OutgoingWiretransferModel>('/outgoing_wire_transfers/' + id)
+    }
 }

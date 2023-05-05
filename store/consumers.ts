@@ -10,146 +10,144 @@ import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/co
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 const defaultState = {
-  isLoadingRegistration: false,
-  isLoading: false,
-  consumer: null,
-  kyc: null
+    isLoadingRegistration: false,
+    isLoading: false,
+    consumer: null,
+    kyc: null,
 }
 
 @Module({
-  name: 'consumersModule',
-  namespaced: true,
-  stateFactory: true
+    name: 'consumersModule',
+    namespaced: true,
+    stateFactory: true,
 })
 export default class Consumers extends StoreModule {
-  isLoading: boolean = defaultState.isLoading
+    isLoading: boolean = defaultState.isLoading
 
-  isLoadingRegistration: boolean = defaultState.isLoadingRegistration
+    isLoadingRegistration: boolean = defaultState.isLoadingRegistration
 
-  consumer: ConsumerModel | null = defaultState.consumer
+    consumer: ConsumerModel | null = defaultState.consumer
 
-  kyc: GetConsumerKYCResponse | null = defaultState.kyc
+    kyc: GetConsumerKYCResponse | null = defaultState.kyc
 
-  @Mutation
-  SET_IS_LOADING(isLoading: boolean) {
-    this.isLoading = isLoading
-  }
-
-  @Mutation
-  SET_IS_LOADING_REGISTRATION(isLoadingRegistration: boolean) {
-    this.isLoadingRegistration = isLoadingRegistration
-  }
-
-  @Mutation
-  SET_CONSUMER(consumer: ConsumerModel) {
-    this.consumer = consumer
-  }
-
-  @Mutation
-  SET_KYC(_kyc: GetConsumerKYCResponse) {
-    this.kyc = _kyc
-  }
-
-  @Mutation
-  RESET_STATE() {
-    Object.keys(defaultState).forEach((key) => {
-      this[key] = defaultState[key]
-    })
-  }
-
-  @Action({ rawError: true })
-  create(request: CreateConsumerRequest) {
-    loaderStore(this.store).start()
-
-    const req = this.store.$apiMulti.consumers.store(request)
-
-    req.then((_res) => {
-      this.SET_CONSUMER(_res.data)
-      identitiesStore(this.store).SET_IDENTITY(_res.data)
-    })
-
-    req.finally(() => {
-      loaderStore(this.store).stop()
-      this.SET_IS_LOADING(false)
-    })
-
-    return req
-  }
-
-  @Action({ rawError: true })
-  update(request: UpdateConsumerRequest) {
-    const req = this.store.$apiMulti.consumers.update(request)
-    req.then((_res) => {
-      this.SET_CONSUMER(_res.data)
-      identitiesStore(this.store).SET_IDENTITY(_res.data)
-    })
-
-    req.finally(() => {
-      this.SET_IS_LOADING(false)
-    })
-
-    return req
-  }
-
-  @Action({ rawError: true })
-  get() {
-    loaderStore(this.store).start()
-    this.SET_IS_LOADING(true)
-
-    const req = this.store.$apiMulti.consumers.show()
-
-    req
-      .then((_res) => {
-        this.SET_CONSUMER(_res.data)
-        identitiesStore(this.store).SET_IDENTITY(_res.data)
-      })
-      .finally(() => {
-        loaderStore(this.store).stop()
-        this.SET_IS_LOADING(false)
-      })
-
-    return req
-  }
-
-  @Action({ rawError: true })
-  getKYC() {
-    const req = this.store.$apiMulti.consumers.showKYC()
-    req.then((res) => {
-      this.SET_KYC(res.data)
-    })
-
-    return req
-  }
-
-  @Action({ rawError: true })
-  async checkKYC() {
-    if (!this.consumer) {
-      await this.get()
-    }
-    if (!this.kyc) {
-      await this.getKYC()
+    @Mutation
+    SET_IS_LOADING(isLoading: boolean) {
+        this.isLoading = isLoading
     }
 
-    if (this.kyc?.fullDueDiligence !== KYCStatusEnum.APPROVED) {
-      return Promise.reject(new Error('KYC not approved'))
-    } else {
-      return Promise.resolve()
+    @Mutation
+    SET_IS_LOADING_REGISTRATION(isLoadingRegistration: boolean) {
+        this.isLoadingRegistration = isLoadingRegistration
     }
-  }
 
-  @Action({ rawError: true })
-  verifyEmail(request: VerifyEmailRequest) {
-    return this.store.$apiMulti.consumers.verifyEmail(request)
-  }
+    @Mutation
+    SET_CONSUMER(consumer: ConsumerModel) {
+        this.consumer = consumer
+    }
 
-  @Action({ rawError: true })
-  sendVerificationCodeEmail(request: SendVerificationCodeRequest) {
-    return this.store.$apiMulti.consumers.sendVerificationCode(request)
-  }
+    @Mutation
+    SET_KYC(_kyc: GetConsumerKYCResponse) {
+        this.kyc = _kyc
+    }
 
-  @Action({ rawError: true })
-  startKYC() {
-    const _res = this.store.$apiMulti.consumers.startKYC()
-    return _res
-  }
+    @Mutation
+    RESET_STATE() {
+        Object.keys(defaultState).forEach((key) => {
+            this[key] = defaultState[key]
+        })
+    }
+
+    @Action({ rawError: true })
+    create(request: CreateConsumerRequest) {
+        loaderStore(this.store).start()
+
+        const req = this.store.$apiMulti.consumers.store(request)
+
+        req.then((_res) => {
+            this.SET_CONSUMER(_res.data)
+            identitiesStore(this.store).SET_IDENTITY(_res.data)
+        })
+
+        req.finally(() => {
+            loaderStore(this.store).stop()
+            this.SET_IS_LOADING(false)
+        })
+
+        return req
+    }
+
+    @Action({ rawError: true })
+    update(request: UpdateConsumerRequest) {
+        const req = this.store.$apiMulti.consumers.update(request)
+        req.then((_res) => {
+            this.SET_CONSUMER(_res.data)
+            identitiesStore(this.store).SET_IDENTITY(_res.data)
+        })
+
+        req.finally(() => {
+            this.SET_IS_LOADING(false)
+        })
+
+        return req
+    }
+
+    @Action({ rawError: true })
+    get() {
+        loaderStore(this.store).start()
+        this.SET_IS_LOADING(true)
+
+        const req = this.store.$apiMulti.consumers.show()
+
+        req.then((_res) => {
+            this.SET_CONSUMER(_res.data)
+            identitiesStore(this.store).SET_IDENTITY(_res.data)
+        }).finally(() => {
+            loaderStore(this.store).stop()
+            this.SET_IS_LOADING(false)
+        })
+
+        return req
+    }
+
+    @Action({ rawError: true })
+    getKYC() {
+        const req = this.store.$apiMulti.consumers.showKYC()
+        req.then((res) => {
+            this.SET_KYC(res.data)
+        })
+
+        return req
+    }
+
+    @Action({ rawError: true })
+    async checkKYC() {
+        if (!this.consumer) {
+            await this.get()
+        }
+        if (!this.kyc) {
+            await this.getKYC()
+        }
+
+        if (this.kyc?.fullDueDiligence !== KYCStatusEnum.APPROVED) {
+            return Promise.reject(new Error('KYC not approved'))
+        } else {
+            return Promise.resolve()
+        }
+    }
+
+    @Action({ rawError: true })
+    verifyEmail(request: VerifyEmailRequest) {
+        return this.store.$apiMulti.consumers.verifyEmail(request)
+    }
+
+    @Action({ rawError: true })
+    sendVerificationCodeEmail(request: SendVerificationCodeRequest) {
+        return this.store.$apiMulti.consumers.sendVerificationCode(request)
+    }
+
+    @Action({ rawError: true })
+    startKYC() {
+        const _res = this.store.$apiMulti.consumers.startKYC()
+        return _res
+    }
 }

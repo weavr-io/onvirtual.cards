@@ -112,6 +112,7 @@ import LoaderButton from '~/components/LoaderButton.vue'
 export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
+
     form: {
         email: string | null
         password: {
@@ -123,6 +124,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
         password: { value: null },
         acceptedTerms: false,
     }
+
     passwordStrength: number = 0
     private $recaptcha: any
 

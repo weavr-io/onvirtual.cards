@@ -13,17 +13,17 @@ import { AccessCodesApi } from '~/plugins/weavr-multi/api/AccessCodesApi'
 import { StepUpApi } from '~/plugins/weavr-multi/api/StepUpApi'
 
 export interface ApiInterface {
-  authentication: AuthenticationApi
-  passwords: PasswordsApi
-  additionalFactors: AdditionalFactorsApi
-  managedAccounts: ManagedAccountsApi
-  managedCards: ManagedCardsApi
-  corporates: CorporatesApi
-  consumers: ConsumersApi
-  transfers: TransfersApi
-  outgoingWireTransfers: OutgoingWireTransferApi
-  ipify: IpifyApi
-  users: UsersApi
-  accessCodes: AccessCodesApi
-  stepUp: StepUpApi
+    authentication: AuthenticationApi
+    passwords: PasswordsApi
+    additionalFactors: AdditionalFactorsApi
+    managedAccounts: ManagedAccountsApi
+    managedCards: ManagedCardsApi
+    corporates: CorporatesApi
+    consumers: ConsumersApi
+    transfers: TransfersApi
+    outgoingWireTransfers: OutgoingWireTransferApi
+    ipify: IpifyApi
+    users: UsersApi
+    accessCodes: AccessCodesApi
+    stepUp: StepUpApi
 }

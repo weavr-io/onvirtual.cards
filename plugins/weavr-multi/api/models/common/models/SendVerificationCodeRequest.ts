@@ -1,3 +1,3 @@
 export interface SendVerificationCodeRequest {
-  email: string
+    email: string
 }

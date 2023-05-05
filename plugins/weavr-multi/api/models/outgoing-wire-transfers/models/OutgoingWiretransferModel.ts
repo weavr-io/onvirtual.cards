@@ -6,14 +6,14 @@ import { OutgoingWireTransferTypeEnum } from '~/plugins/weavr-multi/api/models/o
 import { OutgoingWireTransferStateTypeEnum } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/enums/OutgoingWireTransferStateTypeEnum'
 
 export interface OutgoingWiretransferModel {
-  id: IDModel
-  profileId: IDModel
-  tag?: string
-  sourceInstrument: SourceInstrumentModel
-  transferAmount: CurrencyAmountModel
-  description?: string
-  type: OutgoingWireTransferTypeEnum
-  destination: OutgoingWireTransferBeneficiaryModel
-  state: OutgoingWireTransferStateTypeEnum
-  creationTimestamp: IDModel
+    id: IDModel
+    profileId: IDModel
+    tag?: string
+    sourceInstrument: SourceInstrumentModel
+    transferAmount: CurrencyAmountModel
+    description?: string
+    type: OutgoingWireTransferTypeEnum
+    destination: OutgoingWireTransferBeneficiaryModel
+    state: OutgoingWireTransferStateTypeEnum
+    creationTimestamp: IDModel
 }

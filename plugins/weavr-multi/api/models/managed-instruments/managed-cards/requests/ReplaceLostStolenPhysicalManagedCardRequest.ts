@@ -1,3 +1,3 @@
 export interface ReplaceLostStolenPhysicalManagedCardRequest {
-  activationCode: string
+    activationCode: string
 }

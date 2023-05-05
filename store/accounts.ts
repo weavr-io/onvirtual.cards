@@ -11,178 +11,182 @@ import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/manage
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 const defaultState = {
-  accounts: null,
-  account: null,
-  statements: null,
-  ibanDetails: null
+    accounts: null,
+    account: null,
+    statements: null,
+    ibanDetails: null,
 }
 
 @Module({
-  name: 'accountsModule',
-  stateFactory: true,
-  namespaced: true
+    name: 'accountsModule',
+    stateFactory: true,
+    namespaced: true,
 })
 export default class Accounts extends StoreModule {
-  accounts: PaginatedManagedAccountsResponse | null = defaultState.accounts
-  account: ManagedAccountModel | null = defaultState.account
-  statements: StatementResponseModel | null = defaultState.statements
-  ibanDetails: ManagedAccountIBANModel | null = defaultState.ibanDetails
+    accounts: PaginatedManagedAccountsResponse | null = defaultState.accounts
+    account: ManagedAccountModel | null = defaultState.account
+    statements: StatementResponseModel | null = defaultState.statements
+    ibanDetails: ManagedAccountIBANModel | null = defaultState.ibanDetails
 
-  get totalAvailableBalance() {
-    if (this.accounts == null) {
-      return 0
-    }
-
-    let total = 0
-
-    this.accounts.accounts?.forEach((account) => {
-      if (account.balances.availableBalance) {
-        total += account.balances.availableBalance
-      }
-    })
-
-    return total
-  }
-
-  get filteredStatement() {
-    if (this.statements?.entry === undefined) {
-      return []
-    }
-
-    let _entries: StatementEntryModel[] = this.statements.entry
-
-    _entries = _entries!.filter((transaction) => {
-      const DO_NOT_DISPLAY = ['AUTHORISATION_REVERSAL', 'AUTHORISATION_EXPIRY', 'AUTHORISATION_DECLINE']
-
-      if (DO_NOT_DISPLAY.includes(transaction.transactionId.type)) {
-        return false
-      }
-
-      if (transaction.transactionId.type === 'AUTHORISATION') {
-        if (transaction.additionalFields?.authorisationState === 'COMPLETED') {
-          return false
-        }
-      }
-
-      return true
-    })
-
-    const _out = {}
-
-    _entries.forEach((_entry) => {
-      if (_entry.processedTimestamp) {
-        const _processedTimestamp = parseInt(_entry.processedTimestamp)
-        // @ts-ignore
-        const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
-
-        if (!_out[_date]) {
-          _out[_date] = []
+    get totalAvailableBalance() {
+        if (this.accounts == null) {
+            return 0
         }
 
-        _out[_date].push(_entry)
-      }
-    })
+        let total = 0
 
-    return _out
-  }
+        this.accounts.accounts?.forEach((account) => {
+            if (account.balances.availableBalance) {
+                total += account.balances.availableBalance
+            }
+        })
 
-  @Mutation
-  SET_ACCOUNTS(accounts: PaginatedManagedAccountsResponse) {
-    this.accounts = accounts
-  }
-
-  @Mutation
-  SET_ACCOUNT(account: ManagedAccountModel) {
-    this.account = account
-  }
-
-  @Mutation
-  RESET_STATEMENTS() {
-    this.statements = null
-  }
-
-  @Mutation
-  SET_STATEMENTS(statements: StatementResponseModel | null) {
-    if (!statements) {
-      this.statements = statements
-    } else if (!this.statements?.entry) {
-      this.statements = statements
-    } else if (statements.entry) {
-      this.statements.entry.push(...statements.entry)
+        return total
     }
-  }
 
-  @Mutation
-  RESET_STATE() {
-    Object.keys(defaultState).forEach((key) => {
-      this[key] = defaultState[key]
-    })
-  }
+    get filteredStatement() {
+        if (this.statements?.entry === undefined) {
+            return []
+        }
 
-  @Mutation
-  SET_IBAN(_res: ManagedAccountIBANModel) {
-    this.ibanDetails = _res
-  }
+        let _entries: StatementEntryModel[] = this.statements.entry
 
-  @Action({ rawError: true })
-  index(filters: GetManagedAccountsRequest) {
-    const req = this.store.$apiMulti.managedAccounts.index(filters)
+        _entries = _entries!.filter((transaction) => {
+            const DO_NOT_DISPLAY = [
+                'AUTHORISATION_REVERSAL',
+                'AUTHORISATION_EXPIRY',
+                'AUTHORISATION_DECLINE',
+            ]
 
-    req.then((res) => {
-      this.SET_ACCOUNTS(res.data)
-      if (res.data.count && res.data.accounts) {
-        this.SET_ACCOUNT(res.data.accounts[0])
-      }
-    })
+            if (DO_NOT_DISPLAY.includes(transaction.transactionId.type)) {
+                return false
+            }
 
-    return req
-  }
+            if (transaction.transactionId.type === 'AUTHORISATION') {
+                if (transaction.additionalFields?.authorisationState === 'COMPLETED') {
+                    return false
+                }
+            }
 
-  @Action({ rawError: true })
-  create(request: CreateManagedAccountRequest) {
-    const req = this.store.$apiMulti.managedAccounts.store(request)
+            return true
+        })
 
-    return req
-  }
+        const _out = {}
 
-  @Action({ rawError: true })
-  get(id: string) {
-    const req = this.store.$apiMulti.managedAccounts.show(id)
+        _entries.forEach((_entry) => {
+            if (_entry.processedTimestamp) {
+                const _processedTimestamp = parseInt(_entry.processedTimestamp)
+                // @ts-ignore
+                const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
 
-    req.then((res) => {
-      this.SET_ACCOUNT(res.data)
-    })
+                if (!_out[_date]) {
+                    _out[_date] = []
+                }
 
-    return req
-  }
+                _out[_date].push(_entry)
+            }
+        })
 
-  @Action({ rawError: true })
-  getStatements(request: { id: string; filters: GetManagedAccountStatementRequest }) {
-    const req = this.store.$apiMulti.managedAccounts.statement(request)
+        return _out
+    }
 
-    req.then((res) => {
-      this.SET_STATEMENTS(res.data)
-    })
+    @Mutation
+    SET_ACCOUNTS(accounts: PaginatedManagedAccountsResponse) {
+        this.accounts = accounts
+    }
 
-    return req
-  }
+    @Mutation
+    SET_ACCOUNT(account: ManagedAccountModel) {
+        this.account = account
+    }
 
-  @Action({ rawError: true })
-  getIBANDetails(id: IDModel) {
-    const req = this.store.$apiMulti.managedAccounts.retrieveIban(id)
-    req.then((res) => {
-      this.SET_IBAN(res.data)
-    })
-    return req
-  }
+    @Mutation
+    RESET_STATEMENTS() {
+        this.statements = null
+    }
 
-  @Action({ rawError: true })
-  upgradeIban(id: IDModel) {
-    const req = this.store.$apiMulti.managedAccounts.assignIban(id)
-    req.then((res) => {
-      this.SET_IBAN(res.data)
-    })
+    @Mutation
+    SET_STATEMENTS(statements: StatementResponseModel | null) {
+        if (!statements) {
+            this.statements = statements
+        } else if (!this.statements?.entry) {
+            this.statements = statements
+        } else if (statements.entry) {
+            this.statements.entry.push(...statements.entry)
+        }
+    }
 
-    return req
-  }
+    @Mutation
+    RESET_STATE() {
+        Object.keys(defaultState).forEach((key) => {
+            this[key] = defaultState[key]
+        })
+    }
+
+    @Mutation
+    SET_IBAN(_res: ManagedAccountIBANModel) {
+        this.ibanDetails = _res
+    }
+
+    @Action({ rawError: true })
+    index(filters: GetManagedAccountsRequest) {
+        const req = this.store.$apiMulti.managedAccounts.index(filters)
+
+        req.then((res) => {
+            this.SET_ACCOUNTS(res.data)
+            if (res.data.count && res.data.accounts) {
+                this.SET_ACCOUNT(res.data.accounts[0])
+            }
+        })
+
+        return req
+    }
+
+    @Action({ rawError: true })
+    create(request: CreateManagedAccountRequest) {
+        const req = this.store.$apiMulti.managedAccounts.store(request)
+
+        return req
+    }
+
+    @Action({ rawError: true })
+    get(id: string) {
+        const req = this.store.$apiMulti.managedAccounts.show(id)
+
+        req.then((res) => {
+            this.SET_ACCOUNT(res.data)
+        })
+
+        return req
+    }
+
+    @Action({ rawError: true })
+    getStatements(request: { id: string; filters: GetManagedAccountStatementRequest }) {
+        const req = this.store.$apiMulti.managedAccounts.statement(request)
+
+        req.then((res) => {
+            this.SET_STATEMENTS(res.data)
+        })
+
+        return req
+    }
+
+    @Action({ rawError: true })
+    getIBANDetails(id: IDModel) {
+        const req = this.store.$apiMulti.managedAccounts.retrieveIban(id)
+        req.then((res) => {
+            this.SET_IBAN(res.data)
+        })
+        return req
+    }
+
+    @Action({ rawError: true })
+    upgradeIban(id: IDModel) {
+        const req = this.store.$apiMulti.managedAccounts.assignIban(id)
+        req.then((res) => {
+            this.SET_IBAN(res.data)
+        })
+
+        return req
+    }
 }

@@ -6,13 +6,13 @@ import { ManagedInstrumentBlockedReasonEnum } from '~/plugins/weavr-multi/api/mo
 import { ManagedInstrumentDestroyedReasonEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentDestroyedReasonEnum'
 
 export interface GetManagedAccountsRequest extends PagingModel {
-  profileId?: IDModel
-  friendlyName?: string
-  state: ManagedInstrumentStateEnum
-  ['state.blockedReason']?: ManagedInstrumentBlockedReasonEnum
-  ['state.destroyedReason']?: ManagedInstrumentDestroyedReasonEnum
-  currency?: CurrencyEnum
-  createdFrom?: number
-  createdTo?: number
-  tag?: string
+    profileId?: IDModel
+    friendlyName?: string
+    state: ManagedInstrumentStateEnum
+    ['state.blockedReason']?: ManagedInstrumentBlockedReasonEnum
+    ['state.destroyedReason']?: ManagedInstrumentDestroyedReasonEnum
+    currency?: CurrencyEnum
+    createdFrom?: number
+    createdTo?: number
+    tag?: string
 }

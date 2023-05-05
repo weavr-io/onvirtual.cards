@@ -1,3 +1,3 @@
 export interface AuthVerifyEnrolRequest {
-  verificationCode: string
+    verificationCode: string
 }

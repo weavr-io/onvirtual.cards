@@ -4,10 +4,10 @@ import { CurrencyAmountModel } from '~/plugins/weavr-multi/api/models/common/Cur
 import { OutgoingWireTransferBeneficiaryModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/OutgoingWireTransferBeneficiaryModel'
 
 export interface CreateOutGoingWireTransferRequest {
-  profileId: IDModel
-  tag?: string
-  sourceInstrument: SourceInstrumentModel
-  transferAmount: CurrencyAmountModel
-  description?: string
-  destinationBeneficiary?: OutgoingWireTransferBeneficiaryModel
+    profileId: IDModel
+    tag?: string
+    sourceInstrument: SourceInstrumentModel
+    transferAmount: CurrencyAmountModel
+    description?: string
+    destinationBeneficiary?: OutgoingWireTransferBeneficiaryModel
 }
