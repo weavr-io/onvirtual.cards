@@ -4,8 +4,6 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import CsvMixin from '~/mixins/CsvMixin'
 
-const moment = require('moment')
-
 @Component
 export default class AccountsMixin extends mixins(BaseMixin, CsvMixin) {
     get isManagedAccounts(): boolean {

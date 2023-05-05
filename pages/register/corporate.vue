@@ -33,7 +33,6 @@ import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/co
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
@@ -47,7 +46,7 @@ import Logo from '~/components/Logo.vue'
         LoaderButton: () => import('~/components/LoaderButton.vue'),
         RegisterForm: () => import('~/components/registration/RegisterForm.vue'),
         PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
-        RegistrationNav: () => import('~/components/registration/Nav.vue'),
+        RegistrationNav: () => import('~/components/registration/RegistrationNav.vue'),
         ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
     },
     middleware: 'accessCodeVerified',
@@ -151,10 +150,10 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     onCorporateCreated(res: AxiosResponse<ConsumerModel>) {
-        this.createPassword(res.data.id, res.data.rootUser.id.id!)
+        this.createPassword(res.data.rootUser.id.id!)
     }
 
-    createPassword(identity: IdentityIdModel, rootUserId: IDModel) {
+    createPassword(rootUserId: IDModel) {
         const passwordRequest: CreatePasswordRequestModel = {
             password: {
                 value: this.registrationRequest.password as string,

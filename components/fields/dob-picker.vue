@@ -3,10 +3,10 @@
         <label :class="labelClass" :style="{ flex: proportions[0] }">
             <div v-if="showLabels !== 'false'">{{ labels[0] }}</div>
             <select v-model="day" :class="dayClass" @blur="onBlur" @focus="onFocus">
-                <option v-if="placeholders[0]" value="null" disabled="disabled">
+                <option v-if="placeholders[0]" disabled="disabled" value="null">
                     {{ placeholders[0] }}
                 </option>
-                <option v-for="(item, index) in new Array(28)" :value="index + 1">
+                <option v-for="(item, index) in new Array(28)" :key="index" :value="index + 1">
                     {{ index + 1 }}
                 </option>
                 <option v-if="daysInMonth >= 29 || isLeapYear" value="29">29</option>
@@ -17,10 +17,10 @@
         <label :class="labelClass" :style="{ flex: proportions[1] }">
             <div v-if="showLabels !== 'false'">{{ labels[1] }}</div>
             <select v-model="month" :class="monthClass" @blur="onBlur" @focus="onFocus">
-                <option v-if="placeholders[1]" value="null" disabled="disabled">
+                <option v-if="placeholders[1]" disabled="disabled" value="null">
                     {{ placeholders[1] }}
                 </option>
-                <option v-for="(item, index) in new Array(12)" :value="index">
+                <option v-for="(item, index) in new Array(12)" :key="index" :value="index">
                     {{ getDisplayedMonth(index) }}
                 </option>
             </select>
@@ -28,10 +28,14 @@
         <label :class="labelClass" :style="{ flex: proportions[2] }">
             <div v-if="showLabels !== 'false'">{{ labels[2] }}</div>
             <select v-model="year" :class="yearClass" @blur="onBlur" @focus="onFocus">
-                <option v-if="placeholders[2]" value="null" disabled="disabled">
+                <option v-if="placeholders[2]" disabled="disabled" value="null">
                     {{ placeholders[2] }}
                 </option>
-                <option v-for="(item, index) in new Array(100)" :value="currentYear - index">
+                <option
+                    v-for="(item, index) in new Array(100)"
+                    :key="index"
+                    :value="currentYear - index"
+                >
                     {{ currentYear - index }}
                 </option>
             </select>

@@ -66,15 +66,13 @@
                     <slot name="countdown"></slot>
                 </b-alert>
                 <div v-if="!dismissCountDown" class="mt-4 text-center">
-                    <template>
-                        <small class="text-grey">
-                            Didn’t receive a code?
-                            <b-link class="text-decoration-underline text-grey" @click="resendSms"
-                                >Send again</b-link
-                            >
-                            .
-                        </small>
-                    </template>
+                    <small class="text-grey">
+                        Didn’t receive a code?
+                        <b-link class="text-decoration-underline text-grey" @click="resendSms"
+                            >Send again</b-link
+                        >
+                        .
+                    </small>
                 </div>
             </div>
         </b-card>
@@ -121,7 +119,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
     dismissSecs = 60
     dismissCountDown = 0
 
-    created() {
+    mounted() {
         if (
             this.$route.query.send === 'true' &&
             (this.verifyPhone || localStorage.getItem('scaSmsSent') === 'FALSE')

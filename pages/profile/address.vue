@@ -140,9 +140,7 @@ import { Nullable } from '~/global'
     components: {
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/LoaderButton.vue'),
-        ConsumerPersonalDetailsForm: () =>
-            import('~/components/registration/ConsumerPersonalDetails.vue'),
-        RegistrationNav: () => import('~/components/registration/Nav.vue'),
+        RegistrationNav: () => import('~/components/registration/RegistrationNav.vue'),
         ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
     },
     middleware: ['authRouteGuard'],

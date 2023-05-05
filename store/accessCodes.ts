@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { Mutation } from 'vuex-module-decorators'
 import { Action, Module } from '~/node_modules/vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'

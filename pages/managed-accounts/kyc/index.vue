@@ -76,7 +76,7 @@ export default class KycPage extends mixins(BaseMixin) {
             })
     }
 
-    onMessage(message, additionalInfo) {
+    onMessage(message) {
         if (message === 'kycSubmitted') {
             this.$router.push('/managed-accounts/kyc/check')
         }
