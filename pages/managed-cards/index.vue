@@ -21,7 +21,7 @@
         </b-row>
       </b-container>
       <b-container v-if="!hasAlert" class="mt-5">
-        <b-row v-if="$fetchState.pending">
+        <b-row v-if="pendingDataOrError">
           <b-col class="d-flex flex-column align-items-center">
             <div class="loader-spinner">
               <b-spinner />

@@ -60,30 +60,32 @@
       </b-card-body>
     </b-card>
     <transition name="fade" mode="out-in">
-      <b-row v-if="showOptions && !isDestroyed" class="position-absolute z-index-1">
-        <div class="p-2 mt-1 ml-4 rounded shadow-sm card-options">
-          <b-link class="py-2 d-block text-decoration-none" @click="toggleBlock">
-            <div class="d-flex align-items-center">
-              <b-img fluid src="/img/freeze-icon.svg" />
-              <div class="ml-3">
-                <h6 class="m-0 small">
-                  <template v-if="!isBlocked"> Freeze card</template>
-                  <template v-else> Unfreeze card</template>
-                </h6>
-                <p v-if="!isBlocked" class="text-muted m-0 small">Tap again to unfreeze</p>
+      <b-row v-if="showOptions && !isDestroyed">
+        <b-col>
+          <div class="p-2 mt-1">
+            <b-link class="py-2 d-block text-decoration-none" @click="toggleBlock">
+              <div class="d-flex align-items-center">
+                <b-img fluid src="/img/freeze-icon.svg" />
+                <div class="ml-3">
+                  <h6 class="m-0 small">
+                    <template v-if="!isBlocked"> Freeze card</template>
+                    <template v-else> Unfreeze card</template>
+                  </h6>
+                  <p v-if="!isBlocked" class="text-muted m-0 small">Tap again to unfreeze</p>
+                </div>
               </div>
-            </div>
-          </b-link>
-          <b-link :to="editLink" class="py-2 mt-md-0 d-block text-decoration-none">
-            <div class="d-flex align-items-center">
-              <b-img fluid src="/img/edit-icon.svg" />
-              <div class="ml-3">
-                <h6 class="m-0 small">Edit card</h6>
-                <p class="text-muted m-0 small">Change name and other details</p>
+            </b-link>
+            <b-link :to="editLink" class="py-2 mt-md-0 d-block text-decoration-none">
+              <div class="d-flex align-items-center">
+                <b-img fluid src="/img/edit-icon.svg" />
+                <div class="ml-3">
+                  <h6 class="m-0 small">Edit card</h6>
+                  <p class="text-muted m-0 small">Change name and other details</p>
+                </div>
               </div>
-            </div>
-          </b-link>
-        </div>
+            </b-link>
+          </div>
+        </b-col>
       </b-row>
     </transition>
   </div>
