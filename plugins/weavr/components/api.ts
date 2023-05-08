@@ -1,77 +1,5 @@
+/* eslint-disable no-use-before-define */
 'use strict'
-
-export interface SecureClient {
-    init(publicApiKey: string, options: SecureClientOptions): void
-
-    associate(authToken: string, resolve?: () => void, reject?: (e?: any) => void): void
-
-    kyb(): KYB
-
-    kyc(): KYC
-
-    consumer_kyc(): ConsumerVerificationFlowContract
-
-    form(): SecureForm
-
-    span(field: string, token: string, options?: SecureSpanOptions): SecureSpan
-}
-
-export interface SecureForm {
-    input(name: string, field: string, options?: SecureInputOptions): SecureInput
-
-    tokenize(
-        resolve?: (tokens: { [key: string]: string }) => void,
-        reject?: (e?: any) => void
-    ): void
-
-    destroy(): this
-}
-
-export interface SecureInput {
-    update(options?: SecureInputOptions): void
-
-    focus(): this
-
-    blur(): this
-
-    mount(el: HTMLElement | string): this
-
-    clear(): this
-
-    unmount(): this
-
-    destroy(): this
-
-    addListener(event: string, listener: (...args: any[]) => void): this
-
-    on(event: string, listener: (...args: any[]) => void): this
-
-    removeListener(event: string, listener: (...args: any[]) => void): this
-
-    off(event: string, listener: (...args: any[]) => void): this
-
-    removeAllListeners(event?: string): this
-}
-
-export interface SecureSpan {
-    update(options?: SecureInputOptions): this
-
-    mount(el: HTMLElement | string): this
-
-    unmount(): this
-
-    destroy(): this
-
-    addListener(event: string, listener: (...args: any[]) => void): this
-
-    on(event: string, listener: (...args: any[]) => void): this
-
-    removeListener(event: string, listener: (...args: any[]) => void): this
-
-    off(event: string, listener: (...args: any[]) => void): this
-
-    removeAllListeners(event?: string): this
-}
 
 export interface SecureClientOptions {
     fonts: (SecureElementStyleFontSrc | SecureElementStyleFont)[]
@@ -211,6 +139,7 @@ export interface VerificationFlow {
 export interface ConsumerVerificationFlowLaunchParams {
     reference: bigint | string
 }
+
 export interface CorporateVerificationFlowLaunchParams {
     reference: bigint | string
 }
@@ -278,4 +207,77 @@ export interface SumSub extends VerificationFlowProvider {
 
 export enum VerificationFlowProviders {
     SUMSUB = 'sumsub',
+}
+
+export interface SecureClient {
+    init(publicApiKey: string, options: SecureClientOptions): void
+
+    associate(authToken: string, resolve?: () => void, reject?: (e?: any) => void): void
+
+    kyb(): KYB
+
+    kyc(): KYC
+
+    consumer_kyc(): ConsumerVerificationFlowContract
+
+    form(): SecureForm
+
+    span(field: string, token: string, options?: SecureSpanOptions): SecureSpan
+}
+
+export interface SecureForm {
+    input(name: string, field: string, options?: SecureInputOptions): SecureInput
+
+    tokenize(
+        resolve?: (tokens: { [key: string]: string }) => void,
+        reject?: (e?: any) => void
+    ): void
+
+    destroy(): this
+}
+
+export interface SecureInput {
+    update(options?: SecureInputOptions): void
+
+    focus(): this
+
+    blur(): this
+
+    mount(el: HTMLElement | string): this
+
+    clear(): this
+
+    unmount(): this
+
+    destroy(): this
+
+    addListener(event: string, listener: (...args: any[]) => void): this
+
+    on(event: string, listener: (...args: any[]) => void): this
+
+    removeListener(event: string, listener: (...args: any[]) => void): this
+
+    off(event: string, listener: (...args: any[]) => void): this
+
+    removeAllListeners(event?: string): this
+}
+
+export interface SecureSpan {
+    update(options?: SecureInputOptions): this
+
+    mount(el: HTMLElement | string): this
+
+    unmount(): this
+
+    destroy(): this
+
+    addListener(event: string, listener: (...args: any[]) => void): this
+
+    on(event: string, listener: (...args: any[]) => void): this
+
+    removeListener(event: string, listener: (...args: any[]) => void): this
+
+    off(event: string, listener: (...args: any[]) => void): this
+
+    removeAllListeners(event?: string): this
 }

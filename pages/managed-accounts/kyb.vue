@@ -145,7 +145,7 @@ export default class KybPage extends mixins(BaseMixin) {
         }
     }
 
-    handleSumSubMessage(message) {}
+    handleSumSubMessage() {}
 }
 </script>
 <style lang="scss" scoped>

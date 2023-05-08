@@ -5,46 +5,31 @@ $card: #f0edde;
 $body-color: #232a47;
 $link-color: $body-color;
 $grey: #6d7490;
-
 $success: #3cf7ca;
-
 $danger: #f50e4c;
-
 $card-disabled: #e9edf6;
-
 $shadow: #5768ff4d;
-
-$body-bg: #ffffff;
+$body-bg: #fff;
 $body-bg-colored: #f0edde;
-
 $grey-light: #eaedf6;
-
 $theme-colors: (
-  'card': $card,
-  'grey': $grey,
-  'grey-light': $grey-light,
-  'card-disabled': $card-disabled,
-  'bg-colored': $body-bg-colored,
+    'card': $card,
+    'grey': $grey,
+    'grey-light': $grey-light,
+    'card-disabled': $card-disabled,
+    'bg-colored': $body-bg-colored,
 );
-
 $btn-padding-y-sm: 0.5rem;
 $btn-padding-x-sm: 1rem;
-
 $btn-padding-y: 0.7rem;
 $btn-padding-x: 1.9rem;
-
 $btn-padding-y-lg: 1rem !default;
 $btn-padding-x-lg: 1.9rem !default;
-
 $btn-border-radius: 100px;
 $btn-font-weight: 300;
-
 $font-family-sans-serif: 'Be Vietnam', sans-serif;
-
-$btn-box-shadow: 0px 7px 14px $shadow;
-
+$btn-box-shadow: 0 7px 14px $shadow;
 $enable-validation-icons: false;
-
 $input-placeholder-color: #b6b9c7;
 $input-focus-box-shadow: none;
 $input-border-color: $grey;
@@ -53,31 +38,26 @@ $input-border-width: 1px;
 $input-focus-width: 0;
 $form-feedback-valid-color: $input-border-color;
 $input-disabled-bg: transparent;
-
 $custom-select-focus-box-shadow: none;
 $custom-select-border-color: $input-border-color;
 $custom-select-border-radius: 0;
 $custom-select-border-width: 1px;
-
 $box-shadow-sm: 0 0.125rem 0.25rem $shadow;
 $box-shadow: 0 0.5rem 1rem $shadow;
 $box-shadow-lg: 0 1rem 3rem $shadow;
-
 $spacer: 1rem;
-
 $spacers: (
-  6: (
-    $spacer * 6,
-  ),
-  7: (
-    $spacer * 12,
-  ),
-  8: (
-    $spacer * 18,
-  ),
-  'card': 4rem,
+    6: (
+        $spacer * 6,
+    ),
+    7: (
+        $spacer * 12,
+    ),
+    8: (
+        $spacer * 18,
+    ),
+    'card': 4rem,
 );
-
 $card-border-width: 0;
 $card-border-radius: 2rem;
 $dashboard-header-height: 68px;

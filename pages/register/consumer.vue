@@ -429,8 +429,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
                             return null
                         }
                     },
-                    (e) => {
-                        console.error(e)
+                    () => {
                         return null
                     }
                 )

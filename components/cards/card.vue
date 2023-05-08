@@ -1,16 +1,16 @@
 <template>
     <div>
         <b-card
-            id="managedCard"
+            id="managed-card"
             :class="[{ 'card-frozen': isBlocked }, { 'card-destroyed': isDestroyed }]"
-            no-body
             class="border-0 cards-card"
+            no-body
         >
             <b-card-body class="card-body onvirtual-card overflow-hidden shadow-hover-sm">
                 <b-aspect :aspect="'1.6:1'" class="overflow-hidden">
-                    <b-overlay spinner-small :show="localIsBusy" class="overflow-hidden">
+                    <b-overlay :show="localIsBusy" class="overflow-hidden" spinner-small>
                         <b-link :to="statementsLink">
-                            <b-container fluid class="p-0">
+                            <b-container class="p-0" fluid>
                                 <b-row>
                                     <b-col class="card-balance text-right">
                                         {{
@@ -51,7 +51,7 @@
                                             </div>
                                         </div>
                                     </b-col>
-                                    <b-col cols="2" class="text-right">
+                                    <b-col class="text-right" cols="2">
                                         <b-img src="/img/mc_symbol.svg" width="50px" />
                                     </b-col>
                                 </b-row>
@@ -68,7 +68,7 @@
                 </b-aspect>
             </b-card-body>
         </b-card>
-        <transition name="fade" mode="out-in">
+        <transition mode="out-in" name="fade">
             <b-row v-if="showOptions && !isDestroyed">
                 <b-col>
                     <div class="p-2 mt-1">

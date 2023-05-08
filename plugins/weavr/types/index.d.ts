@@ -22,6 +22,7 @@ declare module '@nuxt/types' {
 
 declare module 'vuex/types/index' {
     // this.$weavrSetUserToken inside Vuex stores
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface Store<S> {
         $weavrSetUserToken: (token) => {}
     }

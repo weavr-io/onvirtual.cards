@@ -179,8 +179,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
                         return null
                     }
                 },
-                (e) => {
-                    console.error(e)
+                () => {
                     return null
                 }
             )

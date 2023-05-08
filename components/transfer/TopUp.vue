@@ -3,9 +3,9 @@
         <b-row>
             <b-col>
                 <h2 class="text-center font-weight-lighter">
-                    <template v-if="!accountDetails"> No account found </template>
-                    <template v-else-if="accountBalance < 0.01"> Not enough funds </template>
-                    <template v-else> Top up amount </template>
+                    <template v-if="!accountDetails"> No account found</template>
+                    <template v-else-if="accountBalance < 0.01"> Not enough funds</template>
+                    <template v-else> Top up amount</template>
                 </h2>
             </b-col>
         </b-row>
@@ -54,16 +54,16 @@
                 <b-row>
                     <b-col>
                         <b-form-group
-                            :state="isInvalid($v.request.amount)"
                             :invalid-feedback="invalidMessage"
+                            :state="isInvalid($v.request.amount)"
                             label="Amount:"
                         >
                             <b-input-group :prepend="accountDetails.currency">
                                 <b-form-input
                                     v-model="$v.request.amount.$model"
-                                    type="number"
-                                    step="0.01"
                                     min="0.01"
+                                    step="0.01"
+                                    type="number"
                                 />
                             </b-input-group>
                         </b-form-group>
@@ -83,7 +83,7 @@
 </template>
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
-import { required, between } from 'vuelidate/lib/validators'
+import { between, required } from 'vuelidate/lib/validators'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -101,11 +101,16 @@ import ValidationMixin from '~/mixins/ValidationMixin'
     },
 })
 export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
+    @Prop({ default: '' }) readonly selectedAccount
+    public request: {
+        amount: number | null
+    } = {
+        amount: null,
+    }
+
     get accounts() {
         return this.stores.accounts.accounts
     }
-
-    @Prop({ default: '' }) readonly selectedAccount
 
     get invalidMessage() {
         const _min = this.$v.request.amount?.$params.between.min
@@ -115,18 +120,14 @@ export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
         return 'Should be between ' + _currency + ' ' + _min + ' and ' + _currency + ' ' + _max
     }
 
-    public request: {
-        amount: number | null
-    } = {
-        amount: null,
-    }
-
     get accountDetails() {
         if (this.accounts) {
             return this.accounts.accounts?.find((account) => {
                 return account.id === this.selectedAccount.id
             })
         }
+
+        return undefined
     }
 
     get accountBalance() {

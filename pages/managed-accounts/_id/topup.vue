@@ -43,7 +43,9 @@
                                     </b-tr>
                                     <b-tr>
                                         <b-th>Address</b-th>
-                                        <b-td v-html="address" />
+                                        <b-td>
+                                            <div>{{ address }}</div>
+                                        </b-td>
                                     </b-tr>
                                     <b-tr v-if="paymentReference">
                                         <b-th>Payment Reference</b-th>

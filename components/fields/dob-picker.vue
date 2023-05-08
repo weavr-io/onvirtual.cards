@@ -51,11 +51,24 @@ export default {
     props: {
         value: {
             type: Date,
+            default: undefined,
         },
-        selectClass: String,
-        selectPlaceholderClass: String,
-        labelClass: String,
-        showLabels: String,
+        selectClass: {
+            type: String,
+            default: '',
+        },
+        selectPlaceholderClass: {
+            type: String,
+            default: '',
+        },
+        labelClass: {
+            type: String,
+            default: '',
+        },
+        showLabels: {
+            type: String,
+            default: '',
+        },
         locale: {
             type: String,
             default: navigator.language,
@@ -94,7 +107,7 @@ export default {
                     daysInMonth += 1
                 }
                 if (this.day > daysInMonth) {
-                    this.day = null
+                    return null
                 }
                 if (this.day !== null && this.month !== null && this.year !== null) {
                     return new Date(this.year, this.month, this.day, 0, 0, 0, 0)

@@ -125,7 +125,7 @@ Vue.filter('weavr_lowercase', function (value) {
 
 Vue.filter('card', function (value, _first6, _last4) {
     if (typeof _first6 === 'undefined' && typeof _last4 === 'undefined') {
-        return value.replace(/(\+?\d{6})(\d+)(\d{4})/g, function (match, start, middle, end) {
+        return value.replace(/(\+?\d{6})(\d+)(\d{4})/g, function (_match, start, middle, end) {
             return start + '*'.repeat(middle.length) + end
         })
     } else {
@@ -141,6 +141,7 @@ Vue.filter('expiryMmyy', function (value) {
     }
 })
 
+// eslint-disable-next-line no-empty-pattern
 export default ({}, inject) => {
     inject('weavrToast', (message: string, options?: BvToastOptions) => {
         const vm = new Vue()

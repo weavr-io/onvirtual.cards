@@ -1,21 +1,22 @@
+input:-webkit-autofill {
+    animation-delay: 1ms; /* Safari support - any positive time runs instantly */
+    animation-name: autofill;
+    animation-fill-mode: both;
+}
+
 /* Change the white to any color ;) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
-input:-webkit-autofill:active  {
-  -webkit-box-shadow: 0 0 0 30px #FFFFFF inset !important;
+input:-webkit-autofill:active {
+    box-shadow: 0 0 0 30px #fff inset !important;
 }
 
-/*remove background when autofill input css*/
-@-webkit-keyframes autofill {
-  0%,100% {
-    color: #666;
-    background: transparent;
-  }
-}
-
-input:-webkit-autofill {
-  -webkit-animation-delay: 1ms; /* Safari support - any positive time runs instantly */
-  -webkit-animation-name: autofill;
-  -webkit-animation-fill-mode: both;
+/* remove background when autofill input css */
+@keyframes autofill {
+    0%,
+    100% {
+        color: #666;
+        background: transparent;
+    }
 }

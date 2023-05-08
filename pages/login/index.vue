@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Ref, Watch } from 'nuxt-property-decorator'
+import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/mixins/BaseMixin'
@@ -211,11 +211,6 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
             e.preventDefault()
             this.login()
         }
-    }
-
-    @Watch('isLoggedIn')
-    isLoggedInChanged(val) {
-        console.warn(val)
     }
 }
 </script>

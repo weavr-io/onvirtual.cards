@@ -1,97 +1,97 @@
-.cards-card {
-  border-radius: 20px;
+.card {
+    &.card-sm-border-radius {
+        border-radius: 1rem;
 
-  .card-body {
-    padding: 0;
+        .card-header:first-child {
+            border-radius: 1rem 1rem 0 0;
+        }
 
-    a {
-      padding: 27px 33px;
-      display: block;
-      text-decoration: none;
-      color: $primary;
-      font-weight: 300;
+        .card-footer:last-child {
+            border-radius: 0 0 1rem 1rem;
+        }
     }
-  }
-
-  .card {
-    &-name {
-      font-weight: 300;
-      font-size: 1.3rem;
-    }
-
-    &-name-on-card {
-      font-weight: 300;
-      font-size: 1rem;
-    }
-
-    &-number {
-      font-weight: 300;
-    }
-
-    &-balance {
-      font-size: 1.3rem;
-    }
-
-    &-cvv,
-    &-expiry {
-      &-label {
-        font-size: 0.7rem;
-        color: $grey;
-      }
-
-      &-value {
-        margin-top: 4px;
-        font-size: 0.9rem;
-      }
-    }
-  }
-
-  &.card-frozen {
-    a {
-      color: $input-placeholder-color;
-    }
-  }
-
-  &.card-destroyed {
-    opacity: 0.4;
-  }
 }
 
-#managedCard {
-  .card-options-button {
-    background: $white;
-    border-radius: 100px;
-    padding: 9px 11px;
-    border: 0;
-    box-shadow: 0 0 6px $shadow;
-    position: absolute;
-    right: 15px;
-    bottom: -21px;
-    z-index: 10;
-    color: $primary;
+.cards-card {
+    border-radius: 20px;
 
-    &:hover {
-      box-shadow: 0 3px 6px $shadow;
+    .card-body {
+        padding: 0;
+
+        a {
+            padding: 27px 33px;
+            display: block;
+            text-decoration: none;
+            color: $primary;
+            font-weight: 300;
+        }
     }
-  }
+
+    .card {
+        &-name {
+            font-weight: 300;
+            font-size: 1.3rem;
+        }
+
+        &-name-on-card {
+            font-weight: 300;
+            font-size: 1rem;
+        }
+
+        &-number {
+            font-weight: 300;
+        }
+
+        &-balance {
+            font-size: 1.3rem;
+        }
+
+        &-cvv,
+        &-expiry {
+            &-label {
+                font-size: 0.7rem;
+                color: $grey;
+            }
+
+            &-value {
+                margin-top: 4px;
+                font-size: 0.9rem;
+            }
+        }
+    }
+
+    &.card-frozen {
+        a {
+            color: $input-placeholder-color;
+        }
+    }
+
+    &.card-destroyed {
+        opacity: 0.4;
+    }
+}
+
+#managed-card {
+    .card-options-button {
+        background: $white;
+        border-radius: 100px;
+        padding: 9px 11px;
+        border: 0;
+        box-shadow: 0 0 6px $shadow;
+        position: absolute;
+        right: 15px;
+        bottom: -21px;
+        z-index: 10;
+        color: $primary;
+
+        &:hover {
+            box-shadow: 0 3px 6px $shadow;
+        }
+    }
 }
 
 .onvirtual-card {
-  background: url('/img/card-background.svg') no-repeat no-repeat;
-  background-size: cover;
-  border-radius: 20px;
-}
-
-.card {
-  &.card-sm-border-radius {
-    border-radius: 1rem;
-
-    .card-header:first-child {
-      border-radius: 1rem 1rem 0 0;
-    }
-
-    .card-footer:last-child {
-      border-radius: 0 0 1rem 1rem;
-    }
-  }
+    background: url('/img/card-background.svg') no-repeat no-repeat;
+    background-size: cover;
+    border-radius: 20px;
 }

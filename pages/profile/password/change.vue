@@ -180,8 +180,6 @@ export default class BundlesPage extends mixins(BaseMixin) {
 
         this.$v.$touch()
 
-        if (this.$v.$invalid) {
-        }
         if (this.isPasswordValid && !this.isAnyPasswordEmpty) {
             this.isLoading = true
 
@@ -195,7 +193,6 @@ export default class BundlesPage extends mixins(BaseMixin) {
             if (tokenizedOld && tokenizedNew) {
                 this.changePasswordRequest.oldPassword.value = tokenizedOld
                 this.changePasswordRequest.newPassword.value = tokenizedNew
-                console.debug('ALL Settled', this.changePasswordRequest)
                 this.stores.auth
                     .validatePassword({ password: this.changePasswordRequest.newPassword })
                     .then(() => {
