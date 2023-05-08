@@ -1,23 +1,23 @@
 <template>
     <div>
         <div v-if="hasConflict">
-            <div class="error-alert" :class="baseClass" role="alert">
+            <div :class="baseClass" class="error-alert" role="alert">
                 <p>{{ conflictMessage }}</p>
                 <button @click="onClose">
-                    <img src="/img/close.svg" width="16" alt="close" />
+                    <img alt="close" src="/img/close.svg" width="16" />
                 </button>
             </div>
         </div>
         <div v-else-if="hasError">
-            <div class="error-alert" :class="baseClass" role="alert">
+            <div :class="baseClass" class="error-alert" role="alert">
                 <p>
                     {{ errorMessage }}
                     <b-link v-if="errorLink != null" :to="errorLink.link" class="error-alert-link">
                         {{ errorLink.text }}
                     </b-link>
                 </p>
-                <button class="z-index-0 my-4" @click="onClose">
-                    <img src="/img/close.svg" width="16" alt="close" />
+                <button @click="onClose">
+                    <img alt="close" src="/img/close.svg" width="16" />
                 </button>
             </div>
         </div>
@@ -34,7 +34,14 @@ export interface ErrorLink {
 
 @Component
 class ErrorAlert extends mixins(BaseMixin) {
-    @Prop({ type: String, default: 'my-5' }) baseClass?: string
+    @Prop({
+        type: String,
+        default: 'my-5',
+    })
+    baseClass?: string
+
+    @Prop({ default: '' }) readonly message!: string
+    @Prop({ default: null }) readonly errorLink!: ErrorLink | null
 
     get errors() {
         return this.stores.errors.errors
@@ -46,14 +53,6 @@ class ErrorAlert extends mixins(BaseMixin) {
 
     get conflictMessage() {
         return this.stores.errors.conflictMessage
-    }
-
-    @Prop({ default: '' }) readonly message!: string
-
-    @Prop({ default: null }) readonly errorLink!: ErrorLink | null
-
-    @Emit('close') onClose() {
-        this.stores.errors.RESET_ERROR()
     }
 
     get hasError(): boolean {
@@ -86,6 +85,10 @@ class ErrorAlert extends mixins(BaseMixin) {
         } else {
             return 'An error occurred. Please try again.'
         }
+    }
+
+    @Emit('close') onClose() {
+        this.stores.errors.RESET_ERROR()
     }
 }
 
