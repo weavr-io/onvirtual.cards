@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+echo "###### Running Pre-Commit Hooks ######"
+echo ""
+npx lint-staged
+
 local_branch_name="$(git rev-parse --abbrev-ref HEAD)"
 lower_local_branch_name=$(echo $local_branch_name | tr '[:upper:]' '[:lower:]')
 
@@ -20,6 +24,4 @@ fi
     exit 0
 
 
-echo "###### Running Pre-Commit Hooks ######"
-echo ""
-npx lint-staged
+
