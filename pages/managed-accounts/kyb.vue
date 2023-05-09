@@ -1,5 +1,6 @@
 <template>
     <section>
+        <dashboard-header />
         <b-container>
             <b-row v-if="!sumsSubEnabled" align-h="center">
                 <b-col class="py-5 font-weight-lighter" lg="6" md="9">
@@ -89,9 +90,11 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
 import BaseMixin from '~/mixins/BaseMixin'
 import { KYBErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBErrorCodeEnum'
+import DashboardHeader from '~/components/DashboardHeader.vue'
 
 @Component({
     components: {
+        DashboardHeader,
         BIcon,
         BIconBoxArrowUpRight,
     },
