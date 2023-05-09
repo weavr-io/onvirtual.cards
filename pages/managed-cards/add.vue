@@ -1,109 +1,136 @@
 <template>
-  <section>
-    <b-container>
-      <b-row v-if="pendingDataOrError">
-        <b-col>
-          <div class="d-flex flex-column align-items-center">
-            <div class="loader-spinner">
-              <b-spinner />
-            </div>
-          </div>
-        </b-col>
-      </b-row>
-      <b-row v-else align-h="center">
-        <b-col md="9" lg="6">
-          <b-card class="border-0">
-            <b-card-title class="mb-5 text-center font-weight-lighter"> Create Card</b-card-title>
-            <b-card-body>
-              <b-alert :show="showError" variant="danger" class="text-center">
-                Error creating new card. <br />Contact support if problem persists.
-              </b-alert>
-              <b-form v-if="!showError" @submit.prevent="doAdd">
-                <b-form-row v-if="showNameOnCardField">
-                  <b-col>
-                    <b-form-group
-                      label="Name of Person using Card"
-                      :state="isInvalid($v.createManagedCardRequest.nameOnCard)"
-                      :invalid-feedback="
-                        invalidFeedback(
-                          $v.createManagedCardRequest.nameOnCard,
-                          validateVParams(
-                            $v.createManagedCardRequest.nameOnCard.$params,
-                            $v.createManagedCardRequest.nameOnCard
-                          ),
-                          'Name is required and should not exceed 27 characters.'
-                        )
-                      "
-                    >
-                      <b-form-input
-                        v-model="$v.createManagedCardRequest.nameOnCard.$model"
-                        :state="isInvalid($v.createManagedCardRequest.nameOnCard)"
-                        placeholder="eg. Elon Musk"
-                      />
-                    </b-form-group>
-                  </b-col>
-                </b-form-row>
-                <b-form-row v-if="!isConsumer">
-                  <b-col>
-                    <b-form-group label="CARDHOLDER MOBILE NUMBER">
-                      <vue-phone-number-input
-                        :value="mobile.number"
-                        :error="numberIsValid === false"
-                        :border-radius="0"
-                        color="#6C1C5C"
-                        error-color="#F50E4C"
-                        valid-color="#6D7490"
-                        default-country-code="GB"
-                        @update="phoneUpdate"
-                      />
-                      <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
-                        This field must be a valid mobile number.
-                      </b-form-invalid-feedback>
-                    </b-form-group>
-                  </b-col>
-                </b-form-row>
-                <b-form-row>
-                  <b-col>
-                    <b-form-group :state="isInvalid($v.createManagedCardRequest.currency)" label="Currency">
-                      <b-form-select v-model="$v.createManagedCardRequest.currency.$model" :options="currencyOptions" />
-                    </b-form-group>
-                  </b-col>
-                </b-form-row>
-                <b-form-row>
-                  <b-col>
-                    <b-form-group
-                      label="ADD A CUSTOM CARD NAME"
-                      :invalid-feedback="
-                        invalidFeedback(
-                          $v.createManagedCardRequest.friendlyName,
-                          validateVParams(
-                            $v.createManagedCardRequest.friendlyName.$params,
-                            $v.createManagedCardRequest.friendlyName
-                          )
-                        )
-                      "
-                      :state="isInvalid($v.createManagedCardRequest.friendlyName)"
-                    >
-                      <b-form-input
-                        v-model="$v.createManagedCardRequest.friendlyName.$model"
-                        placeholder="eg. travel expenses"
-                      />
-                    </b-form-group>
-                  </b-col>
-                </b-form-row>
-                <loader-button
-                  :is-loading="localIsBusy"
-                  :disabled="$v.$invalid || numberIsValid === false"
-                  button-text="next"
-                  class="mt-5 text-center"
-                />
-              </b-form>
-            </b-card-body>
-          </b-card>
-        </b-col>
-      </b-row>
-    </b-container>
-  </section>
+    <section>
+        <b-container>
+            <b-row v-if="pendingDataOrError">
+                <b-col>
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="loader-spinner">
+                            <b-spinner />
+                        </div>
+                    </div>
+                </b-col>
+            </b-row>
+            <b-row v-else align-h="center">
+                <b-col lg="6" md="9">
+                    <b-card class="border-0">
+                        <b-card-title class="mb-5 text-center font-weight-lighter">
+                            Create Card
+                        </b-card-title>
+                        <b-card-body>
+                            <b-alert :show="showError" class="text-center" variant="danger">
+                                Error creating new card. <br />Contact support if problem persists.
+                            </b-alert>
+                            <b-form v-if="!showError" @submit.prevent="doAdd">
+                                <b-form-row v-if="showNameOnCardField">
+                                    <b-col>
+                                        <b-form-group
+                                            :invalid-feedback="
+                                                invalidFeedback(
+                                                    $v.createManagedCardRequest.nameOnCard,
+                                                    validateVParams(
+                                                        $v.createManagedCardRequest.nameOnCard
+                                                            .$params,
+                                                        $v.createManagedCardRequest.nameOnCard
+                                                    ),
+                                                    'Name is required and should not exceed 27 characters.'
+                                                )
+                                            "
+                                            :state="
+                                                isInvalid($v.createManagedCardRequest.nameOnCard)
+                                            "
+                                            label="Name of Person using Card"
+                                        >
+                                            <b-form-input
+                                                v-model="
+                                                    $v.createManagedCardRequest.nameOnCard.$model
+                                                "
+                                                :state="
+                                                    isInvalid(
+                                                        $v.createManagedCardRequest.nameOnCard
+                                                    )
+                                                "
+                                                placeholder="eg. Elon Musk"
+                                            />
+                                        </b-form-group>
+                                    </b-col>
+                                </b-form-row>
+                                <b-form-row v-if="!isConsumer">
+                                    <b-col>
+                                        <b-form-group label="CARDHOLDER MOBILE NUMBER">
+                                            <vue-phone-number-input
+                                                :border-radius="0"
+                                                :error="numberIsValid === false"
+                                                :value="mobile.number"
+                                                color="#6C1C5C"
+                                                default-country-code="GB"
+                                                error-color="#F50E4C"
+                                                valid-color="#6D7490"
+                                                @update="phoneUpdate"
+                                            />
+                                            <b-form-invalid-feedback
+                                                v-if="numberIsValid === false"
+                                                force-show
+                                            >
+                                                This field must be a valid mobile number.
+                                            </b-form-invalid-feedback>
+                                        </b-form-group>
+                                    </b-col>
+                                </b-form-row>
+                                <b-form-row>
+                                    <b-col>
+                                        <b-form-group
+                                            :state="isInvalid($v.createManagedCardRequest.currency)"
+                                            label="Currency"
+                                        >
+                                            <b-form-select
+                                                v-model="
+                                                    $v.createManagedCardRequest.currency.$model
+                                                "
+                                                :options="currencyOptions"
+                                            />
+                                        </b-form-group>
+                                    </b-col>
+                                </b-form-row>
+                                <b-form-row>
+                                    <b-col>
+                                        <b-form-group
+                                            :invalid-feedback="
+                                                invalidFeedback(
+                                                    $v.createManagedCardRequest.friendlyName,
+                                                    validateVParams(
+                                                        $v.createManagedCardRequest.friendlyName
+                                                            .$params,
+                                                        $v.createManagedCardRequest.friendlyName
+                                                    )
+                                                )
+                                            "
+                                            :state="
+                                                isInvalid($v.createManagedCardRequest.friendlyName)
+                                            "
+                                            label="ADD A CUSTOM CARD NAME"
+                                        >
+                                            <b-form-input
+                                                v-model="
+                                                    $v.createManagedCardRequest.friendlyName.$model
+                                                "
+                                                placeholder="eg. travel expenses"
+                                            />
+                                        </b-form-group>
+                                    </b-col>
+                                </b-form-row>
+                                <loader-button
+                                    :disabled="$v.$invalid || numberIsValid === false"
+                                    :is-loading="localIsBusy"
+                                    button-text="next"
+                                    class="mt-5 text-center"
+                                />
+                            </b-form>
+                        </b-card-body>
+                    </b-card>
+                </b-col>
+            </b-row>
+        </b-container>
+    </section>
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
@@ -118,124 +145,127 @@ import { Nullable } from '~/global'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 
 @Component({
-  components: {
-    ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    LoaderButton: () => import('~/components/LoaderButton.vue'),
-  },
-  validations: {
-    createManagedCardRequest: {
-      friendlyName: {
-        required,
-        maxLength: maxLength(50),
-      },
-      currency: {
-        required,
-      },
-      nameOnCard: {
-        required,
-        maxLength: maxLength(27),
-      },
+    components: {
+        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+        LoaderButton: () => import('~/components/LoaderButton.vue'),
     },
-  },
-  middleware: ['kyVerified'],
+    validations: {
+        createManagedCardRequest: {
+            friendlyName: {
+                required,
+                maxLength: maxLength(50),
+            },
+            currency: {
+                required,
+            },
+            nameOnCard: {
+                required,
+                maxLength: maxLength(27),
+            },
+        },
+    },
+    middleware: ['kyVerified'],
 })
 export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
-  showNameOnCardField: boolean = false
+    showNameOnCardField: boolean = false
 
-  showError: boolean = false
+    showError: boolean = false
 
-  localIsBusy: boolean = false
+    localIsBusy: boolean = false
 
-  mobile: {
-    countryCode: string
-    number: string
-  } = {
-    countryCode: '',
-    number: '',
-  }
-
-  numberIsValid: boolean | null = null
-
-  createManagedCardRequest: Nullable<CreateManagedCardRequest> = {
-    profileId: null,
-    friendlyName: null,
-    currency: null,
-    nameOnCard: null,
-    cardholderMobileNumber: null,
-    billingAddress: null,
-    mode: ManagedCardModeEnum.PREPAID_MODE,
-  }
-
-  get currencyOptions() {
-    return CurrencySelectConst.filter((item) => {
-      return item.value === this.profileBaseCurrency
-    })
-  }
-
-  fetch() {
-    if (this.stores.auth.isConsumer) {
-      const _consumer: ConsumerModel = this.stores.consumers.consumer as ConsumerModel
-      this.createManagedCardRequest.nameOnCard = _consumer.rootUser.name + ' ' + _consumer.rootUser.surname
-      this.createManagedCardRequest.cardholderMobileNumber =
-        _consumer.rootUser.mobile.countryCode + _consumer.rootUser.mobile.number
+    mobile: {
+        countryCode: string
+        number: string
+    } = {
+        countryCode: '',
+        number: '',
     }
 
-    this.showNameOnCardField =
-      !this.stores.auth.isConsumer ||
-      (!!this.createManagedCardRequest.nameOnCard && this.createManagedCardRequest.nameOnCard.length > 27)
+    numberIsValid: boolean | null = null
 
-    this.createManagedCardRequest.currency = this.profileBaseCurrency
-  }
-
-  async doAdd() {
-    if (this.localIsBusy) {
-      return
+    createManagedCardRequest: Nullable<CreateManagedCardRequest> = {
+        profileId: null,
+        friendlyName: null,
+        currency: null,
+        nameOnCard: null,
+        cardholderMobileNumber: null,
+        billingAddress: null,
+        mode: ManagedCardModeEnum.PREPAID_MODE,
     }
 
-    if (this.isConsumer) {
-      this.numberIsValid = true
+    get currencyOptions() {
+        return CurrencySelectConst.filter((item) => {
+            return item.value === this.profileBaseCurrency
+        })
     }
 
-    if (this.numberIsValid === null) {
-      this.numberIsValid = false
-    }
-
-    this.$v.$touch()
-    if (this.$v.$invalid || !this.numberIsValid) {
-      return
-    }
-
-    this.localIsBusy = true
-
-    this.createManagedCardRequest = {
-      ...this.createManagedCardRequest,
-      profileId: this.cardProfileId,
-      billingAddress: {
-        ...(this.isConsumer
-          ? (this.stores.consumers.consumer?.rootUser.address as AddressModel)
-          : (this.stores.corporates.corporate?.company.businessAddress as AddressModel)),
-      },
-    }
-
-    await this.stores.cards
-      .addCard(this.createManagedCardRequest as CreateManagedCardRequest)
-      .then(() => {
-        this.$router.push('/managed-cards')
-      })
-      .catch((err) => {
-        if (err.response.status) {
-          this.showError = true
+    fetch() {
+        if (this.stores.auth.isConsumer) {
+            const _consumer: ConsumerModel = this.stores.consumers.consumer as ConsumerModel
+            this.createManagedCardRequest.nameOnCard =
+                _consumer.rootUser.name + ' ' + _consumer.rootUser.surname
+            this.createManagedCardRequest.cardholderMobileNumber =
+                _consumer.rootUser.mobile.countryCode + _consumer.rootUser.mobile.number
         }
-      })
 
-    this.localIsBusy = false
-  }
+        this.showNameOnCardField =
+            !this.stores.auth.isConsumer ||
+            (!!this.createManagedCardRequest.nameOnCard &&
+                this.createManagedCardRequest.nameOnCard.length > 27)
 
-  phoneUpdate(number) {
-    this.mobile.number = number.phoneNumber
-    this.mobile.countryCode = number.countryCallingCode
-    this.createManagedCardRequest.cardholderMobileNumber = '+' + number.countryCallingCode + number.phoneNumber
-    this.numberIsValid = number.isValid
-  }
+        this.createManagedCardRequest.currency = this.profileBaseCurrency
+    }
+
+    async doAdd() {
+        if (this.localIsBusy) {
+            return
+        }
+
+        if (this.isConsumer) {
+            this.numberIsValid = true
+        }
+
+        if (this.numberIsValid === null) {
+            this.numberIsValid = false
+        }
+
+        this.$v.$touch()
+        if (this.$v.$invalid || !this.numberIsValid) {
+            return
+        }
+
+        this.localIsBusy = true
+
+        this.createManagedCardRequest = {
+            ...this.createManagedCardRequest,
+            profileId: this.cardProfileId,
+            billingAddress: {
+                ...(this.isConsumer
+                    ? (this.stores.consumers.consumer?.rootUser.address as AddressModel)
+                    : (this.stores.corporates.corporate?.company.businessAddress as AddressModel)),
+            },
+        }
+
+        await this.stores.cards
+            .addCard(this.createManagedCardRequest as CreateManagedCardRequest)
+            .then(() => {
+                this.$router.push('/managed-cards')
+            })
+            .catch((err) => {
+                if (err.response.status) {
+                    this.showError = true
+                }
+            })
+
+        this.localIsBusy = false
+    }
+
+    phoneUpdate(number) {
+        this.mobile.number = number.phoneNumber
+        this.mobile.countryCode = number.countryCallingCode
+        this.createManagedCardRequest.cardholderMobileNumber =
+            '+' + number.countryCallingCode + number.phoneNumber
+        this.numberIsValid = number.isValid
+    }
 }
 </script>

@@ -5,15 +5,21 @@ import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authenticati
 import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
 
 export class AdditionalFactorsApi {
-  index(): Promise<AxiosResponse<GetAuthenticationFactorsResponse>> {
-    return $axiosMulti.get<GetAuthenticationFactorsResponse>('/authentication_factors')
-  }
+    index(): Promise<AxiosResponse<GetAuthenticationFactorsResponse>> {
+        return $axiosMulti.get<GetAuthenticationFactorsResponse>('/authentication_factors')
+    }
 
-  enroll(channel: SCAOtpChannelEnum): Promise<AxiosResponse> {
-    return $axiosMulti.post(`/authentication_factors/otp/${channel}`)
-  }
+    enroll(channel: SCAOtpChannelEnum): Promise<AxiosResponse> {
+        return $axiosMulti.post(`/authentication_factors/otp/${channel}`)
+    }
 
-  verify(request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrolRequest }): Promise<AxiosResponse> {
-    return $axiosMulti.post(`/authentication_factors/otp/${request.channel}/verify`, request.body)
-  }
+    verify(request: {
+        channel: SCAOtpChannelEnum
+        body: AuthVerifyEnrolRequest
+    }): Promise<AxiosResponse> {
+        return $axiosMulti.post(
+            `/authentication_factors/otp/${request.channel}/verify`,
+            request.body
+        )
+    }
 }

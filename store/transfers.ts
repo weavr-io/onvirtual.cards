@@ -4,39 +4,39 @@ import { StoreModule } from '~/store/storeModule'
 import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 
 const defaultState = {
-  isLoading: false
+    isLoading: false,
 }
 
 @Module({
-  name: 'transfersModule',
-  namespaced: true,
-  stateFactory: true
+    name: 'transfersModule',
+    namespaced: true,
+    stateFactory: true,
 })
 export default class Transfers extends StoreModule {
-  isLoading: boolean = defaultState.isLoading
+    isLoading: boolean = defaultState.isLoading
 
-  @Mutation
-  RESET_STATE() {
-    Object.keys(defaultState).forEach((key) => {
-      this[key] = defaultState[key]
-    })
-  }
+    @Mutation
+    RESET_STATE() {
+        Object.keys(defaultState).forEach((key) => {
+            this[key] = defaultState[key]
+        })
+    }
 
-  @Mutation
-  SET_IS_LOADING(isLoading: boolean) {
-    this.isLoading = isLoading
-  }
+    @Mutation
+    SET_IS_LOADING(isLoading: boolean) {
+        this.isLoading = isLoading
+    }
 
-  @Action
-  execute(request: CreateTransferRequest) {
-    loaderStore(this.store).start()
+    @Action
+    execute(request: CreateTransferRequest) {
+        loaderStore(this.store).start()
 
-    const req = this.store.$apiMulti.transfers.store(request)
+        const req = this.store.$apiMulti.transfers.store(request)
 
-    req.finally(() => {
-      loaderStore(this.store).stop()
-    })
+        req.finally(() => {
+            loaderStore(this.store).stop()
+        })
 
-    return req
-  }
+        return req
+    }
 }

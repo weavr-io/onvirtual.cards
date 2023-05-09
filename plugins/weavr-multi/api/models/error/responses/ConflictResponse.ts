@@ -1,3 +1,3 @@
 export interface ConflictResponse {
-  errorCode?: string
+    errorCode?: string
 }

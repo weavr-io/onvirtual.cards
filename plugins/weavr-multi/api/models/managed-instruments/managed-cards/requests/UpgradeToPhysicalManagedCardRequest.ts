@@ -3,10 +3,10 @@ import { DeliveryAddressModel } from '~/plugins/weavr-multi/api/models/common/De
 import { SensitivePinModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/SensitivePinModel'
 
 export interface UpgradeToPhysicalManagedCardRequest {
-  productReference?: string
-  carrierType?: string
-  deliveryMethod?: PhysicalCardDeliveryMethodEnum
-  deliveryAddress: DeliveryAddressModel
-  activationCode: string
-  pin: SensitivePinModel
+    productReference?: string
+    carrierType?: string
+    deliveryMethod?: PhysicalCardDeliveryMethodEnum
+    deliveryAddress: DeliveryAddressModel
+    activationCode: string
+    pin: SensitivePinModel
 }

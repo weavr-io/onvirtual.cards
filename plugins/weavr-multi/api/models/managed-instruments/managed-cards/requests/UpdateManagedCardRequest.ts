@@ -3,10 +3,10 @@ import { DeliveryAddressModel } from '~/plugins/weavr-multi/api/models/common/De
 import { PhysicalCardDeliveryMethodEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/PhysicalCardDeliveryMethodEnum'
 
 export interface UpdateManagedCardRequest {
-  tag?: string
-  friendlyName?: string
-  cardholderMobileNumber?: string
-  billingAddress?: AddressModel
-  deliveryAddress?: DeliveryAddressModel
-  deliveryMethod?: PhysicalCardDeliveryMethodEnum
+    tag?: string
+    friendlyName?: string
+    cardholderMobileNumber?: string
+    billingAddress?: AddressModel
+    deliveryAddress?: DeliveryAddressModel
+    deliveryMethod?: PhysicalCardDeliveryMethodEnum
 }

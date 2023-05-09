@@ -1,4 +1,4 @@
 export interface SepaBankDetailsModel {
-  iban: string
-  bankIdentifierCode?: string
+    iban: string
+    bankIdentifierCode?: string
 }

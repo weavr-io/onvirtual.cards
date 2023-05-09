@@ -1,11 +1,11 @@
 <template>
-  <b-container>
-    <div class="d-flex flex-column align-items-center">
-      <logo />
-      <access-code-component v-if="$config.production && !isAccessCodeValid" />
-      <business-or-personal-component v-else />
-    </div>
-  </b-container>
+    <b-container>
+        <div class="d-flex flex-column align-items-center">
+            <logo />
+            <access-code-component v-if="$config.production && !isAccessCodeValid" />
+            <business-or-personal-component v-else />
+        </div>
+    </b-container>
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
@@ -16,25 +16,25 @@ import AccessCodeComponent from '~/components/registration/AccessCodeComponent.v
 import Logo from '~/components/Logo.vue'
 
 @Component({
-  components: {
-    Logo,
-    AccessCodeComponent,
-    BusinessOrPersonalComponent,
-  },
-  layout: 'auth',
-  middleware: 'accessCodeVerified',
+    components: {
+        Logo,
+        AccessCodeComponent,
+        BusinessOrPersonalComponent,
+    },
+    layout: 'auth',
+    middleware: 'accessCodeVerified',
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
-  get isAccessCodeValid() {
-    return this.stores.accessCodes.isValid
-  }
-
-  asyncData({ store, redirect }) {
-    const isLoggedIn = authStore(store).isLoggedIn
-
-    if (isLoggedIn) {
-      redirect('/dashboard')
+    get isAccessCodeValid() {
+        return this.stores.accessCodes.isValid
     }
-  }
+
+    asyncData({ store, redirect }) {
+        const isLoggedIn = authStore(store).isLoggedIn
+
+        if (isLoggedIn) {
+            redirect('/dashboard')
+        }
+    }
 }
 </script>

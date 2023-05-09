@@ -1,4 +1,4 @@
 export interface SelectOptionsModel {
-    text: string;
-    value: any;
+    text: string
+    value: any
 }

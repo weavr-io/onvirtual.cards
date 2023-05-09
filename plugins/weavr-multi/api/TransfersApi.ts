@@ -7,15 +7,17 @@ import { GetTransferTransactionsRequest } from '~/plugins/weavr-multi/api/models
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 
 export class TransfersApi {
-  index(filters?: GetTransferTransactionsRequest): Promise<AxiosResponse<GetTransferTransactionsResponse>> {
-    return $axiosMulti.get<GetTransferTransactionsResponse>('/transfers', { params: filters })
-  }
+    index(
+        filters?: GetTransferTransactionsRequest
+    ): Promise<AxiosResponse<GetTransferTransactionsResponse>> {
+        return $axiosMulti.get<GetTransferTransactionsResponse>('/transfers', { params: filters })
+    }
 
-  store(body: CreateTransferRequest): Promise<AxiosResponse<TransferModel>> {
-    return $axiosMulti.post<TransferModel>('/transfers', body)
-  }
+    store(body: CreateTransferRequest): Promise<AxiosResponse<TransferModel>> {
+        return $axiosMulti.post<TransferModel>('/transfers', body)
+    }
 
-  show(id: IDModel): Promise<AxiosResponse<TransferModel>> {
-    return $axiosMulti.get<TransferModel>('/transfers/' + id)
-  }
+    show(id: IDModel): Promise<AxiosResponse<TransferModel>> {
+        return $axiosMulti.get<TransferModel>('/transfers/' + id)
+    }
 }

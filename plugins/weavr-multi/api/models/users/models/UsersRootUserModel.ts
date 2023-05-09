@@ -4,14 +4,14 @@ import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities
 import { DateModel } from '~/plugins/weavr-multi/api/models/common/DateModel'
 
 export interface UsersRootUserModel {
-  id: UserIdentityModel
-  name: string
-  surname: string
-  email: string
-  mobile: MobileModel
-  companyPosition: CompanyPositionEnum
-  active: boolean
-  emailVerified: boolean
-  mobileNumberVerified: boolean
-  dateOfBirth: DateModel
+    id: UserIdentityModel
+    name: string
+    surname: string
+    email: string
+    mobile: MobileModel
+    companyPosition: CompanyPositionEnum
+    active: boolean
+    emailVerified: boolean
+    mobileNumberVerified: boolean
+    dateOfBirth: DateModel
 }

@@ -4,11 +4,14 @@ import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authenticati
 import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
 
 export class StepUpApi {
-  enroll(channel: SCAOtpChannelEnum): Promise<AxiosResponse> {
-    return $axiosMulti.post(`/stepup/challenges/otp/${channel}`)
-  }
+    enroll(channel: SCAOtpChannelEnum): Promise<AxiosResponse> {
+        return $axiosMulti.post(`/stepup/challenges/otp/${channel}`)
+    }
 
-  verify(request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrolRequest }): Promise<AxiosResponse> {
-    return $axiosMulti.post(`/stepup/challenges/otp/${request.channel}/verify`, request.body)
-  }
+    verify(request: {
+        channel: SCAOtpChannelEnum
+        body: AuthVerifyEnrolRequest
+    }): Promise<AxiosResponse> {
+        return $axiosMulti.post(`/stepup/challenges/otp/${request.channel}/verify`, request.body)
+    }
 }

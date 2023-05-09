@@ -1,3 +1,3 @@
 export interface CreationTimestamp {
-  creationTimestamp: number
+    creationTimestamp: number
 }

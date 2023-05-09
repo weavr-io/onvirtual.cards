@@ -1,3 +1,3 @@
 export interface StartCorporateKYBResponse {
-  reference: string
+    reference: string
 }

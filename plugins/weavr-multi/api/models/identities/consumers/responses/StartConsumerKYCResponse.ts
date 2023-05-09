@@ -1,3 +1,3 @@
 export interface StartConsumerKYCResponse {
-  reference: string
+    reference: string
 }

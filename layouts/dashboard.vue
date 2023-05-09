@@ -1,35 +1,35 @@
 <template>
-  <div>
-    <app-header />
-    <dashboard-header />
-    <Nuxt />
-    <kyb-alert v-if="showKybAlert" />
-    <kyc-alert v-if="showKycAlert" />
-    <b-alert
-      id="verify-mobile"
-      :show="showVerifyMobileAlert && !showVerifyEmailAlert"
-      class="fixed-bottom bottom-left-alert m-4 p-4"
-      variant="bg-colored"
-    >
-      We need to verify your mobile number. Please click
-      <b-link to="/login/verify/mobile" class="link"> here. </b-link>
-    </b-alert>
-    <b-alert
-      id="verify-email"
-      :show="showVerifyEmailAlert"
-      class="fixed-bottom bottom-left-alert m-4 p-4"
-      variant="bg-colored"
-    >
-      We need to verify your email address. Please click
-      <b-button variant="transparent" class="link mb-1" @click="goToVerify">here.</b-button>
-    </b-alert>
-    <div v-if="isLoading" id="loader">
-      <div class="loader-spinner">
-        <b-spinner />
-      </div>
+    <div>
+        <app-header />
+        <dashboard-header />
+        <Nuxt />
+        <kyb-alert v-if="showKybAlert" />
+        <kyc-alert v-if="showKycAlert" />
+        <b-alert
+            id="verify-mobile"
+            :show="showVerifyMobileAlert && !showVerifyEmailAlert"
+            class="fixed-bottom bottom-left-alert m-4 p-4"
+            variant="bg-colored"
+        >
+            We need to verify your mobile number. Please click
+            <b-link to="/login/verify/mobile" class="link"> here. </b-link>
+        </b-alert>
+        <b-alert
+            id="verify-email"
+            :show="showVerifyEmailAlert"
+            class="fixed-bottom bottom-left-alert m-4 p-4"
+            variant="bg-colored"
+        >
+            We need to verify your email address. Please click
+            <b-button variant="transparent" class="link mb-1" @click="goToVerify">here.</b-button>
+        </b-alert>
+        <div v-if="isLoading" id="loader">
+            <div class="loader-spinner">
+                <b-spinner />
+            </div>
+        </div>
+        <cookie-policy />
     </div>
-    <cookie-policy />
-  </div>
 </template>
 
 <script lang="ts">
@@ -38,34 +38,34 @@ import KyVerified from '~/mixins/kyVerified'
 import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
-  components: {
-    AppFooter: () => import('~/components/Footer.vue'),
-    AppHeader: () => import('~/components/Header.vue'),
-    DashboardHeader: () => import('~/components/DashboardHeader.vue'),
-    KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
-    KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
-    cookiePolicy: () => import('~/components/cookie.vue'),
-  },
+    components: {
+        AppFooter: () => import('~/components/Footer.vue'),
+        AppHeader: () => import('~/components/Header.vue'),
+        DashboardHeader: () => import('~/components/DashboardHeader.vue'),
+        KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
+        KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
+        cookiePolicy: () => import('~/components/cookie.vue'),
+    },
 })
 export default class DefaultLayout extends mixins(KyVerified, BaseMixin) {
-  get isLoading() {
-    return this.stores.loader.isLoading
-  }
+    get isLoading() {
+        return this.stores.loader.isLoading
+    }
 
-  get accounts() {
-    return this.stores.accounts.accounts
-  }
+    get accounts() {
+        return this.stores.accounts.accounts
+    }
 }
 </script>
 <style lang="scss" scoped>
 .bottom-left-alert {
-  max-width: 350px;
+    max-width: 350px;
 }
 
 #account {
-  &-limit,
-  &-kyc {
-    max-width: 350px;
-  }
+    &-limit,
+    &-kyc {
+        max-width: 350px;
+    }
 }
 </style>

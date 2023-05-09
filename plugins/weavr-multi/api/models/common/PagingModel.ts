@@ -1,4 +1,4 @@
 export interface PagingModel {
-  offset?: string | number
-  limit?: string | number
+    offset?: string | number
+    limit?: string | number
 }

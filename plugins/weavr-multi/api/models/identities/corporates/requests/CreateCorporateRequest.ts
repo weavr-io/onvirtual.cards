@@ -6,15 +6,15 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
 import { CompanyRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CompanyRequest'
 
 export interface CreateCorporateRequest {
-  profileId: IDModel
-  tag?: string
-  rootUser: CorporatesRootUserRequest
-  company: CompanyRequest
-  industry: IndustryTypeEnum
-  sourceOfFunds: CorporateSourceOfFundTypeEnum
-  sourceOfFundsOther?: string
-  acceptedTerms: boolean
-  ipAddress: string
-  baseCurrency: CurrencyEnum
-  feeGroup?: string
+    profileId: IDModel
+    tag?: string
+    rootUser: CorporatesRootUserRequest
+    company: CompanyRequest
+    industry: IndustryTypeEnum
+    sourceOfFunds: CorporateSourceOfFundTypeEnum
+    sourceOfFundsOther?: string
+    acceptedTerms: boolean
+    ipAddress: string
+    baseCurrency: CurrencyEnum
+    feeGroup?: string
 }

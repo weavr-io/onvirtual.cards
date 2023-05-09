@@ -4,11 +4,11 @@ import { LegalAddressModel } from '~/plugins/weavr-multi/api/models/identities/c
 import { DateModel } from '~/plugins/weavr-multi/api/models/common/DateModel'
 
 export interface CompanyModel {
-  name: string
-  type: CompanyTypeEnum
-  registrationNumber: string
-  registeredAddress?: LegalAddressModel
-  businessAddress?: AddressModel
-  countryOfRegistration: string
-  incorporatedOn?: DateModel
+    name: string
+    type: CompanyTypeEnum
+    registrationNumber: string
+    registeredAddress?: LegalAddressModel
+    businessAddress?: AddressModel
+    countryOfRegistration: string
+    incorporatedOn?: DateModel
 }

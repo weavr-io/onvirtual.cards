@@ -1,3 +1,3 @@
 export interface InitiateLostPasswordRequestModel {
-  email: string
+    email: string
 }
