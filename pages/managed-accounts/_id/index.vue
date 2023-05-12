@@ -1,6 +1,6 @@
 <template>
     <div>
-        <section v-if="!hasAlert && !pendingDataOrError">
+        <section v-if="!kyVerified.unRefs.hasAlert && !base.unRefs.pendingDataOrError">
             <statement :filters="filters" />
             <infinite-loading spinner="spiral" @infinite="infiniteScroll">
                 <span slot="no-more" />
@@ -10,15 +10,13 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-
-import BaseMixin from '~/mixins/BaseMixin'
-import RouterMixin from '~/mixins/RouterMixin'
-import AccountsMixin from '~/mixins/AccountsMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
-import KyVerified from '~/mixins/kyVerified'
 import { accountsStore } from '~/utils/store-accessor'
+import { useBase } from '~/composables/useBase'
+import { useKyVerified } from '~/composables/useKyVerified'
 
 const dot = require('dot-object')
 const moment = require('moment')
@@ -33,13 +31,16 @@ const moment = require('moment')
     },
     middleware: 'kyVerified',
 })
-export default class AccountPage extends mixins(BaseMixin, RouterMixin, AccountsMixin, KyVerified) {
+export default class AccountPage extends Vue {
+    base = useBase(this)
+    kyVerified = useKyVerified(this)
+
     filters: GetManagedAccountStatementRequest | null = null
 
     page: number = 0
 
     get filteredStatement() {
-        return this.stores.accounts.filteredStatement
+        return this.base.stores.accounts.filteredStatement
     }
 
     asyncData({ store }) {
@@ -49,7 +50,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
     async fetch() {
         const _accountId = this.$route.params.id
 
-        await this.stores.accounts.get(_accountId)
+        await this.base.stores.accounts.get(_accountId)
 
         const _routeQueries = dot.object(this.$route.query)
         const _filters = _routeQueries.filters ? _routeQueries.filters : {}
@@ -78,7 +79,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
         this.filters = { ..._statementFilters }
 
         this.page = 0
-        await this.stores.accounts.getStatements(_req)
+        await this.base.stores.accounts.getStatements(_req)
     }
 
     infiniteScroll($state) {
@@ -89,7 +90,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
 
             _request!.offset = (this.page * +_request!.limit!).toString()
 
-            this.stores.accounts
+            this.base.stores.accounts
                 .getStatements({
                     id: this.$route.params.id,
                     filters: _request,

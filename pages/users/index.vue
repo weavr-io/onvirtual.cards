@@ -12,7 +12,7 @@
                 </b-col>
             </b-row>
 
-            <template v-if="users && !pendingDataOrError">
+            <template v-if="users && !base.unRefs.pendingDataOrError">
                 <b-row v-for="(user, key) in users.users" :key="key" align-v="center" class="mt-3">
                     <b-col cols="2" md="1">
                         <b-img :alt="user.name + ' ' + user.surname" rounded v-bind="mainProps" />
@@ -35,11 +35,14 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
+import { useBase } from '~/composables/useBase'
 
 @Component({ middleware: ['kyVerified'] })
-export default class UsersPage extends mixins(BaseMixin) {
+export default class UsersPage extends Vue {
+    base = useBase(this)
+
     mainProps = {
         blank: true,
         blankColor: '#EAEDF6',
@@ -48,11 +51,11 @@ export default class UsersPage extends mixins(BaseMixin) {
     }
 
     get users() {
-        return this.stores.users.users
+        return this.base.stores.users.users
     }
 
     fetch() {
-        return this.stores.users.index()
+        return this.base.stores.users.index()
     }
 }
 </script>

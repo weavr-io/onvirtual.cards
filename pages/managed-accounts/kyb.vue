@@ -40,7 +40,7 @@
             </b-row>
             <b-row v-else>
                 <b-col>
-                    <template v-if="pendingDataOrError">
+                    <template v-if="base.unRefs.pendingDataOrError">
                         <div class="d-flex justify-content-center">
                             <div class="loader-spinner">
                                 <b-spinner />
@@ -86,11 +86,12 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { KYBErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBErrorCodeEnum'
 import DashboardHeader from '~/components/DashboardHeader.vue'
+import { useBase } from '~/composables/useBase'
 
 @Component({
     components: {
@@ -100,7 +101,9 @@ import DashboardHeader from '~/components/DashboardHeader.vue'
     },
     middleware: ['kyVerified'],
 })
-export default class KybPage extends mixins(BaseMixin) {
+export default class KybPage extends Vue {
+    base = useBase(this)
+
     reference: string = ''
     kybErrorCode: KYBErrorCodeEnum | null = null
 
@@ -131,11 +134,11 @@ export default class KybPage extends mixins(BaseMixin) {
     async fetch() {
         if (this.sumsSubEnabled) {
             try {
-                await this.stores.corporates
+                await this.base.stores.corporates
                     .startKYB()
                     .then((res) => {
                         this.reference = res.data.reference
-                        this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+                        this.$weavrSetUserToken('Bearer ' + this.base.stores.auth.token)
                     })
                     .catch((res) => {
                         if (res.response.data.errorCode) {
@@ -143,7 +146,7 @@ export default class KybPage extends mixins(BaseMixin) {
                         }
                     })
             } catch (e: any) {
-                this.showErrorToast(e)
+                this.base.showErrorToast(e)
             }
         }
     }

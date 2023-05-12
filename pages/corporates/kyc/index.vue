@@ -26,10 +26,10 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
+import Vue from 'vue'
 import { KYBOptions } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
     components: {
@@ -37,7 +37,7 @@ import BaseMixin from '~/mixins/BaseMixin'
         BIconBoxArrowUpRight,
     },
 })
-export default class KybPage extends mixins(BaseMixin) {
+export default class KybPage extends Vue {
     reference!: string
 
     accessTokenError: boolean = false

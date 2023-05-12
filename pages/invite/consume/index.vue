@@ -49,15 +49,16 @@
     </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Ref } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
+import Vue from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
 import Logo from '~/components/Logo.vue'
+import { useBase } from '~/composables/useBase'
 
 @Component({
     layout: 'auth',
@@ -75,7 +76,9 @@ import Logo from '~/components/Logo.vue'
         WeavrPasswordInput,
     },
 })
-export default class IniteConsume extends mixins(BaseMixin) {
+export default class IniteConsume extends Vue {
+    base = useBase(this)
+
     showError: boolean = false
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
@@ -146,7 +149,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
                 },
             }
 
-            return this.stores.users.inviteValidate(_validateRequest).catch(this.handleError)
+            return this.base.stores.users.inviteValidate(_validateRequest).catch(this.handleError)
         } catch (e) {}
     }
 
@@ -162,7 +165,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
     }
 
     handleError(e) {
-        this.stores.errors.SET_ERROR(e.response)
+        this.base.stores.errors.SET_ERROR(e.response)
     }
 
     tryToSubmitForm(e) {
@@ -172,7 +175,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
                 (tokens) => {
                     if (tokens.tokens.password !== '') {
                         this.form.data.password!.value = tokens.tokens.password
-                        this.stores.users.inviteConsume(this.form).then(() => {
+                        this.base.stores.users.inviteConsume(this.form).then(() => {
                             this.$router.push('/login')
                         })
                     } else {

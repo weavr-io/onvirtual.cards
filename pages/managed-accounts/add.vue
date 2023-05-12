@@ -3,7 +3,7 @@
         <b-container>
             <b-row align-h="center">
                 <b-col lg="4" md="9">
-                    <b-card v-if="isCorporate" class="border-0">
+                    <b-card v-if="base.unRefs.isCorporate" class="border-0">
                         <b-card-title class="mb-5 text-center font-weight-lighter">
                             Select Account Currency
                         </b-card-title>
@@ -11,7 +11,11 @@
                             <b-form-row>
                                 <b-col>
                                     <b-form-group
-                                        :state="isInvalid($v.createManagedAccountRequest.currency)"
+                                        :state="
+                                            validation.isInvalid(
+                                                $v.createManagedAccountRequest.currency
+                                            )
+                                        "
                                         label="Currency"
                                     >
                                         <b-form-select
@@ -34,15 +38,16 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins, Watch } from 'nuxt-property-decorator'
+import { Component, Watch } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import AccountsMixin from '~/mixins/AccountsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
+import { useBase } from '~/composables/useBase'
+import { useAccounts } from '~/composables/useAccounts'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
     components: {
@@ -62,7 +67,11 @@ import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/con
     },
     middleware: ['kyVerified'],
 })
-export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, ValidationMixin) {
+export default class AddAccountPage extends Vue {
+    base = useBase(this)
+    accounts = useAccounts(this)
+    validation = useValidation()
+
     localIsBusy: boolean = false
 
     createManagedAccountRequest: CreateManagedAccountRequest = {
@@ -73,36 +82,36 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
 
     get currencyOptions() {
         return CurrencySelectConst.filter((item) => {
-            return item.value === this.profileBaseCurrency
+            return item.value === this.base.unRefs.profileBaseCurrency
         })
     }
 
     async fetch() {
-        await this.stores.accounts
+        await this.base.stores.accounts
             .index({
-                profileId: this.accountProfileId,
+                profileId: this.base.unRefs.accountProfileId,
                 state: ManagedInstrumentStateEnum.ACTIVE,
                 offset: '0',
             })
             .then(async (res) => {
                 if (parseInt(res.data.count!) < 1) {
-                    if (this.isConsumer) {
-                        await this.stores.accounts
+                    if (this.base.unRefs.isConsumer) {
+                        await this.base.stores.accounts
                             .create(this.createManagedAccountRequest)
                             .then(async (res) => {
-                                await this.stores.accounts.upgradeIban(res.data.id)
-                                return this.goToManagedAccountIndex()
+                                await this.base.stores.accounts.upgradeIban(res.data.id)
+                                return this.accounts.goToManagedAccountIndex()
                             })
                             .catch((err) => {
                                 const data = err.response.data
                                 const error = data.message ? data.message : data.errorCode
 
-                                this.showErrorToast(error)
-                                this.goToManagedAccountIndex()
+                                this.base.showErrorToast(error)
+                                this.accounts.goToManagedAccountIndex()
                             })
                     }
                 } else {
-                    return this.goToManagedAccountIndex()
+                    return this.accounts.goToManagedAccountIndex()
                 }
             })
     }
@@ -117,17 +126,17 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
 
         this.localIsBusy = true
 
-        await this.stores.accounts
+        await this.base.stores.accounts
             .create(this.createManagedAccountRequest)
             .then(async (res) => {
-                await this.stores.accounts.upgradeIban(res.data.id)
-                return this.goToManagedAccountIndex()
+                await this.base.stores.accounts.upgradeIban(res.data.id)
+                return this.accounts.goToManagedAccountIndex()
             })
             .catch((err) => {
                 const data = err.response.data
                 const error = data.message ? data.message : data.errorCode
 
-                this.showErrorToast(error)
+                this.base.showErrorToast(error)
             })
 
         this.localIsBusy = false
@@ -135,7 +144,7 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
 
     @Watch('isConsumer', { immediate: true })
     updateProfileId() {
-        this.createManagedAccountRequest.profileId = this.accountProfileId
+        this.createManagedAccountRequest.profileId = this.base.unRefs.accountProfileId
     }
 }
 </script>

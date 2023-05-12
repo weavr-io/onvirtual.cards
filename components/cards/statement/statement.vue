@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-row class="mb-3" align-v="center" align-h="between">
+        <b-row align-h="between" align-v="center" class="mb-3">
             <b-col cols="9" sm="auto">
                 <div class="d-flex justify-content-start justify-content-lg-start align-items-end">
                     <label class="mr-2 mr-lg-4 font-weight-lighter" for="transaction-timeframe"
@@ -15,21 +15,21 @@
                     />
                 </div>
             </b-col>
-            <b-col cols="3" sm="auto" class="d-flex justify-content-center justify-content-lg-end">
+            <b-col class="d-flex justify-content-center justify-content-lg-end" cols="3" sm="auto">
                 <div>
                     <b-button
-                        variant="link"
                         class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none no-focus"
+                        variant="link"
                         @click="downloadStatement"
                     >
                         <download-icon class="mr-2" />
                         <p class="d-none d-sm-inline m-0">download</p>
                     </b-button>
                 </div>
-                <div v-if="isCardActive" class="ml-2 ml-sm-5">
+                <div v-if="cards.unRefs.isCardActive" class="ml-2 ml-sm-5">
                     <b-button
-                        variant="link"
                         class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none no-focus"
+                        variant="link"
                         @click="confirmDeleteCard"
                     >
                         <delete-icon class="mr-2" />
@@ -59,17 +59,18 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
+import { Component, Emit, Prop } from 'nuxt-property-decorator'
 import { AxiosError } from 'axios'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
-import CardsMixin from '~/mixins/CardsMixin'
-import RouterMixin from '~/mixins/RouterMixin'
-import FiltersMixin from '~/mixins/FiltersMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
+import { useBase } from '~/composables/useBase'
+import { useFilters } from '~/composables/useFilters'
+import { useCards } from '~/composables/useCards'
+import { useRouter } from '~/composables/useRouter'
 
 const dot = require('dot-object')
 const moment = require('moment')
@@ -81,12 +82,12 @@ const moment = require('moment')
         StatementItem: () => import('~/components/statement/item.vue'),
     },
 })
-export default class CardStatement extends mixins(
-    BaseMixin,
-    RouterMixin,
-    FiltersMixin,
-    CardsMixin
-) {
+export default class CardStatement extends Vue {
+    base = useBase(this)
+    filtersComp = useFilters()
+    cards = useCards(this)
+    router = useRouter(this)
+
     @Prop({
         required: true,
         default: null,
@@ -94,15 +95,8 @@ export default class CardStatement extends mixins(
     filters!: GetManagedCardStatementRequest | null
 
     get months() {
-        if (!this.managedCard) return []
-        return this.monthsFilter(this.managedCard.creationTimestamp)
-    }
-
-    filterMonthChange(val) {
-        this.setFilters({
-            fromTimestamp: val.start,
-            toTimestamp: val.end,
-        })
+        if (!this.cards.unRefs.managedCard) return []
+        return this.filtersComp.monthsFilter(this.cards.unRefs.managedCard.creationTimestamp)
     }
 
     get filterDate() {
@@ -114,7 +108,14 @@ export default class CardStatement extends mixins(
     }
 
     get filteredStatement() {
-        return this.stores.cards.filteredStatement
+        return this.base.stores.cards.filteredStatement
+    }
+
+    filterMonthChange(val) {
+        this.router.setFilters({
+            fromTimestamp: val.start,
+            toTimestamp: val.end,
+        })
     }
 
     downloadStatement() {
@@ -137,8 +138,8 @@ export default class CardStatement extends mixins(
             ..._filters,
         }
 
-        this.downloadAsCSV({
-            id: this.cardId,
+        this.cards.downloadAsCSV({
+            id: this.cards.unRefs.cardId,
             filters,
         })
     }
@@ -162,13 +163,13 @@ export default class CardStatement extends mixins(
 
     async doDeleteCard() {
         try {
-            this.showSuccessToast('Preparing card for deletion', 'Card Action')
+            this.base.showSuccessToast('Preparing card for deletion', 'Card Action')
             if (
-                this.managedCard?.balances?.availableBalance &&
-                this.managedCard.balances.availableBalance > 0
+                this.cards.unRefs.managedCard?.balances?.availableBalance &&
+                this.cards.unRefs.managedCard.balances.availableBalance > 0
             ) {
-                const _accounts = await this.stores.accounts.index({
-                    profileId: this.accountProfileId,
+                const _accounts = await this.base.stores.accounts.index({
+                    profileId: this.base.unRefs.accountProfileId,
                     state: ManagedInstrumentStateEnum.ACTIVE,
                     offset: '0',
                 })
@@ -177,29 +178,29 @@ export default class CardStatement extends mixins(
                         profileId: this.$config.profileId.transfers!,
                         source: {
                             type: InstrumentEnum.managedCards,
-                            id: this.cardId,
+                            id: this.cards.unRefs.cardId,
                         },
                         destination: {
                             type: InstrumentEnum.managedAccounts,
                             id: _accounts.data.accounts[0].id,
                         },
                         destinationAmount: {
-                            currency: this.managedCard.currency,
-                            amount: this.managedCard.balances.availableBalance,
+                            currency: this.cards.unRefs.managedCard.currency,
+                            amount: this.cards.unRefs.managedCard.balances.availableBalance,
                         },
                     }
-                    await this.stores.transfers.execute(_request)
+                    await this.base.stores.transfers.execute(_request)
                 }
             }
-            await this.stores.cards.remove(this.cardId).then(() => {
-                this.showSuccessToast('Card has been deleted', 'Card Action')
+            await this.base.stores.cards.remove(this.cards.unRefs.cardId).then(() => {
+                this.base.showSuccessToast('Card has been deleted', 'Card Action')
             })
             await this.$router.push('/managed-cards')
         } catch (err) {
             const data = (err as AxiosError<any>).response?.data
             const error = data.message ? data.message : data.errorCode
 
-            this.showErrorToast(error)
+            this.base.showErrorToast(error)
         }
     }
 

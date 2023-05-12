@@ -14,15 +14,15 @@
                 <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
                     <b-form-group
                         id="ig-email"
-                        :invalid-feedback="invalidFeedback($v.form.email, 'email')"
-                        :state="isInvalid($v.form.email)"
+                        :invalid-feedback="validation.invalidFeedback($v.form.email, 'email')"
+                        :state="validation.isInvalid($v.form.email)"
                         label="Email:"
                         label-for="from-email"
                     >
                         <b-form-input
                             id="from-email"
                             v-model="form.email"
-                            :state="isInvalid($v.form.email)"
+                            :state="validation.isInvalid($v.form.email)"
                             class="form-control"
                             name="setEmail"
                             placeholder="name@email.com"
@@ -67,12 +67,13 @@
     </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import Logo from '~/components/Logo.vue'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
     layout: 'auth',
@@ -90,7 +91,10 @@ import Logo from '~/components/Logo.vue'
         },
     },
 })
-export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin) {
+export default class ResetPasswordPage extends Vue {
+    base = useBase(this)
+    validation = useValidation()
+
     isLoading: boolean = false
 
     passwordSent: boolean = false
@@ -104,14 +108,14 @@ export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin
         if (this.$v.$invalid) return
 
         this.isLoading = true
-        this.stores.errors.SET_ERROR(null)
-        this.stores.auth
+        this.base.stores.errors.SET_ERROR(null)
+        this.base.stores.auth
             .lostPasswordInitiate(this.form)
             .then(() => {
                 this.passwordSent = true
             })
             .catch((err) => {
-                this.stores.errors.SET_ERROR(err)
+                this.base.stores.errors.SET_ERROR(err)
             })
             .finally(() => {
                 this.isLoading = false

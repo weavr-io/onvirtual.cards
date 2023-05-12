@@ -1,13 +1,13 @@
 <template>
     <b-container>
-        <b-row class="mb-2" align-v="center">
+        <b-row align-v="center" class="mb-2">
             <b-col>
                 <b-row>
                     <b-col cols="10" sm="8">
                         <h6 class="font-weight-lighter">
                             <b-row align-v="center">
                                 <b-col class="pr-0" cols="auto"> All Transactions</b-col>
-                                <b-col cols="auto" class="pl-2">
+                                <b-col class="pl-2" cols="auto">
                                     <b-form-select
                                         :options="months"
                                         :value="filterDate"
@@ -19,11 +19,11 @@
                             </b-row>
                         </h6>
                     </b-col>
-                    <b-col cols="2" sm="4" class="d-flex justify-content-end">
+                    <b-col class="d-flex justify-content-end" cols="2" sm="4">
                         <div class="d-flex align-items-center">
                             <b-button
-                                variant="link"
                                 class="p-0 d-flex align-items-center font-weight-lighter text-decoration-none no-focus"
+                                variant="link"
                                 @click="downloadStatement"
                             >
                                 <download-icon class="mr-2" />
@@ -53,7 +53,10 @@
                 <b-row v-else-if="availableBalance === 0" class="py-5">
                     <b-col class="text-center">
                         <h5 class="font-weight-light">Your transactions will appear here.</h5>
-                        <b-button :to="`/managed-accounts/${account.id}/topup`" variant="link">
+                        <b-button
+                            :to="`/managed-accounts/${accounts.unRefs.account.id}/topup`"
+                            variant="link"
+                        >
                             Start by topping up your account.
                         </b-button>
                     </b-col>
@@ -63,14 +66,15 @@
     </b-container>
 </template>
 <script lang="ts">
-import { Component, mixins, Prop } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import RouterMixin from '~/mixins/RouterMixin'
-import FiltersMixin from '~/mixins/FiltersMixin'
+import { Component, Prop } from 'nuxt-property-decorator'
 
+import Vue from 'vue'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
-import AccountsMixin from '~/mixins/AccountsMixin'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
+import { useBase } from '~/composables/useBase'
+import { useFilters } from '~/composables/useFilters'
+import { useAccounts } from '~/composables/useAccounts'
+import { useRouter } from '~/composables/useRouter'
 
 const moment = require('moment')
 
@@ -82,21 +86,21 @@ const dot = require('dot-object')
         DownloadIcon: () => import('~/assets/svg/download.svg?inline'),
     },
 })
-export default class AccountStatement extends mixins(
-    BaseMixin,
-    RouterMixin,
-    FiltersMixin,
-    AccountsMixin
-) {
+export default class AccountStatement extends Vue {
+    base = useBase(this)
+    filtersComp = useFilters()
+    accounts = useAccounts(this)
+    router = useRouter(this)
+
     @Prop() filters!: GetManagedAccountStatementRequest
 
     get filteredStatement() {
-        return this.stores.accounts.filteredStatement
+        return this.base.stores.accounts.filteredStatement
     }
 
     get availableBalance() {
-        if (this.stores.accounts.account) {
-            return this.stores.accounts.account.balances.availableBalance
+        if (this.base.stores.accounts.account) {
+            return this.base.stores.accounts.account.balances.availableBalance
         } else {
             return 0
         }
@@ -118,11 +122,11 @@ export default class AccountStatement extends mixins(
     }
 
     get months() {
-        return this.monthsFilter(this.account!.creationTimestamp)
+        return this.filtersComp.monthsFilter(this.accounts.unRefs.account!.creationTimestamp)
     }
 
     filterMonthChange(val) {
-        this.setFilters({
+        this.router.setFilters({
             fromTimestamp: val.start,
             toTimestamp: val.end,
         })
@@ -148,7 +152,7 @@ export default class AccountStatement extends mixins(
             ..._filters,
         }
 
-        this.downloadAsCSV({
+        this.accounts.downloadAsCSV({
             id: this.$route.params.id,
             filters: _req,
         })

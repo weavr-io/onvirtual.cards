@@ -9,7 +9,7 @@
                             <b-col>
                                 <b-form-group label="FIRST NAME">
                                     <b-form-input
-                                        :value="rootName"
+                                        :value="base.unRefs.rootName"
                                         class="form-control"
                                         disabled
                                         placeholder="John"
@@ -20,7 +20,7 @@
                             <b-col>
                                 <b-form-group label="LAST NAME">
                                     <b-form-input
-                                        :value="rootSurname"
+                                        :value="base.unRefs.rootSurname"
                                         class="form-control"
                                         disabled
                                         placeholder="Doe"
@@ -33,15 +33,15 @@
                             <b-col>
                                 <b-form-group
                                     :invalid-feedback="
-                                        invalidFeedback(
+                                        validation.invalidFeedback(
                                             $v.updateIdentityRootUser.email,
-                                            validateVParams(
+                                            validation.validateVParams(
                                                 $v.updateIdentityRootUser.email.$params,
                                                 $v.updateIdentityRootUser.email
                                             )
                                         )
                                     "
-                                    :state="isInvalid($v.updateIdentityRootUser.email)"
+                                    :state="validation.isInvalid($v.updateIdentityRootUser.email)"
                                     label="E-Mail"
                                 >
                                     <b-form-input
@@ -104,15 +104,16 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import Vue from 'vue'
 import { DeepNullable } from '~/global'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
     components: {
@@ -135,7 +136,10 @@ import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identit
     },
     middleware: ['kyVerified'],
 })
-export default class Profile extends mixins(BaseMixin, ValidationMixin) {
+export default class Profile extends Vue {
+    base = useBase(this)
+    validation = useValidation()
+
     numberIsValid: boolean | null = null
 
     updateIdentityRootUser: DeepNullable<{ mobile: MobileModel; email: string }> = {
@@ -157,30 +161,30 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
     }
 
     get isMobileVerified() {
-        return this.isConsumer
-            ? this.consumer?.rootUser.mobileNumberVerified
-            : this.corporate?.rootUser.mobileNumberVerified
+        return this.base.unRefs.isConsumer
+            ? this.base.unRefs.consumer?.rootUser.mobileNumberVerified
+            : this.base.unRefs.corporate?.rootUser.mobileNumberVerified
     }
 
     get isEmailVerified() {
-        return this.isConsumer
-            ? this.consumer?.rootUser.emailVerified
-            : this.corporate?.rootUser.emailVerified
+        return this.base.unRefs.isConsumer
+            ? this.base.unRefs.consumer?.rootUser.emailVerified
+            : this.base.unRefs.corporate?.rootUser.emailVerified
     }
 
     fetch() {
         this.updateIdentityRootUser = {
             mobile: {
-                countryCode: this.isConsumer
-                    ? this.consumer?.rootUser?.mobile.countryCode ?? null
-                    : this.corporate?.rootUser?.mobile.countryCode ?? null,
-                number: this.isConsumer
-                    ? this.consumer?.rootUser?.mobile.number ?? null
-                    : this.corporate?.rootUser?.mobile.number ?? null,
+                countryCode: this.base.unRefs.isConsumer
+                    ? this.base.unRefs.consumer?.rootUser?.mobile.countryCode ?? null
+                    : this.base.unRefs.corporate?.rootUser?.mobile.countryCode ?? null,
+                number: this.base.unRefs.isConsumer
+                    ? this.base.unRefs.consumer?.rootUser?.mobile.number ?? null
+                    : this.base.unRefs.corporate?.rootUser?.mobile.number ?? null,
             },
-            email: this.isConsumer
-                ? this.consumer?.rootUser?.email ?? null
-                : this.corporate?.rootUser?.email ?? null,
+            email: this.base.unRefs.isConsumer
+                ? this.base.unRefs.consumer?.rootUser?.email ?? null
+                : this.base.unRefs.corporate?.rootUser?.email ?? null,
         }
 
         if (
@@ -227,12 +231,14 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
 
         const xhr: Promise<any>[] = []
 
-        this.isConsumer
+        this.base.unRefs.isConsumer
             ? xhr.push(
-                  this.stores.consumers.update(this.updateIdentityRootUser as UpdateConsumerRequest)
+                  this.base.stores.consumers.update(
+                      this.updateIdentityRootUser as UpdateConsumerRequest
+                  )
               )
             : xhr.push(
-                  this.stores.corporates.update(
+                  this.base.stores.corporates.update(
                       this.updateIdentityRootUser as UpdateCorporateRequest
                   )
               )

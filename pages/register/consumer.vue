@@ -13,7 +13,11 @@
                                 <b-form-group label="First Name*">
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.name"
-                                        :state="isInvalid($v.registrationRequest.rootUser.name)"
+                                        :state="
+                                            validation.isInvalid(
+                                                $v.registrationRequest.rootUser.name
+                                            )
+                                        "
                                         placeholder="First Name"
                                     />
                                     <b-form-invalid-feedback
@@ -30,7 +34,11 @@
                                 <b-form-group label="Last Name*">
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.surname"
-                                        :state="isInvalid($v.registrationRequest.rootUser.surname)"
+                                        :state="
+                                            validation.isInvalid(
+                                                $v.registrationRequest.rootUser.surname
+                                            )
+                                        "
                                         placeholder="Last Name"
                                     />
                                     <b-form-invalid-feedback
@@ -58,19 +66,27 @@
                                     />
                                     <b-form-invalid-feedback
                                         :state="
-                                            isInvalid($v.registrationRequest.rootUser.dateOfBirth)
+                                            validation.isInvalid(
+                                                $v.registrationRequest.rootUser.dateOfBirth
+                                            )
                                         "
                                     >
                                         This field is required.
                                     </b-form-invalid-feedback>
                                 </b-form-group>
                                 <b-form-group
-                                    :state="isInvalid($v.registrationRequest.rootUser.email)"
+                                    :state="
+                                        validation.isInvalid($v.registrationRequest.rootUser.email)
+                                    "
                                     label="Email*"
                                 >
                                     <b-form-input
                                         v-model="$v.registrationRequest.rootUser.email.$model"
-                                        :state="isInvalid($v.registrationRequest.rootUser.email)"
+                                        :state="
+                                            validation.isInvalid(
+                                                $v.registrationRequest.rootUser.email
+                                            )
+                                        "
                                         placeholder="name@email.com"
                                         @input="delayTouch($v.registrationRequest.rootUser.email)"
                                     />
@@ -83,7 +99,7 @@
                                         v-model="rootMobileNumber"
                                         :border-radius="0"
                                         :error="numberIsValid === false"
-                                        :only-countries="mobileCountries"
+                                        :only-countries="base.unRefs.mobileCountries"
                                         color="#6C1C5C"
                                         default-country-code="GB"
                                         error-color="#F50E4C"
@@ -98,14 +114,20 @@
                                     </b-form-invalid-feedback>
                                 </b-form-group>
                                 <b-form-group
-                                    :state="isInvalid($v.registrationRequest.rootUser.occupation)"
+                                    :state="
+                                        validation.isInvalid(
+                                            $v.registrationRequest.rootUser.occupation
+                                        )
+                                    "
                                     label="Industry*"
                                 >
                                     <b-form-select
                                         v-model="$v.registrationRequest.rootUser.occupation.$model"
                                         :options="industryOccupationOptions"
                                         :state="
-                                            isInvalid($v.registrationRequest.rootUser.occupation)
+                                            validation.isInvalid(
+                                                $v.registrationRequest.rootUser.occupation
+                                            )
                                         "
                                     />
                                     <b-form-invalid-feedback
@@ -113,13 +135,19 @@
                                     </b-form-invalid-feedback>
                                 </b-form-group>
                                 <b-form-group
-                                    :state="isInvalid($v.registrationRequest.sourceOfFunds)"
+                                    :state="
+                                        validation.isInvalid($v.registrationRequest.sourceOfFunds)
+                                    "
                                     label="Source of Funds*"
                                 >
                                     <b-form-select
                                         v-model="$v.registrationRequest.sourceOfFunds.$model"
                                         :options="sourceOfFundsOptions"
-                                        :state="isInvalid($v.registrationRequest.sourceOfFunds)"
+                                        :state="
+                                            validation.isInvalid(
+                                                $v.registrationRequest.sourceOfFunds
+                                            )
+                                        "
                                     />
                                     <b-form-invalid-feedback
                                         >This field is required.
@@ -129,7 +157,9 @@
                                     <b-form-input
                                         v-model="registrationRequest.sourceOfFundsOther"
                                         :state="
-                                            isInvalid($v.registrationRequest.sourceOfFundsOther)
+                                            validation.isInvalid(
+                                                $v.registrationRequest.sourceOfFundsOther
+                                            )
                                         "
                                         placeholder="Specify Other Source of Funds"
                                     />
@@ -167,7 +197,9 @@
                                                     $v.registrationRequest.acceptedTerms.$model
                                                 "
                                                 :state="
-                                                    isInvalid($v.registrationRequest.acceptedTerms)
+                                                    validation.isInvalid(
+                                                        $v.registrationRequest.acceptedTerms
+                                                    )
                                                 "
                                             >
                                                 I accept the
@@ -214,13 +246,13 @@
     </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Ref } from 'nuxt-property-decorator'
 import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import { AxiosResponse } from 'axios'
 
+import Vue from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
@@ -231,9 +263,10 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
 import Logo from '~/components/Logo.vue'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 const touchMap = new WeakMap()
 
@@ -301,7 +334,10 @@ const touchMap = new WeakMap()
     },
     middleware: 'accessCodeVerified',
 })
-export default class ConsumerRegistrationPage extends mixins(BaseMixin, ValidationMixin) {
+export default class ConsumerRegistrationPage extends Vue {
+    base = useBase(this)
+    validation = useValidation()
+
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
@@ -390,7 +426,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     get isLoadingRegistration(): boolean {
-        return this.stores.consumers.isLoadingRegistration
+        return this.base.stores.consumers.isLoadingRegistration
     }
 
     get isPasswordValid(): boolean {
@@ -404,7 +440,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     submitForm(e) {
-        this.stores.errors.RESET_ERROR()
+        this.base.stores.errors.RESET_ERROR()
         try {
             e.preventDefault()
 
@@ -419,7 +455,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
             }
 
             if (this.isPasswordValid) {
-                this.stores.consumers.SET_IS_LOADING_REGISTRATION(true)
+                this.base.stores.consumers.SET_IS_LOADING_REGISTRATION(true)
                 this.passwordField.createToken().then(
                     (tokens) => {
                         if (tokens.tokens.password !== '') {
@@ -436,7 +472,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
             }
         } catch (error: any) {
             this.stopRegistrationLoading()
-            this.showErrorToast(error)
+            this.base.showErrorToast(error)
         }
     }
 
@@ -452,7 +488,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     doRegister() {
-        this.stores.consumers
+        this.base.stores.consumers
             .create(this.registrationRequest as CreateConsumerRequest)
             .then(this.onConsumerCreated)
             .catch(this.registrationFailed)
@@ -477,7 +513,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     onRegisteredSuccessfully() {
-        this.stores.accessCodes.DELETE_ACCESS_CODE()
+        this.base.stores.accessCodes.DELETE_ACCESS_CODE()
 
         if (!this.registrationRequest.rootUser) {
             return
@@ -490,10 +526,10 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
             },
         }
 
-        const _req = this.stores.auth.loginWithPassword(loginRequest)
+        const _req = this.base.stores.auth.loginWithPassword(loginRequest)
 
         _req.then(() => {
-            this.setSCAstorage()
+            this.base.setSCAstorage()
             this.stopRegistrationLoading()
             return this.$router.push({ path: '/profile/address' })
         })
@@ -502,7 +538,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     registrationFailed(err) {
         this.stopRegistrationLoading()
         const _errCode = err.response.data.errorCode
-        this.showErrorToast(_errCode)
+        this.base.showErrorToast(_errCode)
     }
 
     phoneUpdate(number) {
@@ -528,7 +564,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     stopRegistrationLoading() {
-        this.stores.consumers.SET_IS_LOADING_REGISTRATION(false)
+        this.base.stores.consumers.SET_IS_LOADING_REGISTRATION(false)
     }
 }
 </script>

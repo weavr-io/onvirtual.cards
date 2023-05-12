@@ -3,13 +3,13 @@
         <b-alert
             id="cookie-alert"
             v-model="showCookieAlert"
-            variant="primary"
             class="text-uppercase"
+            variant="primary"
         >
             <div class="d-flex justify-content-between align-items-center">
                 <div class="flex-grow-1">
                     This site uses cookies. If you continue we'll assume you're ok with that.
-                    <b-link href="https://onvirtual.cards/policy/" target="_blank" class="link">
+                    <b-link class="link" href="https://onvirtual.cards/policy/" target="_blank">
                         View privacy policy
                     </b-link>
                 </div>
@@ -23,14 +23,14 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import config from '~/config'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
 @Component
-export default class Cookies extends mixins(BaseMixin) {
+export default class Cookies extends Vue {
     showCookieAlert: boolean = false
 
     created() {

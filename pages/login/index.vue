@@ -11,8 +11,10 @@
                     />
                     <b-form-group
                         id="login-email"
-                        :invalid-feedback="invalidFeedback($v.loginRequest.email, 'email')"
-                        :state="isInvalid($v.loginRequest.email)"
+                        :invalid-feedback="
+                            validation.invalidFeedback($v.loginRequest.email, 'email')
+                        "
+                        :state="validation.isInvalid($v.loginRequest.email)"
                         label="Email"
                         label-for="form-email"
                     >
@@ -79,15 +81,16 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Ref } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
+import Vue from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { authStore } from '~/utils/store-accessor'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import Logo from '~/components/Logo.vue'
+import { useValidation } from '~/composables/useValidation'
+import { useBase } from '~/composables/useBase'
 
 @Component({
     layout: 'auth',
@@ -111,7 +114,10 @@ import Logo from '~/components/Logo.vue'
         },
     },
 })
-export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
+export default class LoginPage extends Vue {
+    base = useBase(this)
+    validation = useValidation()
+
     isLoading: boolean = false
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
@@ -156,11 +162,11 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
         if (!this.$v.$invalid) {
             try {
                 this.isLoading = true
-                this.stores.errors.SET_ERROR(null)
+                this.base.stores.errors.SET_ERROR(null)
                 this.passwordField.createToken().then(
                     (tokens) => {
                         this.loginRequest.password.value = tokens.tokens.password
-                        this.stores.auth
+                        this.base.stores.auth
                             .loginWithPassword(this.loginRequest)
                             .then(() => {
                                 localStorage.setItem('stepUp', 'FALSE')
@@ -169,25 +175,25 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
                             })
                             .catch((err) => {
                                 this.isLoading = false
-                                this.stores.errors.SET_ERROR(err)
+                                this.base.stores.errors.SET_ERROR(err)
                             })
                     },
                     (e) => {
-                        this.showErrorToast(e, 'Tokenization Error')
+                        this.base.showErrorToast(e, 'Tokenization Error')
                     }
                 )
             } catch (error: any) {
-                this.showErrorToast(error, 'Login Error')
+                this.base.showErrorToast(error, 'Login Error')
             }
         }
     }
 
     async goToDashboard() {
-        if (this.stores.auth.isConsumer) {
-            await this.stores.consumers.get()
+        if (this.base.stores.auth.isConsumer) {
+            await this.base.stores.consumers.get()
         }
 
-        await this.stores.auth.indexAuthFactors()
+        await this.base.stores.auth.indexAuthFactors()
 
         await this.$router.push({
             path: '/login/sca',

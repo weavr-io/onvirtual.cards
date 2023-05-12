@@ -26,7 +26,7 @@ export function useBase(root) {
         return stores.auth.isLoggedIn
     })
 
-    const accountProfileId = computed(() => {
+    const accountProfileId = computed<string>(() => {
         return isConsumer.value
             ? root.$config.profileId.managed_accounts_consumers!
             : root.$config.profileId.managed_accounts_corporates!
@@ -168,7 +168,8 @@ export function useBase(root) {
     })
 
     function setSCAstorage() {
-        return pendingData.value || fetchHasError.value
+        localStorage.setItem('stepUp', 'FALSE')
+        localStorage.setItem('scaSmsSent', 'FALSE')
     }
 
     const unRefs = reactive({
@@ -188,9 +189,7 @@ export function useBase(root) {
         mobileCountries,
         countryOptionsWithDefault,
         identityVerified,
-        goToVerify,
         pendingDataOrError,
-        setSCAstorage,
     })
 
     return {

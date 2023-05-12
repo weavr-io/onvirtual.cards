@@ -24,8 +24,9 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component, Emit, Prop } from 'nuxt-property-decorator'
+import Vue from 'vue'
+import { useBase } from '~/composables/useBase'
 
 export interface ErrorLink {
     text: string
@@ -33,7 +34,9 @@ export interface ErrorLink {
 }
 
 @Component
-class ErrorAlert extends mixins(BaseMixin) {
+class ErrorAlert extends Vue {
+    base = useBase(this)
+
     @Prop({
         type: String,
         default: 'my-5',
@@ -44,15 +47,15 @@ class ErrorAlert extends mixins(BaseMixin) {
     @Prop({ default: null }) readonly errorLink!: ErrorLink | null
 
     get errors() {
-        return this.stores.errors.errors
+        return this.base.stores.errors.errors
     }
 
     get conflict() {
-        return this.stores.errors.conflict
+        return this.base.stores.errors.conflict
     }
 
     get conflictMessage() {
-        return this.stores.errors.conflictMessage
+        return this.base.stores.errors.conflictMessage
     }
 
     get hasError(): boolean {
@@ -88,7 +91,7 @@ class ErrorAlert extends mixins(BaseMixin) {
     }
 
     @Emit('close') onClose() {
-        this.stores.errors.RESET_ERROR()
+        this.base.stores.errors.RESET_ERROR()
     }
 }
 

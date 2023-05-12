@@ -55,7 +55,7 @@
                     <b-col>
                         <b-form-group
                             :invalid-feedback="invalidMessage"
-                            :state="isInvalid($v.request.amount)"
+                            :state="validation.isInvalid($v.request.amount)"
                             label="Amount:"
                         >
                             <b-input-group :prepend="accountDetails.currency">
@@ -82,11 +82,12 @@
     </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { Component, Emit } from 'nuxt-property-decorator'
 import { between, required } from 'vuelidate/lib/validators'
 import { Prop } from '~/node_modules/nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import Vue from 'vue'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
     validations: {
@@ -100,7 +101,10 @@ import ValidationMixin from '~/mixins/ValidationMixin'
         },
     },
 })
-export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
+export default class TopUpForm extends Vue {
+    base = useBase(this)
+    validation = useValidation()
+
     @Prop({ default: '' }) readonly selectedAccount
     public request: {
         amount: number | null
@@ -109,7 +113,7 @@ export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
     }
 
     get accounts() {
-        return this.stores.accounts.accounts
+        return this.base.stores.accounts.accounts
     }
 
     get invalidMessage() {

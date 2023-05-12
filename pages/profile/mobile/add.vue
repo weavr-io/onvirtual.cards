@@ -20,7 +20,7 @@
                         v-model="rootMobileNumber"
                         :border-radius="0"
                         :error="numberIsValid === false"
-                        :only-countries="mobileCountries"
+                        :only-countries="base.unRefs.mobileCountries"
                         color="#6C1C5C"
                         default-country-code="GB"
                         error-color="#F50E4C"
@@ -46,10 +46,9 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { DeepNullable } from '~/global'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
@@ -59,6 +58,7 @@ import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/r
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
+import { useBase } from '~/composables/useBase'
 
 @Component({
     layout: 'auth',
@@ -81,7 +81,9 @@ import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentica
     },
     middleware: ['kyVerified'],
 })
-export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
+export default class LoginPage extends Vue {
+    base = useBase(this)
+
     isLoading: boolean = false
 
     rootMobileNumber = ''
@@ -126,17 +128,17 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
                 return null
             }
 
-            if (this.stores.auth.auth?.credentials.type === CredentialTypeEnum.ROOT) {
-                this.isConsumer
-                    ? await this.stores.consumers.update(
+            if (this.base.stores.auth.auth?.credentials.type === CredentialTypeEnum.ROOT) {
+                this.base.unRefs.isConsumer
+                    ? await this.base.stores.consumers.update(
                           this.updateRequest as UpdateConsumerRequest
                       )
-                    : await this.stores.corporates.update(
+                    : await this.base.stores.corporates.update(
                           this.updateRequest as UpdateCorporateRequest
                       )
             } else {
-                await this.stores.users.update({
-                    id: this.stores.auth.auth!.credentials.id,
+                await this.base.stores.users.update({
+                    id: this.base.stores.auth.auth!.credentials.id,
                     data: this.updateRequest as UpdateUserRequestModel,
                 })
             }
@@ -147,7 +149,7 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
                 },
             })
         } catch (error: any) {
-            this.showErrorToast(error)
+            this.base.showErrorToast(error)
         } finally {
             this.isLoading = false
         }

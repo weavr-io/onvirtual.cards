@@ -19,7 +19,7 @@
                     <b-col class="text-right d-flex justify-content-end pl-0">
                         <div v-b-tooltip.hover :title="identityVerificationMessage">
                             <b-button
-                                :disabled="!identityVerified"
+                                :disabled="!base.unRefs.identityVerified"
                                 to="/managed-cards/add"
                                 variant="border-primary"
                             >
@@ -29,16 +29,16 @@
                     </b-col>
                 </b-row>
             </b-container>
-            <b-container v-if="!hasAlert" class="mt-5">
-                <b-row v-if="pendingDataOrError">
+            <b-container v-if="!kyVerified.unRefs.hasAlert" class="mt-5">
+                <b-row v-if="base.unRefs.pendingDataOrError">
                     <b-col class="d-flex flex-column align-items-center">
                         <div class="loader-spinner">
                             <b-spinner />
                         </div>
                     </b-col>
                 </b-row>
-                <b-row v-else-if="hasCards" cols="1" cols-lg="3" cols-md="2">
-                    <b-col v-for="card in cards" :key="card.id">
+                <b-row v-else-if="cards.unRefs.hasCards" cols="1" cols-lg="3" cols-md="2">
+                    <b-col v-for="card in cards.unRefs.cards" :key="card.id">
                         <weavr-card
                             :card="card"
                             class="mb-5"
@@ -63,11 +63,12 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import CardsMixin from '~/mixins/CardsMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import KyVerified from '~/mixins/kyVerified'
+import { useBase } from '~/composables/useBase'
+import { useKyVerified } from '~/composables/useKyVerified'
+import { useCards } from '~/composables/useCards'
 
 @Component({
     layout: 'dashboard',
@@ -77,7 +78,11 @@ import KyVerified from '~/mixins/kyVerified'
     },
     middleware: ['kyVerified'],
 })
-export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified) {
+export default class CardsPage extends Vue {
+    base = useBase(this)
+    kyVerified = useKyVerified(this)
+    cards = useCards(this)
+
     showDestroyedSwitch = false
 
     get showDestroyed() {
@@ -85,7 +90,7 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified)
     }
 
     get identityVerificationMessage() {
-        if (!this.identityVerified) return 'Pending identity verification'
+        if (!this.base.unRefs.identityVerified) return 'Pending identity verification'
         return undefined
     }
 
@@ -97,14 +102,14 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified)
 
     fetch() {
         return this.getCards(this.cardStateFilters).then(() => {
-            return this.stores.cards.hasDestroyedCards().then((res) => {
+            return this.base.stores.cards.hasDestroyedCards().then((res) => {
                 this.showDestroyedSwitch = res
             })
         })
     }
 
     async getCards(_state: ManagedInstrumentStateEnum[]) {
-        await this.stores.cards.getCards({
+        await this.base.stores.cards.getCards({
             state: _state.join(','),
         })
     }

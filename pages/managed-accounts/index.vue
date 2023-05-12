@@ -1,6 +1,12 @@
 <template>
     <section>
-        <template v-if="!hasAccount && identityVerified && !pendingDataOrError">
+        <template
+            v-if="
+                !accounts.unRefs.hasAccount &&
+                base.unRefs.identityVerified &&
+                !base.unRefs.pendingDataOrError
+            "
+        >
             <b-container class="mb-5">
                 <b-row align-v="center">
                     <b-col class="text-right">
@@ -34,20 +40,24 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import AccountsMixin from '~/mixins/AccountsMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { useBase } from '~/composables/useBase'
+import { useAccounts } from '~/composables/useAccounts'
 
 @Component({
     layout: 'dashboard',
     middleware: ['kyVerified'],
 })
-export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
+export default class IndexPage extends Vue {
+    base = useBase(this)
+    accounts = useAccounts(this)
+
     fetch() {
-        return this.stores.accounts
+        return this.base.stores.accounts
             .index({
-                profileId: this.accountProfileId,
+                profileId: this.base.unRefs.accountProfileId,
                 state: ManagedInstrumentStateEnum.ACTIVE,
                 offset: '0',
             })
@@ -62,7 +72,7 @@ export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
 
                 const error = data.message ? data.message : data.errorCode
 
-                this.showErrorToast(error)
+                this.base.showErrorToast(error)
             })
     }
 }

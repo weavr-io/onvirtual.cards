@@ -24,9 +24,9 @@
     </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { AxiosResponse } from 'axios'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { authStore } from '~/utils/store-accessor'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
@@ -38,6 +38,7 @@ import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/aut
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { DeepNullable, RecursivePartial } from '~/global'
 import Logo from '~/components/Logo.vue'
+import { useBase } from '~/composables/useBase'
 
 @Component({
     layout: 'auth',
@@ -51,7 +52,9 @@ import Logo from '~/components/Logo.vue'
     },
     middleware: 'accessCodeVerified',
 })
-export default class RegistrationPage extends mixins(BaseMixin) {
+export default class RegistrationPage extends Vue {
+    base = useBase(this)
+
     screen: number = 0
     passwordStrength: number = 0
     private registrationRequest: DeepNullable<
@@ -80,10 +83,6 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         acceptedTerms: false,
         ipAddress: '',
         baseCurrency: CurrencyEnum.EUR,
-    }
-
-    get isLoadingRegistration() {
-        return this.stores.corporates.isLoadingRegistration
     }
 
     strengthCheck(val) {
@@ -138,15 +137,15 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     doRegister() {
-        this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
-        this.stores.corporates
+        this.base.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
+        this.base.stores.corporates
             .create(this.registrationRequest as CreateCorporateRequest)
             .then(this.onCorporateCreated)
             .catch(this.registrationFailed)
     }
 
     stopRegistrationLoading() {
-        this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
+        this.base.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
     }
 
     onCorporateCreated(res: AxiosResponse<ConsumerModel>) {
@@ -169,7 +168,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     onRegisteredSuccessfully() {
-        this.stores.accessCodes.DELETE_ACCESS_CODE()
+        this.base.stores.accessCodes.DELETE_ACCESS_CODE()
         if (!this.registrationRequest.rootUser) {
             return
         }
@@ -179,9 +178,9 @@ export default class RegistrationPage extends mixins(BaseMixin) {
                 value: this.registrationRequest.password as string,
             },
         }
-        const _req = this.stores.auth.loginWithPassword(loginRequest)
+        const _req = this.base.stores.auth.loginWithPassword(loginRequest)
         _req.then(() => {
-            this.setSCAstorage()
+            this.base.setSCAstorage()
             this.stopRegistrationLoading()
             this.$router.push({ path: '/profile/address' })
         })
@@ -193,7 +192,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
             this.screen = 0
         } else {
-            this.showErrorToast(_errCode)
+            this.base.showErrorToast(_errCode)
         }
     }
 }

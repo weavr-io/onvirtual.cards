@@ -1,7 +1,7 @@
 <template>
     <section>
         <b-container>
-            <b-row v-if="pendingDataOrError">
+            <b-row v-if="base.unRefs.pendingDataOrError">
                 <b-col>
                     <div class="d-flex flex-column align-items-center">
                         <div class="loader-spinner">
@@ -25,9 +25,9 @@
                                     <b-col>
                                         <b-form-group
                                             :invalid-feedback="
-                                                invalidFeedback(
+                                                validation.invalidFeedback(
                                                     $v.createManagedCardRequest.nameOnCard,
-                                                    validateVParams(
+                                                    validation.validateVParams(
                                                         $v.createManagedCardRequest.nameOnCard
                                                             .$params,
                                                         $v.createManagedCardRequest.nameOnCard
@@ -36,7 +36,9 @@
                                                 )
                                             "
                                             :state="
-                                                isInvalid($v.createManagedCardRequest.nameOnCard)
+                                                validation.isInvalid(
+                                                    $v.createManagedCardRequest.nameOnCard
+                                                )
                                             "
                                             label="Name of Person using Card"
                                         >
@@ -45,7 +47,7 @@
                                                     $v.createManagedCardRequest.nameOnCard.$model
                                                 "
                                                 :state="
-                                                    isInvalid(
+                                                    validation.isInvalid(
                                                         $v.createManagedCardRequest.nameOnCard
                                                     )
                                                 "
@@ -54,7 +56,7 @@
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
-                                <b-form-row v-if="!isConsumer">
+                                <b-form-row v-if="!base.unRefs.isConsumer">
                                     <b-col>
                                         <b-form-group label="CARDHOLDER MOBILE NUMBER">
                                             <vue-phone-number-input
@@ -79,7 +81,11 @@
                                 <b-form-row>
                                     <b-col>
                                         <b-form-group
-                                            :state="isInvalid($v.createManagedCardRequest.currency)"
+                                            :state="
+                                                validation.isInvalid(
+                                                    $v.createManagedCardRequest.currency
+                                                )
+                                            "
                                             label="Currency"
                                         >
                                             <b-form-select
@@ -95,9 +101,9 @@
                                     <b-col>
                                         <b-form-group
                                             :invalid-feedback="
-                                                invalidFeedback(
+                                                validation.invalidFeedback(
                                                     $v.createManagedCardRequest.friendlyName,
-                                                    validateVParams(
+                                                    validation.validateVParams(
                                                         $v.createManagedCardRequest.friendlyName
                                                             .$params,
                                                         $v.createManagedCardRequest.friendlyName
@@ -105,7 +111,9 @@
                                                 )
                                             "
                                             :state="
-                                                isInvalid($v.createManagedCardRequest.friendlyName)
+                                                validation.isInvalid(
+                                                    $v.createManagedCardRequest.friendlyName
+                                                )
                                             "
                                             label="ADD A CUSTOM CARD NAME"
                                         >
@@ -133,16 +141,17 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
     components: {
@@ -166,7 +175,10 @@ import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/con
     },
     middleware: ['kyVerified'],
 })
-export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
+export default class AddCardPage extends Vue {
+    base = useBase(this)
+    validation = useValidation()
+
     showNameOnCardField: boolean = false
 
     showError: boolean = false
@@ -195,13 +207,13 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
 
     get currencyOptions() {
         return CurrencySelectConst.filter((item) => {
-            return item.value === this.profileBaseCurrency
+            return item.value === this.base.unRefs.profileBaseCurrency
         })
     }
 
     fetch() {
-        if (this.stores.auth.isConsumer) {
-            const _consumer: ConsumerModel = this.stores.consumers.consumer as ConsumerModel
+        if (this.base.stores.auth.isConsumer) {
+            const _consumer: ConsumerModel = this.base.stores.consumers.consumer as ConsumerModel
             this.createManagedCardRequest.nameOnCard =
                 _consumer.rootUser.name + ' ' + _consumer.rootUser.surname
             this.createManagedCardRequest.cardholderMobileNumber =
@@ -209,11 +221,11 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         }
 
         this.showNameOnCardField =
-            !this.stores.auth.isConsumer ||
+            !this.base.stores.auth.isConsumer ||
             (!!this.createManagedCardRequest.nameOnCard &&
                 this.createManagedCardRequest.nameOnCard.length > 27)
 
-        this.createManagedCardRequest.currency = this.profileBaseCurrency
+        this.createManagedCardRequest.currency = this.base.unRefs.profileBaseCurrency
     }
 
     async doAdd() {
@@ -221,7 +233,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
             return
         }
 
-        if (this.isConsumer) {
+        if (this.base.unRefs.isConsumer) {
             this.numberIsValid = true
         }
 
@@ -238,15 +250,16 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
 
         this.createManagedCardRequest = {
             ...this.createManagedCardRequest,
-            profileId: this.cardProfileId,
+            profileId: this.base.unRefs.cardProfileId,
             billingAddress: {
-                ...(this.isConsumer
-                    ? (this.stores.consumers.consumer?.rootUser.address as AddressModel)
-                    : (this.stores.corporates.corporate?.company.businessAddress as AddressModel)),
+                ...(this.base.unRefs.isConsumer
+                    ? (this.base.stores.consumers.consumer?.rootUser.address as AddressModel)
+                    : (this.base.stores.corporates.corporate?.company
+                          .businessAddress as AddressModel)),
             },
         }
 
-        await this.stores.cards
+        await this.base.stores.cards
             .addCard(this.createManagedCardRequest as CreateManagedCardRequest)
             .then(() => {
                 this.$router.push('/managed-cards')

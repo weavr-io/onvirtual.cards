@@ -4,12 +4,12 @@
         <error-alert />
         <b-form-group
             :invalid-feedback="
-                invalidFeedback(
+                validation.invalidFeedback(
                     $v.form.email,
-                    validateVParams($v.form.email.$params, $v.form.email)
+                    validation.validateVParams($v.form.email.$params, $v.form.email)
                 )
             "
-            :state="isInvalid($v.form.email)"
+            :state="validation.isInvalid($v.form.email)"
             label="Email*"
         >
             <b-form-input v-model="$v.form.email.$model" lazy placeholder="name@email.com" />
@@ -41,7 +41,7 @@
                 <b-form-group>
                     <b-form-checkbox
                         v-model="$v.form.acceptedTerms.$model"
-                        :state="isInvalid($v.form.acceptedTerms)"
+                        :state="validation.isInvalid($v.form.acceptedTerms)"
                     >
                         I accept the
                         <a
@@ -77,13 +77,14 @@
     </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Emit, Ref } from 'nuxt-property-decorator'
 import { email, required, sameAs } from 'vuelidate/lib/validators'
+import Vue from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import LoaderButton from '~/components/LoaderButton.vue'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
     validations: {
@@ -109,7 +110,10 @@ import LoaderButton from '~/components/LoaderButton.vue'
         LoaderButton,
     },
 })
-export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
+export default class RegisterForm extends Vue {
+    base = useBase(this)
+    validation = useValidation()
+
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
@@ -159,11 +163,11 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     }
 
     get isLoadingRegistration() {
-        return this.stores.corporates.isLoadingRegistration
+        return this.base.stores.corporates.isLoadingRegistration
     }
 
     tryToSubmitForm() {
-        this.stores.errors.RESET_ERROR()
+        this.base.stores.errors.RESET_ERROR()
         try {
             this.$v.$touch()
             if (this.$v.$invalid || !this.isPasswordValid) {
@@ -180,12 +184,12 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
                         }
                     },
                     (e) => {
-                        this.showErrorToast(e, 'Tokenization Error')
+                        this.base.showErrorToast(e, 'Tokenization Error')
                     }
                 )
             }
         } catch (error: any) {
-            this.showErrorToast(error, 'Registration Error')
+            this.base.showErrorToast(error, 'Registration Error')
         }
     }
 
@@ -202,12 +206,12 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     }
 
     startRegistrationLoading() {
-        this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
+        this.base.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
     }
 
     @Emit()
     submitForm() {
-        this.stores.errors.RESET_ERROR()
+        this.base.stores.errors.RESET_ERROR()
         return this.form
     }
 

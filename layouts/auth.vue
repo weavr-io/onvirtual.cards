@@ -1,18 +1,20 @@
 <template>
     <div id="main-header">
         <div v-if="showHeader" class="container-fluid">
-            <b-navbar variant="card" class="fixed-top auth-nav-bar">
+            <b-navbar class="fixed-top auth-nav-bar" variant="card">
                 <b-container>
                     <b-collapse id="nav_collapse" is-nav>
                         <b-navbar-nav class="ml-auto">
-                            <b-nav-item v-if="showRegister && !isLoggedIn" to="/register"
-                                >Register</b-nav-item
-                            >
-                            <b-nav-item v-if="showLogin && !isLoggedIn" to="/login"
-                                >Sign In</b-nav-item
-                            >
-                            <b-nav-item v-if="isLoggedIn">
-                                <b-button class="nav-item" @click="doLogout">Sign out</b-button>
+                            <b-nav-item v-if="showRegister && !base.isLoggedIn" to="/register"
+                                >Register
+                            </b-nav-item>
+                            <b-nav-item v-if="showLogin && !base.isLoggedIn" to="/login"
+                                >Sign In
+                            </b-nav-item>
+                            <b-nav-item v-if="base.isLoggedIn">
+                                <b-button class="nav-item" @click="base.doLogout"
+                                    >Sign out
+                                </b-button>
                             </b-nav-item>
                         </b-navbar-nav>
                     </b-collapse>
@@ -21,9 +23,9 @@
         </div>
         <b-container>
             <b-row
-                style="min-height: calc(100vh - var(--navbar-height))"
-                align-v="center"
                 align-h="center"
+                align-v="center"
+                style="min-height: calc(100vh - var(--navbar-height))"
             >
                 <nuxt class="d-flex flex-column pt-2" style="margin-top: var(--navbar-height)" />
             </b-row>
@@ -32,8 +34,9 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
+import { useBase } from '~/composables/useBase'
 
 @Component({
     components: {
@@ -46,7 +49,9 @@ import BaseMixin from '~/mixins/BaseMixin'
         },
     },
 })
-class AuthLayout extends mixins(BaseMixin) {
+class AuthLayout extends Vue {
+    base = useBase(this)
+
     get showHeader(): boolean {
         return this.$config.app.view_register
     }

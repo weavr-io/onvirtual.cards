@@ -7,7 +7,10 @@
         </b-row>
         <b-row class="py-5 my-5">
             <b-col>
-                <b-form-group class="weavr-account-radio" :state="isInvalid($v.request.source.id)">
+                <b-form-group
+                    :state="validation.isInvalid($v.request.source.id)"
+                    class="weavr-account-radio"
+                >
                     <b-form-radio-group
                         v-model="request.source.id"
                         :options="formattedAccounts"
@@ -28,11 +31,12 @@
     </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { Component, Emit } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
     validations: {
@@ -45,10 +49,9 @@ import ValidationMixin from '~/mixins/ValidationMixin'
         },
     },
 })
-export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMixin) {
-    get accounts() {
-        return this.stores.accounts.accounts
-    }
+export default class AccountSelectionForm extends Vue {
+    base = useBase(this)
+    validation = useValidation()
 
     public request = {
         source: {
@@ -57,19 +60,8 @@ export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMi
         },
     }
 
-    @Emit()
-    submitForm(e) {
-        e.preventDefault()
-
-        if (this.$v.request) {
-            this.$v.request.$touch()
-            if (this.$v.request.$anyError) {
-                this.showErrorToast('Please select an account to top up from.')
-                return null
-            }
-        }
-
-        return this.request
+    get accounts() {
+        return this.base.stores.accounts.accounts
     }
 
     get formattedAccounts(): { value: string; text: string; html: string }[] {
@@ -118,6 +110,21 @@ export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMi
                 disabled: isDisabled,
             }
         })
+    }
+
+    @Emit()
+    submitForm(e) {
+        e.preventDefault()
+
+        if (this.$v.request) {
+            this.$v.request.$touch()
+            if (this.$v.request.$anyError) {
+                this.base.showErrorToast('Please select an account to top up from.')
+                return null
+            }
+        }
+
+        return this.request
     }
 }
 </script>

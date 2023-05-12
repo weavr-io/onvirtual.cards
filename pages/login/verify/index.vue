@@ -28,7 +28,9 @@
                     <b-row align-h="center">
                         <b-col cols="6">
                             <b-form-group
-                                :state="isInvalid($v.verifyEmailRequest.verificationCode)"
+                                :state="
+                                    validation.isInvalid($v.verifyEmailRequest.verificationCode)
+                                "
                                 invalid-feedback="This field is required and must be 6 characters"
                             >
                                 <b-form-input
@@ -61,14 +63,15 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
 import Logo from '~/components/Logo.vue'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
     layout: 'auth',
@@ -87,7 +90,10 @@ import Logo from '~/components/Logo.vue'
         },
     },
 })
-export default class EmailVerificationPage extends mixins(BaseMixin, ValidationMixin) {
+export default class EmailVerificationPage extends Vue {
+    base = useBase(this)
+    validation = useValidation()
+
     showEmailResentSuccess: boolean = false
     isLoading: boolean = false
     private verifyEmailRequest!: VerifyEmailRequest
@@ -154,7 +160,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
         this.isLoading = true
 
         try {
-            if (this.isConsumer) {
+            if (this.base.unRefs.isConsumer) {
                 await this.sendVerifyEmailConsumers()
             } else {
                 // else treat as corporate
@@ -167,13 +173,13 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     }
 
     async sendVerifyEmailConsumers() {
-        await this.stores.consumers.sendVerificationCodeEmail({
+        await this.base.stores.consumers.sendVerificationCodeEmail({
             email: this.verifyEmailRequest.email,
         })
     }
 
     async sendVerifyEmailCorporates() {
-        await this.stores.corporates.sendVerificationCodeEmail({
+        await this.base.stores.corporates.sendVerificationCodeEmail({
             email: this.verifyEmailRequest.email,
         })
     }
@@ -193,20 +199,20 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
         this.isLoading = true
 
-        this.isConsumer
-            ? this.stores.consumers
+        this.base.unRefs.isConsumer
+            ? this.base.stores.consumers
                   .verifyEmail(this.verifyEmailRequest)
                   .then(this.onMobileVerified)
                   .catch((e) => {
                       this.removeLoader()
-                      this.stores.errors.SET_CONFLICT(e)
+                      this.base.stores.errors.SET_CONFLICT(e)
                   })
-            : this.stores.corporates
+            : this.base.stores.corporates
                   .verifyEmail(this.verifyEmailRequest)
                   .then(this.onMobileVerified)
                   .catch((e) => {
                       this.removeLoader()
-                      this.stores.errors.SET_CONFLICT(e)
+                      this.base.stores.errors.SET_CONFLICT(e)
                   })
     }
 
@@ -215,7 +221,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     }
 
     onMobileVerified() {
-        this.stores.identities.SET_EMAIL_VERIFIED(true)
+        this.base.stores.identities.SET_EMAIL_VERIFIED(true)
 
         return this.$router.push({
             path: '/login/verify/mobile',

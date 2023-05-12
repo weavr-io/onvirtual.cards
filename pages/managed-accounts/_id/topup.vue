@@ -2,7 +2,11 @@
     <section>
         <b-container>
             <b-row align-h="center">
-                <b-col v-if="account && !pendingDataOrError" lg="6" md="9">
+                <b-col
+                    v-if="accounts.unRefs.account && !base.unRefs.pendingDataOrError"
+                    lg="6"
+                    md="9"
+                >
                     <b-row>
                         <b-col>
                             <h2 class="text-center font-weight-lighter">
@@ -60,7 +64,7 @@
                     <b-row>
                         <b-col class="text-center my-5">
                             <b-button
-                                :to="'/managed-accounts/' + accountId"
+                                :to="'/managed-accounts/' + accounts.unRefs.accountId"
                                 class="px-5"
                                 variant="secondary"
                             >
@@ -81,14 +85,15 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
-import BaseMixin from '~/mixins/BaseMixin'
-import AccountsMixin from '~/mixins/AccountsMixin'
+import Vue from 'vue'
 import { BankAccountDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/BankAccountDetailsModel'
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
 import { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
 import { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SwiftBankDetailsModel'
+import { useAccounts } from '~/composables/useAccounts'
+import { useBase } from '~/composables/useBase'
 
 @Component({
     components: {
@@ -97,7 +102,10 @@ import { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-
     },
     middleware: ['kyVerified', 'instruments'],
 })
-export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
+export default class AccountTopupPage extends Vue {
+    base = useBase(this)
+    accounts = useAccounts(this)
+
     get address() {
         return this.bankAccountDetails?.beneficiaryBankAddress?.split(',').join(',<br>')
     }
@@ -143,7 +151,7 @@ export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
     }
 
     get ibanDetails(): ManagedAccountIBANModel | null {
-        return this.stores.accounts.ibanDetails
+        return this.base.stores.accounts.ibanDetails
     }
 
     get beneficiaryNameAndSurname() {
@@ -168,7 +176,7 @@ export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
     }
 
     fetch() {
-        return this.stores.accounts.getIBANDetails(this.$route.params.id)
+        return this.base.stores.accounts.getIBANDetails(this.$route.params.id)
     }
 }
 </script>

@@ -66,13 +66,14 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Ref } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
+import Vue from 'vue'
 import LoaderButton from '~/components/LoaderButton.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
+import { useBase } from '~/composables/useBase'
 
 @Component({
     components: {
@@ -96,7 +97,9 @@ import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/aut
         },
     },
 })
-export default class BundlesPage extends mixins(BaseMixin) {
+export default class BundlesPage extends Vue {
+    base = useBase(this)
+
     @Ref('oldPassword')
     oldPassword!: WeavrPasswordInput
 
@@ -193,20 +196,20 @@ export default class BundlesPage extends mixins(BaseMixin) {
             if (tokenizedOld && tokenizedNew) {
                 this.changePasswordRequest.oldPassword.value = tokenizedOld
                 this.changePasswordRequest.newPassword.value = tokenizedNew
-                this.stores.auth
+                this.base.stores.auth
                     .validatePassword({ password: this.changePasswordRequest.newPassword })
                     .then(() => {
-                        this.stores.auth
+                        this.base.stores.auth
                             .updatePassword(this.changePasswordRequest)
                             .then(() => {
-                                this.showSuccessToast('Password changed successfully')
+                                this.base.showSuccessToast('Password changed successfully')
                                 this.$router.push('/profile')
                             })
                             .catch((err) => {
                                 const data = err.response.data
                                 const error = data.message ? data.message : data.errorCode
 
-                                this.showErrorToast(error)
+                                this.base.showErrorToast(error)
                             })
                             .finally(() => {
                                 this.isLoading = false

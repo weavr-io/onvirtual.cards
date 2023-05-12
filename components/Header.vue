@@ -1,24 +1,26 @@
 <template>
     <div class="container-fluid px-0 mb-5 pb-5">
-        <b-navbar type="light" fixed="top" variant="white" class="navbar-padding-adjust">
+        <b-navbar class="navbar-padding-adjust" fixed="top" type="light" variant="white">
             <b-container>
                 <b-navbar-brand to="/">
                     <img
+                        alt="WEAVR"
+                        class="d-inline-block align-center"
                         src="/img/logo.svg"
                         width="160"
-                        class="d-inline-block align-center"
-                        alt="WEAVR"
                     />
                 </b-navbar-brand>
-                <b-collapse v-if="isLoggedIn" id="nav_collapse" is-nav>
+                <b-collapse v-if="base.unRefs.isLoggedIn" id="nav_collapse" is-nav>
                     <b-navbar-nav class="ml-auto">
                         <b-nav-item-dropdown right toggle-class="border-bottom">
                             <template #button-content>
-                                {{ rootFullName }}
+                                {{ base.unRefs.rootFullName }}
                             </template>
                             <b-dropdown-item to="/profile"> Profile</b-dropdown-item>
-                            <b-dropdown-item v-if="isCorporate" to="/users"> Users</b-dropdown-item>
-                            <b-dropdown-item @click="doLogout"> Sign out</b-dropdown-item>
+                            <b-dropdown-item v-if="base.unRefs.isCorporate" to="/users">
+                                Users
+                            </b-dropdown-item>
+                            <b-dropdown-item @click="base.doLogout"> Sign out</b-dropdown-item>
                         </b-nav-item-dropdown>
                     </b-navbar-nav>
                 </b-collapse>
@@ -27,17 +29,20 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
+import { useBase } from '~/composables/useBase'
 
 @Component
-export default class Header extends mixins(BaseMixin) {
+export default class Header extends Vue {
+    base = useBase(this)
+
     fetch() {
-        if (this.consumer === null && this.corporate === null) {
-            if (this.isConsumer) {
-                this.stores.consumers.get()
-            } else if (this.isCorporate) {
-                this.stores.corporates.get()
+        if (this.base.unRefs.consumer === null && this.base.unRefs.corporate === null) {
+            if (this.base.unRefs.isConsumer) {
+                this.base.stores.consumers.get()
+            } else if (this.base.unRefs.isCorporate) {
+                this.base.stores.corporates.get()
             }
         }
     }

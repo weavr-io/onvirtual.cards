@@ -1,7 +1,7 @@
 <template>
     <section>
         <b-container>
-            <template v-if="managedCard && !pendingDataOrError">
+            <template v-if="cards.unRefs.managedCard && !base.unRefs.pendingDataOrError">
                 <b-row align-h="between" align-v="end" class="mb-3 border-bottom pb-3">
                     <b-col cols="7" sm="auto">
                         <div class="d-flex align-items-center">
@@ -11,16 +11,16 @@
                             </b-link>
                             <div class="d-flex flex-column ml-3">
                                 <p class="card-name m-0">
-                                    {{ managedCard.nameOnCard }}
+                                    {{ cards.unRefs.managedCard.nameOnCard }}
                                 </p>
                                 <div class="d-flex">
                                     <span class="card-number">
-                                        •••• {{ managedCard.cardNumberLastFour }}
+                                        •••• {{ cards.unRefs.managedCard.cardNumberLastFour }}
                                     </span>
                                     <span class="card-expiry ml-2 ml-sm-5">
                                         <span class="card-expiry-label">EXP</span>
                                         <span class="card-expiry-value">
-                                            {{ managedCard.expiryMmyy | expiryMmyy }}
+                                            {{ cards.unRefs.managedCard.expiryMmyy | expiryMmyy }}
                                         </span>
                                     </span>
                                 </div>
@@ -30,8 +30,8 @@
                     <b-col cols="5" sm="auto">
                         <div class="d-flex align-items-center justify-content-end">
                             <b-button
-                                v-if="isCardActive"
-                                :to="'/transfer?destination=' + managedCard.id"
+                                v-if="cards.unRefs.isCardActive"
+                                :to="'/transfer?destination=' + cards.unRefs.managedCard.id"
                                 class="add-funds mr-3"
                                 variant="secondary"
                             >
@@ -41,8 +41,8 @@
                                 <div class="card-balance-label text-muted">balance</div>
                                 <div class="card-balance-value">
                                     {{
-                                        managedCard.balances.availableBalance |
-                                            weavr_currency(managedCard.currency)
+                                        cards.unRefs.managedCard.balances.availableBalance |
+                                            weavr_currency(cards.unRefs.managedCard.currency)
                                     }}
                                 </div>
                             </div>
@@ -64,9 +64,17 @@
             size="md"
             @hidden="toggleIsLoading"
         >
-            <b-card v-if="managedCard" bg-variant="card-purple" class="border-0 cards-card" no-body>
+            <b-card
+                v-if="cards.unRefs.managedCard"
+                bg-variant="card-purple"
+                class="border-0 cards-card"
+                no-body
+            >
                 <b-card-body class="card-body-modal card-body onvirtual-card">
-                    <b-link :to="`/managed-cards/${managedCard.id}/statements`" class="p-5">
+                    <b-link
+                        :to="`/managed-cards/${cards.unRefs.managedCard.id}/statements`"
+                        class="p-5"
+                    >
                         <b-container class="p-0" fluid>
                             <b-row align-h="end">
                                 <b-col class="text-right" cols="2">
@@ -78,7 +86,7 @@
                                     <b-row>
                                         <b-col>
                                             <div class="card-name">
-                                                {{ managedCard.friendlyName }}
+                                                {{ cards.unRefs.managedCard.friendlyName }}
                                             </div>
                                         </b-col>
                                     </b-row>
@@ -98,7 +106,9 @@
                                                         lineHeight: '1',
                                                         fontSize: '20px',
                                                     }"
-                                                    :token="managedCard.cardNumber.value"
+                                                    :token="
+                                                        cards.unRefs.managedCard.cardNumber.value
+                                                    "
                                                     class="card-select-number"
                                                     @onChange="toggleIsLoading"
                                                 />
@@ -110,14 +120,14 @@
                             <b-row align-v="end">
                                 <b-col cols="6">
                                     <div class="card-name-on-card text-truncate">
-                                        {{ managedCard.nameOnCard }}
+                                        {{ cards.unRefs.managedCard.nameOnCard }}
                                     </div>
                                 </b-col>
                                 <b-col cols="3">
                                     <div class="card-expiry">
                                         <div class="card-expiry-label">EXP</div>
                                         <div class="card-expiry-value">
-                                            {{ managedCard.expiryMmyy | expiryMmyy }}
+                                            {{ cards.unRefs.managedCard.expiryMmyy | expiryMmyy }}
                                         </div>
                                     </div>
                                 </b-col>
@@ -135,7 +145,7 @@
                                                     fontSize: '14.4px',
                                                     fontWeight: 300,
                                                 }"
-                                                :token="managedCard.cvv.value"
+                                                :token="cards.unRefs.managedCard.cvv.value"
                                                 class="card-select-number"
                                             />
                                         </div>
@@ -155,17 +165,16 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import RouterMixin from '~/mixins/RouterMixin'
-import FiltersMixin from '~/mixins/FiltersMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
-import CardsMixin from '~/mixins/CardsMixin'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import Statement from '~/components/cards/statement/statement.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
+import { useBase } from '~/composables/useBase'
+import { useCards } from '~/composables/useCards'
 
 const dot = require('dot-object')
 const moment = require('moment')
@@ -181,12 +190,10 @@ const moment = require('moment')
         StatementItem: () => import('~/components/statement/item.vue'),
     },
 })
-export default class ManagedCardsStatements extends mixins(
-    BaseMixin,
-    RouterMixin,
-    FiltersMixin,
-    CardsMixin
-) {
+export default class ManagedCardsStatements extends Vue {
+    base = useBase(this)
+    cards = useCards(this)
+
     filters: StatementFiltersRequest | null = null
 
     page: number = 0
@@ -197,9 +204,9 @@ export default class ManagedCardsStatements extends mixins(
 
     async fetch() {
         this.page = 0
-        this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+        this.$weavrSetUserToken('Bearer ' + this.base.stores.auth.token)
 
-        await this.stores.cards.getManagedCard(this.cardId)
+        await this.base.stores.cards.getManagedCard(this.cards.unRefs.cardId)
         await this.fetchCardStatements()
     }
 
@@ -224,14 +231,14 @@ export default class ManagedCardsStatements extends mixins(
         }
 
         const _req: ManagedCardStatementRequest = {
-            id: this.cardId,
+            id: this.cards.unRefs.cardId,
             request: statementFilters,
         }
 
         this.filters = statementFilters
 
-        this.stores.cards.clearCardStatements()
-        await this.stores.cards.getCardStatement(_req)
+        this.base.stores.cards.clearCardStatements()
+        await this.base.stores.cards.getCardStatement(_req)
     }
 
     toggleIsLoading() {
@@ -249,7 +256,7 @@ export default class ManagedCardsStatements extends mixins(
             const request: StatementFiltersRequest = { ...this.filters }
             request.offset = this.page * +request.limit!
 
-            this.stores.cards
+            this.base.stores.cards
                 .getCardStatement({
                     id: this.$route.params.id,
                     request,

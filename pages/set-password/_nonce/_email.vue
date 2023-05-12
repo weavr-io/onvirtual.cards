@@ -17,15 +17,15 @@
                 >
                     <b-form-group
                         id="ig-email"
-                        :invalid-feedback="invalidFeedback($v.form.email, 'email')"
-                        :state="isInvalid($v.form.email)"
+                        :invalid-feedback="validation.invalidFeedback($v.form.email, 'email')"
+                        :state="validation.isInvalid($v.form.email)"
                         label="Email"
                         label-for="setEmail"
                     >
                         <b-form-input
                             id="setEmail"
                             v-model="form.email"
-                            :state="isInvalid($v.form.email)"
+                            :state="validation.isInvalid($v.form.email)"
                             autocomplete="email"
                             class="form-control"
                             name="setEmail"
@@ -67,17 +67,18 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Ref } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
+import Vue from 'vue'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/LoaderButton.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import Logo from '~/components/Logo.vue'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
     layout: 'auth',
@@ -96,7 +97,10 @@ import Logo from '~/components/Logo.vue'
         },
     },
 })
-export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin) {
+export default class PasswordSentPage extends Vue {
+    base = useBase(this)
+    validation = useValidation()
+
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
@@ -110,7 +114,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
     }
 
     get noErrors() {
-        return !this.stores.errors.errors
+        return !this.base.stores.errors.errors
     }
 
     get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -136,7 +140,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
             this.form.nonce = this.$route.params.nonce.toString()
             this.form.email = this.$route.params.email.toString()
         } catch (e) {
-            this.stores.errors.SET_ERROR(e)
+            this.base.stores.errors.SET_ERROR(e)
         }
     }
 
@@ -166,17 +170,17 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
             },
         }
 
-        this.stores.auth.validatePassword(_request).then(this.submitForm)
+        this.base.stores.auth.validatePassword(_request).then(this.submitForm)
     }
 
     submitForm() {
-        this.stores.auth
+        this.base.stores.auth
             .lostPasswordResume(this.form)
             .then(() => {
                 this.$router.push('/login')
             })
             .catch((err) => {
-                this.stores.errors.SET_ERROR(err)
+                this.base.stores.errors.SET_ERROR(err)
             })
     }
 

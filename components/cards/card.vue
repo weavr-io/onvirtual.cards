@@ -104,11 +104,12 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
+import { Component, Emit, Prop } from 'nuxt-property-decorator'
 import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { useBase } from '~/composables/useBase'
 
 @Component({
     components: {
@@ -116,7 +117,9 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
         BIconThreeDotsVertical,
     },
 })
-export default class WeavrCard extends mixins(BaseMixin) {
+export default class WeavrCard extends Vue {
+    base = useBase(this)
+
     @Prop() readonly card!: ManagedCardModel
 
     showOptions: boolean = false
@@ -156,24 +159,24 @@ export default class WeavrCard extends mixins(BaseMixin) {
     }
 
     async blockCard() {
-        await this.stores.cards
+        await this.base.stores.cards
             .block(this.card.id)
             .then(this.blocked)
             .catch((err) => {
                 const data = err.response.data
                 const error = data.message ? data.message : data.errorCode
-                this.showErrorToast(error)
+                this.base.showErrorToast(error)
             })
     }
 
     async unblockCard() {
-        await this.stores.cards
+        await this.base.stores.cards
             .unblock(this.card.id)
             .then(this.unblocked)
             .catch((err) => {
                 const data = err.response.data
                 const error = data.message ? data.message : data.errorCode
-                this.showErrorToast(error)
+                this.base.showErrorToast(error)
             })
     }
 

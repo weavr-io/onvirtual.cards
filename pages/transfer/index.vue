@@ -22,13 +22,14 @@
     </b-container>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component } from 'nuxt-property-decorator'
+import Vue from 'vue'
 import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { DeepNullable } from '~/global'
+import { useBase } from '~/composables/useBase'
 
 @Component({
     components: {
@@ -39,7 +40,9 @@ import { DeepNullable } from '~/global'
     },
     middleware: ['kyVerified'],
 })
-export default class TransfersPage extends mixins(BaseMixin) {
+export default class TransfersPage extends Vue {
+    base = useBase(this)
+
     createTransferRequest: DeepNullable<CreateTransferRequest> | null = null
     screen: number = 1
     public accountTypes = [
@@ -54,11 +57,11 @@ export default class TransfersPage extends mixins(BaseMixin) {
     ]
 
     get cards() {
-        return this.stores.cards.cards?.cards
+        return this.base.stores.cards.cards?.cards
     }
 
     get accounts() {
-        return this.stores.accounts.accounts
+        return this.base.stores.accounts.accounts
     }
 
     get formattedCards(): { value: number; text: string }[] {
@@ -73,9 +76,9 @@ export default class TransfersPage extends mixins(BaseMixin) {
     }
 
     async fetch() {
-        await this.stores.cards.getCards()
-        const accounts = await this.stores.accounts.index({
-            profileId: this.accountProfileId,
+        await this.base.stores.cards.getCards()
+        const accounts = await this.base.stores.accounts.index({
+            profileId: this.base.unRefs.accountProfileId,
             state: ManagedInstrumentStateEnum.ACTIVE,
             offset: '0',
         })
@@ -118,7 +121,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
     }
 
     doTransfer() {
-        this.stores.transfers
+        this.base.stores.transfers
             .execute(this.createTransferRequest as CreateTransferRequest)
             .then(() => {
                 this.createTransferRequest = {
@@ -149,7 +152,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
                     error = 'Amount is higher than available balance'
                 }
 
-                this.showErrorToast(error)
+                this.base.showErrorToast(error)
             })
     }
 }

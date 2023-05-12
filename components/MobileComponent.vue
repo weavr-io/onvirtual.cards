@@ -5,8 +5,8 @@
                 <slot name="title"></slot>
             </h3>
             <b-row align-h="center">
-                <b-col md="6" class="text-center">
-                    <b-img fluid src="/img/mobile.svg" class="mt-5 mb-2" />
+                <b-col class="text-center" md="6">
+                    <b-img class="mt-5 mb-2" fluid src="/img/mobile.svg" />
                 </b-col>
             </b-row>
 
@@ -21,14 +21,14 @@
                 <b-row align-h="center">
                     <b-col cols="6">
                         <b-form-group
-                            :state="isInvalid($v.request.verificationCode)"
+                            :state="validation.isInvalid($v.request.verificationCode)"
                             invalid-feedback="This field is required and must be 6 characters"
                         >
                             <b-form-input
                                 v-model="$v.request.verificationCode.$model"
+                                class="text-center"
                                 lazy
                                 placeholder="000000"
-                                class="text-center"
                             />
                         </b-form-group>
                     </b-col>
@@ -41,8 +41,8 @@
                     <small v-else>
                         Please contact our
                         <a
-                            href="https://support.weavr.io/support/login"
                             class="text-primary text-decoration-none"
+                            href="https://support.weavr.io/support/login"
                             target="_blank"
                             >customer support</a
                         >
@@ -58,8 +58,8 @@
             <div v-if="verifyPhone">
                 <b-alert
                     :show="dismissCountDown"
-                    variant="white"
                     class="text-center mt-4 mb-0 text-muted small"
+                    variant="white"
                     @dismiss-count-down="countDownChanged"
                 >
                     {{ dismissCountDown }}
@@ -69,8 +69,8 @@
                     <small class="text-grey">
                         Didn’t receive a code?
                         <b-link class="text-decoration-underline text-grey" @click="resendSms"
-                            >Send again</b-link
-                        >
+                            >Send again
+                        </b-link>
                         .
                     </small>
                 </div>
@@ -80,15 +80,16 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Prop } from 'nuxt-property-decorator'
+import { Component, Prop } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import Vue from 'vue'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/LoaderButton.vue'
+import { useBase } from '~/composables/useBase'
+import { useValidation } from '~/composables/useValidation'
 
 @Component({
     layout: 'auth',
@@ -106,7 +107,10 @@ import LoaderButton from '~/components/LoaderButton.vue'
         },
     },
 })
-export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) {
+export default class MobileComponent extends Vue {
+    base = useBase(this)
+    validation = useValidation()
+
     @Prop() readonly verifyPhone!: boolean
 
     isLoading: boolean = false
@@ -138,11 +142,11 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
         this.showAlert()
         this.isLoading = true
         if (this.verifyPhone) {
-            await this.stores.auth
+            await this.base.stores.auth
                 .enrollAuthFactors(SCAOtpChannelEnum.SMS)
                 .finally(() => (this.isLoading = false))
         } else {
-            await this.stores.auth
+            await this.base.stores.auth
                 .enrollStepUp(SCAOtpChannelEnum.SMS)
                 .then(() => localStorage.setItem('scaSmsSent', 'TRUE'))
                 .finally(() => (this.isLoading = false))
@@ -165,16 +169,16 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
 
         try {
             if (this.verifyPhone) {
-                await this.stores.auth
+                await this.base.stores.auth
                     .verifyAuthFactors(req)
                     .then(() => {
-                        this.stores.identities.SET_MOBILE_VERIFIED(true)
+                        this.base.stores.identities.SET_MOBILE_VERIFIED(true)
                         this.getConsumersOrCorporates()
                     })
                     .finally(() => {
                         this.isLoading = false
                     })
-                await this.stores.auth.indexAuthFactors()
+                await this.base.stores.auth.indexAuthFactors()
                 await this.$router.push({
                     path: '/login/sca',
                     query: {
@@ -182,12 +186,12 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
                     },
                 })
             } else {
-                await this.stores.auth
+                await this.base.stores.auth
                     .verifyStepUp(req)
                     .then(() => {
                         localStorage.setItem('stepUp', 'TRUE')
                         this.getConsumersOrCorporates()
-                        this.goToIndex()
+                        this.base.goToIndex()
                     })
                     .finally(() => {
                         this.isLoading = false
@@ -197,7 +201,9 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
     }
 
     getConsumersOrCorporates() {
-        return this.isConsumer ? this.stores.consumers.get() : this.stores.corporates.get()
+        return this.base.unRefs.isConsumer
+            ? this.base.stores.consumers.get()
+            : this.base.stores.corporates.get()
     }
 
     countDownChanged(dismissCountDown) {
