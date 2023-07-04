@@ -98,6 +98,28 @@
                                     </b-form-invalid-feedback>
                                 </b-form-group>
                                 <b-form-group
+                                    :state="
+                                        isInvalid($v.registrationRequest.rootUser.address.country)
+                                    "
+                                    label="Country*"
+                                >
+                                    <b-form-select
+                                        v-model="
+                                            $v.registrationRequest.rootUser.address.country.$model
+                                        "
+                                        :options="countryOptionsWithDefault"
+                                        :state="
+                                            isInvalid(
+                                                $v.registrationRequest.rootUser.address.country
+                                            )
+                                        "
+                                        placeholder="Registration Country"
+                                    />
+                                    <b-form-invalid-feedback>
+                                        This field is required.
+                                    </b-form-invalid-feedback>
+                                </b-form-group>
+                                <b-form-group
                                     :state="isInvalid($v.registrationRequest.rootUser.occupation)"
                                     label="Industry*"
                                 >
@@ -276,6 +298,11 @@ const touchMap = new WeakMap()
                         required,
                     },
                 },
+                address: {
+                    country: {
+                        required,
+                    },
+                },
             },
             acceptedTerms: {
                 required,
@@ -325,6 +352,9 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
                 day: null,
                 month: null,
                 year: null,
+            },
+            address: {
+                country: null,
             },
             occupation: null,
         },
