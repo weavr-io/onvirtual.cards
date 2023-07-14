@@ -24,7 +24,7 @@
                                     label="Address Line 1*"
                                 >
                                     <b-form-input
-                                        v-model="$v.address.addressLine1.$model"
+                                        v-model="address.addressLine1"
                                         placeholder="Address Line 1"
                                     />
                                 </b-form-group>
@@ -47,10 +47,7 @@
                                     :state="isInvalid($v.address.city)"
                                     label="City*"
                                 >
-                                    <b-form-input
-                                        v-model="$v.address.city.$model"
-                                        placeholder="City"
-                                    />
+                                    <b-form-input v-model="address.city" placeholder="City" />
                                 </b-form-group>
                                 <b-form-group
                                     :invalid-feedback="
@@ -66,7 +63,7 @@
                                     label="Country*"
                                 >
                                     <b-form-select
-                                        v-model="$v.address.country.$model"
+                                        v-model="address.country"
                                         :options="countryOptionsWithDefault"
                                         placeholder="Registration Country"
                                     />
@@ -85,7 +82,7 @@
                                     label="Post Code*"
                                 >
                                     <b-form-input
-                                        v-model="$v.address.postCode.$model"
+                                        v-model="address.postCode"
                                         placeholder="Post Code"
                                     />
                                 </b-form-group>
