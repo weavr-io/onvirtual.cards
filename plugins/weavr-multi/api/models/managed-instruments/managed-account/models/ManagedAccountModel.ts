@@ -5,11 +5,11 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
 import { CreationTimestamp } from '~/plugins/weavr-multi/api/models/common/models/Timestamp'
 
 export interface ManagedAccountModel extends CreationTimestamp {
-  id: IDModel
-  profileId: IDModel
-  tag?: string
-  friendlyName: string
-  currency: CurrencyEnum
-  balances: ManagedInstrumentBalanceModel
-  state: ManagedInstrumentStateModel
+    id: IDModel
+    profileId: IDModel
+    tag?: string
+    friendlyName: string
+    currency: CurrencyEnum
+    balances: ManagedInstrumentBalanceModel
+    state: ManagedInstrumentStateModel
 }

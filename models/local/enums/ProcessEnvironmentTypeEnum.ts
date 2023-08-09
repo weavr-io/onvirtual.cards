@@ -1,4 +1,4 @@
 export enum ProcessEnvironmentTypeEnum {
-  SANDBOX = 'SANDBOX',
-  PRODUCTION = 'PRODUCTION'
+    SANDBOX = 'SANDBOX',
+    PRODUCTION = 'PRODUCTION',
 }

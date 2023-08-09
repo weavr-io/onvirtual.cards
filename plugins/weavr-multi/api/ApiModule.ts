@@ -14,33 +14,33 @@ import { AccessCodesApi } from '~/plugins/weavr-multi/api/AccessCodesApi'
 import { StepUpApi } from '~/plugins/weavr-multi/api/StepUpApi'
 
 export class ApiModule implements ApiInterface {
-  authentication: AuthenticationApi
-  managedAccounts: ManagedAccountsApi
-  managedCards: ManagedCardsApi
-  corporates: CorporatesApi
-  consumers: ConsumersApi
-  passwords: PasswordsApi
-  transfers: TransfersApi
-  outgoingWireTransfers: OutgoingWireTransferApi
-  ipify: IpifyApi
-  users: UsersApi
-  additionalFactors: AdditionalFactorsApi
-  accessCodes: AccessCodesApi
-  stepUp: StepUpApi
+    authentication: AuthenticationApi
+    managedAccounts: ManagedAccountsApi
+    managedCards: ManagedCardsApi
+    corporates: CorporatesApi
+    consumers: ConsumersApi
+    passwords: PasswordsApi
+    transfers: TransfersApi
+    outgoingWireTransfers: OutgoingWireTransferApi
+    ipify: IpifyApi
+    users: UsersApi
+    additionalFactors: AdditionalFactorsApi
+    accessCodes: AccessCodesApi
+    stepUp: StepUpApi
 
-  constructor() {
-    this.authentication = new AuthenticationApi()
-    this.passwords = new PasswordsApi()
-    this.additionalFactors = new AdditionalFactorsApi()
-    this.managedAccounts = new ManagedAccountsApi()
-    this.managedCards = new ManagedCardsApi()
-    this.corporates = new CorporatesApi()
-    this.consumers = new ConsumersApi()
-    this.transfers = new TransfersApi()
-    this.outgoingWireTransfers = new OutgoingWireTransferApi()
-    this.ipify = new IpifyApi()
-    this.users = new UsersApi()
-    this.accessCodes = new AccessCodesApi()
-    this.stepUp = new StepUpApi()
-  }
+    constructor() {
+        this.authentication = new AuthenticationApi()
+        this.passwords = new PasswordsApi()
+        this.additionalFactors = new AdditionalFactorsApi()
+        this.managedAccounts = new ManagedAccountsApi()
+        this.managedCards = new ManagedCardsApi()
+        this.corporates = new CorporatesApi()
+        this.consumers = new ConsumersApi()
+        this.transfers = new TransfersApi()
+        this.outgoingWireTransfers = new OutgoingWireTransferApi()
+        this.ipify = new IpifyApi()
+        this.users = new UsersApi()
+        this.accessCodes = new AccessCodesApi()
+        this.stepUp = new StepUpApi()
+    }
 }

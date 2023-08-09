@@ -3,10 +3,10 @@ import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities
 import { DateModel } from '~/plugins/weavr-multi/api/models/common/DateModel'
 
 export interface CorporatesRootUserRequest {
-  name: string
-  surname: string
-  email: string
-  mobile: MobileModel
-  companyPosition: CompanyPositionEnum
-  dateOfBirth?: DateModel
+    name: string
+    surname: string
+    email: string
+    mobile: MobileModel
+    companyPosition: CompanyPositionEnum
+    dateOfBirth?: DateModel
 }

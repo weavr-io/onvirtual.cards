@@ -10,26 +10,36 @@ import { ResumeLostPasswordResponseModel } from '~/plugins/weavr-multi/api/model
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 
 export class PasswordsApi {
-  store(params: {
-    userId: IDModel
-    data: CreatePasswordRequestModel
-  }): Promise<AxiosResponse<CreatePasswordResponseModel>> {
-    return $axiosMulti.post<CreatePasswordResponseModel>('/passwords/' + params.userId + '/create', params.data)
-  }
+    store(params: {
+        userId: IDModel
+        data: CreatePasswordRequestModel
+    }): Promise<AxiosResponse<CreatePasswordResponseModel>> {
+        return $axiosMulti.post<CreatePasswordResponseModel>(
+            '/passwords/' + params.userId + '/create',
+            params.data
+        )
+    }
 
-  update(request: UpdatePasswordRequestModel): Promise<AxiosResponse<CreatePasswordResponseModel>> {
-    return $axiosMulti.post<CreatePasswordResponseModel>('/passwords/update', request)
-  }
+    update(
+        request: UpdatePasswordRequestModel
+    ): Promise<AxiosResponse<CreatePasswordResponseModel>> {
+        return $axiosMulti.post<CreatePasswordResponseModel>('/passwords/update', request)
+    }
 
-  validate(request: ValidatePasswordRequestModel): Promise<AxiosResponse> {
-    return $axiosMulti.post('/passwords/validate', request)
-  }
+    validate(request: ValidatePasswordRequestModel): Promise<AxiosResponse> {
+        return $axiosMulti.post('/passwords/validate', request)
+    }
 
-  initiate(request: InitiateLostPasswordRequestModel): Promise<AxiosResponse> {
-    return $axiosMulti.post('/passwords/lost_password/start', request)
-  }
+    initiate(request: InitiateLostPasswordRequestModel): Promise<AxiosResponse> {
+        return $axiosMulti.post('/passwords/lost_password/start', request)
+    }
 
-  resume(request: ResumeLostPasswordRequestModel): Promise<AxiosResponse<ResumeLostPasswordResponseModel>> {
-    return $axiosMulti.post<ResumeLostPasswordResponseModel>('/passwords/lost_password/resume', request)
-  }
+    resume(
+        request: ResumeLostPasswordRequestModel
+    ): Promise<AxiosResponse<ResumeLostPasswordResponseModel>> {
+        return $axiosMulti.post<ResumeLostPasswordResponseModel>(
+            '/passwords/lost_password/resume',
+            request
+        )
+    }
 }

@@ -1,3 +1,3 @@
 export enum SCAOtpChannelEnum {
-  SMS = 'SMS'
+    SMS = 'SMS',
 }

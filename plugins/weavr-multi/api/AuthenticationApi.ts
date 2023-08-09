@@ -4,11 +4,13 @@ import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/auth
 import { $axiosMulti } from '~/utils/api'
 
 export class AuthenticationApi {
-  loginWithPassword(request: LoginWithPasswordRequest): Promise<AxiosResponse<LoginWithPasswordResponse>> {
-    return $axiosMulti.post<LoginWithPasswordResponse>('/login_with_password', request)
-  }
+    loginWithPassword(
+        request: LoginWithPasswordRequest
+    ): Promise<AxiosResponse<LoginWithPasswordResponse>> {
+        return $axiosMulti.post<LoginWithPasswordResponse>('/login_with_password', request)
+    }
 
-  logout(): Promise<AxiosResponse> {
-    return $axiosMulti.post('/logout', {})
-  }
+    logout(): Promise<AxiosResponse> {
+        return $axiosMulti.post('/logout', {})
+    }
 }

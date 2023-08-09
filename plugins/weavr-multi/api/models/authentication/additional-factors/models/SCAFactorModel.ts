@@ -3,7 +3,7 @@ import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentica
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 
 export interface SCAFactorModel {
-  type?: SCAChallengeTypeEnum
-  status?: SCAFactorStatusEnum
-  channel?: SCAOtpChannelEnum
+    type?: SCAChallengeTypeEnum
+    status?: SCAFactorStatusEnum
+    channel?: SCAOtpChannelEnum
 }

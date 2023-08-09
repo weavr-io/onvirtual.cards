@@ -1,4 +1,4 @@
 export enum IdentityTypeEnum {
-  CONSUMER = 'CONSUMER',
-  CORPORATE = 'CORPORATE'
+    CONSUMER = 'CONSUMER',
+    CORPORATE = 'CORPORATE',
 }

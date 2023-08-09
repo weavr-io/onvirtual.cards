@@ -28,27 +28,27 @@ export type RootState = root.State
 const initializer = (store: Store<any>) => initialiseStores(store)
 
 const createStore = () => {
-  return new Store({
-    plugins: [initializer],
-    state: root.state(),
-    getters: root.getters,
-    mutations: root.mutations,
-    actions: root.actions,
-    modules: {
-      cardsModule: Cards,
-      accountsModule: Accounts,
-      corporatesModule: Corporates,
-      loaderModule: Loader,
-      authModule: Auth,
-      secureClientModule: SecureClient,
-      consumersModule: Consumers,
-      identitiesModule: Identity,
-      transfersModule: Transfers,
-      errorsModule: Errors,
-      usersModule: Users,
-      accessCodesModule: AccessCodes
-    }
-  })
+    return new Store({
+        plugins: [initializer],
+        state: root.state(),
+        getters: root.getters,
+        mutations: root.mutations,
+        actions: root.actions,
+        modules: {
+            cardsModule: Cards,
+            accountsModule: Accounts,
+            corporatesModule: Corporates,
+            loaderModule: Loader,
+            authModule: Auth,
+            secureClientModule: SecureClient,
+            consumersModule: Consumers,
+            identitiesModule: Identity,
+            transfersModule: Transfers,
+            errorsModule: Errors,
+            usersModule: Users,
+            accessCodesModule: AccessCodes,
+        },
+    })
 }
 
 export default createStore

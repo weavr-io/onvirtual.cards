@@ -3,9 +3,9 @@ import { CurrencyAmountModel } from '~/plugins/weavr-multi/api/models/common/Cur
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 
 export interface CreateTransferRequest {
-  profileId: IDModel
-  tag?: string
-  source: InstrumentIdModel
-  destination: InstrumentIdModel
-  destinationAmount: CurrencyAmountModel
+    profileId: IDModel
+    tag?: string
+    source: InstrumentIdModel
+    destination: InstrumentIdModel
+    destinationAmount: CurrencyAmountModel
 }

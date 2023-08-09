@@ -1,4 +1,4 @@
 export interface MobileModel {
-  countryCode: string
-  number: string
+    countryCode: string
+    number: string
 }

@@ -10,35 +10,35 @@ import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/mode
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 
 export class CorporatesApi {
-  store(data: CreateCorporateRequest): Promise<AxiosResponse<CorporateModel>> {
-    return $axiosMulti.post<CorporateModel>('/corporates', data)
-  }
+    store(data: CreateCorporateRequest): Promise<AxiosResponse<CorporateModel>> {
+        return $axiosMulti.post<CorporateModel>('/corporates', data)
+    }
 
-  show(): Promise<AxiosResponse<CorporateModel>> {
-    return $axiosMulti.get<CorporateModel>('/corporates')
-  }
+    show(): Promise<AxiosResponse<CorporateModel>> {
+        return $axiosMulti.get<CorporateModel>('/corporates')
+    }
 
-  update(data: UpdateCorporateRequest): Promise<AxiosResponse<CorporateModel>> {
-    return $axiosMulti.patch<CorporateModel>('/corporates', data)
-  }
+    update(data: UpdateCorporateRequest): Promise<AxiosResponse<CorporateModel>> {
+        return $axiosMulti.patch<CorporateModel>('/corporates', data)
+    }
 
-  sendVerificationCode(data: SendVerificationCodeRequest): Promise<AxiosResponse> {
-    return $axiosMulti.post('/corporates/verification/email/send', data)
-  }
+    sendVerificationCode(data: SendVerificationCodeRequest): Promise<AxiosResponse> {
+        return $axiosMulti.post('/corporates/verification/email/send', data)
+    }
 
-  verifyEmail(data: VerifyEmailRequest): Promise<AxiosResponse> {
-    return $axiosMulti.post('/corporates/verification/email/verify', data)
-  }
+    verifyEmail(data: VerifyEmailRequest): Promise<AxiosResponse> {
+        return $axiosMulti.post('/corporates/verification/email/verify', data)
+    }
 
-  startKYB(): Promise<AxiosResponse<StartCorporateKYBResponse>> {
-    return $axiosMulti.post<StartCorporateKYBResponse>('/corporates/kyb')
-  }
+    startKYB(): Promise<AxiosResponse<StartCorporateKYBResponse>> {
+        return $axiosMulti.post<StartCorporateKYBResponse>('/corporates/kyb')
+    }
 
-  getCorporateKYB(): Promise<AxiosResponse<GetCorporateKYBResponse>> {
-    return $axiosMulti.get<GetCorporateKYBResponse>('/corporates/kyb')
-  }
+    getCorporateKYB(): Promise<AxiosResponse<GetCorporateKYBResponse>> {
+        return $axiosMulti.get<GetCorporateKYBResponse>('/corporates/kyb')
+    }
 
-  chargeFee(data: ChargeFeeToCorporateRequest): Promise<AxiosResponse> {
-    return $axiosMulti.post('/corporates/fees/charge', data)
-  }
+    chargeFee(data: ChargeFeeToCorporateRequest): Promise<AxiosResponse> {
+        return $axiosMulti.post('/corporates/fees/charge', data)
+    }
 }

@@ -6,16 +6,16 @@ import { DateModel } from '~/plugins/weavr-multi/api/models/common/DateModel'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
 export interface UpdateConsumerRequest {
-  tag?: string
-  name?: string
-  surname?: string
-  email?: string
-  mobile?: MobileModel
-  dateOfBirth?: DateModel
-  address?: AddressModel
-  feeGroup?: string
-  baseCurrency?: CurrencyEnum
-  occupation?: OccupationTypeEnum
-  sourceOfFunds?: CorporateSourceOfFundTypeEnum
-  sourceOfFundsOther?: string
+    tag?: string
+    name?: string
+    surname?: string
+    email?: string
+    mobile?: MobileModel
+    dateOfBirth?: DateModel
+    address?: AddressModel
+    feeGroup?: string
+    baseCurrency?: CurrencyEnum
+    occupation?: OccupationTypeEnum
+    sourceOfFunds?: CorporateSourceOfFundTypeEnum
+    sourceOfFundsOther?: string
 }

@@ -4,7 +4,7 @@ import { NuxtAxiosInstance } from '~/node_modules/@nuxtjs/axios'
 let $axiosMulti: NuxtAxiosInstance
 
 export function initializeAxios(axiosMulti: NuxtAxiosInstance) {
-  $axiosMulti = axiosMulti
+    $axiosMulti = axiosMulti
 }
 
 export { $axiosMulti }

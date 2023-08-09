@@ -1,4 +1,4 @@
 export interface FasterPaymentsBankDetailsModel {
-  accountNumber: string
-  sortCode: string
+    accountNumber: string
+    sortCode: string
 }

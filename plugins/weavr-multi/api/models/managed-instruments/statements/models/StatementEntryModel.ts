@@ -3,15 +3,15 @@ import { CurrencyAmountModel } from '~/plugins/weavr-multi/api/models/common/Cur
 import { ScaledAmountModel } from '~/plugins/weavr-multi/api/models/common/ScaledAmountModel'
 
 export interface StatementEntryModel {
-  transactionId: TransactionIdModel
-  originalAmount?: CurrencyAmountModel
-  forexRate?: ScaledAmountModel
-  transactionAmount: CurrencyAmountModel
-  balanceAfter?: CurrencyAmountModel
-  cardholderFee?: CurrencyAmountModel
-  processedTimestamp: string
-  sourceAmount: CurrencyAmountModel
-  additionalFields: {
-    [k: string]: string
-  }
+    transactionId: TransactionIdModel
+    originalAmount?: CurrencyAmountModel
+    forexRate?: ScaledAmountModel
+    transactionAmount: CurrencyAmountModel
+    balanceAfter?: CurrencyAmountModel
+    cardholderFee?: CurrencyAmountModel
+    processedTimestamp: string
+    sourceAmount: CurrencyAmountModel
+    additionalFields: {
+        [k: string]: string
+    }
 }

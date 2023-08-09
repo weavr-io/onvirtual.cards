@@ -4,13 +4,13 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
 import { ConsumersRootUserRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/ConsumersRootUserRequest'
 
 export interface CreateConsumerRequest {
-  profileId: IDModel
-  tag?: string
-  rootUser: ConsumersRootUserRequest
-  ipAddress: string
-  acceptedTerms: boolean
-  baseCurrency?: CurrencyEnum
-  feeGroup?: string
-  sourceOfFunds: ConsumerSourceOfFundTypeEnum
-  sourceOfFundsOther?: string
+    profileId: IDModel
+    tag?: string
+    rootUser: ConsumersRootUserRequest
+    ipAddress: string
+    acceptedTerms: boolean
+    baseCurrency?: CurrencyEnum
+    feeGroup?: string
+    sourceOfFunds: ConsumerSourceOfFundTypeEnum
+    sourceOfFundsOther?: string
 }

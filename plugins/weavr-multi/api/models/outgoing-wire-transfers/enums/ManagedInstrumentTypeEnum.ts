@@ -1,3 +1,3 @@
 export enum ManagedInstrumentTypeEnum {
-  MANAGED_ACCOUNT = 'managed_accounts'
+    MANAGED_ACCOUNT = 'managed_accounts',
 }

@@ -1,3 +1,3 @@
 export interface SensitivePinModel {
-  value?: string
+    value?: string
 }

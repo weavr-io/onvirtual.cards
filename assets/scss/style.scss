@@ -4,7 +4,6 @@
 // Then include the following
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/bootstrap-vue/src/index';
-
 @import 'defaultBrowserBehaviour';
 @import 'forms';
 @import 'nav';
@@ -14,125 +13,134 @@
 @import 'shadow';
 @import 'cookie';
 @import 'border';
+@import 'helpers';
 
 .transparent-modal {
-  background: transparent !important;
-  border: none !important;
+    background: transparent !important;
+    border: none !important;
 }
 
 .col-form-label {
-  text-transform: uppercase;
+    text-transform: uppercase;
 }
 
 .btn {
-  &.btn-primary {
-    &:hover {
-      box-shadow: $btn-box-shadow;
+    &.btn-primary {
+        &:hover {
+            box-shadow: $btn-box-shadow;
+        }
     }
-  }
 }
 
 #loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.9);
-  z-index: 999;
-
-  .loader-spinner {
-    text-align: center;
-    top: 50%;
     position: fixed;
-    left: 50%;
-    margin-left: -15px;
-    margin-top: -15px;
-  }
+    inset: 0;
+    background-color: rgb(255 255 255 / 90%);
+    z-index: 999;
+
+    .loader-spinner {
+        text-align: center;
+        top: 50%;
+        position: fixed;
+        left: 50%;
+        margin-left: -15px;
+        margin-top: -15px;
+    }
 }
 
 .error-alert {
-  width: 100%;
-  min-height: 50px;
-  background-color: $red;
-  border-radius: 0.6em;
-  position: relative;
-  margin: 2em 0;
+    width: 100%;
+    min-height: 50px;
+    background-color: $red;
+    border-radius: 0.6em;
+    position: relative;
 
-  p {
-    vertical-align: middle;
-    padding: 14px 54px 14px 20px;
-    margin: 0;
-    color: #ffffff;
-  }
-
-  button {
-    position: absolute;
-    top: 50%;
-    margin-top: -25px;
-    right: 0;
-    width: 50px;
-    height: 50px;
-    z-index: 1030;
-    cursor: pointer;
-
-    img {
-      position: absolute;
-      top: 17px;
-      left: 17px;
+    p {
+        vertical-align: middle;
+        padding: 14px 54px 14px 20px;
+        margin: 0;
+        color: $body-bg;
     }
 
-    background-color: transparent;
-    border: 0;
-    outline: 0;
-    vertical-align: middle;
+    button {
+        position: absolute;
+        top: 50%;
+        margin-top: -25px;
+        right: 0;
+        width: 50px;
+        height: 50px;
+        z-index: 1030;
+        cursor: pointer;
 
-    &:focus {
-      outline: 0;
+        img {
+            position: absolute;
+            top: 17px;
+            left: 17px;
+        }
+
+        background-color: transparent;
+        border: 0;
+        outline: 0;
+        vertical-align: middle;
+
+        &:focus {
+            outline: 0;
+        }
     }
-  }
 }
 
 a {
-  &.link {
-    color: $primary;
-    border-bottom: 3px solid $secondary;
-    transition: 0.3s border;
+    &.link {
+        color: $primary;
+        border-bottom: 3px solid $secondary;
+        transition: 0.3s border;
 
-    &:hover {
-      text-decoration: none;
-      border-color: $primary;
+        &:hover {
+            text-decoration: none;
+            border-color: $primary;
+        }
     }
-  }
 }
 
 .text-decoration {
-  &-underline {
-    text-decoration: underline;
-  }
+    &-underline {
+        text-decoration: underline;
+    }
 }
 
 .line-height {
-  &-md {
-    line-height: 2rem;
-  }
+    &-md {
+        line-height: 2rem;
+    }
 
-  &-lg {
-    line-height: 2.8rem;
-  }
+    &-lg {
+        line-height: 2.8rem;
+    }
 }
 
 .transaction-type-icon {
-  background: #eaedf6;
-  text-align: center;
-  border-radius: 10px;
-  font-size: 30px;
-  color: #6d7490;
-  font-weight: 100;
-  padding: 16px 0px;
-  line-height: 0;
+    background: $grey-light;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 30px;
+    color: $grey;
+    font-weight: 100;
+    padding: 16px 0;
+    line-height: 0;
 }
 
 .smaller {
-  font-size: 0.8 * $small-font-size;
+    font-size: 0.8 * $small-font-size;
+}
+
+// Transition Style
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.1s;
+}
+
+.fade-enter,
+.fade-leave-active {
+    transition: all 0.2s;
+    opacity: 0;
 }
