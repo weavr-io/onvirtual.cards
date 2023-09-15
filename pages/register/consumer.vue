@@ -251,7 +251,6 @@ import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/i
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
@@ -334,7 +333,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
 
     rootMobileNumber = ''
     numberIsValid: boolean | null = null
-    passwordStrength: number = 0
+    passwordStrength = 0
     public registrationRequest: DeepNullable<
         RecursivePartial<CreateConsumerRequest> & { password: string }
     > = {
@@ -512,20 +511,12 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         if (!this.registrationRequest.rootUser) {
             return
         }
-
-        const loginRequest: LoginWithPasswordRequest = {
-            email: this.registrationRequest.rootUser.email as string,
-            password: {
-                value: this.registrationRequest.password as string,
+        return this.$router.push({
+            path: '/login/verify',
+            query: {
+                send: 'true',
+                cons: this.consumer?.id.id,
             },
-        }
-
-        const _req = this.stores.auth.loginWithPassword(loginRequest)
-
-        _req.then(() => {
-            this.setSCAstorage()
-            this.stopRegistrationLoading()
-            return this.$router.push({ path: '/profile/address' })
         })
     }
 

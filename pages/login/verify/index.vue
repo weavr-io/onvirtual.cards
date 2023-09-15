@@ -88,8 +88,8 @@ import Logo from '~/components/Logo.vue'
     },
 })
 export default class EmailVerificationPage extends mixins(BaseMixin, ValidationMixin) {
-    showEmailResentSuccess: boolean = false
-    isLoading: boolean = false
+    showEmailResentSuccess = false
+    isLoading = false
     private verifyEmailRequest!: VerifyEmailRequest
 
     async asyncData({ route, redirect, store }) {
@@ -100,30 +100,21 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
             await identities.getIdentity()
         }
 
-        if (!authStore(store).isLoggedIn) {
-            redirect('/')
-            return
-        }
-
         if (identities.emailVerified || auth.auth?.credentials.type === CredentialTypeEnum.USER) {
             return redirect('/login/verify/mobile')
         }
 
         const request: VerifyEmailRequest = {
-            email: identities.identity!.rootUser?.email,
+            email: route.query.email ?? identities.identity!.rootUser?.email,
             verificationCode: route.query.nonce ? `${route.query.nonce}` : '',
         }
 
         if (request.verificationCode !== '') {
-            if (authStore(store).isConsumer) {
+            if (route.query.cons) {
                 consumersStore(store)
                     .verifyEmail(request)
                     .then(() => {
-                        if (authStore(store).isLoggedIn) {
-                            redirect('/')
-                        } else {
-                            redirect('/login')
-                        }
+                        redirect('/')
                     })
             } else {
                 // else treat as Corporate
@@ -154,7 +145,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
         this.isLoading = true
 
         try {
-            if (this.isConsumer) {
+            if (this.$route.query.cons) {
                 await this.sendVerifyEmailConsumers()
             } else {
                 // else treat as corporate
@@ -193,7 +184,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
 
         this.isLoading = true
 
-        this.isConsumer
+        this.$route.query.cons
             ? this.stores.consumers
                   .verifyEmail(this.verifyEmailRequest)
                   .then(this.onMobileVerified)
