@@ -145,11 +145,13 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
         this.isLoading = true
 
         if (this.$route.query.cons) {
-            await this.sendVerifyEmailConsumers()
+            await this.sendVerifyEmailConsumers().catch()
         } else {
             // else treat as corporate
-            await this.sendVerifyEmailCorporates()
+            await this.sendVerifyEmailCorporates().catch()
         }
+
+        this.isLoading = false
     }
 
     async sendVerifyEmailConsumers() {

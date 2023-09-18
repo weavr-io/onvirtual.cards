@@ -516,6 +516,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
             query: {
                 send: 'true',
                 cons: this.consumer?.id.id,
+                email: this.registrationRequest.rootUser.email,
             },
         })
     }
