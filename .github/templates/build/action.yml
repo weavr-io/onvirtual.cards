@@ -1,91 +1,91 @@
 name: Build Reusable Template
 
 inputs:
-  base_url_script:
-    required: true
-    type: string
-  base_url:
-    required: true
-    type: string
-  multi_base_url:
-    required: true
-    type: string
-  application_id:
-    required: true
-    type: string
-  ui_key:
-    required: true
-    type: string
-  environment:
-    required: true
-    type: string
-  corporates_profile_id:
-    required: true
-    type: string
-  transfers_profile_id:
-    required: true
-    type: string
-  segment_write_key:
-    required: true
-    type: string
-  consumers_profile_id:
-    required: true
-    type: string
-  managed_accounts_consumers_profile_id:
-    required: true
-    type: string
-  managed_accounts_corporates_profile_id:
-    required: true
-    type: string
-  managed_cards_consumers_profile_id:
-    required: true
-    type: string
-  managed_cards_corporates_profile_id:
-    required: true
-    type: string
-  recaptcha:
-    required: true
-    type: string
+    base_url_script:
+        required: true
+        type: string
+    base_url:
+        required: true
+        type: string
+    multi_base_url:
+        required: true
+        type: string
+    application_id:
+        required: true
+        type: string
+    ui_key:
+        required: true
+        type: string
+    environment:
+        required: true
+        type: string
+    corporates_profile_id:
+        required: true
+        type: string
+    transfers_profile_id:
+        required: true
+        type: string
+    segment_write_key:
+        required: true
+        type: string
+    consumers_profile_id:
+        required: true
+        type: string
+    managed_accounts_consumers_profile_id:
+        required: true
+        type: string
+    managed_accounts_corporates_profile_id:
+        required: true
+        type: string
+    managed_cards_consumers_profile_id:
+        required: true
+        type: string
+    managed_cards_corporates_profile_id:
+        required: true
+        type: string
+    recaptcha:
+        required: true
+        type: string
 
 runs:
-  using: "composite"
-  steps:
-    - name: Use Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.x
-        cache: npm
-    - run: echo BASE_URL_SCRIPT=${{ inputs.base_url_script }} >> .env
-      shell: bash
-    - run: echo BASE_URL=${{ inputs.vite_base_url }} >> .env
-      shell: bash
-    - run: echo MULTI_BASE_URL=${{ inputs.multi_base_url }} >> .env
-      shell: bash
-    - run: echo APPLICATION_ID=${{ inputs.application_id }} >> .env
-      shell: bash
-    - run: echo UI_KEY=${{ inputs.ui_key }} >> .env
-      shell: bash
-    - run: echo ENVIRONMENT=${{ inputs.environment }} >> .env
-      shell: bash
-    - run: echo CORPORATES_PROFILE_ID=${{ inputs.corporates_profile_id }} >> .env
-      shell: bash
-    - run: echo TRANSFERS_PROFILE_ID=${{ inputs.transfers_profile_id }} >> .env
-      shell: bash
-    - run: echo SEGMENT_WRITE_KEY=${{ inputs.segment_write_key }} >> .env
-      shell: bash
-    - run: echo CONSUMERS_PROFILE_ID=${{ inputs.consumers_profile_id }} >> .env
-      shell: bash
-    - run: echo MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID=${{ inputs.managed_accounts_consumers_profile_id }} >> .env
-      shell: bash
-    - run: echo MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID=${{ inputs.managed_accounts_corporates_profile_id }} >> .env
-      shell: bash
-    - run: echo MANAGED_CARDS_CONSUMERS_PROFILE_ID=${{ inputs.managed_cards_consumers_profile_id }} >> .env
-      shell: bash
-    - run: echo MANAGED_CARDS_CORPORATES_PROFILE_ID=${{ inputs.managed_cards_corporates_profile_id }} >> .env
-      shell: bash
-    - run: echo RECAPTCHA=${{ inputs.recaptcha }} >> .env
-      shell: bash
-    - run: npm install
-      shell: bash
-    - run: npm run build
-      shell: bash
+    using: "composite"
+    steps:
+        -   name: Use Node.js
+            uses: actions/setup-node@v3
+            with:
+                node-version: 18.x
+                cache: npm
+        -   run: echo BASE_URL_SCRIPT=${{ inputs.base_url_script }} >> .env
+            shell: bash
+        -   run: echo BASE_URL=${{ inputs.vite_base_url }} >> .env
+            shell: bash
+        -   run: echo MULTI_BASE_URL=${{ inputs.multi_base_url }} >> .env
+            shell: bash
+        -   run: echo APPLICATION_ID=${{ inputs.application_id }} >> .env
+            shell: bash
+        -   run: echo UI_KEY=${{ inputs.ui_key }} >> .env
+            shell: bash
+        -   run: echo ENVIRONMENT=${{ inputs.environment }} >> .env
+            shell: bash
+        -   run: echo CORPORATES_PROFILE_ID=${{ inputs.corporates_profile_id }} >> .env
+            shell: bash
+        -   run: echo TRANSFERS_PROFILE_ID=${{ inputs.transfers_profile_id }} >> .env
+            shell: bash
+        -   run: echo SEGMENT_WRITE_KEY=${{ inputs.segment_write_key }} >> .env
+            shell: bash
+        -   run: echo CONSUMERS_PROFILE_ID=${{ inputs.consumers_profile_id }} >> .env
+            shell: bash
+        -   run: echo MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID=${{ inputs.managed_accounts_consumers_profile_id }} >> .env
+            shell: bash
+        -   run: echo MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID=${{ inputs.managed_accounts_corporates_profile_id }} >> .env
+            shell: bash
+        -   run: echo MANAGED_CARDS_CONSUMERS_PROFILE_ID=${{ inputs.managed_cards_consumers_profile_id }} >> .env
+            shell: bash
+        -   run: echo MANAGED_CARDS_CORPORATES_PROFILE_ID=${{ inputs.managed_cards_corporates_profile_id }} >> .env
+            shell: bash
+        -   run: echo RECAPTCHA=${{ inputs.recaptcha }} >> .env
+            shell: bash
+        -   run: npm install
+            shell: bash
+        -   run: npm run build
+            shell: bash

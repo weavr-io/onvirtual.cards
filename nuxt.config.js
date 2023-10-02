@@ -125,6 +125,11 @@ const config = {
         linkActiveClass: 'active',
     },
     buildModules: ['@nuxt/typescript-build'],
+    build: {
+        babel: {
+            compact: true,
+        },
+    },
     typescript: {
         typeCheck: true,
         ignoreNotFoundWarnings: true,
