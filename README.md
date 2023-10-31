@@ -8,7 +8,7 @@ This is a demo application called **onvirtual.cards** used to illustrate how to 
 
 # Configuration
 1. Copy .env.example file to a new .env file in the project root and fill in the correct environment variables(if necessary).  These values are available upon setting an Innovator integration with the Weavr Platform (https://docs.weavr.io/start/open-multi-sandbox-account).  For this application, you must choose the *Business Purchasing* payment model. 
-<br> <br> **Note**: MULTI_BASE_URL points to the proxy server (Dockerfile-proxy (i.e localhost:81)) while BASE_URL_SCRIPT should point to the Weavr **Sandbox** environment.<br> <br>
+<br> <br> **Note**: MULTI_BASE_URL points to the proxy server (Dockerfile-proxy (i.e localhost:81)) while BASE_URL_SCRIPT should point to the Weavr **Sandbox** environment UI Library script source URL.<br> <br>
 3. Copy .proxy.conf.example to .proxy.conf file in the project root. Replace {{API_KEY}} with the **API Key** value in the Innovator Portal API Credentials.
 
 # Running the App
@@ -34,7 +34,7 @@ docker-machine ip default
 
 ### _Local Development Configuration_
 1. Copy .env.example file to a new .env file in the project root and fill in the correct environment variables(if necessary).  These values are available upon setting an Innovator integration with the Weavr Platform (https://docs.weavr.io/start/open-multi-sandbox-account).  For this application, you must choose the *Business Purchasing* payment model.
-   <br> <br> **Note**: MULTI_BASE_URL points to the proxy server (Dockerfile-proxy (i.e http://localhost:81/multi)) while BASE_URL_SCRIPT should point to the Weavr **QA** environment.<br> <br>
+   <br> <br> **Note**: MULTI_BASE_URL points to the proxy server (Dockerfile-proxy (i.e http://localhost:81/multi)) while BASE_URL_SCRIPT should point to the Weavr **QA** environment UI Library script source URL.<br> <br>
 3. Copy .proxy.conf.example to .proxy.conf file in the development folder. Replace {{API_KEY}} with the **API Key** value in the Innovator Portal API Credentials.
 
 ``` bash
