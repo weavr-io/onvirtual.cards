@@ -8,6 +8,7 @@ import { identitiesStore } from '~/utils/store-accessor'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
+import { PUK_COUNTRY_CODES } from '~/utils/juristication'
 
 const defaultState = {
     isLoading: false,
@@ -29,6 +30,14 @@ export default class Corporates extends StoreModule {
     corporate: CorporateModel | null = defaultState.corporate
 
     kyb: GetCorporateKYBResponse | null = defaultState.corporate
+
+    get regCountry() {
+        return this.corporate?.company.countryOfRegistration || ''
+    }
+
+    get isUk() {
+        return PUK_COUNTRY_CODES.includes(this.regCountry)
+    }
 
     @Mutation
     SET_IS_LOADING(_isLoading: boolean) {

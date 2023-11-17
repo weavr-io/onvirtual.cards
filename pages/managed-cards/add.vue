@@ -238,7 +238,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
 
         this.createManagedCardRequest = {
             ...this.createManagedCardRequest,
-            profileId: this.cardProfileId,
+            profileId: this.cardJuristicationProfileId,
             billingAddress: {
                 ...(this.isConsumer
                     ? (this.stores.consumers.consumer?.rootUser.address as AddressModel)

@@ -14,9 +14,13 @@ const config = {
             consumers: process.env.CONSUMERS_PROFILE_ID,
             corporates: process.env.CORPORATES_PROFILE_ID,
             managed_cards_consumers: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID,
+            managed_cards_consumers_uk: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID_UK,
             managed_cards_corporates: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID,
+            managed_cards_corporates_uk: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID_UK,
             managed_accounts_consumers: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID,
+            managed_accounts_consumers_uk: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_UK,
             managed_accounts_corporates: process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID,
+            managed_accounts_corporates_uk: process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_UK,
             transfers: process.env.TRANSFERS_PROFILE_ID,
             send: process.env.SEND_PROFILE_ID,
         },
@@ -32,7 +36,10 @@ const config = {
         title: 'onvirtual.cards',
         meta: [
             { charset: 'utf-8' },
-            { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+            {
+                name: 'viewport',
+                content: 'width=device-width, initial-scale=1',
+            },
             {
                 hid: 'description',
                 name: 'description',
@@ -47,7 +54,10 @@ const config = {
         ],
 
         link: [
-            { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+            {
+                rel: 'apple-touch-icon',
+                href: '/apple-touch-icon.png',
+            },
             {
                 rel: 'icon',
                 type: 'image/png',
@@ -60,8 +70,15 @@ const config = {
                 sizes: '16x16',
                 href: '/favicon-16x16.png',
             },
-            { rel: 'manifest', href: '/site.webmanifest' },
-            { rel: 'mask-ico', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
+            {
+                rel: 'manifest',
+                href: '/site.webmanifest',
+            },
+            {
+                rel: 'mask-ico',
+                href: '/safari-pinned-tab.svg',
+                color: '#5bbad5',
+            },
             {
                 rel: 'stylesheet',
                 href: 'https://fonts.googleapis.com/css?family=Be+Vietnam:100,100i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i&display=swap',
@@ -84,12 +101,27 @@ const config = {
      ** Plugins to load before mounting the App
      */
     plugins: [
-        { src: '~/plugins/weavr/security.client.ts', ssr: false },
+        {
+            src: '~/plugins/weavr/security.client.ts',
+            ssr: false,
+        },
         { src: '~/plugins/vuelidate' },
-        { src: '~/plugins/WeavrVueFilters.ts', ssr: false },
-        { src: '~/plugins/PhoneNumberInput.ts', ssr: false },
-        { src: '~/plugins/flatpickr.ts', ssr: false },
-        { src: '~/plugins/InfiniteLoading.ts', ssr: false },
+        {
+            src: '~/plugins/WeavrVueFilters.ts',
+            ssr: false,
+        },
+        {
+            src: '~/plugins/PhoneNumberInput.ts',
+            ssr: false,
+        },
+        {
+            src: '~/plugins/flatpickr.ts',
+            ssr: false,
+        },
+        {
+            src: '~/plugins/InfiniteLoading.ts',
+            ssr: false,
+        },
         { src: '~/plugins/axios.ts' },
         { src: '~/plugins/axios-accessor.ts' },
         { src: '~/plugins/weavr-multi/index.ts' },
