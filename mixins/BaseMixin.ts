@@ -45,7 +45,7 @@ export default class BaseMixin extends Vue {
         return this.isConsumer ? this.stores.consumers.isUk : this.stores.corporates.isUk
     }
 
-    get cardJuristicationProfileId() {
+    get cardJurisdictionProfileId() {
         if (this.isConsumer) {
             if (this.consumer && this.identityRegCountryIsUK) {
                 return this.$config.profileId.managed_cards_consumers_uk
@@ -59,7 +59,7 @@ export default class BaseMixin extends Vue {
         }
     }
 
-    get accountJuristicationProfileId() {
+    get accountJurisdictionProfileId() {
         if (this.isConsumer) {
             if (this.consumer && this.identityRegCountryIsUK) {
                 return this.$config.profileId.managed_accounts_consumers_uk

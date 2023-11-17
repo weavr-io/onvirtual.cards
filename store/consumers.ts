@@ -8,7 +8,7 @@ import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identiti
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
-import { PUK_COUNTRY_CODES } from '~/utils/juristication'
+import { PUK_COUNTRY_CODES } from '~/utils/jurisdiction'
 
 const defaultState = {
     isLoadingRegistration: false,

@@ -80,7 +80,7 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
     async fetch() {
         await this.stores.accounts
             .index({
-                profileId: this.accountJuristicationProfileId,
+                profileId: this.accountJurisdictionProfileId,
                 state: ManagedInstrumentStateEnum.ACTIVE,
                 offset: '0',
             })

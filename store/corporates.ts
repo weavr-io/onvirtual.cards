@@ -8,7 +8,7 @@ import { identitiesStore } from '~/utils/store-accessor'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
-import { PUK_COUNTRY_CODES } from '~/utils/juristication'
+import { PUK_COUNTRY_CODES } from '~/utils/jurisdiction'
 
 const defaultState = {
     isLoading: false,
