@@ -47,14 +47,14 @@ export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
     fetch() {
         return this.stores.accounts
             .index({
-                profileId: this.accountProfileId,
+                profileId: this.accountJurisdictionProfileId,
                 state: ManagedInstrumentStateEnum.ACTIVE,
                 offset: '0',
             })
             .then((res) => {
                 if (parseInt(res.data.count!) >= 1 && res.data.accounts) {
                     const _accountId = res.data.accounts[0].id
-                    this.$router.push('/managed-accounts/' + _accountId)
+                    this.$router.push(`/managed-accounts/${_accountId}`)
                 }
             })
             .catch((err) => {

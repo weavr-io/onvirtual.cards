@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-row class="mb-3" align-v="center" align-h="between">
+        <b-row align-h="between" align-v="center" class="mb-3">
             <b-col cols="9" sm="auto">
                 <div class="d-flex justify-content-start justify-content-lg-start align-items-end">
                     <label class="mr-2 mr-lg-4 font-weight-lighter" for="transaction-timeframe"
@@ -15,11 +15,11 @@
                     />
                 </div>
             </b-col>
-            <b-col cols="3" sm="auto" class="d-flex justify-content-center justify-content-lg-end">
+            <b-col class="d-flex justify-content-center justify-content-lg-end" cols="3" sm="auto">
                 <div>
                     <b-button
-                        variant="link"
                         class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none no-focus"
+                        variant="link"
                         @click="downloadStatement"
                     >
                         <download-icon class="mr-2" />
@@ -28,8 +28,8 @@
                 </div>
                 <div v-if="isCardActive" class="ml-2 ml-sm-5">
                     <b-button
-                        variant="link"
                         class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none no-focus"
+                        variant="link"
                         @click="confirmDeleteCard"
                     >
                         <delete-icon class="mr-2" />
@@ -98,13 +98,6 @@ export default class CardStatement extends mixins(
         return this.monthsFilter(this.managedCard.creationTimestamp)
     }
 
-    filterMonthChange(val) {
-        this.setFilters({
-            fromTimestamp: val.start,
-            toTimestamp: val.end,
-        })
-    }
-
     get filterDate() {
         if (!this.filters) return {}
         return {
@@ -115,6 +108,13 @@ export default class CardStatement extends mixins(
 
     get filteredStatement() {
         return this.stores.cards.filteredStatement
+    }
+
+    filterMonthChange(val) {
+        this.setFilters({
+            fromTimestamp: val.start,
+            toTimestamp: val.end,
+        })
     }
 
     downloadStatement() {
@@ -168,7 +168,7 @@ export default class CardStatement extends mixins(
                 this.managedCard.balances.availableBalance > 0
             ) {
                 const _accounts = await this.stores.accounts.index({
-                    profileId: this.accountProfileId,
+                    profileId: this.accountJurisdictionProfileId,
                     state: ManagedInstrumentStateEnum.ACTIVE,
                     offset: '0',
                 })

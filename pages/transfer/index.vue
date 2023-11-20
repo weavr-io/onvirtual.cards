@@ -75,7 +75,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
     async fetch() {
         await this.stores.cards.getCards()
         const accounts = await this.stores.accounts.index({
-            profileId: this.accountProfileId,
+            profileId: this.accountJurisdictionProfileId,
             state: ManagedInstrumentStateEnum.ACTIVE,
             offset: '0',
         })
