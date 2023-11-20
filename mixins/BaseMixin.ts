@@ -25,22 +25,6 @@ export default class BaseMixin extends Vue {
         return this.stores.auth.isLoggedIn
     }
 
-    get identityId() {
-        return this.stores.auth.identityId
-    }
-
-    get accountProfileId() {
-        return this.isConsumer
-            ? this.$config.profileId.managed_accounts_consumers!
-            : this.$config.profileId.managed_accounts_corporates!
-    }
-
-    get cardProfileId() {
-        return this.isConsumer
-            ? this.$config.profileId.managed_cards_consumers!
-            : this.$config.profileId.managed_cards_corporates!
-    }
-
     get identityRegCountryIsUK() {
         return this.isConsumer ? this.stores.consumers.isUk : this.stores.corporates.isUk
     }

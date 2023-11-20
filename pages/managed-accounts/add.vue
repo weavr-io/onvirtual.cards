@@ -135,7 +135,7 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
 
     @Watch('isConsumer', { immediate: true })
     updateProfileId() {
-        this.createManagedAccountRequest.profileId = this.accountProfileId
+        this.createManagedAccountRequest.profileId = this.accountJurisdictionProfileId
     }
 }
 </script>
