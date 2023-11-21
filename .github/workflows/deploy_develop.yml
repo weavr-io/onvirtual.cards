@@ -32,6 +32,10 @@ jobs:
           managed_accounts_corporates_profile_id: ${{ secrets.DEVELOP_MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID }}
           managed_cards_consumers_profile_id: ${{ secrets.DEVELOP_MANAGED_CARDS_CONSUMERS_PROFILE_ID }}
           managed_cards_corporates_profile_id: ${{ secrets.DEVELOP_MANAGED_CARDS_CORPORATES_PROFILE_ID }}
+          managed_cards_corporates_profile_id_puk: ${{ secrets.DEVELOP_MANAGED_CARDS_CORPORATES_PROFILE_ID_PUK }}
+          managed_cards_consumers_profile_id_puk: ${{ secrets.DEVELOP_MANAGED_CARDS_CONSUMERS_PROFILE_ID_PUK }}
+          managed_accounts_consumers_profile_id_puk: ${{ secrets.DEVELOP_MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_PUK }}
+          managed_accounts_corporates_profile_id_puk: ${{ secrets.DEVELOP_MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_PUK }}
           recaptcha: ${{ secrets.DEVELOP_RECAPTCHA }}
       - name: Deploy
         uses: ./.github/templates/deploy
