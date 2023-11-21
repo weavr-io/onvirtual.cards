@@ -43,6 +43,18 @@ inputs:
     managed_cards_corporates_profile_id:
         required: true
         type: string
+    managed_cards_corporates_profile_id_puk:
+        required: true
+        type: string
+    managed_cards_consumers_profile_id_puk:
+        required: true
+        type: string
+    managed_accounts_consumers_profile_id_puk:
+        required: true
+        type: string
+    managed_accounts_corporates_profile_id_puk:
+        required: true
+        type: string
     recaptcha:
         required: true
         type: string
@@ -82,6 +94,14 @@ runs:
         -   run: echo MANAGED_CARDS_CONSUMERS_PROFILE_ID=${{ inputs.managed_cards_consumers_profile_id }} >> .env
             shell: bash
         -   run: echo MANAGED_CARDS_CORPORATES_PROFILE_ID=${{ inputs.managed_cards_corporates_profile_id }} >> .env
+            shell: bash
+        -   run: echo MANAGED_CARDS_CORPORATES_PROFILE_ID_UK=${{ inputs.managed_cards_corporates_profile_id_puk }} >> .env
+            shell: bash
+        -   run: echo MANAGED_CARDS_CONSUMERS_PROFILE_ID_UK=${{ inputs.managed_cards_consumers_profile_id_puk }} >> .env
+            shell: bash
+        -   run: echo MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_UK=${{ inputs.managed_accounts_consumers_profile_id_puk }} >> .env
+            shell: bash
+        -   run: echo MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_UK=${{ inputs.managed_accounts_corporates_profile_id_puk }} >> .env
             shell: bash
         -   run: echo RECAPTCHA=${{ inputs.recaptcha }} >> .env
             shell: bash

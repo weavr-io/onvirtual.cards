@@ -8,6 +8,7 @@ import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identiti
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import { PUK_COUNTRY_CODES } from '~/utils/jurisdiction'
 
 const defaultState = {
     isLoadingRegistration: false,
@@ -29,6 +30,14 @@ export default class Consumers extends StoreModule {
     consumer: ConsumerModel | null = defaultState.consumer
 
     kyc: GetConsumerKYCResponse | null = defaultState.kyc
+
+    get regCountry() {
+        return this.consumer?.rootUser.address?.country || ''
+    }
+
+    get isUk() {
+        return PUK_COUNTRY_CODES.includes(this.regCountry)
+    }
 
     @Mutation
     SET_IS_LOADING(isLoading: boolean) {
