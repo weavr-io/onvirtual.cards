@@ -7,26 +7,29 @@
                 <b-spinner />
             </div>
         </div>
-        <!-- <app-footer /> -->
         <cookie-policy />
     </div>
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { defineComponent, computed } from 'vue'
+import { useBase } from '@/composables/useBase'
+import AppHeader from '~/components/Header.vue'
+import CookiePolicy from '~/components/cookie.vue'
 
-@Component({
+export default defineComponent({
+    name: 'DefaultLayout',
+    // TODO: Remove after full nuxt3 upgrade
     components: {
-        AppFooter: () => import('~/components/Footer.vue'),
-        AppHeader: () => import('~/components/Header.vue'),
-        cookiePolicy: () => import('~/components/cookie.vue'),
+        AppHeader,
+        CookiePolicy,
     },
     middleware: ['authRouteGuard'],
+    setup() {
+        const { stores } = useBase()
+        const isLoading = computed(() => stores.loader.isLoading)
+
+        return { isLoading }
+    },
 })
-export default class DefaultLayout extends mixins(BaseMixin) {
-    get isLoading() {
-        return this.stores.loader.isLoading
-    }
-}
 </script>
