@@ -24,7 +24,12 @@ export function useBase() {
     const isCorporatePopulated = computed(() => corporate.value && isCorporate)
     const isConsumerAndPopulated = computed(() => isConsumerPopulated.value && consumer.value)
     const isCorporateAndPopulated = computed(() => isCorporatePopulated.value && corporate.value)
+    const corporateKyB = computed(() => stores.corporates.kyb)
+    const corporateKyBStatus = computed(() => corporateKyB.value?.kybStatus)
+    const consumerKyC = computed(() => stores.consumers.kyc)
+    const consumerKyCStatus = computed(() => consumerKyC.value?.fullDueDiligence)
 
+    const identityId = computed(() => stores.auth.identityId)
     const rootFullName = computed<string>(() => `${rootName.value} ${rootSurname.value}`)
     const rootUserEmail = computed(() =>
         isConsumer.value ? consumer.value?.rootUser.email : corporate.value?.rootUser.email
@@ -89,11 +94,11 @@ export function useBase() {
     })
 
     const identityVerified = computed<boolean>(() => {
-        if (stores.auth.isConsumer) {
-            return stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
-        } else {
-            return stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
+        if (isConsumer.value) {
+            return consumerKyCStatus.value === KYCStatusEnum.APPROVED
         }
+
+        return corporateKyBStatus.value === KYBStatusEnum.APPROVED
     })
 
     function sleep(ms: number) {
@@ -152,10 +157,15 @@ export function useBase() {
         cardProfileId,
         profileBaseCurrency,
         consumer,
+        identityId,
         rootName,
         rootSurname,
         rootFullName,
         corporate,
+        corporateKyBStatus,
+        corporateKyB,
+        consumerKyC,
+        consumerKyCStatus,
         rootUserEmail,
         countiesOptions,
         mobileCountries,

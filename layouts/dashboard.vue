@@ -33,30 +33,40 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import KyVerified from '~/mixins/kyVerified'
-import BaseMixin from '~/mixins/BaseMixin'
+import { defineComponent, computed } from 'vue'
+import { useBase } from '@/composables/useBase'
+import { useKyVerified } from '@/composables/useKyVerified'
 
-@Component({
+export default defineComponent({
+    name: 'DashboardLayout',
     components: {
-        AppFooter: () => import('~/components/Footer.vue'),
         AppHeader: () => import('~/components/Header.vue'),
         DashboardHeader: () => import('~/components/DashboardHeader.vue'),
         KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
         KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
-        cookiePolicy: () => import('~/components/cookie.vue'),
+        CookiePolicy: () => import('~/components/cookie.vue'),
+    },
+    setup() {
+        const { goToVerify, stores } = useBase()
+        const { showKybAlert, showKycAlert, showVerifyMobileAlert, showVerifyEmailAlert } =
+            useKyVerified()
+
+        const isLoading = computed(() => stores.loader.isLoading)
+        const accounts = computed(() => stores.accounts.accounts)
+
+        return {
+            isLoading,
+            goToVerify,
+            accounts,
+            showKybAlert,
+            showKycAlert,
+            showVerifyMobileAlert,
+            showVerifyEmailAlert,
+        }
     },
 })
-export default class DefaultLayout extends mixins(KyVerified, BaseMixin) {
-    get isLoading() {
-        return this.stores.loader.isLoading
-    }
-
-    get accounts() {
-        return this.stores.accounts.accounts
-    }
-}
 </script>
+
 <style lang="scss" scoped>
 .bottom-left-alert {
     max-width: 350px;
