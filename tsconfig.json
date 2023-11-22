@@ -5,6 +5,7 @@
         "moduleResolution": "Node",
         "lib": ["ESNext", "ESNext.AsyncIterable", "DOM"],
         "esModuleInterop": true,
+        "resolveJsonModule": true,
         "experimentalDecorators": true,
         "allowJs": true,
         "sourceMap": true,
