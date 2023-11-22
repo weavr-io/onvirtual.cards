@@ -19,21 +19,37 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Prop } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { defineComponent, computed, onMounted, defineProps } from 'vue'
+import { useBase } from '@/composables/useBase'
 
-@Component
-export default class NuxtError extends mixins(BaseMixin) {
-    @Prop(Object) error!: any
+export default defineComponent({
+    name: 'NuxtError',
+    setup() {
+        const props = defineProps({
+            error: {
+                type: Object,
+                required: true,
+            },
+        })
 
-    get statusCode() {
-        return (this.error && this.error.statusCode) || 500
-    }
+        const { root } = useBase()
 
-    get is404() {
-        return this.statusCode === 404
-    }
+        onMounted(() => {
+            switch (props.error.statusCode) {
+                case 401:
+                    root!.$router.replace('/login')
+                    break
+                case 403:
+                    root!.$router.replace('/forbidden')
+                    break
+            }
+        })
 
+        const statusCode = computed(() => (props.error && props.error.statusCode) || 500)
+        const is404 = computed(() => statusCode.value === 404)
+
+        return { statusCode, is404 }
+    },
     head() {
         return {
             title: this.statusCode === 404 ? 'Page Not Found' : 'Oh snap!',
@@ -45,20 +61,10 @@ export default class NuxtError extends mixins(BaseMixin) {
                 },
             ],
         }
-    }
-
-    mounted() {
-        switch (this.error.statusCode) {
-            case 401:
-                this.$router.replace('/login')
-                break
-            case 403:
-                this.$router.replace('/forbidden')
-                break
-        }
-    }
-}
+    },
+})
 </script>
+
 <style lang="scss" scoped>
 .container-full-height {
     position: absolute;

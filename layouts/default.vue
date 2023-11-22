@@ -14,15 +14,13 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useBase } from '@/composables/useBase'
-import AppHeader from '~/components/Header.vue'
-import CookiePolicy from '~/components/cookie.vue'
 
 export default defineComponent({
     name: 'DefaultLayout',
-    // TODO: Remove after full nuxt3 upgrade
+    // TODO: update after full nuxt3 upgrade
     components: {
-        AppHeader,
-        CookiePolicy,
+        AppHeader: () => import('~/components/Header.vue'),
+        CookiePolicy: () => import('~/components/cookie.vue'),
     },
     middleware: ['authRouteGuard'],
     setup() {
