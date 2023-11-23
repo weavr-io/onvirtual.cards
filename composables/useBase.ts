@@ -128,15 +128,15 @@ export function useBase() {
     }
 
     function showSuccessToast(msg?: string, title?: string) {
-        return root!.$weavrToast(msg !== undefined ? msg : 'All changes have been saved', {
-            title: title !== undefined ? title : 'Changes saved',
+        return root!.$weavrToast(msg || 'All changes have been saved', {
+            title: title || 'Changes saved',
             variant: 'success',
         })
     }
 
     function showErrorToast(msg?: string, title?: string) {
-        return root!.$weavrToast(msg !== undefined ? msg : 'An error has occurred while saving', {
-            title: title !== undefined ? title : 'Error',
+        return root!.$weavrToast(msg || 'An error has occurred while saving', {
+            title: title || 'Error',
             variant: 'danger',
         })
     }
