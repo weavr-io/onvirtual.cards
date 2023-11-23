@@ -1,4 +1,4 @@
-import { computed } from '~/node_modules/vue'
+import { computed } from 'vue'
 import { useBase } from '~/composables/useBase'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
