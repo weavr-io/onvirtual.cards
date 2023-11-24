@@ -138,6 +138,7 @@ const config = {
         '@nuxtjs/axios',
         // '@nuxtjs/eslint-module'
         '@nuxtjs/svg',
+        '@pinia/nuxt',
     ],
     bootstrapVue: {
         bootstrapCSS: false, // Or `css: false`
