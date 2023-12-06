@@ -37,8 +37,8 @@
                                             $v.updateIdentityRootUser.email,
                                             validateVParams(
                                                 $v.updateIdentityRootUser.email.$params,
-                                                $v.updateIdentityRootUser.email
-                                            )
+                                                $v.updateIdentityRootUser.email,
+                                            ),
                                         )
                                     "
                                     :state="isInvalid($v.updateIdentityRootUser.email)"
@@ -194,7 +194,7 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
 
         const _parsedNumber = parsePhoneNumberFromString(
             this.updateIdentityRootUser.mobile!.countryCode! +
-                this.updateIdentityRootUser.mobile!.number
+                this.updateIdentityRootUser.mobile!.number,
         )
 
         this.mobile = {
@@ -229,12 +229,14 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
 
         this.isConsumer
             ? xhr.push(
-                  this.stores.consumers.update(this.updateIdentityRootUser as UpdateConsumerRequest)
+                  this.stores.consumers.update(
+                      this.updateIdentityRootUser as UpdateConsumerRequest,
+                  ),
               )
             : xhr.push(
                   this.stores.corporates.update(
-                      this.updateIdentityRootUser as UpdateCorporateRequest
-                  )
+                      this.updateIdentityRootUser as UpdateCorporateRequest,
+                  ),
               )
 
         Promise.all(xhr).finally(() => {

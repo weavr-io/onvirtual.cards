@@ -10,7 +10,7 @@ export default class CardsMixin extends mixins(BaseMixin, CsvMixin) {
     get isManagedCards(): boolean {
         if (this.$route.matched[0].name) {
             return ['managed-cards', 'managed-cards-id-statements'].includes(
-                this.$route.matched[0].name
+                this.$route.matched[0].name,
             )
         } else {
             return false

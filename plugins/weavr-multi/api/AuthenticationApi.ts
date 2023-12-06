@@ -5,7 +5,7 @@ import { $axiosMulti } from '~/utils/api'
 
 export class AuthenticationApi {
     loginWithPassword(
-        request: LoginWithPasswordRequest
+        request: LoginWithPasswordRequest,
     ): Promise<AxiosResponse<LoginWithPasswordResponse>> {
         return $axiosMulti.post<LoginWithPasswordResponse>('/login_with_password', request)
     }

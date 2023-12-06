@@ -8,7 +8,7 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 
 export class OutgoingWireTransferApi {
     index(
-        filters?: OutgoingWireTransfersFilterRequest
+        filters?: OutgoingWireTransfersFilterRequest,
     ): Promise<AxiosResponse<PaginatedOutgoingWireTransferResponse>> {
         return $axiosMulti.get<PaginatedOutgoingWireTransferResponse>('/outgoing_wire_transfers', {
             data: filters,
@@ -16,7 +16,7 @@ export class OutgoingWireTransferApi {
     }
 
     store(
-        request: CreateOutGoingWireTransferRequest
+        request: CreateOutGoingWireTransferRequest,
     ): Promise<AxiosResponse<OutgoingWiretransferModel>> {
         return $axiosMulti.post<OutgoingWiretransferModel>('/outgoing_wire_transfers', request)
     }

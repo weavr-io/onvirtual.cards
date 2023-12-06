@@ -21,7 +21,8 @@
             "@nuxt/types",
             "@nuxtjs/axios",
             "@types/vuelidate"
-        ]
+        ],
+        "resolveJsonModule": true
     },
     "exclude": [".nuxt", "dist", "node_modules"],
     "importHelpers": true,

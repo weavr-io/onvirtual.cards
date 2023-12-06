@@ -64,6 +64,8 @@
 </template>
 <script lang="ts">
 import { Component, mixins, Prop } from 'nuxt-property-decorator'
+import moment from 'moment'
+import dot from 'dot-object'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
@@ -71,10 +73,6 @@ import FiltersMixin from '~/mixins/FiltersMixin'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import AccountsMixin from '~/mixins/AccountsMixin'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
-
-const moment = require('moment')
-
-const dot = require('dot-object')
 
 @Component({
     components: {
@@ -86,7 +84,7 @@ export default class AccountStatement extends mixins(
     BaseMixin,
     RouterMixin,
     FiltersMixin,
-    AccountsMixin
+    AccountsMixin,
 ) {
     @Prop() filters!: GetManagedAccountStatementRequest
 

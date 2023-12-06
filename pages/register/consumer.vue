@@ -110,7 +110,7 @@
                                         :options="countryOptionsWithDefault"
                                         :state="
                                             isInvalid(
-                                                $v.registrationRequest.rootUser.address.country
+                                                $v.registrationRequest.rootUser.address.country,
                                             )
                                         "
                                         placeholder="Registration Country"
@@ -460,7 +460,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
                     },
                     () => {
                         return null
-                    }
+                    },
                 )
             }
         } catch (error: any) {

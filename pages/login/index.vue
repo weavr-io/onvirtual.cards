@@ -174,7 +174,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
                     },
                     (e) => {
                         this.showErrorToast(e, 'Tokenization Error')
-                    }
+                    },
                 )
             } catch (error: any) {
                 this.showErrorToast(error, 'Login Error')

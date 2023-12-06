@@ -6,7 +6,7 @@
             :invalid-feedback="
                 invalidFeedback(
                     $v.form.email,
-                    validateVParams($v.form.email.$params, $v.form.email)
+                    validateVParams($v.form.email.$params, $v.form.email),
                 )
             "
             :state="isInvalid($v.form.email)"
@@ -167,7 +167,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
         try {
             this.$v.$touch()
             if (this.$v.$invalid || !this.isPasswordValid) {
-                return
+                // empty
             } else {
                 this.startRegistrationLoading()
                 this.passwordField.createToken().then(
@@ -181,7 +181,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
                     },
                     (e) => {
                         this.showErrorToast(e, 'Tokenization Error')
-                    }
+                    },
                 )
             }
         } catch (error: any) {
