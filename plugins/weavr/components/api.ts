@@ -92,7 +92,7 @@ export interface KYB {
         selector: string,
         auth: KYBAuthObject,
         listener: (messageType: any, payload: any) => void,
-        options?: KYBOptions
+        options?: KYBOptions,
     ): void
 }
 
@@ -111,7 +111,7 @@ export interface KYC {
         selector: string,
         auth: KYCAuthObject,
         listener: (messageType: any, payload: any) => void,
-        options?: KYCOptions
+        options?: KYCOptions,
     ): void
 }
 
@@ -119,7 +119,7 @@ export interface ConsumerKYC {}
 
 export declare type VerificationFlowLoadHandler = () => void
 export declare type VerificationFlowLaunchHandler = (
-    response: CorporateVerificationFlowLoadAndLaunchParams
+    response: CorporateVerificationFlowLoadAndLaunchParams,
 ) => void
 
 export interface VerificationFlow {
@@ -132,7 +132,7 @@ export interface VerificationFlow {
     loadAndLaunch(
         params:
             | CorporateVerificationFlowLoadAndLaunchParams
-            | ConsumerVerificationFlowLoadAndLaunchParams
+            | ConsumerVerificationFlowLoadAndLaunchParams,
     ): SumSub
 }
 
@@ -201,7 +201,7 @@ export interface SumSub extends VerificationFlowProvider {
     launch(
         params:
             | ConsumerVerificationFlowLoadAndLaunchParams
-            | CorporateVerificationFlowLoadAndLaunchParams
+            | CorporateVerificationFlowLoadAndLaunchParams,
     ): void
 }
 
@@ -230,7 +230,7 @@ export interface SecureForm {
 
     tokenize(
         resolve?: (tokens: { [key: string]: string }) => void,
-        reject?: (e?: any) => void
+        reject?: (e?: any) => void,
     ): void
 
     destroy(): this

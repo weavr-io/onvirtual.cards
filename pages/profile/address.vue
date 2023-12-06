@@ -16,8 +16,8 @@
                                             $v.address.addressLine1,
                                             validateVParams(
                                                 $v.address.addressLine1.$params,
-                                                $v.address.addressLine1
-                                            )
+                                                $v.address.addressLine1,
+                                            ),
                                         )
                                     "
                                     :state="isInvalid($v.address.addressLine1)"
@@ -40,8 +40,8 @@
                                             $v.address.city,
                                             validateVParams(
                                                 $v.address.city.$params,
-                                                $v.address.city
-                                            )
+                                                $v.address.city,
+                                            ),
                                         )
                                     "
                                     :state="isInvalid($v.address.city)"
@@ -55,8 +55,8 @@
                                             $v.address.country,
                                             validateVParams(
                                                 $v.address.country.$params,
-                                                $v.address.country
-                                            )
+                                                $v.address.country,
+                                            ),
                                         )
                                     "
                                     :state="isInvalid($v.address.country)"
@@ -74,8 +74,8 @@
                                             $v.address.postCode,
                                             validateVParams(
                                                 $v.address.postCode.$params,
-                                                $v.address.postCode
-                                            )
+                                                $v.address.postCode,
+                                            ),
                                         )
                                     "
                                     :state="isInvalid($v.address.postCode)"
@@ -173,7 +173,9 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
     fetch() {
         if (this.isConsumer && this.consumer) {
             if (Object.keys(this.consumer.rootUser.address as AddressModel).length !== 0) {
-                this.address = { ...this.consumer?.rootUser.address! }
+                this.address = { ...this.consumer?.rootUser.address } as
+                    | AddressModel
+                    | LegalAddressModel
             }
         } else if (this.isCorporate && this.corporate) {
             if (
@@ -181,7 +183,9 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
                     .length !== 0
             ) {
                 // treat as corporate
-                this.address = { ...this.corporate?.company.registeredAddress! }
+                this.address = { ...this.corporate?.company.registeredAddress } as
+                    | AddressModel
+                    | LegalAddressModel
             }
         }
     }

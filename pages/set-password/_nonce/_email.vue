@@ -154,7 +154,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
             },
             () => {
                 return null
-            }
+            },
         )
     }
 

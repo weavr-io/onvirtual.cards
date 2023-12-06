@@ -108,7 +108,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     form1Submit(
-        _data: { email: string | null; password: string | null; acceptedTerms: boolean } | null
+        _data: { email: string | null; password: string | null; acceptedTerms: boolean } | null,
     ) {
         if (_data !== null) {
             this.registrationRequest.rootUser!.email = _data.email
