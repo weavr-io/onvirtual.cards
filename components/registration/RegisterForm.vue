@@ -167,7 +167,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
         try {
             this.$v.$touch()
             if (this.$v.$invalid || !this.isPasswordValid) {
-                // empty
+                return
             } else {
                 this.startRegistrationLoading()
                 this.passwordField.createToken().then(
