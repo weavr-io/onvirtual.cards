@@ -5,9 +5,9 @@ export default defineNuxtConfig({
     bridge: {
         typescript: true,
         vite: false,
-        nitro: false,
+        nitro: true,
     },
-    server: {
+    devServer: {
         host: '0.0.0.0',
         port: 5000,
     },
