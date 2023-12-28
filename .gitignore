@@ -89,6 +89,8 @@ sw.*
 # Mac OSX
 .DS_Store
 
+# Nitro
+.output
 
 certs
 

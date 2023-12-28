@@ -9,7 +9,8 @@ const accessCodeVerified: Middleware = async ({ store, redirect, route, $config 
     const accessCodeStore = accessCodesStore(store)
 
     const accessCode = () => {
-        return +localStorage.getItem('onv-access-code')! ?? undefined
+        const item = localStorage.getItem('onv-access-code')
+        return item !== null ? +item : undefined
     }
 
     if (accessCode()) {

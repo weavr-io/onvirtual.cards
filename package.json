@@ -5,15 +5,15 @@
     "author": "Threls Ltd.",
     "private": true,
     "scripts": {
-        "dev": "nuxt2",
-        "build": "nuxt2 build",
-        "start": "nuxt2 start",
+        "dev": "nuxi dev",
+        "build": "nuxi build",
+        "start": "nuxti preview",
         "lint": "eslint --ext .ts,.jsx,.js,.html,.vue . && stylelint \"**/*.{css,scss}\"",
         "lint:fix": "eslint --fix --ext .ts,.jsx,.js,.html,.vue . && stylelint \"**/*.{css,scss}\" --fix",
         "lint:ci": "eslint --ext .ts,.jsx,.js,.html,.vue . && stylelint \"**/*.{css,scss}\" && prettier \"**/*.{js,ts,jsx,vue,scss,css,json,html}\" --check",
         "precommit": "npm run lint",
         "pretty": "prettier --write \"**/*.{js,ts,jsx,vue,scss,css,json,html}\"",
-        "generate": "nuxt2 generate",
+        "generate": "nuxi generate",
         "prepare": "husky install"
     },
     "dependencies": {
