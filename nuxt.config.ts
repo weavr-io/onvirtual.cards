@@ -4,32 +4,40 @@ export default defineNuxtConfig({
     ssr: false,
     bridge: {
         typescript: true,
-        vite: false,
+        vite: true,
         nitro: true,
+    },
+    vite: {
+        build: {
+            target: 'esnext',
+        },
     },
     devServer: {
         host: '0.0.0.0',
         port: 5000,
     },
     runtimeConfig: {
-        multiApi: {
-            baseUrl: process.env.MULTI_BASE_URL,
-            uiKey: process.env.UI_KEY,
-        },
-        production: process.env.ENVIRONMENT === 'production',
-        profileId: {
-            consumers: process.env.CONSUMERS_PROFILE_ID,
-            corporates: process.env.CORPORATES_PROFILE_ID,
-            managed_cards_consumers: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID,
-            managed_cards_consumers_uk: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID_UK,
-            managed_cards_corporates: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID,
-            managed_cards_corporates_uk: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID_UK,
-            managed_accounts_consumers: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID,
-            managed_accounts_consumers_uk: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_UK,
-            managed_accounts_corporates: process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID,
-            managed_accounts_corporates_uk: process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_UK,
-            transfers: process.env.TRANSFERS_PROFILE_ID,
-            send: process.env.SEND_PROFILE_ID,
+        public: {
+            multiApi: {
+                baseUrl: process.env.MULTI_BASE_URL,
+                uiKey: process.env.UI_KEY,
+            },
+            production: process.env.ENVIRONMENT === 'production',
+            profileId: {
+                consumers: process.env.CONSUMERS_PROFILE_ID,
+                corporates: process.env.CORPORATES_PROFILE_ID,
+                managed_cards_consumers: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID,
+                managed_cards_consumers_uk: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID_UK,
+                managed_cards_corporates: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID,
+                managed_cards_corporates_uk: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID_UK,
+                managed_accounts_consumers: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID,
+                managed_accounts_consumers_uk: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_UK,
+                managed_accounts_corporates: process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID,
+                managed_accounts_corporates_uk:
+                    process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_UK,
+                transfers: process.env.TRANSFERS_PROFILE_ID,
+                send: process.env.SEND_PROFILE_ID,
+            },
         },
         app: {
             view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true,
@@ -100,7 +108,7 @@ export default defineNuxtConfig({
         mode: 'out-in',
     },
     plugins: [
-        { src: '~/plugins/weavr/security.client.ts' },
+        { src: '~/plugins/weavr/security.client.ts', ssr: false },
         { src: '~/plugins/vuelidate' },
         { src: '~/plugins/WeavrVueFilters.ts' },
         { src: '~/plugins/PhoneNumberInput.ts' },
