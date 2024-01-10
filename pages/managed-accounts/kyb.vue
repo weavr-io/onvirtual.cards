@@ -101,7 +101,7 @@ import DashboardHeader from '~/components/DashboardHeader.vue'
     middleware: ['kyVerified'],
 })
 export default class KybPage extends mixins(BaseMixin) {
-    reference: string = ''
+    reference = ''
     kybErrorCode: KYBErrorCodeEnum | null = null
 
     get kybOptions() {

@@ -167,11 +167,11 @@ import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/con
     middleware: ['kyVerified'],
 })
 export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
-    showNameOnCardField: boolean = false
+    showNameOnCardField = false
 
-    showError: boolean = false
+    showError = false
 
-    localIsBusy: boolean = false
+    localIsBusy = false
 
     mobile: {
         countryCode: string

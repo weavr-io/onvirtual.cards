@@ -125,7 +125,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
         acceptedTerms: false,
     }
 
-    passwordStrength: number = 0
+    passwordStrength = 0
     private $recaptcha: any
 
     get isPasswordValidAndDirty(): boolean {

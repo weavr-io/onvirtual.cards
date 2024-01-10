@@ -76,11 +76,11 @@ import Logo from '~/components/Logo.vue'
     },
 })
 export default class IniteConsume extends mixins(BaseMixin) {
-    showError: boolean = false
+    showError = false
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
-    passwordStrength: number = 0
+    passwordStrength = 0
     protected form!: { id: IDModel; data: InviteConsumeRequestModel }
     private inviteForm = {
         password: {

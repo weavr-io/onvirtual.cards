@@ -40,7 +40,7 @@ import BaseMixin from '~/mixins/BaseMixin'
 export default class KybPage extends mixins(BaseMixin) {
     reference!: string
 
-    accessTokenError: boolean = false
+    accessTokenError = false
 
     get kybOptions(): KYBOptions {
         return {

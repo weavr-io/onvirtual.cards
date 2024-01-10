@@ -151,7 +151,7 @@ import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identit
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
-import * as Countries from '~/static/json/countries.json'
+import Countries from '~/static/json/countries.json'
 
 @Component({
     validations: {
