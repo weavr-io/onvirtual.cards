@@ -100,7 +100,7 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
         await auth.indexAuthFactors()
 
         const smsAuthFactors = auth.authFactors?.factors?.filter(
-            (factor) => factor.channel === SCAOtpChannelEnum.SMS
+            (factor) => factor.channel === SCAOtpChannelEnum.SMS,
         )
 
         if (
@@ -129,10 +129,10 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
             if (this.stores.auth.auth?.credentials.type === CredentialTypeEnum.ROOT) {
                 this.isConsumer
                     ? await this.stores.consumers.update(
-                          this.updateRequest as UpdateConsumerRequest
+                          this.updateRequest as UpdateConsumerRequest,
                       )
                     : await this.stores.corporates.update(
-                          this.updateRequest as UpdateCorporateRequest
+                          this.updateRequest as UpdateCorporateRequest,
                       )
             } else {
                 await this.stores.users.update({

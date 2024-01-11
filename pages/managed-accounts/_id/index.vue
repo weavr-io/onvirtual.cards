@@ -12,6 +12,8 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 
+import dot from 'dot-object'
+import moment from 'moment'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import AccountsMixin from '~/mixins/AccountsMixin'
@@ -19,9 +21,6 @@ import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/mod
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import KyVerified from '~/mixins/kyVerified'
 import { accountsStore } from '~/utils/store-accessor'
-
-const dot = require('dot-object')
-const moment = require('moment')
 
 @Component({
     watch: {

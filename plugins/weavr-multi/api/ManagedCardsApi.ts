@@ -51,7 +51,7 @@ export class ManagedCardsApi {
 
     statement(
         id: IDModel,
-        filters?: StatementFiltersRequest
+        filters?: StatementFiltersRequest,
     ): Promise<AxiosResponse<StatementResponseModel>> {
         return $axiosMulti.get<StatementResponseModel>(`/managed_cards/${id}/statement`, {
             params: filters,
@@ -68,7 +68,7 @@ export class ManagedCardsApi {
     }): Promise<AxiosResponse<ManagedCardsSpendRulesModel>> {
         return $axiosMulti.put<ManagedCardsSpendRulesModel>(
             `/managed_cards/${params.id}/spend_rules`,
-            params.body
+            params.body,
         )
     }
 
@@ -78,13 +78,13 @@ export class ManagedCardsApi {
     }): Promise<AxiosResponse<ManagedCardModel>> {
         return $axiosMulti.post<ManagedCardModel>(
             `/managed_cards/${params.id}/physical`,
-            params.body
+            params.body,
         )
     }
 
     activatePhysicalCard(
         id: IDModel,
-        body: ActivatePhysicalManagedCardRequest
+        body: ActivatePhysicalManagedCardRequest,
     ): Promise<AxiosResponse<ManagedCardModel>> {
         return $axiosMulti.post<ManagedCardModel>(`/managed_cards/${id}/physical/activate`, body)
     }
@@ -99,7 +99,7 @@ export class ManagedCardsApi {
     }): Promise<AxiosResponse<PhysicalCardPinResponse>> {
         return $axiosMulti.post<PhysicalCardPinResponse>(
             `/managed_cards/${params.id}/physical/pin`,
-            params.body
+            params.body,
         )
     }
 
@@ -128,7 +128,7 @@ export class ManagedCardsApi {
     }): Promise<AxiosResponse<ManagedCardModel>> {
         return $axiosMulti.post<ManagedCardModel>(
             `/managed_cards/${params.id}/physical/replace_lost_stolen`,
-            params.body
+            params.body,
         )
     }
 

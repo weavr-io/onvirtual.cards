@@ -5,7 +5,7 @@ import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectV
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 
-const Countries = require('~/static/json/countries.json')
+import Countries from '~/static/json/countries.json'
 
 @Component
 export default class BaseMixin extends Vue {

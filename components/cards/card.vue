@@ -14,8 +14,8 @@
                                 <b-row>
                                     <b-col class="card-balance text-right">
                                         {{
-                                            card.balances.availableBalance |
-                                                weavr_currency(card.currency)
+                                            card.balances.availableBalance
+                                                | weavr_currency(card.currency)
                                         }}
                                     </b-col>
                                 </b-row>

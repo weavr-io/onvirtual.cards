@@ -19,5 +19,6 @@ module.exports = {
                 allowModifiers: true,
             },
         ],
+        'import/named': 0,
     },
 }

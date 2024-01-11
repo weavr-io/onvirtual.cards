@@ -41,8 +41,8 @@
                                 <div class="card-balance-label text-muted">balance</div>
                                 <div class="card-balance-value">
                                     {{
-                                        managedCard.balances.availableBalance |
-                                            weavr_currency(managedCard.currency)
+                                        managedCard.balances.availableBalance
+                                            | weavr_currency(managedCard.currency)
                                     }}
                                 </div>
                             </div>
@@ -156,6 +156,8 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
+import dot from 'dot-object'
+import moment from 'moment'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
@@ -166,9 +168,6 @@ import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEn
 import Statement from '~/components/cards/statement/statement.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
-
-const dot = require('dot-object')
-const moment = require('moment')
 
 @Component({
     watch: {
@@ -185,7 +184,7 @@ export default class ManagedCardsStatements extends mixins(
     BaseMixin,
     RouterMixin,
     FiltersMixin,
-    CardsMixin
+    CardsMixin,
 ) {
     filters: StatementFiltersRequest | null = null
 
