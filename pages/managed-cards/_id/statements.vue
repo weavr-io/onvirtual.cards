@@ -188,7 +188,7 @@ export default class ManagedCardsStatements extends mixins(
 ) {
     filters: StatementFiltersRequest | null = null
 
-    page: number = 0
+    page = 0
 
     isLoading: boolean | null = true
 

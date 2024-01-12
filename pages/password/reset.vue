@@ -91,9 +91,9 @@ import Logo from '~/components/Logo.vue'
     },
 })
 export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin) {
-    isLoading: boolean = false
+    isLoading = false
 
-    passwordSent: boolean = false
+    passwordSent = false
 
     protected form: InitiateLostPasswordRequestModel = {
         email: '',

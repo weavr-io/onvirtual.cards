@@ -146,7 +146,7 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
         email: null,
     }
 
-    isLoading: boolean = false
+    isLoading = false
 
     mobile: {
         countryCode: string

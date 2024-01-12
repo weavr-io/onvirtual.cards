@@ -8,7 +8,7 @@ import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/m
     namespaced: true,
 })
 export default class AccessCodes extends StoreModule {
-    isValid: boolean = false
+    isValid = false
 
     @Mutation
     SET_ACCESS_CODE(code) {

@@ -112,7 +112,7 @@ import Logo from '~/components/Logo.vue'
     },
 })
 export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
-    isLoading: boolean = false
+    isLoading = false
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 

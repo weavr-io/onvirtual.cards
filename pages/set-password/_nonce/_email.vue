@@ -100,7 +100,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
-    isLoading: boolean = false
+    isLoading = false
     protected form: ResumeLostPasswordRequestModel = {
         nonce: '',
         email: '',

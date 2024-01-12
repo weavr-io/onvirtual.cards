@@ -152,7 +152,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
         country: null,
     }
 
-    isLoading: boolean = false
+    isLoading = false
 
     get country() {
         return this.address.country !== undefined ? this.address.country : null
@@ -173,9 +173,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
     fetch() {
         if (this.isConsumer && this.consumer) {
             if (Object.keys(this.consumer.rootUser.address as AddressModel).length !== 0) {
-                this.address = { ...this.consumer?.rootUser.address } as
-                    | AddressModel
-                    | LegalAddressModel
+                this.address = { ...this.consumer.rootUser.address! }
             }
         } else if (this.isCorporate && this.corporate) {
             if (
@@ -183,9 +181,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
                     .length !== 0
             ) {
                 // treat as corporate
-                this.address = { ...this.corporate?.company.registeredAddress } as
-                    | AddressModel
-                    | LegalAddressModel
+                this.address = { ...this.corporate.company.registeredAddress! }
             }
         }
     }

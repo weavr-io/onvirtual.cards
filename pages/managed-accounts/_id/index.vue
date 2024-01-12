@@ -35,7 +35,7 @@ import { accountsStore } from '~/utils/store-accessor'
 export default class AccountPage extends mixins(BaseMixin, RouterMixin, AccountsMixin, KyVerified) {
     filters: GetManagedAccountStatementRequest | null = null
 
-    page: number = 0
+    page = 0
 
     get filteredStatement() {
         return this.stores.accounts.filteredStatement

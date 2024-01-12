@@ -82,7 +82,7 @@ import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentica
     middleware: ['kyVerified'],
 })
 export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
-    isLoading: boolean = false
+    isLoading = false
 
     rootMobileNumber = ''
     numberIsValid: boolean | null = null

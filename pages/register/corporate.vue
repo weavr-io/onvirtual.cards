@@ -52,8 +52,8 @@ import Logo from '~/components/Logo.vue'
     middleware: 'accessCodeVerified',
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
-    screen: number = 0
-    passwordStrength: number = 0
+    screen = 0
+    passwordStrength = 0
     private registrationRequest: DeepNullable<
         RecursivePartial<CreateCorporateRequest & { password: string }>
     > = {
