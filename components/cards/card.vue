@@ -14,8 +14,8 @@
                                 <b-row>
                                     <b-col class="card-balance text-right">
                                         {{
-                                            card.balances.availableBalance |
-                                                weavr_currency(card.currency)
+                                            card.balances.availableBalance
+                                                | weavr_currency(card.currency)
                                         }}
                                     </b-col>
                                 </b-row>
@@ -119,9 +119,9 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
 export default class WeavrCard extends mixins(BaseMixin) {
     @Prop() readonly card!: ManagedCardModel
 
-    showOptions: boolean = false
+    showOptions = false
 
-    localIsBusy: boolean = false
+    localIsBusy = false
 
     get isBlocked() {
         return this.card.state.state === ManagedInstrumentStateEnum.BLOCKED

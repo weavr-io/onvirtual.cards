@@ -39,7 +39,7 @@ export default class SecureClient extends StoreModule {
                 },
                 (e) => {
                     reject(e)
-                }
+                },
             )
         })
     }

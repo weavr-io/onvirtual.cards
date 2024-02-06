@@ -16,12 +16,12 @@ export class PasswordsApi {
     }): Promise<AxiosResponse<CreatePasswordResponseModel>> {
         return $axiosMulti.post<CreatePasswordResponseModel>(
             '/passwords/' + params.userId + '/create',
-            params.data
+            params.data,
         )
     }
 
     update(
-        request: UpdatePasswordRequestModel
+        request: UpdatePasswordRequestModel,
     ): Promise<AxiosResponse<CreatePasswordResponseModel>> {
         return $axiosMulti.post<CreatePasswordResponseModel>('/passwords/update', request)
     }
@@ -35,11 +35,11 @@ export class PasswordsApi {
     }
 
     resume(
-        request: ResumeLostPasswordRequestModel
+        request: ResumeLostPasswordRequestModel,
     ): Promise<AxiosResponse<ResumeLostPasswordResponseModel>> {
         return $axiosMulti.post<ResumeLostPasswordResponseModel>(
             '/passwords/lost_password/resume',
-            request
+            request,
         )
     }
 }

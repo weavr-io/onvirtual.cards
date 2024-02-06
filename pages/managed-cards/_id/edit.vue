@@ -49,7 +49,7 @@
                                                 "
                                                 :state="
                                                     isInvalid(
-                                                        $v.updateManagedCardRequest.friendlyName
+                                                        $v.updateManagedCardRequest.friendlyName,
                                                     )
                                                 "
                                                 placeholder="eg. travel expenses"
@@ -174,7 +174,7 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
         this.$set(
             this.mobile,
             'cardholderMobileNumber',
-            number.formatNational ? number.formatNational : number.phoneNumber
+            number.formatNational ? number.formatNational : number.phoneNumber,
         )
         this.updateManagedCardRequest!.cardholderMobileNumber = number.formattedNumber
         this.numberIsValid = number.isValid

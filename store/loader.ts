@@ -7,7 +7,7 @@ import { StoreModule } from '~/store/storeModule'
     stateFactory: true,
 })
 export default class Loader extends StoreModule {
-    isLoading: boolean = false
+    isLoading = false
 
     @Mutation
     SET_IS_LOADING(val: boolean) {
