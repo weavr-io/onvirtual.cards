@@ -107,5 +107,5 @@ runs:
             shell: bash
         -   run: npm install
             shell: bash
-        -   run: npm run build
+        -   run: npm run generate
             shell: bash
