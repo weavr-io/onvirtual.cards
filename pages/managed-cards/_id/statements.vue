@@ -133,7 +133,7 @@
                                                     color: '#6C1C5C',
                                                     lineHeight: '14.4px',
                                                     fontSize: '14.4px',
-                                                    fontWeight: 300,
+                                                    fontWeight: '300',
                                                 }"
                                                 :token="managedCard.cvv.value"
                                                 class="card-select-number"
