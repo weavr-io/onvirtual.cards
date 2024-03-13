@@ -9,7 +9,7 @@
             <b-row align-h="center">
                 <b-col lg="6" md="9">
                     <error-alert />
-                    <b-form @submit="doAdd">
+                    <b-form @submit.prevent="doAdd">
                         <b-form-row>
                             <b-col>
                                 <b-form-group label="Name*">
@@ -65,11 +65,11 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
 import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
+import BaseMixin from '~/mixins/BaseMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 
 @Component({
     components: {
@@ -105,13 +105,11 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         dateOfBirth: null,
     }
 
-    async doAdd(evt) {
-        evt.preventDefault()
-
+    async doAdd() {
         if (this.$v.request) {
             this.$v.request.$touch()
             if (this.$v.request.$anyError) {
-                return null
+                return
             }
         }
 

@@ -22,7 +22,7 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
             case 403:
                 if (
                     ctxt.route.name !== 'login' &&
-                    error.response.data.message === 'STEP_UP_REQUIRED' &&
+                    error.response.data.errorCode === 'STEP_UP_REQUIRED' &&
                     localStorage.getItem('stepUp') !== 'TRUE'
                 ) {
                     ctxt.redirect('/login/sca')
