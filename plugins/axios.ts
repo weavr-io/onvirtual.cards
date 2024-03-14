@@ -20,15 +20,14 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
                 ctxt.redirect('/login')
                 break
             case 403:
-                if (
-                    ctxt.route.name !== 'login' &&
-                    error.response.data.errorCode === 'STEP_UP_REQUIRED' &&
-                    localStorage.getItem('stepUp') !== 'TRUE'
-                ) {
-                    ctxt.redirect('/login/sca')
-                } else if (ctxt.route.name !== 'login') {
-                    authStore(ctxt.store).resetTokenAndStates()
-                    ctxt.redirect('/login')
+                localStorage.setItem('stepUp', 'FALSE')
+                if (ctxt.route.name !== 'login') {
+                    if (error.response.data.errorCode === 'STEP_UP_REQUIRED') {
+                        ctxt.redirect('/login/sca')
+                    } else {
+                        authStore(ctxt.store).resetTokenAndStates()
+                        ctxt.redirect('/login')
+                    }
                 }
                 break
             case 409:

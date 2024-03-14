@@ -8,7 +8,7 @@
                 width="200"
             />
         </div>
-        <MobileComponent :verify-phone="false">
+        <MobileComponent :verify-phone="false" @action="doRedirect">
             <template #title>Check your phone</template>
             <template #alert>The one-time password was resent by SMS.</template>
             <template #description
@@ -21,11 +21,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import MobileComponent from '~/components/MobileComponent.vue'
 import { authStore, identitiesStore } from '~/utils/store-accessor'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
+import MobileComponent from '~/components/MobileComponent.vue'
+
+const Cookie = process.client ? require('js-cookie') : undefined
 
 @Component({
     layout: 'auth',
@@ -54,6 +56,19 @@ export default class Sca extends Vue {
         } else if (localStorage.getItem('stepUp') === 'TRUE') {
             return redirect('/')
         }
+    }
+
+    doRedirect() {
+        if (Cookie.get('user-invite')) {
+            return this.$router.push({
+                path: '/users/add',
+                query: {
+                    invite: 'true',
+                },
+            })
+        }
+
+        return this.$router.push('/')
     }
 }
 </script>

@@ -63,13 +63,15 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component, mixins, Watch } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
 import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import { Nullable } from '~/global'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
+
+const Cookie = process.client ? require('js-cookie') : undefined
 
 @Component({
     components: {
@@ -105,7 +107,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         dateOfBirth: null,
     }
 
-    async doAdd() {
+    doAdd() {
         if (this.$v.request) {
             this.$v.request.$touch()
             if (this.$v.request.$anyError) {
@@ -115,12 +117,21 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
 
         this.isLoading = true
 
-        await this.stores.users
-            .add(this.request as CreateUserRequestModel)
+        this.sendRequest(this.request as CreateUserRequestModel)
+    }
+
+    sendRequest(request: CreateUserRequestModel) {
+        return this.stores.users
+            .add(request)
             .then((res) => {
                 this.userAdded(res.data)
+                Cookie.remove('user-invite')
             })
             .catch((err) => {
+                if (parseInt(err.response && err.response.status) === 403) {
+                    Cookie.set('user-invite', JSON.stringify(this.request))
+                }
+
                 this.stores.errors.SET_ERROR(err)
                 this.isLoading = false
             })
@@ -130,6 +141,21 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         await this.stores.users.inviteSend(res.id)
         await this.$router.push('/users')
         this.isLoading = false
+    }
+
+    @Watch('$route.query.invite')
+    onInvited(status: string) {
+        if (status === 'true') {
+            const userInvite = Cookie.get('user-invite')
+            if (userInvite) {
+                try {
+                    const invite = JSON.parse(userInvite)
+                    this.sendRequest(invite as CreateUserRequestModel)
+                } catch (_) {
+                    // No valid cookie found
+                }
+            }
+        }
     }
 }
 </script>
