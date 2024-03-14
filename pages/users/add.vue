@@ -143,7 +143,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         this.isLoading = false
     }
 
-    @Watch('$route.query.invite')
+    @Watch('$route.query.invite', { immediate: true })
     onInvited(status: string) {
         if (status === 'true') {
             const userInvite = Cookie.get('user-invite')
