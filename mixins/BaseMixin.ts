@@ -6,6 +6,8 @@ import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consu
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import Countries from '~/static/json/countries.json'
 
+const Cookie = process.client ? require('js-cookie') : undefined
+
 @Component
 export default class BaseMixin extends Vue {
     get stores() {
@@ -177,20 +179,28 @@ export default class BaseMixin extends Vue {
         return this.stores.auth.logout().then(this.redirectToLogin)
     }
 
+    signOut() {
+        this.doLogout().then(() => {
+            if (Cookie.get('user-invite')) {
+                Cookie.remove('user-invite')
+            }
+        })
+    }
+
     redirectToLogin() {
         this.$router.push('/login')
     }
 
     showSuccessToast(msg?: string, title?: string) {
-        return this.$weavrToast(msg !== undefined ? msg : 'All changes have been saved', {
-            title: title !== undefined ? title : 'Changes saved',
+        return this.$weavrToast(msg ?? 'All changes have been saved', {
+            title: title ?? 'Changes saved',
             variant: 'success',
         })
     }
 
     showErrorToast(msg?: string, title?: string) {
-        return this.$weavrToast(msg !== undefined ? msg : 'An error has occurred while saving', {
-            title: title !== undefined ? title : 'Error',
+        return this.$weavrToast(msg ?? 'An error has occurred while saving', {
+            title: title ?? 'Error',
             variant: 'danger',
         })
     }
