@@ -13,20 +13,20 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
     })
 
     function onError(error) {
-        const code = parseInt(error.response && error.response.status)
+        const code = parseInt(error.response?.status)
         switch (code) {
             case 401:
                 if (error.response.config.url !== '/logout') authStore(ctxt.store).logout()
-                ctxt.redirect('/login')
+                ctxt.app.router!.push('/login')
                 break
             case 403:
                 localStorage.setItem('stepUp', 'FALSE')
                 if (ctxt.route.name !== 'login') {
                     if (error.response.data.errorCode === 'STEP_UP_REQUIRED') {
-                        ctxt.redirect('/login/sca')
+                        ctxt.app.router!.push('/login/sca')
                     } else {
                         authStore(ctxt.store).resetTokenAndStates()
-                        ctxt.redirect('/login')
+                        ctxt.app.router!.push('/login')
                     }
                 }
                 break

@@ -12,7 +12,7 @@
                                 >Sign In</b-nav-item
                             >
                             <b-nav-item v-if="isLoggedIn">
-                                <b-button class="nav-item" @click="doLogout">Sign out</b-button>
+                                <b-button class="nav-item" @click="logout">Sign out</b-button>
                             </b-nav-item>
                         </b-navbar-nav>
                     </b-collapse>
@@ -34,6 +34,8 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
+
+const Cookie = process.client ? require('js-cookie') : undefined
 
 @Component({
     components: {
@@ -63,6 +65,14 @@ class AuthLayout extends mixins(BaseMixin) {
         } else {
             return false
         }
+    }
+
+    logout() {
+        this.doLogout().then(() => {
+            if (Cookie.get('user-invite')) {
+                Cookie.remove('user-invite')
+            }
+        })
     }
 }
 
