@@ -9,7 +9,7 @@
             <b-row align-h="center">
                 <b-col lg="6" md="9">
                     <error-alert />
-                    <b-form @submit="doAdd">
+                    <b-form @submit.prevent="doAdd">
                         <b-form-row>
                             <b-col>
                                 <b-form-group label="Name*">
@@ -63,13 +63,15 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { Component, mixins, Watch } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
 import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
+import BaseMixin from '~/mixins/BaseMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
+
+const Cookie = process.client ? require('js-cookie') : undefined
 
 @Component({
     components: {
@@ -105,24 +107,31 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         dateOfBirth: null,
     }
 
-    async doAdd(evt) {
-        evt.preventDefault()
-
+    doAdd() {
         if (this.$v.request) {
             this.$v.request.$touch()
             if (this.$v.request.$anyError) {
-                return null
+                return
             }
         }
 
         this.isLoading = true
 
-        await this.stores.users
-            .add(this.request as CreateUserRequestModel)
+        this.sendRequest(this.request as CreateUserRequestModel)
+    }
+
+    sendRequest(request: CreateUserRequestModel) {
+        return this.stores.users
+            .add(request)
             .then((res) => {
                 this.userAdded(res.data)
+                Cookie.remove('user-invite')
             })
             .catch((err) => {
+                if (parseInt(err.response && err.response.status) === 403) {
+                    Cookie.set('user-invite', JSON.stringify(this.request))
+                }
+
                 this.stores.errors.SET_ERROR(err)
                 this.isLoading = false
             })
@@ -132,6 +141,21 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         await this.stores.users.inviteSend(res.id)
         await this.$router.push('/users')
         this.isLoading = false
+    }
+
+    @Watch('$route.query.invite', { immediate: true })
+    onInvited(status: string) {
+        if (status === 'true') {
+            const userInvite = Cookie.get('user-invite')
+            if (userInvite) {
+                try {
+                    const invite = JSON.parse(userInvite)
+                    this.sendRequest(invite as CreateUserRequestModel)
+                } catch (_) {
+                    // No valid cookie found
+                }
+            }
+        }
     }
 }
 </script>

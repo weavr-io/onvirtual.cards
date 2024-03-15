@@ -12,7 +12,7 @@
                                 >Sign In</b-nav-item
                             >
                             <b-nav-item v-if="isLoggedIn">
-                                <b-button class="nav-item" @click="doLogout">Sign out</b-button>
+                                <b-button class="nav-item" @click="signOut">Sign out</b-button>
                             </b-nav-item>
                         </b-navbar-nav>
                     </b-collapse>

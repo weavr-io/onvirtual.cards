@@ -82,11 +82,11 @@
 <script lang="ts">
 import { Component, mixins, Prop } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
+import BaseMixin from '~/mixins/BaseMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/LoaderButton.vue'
 
@@ -187,13 +187,13 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
                     .then(() => {
                         localStorage.setItem('stepUp', 'TRUE')
                         this.getConsumersOrCorporates()
-                        this.goToIndex()
+                        this.$emit('action')
                     })
                     .finally(() => {
                         this.isLoading = false
                     })
             }
-        } catch (e) {}
+        } catch (_) {}
     }
 
     getConsumersOrCorporates() {

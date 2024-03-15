@@ -18,7 +18,7 @@
                             </template>
                             <b-dropdown-item to="/profile"> Profile</b-dropdown-item>
                             <b-dropdown-item v-if="isCorporate" to="/users"> Users</b-dropdown-item>
-                            <b-dropdown-item @click="doLogout"> Sign out</b-dropdown-item>
+                            <b-dropdown-item @click="signOut"> Sign out</b-dropdown-item>
                         </b-nav-item-dropdown>
                     </b-navbar-nav>
                 </b-collapse>
