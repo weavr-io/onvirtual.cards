@@ -22,7 +22,7 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
     middleware: ['kyVerified'],
 })
 export default class KycPage extends mixins(BaseMixin) {
-    private tries: number = 0
+    private tries = 0
 
     mounted() {
         this.KycApproved()

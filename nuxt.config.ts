@@ -5,7 +5,7 @@ export default defineNuxtConfig({
     bridge: {
         typescript: true,
         vite: true,
-        nitro: true,
+        nitro: false,
     },
     vite: {
         build: {

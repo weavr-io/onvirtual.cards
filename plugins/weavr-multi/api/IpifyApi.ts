@@ -1,6 +1,4 @@
-import { AxiosResponse } from 'axios'
-
-const axios = require('axios')
+import axios, { AxiosResponse } from 'axios'
 
 export class IpifyApi {
     get(): Promise<AxiosResponse<{ ip: string }>> {

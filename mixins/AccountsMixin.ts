@@ -34,7 +34,7 @@ export default class AccountsMixin extends mixins(BaseMixin, CsvMixin) {
 
     get accountId(): IDModel | undefined {
         if (this.hasAccount) {
-            return this.account?.id!
+            return this.account?.id
         } else return undefined
     }
 

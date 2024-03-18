@@ -52,8 +52,8 @@ import Logo from '~/components/Logo.vue'
     middleware: 'accessCodeVerified',
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
-    screen: number = 0
-    passwordStrength: number = 0
+    screen = 0
+    passwordStrength = 0
     private registrationRequest: DeepNullable<
         RecursivePartial<CreateCorporateRequest & { password: string }>
     > = {
@@ -108,7 +108,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     form1Submit(
-        _data: { email: string | null; password: string | null; acceptedTerms: boolean } | null
+        _data: { email: string | null; password: string | null; acceptedTerms: boolean } | null,
     ) {
         if (_data !== null) {
             this.registrationRequest.rootUser!.email = _data.email

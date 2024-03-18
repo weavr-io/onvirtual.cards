@@ -12,7 +12,7 @@ import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/mod
 
 export class ManagedAccountsApi {
     index(
-        filters?: GetManagedAccountsRequest
+        filters?: GetManagedAccountsRequest,
     ): Promise<AxiosResponse<PaginatedManagedAccountsResponse>> {
         return $axiosMulti.get<PaginatedManagedAccountsResponse>('/managed_accounts', {
             params: filters,
