@@ -65,7 +65,7 @@ runs:
         -   name: Use Node.js
             uses: actions/setup-node@v3
             with:
-                node-version: 18.x
+                node-version: 20.11.0
                 cache: npm
         -   run: echo BASE_URL_SCRIPT=${{ inputs.base_url_script }} >> .env
             shell: bash
@@ -107,5 +107,5 @@ runs:
             shell: bash
         -   run: npm install
             shell: bash
-        -   run: npm run build
+        -   run: npm run generate
             shell: bash

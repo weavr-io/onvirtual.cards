@@ -1,5 +1,5 @@
 import { Component, Vue } from 'nuxt-property-decorator'
-const moment = require('moment')
+import moment from 'moment'
 
 @Component
 export default class FiltersMixin extends Vue {

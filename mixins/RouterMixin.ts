@@ -1,6 +1,6 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 
-const dot = require('dot-object')
+import dot from 'dot-object'
 
 @Component
 export default class RouterMixin extends Vue {

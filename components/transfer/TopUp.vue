@@ -82,9 +82,8 @@
     </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { between, required } from 'vuelidate/lib/validators'
-import { Prop } from '~/node_modules/nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 

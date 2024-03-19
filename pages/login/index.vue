@@ -112,7 +112,7 @@ import Logo from '~/components/Logo.vue'
     },
 })
 export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
-    isLoading: boolean = false
+    isLoading = false
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
@@ -174,7 +174,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
                     },
                     (e) => {
                         this.showErrorToast(e, 'Tokenization Error')
-                    }
+                    },
                 )
             } catch (error: any) {
                 this.showErrorToast(error, 'Login Error')

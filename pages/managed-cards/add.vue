@@ -30,9 +30,9 @@
                                                     validateVParams(
                                                         $v.createManagedCardRequest.nameOnCard
                                                             .$params,
-                                                        $v.createManagedCardRequest.nameOnCard
+                                                        $v.createManagedCardRequest.nameOnCard,
                                                     ),
-                                                    'Name is required and should not exceed 27 characters.'
+                                                    'Name is required and should not exceed 27 characters.',
                                                 )
                                             "
                                             :state="
@@ -46,7 +46,7 @@
                                                 "
                                                 :state="
                                                     isInvalid(
-                                                        $v.createManagedCardRequest.nameOnCard
+                                                        $v.createManagedCardRequest.nameOnCard,
                                                     )
                                                 "
                                                 placeholder="eg. Elon Musk"
@@ -100,8 +100,8 @@
                                                     validateVParams(
                                                         $v.createManagedCardRequest.friendlyName
                                                             .$params,
-                                                        $v.createManagedCardRequest.friendlyName
-                                                    )
+                                                        $v.createManagedCardRequest.friendlyName,
+                                                    ),
                                                 )
                                             "
                                             :state="
@@ -167,11 +167,11 @@ import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/con
     middleware: ['kyVerified'],
 })
 export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
-    showNameOnCardField: boolean = false
+    showNameOnCardField = false
 
-    showError: boolean = false
+    showError = false
 
-    localIsBusy: boolean = false
+    localIsBusy = false
 
     mobile: {
         countryCode: string

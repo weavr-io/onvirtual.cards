@@ -61,6 +61,8 @@
 <script lang="ts">
 import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { AxiosError } from 'axios'
+import dot from 'dot-object'
+import moment from 'moment'
 import BaseMixin from '~/mixins/BaseMixin'
 import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
@@ -70,9 +72,6 @@ import FiltersMixin from '~/mixins/FiltersMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
-
-const dot = require('dot-object')
-const moment = require('moment')
 
 @Component({
     components: {
@@ -85,7 +84,7 @@ export default class CardStatement extends mixins(
     BaseMixin,
     RouterMixin,
     FiltersMixin,
-    CardsMixin
+    CardsMixin,
 ) {
     @Prop({
         required: true,
@@ -151,7 +150,7 @@ export default class CardStatement extends mixins(
                     buttonSize: 'sm',
                     centered: true,
                     cancelVariant: 'link',
-                }
+                },
             )
             .then((value) => {
                 if (value) {

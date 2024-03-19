@@ -29,8 +29,8 @@
                             </p>
                             <p class="mb-0 account-balance-value">
                                 {{
-                                    account.balances.availableBalance |
-                                        weavr_currency(account.currency)
+                                    account.balances.availableBalance
+                                        | weavr_currency(account.currency)
                                 }}
                             </p>
                         </div>

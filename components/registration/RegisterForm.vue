@@ -6,7 +6,7 @@
             :invalid-feedback="
                 invalidFeedback(
                     $v.form.email,
-                    validateVParams($v.form.email.$params, $v.form.email)
+                    validateVParams($v.form.email.$params, $v.form.email),
                 )
             "
             :state="isInvalid($v.form.email)"
@@ -125,7 +125,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
         acceptedTerms: false,
     }
 
-    passwordStrength: number = 0
+    passwordStrength = 0
     private $recaptcha: any
 
     get isPasswordValidAndDirty(): boolean {
@@ -168,22 +168,22 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
             this.$v.$touch()
             if (this.$v.$invalid || !this.isPasswordValid) {
                 return
-            } else {
-                this.startRegistrationLoading()
-                this.passwordField.createToken().then(
-                    (tokens) => {
-                        if (tokens.tokens.password !== '') {
-                            this.form.password = tokens.tokens.password
-                            this.submitForm()
-                        } else {
-                            return null
-                        }
-                    },
-                    (e) => {
-                        this.showErrorToast(e, 'Tokenization Error')
-                    }
-                )
             }
+
+            this.startRegistrationLoading()
+            this.passwordField.createToken().then(
+                (tokens) => {
+                    if (tokens.tokens.password !== '') {
+                        this.form.password = tokens.tokens.password
+                        this.submitForm()
+                    } else {
+                        return null
+                    }
+                },
+                (e) => {
+                    this.showErrorToast(e, 'Tokenization Error')
+                },
+            )
         } catch (error: any) {
             this.showErrorToast(error, 'Registration Error')
         }

@@ -64,7 +64,7 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
         code: null,
     }
 
-    isLoading: boolean = false
+    isLoading = false
 
     inviteCodeError: { errorMsg: string; showMsg: boolean } = {
         errorMsg: '',
