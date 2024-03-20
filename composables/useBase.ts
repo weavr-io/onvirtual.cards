@@ -1,7 +1,7 @@
 import { computed, getCurrentInstance } from 'vue'
 import { initialiseStores } from '~/utils/store-accessor'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
+import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
@@ -32,23 +32,23 @@ export function useBase() {
     const identityId = computed(() => stores.auth.identityId)
     const rootFullName = computed<string>(() => `${rootName.value} ${rootSurname.value}`)
     const rootUserEmail = computed(() =>
-        isConsumer.value ? consumer.value?.rootUser.email : corporate.value?.rootUser.email
+        isConsumer.value ? consumer.value?.rootUser.email : corporate.value?.rootUser.email,
     )
 
     const accountProfileId = computed<string>(() =>
         isConsumer.value
             ? root!.$config.profileId.managed_accounts_consumers!
-            : root!.$config.profileId.managed_accounts_corporates!
+            : root!.$config.profileId.managed_accounts_corporates!,
     )
 
     const cardProfileId = computed(() =>
         isConsumer.value
             ? root!.$config.profileId.managed_cards_consumers!
-            : root!.$config.profileId.managed_cards_corporates!
+            : root!.$config.profileId.managed_cards_corporates!,
     )
 
     const profileBaseCurrency = computed(() =>
-        isConsumer.value ? consumer.value?.baseCurrency : corporate.value?.baseCurrency || null
+        isConsumer.value ? consumer.value?.baseCurrency : corporate.value?.baseCurrency ?? null,
     )
 
     const rootName = computed<string>(() => {
@@ -65,7 +65,7 @@ export function useBase() {
         if (isConsumerAndPopulated.value) {
             return consumer.value!.rootUser.surname
         } else if (isCorporateAndPopulated.value) {
-            return consumer.value!.rootUser.surname
+            return corporate.value!.rootUser.surname
         }
 
         return 'nosurname'
@@ -128,15 +128,15 @@ export function useBase() {
     }
 
     function showSuccessToast(msg?: string, title?: string) {
-        return root!.$weavrToast(msg || 'All changes have been saved', {
-            title: title || 'Changes saved',
+        return root!.$weavrToast(msg ?? 'All changes have been saved', {
+            title: title ?? 'Changes saved',
             variant: 'success',
         })
     }
 
     function showErrorToast(msg?: string, title?: string) {
-        return root!.$weavrToast(msg || 'An error has occurred while saving', {
-            title: title || 'Error',
+        return root!.$weavrToast(msg ?? 'An error has occurred while saving', {
+            title: title ?? 'Error',
             variant: 'danger',
         })
     }
