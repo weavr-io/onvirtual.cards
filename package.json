@@ -70,5 +70,11 @@
         "*.{js,jsx,ts,html,vue}": "eslint --fix",
         "*.{css,scss}": "stylelint --fix",
         "*.{js,ts,jsx,vue,scss,css,json,html}": "prettier --write"
+    },
+    "overrides": {
+        "glob-parent": "^5.1.2",
+        "axios": "^0.28.0",
+        "nth-check": "^2.0.1",
+        "postcss": "^8.2.13"
     }
 }
