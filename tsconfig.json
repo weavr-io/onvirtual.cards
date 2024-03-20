@@ -1,4 +1,5 @@
 {
+    "extends": "./.nuxt/tsconfig.json",
     "compilerOptions": {
         "target": "ES2018",
         "module": "ESNext",
@@ -7,6 +8,7 @@
         "lib": ["ESNext", "ESNext.AsyncIterable", "DOM"],
         "esModuleInterop": true,
         "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "allowJs": true,
         "sourceMap": true,
         "strict": true,
@@ -22,10 +24,9 @@
             "@nuxt/types",
             "@nuxtjs/axios",
             "@types/vuelidate"
-        ],
-        "resolveJsonModule": true
+        ]
     },
-    "exclude": [".nuxt", "dist", "node_modules"],
+    "exclude": [".nuxt", "dist", "node_modules", ".husky", ".github"],
     "importHelpers": true,
     "emitHelpers": true
 }
