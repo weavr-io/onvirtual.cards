@@ -32,39 +32,15 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed } from 'vue'
+<script lang="ts" setup>
+import { computed } from 'vue'
 import { useBase } from '@/composables/useBase'
 import { useKyVerified } from '@/composables/useKyVerified'
 
-export default defineComponent({
-    name: 'DashboardLayout',
-    components: {
-        AppHeader: () => import('~/components/Header.vue'),
-        DashboardHeader: () => import('~/components/DashboardHeader.vue'),
-        KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
-        KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
-        CookiePolicy: () => import('~/components/cookie.vue'),
-    },
-    setup() {
-        const { goToVerify, stores } = useBase()
-        const { showKybAlert, showKycAlert, showVerifyMobileAlert, showVerifyEmailAlert } =
-            useKyVerified()
+const { goToVerify, stores } = useBase()
+const { showKybAlert, showKycAlert, showVerifyMobileAlert, showVerifyEmailAlert } = useKyVerified()
 
-        const isLoading = computed(() => stores.loader.isLoading)
-        const accounts = computed(() => stores.accounts.accounts)
-
-        return {
-            isLoading,
-            goToVerify,
-            accounts,
-            showKybAlert,
-            showKycAlert,
-            showVerifyMobileAlert,
-            showVerifyEmailAlert,
-        }
-    },
-})
+const isLoading = computed(() => stores.loader.isLoading)
 </script>
 
 <style lang="scss" scoped>

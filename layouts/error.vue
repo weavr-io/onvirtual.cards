@@ -45,7 +45,7 @@ export default defineComponent({
             }
         })
 
-        const statusCode = computed(() => (props.error && props.error.statusCode) || 500)
+        const statusCode = computed(() => props.error?.statusCode || 500)
         const is404 = computed(() => statusCode.value === 404)
 
         return { statusCode, is404 }
