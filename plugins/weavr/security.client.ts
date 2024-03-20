@@ -36,7 +36,7 @@ const weavrModules: Plugin = (context, inject) => {
                 },
                 (e) => {
                     reject(e)
-                }
+                },
             )
         })
     }

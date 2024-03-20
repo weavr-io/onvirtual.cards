@@ -31,7 +31,7 @@ const Cookie = process.client ? require('js-cookie') : undefined
 
 @Component
 export default class Cookies extends mixins(BaseMixin) {
-    showCookieAlert: boolean = false
+    showCookieAlert = false
 
     created() {
         const _authCookie = Cookie.get(config.ONV_COOKIE_NAME)

@@ -6,7 +6,7 @@
             :invalid-feedback="
                 invalidFeedback(
                     $v.form.email,
-                    validateVParams($v.form.email.$params, $v.form.email)
+                    validateVParams($v.form.email.$params, $v.form.email),
                 )
             "
             :state="isInvalid($v.form.email)"
@@ -125,7 +125,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
         acceptedTerms: false,
     }
 
-    passwordStrength: number = 0
+    passwordStrength = 0
     private $recaptcha: any
 
     get isPasswordValidAndDirty(): boolean {
@@ -181,7 +181,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
                     },
                     (e) => {
                         this.showErrorToast(e, 'Tokenization Error')
-                    }
+                    },
                 )
             }
         } catch (error: any) {

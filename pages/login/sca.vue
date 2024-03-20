@@ -41,7 +41,7 @@ export default class Sca extends Vue {
         const auth = authStore(store)
 
         const smsAuthFactors = auth.authFactors?.factors?.filter(
-            (factor) => factor.channel === SCAOtpChannelEnum.SMS
+            (factor) => factor.channel === SCAOtpChannelEnum.SMS,
         )
 
         if (auth.auth?.credentials.type === CredentialTypeEnum.ROOT && !identities.emailVerified) {

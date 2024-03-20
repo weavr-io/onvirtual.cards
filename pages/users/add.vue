@@ -95,7 +95,7 @@ import { Nullable } from '~/global'
     middleware: ['kyVerified'],
 })
 export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
-    isLoading: boolean = false
+    isLoading = false
 
     request: Nullable<CreateUserRequestModel> = {
         name: null,

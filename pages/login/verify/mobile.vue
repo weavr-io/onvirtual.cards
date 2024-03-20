@@ -44,7 +44,7 @@ export default class Mobile extends Vue {
         await auth.indexAuthFactors()
 
         const smsAuthFactors = auth.authFactors?.factors?.filter(
-            (factor) => factor.channel === SCAOtpChannelEnum.SMS
+            (factor) => factor.channel === SCAOtpChannelEnum.SMS,
         )
 
         if (
