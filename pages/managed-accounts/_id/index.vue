@@ -11,16 +11,15 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-
 import dot from 'dot-object'
-import moment from 'moment'
+import { DateTime } from 'luxon'
+import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
+import { accountsStore } from '~/utils/store-accessor'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import AccountsMixin from '~/mixins/AccountsMixin'
-import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
-import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import KyVerified from '~/mixins/kyVerified'
-import { accountsStore } from '~/utils/store-accessor'
 
 @Component({
     watch: {
@@ -54,11 +53,11 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
         const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
         if (!_filters.fromTimestamp) {
-            _filters.fromTimestamp = moment().startOf('month').valueOf()
+            _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
         }
 
         if (!_filters.toTimestamp) {
-            _filters.toTimestamp = moment().endOf('month').valueOf()
+            _filters.toTimestamp = DateTime.now().endOf('month').toMillis()
         }
 
         const _statementFilters: GetManagedAccountStatementRequest = {

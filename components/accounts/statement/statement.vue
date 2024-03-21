@@ -38,7 +38,7 @@
                             <b-col>
                                 <b-row class="mt-4">
                                     <b-col class="text-muted">
-                                        {{ date | moment_statement }}
+                                        {{ formatDate(date) }}
                                     </b-col>
                                 </b-row>
                                 <b-row v-for="(statement, key) in statementEntries" :key="key">
@@ -64,14 +64,14 @@
 </template>
 <script lang="ts">
 import { Component, mixins, Prop } from 'nuxt-property-decorator'
-import moment from 'moment'
+import { DateTime } from 'luxon'
 import dot from 'dot-object'
+import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
-import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import AccountsMixin from '~/mixins/AccountsMixin'
-import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 
 @Component({
     components: {
@@ -118,6 +118,16 @@ export default class AccountStatement extends mixins(
         return this.monthsFilter(this.account!.creationTimestamp)
     }
 
+    // TODO: Resolve to useBase Composable
+    formatDate(val) {
+        const dateTime = DateTime.fromJSDate(val)
+        if (dateTime.hasSame(DateTime.now(), 'year')) {
+            return dateTime.toFormat('d MMMM')
+        }
+
+        return dateTime.toFormat('d MMMM yyyy')
+    }
+
     filterMonthChange(val) {
         this.setFilters({
             fromTimestamp: val.start,
@@ -130,11 +140,11 @@ export default class AccountStatement extends mixins(
         const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
         if (!_filters.fromTimestamp) {
-            _filters.fromTimestamp = moment().startOf('month').valueOf()
+            _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
         }
 
         if (!_filters.toTimestamp) {
-            _filters.toTimestamp = moment().endOf('month').valueOf()
+            _filters.toTimestamp = DateTime.now().endOf('month').toMillis()
         }
 
         const _req: GetManagedAccountStatementRequest = {

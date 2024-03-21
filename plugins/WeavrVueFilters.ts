@@ -1,30 +1,5 @@
 import Vue from 'vue'
-import VueMoment from 'vue-moment'
-import moment from 'moment'
-import { BvToastOptions } from '~/node_modules/bootstrap-vue'
-
-Vue.use(VueMoment, { moment })
-
-Vue.filter('milli_to_moment', function (value) {
-    // @ts-ignore
-    return window.$nuxt.$moment(parseInt(value))
-})
-
-Vue.filter('moment_statement', function (value) {
-    // @ts-ignore
-    const _m = window.$nuxt.$moment(value)
-    if (_m.isSame(new Date(), 'year')) {
-        return _m.format('D MMMM')
-    } else {
-        return _m.format('D MMMM YYYY')
-    }
-})
-
-Vue.filter('milli_to_moment_dt', function (value) {
-    // @ts-ignore
-    const _m = window.$nuxt.$moment(parseInt(value))
-    return _m.format('YYYY-MM-DD h:mm')
-})
+import type { BvToastOptions } from '~/node_modules/bootstrap-vue'
 
 Vue.filter('weavr_currency_symbol', function (_currency) {
     const formatter = new Intl.NumberFormat('en-US', {
@@ -62,15 +37,15 @@ Vue.filter('weavr_currency_with_operator', function (value, _currency) {
     let _amount = ''
     try {
         if (
-            Object.prototype.hasOwnProperty.call(value, 'currency') &&
-            Object.prototype.hasOwnProperty.call(value, 'amount')
+            Object.prototype.hasOwn(value, 'currency') &&
+            Object.prototype.hasOwn(value, 'amount')
         ) {
             _currency = value.currency
             _amount = value.amount
         } else {
             _amount = value
         }
-    } catch (e) {
+    } catch (_) {
         // debugger
     }
 
@@ -170,9 +145,7 @@ export default ({}, inject) => {
     })
 }
 
-export interface WeavrToast {
-    (message: string, options?: BvToastOptions): void
-}
+export type WeavrToast = (message: string, options?: BvToastOptions) => void
 
 declare module 'vue/types/vue' {
     interface Vue {
