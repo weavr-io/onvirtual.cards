@@ -1,6 +1,6 @@
-import { Plugin } from '@nuxt/types'
+import type { Plugin } from '@nuxt/types'
+import type { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
 import { FormattingFiltersModule } from '~/plugins/formattingFilters/FormattingFiltersModule'
-import { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
 
 declare module 'vue/types/vue' {
     // this.$formattingFilters inside Vue components
