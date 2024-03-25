@@ -157,14 +157,14 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import dot from 'dot-object'
-import moment from 'moment'
+import { DateTime } from 'luxon'
+import type { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import type { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
-import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
-import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import CardsMixin from '~/mixins/CardsMixin'
-import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import Statement from '~/components/cards/statement/statement.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
@@ -207,11 +207,11 @@ export default class ManagedCardsStatements extends mixins(
         const filters = routeQueries.filters || {}
 
         if (!filters?.fromTimestamp) {
-            filters.fromTimestamp = moment().startOf('month').valueOf()
+            filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
         }
 
         if (!filters?.toTimestamp) {
-            filters.toTimestamp = moment().endOf('month').valueOf()
+            filters.toTimestamp = DateTime.now().endOf('month').toMillis()
         }
 
         const statementFilters: StatementFiltersRequest = {
