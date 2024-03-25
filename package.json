@@ -76,6 +76,7 @@
         "glob-parent": "^5.1.2",
         "axios": "^0.28.0",
         "nth-check": "^2.0.1",
-        "postcss": "^8.2.13"
+        "postcss": "^8.2.13",
+        "webpack-dev-middleware": "^5.3.4"
     }
 }
