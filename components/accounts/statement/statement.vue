@@ -119,6 +119,7 @@ export default class AccountStatement extends mixins(
     }
 
     // TODO: Resolve to useBase Composable
+    // Move all luxon function calls to utils for reusability
     formatDate(val) {
         const dateTime = DateTime.fromJSDate(val)
         if (dateTime.hasSame(DateTime.now(), 'year')) {
