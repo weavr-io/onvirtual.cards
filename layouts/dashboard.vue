@@ -32,31 +32,17 @@
     </div>
 </template>
 
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import KyVerified from '~/mixins/kyVerified'
-import BaseMixin from '~/mixins/BaseMixin'
+<script lang="ts" setup>
+import { computed } from 'vue'
+import { useBase } from '@/composables/useBase'
+import { useKyVerified } from '@/composables/useKyVerified'
 
-@Component({
-    components: {
-        AppFooter: () => import('~/components/Footer.vue'),
-        AppHeader: () => import('~/components/Header.vue'),
-        DashboardHeader: () => import('~/components/DashboardHeader.vue'),
-        KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
-        KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
-        cookiePolicy: () => import('~/components/cookie.vue'),
-    },
-})
-export default class DefaultLayout extends mixins(KyVerified, BaseMixin) {
-    get isLoading() {
-        return this.stores.loader.isLoading
-    }
+const { goToVerify, stores } = useBase()
+const { showKybAlert, showKycAlert, showVerifyMobileAlert, showVerifyEmailAlert } = useKyVerified()
 
-    get accounts() {
-        return this.stores.accounts.accounts
-    }
-}
+const isLoading = computed(() => stores.loader.isLoading)
 </script>
+
 <style lang="scss" scoped>
 .bottom-left-alert {
     max-width: 350px;

@@ -7,6 +7,9 @@ export default defineNuxtConfig({
         vite: true,
         nitro: true,
         meta: false,
+        macros: {
+            pageMeta: true,
+        },
     },
     vite: {
         build: {

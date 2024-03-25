@@ -7,26 +7,18 @@
                 <b-spinner />
             </div>
         </div>
-        <!-- <app-footer /> -->
         <cookie-policy />
     </div>
 </template>
 
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+<script lang="ts" setup>
+import { computed } from 'vue'
+import { useBase } from '@/composables/useBase'
 
-@Component({
-    components: {
-        AppFooter: () => import('~/components/Footer.vue'),
-        AppHeader: () => import('~/components/Header.vue'),
-        cookiePolicy: () => import('~/components/cookie.vue'),
-    },
+definePageMeta({
     middleware: ['authRouteGuard'],
 })
-export default class DefaultLayout extends mixins(BaseMixin) {
-    get isLoading() {
-        return this.stores.loader.isLoading
-    }
-}
+
+const { stores } = useBase()
+const isLoading = computed(() => stores.loader.isLoading)
 </script>
