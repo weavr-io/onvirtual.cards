@@ -3,6 +3,7 @@ import { defineNuxtConfig } from '@nuxt/bridge'
 export default defineNuxtConfig({
     ssr: false,
     bridge: {
+        capi: true,
         typescript: true,
         vite: true,
         nitro: true,
@@ -123,7 +124,7 @@ export default defineNuxtConfig({
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
     ],
-    modules: ['bootstrap-vue/nuxt', '@nuxtjs/dotenv', '@nuxtjs/axios', '@nuxtjs/svg'],
+    modules: ['bootstrap-vue/nuxt', '@nuxtjs/axios', '@nuxtjs/svg'],
     router: {
         middleware: ['authCookie', 'errorReset', 'identities'],
         linkActiveClass: 'active',
