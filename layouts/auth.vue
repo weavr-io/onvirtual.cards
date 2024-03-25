@@ -32,39 +32,36 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { defineComponent, computed } from 'vue'
+import { useBase } from '@/composables/useBase'
 
-@Component({
-    components: {
-        AppFooter: () => import('~/components/Footer.vue'),
-        cookiePolicy: () => import('~/components/cookie.vue'),
+export default defineComponent({
+    name: 'AuthLayout',
+    setup() {
+        const { isLoggedIn, doLogout, root } = useBase()
+
+        const showHeader = computed(() => root!.$config.app.view_register)
+        const showRegister = computed(() => showLogin)
+
+        const showLogin = computed(() => {
+            const _matchedName = root!.$route.matched[0].name
+
+            if (_matchedName) {
+                const _registration = ['login']
+                return !_registration.includes(_matchedName)
+            }
+
+            return false
+        })
+
+        return { isLoggedIn, doLogout, showHeader, showLogin, showRegister }
     },
-    head: {
-        bodyAttrs: {
-            class: 'bg-bg-colored',
-        },
+    head() {
+        return {
+            bodyAttrs: {
+                class: 'bg-bg-colored',
+            },
+        }
     },
 })
-class AuthLayout extends mixins(BaseMixin) {
-    get showHeader(): boolean {
-        return this.$config.app.view_register
-    }
-
-    get showRegister(): boolean {
-        return !this.showLogin
-    }
-
-    get showLogin(): boolean {
-        const _matchedName = this.$route.matched[0].name
-        if (_matchedName) {
-            const _registration = ['login']
-            return !_registration.includes(_matchedName)
-        } else {
-            return false
-        }
-    }
-}
-
-export default AuthLayout
 </script>
