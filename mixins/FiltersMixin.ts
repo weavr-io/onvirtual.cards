@@ -1,32 +1,32 @@
 import { Component, Vue } from 'nuxt-property-decorator'
-const moment = require('moment')
+import { DateTime } from 'luxon'
 
 @Component
 export default class FiltersMixin extends Vue {
     public monthsFilter(_start: number) {
         const _out: { value: { start: number; end: number }; text: string }[] = []
 
-        let _pointer = moment(_start)
+        let _pointer = DateTime.fromMillis(_start * 1000)
 
-        const _today = moment()
-        while (_pointer.isBefore(_today) && !_pointer.isSame(_today, 'month')) {
-            const _readableText = _pointer.format('MMMM Y')
+        const _today = DateTime.now()
+        while (_pointer < _today && !_pointer.hasSame(_today, 'month')) {
+            const _readableText = _pointer.toFormat('MMMM yyyy')
 
             _out.push({
                 value: {
-                    start: _pointer.startOf('month').valueOf(),
-                    end: _pointer.endOf('month').valueOf(),
+                    start: _pointer.startOf('month').toMillis(),
+                    end: _pointer.endOf('month').toMillis(),
                 },
                 text: _readableText,
             })
 
-            _pointer = _pointer.add(1, 'month')
+            _pointer = _pointer.plus({ months: 1 })
         }
 
         _out.push({
             value: {
-                start: moment().startOf('month').valueOf(),
-                end: moment().endOf('month').valueOf(),
+                start: DateTime.now().startOf('month').toMillis(),
+                end: DateTime.now().endOf('month').toMillis(),
             },
             text: 'this month',
         })

@@ -1,5 +1,5 @@
-import { Store } from 'vuex'
-import * as root from './root'
+import { Store, GetterTree, ActionContext, ActionTree, MutationTree } from 'vuex'
+import { RootState } from 'store'
 import Cards from '~/store/cards'
 import Accounts from '~/store/accounts'
 import Corporates from '~/store/corporates'
@@ -23,17 +23,32 @@ import AccessCodes from '~/store/accessCodes'
 // action: Sync or async operations that commit mutations
 // mutations: Modify the state
 
-export type RootState = root.State
+// interface for each states and actions
+interface State {}
+interface Actions<S, R> extends ActionTree<S, R> {
+    nuxtServerInit(context: ActionContext<S, R>): void
+}
+
+const state = (): State => ({})
+
+// global rootstate for getters and actions
+const getters: GetterTree<State, RootState> = {}
+
+const actions: Actions<State, RootState> = {
+    async nuxtServerInit() {},
+}
+
+const mutations: MutationTree<State> = {}
 
 const initializer = (store: Store<any>) => initialiseStores(store)
 
 const createStore = () => {
     return new Store({
         plugins: [initializer],
-        state: root.state(),
-        getters: root.getters,
-        mutations: root.mutations,
-        actions: root.actions,
+        state: state(),
+        getters,
+        mutations,
+        actions,
         modules: {
             cardsModule: Cards,
             accountsModule: Accounts,

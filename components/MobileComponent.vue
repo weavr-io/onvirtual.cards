@@ -69,8 +69,8 @@
                     <small class="text-grey">
                         Didn’t receive a code?
                         <b-link class="text-decoration-underline text-grey" @click="resendSms"
-                            >Send again</b-link
-                        >
+                            >Send again
+                        </b-link>
                         .
                     </small>
                 </div>
@@ -109,13 +109,13 @@ import LoaderButton from '~/components/LoaderButton.vue'
 export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) {
     @Prop() readonly verifyPhone!: boolean
 
-    isLoading: boolean = false
+    isLoading = false
 
     request: Nullable<AuthVerifyEnrolRequest> = {
         verificationCode: null,
     }
 
-    showSmsResentSuccess: boolean = false
+    showSmsResentSuccess = false
     dismissSecs = 60
     dismissCountDown = 0
 

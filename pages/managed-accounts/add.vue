@@ -63,7 +63,7 @@ import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/con
     middleware: ['kyVerified'],
 })
 export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, ValidationMixin) {
-    localIsBusy: boolean = false
+    localIsBusy = false
 
     createManagedAccountRequest: CreateManagedAccountRequest = {
         profileId: '',

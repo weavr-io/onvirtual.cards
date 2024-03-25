@@ -19,7 +19,7 @@ export class AdditionalFactorsApi {
     }): Promise<AxiosResponse> {
         return $axiosMulti.post(
             `/authentication_factors/otp/${request.channel}/verify`,
-            request.body
+            request.body,
         )
     }
 }

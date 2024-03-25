@@ -44,7 +44,7 @@
                     <b-col>
                         <b-row class="mt-4">
                             <b-col class="text-muted">
-                                {{ date | moment_statement }}
+                                {{ formatDate(date) }}
                             </b-col>
                         </b-row>
                         <b-row v-for="(statement, key) in statementEntries" :key="key">
@@ -61,18 +61,17 @@
 <script lang="ts">
 import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { AxiosError } from 'axios'
-import BaseMixin from '~/mixins/BaseMixin'
-import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
+import dot from 'dot-object'
+import { DateTime } from 'luxon'
+import type { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
+import type { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
+import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
+import BaseMixin from '~/mixins/BaseMixin'
 import CardsMixin from '~/mixins/CardsMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
-import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
-import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
-
-const dot = require('dot-object')
-const moment = require('moment')
 
 @Component({
     components: {
@@ -85,7 +84,7 @@ export default class CardStatement extends mixins(
     BaseMixin,
     RouterMixin,
     FiltersMixin,
-    CardsMixin
+    CardsMixin,
 ) {
     @Prop({
         required: true,
@@ -110,6 +109,15 @@ export default class CardStatement extends mixins(
         return this.stores.cards.filteredStatement
     }
 
+    formatDate(val) {
+        const dateTime = DateTime.fromJSDate(val)
+        if (dateTime.hasSame(DateTime.now(), 'year')) {
+            return dateTime.toFormat('d MMMM')
+        }
+
+        return dateTime.toFormat('d MMMM yyyy')
+    }
+
     filterMonthChange(val) {
         this.setFilters({
             fromTimestamp: val.start,
@@ -122,11 +130,11 @@ export default class CardStatement extends mixins(
         const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
         if (!_filters.fromTimestamp) {
-            _filters.fromTimestamp = moment().startOf('month').valueOf()
+            _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
         }
 
         if (!_filters.toTimestamp) {
-            _filters.toTimestamp = moment().endOf('month').valueOf()
+            _filters.toTimestamp = DateTime.now().endOf('month').toMillis()
         }
 
         const filters: GetManagedCardStatementRequest = {
@@ -151,7 +159,7 @@ export default class CardStatement extends mixins(
                     buttonSize: 'sm',
                     centered: true,
                     cancelVariant: 'link',
-                }
+                },
             )
             .then((value) => {
                 if (value) {

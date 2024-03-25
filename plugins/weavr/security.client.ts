@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Plugin } from '~/node_modules/@nuxt/types'
+import type { Plugin } from '~/node_modules/@nuxt/types'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
@@ -16,9 +16,9 @@ Vue.component('WeavrKyb', WeavrKyb)
 Vue.component('WeavrKycBeneficiaries', WeavrKycBeneficiaries)
 Vue.component('WeavrKyc', WeavrKyc)
 
-const weavrModules: Plugin = (context, inject) => {
+const weavrModules: Plugin = (_, inject) => {
     // @ts-ignore
-    const weavrComponents = window.weavr.init(context.$config.multiApi.uiKey, {
+    const weavrComponents = window.weavr.init(useRuntimeConfig().public.multiApi.uiKey, {
         fonts: [
             {
                 cssSrc: 'https://fonts.googleapis.com/css?family=Be+Vietnam:100,100i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i',
@@ -36,7 +36,7 @@ const weavrModules: Plugin = (context, inject) => {
                 },
                 (e) => {
                     reject(e)
-                }
+                },
             )
         })
     }

@@ -11,23 +11,14 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed } from 'vue'
+<script lang="ts" setup>
+import { computed } from 'vue'
 import { useBase } from '@/composables/useBase'
 
-export default defineComponent({
-    name: 'DefaultLayout',
-    // TODO: update after full nuxt3 upgrade
-    components: {
-        AppHeader: () => import('~/components/Header.vue'),
-        CookiePolicy: () => import('~/components/cookie.vue'),
-    },
+definePageMeta({
     middleware: ['authRouteGuard'],
-    setup() {
-        const { stores } = useBase()
-        const isLoading = computed(() => stores.loader.isLoading)
-
-        return { isLoading }
-    },
 })
+
+const { stores } = useBase()
+const isLoading = computed(() => stores.loader.isLoading)
 </script>

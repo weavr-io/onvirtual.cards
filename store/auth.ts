@@ -49,6 +49,10 @@ export default class Auth extends StoreModule {
         return this.auth?.token
     }
 
+    get hasAuthToken(): boolean {
+        return !!this.auth && !!this.auth.token
+    }
+
     get identityId() {
         return this.auth?.identity ? this.auth.identity.id : null
     }
@@ -68,7 +72,7 @@ export default class Auth extends StoreModule {
     @Mutation
     SET_AUTH(auth: LoginWithPasswordResponse | null) {
         this.auth = auth
-        Cookie.set(config.ONV_COOKIE_NAME, this.auth)
+        Cookie.set(config.ONV_COOKIE_NAME, JSON.stringify(this.auth))
 
         $axiosMulti.defaults.headers.Authorization = 'Bearer ' + this.auth?.token
     }

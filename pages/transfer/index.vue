@@ -41,7 +41,7 @@ import { DeepNullable } from '~/global'
 })
 export default class TransfersPage extends mixins(BaseMixin) {
     createTransferRequest: DeepNullable<CreateTransferRequest> | null = null
-    screen: number = 1
+    screen = 1
     public accountTypes = [
         {
             value: 'managed_accounts',

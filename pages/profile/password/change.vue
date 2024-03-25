@@ -103,9 +103,9 @@ export default class BundlesPage extends mixins(BaseMixin) {
     @Ref('newPassword')
     newPassword!: WeavrPasswordInput
 
-    isLoading: boolean = false
+    isLoading = false
 
-    passwordStrength: number = 0
+    passwordStrength = 0
 
     changePasswordRequest: UpdatePasswordRequestModel = {
         oldPassword: {

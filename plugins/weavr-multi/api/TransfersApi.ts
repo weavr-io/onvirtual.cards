@@ -8,7 +8,7 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 
 export class TransfersApi {
     index(
-        filters?: GetTransferTransactionsRequest
+        filters?: GetTransferTransactionsRequest,
     ): Promise<AxiosResponse<GetTransferTransactionsResponse>> {
         return $axiosMulti.get<GetTransferTransactionsResponse>('/transfers', { params: filters })
     }

@@ -41,8 +41,8 @@
                                 <div class="card-balance-label text-muted">balance</div>
                                 <div class="card-balance-value">
                                     {{
-                                        managedCard.balances.availableBalance |
-                                            weavr_currency(managedCard.currency)
+                                        managedCard.balances.availableBalance
+                                            | weavr_currency(managedCard.currency)
                                     }}
                                 </div>
                             </div>
@@ -133,7 +133,7 @@
                                                     color: '#6C1C5C',
                                                     lineHeight: '14.4px',
                                                     fontSize: '14.4px',
-                                                    fontWeight: 300,
+                                                    fontWeight: '300',
                                                 }"
                                                 :token="managedCard.cvv.value"
                                                 class="card-select-number"
@@ -156,19 +156,18 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
+import dot from 'dot-object'
+import { DateTime } from 'luxon'
+import type { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import type { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
-import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
-import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import CardsMixin from '~/mixins/CardsMixin'
-import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import Statement from '~/components/cards/statement/statement.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
-
-const dot = require('dot-object')
-const moment = require('moment')
 
 @Component({
     watch: {
@@ -185,11 +184,11 @@ export default class ManagedCardsStatements extends mixins(
     BaseMixin,
     RouterMixin,
     FiltersMixin,
-    CardsMixin
+    CardsMixin,
 ) {
     filters: StatementFiltersRequest | null = null
 
-    page: number = 0
+    page = 0
 
     isLoading: boolean | null = true
 
@@ -208,11 +207,11 @@ export default class ManagedCardsStatements extends mixins(
         const filters = routeQueries.filters || {}
 
         if (!filters?.fromTimestamp) {
-            filters.fromTimestamp = moment().startOf('month').valueOf()
+            filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
         }
 
         if (!filters?.toTimestamp) {
-            filters.toTimestamp = moment().endOf('month').valueOf()
+            filters.toTimestamp = DateTime.now().endOf('month').toMillis()
         }
 
         const statementFilters: StatementFiltersRequest = {
