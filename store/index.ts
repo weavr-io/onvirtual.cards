@@ -1,6 +1,10 @@
-import { Store, GetterTree, ActionContext, ActionTree, MutationTree } from 'vuex'
-import { RootState } from 'store'
-import Cards from '~/store/cards'
+import {
+    Store,
+    type GetterTree,
+    type ActionContext,
+    type ActionTree,
+    type MutationTree,
+} from 'vuex'
 import Accounts from '~/store/accounts'
 import Corporates from '~/store/corporates'
 import { initialiseStores } from '~/utils/store-accessor'
@@ -32,9 +36,9 @@ interface Actions<S, R> extends ActionTree<S, R> {
 const state = (): State => ({})
 
 // global rootstate for getters and actions
-const getters: GetterTree<State, RootState> = {}
+const getters: GetterTree<State, State> = {}
 
-const actions: Actions<State, RootState> = {
+const actions: Actions<State, State> = {
     async nuxtServerInit() {},
 }
 
@@ -50,7 +54,6 @@ const createStore = () => {
         mutations,
         actions,
         modules: {
-            cardsModule: Cards,
             accountsModule: Accounts,
             corporatesModule: Corporates,
             loaderModule: Loader,

@@ -126,12 +126,14 @@ export default defineNuxtConfig({
         { src: '~/plugins/axios-accessor.ts' },
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
+        { src: '~/plugins/pinia.ts' },
     ],
     modules: [
         ...(process.env.RECAPTCHA ? ['@nuxtjs/recaptcha'] : []),
         'bootstrap-vue/nuxt',
         '@nuxtjs/axios',
         '@nuxtjs/svg',
+        '@pinia/nuxt',
     ],
     router: {
         middleware: ['authCookie', 'errorReset', 'identities'],
