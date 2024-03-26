@@ -5,7 +5,6 @@ import {
     type ActionTree,
     type MutationTree,
 } from 'vuex'
-import Cards from '~/store/cards'
 import Accounts from '~/store/accounts'
 import Corporates from '~/store/corporates'
 import { initialiseStores } from '~/utils/store-accessor'
@@ -55,7 +54,6 @@ const createStore = () => {
         mutations,
         actions,
         modules: {
-            cardsModule: Cards,
             accountsModule: Accounts,
             corporatesModule: Corporates,
             loaderModule: Loader,
