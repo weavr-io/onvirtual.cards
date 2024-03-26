@@ -1,13 +1,18 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import { initialiseStores } from '~/utils/store-accessor'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
-import Countries from '~/static/json/countries.json'
+import Countries from '~/assets/json/countries.json'
 
 @Component
 export default class BaseMixin extends Vue {
+    get isRecaptchaEnabled(): boolean {
+        // TODO: add to useBase composable
+        return typeof this.useRuntimeConfig().public.recaptcha.siteKey !== 'undefined'
+    }
+
     get stores() {
         return initialiseStores(this.$store)
     }
@@ -31,28 +36,28 @@ export default class BaseMixin extends Vue {
     get cardJurisdictionProfileId() {
         if (this.isConsumer) {
             if (this.consumer && this.identityRegCountryIsUK) {
-                return this.$config.profileId.managed_cards_consumers_uk
+                return this.useRuntimeConfig().public.profileId.managed_cards_consumers_uk
             }
-            return this.$config.profileId.managed_cards_consumers
+            return this.useRuntimeConfig().public.profileId.managed_cards_consumers
         } else {
             if (this.identityRegCountryIsUK) {
-                return this.$config.profileId.managed_cards_corporates_uk
+                return this.useRuntimeConfig().public.profileId.managed_cards_corporates_uk
             }
-            return this.$config.profileId.managed_cards_corporates
+            return this.useRuntimeConfig().public.profileId.managed_cards_corporates
         }
     }
 
     get accountJurisdictionProfileId() {
         if (this.isConsumer) {
             if (this.consumer && this.identityRegCountryIsUK) {
-                return this.$config.profileId.managed_accounts_consumers_uk
+                return this.useRuntimeConfig().public.profileId.managed_accounts_consumers_uk
             }
-            return this.$config.profileId.managed_accounts_consumers
+            return this.useRuntimeConfig().public.profileId.managed_accounts_consumers
         } else {
             if (this.identityRegCountryIsUK) {
-                return this.$config.profileId.managed_accounts_corporates_uk
+                return this.useRuntimeConfig().public.profileId.managed_accounts_corporates_uk
             }
-            return this.$config.profileId.managed_accounts_corporates
+            return this.useRuntimeConfig().public.profileId.managed_accounts_corporates
         }
     }
 
@@ -198,5 +203,10 @@ export default class BaseMixin extends Vue {
     setSCAstorage() {
         localStorage.setItem('stepUp', 'FALSE')
         localStorage.setItem('scaSmsSent', 'FALSE')
+    }
+
+    useRuntimeConfig() {
+        // TODO: Remove this on full migration
+        return this.$config
     }
 }

@@ -25,18 +25,18 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { AxiosResponse } from 'axios'
-import BaseMixin from '~/mixins/BaseMixin'
+import type { AxiosResponse } from 'axios'
 import { authStore } from '~/utils/store-accessor'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import type { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import type { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import type { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import type { DeepNullable, RecursivePartial } from '~/global'
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
-import { DeepNullable, RecursivePartial } from '~/global'
+import BaseMixin from '~/mixins/BaseMixin'
 import Logo from '~/components/Logo.vue'
 
 @Component({
@@ -57,7 +57,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     private registrationRequest: DeepNullable<
         RecursivePartial<CreateCorporateRequest & { password: string }>
     > = {
-        profileId: this.$config.profileId.corporates,
+        profileId: this.useRuntimeConfig().public.profileId.corporates,
         tag: 'tag',
         rootUser: {
             name: null,

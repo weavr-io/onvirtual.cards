@@ -1,3 +1,3 @@
 export interface AccessCodeModel {
-    code: number | null
+    code?: number | null
 }

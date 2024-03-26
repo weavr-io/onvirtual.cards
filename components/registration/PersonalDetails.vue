@@ -142,16 +142,16 @@
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import type { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import type { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
+import type { DeepNullable, RecursivePartial } from '~/global'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
-import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
+import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
-import { DeepNullable, RecursivePartial } from '~/global'
-import Countries from '~/static/json/countries.json'
+import Countries from '~/assets/json/countries.json'
 
 @Component({
     validations: {

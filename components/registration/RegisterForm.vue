@@ -79,10 +79,10 @@
 <script lang="ts">
 import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required, sameAs } from 'vuelidate/lib/validators'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/mixins/BaseMixin'
-import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import LoaderButton from '~/components/LoaderButton.vue'
 
 @Component({
@@ -126,7 +126,6 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     }
 
     passwordStrength = 0
-    private $recaptcha: any
 
     get isPasswordValidAndDirty(): boolean {
         return !this.$v.form.password?.$dirty ? true : this.isPasswordValid
@@ -152,10 +151,6 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
                 fontWeight: '400',
             },
         }
-    }
-
-    get isRecaptchaEnabled(): boolean {
-        return typeof process.env.RECAPTCHA !== 'undefined'
     }
 
     get isLoadingRegistration() {

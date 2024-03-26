@@ -38,9 +38,9 @@ import { useBase } from '@/composables/useBase'
 export default defineComponent({
     name: 'AuthLayout',
     setup() {
-        const { isLoggedIn, doLogout, root } = useBase()
+        const { isLoggedIn, useRuntimeConfig, doLogout, root } = useBase()
 
-        const showHeader = computed(() => root!.$config.app.view_register)
+        const showHeader = computed(() => useRuntimeConfig().app.view_register)
         const showRegister = computed(() => showLogin)
 
         const showLogin = computed(() => {

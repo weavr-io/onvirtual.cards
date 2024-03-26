@@ -23,12 +23,12 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
+import type { DeepNullable } from '~/global'
+import type { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import { DeepNullable } from '~/global'
+import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
     components: {
@@ -82,7 +82,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
         const firstAccount = accounts.data.accounts && accounts.data.accounts[0]
 
         this.createTransferRequest = {
-            profileId: this.$config.profileId.transfers!,
+            profileId: this.useRuntimeConfig().public.profileId.transfers!,
             source: {
                 type: InstrumentEnum.managedAccounts,
                 id: firstAccount?.id || '',

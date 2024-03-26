@@ -238,22 +238,20 @@
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
-
-import { AxiosResponse } from 'axios'
-
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
-import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import type { AxiosResponse } from 'axios'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import type { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
+import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import type { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import type { DeepNullable, RecursivePartial } from '~/global'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
-import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
-import { DeepNullable, RecursivePartial } from '~/global'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import Logo from '~/components/Logo.vue'
 
 const touchMap = new WeakMap()
@@ -337,7 +335,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     public registrationRequest: DeepNullable<
         RecursivePartial<CreateConsumerRequest> & { password: string }
     > = {
-        profileId: this.$config.profileId.consumers,
+        profileId: this.useRuntimeConfig().public.profileId.consumers,
         tag: 'tag',
         rootUser: {
             name: null,
@@ -364,8 +362,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         sourceOfFundsOther: null,
         password: null,
     }
-
-    private $recaptcha: any
 
     get isPasswordValidAndDirty() {
         return !this.$v.registrationRequest.password?.$dirty ? true : this.isPasswordValid
@@ -414,10 +410,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         }
     }
 
-    get isRecaptchaEnabled(): boolean {
-        return typeof process.env.RECAPTCHA !== 'undefined'
-    }
-
     get isLoadingRegistration(): boolean {
         return this.stores.consumers.isLoadingRegistration
     }
@@ -432,11 +424,9 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         })
     }
 
-    submitForm(e) {
+    submitForm() {
         this.stores.errors.RESET_ERROR()
         try {
-            e.preventDefault()
-
             this.$v.$touch()
 
             if (this.numberIsValid === null) {

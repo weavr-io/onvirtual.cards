@@ -22,11 +22,11 @@ export default defineNuxtConfig({
     },
     runtimeConfig: {
         public: {
+            production: process.env.ENVIRONMENT === 'production',
             multiApi: {
                 baseUrl: process.env.MULTI_BASE_URL,
                 uiKey: process.env.UI_KEY,
             },
-            production: process.env.ENVIRONMENT === 'production',
             profileId: {
                 consumers: process.env.CONSUMERS_PROFILE_ID,
                 corporates: process.env.CORPORATES_PROFILE_ID,
@@ -41,6 +41,10 @@ export default defineNuxtConfig({
                     process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_UK,
                 transfers: process.env.TRANSFERS_PROFILE_ID,
                 send: process.env.SEND_PROFILE_ID,
+            },
+            recaptcha: {
+                siteKey: process.env.RECAPTCHA,
+                version: 2,
             },
         },
         app: {
@@ -123,7 +127,12 @@ export default defineNuxtConfig({
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
     ],
-    modules: ['bootstrap-vue/nuxt', '@nuxtjs/dotenv', '@nuxtjs/axios', '@nuxtjs/svg'],
+    modules: [
+        ...(process.env.RECAPTCHA ? ['@nuxtjs/recaptcha'] : []),
+        'bootstrap-vue/nuxt',
+        '@nuxtjs/axios',
+        '@nuxtjs/svg',
+    ],
     router: {
         middleware: ['authCookie', 'errorReset', 'identities'],
         linkActiveClass: 'active',
