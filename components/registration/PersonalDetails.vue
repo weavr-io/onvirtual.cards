@@ -142,7 +142,6 @@
 <script lang="ts">
 import { Component, Emit, mixins } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
-import Countries from '~/assets/json/countries.json'
 import type { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import type { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 import type { DeepNullable, RecursivePartial } from '~/global'
@@ -152,6 +151,7 @@ import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import Countries from '~/assets/json/countries.json'
 
 @Component({
     validations: {
