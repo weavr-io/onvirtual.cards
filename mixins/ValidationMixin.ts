@@ -26,7 +26,7 @@ export default class ValidationMixin extends Vue {
         }
     }
 
-    public invalidFeedback(_item, type, customMessage) {
+    public invalidFeedback(_item, type, customMessage?) {
         const messageResult: string | undefined = customMessage ?? INVALID_FEEDBACK_CONST[type]
 
         return messageResult ?? 'Not Handled'

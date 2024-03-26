@@ -182,7 +182,7 @@ export default class CardStatement extends mixins(
                 })
                 if (_accounts.data.count && _accounts.data.accounts) {
                     const _request: CreateTransferRequest = {
-                        profileId: this.$config.profileId.transfers!,
+                        profileId: this.useRuntimeConfig().public.profileId.transfers!,
                         source: {
                             type: InstrumentEnum.managedCards,
                             id: this.cardId,

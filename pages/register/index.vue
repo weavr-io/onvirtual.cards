@@ -2,7 +2,7 @@
     <b-container>
         <div class="d-flex flex-column align-items-center">
             <logo />
-            <access-code-component v-if="$config.production && !isAccessCodeValid" />
+            <access-code-component v-if="$config.public.production && !isAccessCodeValid" />
             <business-or-personal-component v-else />
         </div>
     </b-container>

@@ -88,9 +88,9 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
-import BaseMixin from '~/mixins/BaseMixin'
 import { KYBErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBErrorCodeEnum'
 import DashboardHeader from '~/components/DashboardHeader.vue'
+import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
     components: {
@@ -113,7 +113,7 @@ export default class KybPage extends mixins(BaseMixin) {
     }
 
     get sumsSubEnabled() {
-        return this.$config.app.sumsub_enabled
+        return this.useRuntimeConfig().app.sumsub_enabled
     }
 
     get isKybPending() {

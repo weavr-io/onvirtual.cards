@@ -16,6 +16,7 @@ import { authStore, identitiesStore } from '~/utils/store-accessor'
 @Component({})
 export default class IndexPage extends mixins(BaseMixin) {
     async asyncData({ store, redirect }) {
+        console.log('ha')
         const isLoggedIn = authStore(store).isLoggedIn
 
         if (!isLoggedIn) {

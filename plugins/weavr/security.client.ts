@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import type { Plugin } from '~/node_modules/@nuxt/types'
+import { useBase } from '@/composables/useBase'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
-
 import WeavrKyb from '~/plugins/weavr/components/WeavrKyb.vue'
 import WeavrKycBeneficiaries from '~/plugins/weavr/components/WeavrKycBeneficiaries.vue'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
@@ -11,10 +11,11 @@ import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 Vue.component('WeavrPasswordInput', WeavrPasswordInput)
 Vue.component('WeavrCardNumberSpan', WeavrCardNumberSpan)
 Vue.component('WeavrCvvSpan', WeavrCvvSpan)
-
 Vue.component('WeavrKyb', WeavrKyb)
 Vue.component('WeavrKycBeneficiaries', WeavrKycBeneficiaries)
 Vue.component('WeavrKyc', WeavrKyc)
+
+const { useRuntimeConfig } = useBase()
 
 const weavrModules: Plugin = (_, inject) => {
     // @ts-ignore
