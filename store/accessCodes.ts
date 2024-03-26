@@ -1,6 +1,6 @@
 import { Mutation, Action, Module } from 'vuex-module-decorators'
 import { StoreModule } from '~/store/storeModule'
-import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
+import type { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
 
 @Module({
     name: 'accessCodesModule',
@@ -11,7 +11,7 @@ export default class AccessCodes extends StoreModule {
     isValid = false
 
     @Mutation
-    SET_ACCESS_CODE(code) {
+    SET_ACCESS_CODE(code: string) {
         localStorage.setItem('onv-access-code', code)
         this.isValid = true
     }
@@ -26,7 +26,9 @@ export default class AccessCodes extends StoreModule {
         const req = this.store.$apiMulti.accessCodes.verifyAccessCode(request)
 
         req.then(() => {
-            this.SET_ACCESS_CODE(request.code)
+            if (request.code) {
+                this.SET_ACCESS_CODE(request.code.toString())
+            }
         }).catch(this.DELETE_ACCESS_CODE)
 
         return req

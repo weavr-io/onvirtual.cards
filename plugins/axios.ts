@@ -1,5 +1,8 @@
-import { Context, Plugin } from '@nuxt/types'
+import type { Context, Plugin } from '@nuxt/types'
 import { authStore, errorsStore } from '~/utils/store-accessor'
+import { useBase } from '@/composables/useBase'
+
+const { useRuntimeConfig } = useBase()
 
 const axiosPlugin: Plugin = (ctxt: Context, inject) => {
     const axiosMulti = ctxt.$axios.create({
@@ -9,7 +12,7 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
                 Accept: 'application/json',
             },
         },
-        baseURL: ctxt.$config.multiApi.baseUrl,
+        baseURL: useRuntimeConfig().public.multiApi.baseUrl,
     })
 
     function onError(error) {

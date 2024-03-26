@@ -5,7 +5,7 @@ import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
-import Countries from '~/static/json/countries.json'
+import Countries from '~/assets/json/countries.json'
 
 export function useBase() {
     const { proxy: root } = getCurrentInstance() || {}
@@ -37,14 +37,14 @@ export function useBase() {
 
     const accountProfileId = computed<string>(() =>
         isConsumer.value
-            ? root!.$config.profileId.managed_accounts_consumers!
-            : root!.$config.profileId.managed_accounts_corporates!,
+            ? useRuntimeConfig().public.profileId.managed_accounts_consumers!
+            : useRuntimeConfig().public.profileId.managed_accounts_corporates!,
     )
 
     const cardProfileId = computed(() =>
         isConsumer.value
-            ? root!.$config.profileId.managed_cards_consumers!
-            : root!.$config.profileId.managed_cards_corporates!,
+            ? useRuntimeConfig().public.profileId.managed_cards_consumers!
+            : useRuntimeConfig().public.profileId.managed_cards_corporates!,
     )
 
     const profileBaseCurrency = computed(() =>
@@ -101,15 +101,15 @@ export function useBase() {
         return corporateKyBStatus.value === KYBStatusEnum.APPROVED
     })
 
-    function sleep(ms: number) {
+    const sleep = (ms: number) => {
         return new Promise((resolve) => setTimeout(resolve, ms))
     }
 
-    function goToIndex() {
+    const goToIndex = () => {
         return root!.$router.push('/')
     }
 
-    function goToVerify() {
+    const goToVerify = () => {
         return root!.$router.push({
             path: '/login/verify',
             query: {
@@ -119,31 +119,36 @@ export function useBase() {
         })
     }
 
-    function doLogout() {
+    const doLogout = () => {
         return stores.auth.logout().then(redirectToLogin)
     }
 
-    function redirectToLogin() {
+    const redirectToLogin = () => {
         root!.$router.push('/login')
     }
 
-    function showSuccessToast(msg?: string, title?: string) {
+    const showSuccessToast = (msg?: string, title?: string) => {
         return root!.$weavrToast(msg ?? 'All changes have been saved', {
             title: title ?? 'Changes saved',
             variant: 'success',
         })
     }
 
-    function showErrorToast(msg?: string, title?: string) {
+    const showErrorToast = (msg?: string, title?: string) => {
         return root!.$weavrToast(msg ?? 'An error has occurred while saving', {
             title: title ?? 'Error',
             variant: 'danger',
         })
     }
 
-    function setSCAstorage() {
+    const setSCAstorage = () => {
         localStorage.setItem('stepUp', 'FALSE')
         localStorage.setItem('scaSmsSent', 'FALSE')
+    }
+
+    const useRuntimeConfig = () => {
+        // TODO: Remove this on full migration
+        return root!.$config
     }
 
     return {
@@ -178,5 +183,6 @@ export function useBase() {
         showErrorToast,
         pendingDataOrError,
         setSCAstorage,
+        useRuntimeConfig,
     }
 }
