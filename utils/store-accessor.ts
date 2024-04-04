@@ -1,102 +1,41 @@
-import { Store } from 'vuex'
-import { getModule } from 'vuex-module-decorators'
-import Cards from '~/store/cards'
-import Accounts from '~/store/accounts'
-import Corporates from '~/store/corporates'
-import Loader from '~/store/loader'
-import Auth from '~/store/auth'
-import Consumers from '~/store/consumers'
-import Identities from '~/store/identity'
-import Transfers from '~/store/transfers'
-import Errors from '~/store/errors'
-import Users from '~/store/users'
-import AccessCodes from '~/store/accessCodes'
+import type { StoreDefinition } from 'pinia'
+import { useBase } from '~/composables/useBase'
 
-export interface Stores {
-    cards: Cards
-    accounts: Accounts
-    corporates: Corporates
-    loader: Loader
-    auth: Auth
-    consumers: Consumers
-    identities: Identities
-    transfers: Transfers
-    errors: Errors
-    users: Users
-    accessCodes: AccessCodes
-}
+const { root } = useBase()
+const modules: Record<string, StoreDefinition> = {}
 
-function initialiseStores(store: Store<any>): Stores {
-    return {
-        cards: cardsStore(store),
-        accounts: accountsStore(store),
-        corporates: corporatesStore(store),
-        loader: loaderStore(store),
-        auth: authStore(store),
-        consumers: consumersStore(store),
-        transfers: transfersStore(store),
-        errors: errorsStore(store),
-        users: usersStore(store),
-        identities: identitiesStore(store),
-        accessCodes: accessCodesStore(store),
-    }
-}
+// import meta since we have vite enabled
+const moduleFiles = import.meta.glob('@/store/*.ts')
 
-function transfersStore(store: Store<any>) {
-    return getModule(Transfers, store)
-}
+await Promise.all(
+    Object.entries(moduleFiles).map(async ([path, moduleFile]) => {
+        // TODO: Remove line after deleting index file
+        if (path === './index.ts') return
 
-function usersStore(store: Store<any>) {
-    return getModule(Users, store)
-}
+        const moduleName = root!.$formattingFilters.text.convertToCamelCase(
+            path.replace(/(\.\/|\.ts)/g, ''),
+        )
 
-function consumersStore(store: Store<any>) {
-    return getModule(Consumers, store)
-}
+        const module = await moduleFile()
+        modules[moduleName] = module as StoreDefinition
+    }),
+)
 
-function cardsStore(store: Store<any>) {
-    return getModule(Cards, store)
-}
+export function initialiseStores(storeNames: string[]) {
+    const stores = {}
 
-function authStore(store: Store<any>) {
-    return getModule(Auth, store)
-}
+    storeNames.forEach((store) => {
+        const storeModule = modules[`/stores/${store}`]
 
-function accountsStore(store: Store<any>) {
-    return getModule(Accounts, store)
-}
+        if (!storeModule) {
+            throw new Error(`Pinia store module '${store}' not found.`)
+        }
 
-function corporatesStore(store: Store<any>) {
-    return getModule(Corporates, store)
-}
+        const storeInstance =
+            storeModule[`use${root!.$formattingFilters.text.capitalizeFirstLetter(store)}Store`]
 
-function identitiesStore(store: Store<any>) {
-    return getModule(Identities, store)
-}
+        stores[store] = storeInstance
+    })
 
-function loaderStore(store: Store<any>) {
-    return getModule(Loader, store)
-}
-
-function errorsStore(store: Store<any>) {
-    return getModule(Errors, store)
-}
-
-function accessCodesStore(store: Store<any>) {
-    return getModule(AccessCodes, store)
-}
-
-export {
-    initialiseStores,
-    cardsStore,
-    accountsStore,
-    corporatesStore,
-    loaderStore,
-    authStore,
-    consumersStore,
-    transfersStore,
-    errorsStore,
-    usersStore,
-    identitiesStore,
-    accessCodesStore,
+    return stores
 }

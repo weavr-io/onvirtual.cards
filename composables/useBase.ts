@@ -2,6 +2,7 @@ import { computed, getCurrentInstance } from 'vue'
 import { initialiseStores } from '~/utils/store-accessor'
 import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
+import { useCardsStore } from '~/store/cards'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
@@ -11,6 +12,9 @@ export function useBase() {
     const { proxy: root } = getCurrentInstance() || {}
     const stores = initialiseStores(root!.$store)
     const isLoggedIn = computed(() => stores.auth.isLoggedIn)
+
+    // stores
+    const cardStore = useCardsStore()
 
     const pendingData = computed(() => !root!.$fetchState || root!.$fetchState.pending)
     const fetchHasError = computed(() => root!.$fetchState?.error !== null)
@@ -184,5 +188,6 @@ export function useBase() {
         pendingDataOrError,
         setSCAstorage,
         useRuntimeConfig,
+        cardStore,
     }
 }

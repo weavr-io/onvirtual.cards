@@ -264,3 +264,5 @@ export const useCardsStore = defineStore('cards', () => {
         remove,
     }
 })
+
+export type useCardsStore = ReturnType<typeof useCardsStore>

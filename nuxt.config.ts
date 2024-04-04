@@ -136,7 +136,7 @@ export default defineNuxtConfig({
         '@pinia/nuxt',
     ],
     router: {
-        middleware: ['authCookie', 'errorReset', 'identities'],
+        // middleware: ['authCookie', 'errorReset', 'identities'],
         linkActiveClass: 'active',
     },
 })

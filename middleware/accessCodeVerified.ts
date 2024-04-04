@@ -1,11 +1,10 @@
-import type { Middleware } from '~/node_modules/@nuxt/types'
+import { Middleware } from '~/node_modules/@nuxt/types'
 import { accessCodesStore } from '~/utils/store-accessor'
-import { useBase } from '@/composables/useBase'
 
-const { useRuntimeConfig } = useBase()
-
-const accessCodeVerified: Middleware = async ({ store, redirect, route }) => {
-    if (!useRuntimeConfig().public.production) return
+const accessCodeVerified: Middleware = async ({ store, redirect, route, $config }) => {
+    if (!$config.production) {
+        return
+    }
 
     const accessCodeStore = accessCodesStore(store)
 

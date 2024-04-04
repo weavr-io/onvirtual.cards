@@ -106,7 +106,7 @@ export default class CardStatement extends mixins(
     }
 
     get filteredStatement() {
-        return this.stores.cards.filteredStatement
+        return this.cardstore.cardState.filteredStatement
     }
 
     formatDate(val) {
@@ -199,7 +199,7 @@ export default class CardStatement extends mixins(
                     await this.stores.transfers.execute(_request)
                 }
             }
-            await this.stores.cards.remove(this.cardId).then(() => {
+            await this.cardstore.remove(this.cardId).then(() => {
                 this.showSuccessToast('Card has been deleted', 'Card Action')
             })
             await this.$router.push('/managed-cards')

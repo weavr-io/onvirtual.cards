@@ -246,7 +246,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
             },
         }
 
-        await this.stores.cards
+        await this.cardstore
             .addCard(this.createManagedCardRequest as CreateManagedCardRequest)
             .then(() => {
                 this.$router.push('/managed-cards')
