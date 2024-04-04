@@ -3,6 +3,7 @@ import { initialiseStores } from '~/utils/store-accessor'
 import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
 import { useCardsStore } from '~/store/cards'
+import { useAccountsStore } from '~/store/accounts'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
@@ -15,6 +16,7 @@ export function useBase() {
 
     // stores
     const cardStore = useCardsStore()
+    const accountsStore = useAccountsStore()
 
     const pendingData = computed(() => !root!.$fetchState || root!.$fetchState.pending)
     const fetchHasError = computed(() => root!.$fetchState?.error !== null)
@@ -189,5 +191,6 @@ export function useBase() {
         setSCAstorage,
         useRuntimeConfig,
         cardStore,
+        accountsStore,
     }
 }

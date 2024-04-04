@@ -45,7 +45,7 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
 })
 export default class IndexPage extends mixins(BaseMixin, AccountsMixin) {
     fetch() {
-        return this.stores.accounts
+        return this.accountStore
             .index({
                 profileId: this.accountJurisdictionProfileId,
                 state: ManagedInstrumentStateEnum.ACTIVE,

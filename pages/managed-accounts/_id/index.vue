@@ -37,7 +37,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
     page = 0
 
     get filteredStatement() {
-        return this.stores.accounts.filteredStatement
+        return this.accountStore.filteredStatement
     }
 
     asyncData({ store }) {
@@ -47,7 +47,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
     async fetch() {
         const _accountId = this.$route.params.id
 
-        await this.stores.accounts.get(_accountId)
+        await this.accountStore.get(_accountId)
 
         const _routeQueries = dot.object(this.$route.query)
         const _filters = _routeQueries.filters ? _routeQueries.filters : {}
@@ -76,7 +76,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
         this.filters = { ..._statementFilters }
 
         this.page = 0
-        await this.stores.accounts.getStatements(_req)
+        await this.accountStore.getStatements(_req)
     }
 
     infiniteScroll($state) {
@@ -87,7 +87,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
 
             _request!.offset = (this.page * +_request!.limit!).toString()
 
-            this.stores.accounts
+            this.accountStore
                 .getStatements({
                     id: this.$route.params.id,
                     filters: _request,

@@ -49,7 +49,7 @@ export default class KycPage extends mixins(BaseMixin) {
     }
 
     async redirectToAccountPage() {
-        const _accounts = await this.stores.accounts.index({
+        const _accounts = await this.accountStore.index({
             profileId: this.accountJurisdictionProfileId,
             state: ManagedInstrumentStateEnum.ACTIVE,
             offset: '0',

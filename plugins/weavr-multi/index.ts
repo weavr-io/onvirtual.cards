@@ -1,5 +1,5 @@
-import { Plugin } from '@nuxt/types'
-import { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
+import type { Plugin } from '@nuxt/types'
+import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 import { ApiModule } from '~/plugins/weavr-multi/api/ApiModule'
 
 declare module 'vue/types/vue' {

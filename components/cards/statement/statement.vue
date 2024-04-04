@@ -106,7 +106,7 @@ export default class CardStatement extends mixins(
     }
 
     get filteredStatement() {
-        return this.cardstore.cardState.filteredStatement
+        return this.cardStore.cardState.filteredStatement
     }
 
     formatDate(val) {
@@ -175,7 +175,7 @@ export default class CardStatement extends mixins(
                 this.managedCard?.balances?.availableBalance &&
                 this.managedCard.balances.availableBalance > 0
             ) {
-                const _accounts = await this.stores.accounts.index({
+                const _accounts = await this.accountStore.index({
                     profileId: this.accountJurisdictionProfileId,
                     state: ManagedInstrumentStateEnum.ACTIVE,
                     offset: '0',
@@ -199,7 +199,7 @@ export default class CardStatement extends mixins(
                     await this.stores.transfers.execute(_request)
                 }
             }
-            await this.cardstore.remove(this.cardId).then(() => {
+            await this.cardStore.remove(this.cardId).then(() => {
                 this.showSuccessToast('Card has been deleted', 'Card Action')
             })
             await this.$router.push('/managed-cards')

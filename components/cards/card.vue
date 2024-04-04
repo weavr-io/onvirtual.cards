@@ -156,7 +156,7 @@ export default class WeavrCard extends mixins(BaseMixin) {
     }
 
     async blockCard() {
-        await this.cardstore
+        await this.cardStore
             .block(this.card.id)
             .then(this.blocked)
             .catch((err) => {
@@ -167,7 +167,7 @@ export default class WeavrCard extends mixins(BaseMixin) {
     }
 
     async unblockCard() {
-        await this.cardstore
+        await this.cardStore
             .unblock(this.card.id)
             .then(this.unblocked)
             .catch((err) => {

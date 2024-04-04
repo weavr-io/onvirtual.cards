@@ -108,7 +108,7 @@ export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
     }
 
     get accounts() {
-        return this.stores.accounts.accounts
+        return this.accountStore.accountState.accounts
     }
 
     get invalidMessage() {

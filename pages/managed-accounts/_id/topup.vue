@@ -143,7 +143,7 @@ export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
     }
 
     get ibanDetails(): ManagedAccountIBANModel | null {
-        return this.stores.accounts.ibanDetails
+        return this.accountStore.accountState.ibanDetails
     }
 
     get beneficiaryNameAndSurname() {
@@ -168,7 +168,7 @@ export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
     }
 
     fetch() {
-        return this.stores.accounts.getIBANDetails(this.$route.params.id)
+        return this.accountStore.getIBANDetails(this.$route.params.id)
     }
 }
 </script>

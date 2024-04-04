@@ -1,6 +1,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import { initialiseStores } from '~/utils/store-accessor'
 import type { useCardsStore } from '~/store/cards'
+import type { useAccountsStore } from '~/store/accounts'
 import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
@@ -19,8 +20,12 @@ export default class BaseMixin extends Vue {
     }
 
     // TODO: Remove upon full migration
-    get cardstore() {
+    get cardStore() {
         return this.stores(['cards']) as useCardsStore
+    }
+
+    get accountStore() {
+        return this.stores(['accounts']) as useAccountsStore
     }
 
     get isConsumer() {

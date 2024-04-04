@@ -47,7 +47,7 @@ import ValidationMixin from '~/mixins/ValidationMixin'
 })
 export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMixin) {
     get accounts() {
-        return this.stores.accounts.accounts
+        return this.accountStore.accountState.accounts
     }
 
     public request = {

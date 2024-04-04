@@ -15,20 +15,20 @@ export default class AccountsMixin extends mixins(BaseMixin, CsvMixin) {
     }
 
     get accountsBalance() {
-        return this.stores.accounts.totalAvailableBalance
+        return this.accountStore.totalAvailableBalance
     }
 
     get account() {
-        return this.stores.accounts.account
+        return this.accountStore.accountState.account
     }
 
     get accounts() {
-        return this.stores.accounts.accounts
+        return this.accountStore.accountState.accounts
     }
 
     get hasAccount() {
-        return this.stores.accounts.accounts?.accounts !== undefined
-            ? this.stores.accounts.accounts.accounts.length > 0
+        return this.accountStore.accountState.accounts?.accounts
+            ? this.accountStore.accountState.accounts.accounts.length
             : false
     }
 

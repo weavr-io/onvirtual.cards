@@ -88,23 +88,23 @@ export default class AccountStatement extends mixins(
     @Prop() filters!: GetManagedAccountStatementRequest
 
     get filteredStatement() {
-        return this.stores.accounts.filteredStatement
+        return this.accountStore.filteredStatement
     }
 
     get availableBalance() {
-        if (this.stores.accounts.account) {
-            return this.stores.accounts.account.balances.availableBalance
-        } else {
-            return 0
+        if (this.accountStore.accountState.account) {
+            return this.accountStore.accountState.account.balances.availableBalance
         }
+
+        return 0
     }
 
     get filteredStatementLength(): number {
         if (this.filteredStatement) {
             return Object.keys(this.filteredStatement).length
-        } else {
-            return 0
         }
+
+        return 0
     }
 
     get filterDate() {

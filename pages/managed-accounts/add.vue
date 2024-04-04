@@ -78,7 +78,7 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
     }
 
     async fetch() {
-        await this.stores.accounts
+        await this.accountStore
             .index({
                 profileId: this.accountJurisdictionProfileId,
                 state: ManagedInstrumentStateEnum.ACTIVE,
@@ -87,10 +87,10 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
             .then(async (res) => {
                 if (parseInt(res.data.count!) < 1) {
                     if (this.isConsumer) {
-                        await this.stores.accounts
+                        await this.accountStore
                             .create(this.createManagedAccountRequest)
                             .then(async (res) => {
-                                await this.stores.accounts.upgradeIban(res.data.id)
+                                await this.accountStore.upgradeIban(res.data.id)
                                 return this.goToManagedAccountIndex()
                             })
                             .catch((err) => {
@@ -117,10 +117,10 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
 
         this.localIsBusy = true
 
-        await this.stores.accounts
+        await this.accountStore
             .create(this.createManagedAccountRequest)
             .then(async (res) => {
-                await this.stores.accounts.upgradeIban(res.data.id)
+                await this.accountStore.upgradeIban(res.data.id)
                 return this.goToManagedAccountIndex()
             })
             .catch((err) => {

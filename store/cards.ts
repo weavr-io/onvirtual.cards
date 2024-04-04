@@ -44,8 +44,7 @@ export const useCardsStore = defineStore('cards', () => {
         return total
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const resetStore = () => {
+    const resetState = () => {
         const data = initState()
         Object.keys(data).forEach((key) => {
             cardState[key] = data[key]
@@ -62,9 +61,7 @@ export const useCardsStore = defineStore('cards', () => {
                 TransactionTypeEnum.AUTHORISATION_DECLINE,
             ].includes(transaction.transactionId.type)
 
-            if (!_shouldDisplay) {
-                return false
-            }
+            if (!_shouldDisplay) return false
 
             if (transaction.transactionId.type === TransactionTypeEnum.AUTHORISATION) {
                 if (
@@ -250,6 +247,7 @@ export const useCardsStore = defineStore('cards', () => {
         cardState,
         currency,
         totalAvailableBalance,
+        resetState,
         resetStatement,
         appendStatement,
         getCards,
