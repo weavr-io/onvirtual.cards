@@ -1,21 +1,21 @@
-import { Middleware } from '@nuxt/types'
-import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import type { Middleware } from '@nuxt/types'
+import { useBase } from '~/composables/useBase'
 
-const kyVerified: Middleware = async ({ store, route, redirect }) => {
-    const authStoreInstance = authStore(store)
-    if (authStoreInstance.isLoggedIn) {
-        if (authStoreInstance.isConsumer) {
+const { authStore, consumersStore, corporatesStore } = useBase()
+const kyVerified: Middleware = async ({ route, redirect }) => {
+    if (authStore.isLoggedIn) {
+        if (authStore.isConsumer) {
             try {
                 if (route.name === 'managed-accounts-kyb') {
                     return redirect('/managed-accounts/kyc')
                 }
 
-                await consumersStore(store).checkKYC()
+                await consumersStore.checkKYC()
 
                 if (route.name === 'managed-accounts-kyc') {
                     return redirect('/managed-accounts/add')
                 }
-            } catch (e) {
+            } catch (_) {
                 if (
                     route.name === 'managed-accounts-add' ||
                     route.name === 'managed-cards-add' ||
@@ -30,12 +30,12 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
                     return redirect('/managed-accounts/kyb')
                 }
 
-                await corporatesStore(store).checkKYB()
+                await corporatesStore.checkKYB()
 
                 if (route.name === 'managed-accounts-kyb') {
                     return redirect('/managed-accounts')
                 }
-            } catch (e) {
+            } catch (_) {
                 if (
                     route.name === 'managed-accounts-add' ||
                     route.name === 'managed-cards-add' ||

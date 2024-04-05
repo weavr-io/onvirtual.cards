@@ -5,10 +5,12 @@ import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities
 import { useCardsStore } from '~/store/cards'
 import { useAccountsStore } from '~/store/accounts'
 import { useAuthStore } from '~/store/auth'
+import { useErrorsStore } from '~/store/errors'
 import { useCorporatesStore } from '~/store/corporates'
 import { useConsumersStore } from '~/store/consumers'
 import { useIdentityStore } from '~/store/identity'
 import { useLoaderStore } from '~/store/loader'
+import { useAccessCodesStore } from '~/store/accessCodes'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
@@ -25,6 +27,8 @@ export function useBase() {
     const consumersStore = useConsumersStore()
     const identityStore = useIdentityStore()
     const loaderStore = useLoaderStore()
+    const accessCodesStore = useAccessCodesStore()
+    const errorsStore = useErrorsStore()
 
     const isLoggedIn = computed(() => authStore.hasAuthToken)
     const pendingData = computed(() => !root!.$fetchState || root!.$fetchState.pending)
@@ -206,8 +210,13 @@ export function useBase() {
         setSCAstorage,
         useRuntimeConfig,
         cardStore,
+        authStore,
+        corporatesStore,
+        consumersStore,
         accountsStore,
         identityStore,
         loaderStore,
+        accessCodesStore,
+        errorsStore,
     }
 }

@@ -1,4 +1,4 @@
-import { Middleware } from '~/node_modules/@nuxt/types'
+import type { Middleware } from '~/node_modules/@nuxt/types'
 import config from '~/config'
 
 const Cookie = process.client ? require('js-cookie') : undefined

@@ -42,9 +42,9 @@ export const useAuthStore = defineStore('auth', () => {
     const isCorporate = computed(() => authState.auth?.identity.type === IdentityTypeEnum.CORPORATE)
     const identity = computed(() => authState.auth?.identity)
 
-    const setAuth = (auth: LoginWithPasswordResponse | null) => {
+    const setAuth = async (auth: LoginWithPasswordResponse | null) => {
         authState.auth = auth
-        Cookie.set(config.ONV_COOKIE_NAME, JSON.stringify(authState.auth))
+        await Cookie.set(config.ONV_COOKIE_NAME, JSON.stringify(authState.auth))
         $axiosMulti.defaults.headers.Authorization = 'Bearer ' + authState.auth?.token
     }
 

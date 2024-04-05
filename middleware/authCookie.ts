@@ -1,8 +1,9 @@
-import { Middleware } from '@nuxt/types'
-import { authStore } from '~/utils/store-accessor'
+import type { Middleware } from '~/node_modules/@nuxt/types'
+import { useBase } from '~/composables/useBase'
 import config from '~/config'
 
 const Cookie = process.client ? require('js-cookie') : undefined
+const { authStore } = useBase()
 
 function scaCheck(route, redirect) {
     if (
@@ -16,19 +17,17 @@ function scaCheck(route, redirect) {
     }
 }
 
-const cookieMiddleware: Middleware = async ({ store, route, redirect }) => {
-    const _authStore = authStore(store)
-
+const cookieMiddleware: Middleware = async ({ route, redirect }) => {
     const authCookie = Cookie.get(config.ONV_COOKIE_NAME)
 
     if (authCookie) {
         try {
             const auth = JSON.parse(authCookie)
-            await _authStore.SET_AUTH(auth)
+            await authStore.setAuth(auth)
             scaCheck(route, redirect)
         } catch (err) {
             // No valid cookie found
-            await _authStore.logout()
+            await authStore.logout()
         }
     } else {
         localStorage.removeItem('stepUp')
