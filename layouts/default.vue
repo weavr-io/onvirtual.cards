@@ -19,6 +19,6 @@ definePageMeta({
     middleware: ['authRouteGuard'],
 })
 
-const { stores } = useBase()
-const isLoading = computed(() => stores.loader.isLoading)
+const { loaderStore } = useBase()
+const isLoading = computed(() => loaderStore.isLoading)
 </script>

@@ -37,10 +37,10 @@ import { computed } from 'vue'
 import { useBase } from '@/composables/useBase'
 import { useKyVerified } from '@/composables/useKyVerified'
 
-const { goToVerify, stores } = useBase()
+const { goToVerify, loaderStore } = useBase()
 const { showKybAlert, showKycAlert, showVerifyMobileAlert, showVerifyEmailAlert } = useKyVerified()
 
-const isLoading = computed(() => stores.loader.isLoading)
+const isLoading = computed(() => loaderStore.isLoading)
 </script>
 
 <style lang="scss" scoped>
