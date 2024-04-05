@@ -425,7 +425,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     submitForm() {
-        this.stores.errors.RESET_ERROR()
+        this.errorStore.resetState()
         try {
             this.$v.$touch()
 

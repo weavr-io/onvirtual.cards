@@ -34,6 +34,8 @@ export const useErrorsStore = defineStore('errors', () => {
     }
 
     return {
+        errors,
+        conflict,
         conflictMessage,
         setConflict,
         setError,

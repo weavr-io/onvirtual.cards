@@ -110,7 +110,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
     }
 
     get noErrors() {
-        return !this.stores.errors.errors
+        return !this.errorStore.errors
     }
 
     get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -136,7 +136,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
             this.form.nonce = this.$route.params.nonce.toString()
             this.form.email = this.$route.params.email.toString()
         } catch (e) {
-            this.stores.errors.SET_ERROR(e)
+            this.errorStore.setError(e)
         }
     }
 
@@ -176,7 +176,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
                 this.$router.push('/login')
             })
             .catch((err) => {
-                this.stores.errors.SET_ERROR(err)
+                this.errorStore.setError(err)
             })
     }
 

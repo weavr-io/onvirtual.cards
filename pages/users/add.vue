@@ -123,7 +123,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
                 this.userAdded(res.data)
             })
             .catch((err) => {
-                this.stores.errors.SET_ERROR(err)
+                this.errorStore.setError(err)
                 this.isLoading = false
             })
     }

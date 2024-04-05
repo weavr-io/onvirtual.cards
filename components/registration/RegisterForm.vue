@@ -158,7 +158,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     }
 
     tryToSubmitForm() {
-        this.stores.errors.RESET_ERROR()
+        this.errorStore.resetState()
         try {
             this.$v.$touch()
             if (this.$v.$invalid || !this.isPasswordValid) {
@@ -202,7 +202,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
 
     @Emit()
     submitForm() {
-        this.stores.errors.RESET_ERROR()
+        this.errorStore.resetState()
         return this.form
     }
 

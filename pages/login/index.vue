@@ -156,7 +156,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
         if (!this.$v.$invalid) {
             try {
                 this.isLoading = true
-                this.stores.errors.SET_ERROR(null)
+                this.errorStore.setError(null)
                 this.passwordField.createToken().then(
                     (tokens) => {
                         this.loginRequest.password.value = tokens.tokens.password
@@ -169,7 +169,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
                             })
                             .catch((err) => {
                                 this.isLoading = false
-                                this.stores.errors.SET_ERROR(err)
+                                this.errorStore.setError(err)
                             })
                     },
                     (e) => {

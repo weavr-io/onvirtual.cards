@@ -44,15 +44,15 @@ class ErrorAlert extends mixins(BaseMixin) {
     @Prop({ default: null }) readonly errorLink!: ErrorLink | null
 
     get errors() {
-        return this.stores.errors.errors
+        return this.errorStore.errors
     }
 
     get conflict() {
-        return this.stores.errors.conflict
+        return this.errorStore.conflict
     }
 
     get conflictMessage() {
-        return this.stores.errors.conflictMessage
+        return this.errorStore.conflictMessage
     }
 
     get hasError(): boolean {
@@ -88,7 +88,7 @@ class ErrorAlert extends mixins(BaseMixin) {
     }
 
     @Emit('close') onClose() {
-        this.stores.errors.RESET_ERROR()
+        this.errorStore.resetState()
     }
 }
 

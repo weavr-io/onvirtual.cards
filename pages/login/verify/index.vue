@@ -191,14 +191,14 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
                   .then(this.onMobileVerified)
                   .catch((e) => {
                       this.removeLoader()
-                      this.stores.errors.SET_CONFLICT(e)
+                      this.errorStore.setConflict(e)
                   })
             : this.corporatesStore
                   .verifyEmail(this.verifyEmailRequest)
                   .then(this.onMobileVerified)
                   .catch((e) => {
                       this.removeLoader()
-                      this.stores.errors.SET_CONFLICT(e)
+                      this.errorStore.setConflict(e)
                   })
     }
 
