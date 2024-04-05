@@ -118,7 +118,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
     }
 
     doTransfer() {
-        this.stores.transfers
+        this.transfersStore
             .execute(this.createTransferRequest as CreateTransferRequest)
             .then(() => {
                 this.createTransferRequest = {

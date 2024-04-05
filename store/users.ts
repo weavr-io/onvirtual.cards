@@ -88,6 +88,7 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     return {
+        userState,
         resetState,
         setUsers,
         setUser,

@@ -146,8 +146,8 @@ export default class IniteConsume extends mixins(BaseMixin) {
                 },
             }
 
-            return this.stores.users.inviteValidate(_validateRequest).catch(this.handleError)
-        } catch (e) {}
+            return this.usersStore.inviteValidate(_validateRequest).catch(this.handleError)
+        } catch (_) {}
     }
 
     strengthCheck(val) {
@@ -172,7 +172,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
                 (tokens) => {
                     if (tokens.tokens.password !== '') {
                         this.form.data.password!.value = tokens.tokens.password
-                        this.stores.users.inviteConsume(this.form).then(() => {
+                        this.usersStore.inviteConsume(this.form).then(() => {
                             this.$router.push('/login')
                         })
                     } else {
