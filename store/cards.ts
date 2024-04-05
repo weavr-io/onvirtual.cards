@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
-import { reactive, computed } from 'vue'
+import { reactive, computed, getCurrentInstance } from 'vue'
 import type { Cards as CardState } from '~/local/models/store/cards'
-import { useBase } from '~/composables/useBase'
 import type { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
 import type { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
 import type { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
@@ -25,7 +24,7 @@ const initState = (): CardState => {
 }
 
 export const useCardsStore = defineStore('cards', () => {
-    const { root } = useBase()
+    const { proxy: root } = getCurrentInstance() || {}
     const cardState: CardState = reactive(initState())
 
     const currency = computed(() =>

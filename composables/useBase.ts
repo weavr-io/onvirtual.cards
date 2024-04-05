@@ -2,6 +2,7 @@ import { computed, getCurrentInstance } from 'vue'
 import { initialiseStores } from '~/utils/store-accessor'
 import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
+import type { StoreType } from '~/local/models/store'
 import { useCardsStore } from '~/store/cards'
 import { useAccountsStore } from '~/store/accounts'
 import { useAuthStore } from '~/store/auth'
@@ -122,7 +123,7 @@ export function useBase() {
         return corporateKyBStatus.value === KYBStatusEnum.APPROVED
     })
 
-    const stores = (store: string[]) => {
+    const stores = (store: (keyof StoreType)[]) => {
         return initialiseStores(store)
     }
 

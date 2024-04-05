@@ -40,6 +40,7 @@
         "@nuxtjs/eslint-module": "^3.1.0",
         "@nuxtjs/recaptcha": "^1.1.2",
         "@nuxtjs/svg": "^0.4.0",
+        "@types/js-cookie": "^3.0.6",
         "@types/luxon": "^3.4.2",
         "@types/vuelidate": "^0.7.18",
         "@typescript-eslint/eslint-plugin": "^6.13.2",

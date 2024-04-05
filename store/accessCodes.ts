@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import { useBase } from '~/composables/useBase'
+import { ref, getCurrentInstance } from 'vue'
 import type { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
 
 export const useAccessCodesStore = defineStore('accessCodes', () => {
-    const { root } = useBase()
+    const { proxy: root } = getCurrentInstance() || {}
     const isValid = ref<boolean>(false)
 
     const setAccessCode = (code: string) => {

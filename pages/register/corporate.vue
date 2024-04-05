@@ -26,7 +26,7 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import type { AxiosResponse } from 'axios'
-import { authStore } from '~/utils/store-accessor'
+import { initialiseStores } from '~/utils/store-accessor'
 import type { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import type { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
@@ -94,8 +94,9 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         this.screen--
     }
 
-    asyncData({ store, redirect }) {
-        const isLoggedIn = authStore(store).isLoggedIn
+    asyncData({ redirect }) {
+        const { auth } = initialiseStores(['auth'])
+        const isLoggedIn = auth?.isLoggedIn
         if (isLoggedIn) {
             redirect('/dashboard')
         }

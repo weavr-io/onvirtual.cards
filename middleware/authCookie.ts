@@ -2,7 +2,7 @@ import type { Middleware } from '~/node_modules/@nuxt/types'
 import { useBase } from '~/composables/useBase'
 import config from '~/config'
 
-const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = (await import('js-cookie')).default
 const { authStore } = useBase()
 
 function scaCheck(route, redirect) {

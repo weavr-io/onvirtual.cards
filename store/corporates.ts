@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive, computed } from 'vue'
-import { useBase } from '~/composables/useBase'
+import { reactive, computed, getCurrentInstance } from 'vue'
 import type { Corporates as CorporateState } from '~/local/models/store/corporates'
 import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
 import type { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
@@ -22,7 +21,7 @@ const initState = (): CorporateState => {
 }
 
 export const useCorporatesStore = defineStore('corporates', () => {
-    const { root } = useBase()
+    const { proxy: root } = getCurrentInstance() || {}
     const identity = useIdentityStore()
     const corporateState: CorporateState = reactive(initState())
 

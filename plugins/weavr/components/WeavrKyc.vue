@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { ConsumerVerificationFlowOptions } from './api'
+import type { ConsumerVerificationFlowOptions } from './api'
 
 @Component
 export default class WeavrKyc extends Vue {

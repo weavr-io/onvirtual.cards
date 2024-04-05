@@ -63,11 +63,10 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
-import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
-import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import type { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
+import BaseMixin from '~/mixins/BaseMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
 import Logo from '~/components/Logo.vue'
 
 @Component({
@@ -92,41 +91,40 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     isLoading = false
     private verifyEmailRequest!: VerifyEmailRequest
 
-    async asyncData({ route, redirect, store }) {
-        const identities = identitiesStore(store)
-        const auth = authStore(store)
+    async asyncData({ route, redirect }) {
+        const identities = this.identityStore
+        const auth = this.authStore
 
-        if (identities.identity === null) {
+        if (!identities.identityState.identity) {
             await identities.getIdentity()
         }
 
-        if (identities.emailVerified || auth.auth?.credentials.type === CredentialTypeEnum.USER) {
+        if (
+            identities.identityState.emailVerified ||
+            auth.authState.auth?.credentials.type === CredentialTypeEnum.USER
+        ) {
             return redirect('/login/verify/mobile')
         }
 
         const request: VerifyEmailRequest = {
-            email: route.query.email ?? identities.identity!.rootUser?.email,
+            email: route.query.email ?? identities.identityState.identity!.rootUser?.email,
             verificationCode: route.query.nonce ? `${route.query.nonce}` : '',
         }
 
         if (request.verificationCode !== '') {
             if (route.query.cons) {
-                consumersStore(store)
-                    .verifyEmail(request)
-                    .then(() => {
-                        redirect('/')
-                    })
+                this.consumersStore.verifyEmail(request).then(() => {
+                    redirect('/')
+                })
             } else {
                 // else treat as Corporate
-                corporatesStore(store)
-                    .verifyEmail(request)
-                    .then(() => {
-                        if (authStore(store).isLoggedIn) {
-                            redirect('/')
-                        } else {
-                            redirect('/login')
-                        }
-                    })
+                this.corporatesStore.verifyEmail(request).then(() => {
+                    if (this.authStore.isLoggedIn) {
+                        redirect('/')
+                    } else {
+                        redirect('/login')
+                    }
+                })
             }
         }
 

@@ -11,28 +11,32 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
-import { authStore, identitiesStore } from '~/utils/store-accessor'
 
 @Component({})
 export default class IndexPage extends mixins(BaseMixin) {
-    async asyncData({ store, redirect }) {
-        const isLoggedIn = authStore(store).isLoggedIn
+    async asyncData({ redirect }) {
+        const isLoggedIn = this.authStore.isLoggedIn
 
         if (!isLoggedIn) {
             redirect('/login')
         } else {
-            const identities = identitiesStore(store)
+            const identities = this.identityStore
 
-            if (identities.identity === null) {
+            if (!identities.identityState.identity) {
                 await identities.getIdentity()
             }
 
-            if (!identities.emailVerified) {
-                const email = window.encodeURIComponent(identities.identity!.rootUser?.email)
+            if (!identities.identityState.emailVerified) {
+                const email = window.encodeURIComponent(
+                    identities.identityState.identity!.rootUser?.email,
+                )
                 redirect(`/login/verify?send=true&email=${email}`)
-            } else if (!identities.mobileNumberVerified) {
+            } else if (!identities.identityState.mobileNumberVerified) {
                 redirect('/login/verify/mobile')
-            } else if (identities.identity && typeof identities.identity.rootUser === 'undefined') {
+            } else if (
+                identities.identityState.identity &&
+                typeof identities.identityState.identity.rootUser === 'undefined'
+            ) {
                 redirect('/profile/address')
             } else {
                 redirect('/dashboard')

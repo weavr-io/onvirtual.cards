@@ -27,7 +27,7 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
 import config from '~/config'
 
-const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = (await import('js-cookie')).default
 
 @Component
 export default class Cookies extends mixins(BaseMixin) {
@@ -39,7 +39,7 @@ export default class Cookies extends mixins(BaseMixin) {
     }
 
     dismissCookie() {
-        Cookie.set(config.ONV_COOKIE_NAME, true)
+        Cookie.set(config.ONV_COOKIE_NAME, 'true')
         this.showCookieAlert = false
     }
 }

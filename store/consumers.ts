@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive, computed } from 'vue'
-import { useBase } from '~/composables/useBase'
+import { reactive, computed, getCurrentInstance } from 'vue'
 import { useLoaderStore } from '~/store/loader'
 import type { Consumers as ConsumerState } from '~/local/models/store/consumers'
 import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
@@ -23,7 +22,7 @@ const initState = (): ConsumerState => {
 }
 
 export const useConsumersStore = defineStore('consumers', () => {
-    const { root } = useBase()
+    const { proxy: root } = getCurrentInstance() || {}
     const loader = useLoaderStore()
     const identity = useIdentityStore()
     const consumerState: ConsumerState = reactive(initState())

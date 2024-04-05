@@ -21,11 +21,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import MobileComponent from '~/components/MobileComponent.vue'
-import { authStore, identitiesStore } from '~/utils/store-accessor'
+import { initialiseStores } from '~/utils/store-accessor'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
+import MobileComponent from '~/components/MobileComponent.vue'
 
 @Component({
     layout: 'auth',
@@ -36,15 +36,17 @@ import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/Cred
     },
 })
 export default class Sca extends Vue {
-    asyncData({ store, redirect }) {
-        const identities = identitiesStore(store)
-        const auth = authStore(store)
+    asyncData({ redirect }) {
+        const { identity, auth } = initialiseStores(['identity', 'auth'])
 
-        const smsAuthFactors = auth.authFactors?.factors?.filter(
+        const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
             (factor) => factor.channel === SCAOtpChannelEnum.SMS,
         )
 
-        if (auth.auth?.credentials.type === CredentialTypeEnum.ROOT && !identities.emailVerified) {
+        if (
+            auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT &&
+            !identity?.identityState.emailVerified
+        ) {
             return redirect('/login/verify')
         } else if (
             !smsAuthFactors ||

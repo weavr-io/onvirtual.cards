@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import { useBase } from '~/composables/useBase'
+import { ref, getCurrentInstance } from 'vue'
 import { useLoaderStore } from '~/store/loader'
 import type { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 
 export const useTransfersStore = defineStore('transfers', () => {
     const isLoading = ref<boolean>(false)
-    const { root } = useBase()
+    const { proxy: root } = getCurrentInstance() || {}
     const loader = useLoaderStore()
 
     const resetState = () => {

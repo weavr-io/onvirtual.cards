@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
-import { KYCOptions } from './api'
+import type { KYCOptions } from './api'
 
 @Component
 export default class WeavrKycBeneficiaries extends Vue {

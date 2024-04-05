@@ -19,19 +19,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted, defineProps } from 'vue'
+import { defineComponent, computed, onMounted } from 'vue'
 import { useBase } from '@/composables/useBase'
 
 export default defineComponent({
     name: 'NuxtError',
-    setup() {
-        const props = defineProps({
-            error: {
-                type: Object,
-                required: true,
-            },
-        })
-
+    props: {
+        error: {
+            type: Object,
+            required: true,
+        },
+    },
+    setup(props) {
         const { root } = useBase()
 
         onMounted(() => {

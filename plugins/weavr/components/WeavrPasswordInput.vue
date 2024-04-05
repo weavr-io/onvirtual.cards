@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
-import {
+import type {
     SecureElementStyleWithPseudoClasses,
     SecureInputOptions,
 } from '~/plugins/weavr/components/api'

@@ -1,7 +1,7 @@
 import type { Middleware } from '~/node_modules/@nuxt/types'
 import config from '~/config'
 
-const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = (await import('js-cookie')).default
 
 const authRouteGuard: Middleware = ({ redirect, route }) => {
     const authCookie = Cookie.get(config.ONV_COOKIE_NAME)

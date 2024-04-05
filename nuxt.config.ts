@@ -11,11 +11,6 @@ export default defineNuxtConfig({
             pageMeta: true,
         },
     },
-    vite: {
-        build: {
-            target: 'esnext',
-        },
-    },
     devServer: {
         host: '0.0.0.0',
         port: 5000,
@@ -126,7 +121,6 @@ export default defineNuxtConfig({
         { src: '~/plugins/axios-accessor.ts' },
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
-        { src: '~/plugins/pinia.ts' },
     ],
     modules: [
         ...(process.env.RECAPTCHA ? ['@nuxtjs/recaptcha'] : []),

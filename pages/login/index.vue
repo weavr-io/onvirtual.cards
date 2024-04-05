@@ -81,12 +81,11 @@
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import type { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import BaseMixin from '~/mixins/BaseMixin'
-import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { authStore } from '~/utils/store-accessor'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import Logo from '~/components/Logo.vue'
 
 @Component({
@@ -198,8 +197,8 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
         this.isLoading = false
     }
 
-    asyncData({ store, redirect }) {
-        const isLoggedIn = authStore(store).isLoggedIn
+    asyncData({ redirect }) {
+        const isLoggedIn = this.authStore.isLoggedIn
 
         if (isLoggedIn) {
             redirect('/')

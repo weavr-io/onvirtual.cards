@@ -1,5 +1,6 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import { initialiseStores } from '~/utils/store-accessor'
+import type { StoreType } from '~/local/models/store'
 import type { useCardsStore } from '~/store/cards'
 import type { useAccountsStore } from '~/store/accounts'
 import type { useAccessCodesStore } from '~/store/accessCodes'
@@ -25,7 +26,7 @@ export default class BaseMixin extends Vue {
         return typeof this.useRuntimeConfig().public.recaptcha.siteKey !== 'undefined'
     }
 
-    stores(store: string[]) {
+    stores(store: (keyof StoreType)[]) {
         return initialiseStores(store)
     }
 

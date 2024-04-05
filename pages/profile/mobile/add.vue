@@ -48,17 +48,17 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import BaseMixin from '~/mixins/BaseMixin'
-import { DeepNullable } from '~/global'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
-import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import { authStore } from '~/utils/store-accessor'
-import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
+import type { DeepNullable } from '~/global'
+import type { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
+import type { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import type { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
+import type { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
+import { initialiseStores } from '~/utils/store-accessor'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
+import ValidationMixin from '~/mixins/ValidationMixin'
+import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
     layout: 'auth',
@@ -94,12 +94,12 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
         },
     }
 
-    async asyncData({ redirect, store }) {
-        const auth = authStore(store)
+    async asyncData({ redirect }) {
+        const { auth } = initialiseStores(['auth'])
 
-        await auth.indexAuthFactors()
+        await auth?.indexAuthFactors()
 
-        const smsAuthFactors = auth.authFactors?.factors?.filter(
+        const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
             (factor) => factor.channel === SCAOtpChannelEnum.SMS,
         )
 
@@ -111,12 +111,10 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
         }
     }
 
-    async submitForm(e) {
+    async submitForm() {
         this.isLoading = true
 
         try {
-            e.preventDefault()
-
             if (this.numberIsValid === null) {
                 this.numberIsValid = false
             }

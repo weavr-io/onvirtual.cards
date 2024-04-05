@@ -1,8 +1,7 @@
 import type { Context, Plugin } from '@nuxt/types'
-import { authStore, errorsStore } from '~/utils/store-accessor'
 import { useBase } from '@/composables/useBase'
 
-const { useRuntimeConfig } = useBase()
+const { useRuntimeConfig, authStore, errorsStore } = useBase()
 
 const axiosPlugin: Plugin = (ctxt: Context, inject) => {
     const axiosMulti = ctxt.$axios.create({
@@ -19,7 +18,7 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
         const code = parseInt(error.response && error.response.status)
         switch (code) {
             case 401:
-                if (error.response.config.url !== '/logout') authStore(ctxt.store).logout()
+                if (error.response.config.url !== '/logout') authStore.logout()
                 ctxt.redirect('/login')
                 break
             case 403:
@@ -30,15 +29,15 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
                 ) {
                     ctxt.redirect('/login/sca')
                 } else if (ctxt.route.name !== 'login') {
-                    authStore(ctxt.store).resetTokenAndStates()
+                    authStore.resetTokenAndStates()
                     ctxt.redirect('/login')
                 }
                 break
             case 409:
-                errorsStore(ctxt.store).SET_CONFLICT(error)
+                errorsStore.setConflict(error)
                 break
             default:
-                errorsStore(ctxt.store).SET_ERROR(error)
+                errorsStore.setError(error)
                 break
         }
 

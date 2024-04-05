@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
-import { KYBOptions } from '~/plugins/weavr/components/api'
+import type { KYBOptions } from '~/plugins/weavr/components/api'
 
 @Component
 export default class WeavrKyb extends Vue {

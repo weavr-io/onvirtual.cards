@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive, computed } from 'vue'
-import { useBase } from '~/composables/useBase'
+import { reactive, computed, getCurrentInstance } from 'vue'
 import { $axiosMulti } from '~/utils/api'
 import { initialiseStores } from '~/utils/store-accessor'
 import type { Auth as AuthState } from '~/local/models/store/auth'
@@ -17,7 +16,7 @@ import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authenticati
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
 import config from '~/config'
 
-const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = (await import('js-cookie')).default
 
 const initState = (): AuthState => {
     return {
@@ -28,7 +27,7 @@ const initState = (): AuthState => {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-    const { root } = useBase()
+    const { proxy: root } = getCurrentInstance() || {}
     const authState: AuthState = reactive(initState())
 
     const isLoggedIn = computed(() => authState.auth && authState.auth.token)
@@ -50,7 +49,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const setToken = (res: CreatePasswordResponseModel) => {
         authState.auth!.token = res.token!
-        Cookie.set(config.ONV_COOKIE_NAME, authState.auth)
+        Cookie.set(config.ONV_COOKIE_NAME, JSON.stringify(authState.auth))
         $axiosMulti.defaults.headers.Authorization = 'Bearer ' + authState.auth?.token
     }
 

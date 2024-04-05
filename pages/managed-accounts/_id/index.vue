@@ -15,7 +15,7 @@ import dot from 'dot-object'
 import { DateTime } from 'luxon'
 import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
-import { accountsStore } from '~/utils/store-accessor'
+import { initialiseStores } from '~/utils/store-accessor'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import AccountsMixin from '~/mixins/AccountsMixin'
@@ -40,8 +40,9 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
         return this.accountStore.filteredStatement
     }
 
-    asyncData({ store }) {
-        accountsStore(store).SET_STATEMENTS(null)
+    asyncData() {
+        const { accounts } = initialiseStores(['accounts'])
+        accounts?.setStatements(null)
     }
 
     async fetch() {

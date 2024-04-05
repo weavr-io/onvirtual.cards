@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
-import { reactive, computed } from 'vue'
+import { reactive, computed, getCurrentInstance } from 'vue'
 import { DateTime } from 'luxon'
-import { useBase } from '~/composables/useBase'
 import type { Accounts as AccountState } from '~/local/models/store/accounts'
 import type { GetManagedAccountsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountsRequest'
 import type { PaginatedManagedAccountsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/responses/PaginatedManagedAccountsResponse'
@@ -25,7 +24,7 @@ const initState = (): AccountState => {
 }
 
 export const useAccountsStore = defineStore('accounts', () => {
-    const { root } = useBase()
+    const { proxy: root } = getCurrentInstance() || {}
     const accountState: AccountState = reactive(initState())
 
     const totalAvailableBalance = computed(() => {

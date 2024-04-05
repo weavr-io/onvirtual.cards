@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
-import { useBase } from '~/composables/useBase'
+import { reactive, getCurrentInstance } from 'vue'
 import type { Users as UserState } from '~/local/models/store/users'
 import type { PaginatedUsersResponseModel } from '~/plugins/weavr-multi/api/models/users/response/PaginatedUsersResponseModel'
 import type { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
@@ -19,7 +18,7 @@ const initState = (): UserState => {
 }
 
 export const useUsersStore = defineStore('users', () => {
-    const { root } = useBase()
+    const { proxy: root } = getCurrentInstance() || {}
     const userState: UserState = reactive(initState())
 
     const resetState = () => {
