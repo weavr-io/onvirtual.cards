@@ -4,6 +4,10 @@ import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/
 import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
 import { useCardsStore } from '~/store/cards'
 import { useAccountsStore } from '~/store/accounts'
+import { useAuthStore } from '~/store/auth'
+import { useCorporatesStore } from '~/store/corporates'
+import { useConsumersStore } from '~/store/consumers'
+
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
@@ -11,31 +15,35 @@ import Countries from '~/assets/json/countries.json'
 
 export function useBase() {
     const { proxy: root } = getCurrentInstance() || {}
-    const stores = initialiseStores(root!.$store)
-    const isLoggedIn = computed(() => stores.auth.isLoggedIn)
 
-    // stores
+    // TODO: use initialiseStores()
     const cardStore = useCardsStore()
+    const authStore = useAuthStore()
     const accountsStore = useAccountsStore()
+    const corporatesStore = useCorporatesStore()
+    const consumersStore = useConsumersStore()
 
+    const isLoggedIn = computed(() => authStore.hasAuthToken)
     const pendingData = computed(() => !root!.$fetchState || root!.$fetchState.pending)
     const fetchHasError = computed(() => root!.$fetchState?.error !== null)
     const pendingDataOrError = computed(() => pendingData.value || fetchHasError.value)
 
-    const isConsumer = computed(() => stores.auth.isConsumer)
-    const isCorporate = computed(() => stores.auth.isCorporate)
-    const consumer = computed<ConsumerModel | null>(() => stores.consumers.consumer)
-    const corporate = computed<CorporateModel | null>(() => stores.corporates.corporate)
+    const isConsumer = computed(() => authStore.isConsumer)
+    const isCorporate = computed(() => authStore.isCorporate)
+    const consumer = computed<ConsumerModel | null>(() => consumersStore.consumerState.consumer)
+    const corporate = computed<CorporateModel | null>(
+        () => corporatesStore.corporateState.corporate,
+    )
     const isConsumerPopulated = computed(() => consumer.value && isConsumer)
     const isCorporatePopulated = computed(() => corporate.value && isCorporate)
     const isConsumerAndPopulated = computed(() => isConsumerPopulated.value && consumer.value)
     const isCorporateAndPopulated = computed(() => isCorporatePopulated.value && corporate.value)
-    const corporateKyB = computed(() => stores.corporates.kyb)
+    const corporateKyB = computed(() => corporatesStore.corporateState.kyb)
     const corporateKyBStatus = computed(() => corporateKyB.value?.kybStatus)
-    const consumerKyC = computed(() => stores.consumers.kyc)
+    const consumerKyC = computed(() => consumersStore.consumerState.kyc)
     const consumerKyCStatus = computed(() => consumerKyC.value?.fullDueDiligence)
 
-    const identityId = computed(() => stores.auth.identityId)
+    const identityId = computed(() => authStore.identityId)
     const rootFullName = computed<string>(() => `${rootName.value} ${rootSurname.value}`)
     const rootUserEmail = computed(() =>
         isConsumer.value ? consumer.value?.rootUser.email : corporate.value?.rootUser.email,
@@ -107,6 +115,10 @@ export function useBase() {
         return corporateKyBStatus.value === KYBStatusEnum.APPROVED
     })
 
+    const stores = (store: string[]) => {
+        return initialiseStores(store)
+    }
+
     const sleep = (ms: number) => {
         return new Promise((resolve) => setTimeout(resolve, ms))
     }
@@ -126,7 +138,7 @@ export function useBase() {
     }
 
     const doLogout = () => {
-        return stores.auth.logout().then(redirectToLogin)
+        return authStore.logout().then(redirectToLogin)
     }
 
     const redirectToLogin = () => {

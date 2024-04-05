@@ -1,26 +1,27 @@
-import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { StoreModule } from '~/store/storeModule'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-@Module({
-    name: 'loaderModule',
-    namespaced: true,
-    stateFactory: true,
+export const useLoaderStore = defineStore('loader', () => {
+    const isLoading = ref<boolean>(false)
+
+    const setIsLoading = (val: boolean) => {
+        isLoading.value = val
+    }
+
+    const start = () => {
+        setIsLoading(true)
+    }
+
+    const stop = () => {
+        setIsLoading(false)
+    }
+
+    return {
+        isLoading,
+        setIsLoading,
+        start,
+        stop,
+    }
 })
-export default class Loader extends StoreModule {
-    isLoading = false
 
-    @Mutation
-    SET_IS_LOADING(val: boolean) {
-        this.isLoading = val
-    }
-
-    @Action({ rawError: true })
-    start() {
-        this.SET_IS_LOADING(true)
-    }
-
-    @Action({ rawError: true })
-    stop() {
-        this.SET_IS_LOADING(false)
-    }
-}
+export type useLoaderStore = ReturnType<typeof useLoaderStore>

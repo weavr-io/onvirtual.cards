@@ -24,7 +24,7 @@ const initState = (): AccountState => {
     }
 }
 
-export const useAccountsStore = defineStore('cards', () => {
+export const useAccountsStore = defineStore('accounts', () => {
     const { root } = useBase()
     const accountState: AccountState = reactive(initState())
 

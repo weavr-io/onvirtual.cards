@@ -21,7 +21,7 @@ await Promise.all(
     }),
 )
 
-export function initialiseStores(storeNames: string[]) {
+export function initialiseStores(storeNames: string[], resetOption?: boolean) {
     const stores = {}
 
     storeNames.forEach((store) => {
@@ -35,6 +35,11 @@ export function initialiseStores(storeNames: string[]) {
             storeModule[`use${root!.$formattingFilters.text.capitalizeFirstLetter(store)}Store`]
 
         stores[store] = storeInstance
+
+        // reset stores
+        if (resetOption && typeof storeInstance.resetState === 'function') {
+            storeInstance.resetState()
+        }
     })
 
     return stores
