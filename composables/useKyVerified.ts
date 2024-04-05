@@ -12,7 +12,7 @@ export function useKyVerified() {
         corporateKyBStatus,
         consumerKyC,
         consumerKyCStatus,
-        stores,
+        identityStore,
     } = useBase()
 
     const hasAlert = computed(() => showKybAlert.value || showKycAlert.value)
@@ -43,8 +43,8 @@ export function useKyVerified() {
         return false
     })
 
-    const showVerifyMobileAlert = computed(() => !stores.identities.mobileNumberVerified)
-    const showVerifyEmailAlert = computed(() => !stores.identities.emailVerified)
+    const showVerifyMobileAlert = computed(() => identityStore.identityState.mobileNumberVerified)
+    const showVerifyEmailAlert = computed(() => identityStore.identityState.emailVerified)
 
     return {
         hasAlert,

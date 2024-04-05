@@ -46,10 +46,10 @@ export default class KyVerified extends mixins(BaseMixin) {
     }
 
     get showVerifyMobileAlert() {
-        return this.stores.identities.mobileNumberVerified === false
+        return this.identityStore.identityState.mobileNumberVerified
     }
 
     get showVerifyEmailAlert() {
-        return this.stores.identities.emailVerified === false
+        return this.identityStore.identityState.emailVerified
     }
 }

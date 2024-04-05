@@ -168,7 +168,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
                 await this.authStore
                     .verifyAuthFactors(req)
                     .then(() => {
-                        this.stores.identities.SET_MOBILE_VERIFIED(true)
+                        this.identityStore.setMobileVerified(true)
                         this.getConsumersOrCorporates()
                     })
                     .finally(() => {

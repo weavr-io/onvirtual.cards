@@ -51,6 +51,7 @@ export const useIdentityStore = defineStore('identity', () => {
     }
 
     return {
+        identityState,
         setIdentity,
         setEmailVerified,
         setMobileVerified,

@@ -207,7 +207,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     }
 
     onMobileVerified() {
-        this.stores.identities.SET_EMAIL_VERIFIED(true)
+        this.identityStore.setEmailVerified(true)
 
         return this.$router.push({
             path: '/login/verify/mobile',
