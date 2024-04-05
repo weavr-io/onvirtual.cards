@@ -1,100 +1,105 @@
-import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { StoreModule } from '~/store/storeModule'
-import { PaginatedUsersResponseModel } from '~/plugins/weavr-multi/api/models/users/response/PaginatedUsersResponseModel'
-import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
-import { UsersFilterRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UsersFilterRequestModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
-import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
-import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
-import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
+import { defineStore } from 'pinia'
+import { reactive } from 'vue'
+import { useBase } from '~/composables/useBase'
+import type { Users as UserState } from '~/local/models/store/users'
+import type { PaginatedUsersResponseModel } from '~/plugins/weavr-multi/api/models/users/response/PaginatedUsersResponseModel'
+import type { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
+import type { UsersFilterRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UsersFilterRequestModel'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import type { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
+import type { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
+import type { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
+import type { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
 
-const defaultState = {
-    users: null,
-    user: null,
+const initState = (): UserState => {
+    return {
+        users: null,
+        user: null,
+    }
 }
 
-@Module({
-    name: 'usersModule',
-    stateFactory: true,
-    namespaced: true,
+export const useUsersStore = defineStore('users', () => {
+    const { root } = useBase()
+    const userState: UserState = reactive(initState())
+
+    const resetState = () => {
+        const data = initState()
+        Object.keys(data).forEach((key) => {
+            userState[key] = data[key]
+        })
+    }
+
+    const setUsers = (_users: PaginatedUsersResponseModel) => {
+        userState.users = _users
+    }
+
+    const setUser = (_user: UserModel) => {
+        userState.user = _user
+    }
+
+    const index = (filter?: UsersFilterRequestModel) => {
+        const _req = root!.$apiMulti.users.index(filter)
+
+        _req.then((res) => {
+            setUsers(res.data)
+        })
+
+        return _req
+    }
+
+    const show = (id: IDModel) => {
+        const _req = root!.$apiMulti.users.show(id)
+
+        _req.then((res) => {
+            setUser(res.data)
+        })
+
+        return _req
+    }
+
+    const update = (params: { id: IDModel; data: UpdateUserRequestModel }) => {
+        const _req = root!.$apiMulti.users.update(params)
+
+        _req.then((res) => {
+            setUser(res.data)
+        })
+
+        return _req
+    }
+
+    const add = (body: CreateUserRequestModel) => {
+        return root!.$apiMulti.users.store(body)
+    }
+
+    const deactivate = (id: IDModel) => {
+        return root!.$apiMulti.users.deactivate(id)
+    }
+
+    const inviteSend = (id: IDModel) => {
+        return root!.$apiMulti.users.inviteSend(id)
+    }
+
+    const inviteValidate = (params: { id: IDModel; data: InviteValidateRequestModel }) => {
+        return root!.$apiMulti.users.inviteValidate(params)
+    }
+
+    const inviteConsume = (params: { id: IDModel; data: InviteConsumeRequestModel }) => {
+        return root!.$apiMulti.users.inviteConsume(params)
+    }
+
+    return {
+        resetState,
+        setUsers,
+        setUser,
+        index,
+        show,
+        update,
+        add,
+        deactivate,
+        inviteSend,
+        inviteValidate,
+        inviteConsume,
+    }
 })
-export default class Users extends StoreModule {
-    users: PaginatedUsersResponseModel | null = defaultState.users
-    user: UserModel | null = defaultState.user
 
-    @Mutation
-    RESET_STATE() {
-        Object.keys(defaultState).forEach((key) => {
-            this[key] = defaultState[key]
-        })
-    }
-
-    @Mutation
-    SET_USERS(_users: PaginatedUsersResponseModel) {
-        this.users = _users
-    }
-
-    @Mutation
-    SET_USER(_user: UserModel) {
-        this.user = _user
-    }
-
-    @Action({ rawError: true })
-    index(filter?: UsersFilterRequestModel) {
-        const _req = this.store.$apiMulti.users.index(filter)
-
-        _req.then((res) => {
-            this.SET_USERS(res.data)
-        })
-
-        return _req
-    }
-
-    @Action({ rawError: true })
-    show(id: IDModel) {
-        const _req = this.store.$apiMulti.users.show(id)
-
-        _req.then((res) => {
-            this.SET_USER(res.data)
-        })
-
-        return _req
-    }
-
-    @Action({ rawError: true })
-    update(params: { id: IDModel; data: UpdateUserRequestModel }) {
-        const _req = this.store.$apiMulti.users.update(params)
-
-        _req.then((res) => {
-            this.SET_USER(res.data)
-        })
-
-        return _req
-    }
-
-    @Action({ rawError: true })
-    add(body: CreateUserRequestModel) {
-        return this.store.$apiMulti.users.store(body)
-    }
-
-    @Action({ rawError: true })
-    deactivate(id: IDModel) {
-        return this.store.$apiMulti.users.deactivate(id)
-    }
-
-    @Action({ rawError: true })
-    inviteSend(id: IDModel) {
-        return this.store.$apiMulti.users.inviteSend(id)
-    }
-
-    @Action({ rawError: true })
-    inviteValidate(params: { id: IDModel; data: InviteValidateRequestModel }) {
-        return this.store.$apiMulti.users.inviteValidate(params)
-    }
-
-    @Action({ rawError: true })
-    inviteConsume(params: { id: IDModel; data: InviteConsumeRequestModel }) {
-        return this.store.$apiMulti.users.inviteConsume(params)
-    }
-}
+export type useUsersStore = ReturnType<typeof useUsersStore>

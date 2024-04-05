@@ -2,6 +2,16 @@ import { Component, Vue } from 'nuxt-property-decorator'
 import { initialiseStores } from '~/utils/store-accessor'
 import type { useCardsStore } from '~/store/cards'
 import type { useAccountsStore } from '~/store/accounts'
+import type { useAccessCodesStore } from '~/store/accessCodes'
+import type { useAuthStore } from '~/store/auth'
+import type { useCorporatesStore } from '~/store/corporates'
+import type { useConsumersStore } from '~/store/consumers'
+import type { useErrorsStore } from '~/store/errors'
+import type { useIdentityStore } from '~/store/identity'
+import type { useSecureClientStore } from '~/store/secureClient'
+import type { useLoaderStore } from '~/store/loader'
+import type { useTransfersStore } from '~/store/transfers'
+import type { useUsersStore } from '~/store/users'
 import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
@@ -28,20 +38,60 @@ export default class BaseMixin extends Vue {
         return this.stores(['accounts']) as useAccountsStore
     }
 
+    get accessCodes() {
+        return this.stores(['accessCodes']) as useAccessCodesStore
+    }
+
+    get authStore() {
+        return this.stores(['auth']) as useAuthStore
+    }
+
+    get corporatesStore() {
+        return this.stores(['corporates']) as useCorporatesStore
+    }
+
+    get consumersStore() {
+        return this.stores(['consumers']) as useConsumersStore
+    }
+
+    get errorStore() {
+        return this.stores(['errors']) as useErrorsStore
+    }
+
+    get identityStore() {
+        return this.stores(['identity']) as useIdentityStore
+    }
+
+    get loaderStore() {
+        return this.stores(['loader']) as useLoaderStore
+    }
+
+    get secureClientStore() {
+        return this.stores(['secureClient']) as useSecureClientStore
+    }
+
+    get transfersStore() {
+        return this.stores(['transfers']) as useTransfersStore
+    }
+
+    get usersStore() {
+        return this.stores(['users']) as useUsersStore
+    }
+
     get isConsumer() {
-        return this.stores.auth.isConsumer
+        return this.authStore.isConsumer
     }
 
     get isCorporate() {
-        return this.stores.auth.isCorporate
+        return this.authStore.isCorporate
     }
 
     get isLoggedIn() {
-        return this.stores.auth.isLoggedIn
+        return this.authStore.isLoggedIn
     }
 
     get identityRegCountryIsUK() {
-        return this.isConsumer ? this.stores.consumers.isUk : this.stores.corporates.isUk
+        return this.isConsumer ? this.consumersStore.isUk : this.corporatesStore.isUk
     }
 
     get cardJurisdictionProfileId() {
@@ -75,13 +125,13 @@ export default class BaseMixin extends Vue {
     get profileBaseCurrency() {
         return (
             (this.isConsumer
-                ? this.stores.consumers.consumer?.baseCurrency
-                : this.stores.corporates.corporate?.baseCurrency) || null
+                ? this.consumersStore.consumerState.consumer?.baseCurrency
+                : this.corporatesStore.corporateState.corporate?.baseCurrency) || null
         )
     }
 
     get consumer(): ConsumerModel | null {
-        return this.stores.consumers.consumer
+        return this.consumersStore.consumerState.consumer
     }
 
     get isConsumerPopulated() {
@@ -94,9 +144,9 @@ export default class BaseMixin extends Vue {
 
     get rootName(): string {
         if (this.isConsumerPopulated) {
-            return this.stores.consumers.consumer!.rootUser.name
+            return this.consumersStore.consumerState.consumer!.rootUser.name
         } else if (this.isCorporatePopulated) {
-            return this.stores.corporates.corporate!.rootUser.name
+            return this.corporatesStore.corporateState.corporate!.rootUser.name
         } else {
             return 'noname'
         }
@@ -104,9 +154,9 @@ export default class BaseMixin extends Vue {
 
     get rootSurname(): string {
         if (this.isConsumerPopulated) {
-            return this.stores.consumers.consumer!.rootUser.surname
+            return this.consumersStore.consumerState.consumer!.rootUser.surname
         } else if (this.isCorporatePopulated) {
-            return this.stores.corporates.corporate!.rootUser.surname
+            return this.corporatesStore.corporateState.corporate!.rootUser.surname
         }
         return 'nosurname'
     }
@@ -116,7 +166,7 @@ export default class BaseMixin extends Vue {
     }
 
     get corporate() {
-        return this.stores.corporates.corporate
+        return this.corporatesStore.corporateState.corporate
     }
 
     get rootUserEmail() {
@@ -145,11 +195,13 @@ export default class BaseMixin extends Vue {
     }
 
     get identityVerified(): boolean {
-        if (this.stores.auth.isConsumer) {
-            return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
-        } else {
-            return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
+        if (this.authStore.isConsumer) {
+            return (
+                this.consumersStore.consumerState.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+            )
         }
+
+        return this.corporatesStore.corporateState.kyb?.kybStatus === KYBStatusEnum.APPROVED
     }
 
     get pendingData() {
@@ -190,7 +242,7 @@ export default class BaseMixin extends Vue {
     }
 
     doLogout() {
-        return this.stores.auth.logout().then(this.redirectToLogin)
+        return this.authStore.logout().then(this.redirectToLogin)
     }
 
     redirectToLogin() {

@@ -1,42 +1,38 @@
-import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { loaderStore } from '~/utils/store-accessor'
-import { StoreModule } from '~/store/storeModule'
-import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import { useBase } from '~/composables/useBase'
+import { useLoaderStore } from '~/store/loader'
+import type { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 
-const defaultState = {
-    isLoading: false,
-}
+export const useTransfersStore = defineStore('transfers', () => {
+    const isLoading = ref<boolean>(false)
+    const { root } = useBase()
+    const loader = useLoaderStore()
 
-@Module({
-    name: 'transfersModule',
-    namespaced: true,
-    stateFactory: true,
-})
-export default class Transfers extends StoreModule {
-    isLoading: boolean = defaultState.isLoading
-
-    @Mutation
-    RESET_STATE() {
-        Object.keys(defaultState).forEach((key) => {
-            this[key] = defaultState[key]
-        })
+    const resetState = () => {
+        isLoading.value = false
     }
 
-    @Mutation
-    SET_IS_LOADING(isLoading: boolean) {
-        this.isLoading = isLoading
+    const setIsLoading = (loading: boolean) => {
+        isLoading.value = loading
     }
 
-    @Action
-    execute(request: CreateTransferRequest) {
-        loaderStore(this.store).start()
-
-        const req = this.store.$apiMulti.transfers.store(request)
+    const execute = (request: CreateTransferRequest) => {
+        loader.start()
+        const req = root!.$apiMulti.transfers.store(request)
 
         req.finally(() => {
-            loaderStore(this.store).stop()
+            loader.stop()
         })
 
         return req
     }
-}
+
+    return {
+        resetState,
+        setIsLoading,
+        execute,
+    }
+})
+
+export type useTransfersStore = ReturnType<typeof useTransfersStore>
