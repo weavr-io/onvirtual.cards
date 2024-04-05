@@ -64,9 +64,11 @@ import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consu
 export default class DashboardHeader extends mixins(BaseMixin, CardsMixin, AccountsMixin) {
     get canAddFunds(): boolean {
         if (this.isConsumer) {
-            return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+            return (
+                this.consumersStore.consumerState.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+            )
         } else if (this.isCorporate) {
-            return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
+            return this.corporatesStore.corporateState.kyb?.kybStatus === KYBStatusEnum.APPROVED
         } else {
             return false
         }

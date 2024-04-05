@@ -154,7 +154,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     }
 
     get isLoadingRegistration() {
-        return this.stores.corporates.isLoadingRegistration
+        return this.corporatesStore.corporateState.isLoadingRegistration
     }
 
     tryToSubmitForm() {
@@ -197,7 +197,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     }
 
     startRegistrationLoading() {
-        this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
+        this.corporatesStore.setIsLoadingRegistration(true)
     }
 
     @Emit()

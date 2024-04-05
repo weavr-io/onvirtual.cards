@@ -29,7 +29,7 @@ export default class KycPage extends mixins(BaseMixin) {
     }
 
     async KycApproved() {
-        const _res = await this.stores.consumers.getKYC()
+        const _res = await this.consumersStore.getKYC()
 
         if (
             _res.data.fullDueDiligence === KYCStatusEnum.APPROVED ||

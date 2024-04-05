@@ -49,7 +49,10 @@ import KyVerified from '~/mixins/kyVerified'
 @Component
 export default class KYCAlert extends mixins(KyVerified) {
     get isPendingReview(): boolean {
-        return this.stores.consumers?.kyc?.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
+        return (
+            this.consumersStore.consumerState?.kyc?.fullDueDiligence ===
+            KYCStatusEnum.PENDING_REVIEW
+        )
     }
 }
 </script>

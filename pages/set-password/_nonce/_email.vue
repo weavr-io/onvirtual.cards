@@ -166,11 +166,11 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
             },
         }
 
-        this.stores.auth.validatePassword(_request).then(this.submitForm)
+        this.authStore.validatePassword(_request).then(this.submitForm)
     }
 
     submitForm() {
-        this.stores.auth
+        this.authStore
             .lostPasswordResume(this.form)
             .then(() => {
                 this.$router.push('/login')

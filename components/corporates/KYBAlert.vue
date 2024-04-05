@@ -58,7 +58,7 @@ import KyVerified from '~/mixins/kyVerified'
 @Component
 export default class KYBAlert extends mixins(BaseMixin, KyVerified) {
     get isPendingReview(): boolean {
-        return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.PENDING_REVIEW
+        return this.corporatesStore.corporateState.kyb?.kybStatus === KYBStatusEnum.PENDING_REVIEW
     }
 }
 </script>

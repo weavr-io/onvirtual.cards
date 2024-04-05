@@ -196,7 +196,7 @@ export default class ManagedCardsStatements extends mixins(
 
     async fetch() {
         this.page = 0
-        this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+        this.$weavrSetUserToken('Bearer ' + this.authStore.token)
 
         await this.cardStore.getManagedCard(this.cardId)
         await this.fetchCardStatements()

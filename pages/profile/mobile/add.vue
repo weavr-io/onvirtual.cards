@@ -126,17 +126,15 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
                 return null
             }
 
-            if (this.stores.auth.auth?.credentials.type === CredentialTypeEnum.ROOT) {
+            if (this.authStore.authState.auth?.credentials.type === CredentialTypeEnum.ROOT) {
                 this.isConsumer
-                    ? await this.stores.consumers.update(
-                          this.updateRequest as UpdateConsumerRequest,
-                      )
-                    : await this.stores.corporates.update(
+                    ? await this.consumersStore.update(this.updateRequest as UpdateConsumerRequest)
+                    : await this.corporatesStore.update(
                           this.updateRequest as UpdateCorporateRequest,
                       )
             } else {
                 await this.stores.users.update({
-                    id: this.stores.auth.auth!.credentials.id,
+                    id: this.authStore.authState.auth!.credentials.id,
                     data: this.updateRequest as UpdateUserRequestModel,
                 })
             }

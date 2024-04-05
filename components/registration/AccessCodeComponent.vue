@@ -85,7 +85,7 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
                 code: +this.form.code,
             }
 
-            return this.stores.accessCodes
+            return this.accessCodes
                 .verifyAccessCode(this.form)
                 .catch((err: AxiosError) => {
                     const is403: boolean = err.response?.status === 403

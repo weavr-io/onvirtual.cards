@@ -116,7 +116,7 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     get auth() {
-        return this.stores.auth.auth
+        return this.authStore.authState.auth
     }
 
     get cardId() {

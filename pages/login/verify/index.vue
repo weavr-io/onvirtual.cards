@@ -155,13 +155,13 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     }
 
     async sendVerifyEmailConsumers() {
-        await this.stores.consumers.sendVerificationCodeEmail({
+        await this.consumersStore.sendVerificationCodeEmail({
             email: this.verifyEmailRequest.email,
         })
     }
 
     async sendVerifyEmailCorporates() {
-        await this.stores.corporates.sendVerificationCodeEmail({
+        await this.corporatesStore.sendVerificationCodeEmail({
             email: this.verifyEmailRequest.email,
         })
     }
@@ -186,14 +186,14 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
         this.isLoading = true
 
         this.$route.query.cons
-            ? this.stores.consumers
+            ? this.consumersStore
                   .verifyEmail(this.verifyEmailRequest)
                   .then(this.onMobileVerified)
                   .catch((e) => {
                       this.removeLoader()
                       this.stores.errors.SET_CONFLICT(e)
                   })
-            : this.stores.corporates
+            : this.corporatesStore
                   .verifyEmail(this.verifyEmailRequest)
                   .then(this.onMobileVerified)
                   .catch((e) => {

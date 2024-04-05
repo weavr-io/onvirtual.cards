@@ -160,7 +160,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
                 this.passwordField.createToken().then(
                     (tokens) => {
                         this.loginRequest.password.value = tokens.tokens.password
-                        this.stores.auth
+                        this.authStore
                             .loginWithPassword(this.loginRequest)
                             .then(() => {
                                 localStorage.setItem('stepUp', 'FALSE')
@@ -183,11 +183,11 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     async goToDashboard() {
-        if (this.stores.auth.isConsumer) {
-            await this.stores.consumers.get()
+        if (this.authStore.isConsumer) {
+            await this.consumersStore.get()
         }
 
-        await this.stores.auth.indexAuthFactors()
+        await this.authStore.indexAuthFactors()
 
         await this.$router.push({
             path: '/login/sca',

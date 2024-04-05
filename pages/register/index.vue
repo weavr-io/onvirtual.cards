@@ -28,7 +28,7 @@ import Logo from '~/components/Logo.vue'
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
     get isAccessCodeValid() {
-        return this.stores.accessCodes.isValid
+        return this.accessCodes.isValid
     }
 
     asyncData({ store, redirect }) {

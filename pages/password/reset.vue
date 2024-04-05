@@ -105,7 +105,7 @@ export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin
 
         this.isLoading = true
         this.stores.errors.SET_ERROR(null)
-        this.stores.auth
+        this.authStore
             .lostPasswordInitiate(this.form)
             .then(() => {
                 this.passwordSent = true
