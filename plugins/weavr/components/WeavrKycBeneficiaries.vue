@@ -2,7 +2,7 @@
     <div id="director-kyc" />
 </template>
 <script lang="ts" setup>
-import { defineProps, defineEmits, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import type { KYCOptions } from './api'
 import { useBase } from '~/composables/useBase'
 

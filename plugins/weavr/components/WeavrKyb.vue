@@ -2,7 +2,7 @@
     <div id="kyb-container" />
 </template>
 <script lang="ts" setup>
-import { defineProps, defineEmits, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useBase } from '~/composables/useBase'
 import type { KYBOptions } from '~/plugins/weavr/components/api'
 

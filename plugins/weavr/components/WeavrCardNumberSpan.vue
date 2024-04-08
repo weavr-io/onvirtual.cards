@@ -2,7 +2,7 @@
     <div :class="className" :style="baseStyle" />
 </template>
 <script lang="ts" setup>
-import { defineProps, defineEmits, onMounted, onBeforeUnmount, computed, type Ref, ref } from 'vue'
+import { onMounted, onBeforeUnmount, computed, type Ref, ref } from 'vue'
 import { useBase } from '~/composables/useBase'
 
 const props = defineProps<{
@@ -37,8 +37,8 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-    ;(_span.value as unknown as { destroy: () => void }).destroy()
     _removeListeners()
+    ;(_span.value as unknown as { destroy: () => void }).destroy()
 })
 
 const _addListeners = () => {

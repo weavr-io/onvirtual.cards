@@ -2,7 +2,7 @@
     <div id="consumer-kyc" />
 </template>
 <script lang="ts" setup>
-import { defineProps, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import type { ConsumerVerificationFlowOptions } from './api'
 import { useBase } from '~/composables/useBase'
 
