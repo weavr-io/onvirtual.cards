@@ -1,21 +1,21 @@
 <template>
     <div id="consumer-kyc" />
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import { defineProps, onMounted } from 'vue'
 import type { ConsumerVerificationFlowOptions } from './api'
+import { useBase } from '~/composables/useBase'
 
-@Component
-export default class WeavrKyc extends Vue {
-    @Prop({}) reference!: string
-    @Prop({}) options!: ConsumerVerificationFlowOptions
+const props = defineProps<{
+    reference: String
+    options: ConsumerVerificationFlowOptions
+}>()
 
-    mounted() {
-        this.$weavrComponents.capture
-            .consumerKyc(this.reference)
-            .mount('#consumer-kyc', this.options)
-    }
-}
+const { root } = useBase()
+
+onMounted(() => {
+    root!.$weavrComponents.capture
+        .consumerKyc(props.reference)
+        .mount('#consumer-kyc', props.options)
+})
 </script>
-
-<style lang="scss" scoped></style>

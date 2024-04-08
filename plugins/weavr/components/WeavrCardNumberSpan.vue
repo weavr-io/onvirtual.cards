@@ -1,55 +1,59 @@
 <template>
     <div :class="className" :style="baseStyle" />
 </template>
-<script lang="ts">
-import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import { defineProps, defineEmits, onMounted, onBeforeUnmount, computed, type Ref, ref } from 'vue'
+import { useBase } from '~/composables/useBase'
 
-@Component
-class WeavrCardNumberSpan extends Vue {
-    @Prop() readonly token!: string
+const props = defineProps<{
+    token: String
+    options: object
+    className: String
+    baseStyle: object
+}>()
 
-    @Prop() readonly options!: object
+const { root } = useBase()
+const emit = defineEmits(['onReady', 'onChange'])
 
-    @Prop() readonly className!: string
+const onReady = () => emit('onReady')
+const onChange = () => emit('onChange')
 
-    @Prop() readonly baseStyle!: object
+const rootAttr: Ref<HTMLElement | null> = ref(null)
+const _span: Ref<{ mount: (el: HTMLElement) => void } | null> = ref(null)
 
-    @Emit('onReady') onReady() {}
-
-    @Emit('onChange') onChange() {}
-
-    protected _span
-
-    mounted() {
-        this._span = this.$weavrComponents.display.cardNumber(this.token, this.spanOptions)
-        this._span.mount(this.$el)
-        this._addListeners()
+const spanOptions = computed(() => {
+    return {
+        ...props.options,
+        style: props.baseStyle,
     }
+})
 
-    beforeDestroy() {
-        this._removeListeners()
-        this._span.destroy()
-    }
+onMounted(() => {
+    if (!rootAttr.value) throw new Error('No element found')
 
-    _addListeners() {
-        this.onReady && this._span.on('ready', this.onReady)
-        this.onChange && this._span.on('change', this.onChange)
-    }
+    _span.value = root!.$weavrComponents.display.cardNumber(props.token, spanOptions.value)
+    _span.value?.mount(rootAttr.value)
+    _addListeners()
+})
 
-    _removeListeners() {
-        this.onReady && this._span.off('ready', this.onReady)
-        this.onChange && this._span.off('change', this.onChange)
-    }
+onBeforeUnmount(() => {
+    ;(_span.value as unknown as { destroy: () => void }).destroy()
+    _removeListeners()
+})
 
-    get spanOptions() {
-        return {
-            ...this.options,
-            style: this.baseStyle,
-        }
-    }
+const _addListeners = () => {
+    const span = _span.value as unknown as { on: (event: string, callback: Function) => void }
+
+    if (!span) return
+    onReady && span.on('ready', onReady)
+    onChange && span.on('change', onChange)
 }
 
-export default WeavrCardNumberSpan
-</script>
+const _removeListeners = () => {
+    const span = _span.value as unknown as { off: (event: string, callback: Function) => void }
 
-<style lang="scss" scoped></style>
+    if (!span) return
+    onReady && span.off('ready', onReady)
+    onChange && span.off('change', onChange)
+}
+</script>
