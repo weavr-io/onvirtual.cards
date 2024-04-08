@@ -11,14 +11,18 @@
     </div>
 </template>
 
-<script lang="ts" setup>
-import { computed } from 'vue'
+<script lang="ts">
+import { defineComponent, computed } from 'vue'
 import { useBase } from '@/composables/useBase'
 
-definePageMeta({
+export default defineComponent({
+    name: 'DefaultLayout',
     middleware: ['authRouteGuard'],
-})
+    setup() {
+        const { loaderStore } = useBase()
+        const isLoading = computed(() => loaderStore.isLoading)
 
-const { loaderStore } = useBase()
-const isLoading = computed(() => loaderStore.isLoading)
+        return { isLoading }
+    },
+})
 </script>

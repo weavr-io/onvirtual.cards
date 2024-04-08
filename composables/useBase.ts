@@ -12,6 +12,7 @@ import { useConsumersStore } from '~/store/consumers'
 import { useIdentityStore } from '~/store/identity'
 import { useLoaderStore } from '~/store/loader'
 import { useAccessCodesStore } from '~/store/accessCodes'
+import { useUsersStore } from '~/store/users'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
@@ -30,6 +31,7 @@ export function useBase() {
     const loaderStore = useLoaderStore()
     const accessCodesStore = useAccessCodesStore()
     const errorsStore = useErrorsStore()
+    const usersStore = useUsersStore()
 
     const isLoggedIn = computed(() => authStore.hasAuthToken)
     const pendingData = computed(() => !root!.$fetchState || root!.$fetchState.pending)
@@ -219,5 +221,6 @@ export function useBase() {
         loaderStore,
         accessCodesStore,
         errorsStore,
+        usersStore,
     }
 }

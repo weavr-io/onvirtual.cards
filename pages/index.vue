@@ -9,18 +9,19 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { defineComponent } from 'vue'
+import { initialiseStores } from '~/utils/store-accessor'
 
-@Component({})
-export default class IndexPage extends mixins(BaseMixin) {
+export default defineComponent({
+    name: 'IndexPage',
     async asyncData({ redirect }) {
-        const isLoggedIn = this.authStore.isLoggedIn
+        const { identity, auth } = initialiseStores(['identity', 'auth'])
+        const isLoggedIn = auth!.isLoggedIn
 
         if (!isLoggedIn) {
             redirect('/login')
         } else {
-            const identities = this.identityStore
+            const identities = identity!
 
             if (!identities.identityState.identity) {
                 await identities.getIdentity()
@@ -42,6 +43,6 @@ export default class IndexPage extends mixins(BaseMixin) {
                 redirect('/dashboard')
             }
         }
-    }
-}
+    },
+})
 </script>

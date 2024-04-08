@@ -57,17 +57,13 @@
         "lint-staged": "^15.2.0",
         "nodemon": "^3.0.1",
         "nuxi": "^3.11.0",
-        "nuxt-property-decorator": "^2.9.1",
         "prettier": "^3.1.0",
         "sass": "1.64.0",
         "sass-loader": "^10.4.1",
         "stylelint": "^15.10.3",
         "stylelint-config-standard": "^34.0.0",
         "stylelint-config-standard-scss": "^11.1.0",
-        "vue-property-decorator": "^9.1.2",
-        "vue-svg-loader": "^0.16.0",
-        "vue-template-compiler": "^2.7.14",
-        "vuex-module-decorators": "^1.0.1"
+        "vue-svg-loader": "^0.16.0"
     },
     "lint-staged": {
         "*.{js,jsx,ts,html,vue}": "eslint --fix",

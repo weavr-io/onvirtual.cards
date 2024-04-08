@@ -12,8 +12,13 @@
                 </b-col>
             </b-row>
 
-            <template v-if="users && !pendingDataOrError">
-                <b-row v-for="(user, key) in users.users" :key="key" align-v="center" class="mt-3">
+            <template v-if="usersData && !pendingDataOrError">
+                <b-row
+                    v-for="(user, key) in usersData.users"
+                    :key="key"
+                    align-v="center"
+                    class="mt-3"
+                >
                     <b-col cols="2" md="1">
                         <b-img :alt="user.name + ' ' + user.surname" rounded v-bind="mainProps" />
                     </b-col>
@@ -35,24 +40,32 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { defineComponent, ref, computed } from 'vue'
+import { initialiseStores } from '~/utils/store-accessor'
+import { useBase } from '~/composables/useBase'
 import BaseMixin from '~/mixins/BaseMixin'
 
-@Component({ middleware: ['kyVerified'] })
-export default class UsersPage extends mixins(BaseMixin) {
-    mainProps = {
-        blank: true,
-        blankColor: '#EAEDF6',
-        width: 45,
-        height: 45,
-    }
+export default defineComponent({
+    name: 'UsersPage',
+    mixins: [BaseMixin],
+    middleware: ['kyVerified'],
+    setup() {
+        const { pendingDataOrError } = useBase()
+        const { users } = initialiseStores(['users'])
 
-    get users() {
-        return this.usersStore.userState.users
-    }
+        const mainProps = ref<Record<string, unknown>>({
+            blank: true,
+            blankColor: '#EAEDF6',
+            width: 45,
+            height: 45,
+        })
 
+        const usersData = computed(() => users!.userState.users)
+
+        return { mainProps, usersData, pendingDataOrError }
+    },
     fetch() {
-        return this.usersStore.index()
-    }
-}
+        useBase().usersStore.index()
+    },
+})
 </script>
