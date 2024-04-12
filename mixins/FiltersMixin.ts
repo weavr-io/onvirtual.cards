@@ -6,7 +6,7 @@ export default class FiltersMixin extends Vue {
     public monthsFilter(_start: number) {
         const _out: { value: { start: number; end: number }; text: string }[] = []
 
-        let _pointer = DateTime.fromMillis(_start * 1000)
+        let _pointer = DateTime.fromMillis(_start)
 
         const _today = DateTime.now()
         while (_pointer < _today && !_pointer.hasSame(_today, 'month')) {
