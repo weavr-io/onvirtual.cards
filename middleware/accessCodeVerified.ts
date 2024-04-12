@@ -1,12 +1,12 @@
 import { Middleware } from '~/node_modules/@nuxt/types'
-import { accessCodesStore } from '~/utils/store-accessor'
+import { useAccessCodesStore } from '~/store/accessCodes'
 
-const accessCodeVerified: Middleware = async ({ store, redirect, route, $config }) => {
+const accessCodeVerified: Middleware = async ({ redirect, route, $config }) => {
     if (!$config.production) {
         return
     }
 
-    const accessCodeStore = accessCodesStore(store)
+    const accessCodeStore = useAccessCodesStore()
 
     const accessCode = () => {
         return +localStorage.getItem('onv-access-code')! ?? undefined

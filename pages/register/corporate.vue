@@ -24,20 +24,21 @@
     </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
 import { AxiosResponse } from 'axios'
+import { Component, mixins } from 'nuxt-property-decorator'
+import Logo from '~/components/Logo.vue'
+import { DeepNullable, RecursivePartial } from '~/global'
 import BaseMixin from '~/mixins/BaseMixin'
-import { authStore } from '~/utils/store-accessor'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
-import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
-import { DeepNullable, RecursivePartial } from '~/global'
-import Logo from '~/components/Logo.vue'
+import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import { useAccessCodesStore } from '~/store/accessCodes'
+import { authStore } from '~/utils/store-accessor'
 
 @Component({
     layout: 'auth',
@@ -54,6 +55,7 @@ import Logo from '~/components/Logo.vue'
 export default class RegistrationPage extends mixins(BaseMixin) {
     screen = 0
     passwordStrength = 0
+    accessCodesStore = useAccessCodesStore()
     private registrationRequest: DeepNullable<
         RecursivePartial<CreateCorporateRequest & { password: string }>
     > = {
@@ -169,7 +171,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     onRegisteredSuccessfully() {
-        this.stores.accessCodes.DELETE_ACCESS_CODE()
+        this.accessCodesStore.deleteAccessCode()
         if (!this.registrationRequest.rootUser) {
             return
         }

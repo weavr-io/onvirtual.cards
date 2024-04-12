@@ -14,6 +14,7 @@ import { authStore } from '~/utils/store-accessor'
 import BusinessOrPersonalComponent from '~/components/registration/BusinessOrPersonalComponent.vue'
 import AccessCodeComponent from '~/components/registration/AccessCodeComponent.vue'
 import Logo from '~/components/Logo.vue'
+import { useAccessCodesStore } from '~/store/accessCodes'
 
 @Component({
     components: {
@@ -25,8 +26,9 @@ import Logo from '~/components/Logo.vue'
     middleware: 'accessCodeVerified',
 })
 export default class RegistrationPage extends mixins(BaseMixin) {
+    accessCodesStore = useAccessCodesStore()
     get isAccessCodeValid() {
-        return this.stores.accessCodes.isValid
+        return this.accessCodesStore.isValid
     }
 
     asyncData({ store, redirect }) {

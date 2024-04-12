@@ -255,6 +255,7 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
 import Logo from '~/components/Logo.vue'
+import { useAccessCodesStore } from '~/store/accessCodes'
 
 const touchMap = new WeakMap()
 
@@ -330,6 +331,8 @@ const touchMap = new WeakMap()
 export default class ConsumerRegistrationPage extends mixins(BaseMixin, ValidationMixin) {
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
+
+    accessCodesStore = useAccessCodesStore()
 
     rootMobileNumber = ''
     numberIsValid: boolean | null = null
@@ -506,7 +509,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     onRegisteredSuccessfully() {
-        this.stores.accessCodes.DELETE_ACCESS_CODE()
+        this.accessCodesStore.deleteAccessCode()
 
         if (!this.registrationRequest.rootUser) {
             return

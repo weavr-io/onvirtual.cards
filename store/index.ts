@@ -11,7 +11,6 @@ import Consumers from '~/store/consumers'
 import Transfers from '~/store/transfers'
 import Errors from '~/store/errors'
 import Identity from '~/store/identity'
-import AccessCodes from '~/store/accessCodes'
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
 // See https://nuxtjs.org/guide/vuex-store#classic-mode
@@ -44,7 +43,6 @@ const createStore = () => {
             identitiesModule: Identity,
             transfersModule: Transfers,
             errorsModule: Errors,
-            accessCodesModule: AccessCodes,
         },
     })
 }

@@ -45,12 +45,13 @@
 </template>
 
 <script lang="ts">
+import { AxiosError } from 'axios'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
-import { AxiosError } from 'axios'
 import BaseMixin from '~/mixins/BaseMixin'
-import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
+import { useAccessCodesStore } from '~/store/accessCodes'
 
 @Component({
     validations: {
@@ -60,6 +61,7 @@ import ValidationMixin from '~/mixins/ValidationMixin'
     },
 })
 export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMixin) {
+    accessCodesStore = useAccessCodesStore()
     form: AccessCodeModel = {
         code: null,
     }
@@ -85,7 +87,7 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
                 code: +this.form.code,
             }
 
-            return this.stores.accessCodes
+            return this.accessCodesStore
                 .verifyAccessCode(this.form)
                 .catch((err: AxiosError) => {
                     const is403: boolean = err.response?.status === 403
