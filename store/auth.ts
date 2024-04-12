@@ -1,6 +1,7 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
 import { $axiosMulti } from '~/utils/api'
 import { StoreModule } from '~/store/storeModule'
+import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
 import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
@@ -19,7 +20,6 @@ import {
     corporatesStore,
     identitiesStore,
     transfersStore,
-    usersStore,
 } from '~/utils/store-accessor'
 import config from '~/config'
 
@@ -130,7 +130,7 @@ export default class Auth extends StoreModule {
         cardsStore(this.store).RESET_STATE()
         identitiesStore(this.store).RESET_STATE()
         transfersStore(this.store).RESET_STATE()
-        usersStore(this.store).RESET_STATE()
+        initialisePiniaStores(['users'], true)
     }
 
     @Action({ rawError: true })

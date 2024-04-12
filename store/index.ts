@@ -10,7 +10,6 @@ import SecureClient from '~/store/secureClient'
 import Consumers from '~/store/consumers'
 import Transfers from '~/store/transfers'
 import Errors from '~/store/errors'
-import Users from '~/store/users'
 import Identity from '~/store/identity'
 import AccessCodes from '~/store/accessCodes'
 
@@ -45,7 +44,6 @@ const createStore = () => {
             identitiesModule: Identity,
             transfersModule: Transfers,
             errorsModule: Errors,
-            usersModule: Users,
             accessCodesModule: AccessCodes,
         },
     })

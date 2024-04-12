@@ -48,11 +48,11 @@ export default class UsersPage extends mixins(BaseMixin) {
     }
 
     get users() {
-        return this.stores.users.users
+        return this.usersStore.userState.users
     }
 
     fetch() {
-        return this.stores.users.index()
+        return this.usersStore.index()
     }
 }
 </script>

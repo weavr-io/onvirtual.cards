@@ -135,7 +135,7 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
                           this.updateRequest as UpdateCorporateRequest,
                       )
             } else {
-                await this.stores.users.update({
+                await this.usersStore.update({
                     id: this.stores.auth.auth!.credentials.id,
                     data: this.updateRequest as UpdateUserRequestModel,
                 })

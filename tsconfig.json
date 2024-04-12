@@ -21,9 +21,9 @@
             "@types/node",
             "@nuxt/types",
             "@nuxtjs/axios",
-            "@types/vuelidate"
-        ],
-        "resolveJsonModule": true
+            "@types/vuelidate",
+            "@pinia/nuxt"
+        ]
     },
     "exclude": [".nuxt", "dist", "node_modules"],
     "importHelpers": true,

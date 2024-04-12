@@ -117,7 +117,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
 
         this.isLoading = true
 
-        await this.stores.users
+        await this.usersStore
             .add(this.request as CreateUserRequestModel)
             .then((res) => {
                 this.userAdded(res.data)
@@ -129,7 +129,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     async userAdded(res: UserModel) {
-        await this.stores.users.inviteSend(res.id)
+        await this.usersStore.inviteSend(res.id)
         await this.$router.push('/users')
         this.isLoading = false
     }

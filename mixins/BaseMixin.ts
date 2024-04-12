@@ -1,15 +1,22 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import { initialiseStores } from '~/utils/store-accessor'
+import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import type { StoreType } from '~/local/models/store'
+import type { useUsersStore } from '~/store/users'
 import Countries from '~/static/json/countries.json'
 
 @Component
 export default class BaseMixin extends Vue {
     get stores() {
         return initialiseStores(this.$store)
+    }
+
+    get usersStore() {
+        return this.piniaStores(['users']).users as useUsersStore
     }
 
     get isConsumer() {
@@ -153,6 +160,10 @@ export default class BaseMixin extends Vue {
 
     get pendingDataOrError() {
         return this.pendingData || this.fetchHasError
+    }
+
+    piniaStores(store: (keyof StoreType)[]) {
+        return initialisePiniaStores(store)
     }
 
     sleep(ms) {

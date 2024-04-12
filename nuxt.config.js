@@ -155,7 +155,12 @@ const config = {
         middleware: ['authCookie', 'errorReset', 'identities'],
         linkActiveClass: 'active',
     },
-    buildModules: ['@nuxtjs/composition-api/module', '@nuxt/typescript-build'],
+    buildModules: [
+        '@nuxtjs/composition-api/module',
+        ['@pinia/nuxt', { disableVuex: false }],
+        '@nuxtjs/composition-api/module',
+        '@nuxt/typescript-build',
+    ],
     build: {
         babel: {
             compact: true,
