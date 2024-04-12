@@ -38,7 +38,7 @@
                             <b-col>
                                 <b-row class="mt-4">
                                     <b-col class="text-muted">
-                                        {{ date | moment_statement }}
+                                        {{ formatDate(date) }}
                                     </b-col>
                                 </b-row>
                                 <b-row v-for="(statement, key) in statementEntries" :key="key">

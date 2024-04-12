@@ -31,7 +31,6 @@
         "ts-node": "^10.9.2",
         "vue-flatpickr-component": "^8.1.8",
         "vue-infinite-loading": "^2.4.5",
-        "vue-moment": "^4.1.0",
         "vue-phone-number-input": "^1.12.13",
         "vuelidate": "^0.7.7",
         "vuex-class": "^0.3.2"

@@ -99,7 +99,7 @@ export default class Cards extends StoreModule {
             if (_entry.processedTimestamp) {
                 const _processedTimestamp = parseInt(_entry.processedTimestamp)
                 // @ts-ignore
-                const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
+                const _date = window.$nuxt.$luxon(_processedTimestamp).startOf('day')
 
                 if (!_out[_date]) {
                     _out[_date] = []
