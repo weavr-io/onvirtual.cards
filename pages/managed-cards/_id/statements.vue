@@ -157,7 +157,7 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import dot from 'dot-object'
-import moment from 'moment'
+import { DateTime } from 'luxon'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
@@ -207,11 +207,11 @@ export default class ManagedCardsStatements extends mixins(
         const filters = routeQueries.filters || {}
 
         if (!filters?.fromTimestamp) {
-            filters.fromTimestamp = moment().startOf('month').valueOf()
+            filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
         }
 
         if (!filters?.toTimestamp) {
-            filters.toTimestamp = moment().endOf('month').valueOf()
+            filters.toTimestamp = DateTime.now().endOf('month').toMillis()
         }
 
         const statementFilters: StatementFiltersRequest = {

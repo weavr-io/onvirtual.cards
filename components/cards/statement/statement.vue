@@ -44,7 +44,7 @@
                     <b-col>
                         <b-row class="mt-4">
                             <b-col class="text-muted">
-                                {{ date | moment_statement }}
+                                {{ formatDate(date) }}
                             </b-col>
                         </b-row>
                         <b-row v-for="(statement, key) in statementEntries" :key="key">
@@ -62,7 +62,7 @@
 import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { AxiosError } from 'axios'
 import dot from 'dot-object'
-import moment from 'moment'
+import { DateTime } from 'luxon'
 import BaseMixin from '~/mixins/BaseMixin'
 import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
@@ -116,16 +116,24 @@ export default class CardStatement extends mixins(
         })
     }
 
+    formatDate(val) {
+        const dateTime = DateTime.fromJSDate(val)
+        if (dateTime.hasSame(DateTime.now(), 'year')) {
+            return dateTime.toFormat('d MMMM')
+        }
+        return dateTime.toFormat('d MMMM yyyy')
+    }
+
     downloadStatement() {
         const _routeQueries = dot.object(this.$route.query)
         const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
         if (!_filters.fromTimestamp) {
-            _filters.fromTimestamp = moment().startOf('month').valueOf()
+            _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
         }
 
         if (!_filters.toTimestamp) {
-            _filters.toTimestamp = moment().endOf('month').valueOf()
+            _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
         }
 
         const filters: GetManagedCardStatementRequest = {

@@ -1,4 +1,5 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
+import { DateTime } from 'luxon'
 import { StoreModule } from '~/store/storeModule'
 import { GetManagedAccountsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountsRequest'
 import { PaginatedManagedAccountsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/responses/PaginatedManagedAccountsResponse'
@@ -76,8 +77,8 @@ export default class Accounts extends StoreModule {
         _entries.forEach((_entry) => {
             if (_entry.processedTimestamp) {
                 const _processedTimestamp = parseInt(_entry.processedTimestamp)
-                // @ts-ignore
-                const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
+
+                const _date = DateTime.fromMillis(_processedTimestamp).startOf('day').toString()
 
                 if (!_out[_date]) {
                     _out[_date] = []

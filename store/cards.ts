@@ -1,4 +1,5 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
+import { DateTime } from 'luxon'
 import { StoreModule } from '~/store/storeModule'
 import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
 import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
@@ -98,8 +99,8 @@ export default class Cards extends StoreModule {
         _entries?.forEach((_entry) => {
             if (_entry.processedTimestamp) {
                 const _processedTimestamp = parseInt(_entry.processedTimestamp)
-                // @ts-ignore
-                const _date = window.$nuxt.$moment(_processedTimestamp).startOf('day')
+
+                const _date = DateTime.fromMillis(_processedTimestamp).startOf('day').toString()
 
                 if (!_out[_date]) {
                     _out[_date] = []
