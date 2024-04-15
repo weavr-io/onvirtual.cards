@@ -1,7 +1,6 @@
 import { Store } from 'vuex'
 import { getModule } from 'vuex-module-decorators'
 import Cards from '~/store/cards'
-import Accounts from '~/store/accounts'
 import Corporates from '~/store/corporates'
 import Loader from '~/store/loader'
 import Auth from '~/store/auth'
@@ -13,7 +12,6 @@ import AccessCodes from '~/store/accessCodes'
 
 export interface Stores {
     cards: Cards
-    accounts: Accounts
     corporates: Corporates
     loader: Loader
     auth: Auth
@@ -27,7 +25,6 @@ export interface Stores {
 function initialiseStores(store: Store<any>): Stores {
     return {
         cards: cardsStore(store),
-        accounts: accountsStore(store),
         corporates: corporatesStore(store),
         loader: loaderStore(store),
         auth: authStore(store),
@@ -55,10 +52,6 @@ function authStore(store: Store<any>) {
     return getModule(Auth, store)
 }
 
-function accountsStore(store: Store<any>) {
-    return getModule(Accounts, store)
-}
-
 function corporatesStore(store: Store<any>) {
     return getModule(Corporates, store)
 }
@@ -82,7 +75,6 @@ function accessCodesStore(store: Store<any>) {
 export {
     initialiseStores,
     cardsStore,
-    accountsStore,
     corporatesStore,
     loaderStore,
     authStore,
