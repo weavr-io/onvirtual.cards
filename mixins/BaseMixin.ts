@@ -8,11 +8,16 @@ import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corpo
 import type { StoreType } from '~/local/models/store'
 import type { useUsersStore } from '~/store/users'
 import Countries from '~/static/json/countries.json'
+import { useAccessCodesStore } from '~/store/accessCodes'
 
 @Component
 export default class BaseMixin extends Vue {
     get stores() {
         return initialiseStores(this.$store)
+    }
+
+    get accessCodes() {
+        return this.piniaStores(['accessCodes']) as useAccessCodesStore
     }
 
     get usersStore() {

@@ -37,7 +37,6 @@ import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consu
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import { useAccessCodesStore } from '~/store/accessCodes'
 import { authStore } from '~/utils/store-accessor'
 
 @Component({
@@ -55,7 +54,6 @@ import { authStore } from '~/utils/store-accessor'
 export default class RegistrationPage extends mixins(BaseMixin) {
     screen = 0
     passwordStrength = 0
-    accessCodesStore = useAccessCodesStore()
     private registrationRequest: DeepNullable<
         RecursivePartial<CreateCorporateRequest & { password: string }>
     > = {
@@ -171,7 +169,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     onRegisteredSuccessfully() {
-        this.accessCodesStore.deleteAccessCode()
+        this.accessCodes.deleteAccessCode()
         if (!this.registrationRequest.rootUser) {
             return
         }

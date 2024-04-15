@@ -51,7 +51,6 @@ import { required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
-import { useAccessCodesStore } from '~/store/accessCodes'
 
 @Component({
     validations: {
@@ -61,7 +60,6 @@ import { useAccessCodesStore } from '~/store/accessCodes'
     },
 })
 export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMixin) {
-    accessCodesStore = useAccessCodesStore()
     form: AccessCodeModel = {
         code: null,
     }
@@ -87,7 +85,7 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
                 code: +this.form.code,
             }
 
-            return this.accessCodesStore
+            return this.accessCodes
                 .verifyAccessCode(this.form)
                 .catch((err: AxiosError) => {
                     const is403: boolean = err.response?.status === 403
