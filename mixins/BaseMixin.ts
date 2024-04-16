@@ -18,7 +18,7 @@ export default class BaseMixin extends Vue {
     }
 
     get accessCodes() {
-        return this.piniaStores(['accessCodes']) as useAccessCodesStore
+        return this.piniaStores(['accessCodes']).accessCodes as useAccessCodesStore
     }
 
     get accountsStore() {
