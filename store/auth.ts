@@ -131,6 +131,7 @@ export default class Auth extends StoreModule {
         identitiesStore(this.store).RESET_STATE()
         transfersStore(this.store).RESET_STATE()
         initialisePiniaStores(['users'], true)
+        initialisePiniaStores(['cards'], true)
     }
 
     @Action({ rawError: true })
