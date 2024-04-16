@@ -196,9 +196,9 @@ export default class ManagedCardsStatements extends mixins(
 
     async fetch() {
         this.page = 0
-        this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+        this.$weavrSetUserToken(`Bearer ${this.stores.auth.token}`)
 
-        await this.stores.cards.getManagedCard(this.cardId)
+        await this.cardsStore.getManagedCard(this.cardId)
         await this.fetchCardStatements()
     }
 
@@ -229,8 +229,8 @@ export default class ManagedCardsStatements extends mixins(
 
         this.filters = statementFilters
 
-        this.stores.cards.clearCardStatements()
-        await this.stores.cards.getCardStatement(_req)
+        this.cardsStore.clearCardStatements()
+        await this.cardsStore.getCardStatement(_req)
     }
 
     toggleIsLoading() {
@@ -248,7 +248,7 @@ export default class ManagedCardsStatements extends mixins(
             const request: StatementFiltersRequest = { ...this.filters }
             request.offset = this.page * +request.limit!
 
-            this.stores.cards
+            this.cardsStore
                 .getCardStatement({
                     id: this.$route.params.id,
                     request,

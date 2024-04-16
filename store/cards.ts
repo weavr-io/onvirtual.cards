@@ -35,32 +35,6 @@ export default class Cards extends StoreModule {
 
     filteredStatement: any = defaultState.filteredStatement
 
-    get currency() {
-        if (this.cards == null) {
-            return null
-        } else if (this.cards.cards?.length) {
-            return this.cards.cards[0].currency
-        } else {
-            return null
-        }
-    }
-
-    get totalAvailableBalance() {
-        if (this.cards == null) {
-            return 0
-        }
-
-        let total = 0
-
-        this.cards.cards?.forEach((card) => {
-            if (card.balances?.availableBalance) {
-                total += card.balances.availableBalance
-            }
-        })
-
-        return total
-    }
-
     @Mutation
     RESET_STATE() {
         Object.keys(defaultState).forEach((key) => {

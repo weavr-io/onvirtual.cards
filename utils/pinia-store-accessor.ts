@@ -5,7 +5,7 @@ const modules: Record<string, any> = {}
 const { text } = new FormattingFiltersModule()
 const moduleFiles = (require as unknown as Require).context('@/store', true, /\.ts$/)
 
-const storePaths = ['./users.ts', './accounts.ts']
+const storePaths = ['./users.ts', './accounts.ts', './cards.ts']
 
 export function initialiseStores<T extends keyof StoreType>(
     storeNames: T[],

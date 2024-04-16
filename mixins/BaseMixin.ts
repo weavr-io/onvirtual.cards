@@ -10,6 +10,7 @@ import { useAccountsStore } from '~/store/accounts'
 import type { useUsersStore } from '~/store/users'
 import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
 import { initialiseStores } from '~/utils/store-accessor'
+import { useCardsStore } from '~/store/piniaCards'
 
 @Component
 export default class BaseMixin extends Vue {
@@ -27,6 +28,10 @@ export default class BaseMixin extends Vue {
 
     get usersStore() {
         return this.piniaStores(['users']).users as useUsersStore
+    }
+
+    get cardsStore() {
+        return this.piniaStores(['cards']).cards as useCardsStore
     }
 
     get isConsumer() {
