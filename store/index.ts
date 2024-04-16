@@ -1,6 +1,5 @@
 import { Store } from 'vuex'
 import * as root from './root'
-import Cards from '~/store/cards'
 import Corporates from '~/store/corporates'
 import { initialiseStores } from '~/utils/store-accessor'
 import Loader from '~/store/loader'
@@ -32,7 +31,6 @@ const createStore = () => {
         mutations: root.mutations,
         actions: root.actions,
         modules: {
-            cardsModule: Cards,
             corporatesModule: Corporates,
             loaderModule: Loader,
             authModule: Auth,
