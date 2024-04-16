@@ -1,14 +1,15 @@
 import { Component, Vue } from 'nuxt-property-decorator'
-import { initialiseStores } from '~/utils/store-accessor'
-import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import type { StoreType } from '~/local/models/store'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
-import type { StoreType } from '~/local/models/store'
-import type { useUsersStore } from '~/store/users'
 import Countries from '~/static/json/countries.json'
 import { useAccessCodesStore } from '~/store/accessCodes'
+import { useAccountsStore } from '~/store/accounts'
+import type { useUsersStore } from '~/store/users'
+import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
+import { initialiseStores } from '~/utils/store-accessor'
 
 @Component
 export default class BaseMixin extends Vue {
@@ -18,6 +19,10 @@ export default class BaseMixin extends Vue {
 
     get accessCodes() {
         return this.piniaStores(['accessCodes']) as useAccessCodesStore
+    }
+
+    get accountsStore() {
+        return this.piniaStores(['accounts']).accounts as useAccountsStore
     }
 
     get usersStore() {

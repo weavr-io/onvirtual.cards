@@ -1,7 +1,6 @@
 import { Store } from 'vuex'
 import * as root from './root'
 import Cards from '~/store/cards'
-import Accounts from '~/store/accounts'
 import Corporates from '~/store/corporates'
 import { initialiseStores } from '~/utils/store-accessor'
 import Loader from '~/store/loader'
@@ -34,7 +33,6 @@ const createStore = () => {
         actions: root.actions,
         modules: {
             cardsModule: Cards,
-            accountsModule: Accounts,
             corporatesModule: Corporates,
             loaderModule: Loader,
             authModule: Auth,
