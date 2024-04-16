@@ -14,13 +14,13 @@ import { Component, mixins } from 'nuxt-property-decorator'
 
 import dot from 'dot-object'
 import { DateTime } from 'luxon'
+import AccountsMixin from '~/mixins/AccountsMixin'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
-import AccountsMixin from '~/mixins/AccountsMixin'
-import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
-import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import KyVerified from '~/mixins/kyVerified'
-import { accountsStore } from '~/utils/store-accessor'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
+import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 @Component({
     watch: {
@@ -38,17 +38,18 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
     page = 0
 
     get filteredStatement() {
-        return this.stores.accounts.filteredStatement
+        return this.accountsStore.filteredStatement
     }
 
-    asyncData({ store }) {
-        accountsStore(store).SET_STATEMENTS(null)
+    asyncData() {
+        const { accounts } = initialiseStores(['accounts'])
+        accounts?.setStatements(null)
     }
 
     async fetch() {
         const _accountId = this.$route.params.id
 
-        await this.stores.accounts.get(_accountId)
+        await this.accountsStore.get(_accountId)
 
         const _routeQueries = dot.object(this.$route.query)
         const _filters = _routeQueries.filters ? _routeQueries.filters : {}
@@ -77,7 +78,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
         this.filters = { ..._statementFilters }
 
         this.page = 0
-        await this.stores.accounts.getStatements(_req)
+        await this.accountsStore.getStatements(_req)
     }
 
     infiniteScroll($state) {
@@ -88,7 +89,7 @@ export default class AccountPage extends mixins(BaseMixin, RouterMixin, Accounts
 
             _request!.offset = (this.page * +_request!.limit!).toString()
 
-            this.stores.accounts
+            this.accountsStore
                 .getStatements({
                     id: this.$route.params.id,
                     filters: _request,

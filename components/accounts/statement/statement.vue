@@ -88,12 +88,12 @@ export default class AccountStatement extends mixins(
     @Prop() filters!: GetManagedAccountStatementRequest
 
     get filteredStatement() {
-        return this.stores.accounts.filteredStatement
+        return this.accountsStore.filteredStatement
     }
 
     get availableBalance() {
-        if (this.stores.accounts.account) {
-            return this.stores.accounts.account.balances.availableBalance
+        if (this.accountsStore.accountState.account) {
+            return this.accountsStore.accountState.account.balances.availableBalance
         } else {
             return 0
         }
