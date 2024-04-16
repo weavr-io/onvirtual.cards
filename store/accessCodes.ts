@@ -1,34 +1,38 @@
-import { Mutation, Action, Module } from 'vuex-module-decorators'
-import { StoreModule } from '~/store/storeModule'
+import { defineStore } from 'pinia'
+import { getCurrentInstance, ref } from 'vue'
 import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
 
-@Module({
-    name: 'accessCodesModule',
-    stateFactory: true,
-    namespaced: true,
-})
-export default class AccessCodes extends StoreModule {
-    isValid = false
+export const useAccessCodesStore = defineStore('accessCodes', () => {
+    const { proxy: root } = getCurrentInstance() || {}
+    const isValid = ref<boolean>(false)
 
-    @Mutation
-    SET_ACCESS_CODE(code) {
+    const setAccessCode = (code: string) => {
         localStorage.setItem('onv-access-code', code)
-        this.isValid = true
+        isValid.value = true
     }
 
-    @Mutation
-    DELETE_ACCESS_CODE() {
+    const deleteAccessCode = () => {
         localStorage.removeItem('onv-access-code')
     }
 
-    @Action({ rawError: true })
-    verifyAccessCode(request: AccessCodeModel) {
-        const req = this.store.$apiMulti.accessCodes.verifyAccessCode(request)
+    const verifyAccessCode = (request: AccessCodeModel) => {
+        const req = root!.$apiMulti.accessCodes.verifyAccessCode(request)
 
         req.then(() => {
-            this.SET_ACCESS_CODE(request.code)
-        }).catch(this.DELETE_ACCESS_CODE)
+            if (request.code) {
+                setAccessCode(request.code.toString())
+            }
+        }).catch(deleteAccessCode)
 
         return req
     }
-}
+
+    return {
+        isValid,
+        setAccessCode,
+        deleteAccessCode,
+        verifyAccessCode,
+    }
+})
+
+export type useAccessCodesStore = ReturnType<typeof useAccessCodesStore>

@@ -5,6 +5,7 @@ import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consu
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import Countries from '~/static/json/countries.json'
+import { useAccessCodesStore } from '~/store/accessCodes'
 import { useAccountsStore } from '~/store/accounts'
 import type { useUsersStore } from '~/store/users'
 import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
@@ -14,6 +15,10 @@ import { initialiseStores } from '~/utils/store-accessor'
 export default class BaseMixin extends Vue {
     get stores() {
         return initialiseStores(this.$store)
+    }
+
+    get accessCodes() {
+        return this.piniaStores(['accessCodes']) as useAccessCodesStore
     }
 
     get accountsStore() {
