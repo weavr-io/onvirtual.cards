@@ -26,7 +26,7 @@ import BaseMixin from '~/mixins/BaseMixin'
 })
 export default class DefaultLayout extends mixins(BaseMixin) {
     get isLoading() {
-        return this.stores.loader.isLoading
+        return this.loaderStore.isLoading
     }
 }
 </script>
