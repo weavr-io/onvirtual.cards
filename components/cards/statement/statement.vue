@@ -174,7 +174,7 @@ export default class CardStatement extends mixins(
                 this.managedCard?.balances?.availableBalance &&
                 this.managedCard.balances.availableBalance > 0
             ) {
-                const _accounts = await this.stores.accounts.index({
+                const _accounts = await this.accountsStore.index({
                     profileId: this.accountJurisdictionProfileId,
                     state: ManagedInstrumentStateEnum.ACTIVE,
                     offset: '0',

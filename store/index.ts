@@ -1,7 +1,6 @@
 import { Store } from 'vuex'
 import * as root from './root'
 import Cards from '~/store/cards'
-import Accounts from '~/store/accounts'
 import Corporates from '~/store/corporates'
 import { initialiseStores } from '~/utils/store-accessor'
 import Loader from '~/store/loader'
@@ -11,7 +10,6 @@ import Consumers from '~/store/consumers'
 import Transfers from '~/store/transfers'
 import Errors from '~/store/errors'
 import Identity from '~/store/identity'
-import AccessCodes from '~/store/accessCodes'
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
 // See https://nuxtjs.org/guide/vuex-store#classic-mode
@@ -35,7 +33,6 @@ const createStore = () => {
         actions: root.actions,
         modules: {
             cardsModule: Cards,
-            accountsModule: Accounts,
             corporatesModule: Corporates,
             loaderModule: Loader,
             authModule: Auth,
@@ -44,7 +41,6 @@ const createStore = () => {
             identitiesModule: Identity,
             transfersModule: Transfers,
             errorsModule: Errors,
-            accessCodesModule: AccessCodes,
         },
     })
 }

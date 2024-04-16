@@ -53,7 +53,7 @@ export default class DefaultLayout extends mixins(KyVerified, BaseMixin) {
     }
 
     get accounts() {
-        return this.stores.accounts.accounts
+        return this.accountsStore.accountState.accounts
     }
 }
 </script>

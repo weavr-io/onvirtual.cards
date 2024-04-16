@@ -5,6 +5,8 @@ const modules: Record<string, any> = {}
 const { text } = new FormattingFiltersModule()
 const moduleFiles = (require as unknown as Require).context('@/store', true, /\.ts$/)
 
+const storePaths = ['./users.ts', './accounts.ts']
+
 export function initialiseStores<T extends keyof StoreType>(
     storeNames: T[],
     resetOption?: boolean,
@@ -13,7 +15,7 @@ export function initialiseStores<T extends keyof StoreType>(
 
     moduleFiles.keys().forEach((path: string) => {
         // TODO: Remove line after deleting index file
-        if (path !== './users.ts') return
+        if (!storePaths.includes(path)) return
 
         // incase filename is not camel case already
         const moduleName = path.replace(/(\.\/|\.ts)/g, '')

@@ -241,20 +241,20 @@ import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import { AxiosResponse } from 'axios'
 
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import Logo from '~/components/Logo.vue'
+import { DeepNullable, RecursivePartial } from '~/global'
 import BaseMixin from '~/mixins/BaseMixin'
-import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import ValidationMixin from '~/mixins/ValidationMixin'
+import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
-import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { DeepNullable, RecursivePartial } from '~/global'
-import Logo from '~/components/Logo.vue'
+import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
 const touchMap = new WeakMap()
 
@@ -506,7 +506,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     onRegisteredSuccessfully() {
-        this.stores.accessCodes.DELETE_ACCESS_CODE()
+        this.accessCodes.deleteAccessCode()
 
         if (!this.registrationRequest.rootUser) {
             return

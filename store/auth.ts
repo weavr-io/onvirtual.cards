@@ -1,27 +1,26 @@
 import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { $axiosMulti } from '~/utils/api'
-import { StoreModule } from '~/store/storeModule'
-import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
-import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
-import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
+import config from '~/config'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
-import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
-import { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'
-import { GetAuthenticationFactorsResponse } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/responses/GetAuthenticationFactorsResponse'
+import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
+import { GetAuthenticationFactorsResponse } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/responses/GetAuthenticationFactorsResponse'
 import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
+import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
+import { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'
+import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
+import { StoreModule } from '~/store/storeModule'
+import { $axiosMulti } from '~/utils/api'
+import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
 import {
-    accountsStore,
     cardsStore,
     consumersStore,
     corporatesStore,
     identitiesStore,
     transfersStore,
 } from '~/utils/store-accessor'
-import config from '~/config'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
@@ -126,7 +125,7 @@ export default class Auth extends StoreModule {
         this.RESET_STATE()
         corporatesStore(this.store).RESET_STATE()
         consumersStore(this.store).RESET_STATE()
-        accountsStore(this.store).RESET_STATE()
+        initialisePiniaStores(['accounts'], true)
         cardsStore(this.store).RESET_STATE()
         identitiesStore(this.store).RESET_STATE()
         transfersStore(this.store).RESET_STATE()
