@@ -239,7 +239,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     }
 
     get isLoadingRegistration() {
-        return this.stores.corporates.isLoadingRegistration
+        return this.corporatesStore.corporateState.isLoadingRegistration
     }
 
     get industryOccupationOptions() {

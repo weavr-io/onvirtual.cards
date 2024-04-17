@@ -419,7 +419,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     get isLoadingRegistration(): boolean {
-        return this.stores.consumers.isLoadingRegistration
+        return this.consumersStore.consumerState.isLoadingRegistration
     }
 
     get isPasswordValid(): boolean {
@@ -433,7 +433,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     submitForm(e) {
-        this.stores.errors.RESET_ERROR()
+        this.errorsStore.resetState()
         try {
             e.preventDefault()
 
@@ -448,7 +448,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
             }
 
             if (this.isPasswordValid) {
-                this.stores.consumers.SET_IS_LOADING_REGISTRATION(true)
+                this.consumersStore.setIsLoadingRegistration(true)
                 this.passwordField.createToken().then(
                     (tokens) => {
                         if (tokens.tokens.password !== '') {
@@ -481,7 +481,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     doRegister() {
-        this.stores.consumers
+        this.consumersStore
             .create(this.registrationRequest as CreateConsumerRequest)
             .then(this.onConsumerCreated)
             .catch(this.registrationFailed)
@@ -550,7 +550,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     stopRegistrationLoading() {
-        this.stores.consumers.SET_IS_LOADING_REGISTRATION(false)
+        this.consumersStore.setIsLoadingRegistration(false)
     }
 }
 </script>

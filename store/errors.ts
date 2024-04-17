@@ -5,7 +5,7 @@ import type { ChangePasswordConflict } from '~/plugins/weavr-multi/api/models/er
 import { CONFLICT_MESSAGE_CONST } from '~/plugins/weavr-multi/api/models/error/conflicts/generics/const/ConflictMessageConst'
 
 export const useErrorsStore = defineStore('errors', () => {
-    const errors = ref<unknown>(null)
+    const errors = ref<any>(null)
     const conflict = ref<ChangePasswordConflict | null>(null)
 
     const conflictMessage = computed(() => {

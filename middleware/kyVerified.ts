@@ -1,16 +1,16 @@
 import type { Middleware } from '@nuxt/types'
-import { useBase } from '~/composables/useBase'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
-const { authStore, consumersStore, corporatesStore } = useBase()
 const kyVerified: Middleware = async ({ route, redirect }) => {
-    if (authStore.isLoggedIn) {
-        if (authStore.isConsumer) {
+    const { auth, consumers, corporates } = initialiseStores(['auth', 'consumers', 'corporates'])
+    if (auth?.isLoggedIn) {
+        if (auth?.isConsumer) {
             try {
                 if (route.name === 'managed-accounts-kyb') {
                     return redirect('/managed-accounts/kyc')
                 }
 
-                await consumersStore.checkKYC()
+                await consumers?.checkKYC()
 
                 if (route.name === 'managed-accounts-kyc') {
                     return redirect('/managed-accounts/add')
@@ -30,7 +30,7 @@ const kyVerified: Middleware = async ({ route, redirect }) => {
                     return redirect('/managed-accounts/kyb')
                 }
 
-                await corporatesStore.checkKYB()
+                await corporates?.checkKYB()
 
                 if (route.name === 'managed-accounts-kyb') {
                     return redirect('/managed-accounts')

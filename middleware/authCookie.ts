@@ -1,9 +1,9 @@
 import { Middleware } from '@nuxt/types'
-import { useBase } from '~/composables/useBase'
 import config from '~/config'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 const Cookie = process.client ? require('js-cookie') : undefined
-const { authStore } = useBase()
+const { auth } = initialiseStores(['auth'])
 
 function scaCheck(route, redirect) {
     if (
@@ -22,12 +22,12 @@ const cookieMiddleware: Middleware = async ({ route, redirect }) => {
 
     if (authCookie) {
         try {
-            const auth = JSON.parse(authCookie)
-            await authStore.setAuth(auth)
+            const authCookieJson = JSON.parse(authCookie)
+            await auth?.setAuth(authCookieJson)
             scaCheck(route, redirect)
         } catch (err) {
             // No valid cookie found
-            await authStore.logout()
+            await auth?.logout()
         }
     } else {
         localStorage.removeItem('stepUp')

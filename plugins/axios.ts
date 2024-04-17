@@ -1,9 +1,8 @@
-import type { Context, Plugin } from '@nuxt/types'
-import { useBase } from '@/composables/useBase'
-
-const { useRuntimeConfig, authStore, errorsStore } = useBase()
+import { Context, Plugin } from '@nuxt/types'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 const axiosPlugin: Plugin = (ctxt: Context, inject) => {
+    const { auth, errors } = initialiseStores(['auth', 'errors'])
     const axiosMulti = ctxt.$axios.create({
         headers: {
             common: {
@@ -11,14 +10,14 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
                 Accept: 'application/json',
             },
         },
-        baseURL: useRuntimeConfig().public.multiApi.baseUrl,
+        baseURL: ctxt.$config.multiApi.baseUrl,
     })
 
     function onError(error) {
         const code = parseInt(error.response && error.response.status)
         switch (code) {
             case 401:
-                if (error.response.config.url !== '/logout') authStore.logout()
+                if (error.response.config.url !== '/logout') auth?.logout()
                 ctxt.redirect('/login')
                 break
             case 403:
@@ -29,15 +28,15 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
                 ) {
                     ctxt.redirect('/login/sca')
                 } else if (ctxt.route.name !== 'login') {
-                    authStore.resetTokenAndStates()
+                    auth?.resetTokenAndStates()
                     ctxt.redirect('/login')
                 }
                 break
             case 409:
-                errorsStore.setConflict(error)
+                errors?.setConflict(error)
                 break
             default:
-                errorsStore.setError(error)
+                errors?.setError(error)
                 break
         }
 

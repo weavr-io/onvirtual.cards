@@ -131,11 +131,11 @@ export default class KybPage extends mixins(BaseMixin) {
     async fetch() {
         if (this.sumsSubEnabled) {
             try {
-                await this.stores.corporates
+                await this.corporatesStore
                     .startKYB()
                     .then((res) => {
                         this.reference = res.data.reference
-                        this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+                        this.$weavrSetUserToken('Bearer ' + this.authStore.token)
                     })
                     .catch((res) => {
                         if (res.response.data.errorCode) {

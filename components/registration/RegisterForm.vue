@@ -159,11 +159,11 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     }
 
     get isLoadingRegistration() {
-        return this.stores.corporates.isLoadingRegistration
+        return this.corporatesStore.corporateState.isLoadingRegistration
     }
 
     tryToSubmitForm() {
-        this.stores.errors.RESET_ERROR()
+        this.errorsStore.resetState()
         try {
             this.$v.$touch()
             if (this.$v.$invalid || !this.isPasswordValid) {
@@ -202,12 +202,12 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     }
 
     startRegistrationLoading() {
-        this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
+        this.corporatesStore.setIsLoadingRegistration(true)
     }
 
     @Emit()
     submitForm() {
-        this.stores.errors.RESET_ERROR()
+        this.errorsStore.resetState()
         return this.form
     }
 

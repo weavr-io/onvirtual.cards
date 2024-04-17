@@ -162,7 +162,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
     }
 
     handleError(e) {
-        this.stores.errors.SET_ERROR(e.response)
+        this.errorsStore.setError(e.response)
     }
 
     tryToSubmitForm(e) {

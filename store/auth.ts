@@ -16,7 +16,7 @@ import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authenticati
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
 import config from '~/config'
 
-const Cookie = (await import('js-cookie')).default
+const Cookie = process.client ? require('js-cookie') : undefined
 
 const initState = (): AuthState => {
     return {
