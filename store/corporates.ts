@@ -84,7 +84,6 @@ export const useCorporatesStore = defineStore('corporates', () => {
 
     const get = () => {
         setIsLoading(true)
-
         const req = root!.$apiMulti.corporates.show()
 
         req.then((res) => {

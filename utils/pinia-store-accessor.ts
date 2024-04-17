@@ -5,8 +5,6 @@ const modules: Record<string, any> = {}
 const { text } = new FormattingFiltersModule()
 const moduleFiles = (require as unknown as Require).context('@/store', true, /\.ts$/)
 
-const storePaths = ['./users.ts', './accounts.ts', './cards.ts']
-
 export function initialiseStores<T extends keyof StoreType>(
     storeNames: T[],
     resetOption?: boolean,
@@ -14,16 +12,13 @@ export function initialiseStores<T extends keyof StoreType>(
     const stores: Partial<{ [K in T]: StoreType[K] }> = {}
 
     moduleFiles.keys().forEach((path: string) => {
-        // TODO: Remove line after deleting index file
-        if (!storePaths.includes(path)) return
-
         // incase filename is not camel case already
         const moduleName = path.replace(/(\.\/|\.ts)/g, '')
         const module = moduleFiles(path)
 
         const exportName = `use${text.capitalizeFirstLetter(moduleName)}Store`
 
-        if (typeof module[exportName] === 'function') {
+        if (module[exportName] && typeof module[exportName] === 'function') {
             modules[moduleName] = module[exportName]()
         } else {
             throw new TypeError('Store module does not export a function by default.')
