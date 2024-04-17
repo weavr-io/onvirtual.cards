@@ -1,19 +1,16 @@
-import { Middleware } from '@nuxt/types'
-import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import type { Middleware } from '@nuxt/types'
+import { useBase } from '~/composables/useBase'
 
-const identitiesMiddleware: Middleware = async ({ store }) => {
+const { authStore, consumersStore, corporatesStore } = useBase()
+const identitiesMiddleware: Middleware = async () => {
     // this will run in async before every route change in order to populate identities respectively
 
-    if (authStore(store).isConsumer && consumersStore(store).consumer === null) {
-        await consumersStore(store)
-            .get()
-            .catch(() => {})
+    if (authStore.isConsumer && !consumersStore.consumerState.consumer) {
+        await consumersStore.get().catch(() => {})
     }
 
-    if (authStore(store).isCorporate && corporatesStore(store).corporate === null) {
-        await corporatesStore(store)
-            .get()
-            .catch(() => {})
+    if (authStore.isCorporate && !corporatesStore.corporateState.corporate) {
+        await corporatesStore.get().catch(() => {})
     }
 }
 

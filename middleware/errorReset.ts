@@ -1,5 +1,7 @@
-import { errorsStore } from '~/utils/store-accessor'
+import { useBase } from '~/composables/useBase'
 
-export default function (ctxt) {
-    return errorsStore(ctxt.store).RESET_ERROR()
+export default function () {
+    const { errorsStore } = useBase()
+
+    return errorsStore.resetState()
 }
