@@ -7,6 +7,7 @@ import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corpo
 import Countries from '~/static/json/countries.json'
 import { useAccessCodesStore } from '~/store/accessCodes'
 import { useAccountsStore } from '~/store/accounts'
+import { useLoaderStore } from '~/store/loader'
 import type { useUsersStore } from '~/store/users'
 import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
 import { initialiseStores } from '~/utils/store-accessor'
@@ -19,7 +20,7 @@ export default class BaseMixin extends Vue {
     }
 
     get accessCodes() {
-        return this.piniaStores(['accessCodes']) as useAccessCodesStore
+        return this.piniaStores(['accessCodes']).accessCodes as useAccessCodesStore
     }
 
     get accountsStore() {
@@ -28,6 +29,10 @@ export default class BaseMixin extends Vue {
 
     get usersStore() {
         return this.piniaStores(['users']).users as useUsersStore
+    }
+
+    get loaderStore() {
+        return this.piniaStores(['loader']).loader as useLoaderStore
     }
 
     get cardsStore() {
