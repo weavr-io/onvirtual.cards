@@ -1,179 +1,144 @@
-import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { DateTime } from 'luxon'
-import { StoreModule } from '~/store/storeModule'
-import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
-import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
+import { defineStore } from 'pinia'
+import { getCurrentInstance, reactive } from 'vue'
+import { computed } from '@nuxtjs/composition-api'
+import type { Cards as CardState } from '~/local/models/store/cards'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
-import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
-import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
+import { TransactionTypeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/enums/TransactionTypeEnum'
+import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
-import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
+import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 
-const defaultState = {
-    isLoading: false,
-    cards: null,
-    managedCard: null,
-    statements: null,
-    filteredStatement: {},
+const initState = (): CardState => {
+    return {
+        isLoading: false,
+        cards: null,
+        managedCard: null,
+        statements: null,
+        filteredStatement: {},
+    }
 }
 
-@Module({
-    name: 'cardsModule',
-    stateFactory: true,
-    namespaced: true,
-})
-export default class Cards extends StoreModule {
-    isLoading: boolean = defaultState.isLoading
+export const useCardsStore = defineStore('cards', () => {
+    const { proxy: root } = getCurrentInstance() || {}
+    const cardState: CardState = reactive(initState())
 
-    cards: PaginatedManagedCardsResponse | null = defaultState.cards
-
-    managedCard: ManagedCardModel | null = defaultState.managedCard
-
-    statements: StatementResponseModel | null = defaultState.statements
-
-    filteredStatement: any = defaultState.filteredStatement
-
-    get currency() {
-        if (this.cards == null) {
-            return null
-        } else if (this.cards.cards?.length) {
-            return this.cards.cards[0].currency
-        } else {
-            return null
-        }
-    }
-
-    get totalAvailableBalance() {
-        if (this.cards == null) {
-            return 0
-        }
-
+    const currency = computed(() =>
+        cardState.cards?.cards?.length ? cardState.cards.cards[0].currency : null,
+    )
+    const totalAvailableBalance = computed(() => {
         let total = 0
+        if (!cardState.cards) return total
 
-        this.cards.cards?.forEach((card) => {
+        cardState.cards.cards?.forEach((card: ManagedCardModel) => {
             if (card.balances?.availableBalance) {
                 total += card.balances.availableBalance
             }
         })
 
         return total
-    }
+    })
 
-    @Mutation
-    RESET_STATE() {
-        Object.keys(defaultState).forEach((key) => {
-            this[key] = defaultState[key]
+    const resetState = () => {
+        const data = initState()
+        Object.keys(data).forEach((key) => {
+            cardState[key] = data[key]
         })
     }
 
-    @Mutation
-    SET_FILTERED_STATEMENT() {
-        if (this.statements == null) {
-            return []
-        }
+    const setFilteredStatement = () => {
+        if (!cardState.statements) return []
 
-        const _entries = this.statements.entry?.filter((transaction) => {
+        const _entries = cardState.statements.entry?.filter((transaction) => {
             const _shouldDisplay = ![
-                'AUTHORISATION_REVERSAL',
-                'AUTHORISATION_EXPIRY',
-                'AUTHORISATION_DECLINE',
+                TransactionTypeEnum.AUTHORISATION_REVERSAL,
+                TransactionTypeEnum.AUTHORISATION_EXPIRY,
+                TransactionTypeEnum.AUTHORISATION_DECLINE,
             ].includes(transaction.transactionId.type)
 
-            if (!_shouldDisplay) {
-                return false
-            }
+            if (!_shouldDisplay) return false
 
-            if (transaction.transactionId.type === 'AUTHORISATION') {
-                if (transaction.additionalFields?.authorisationState === 'COMPLETED') {
+            if (transaction.transactionId.type === TransactionTypeEnum.AUTHORISATION) {
+                if (
+                    transaction.additionalFields?.authorisationState ===
+                    TransactionStateTypeEnum.COMPLETED
+                ) {
                     return false
                 }
             }
-
             return true
         })
-
         const _out = {}
-
         _entries?.forEach((_entry) => {
             if (_entry.processedTimestamp) {
                 const _processedTimestamp = parseInt(_entry.processedTimestamp)
-
-                const _date = DateTime.fromMillis(_processedTimestamp).startOf('day').toString()
-
+                // @ts-ignore
+                const _date = DateTime.fromJSDate(_processedTimestamp).startOf('day').toMillis()
                 if (!_out[_date]) {
                     _out[_date] = []
                 }
-
                 _out[_date].push(_entry)
             }
         })
 
-        this.filteredStatement = _out
+        cardState.filteredStatement = _out
     }
 
-    @Mutation
-    SET_CARDS(_cards: PaginatedManagedCardsResponse) {
-        this.cards = _cards
+    const setCards = (_cards: PaginatedManagedCardsResponse) => {
+        cardState.cards = _cards
     }
 
-    @Mutation
-    SET_IS_LOADING(_isLoading: boolean) {
-        this.isLoading = _isLoading
+    const setIsLoading = (_isLoading: boolean) => {
+        cardState.isLoading = _isLoading
     }
 
-    @Mutation
-    SET_STATEMENT(statements: StatementResponseModel | null) {
-        if (!statements) {
-            this.statements = statements
-        } else if (!this.statements?.entry) {
-            this.statements = statements
-        } else if (statements.entry) {
-            this.statements.entry.push(...statements.entry)
+    const setStatement = (statements: StatementResponseModel | null) => {
+        if (statements?.entry) {
+            return cardState.statements?.entry?.push(...statements.entry)
         }
+
+        return (cardState.statements = statements)
     }
 
-    @Mutation
-    RESET_STATEMENT() {
-        this.statements = null
+    const resetStatement = () => {
+        cardState.statements = null
     }
 
-    @Mutation
-    APPEND_STATEMENT(_statement: StatementResponseModel) {
-        if (this.statements === null) {
-            this.statements = _statement
-        } else {
-            _statement.entry!.forEach((_statementEntry) => {
-                this.statements?.entry!.push(_statementEntry)
+    const appendStatement = (_statement: StatementResponseModel) => {
+        if (cardState.statements) {
+            return _statement.entry!.forEach((_statementEntry) => {
+                cardState.statements?.entry!.push(_statementEntry)
             })
         }
+
+        cardState.statements = _statement
     }
 
-    @Mutation
-    SET_MANAGED_CARD(_card: ManagedCardModel) {
-        this.managedCard = _card
+    const setManagedCard = (_card: ManagedCardModel) => {
+        cardState.managedCard = _card
     }
 
-    @Mutation
-    CLEAR_MANAGED_CARD() {
-        this.managedCard = null
+    const clearManagedCard = () => {
+        cardState.managedCard = null
     }
 
-    @Action({ rawError: true })
-    getCards(filters?: GetManagedCardsRequest) {
-        const req = this.store.$apiMulti.managedCards.index(filters)
+    const getCards = (filters?: GetManagedCardsRequest) => {
+        const req = root!.$apiMulti.managedCards.index(filters)
 
         req.then((res) => {
-            this.SET_CARDS(res.data)
+            setCards(res.data)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    hasDestroyedCards() {
-        return this.store.$apiMulti.managedCards
+    const hasDestroyedCards = () => {
+        return root!.$apiMulti.managedCards
             .index({
                 state: ManagedInstrumentStateEnum.DESTROYED,
                 limit: 1,
@@ -184,100 +149,113 @@ export default class Cards extends StoreModule {
             })
     }
 
-    @Action({ rawError: true })
-    addCard(request: CreateManagedCardRequest) {
-        const req = this.store.$apiMulti.managedCards.store(request)
+    const addCard = (request: CreateManagedCardRequest) => {
+        const req = root!.$apiMulti.managedCards.store(request)
 
         req.finally(() => {
-            this.SET_IS_LOADING(false)
+            setIsLoading(false)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    update(params: { id: IDModel; request: UpdateManagedCardRequest }) {
-        const req = this.store.$apiMulti.managedCards.update(params)
+    const update = (params: { id: IDModel; request: UpdateManagedCardRequest }) => {
+        const req = root!.$apiMulti.managedCards.update(params)
 
         req.finally(() => {
-            this.SET_IS_LOADING(false)
+            setIsLoading(false)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    getCardStatement(req: ManagedCardStatementRequest) {
-        this.SET_IS_LOADING(true)
+    const getCardStatement = (req: ManagedCardStatementRequest) => {
+        setIsLoading(true)
 
-        const xhr = this.store.$apiMulti.managedCards.statement(req.id, req.request)
+        const xhr = root!.$apiMulti.managedCards.statement(req.id, req.request)
 
         xhr.then((res) => {
-            this.SET_STATEMENT(res.data)
-            this.SET_FILTERED_STATEMENT()
+            setStatement(res.data)
+            setFilteredStatement()
         }).finally(() => {
-            this.SET_IS_LOADING(false)
+            setIsLoading(false)
         })
 
         return xhr
     }
 
-    @Action({ rawError: true })
-    clearCardStatements() {
-        this.SET_STATEMENT(null)
+    const clearCardStatements = () => {
+        setStatement(null)
     }
 
-    @Action({ rawError: true })
-    getManagedCard(id: string) {
-        const req = this.store.$apiMulti.managedCards.show(id)
+    const getManagedCard = (id: string) => {
+        const req = root!.$apiMulti.managedCards.show(id)
 
         req.then((res) => {
-            this.SET_MANAGED_CARD(res.data)
+            setManagedCard(res.data)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    block(id) {
-        this.SET_IS_LOADING(true)
+    const block = (id: IDModel) => {
+        setIsLoading(true)
 
-        const req = this.store.$apiMulti.managedCards.block(id)
+        const req = root!.$apiMulti.managedCards.block(id)
 
         req.finally(() => {
-            this.SET_IS_LOADING(false)
+            setIsLoading(false)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    unblock(id) {
-        this.SET_IS_LOADING(true)
+    const unblock = (id: IDModel) => {
+        setIsLoading(true)
 
-        const req = this.store.$apiMulti.managedCards.unblock(id)
+        const req = root!.$apiMulti.managedCards.unblock(id)
 
         req.finally(() => {
-            this.SET_IS_LOADING(false)
+            setIsLoading(false)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    remove(id: string) {
-        this.SET_IS_LOADING(true)
+    const remove = (id: string) => {
+        setIsLoading(true)
 
-        const req = this.store.$apiMulti.managedCards.remove(id)
+        const req = root!.$apiMulti.managedCards.remove(id)
 
         req.then(() => {
-            this.CLEAR_MANAGED_CARD()
+            clearManagedCard()
         })
 
         req.finally(() => {
-            this.SET_IS_LOADING(false)
+            setIsLoading(false)
         })
 
         return req
     }
-}
+
+    return {
+        cardState,
+        currency,
+        totalAvailableBalance,
+        resetState,
+        resetStatement,
+        appendStatement,
+        getCards,
+        hasDestroyedCards,
+        addCard,
+        update,
+        getCardStatement,
+        clearCardStatements,
+        getManagedCard,
+        block,
+        unblock,
+        remove,
+    }
+})
+
+export type useCardsStore = ReturnType<typeof useCardsStore>

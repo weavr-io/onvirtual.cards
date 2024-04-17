@@ -15,7 +15,6 @@ import { StoreModule } from '~/store/storeModule'
 import { $axiosMulti } from '~/utils/api'
 import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
 import {
-    cardsStore,
     consumersStore,
     corporatesStore,
     identitiesStore,
@@ -126,10 +125,10 @@ export default class Auth extends StoreModule {
         corporatesStore(this.store).RESET_STATE()
         consumersStore(this.store).RESET_STATE()
         initialisePiniaStores(['accounts'], true)
-        cardsStore(this.store).RESET_STATE()
         identitiesStore(this.store).RESET_STATE()
         transfersStore(this.store).RESET_STATE()
         initialisePiniaStores(['users'], true)
+        initialisePiniaStores(['cards'], true)
     }
 
     @Action({ rawError: true })

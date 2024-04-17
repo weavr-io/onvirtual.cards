@@ -97,14 +97,14 @@ export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified)
 
     fetch() {
         return this.getCards(this.cardStateFilters).then(() => {
-            return this.stores.cards.hasDestroyedCards().then((res) => {
+            return this.cardsStore.hasDestroyedCards().then((res) => {
                 this.showDestroyedSwitch = res
             })
         })
     }
 
     async getCards(_state: ManagedInstrumentStateEnum[]) {
-        await this.stores.cards.getCards({
+        await this.cardsStore.getCards({
             state: _state.join(','),
         })
     }

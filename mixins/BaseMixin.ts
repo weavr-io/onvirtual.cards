@@ -11,6 +11,7 @@ import { useLoaderStore } from '~/store/loader'
 import type { useUsersStore } from '~/store/users'
 import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
 import { initialiseStores } from '~/utils/store-accessor'
+import { useCardsStore } from '~/store/cards'
 
 @Component
 export default class BaseMixin extends Vue {
@@ -32,6 +33,10 @@ export default class BaseMixin extends Vue {
 
     get loaderStore() {
         return this.piniaStores(['loader']).loader as useLoaderStore
+    }
+
+    get cardsStore() {
+        return this.piniaStores(['cards']).cards as useCardsStore
     }
 
     get isConsumer() {
