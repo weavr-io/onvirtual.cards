@@ -85,11 +85,11 @@ export const useConsumersStore = defineStore('consumers', () => {
         return req
     }
 
-    const get = () => {
+    const get = (multi = root!.$apiMulti) => {
         loader.start()
         setIsLoading(true)
 
-        const req = root!.$apiMulti.consumers.show()
+        const req = multi.consumers.show()
 
         req.then((_res) => {
             setConsumer(_res.data)
@@ -142,6 +142,7 @@ export const useConsumersStore = defineStore('consumers', () => {
     }
 
     return {
+        root,
         consumerState,
         regCountry,
         isUk,

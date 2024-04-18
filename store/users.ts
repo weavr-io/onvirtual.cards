@@ -19,6 +19,7 @@ const initState = (): UserState => {
 
 export const useUsersStore = defineStore('users', () => {
     const { proxy: root } = getCurrentInstance() || {}
+    console.log(root)
     const userState: UserState = reactive(initState())
 
     const resetState = () => {
