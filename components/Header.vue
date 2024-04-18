@@ -35,9 +35,9 @@ export default class Header extends mixins(BaseMixin) {
     fetch() {
         if (this.consumer === null && this.corporate === null) {
             if (this.isConsumer) {
-                this.stores.consumers.get()
+                this.consumersStore.get()
             } else if (this.isCorporate) {
-                this.stores.corporates.get()
+                this.corporatesStore.get()
             }
         }
     }

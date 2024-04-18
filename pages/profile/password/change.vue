@@ -193,10 +193,10 @@ export default class BundlesPage extends mixins(BaseMixin) {
             if (tokenizedOld && tokenizedNew) {
                 this.changePasswordRequest.oldPassword.value = tokenizedOld
                 this.changePasswordRequest.newPassword.value = tokenizedNew
-                this.stores.auth
+                this.authStore
                     .validatePassword({ password: this.changePasswordRequest.newPassword })
                     .then(() => {
-                        this.stores.auth
+                        this.authStore
                             .updatePassword(this.changePasswordRequest)
                             .then(() => {
                                 this.showSuccessToast('Password changed successfully')

@@ -23,10 +23,10 @@
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
 import Vue from 'vue'
-import { authStore } from '~/utils/store-accessor'
 import MobileComponent from '~/components/MobileComponent.vue'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 @Component({
     layout: 'auth',
@@ -38,12 +38,12 @@ import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentica
     middleware: ['kyVerified'],
 })
 export default class Mobile extends Vue {
-    async asyncData({ store, redirect }) {
-        const auth = authStore(store)
+    async asyncData({ redirect }) {
+        const { auth } = initialiseStores(['auth'])
 
-        await auth.indexAuthFactors()
+        await auth?.indexAuthFactors()
 
-        const smsAuthFactors = auth.authFactors?.factors?.filter(
+        const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
             (factor) => factor.channel === SCAOtpChannelEnum.SMS,
         )
 

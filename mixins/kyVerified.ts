@@ -10,14 +10,14 @@ export default class KyVerified extends mixins(BaseMixin) {
     }
 
     get showKybAlert() {
-        const _isCorporate = this.stores.auth.isCorporate
+        const _isCorporate = this.authStore.isCorporate
 
         if (!_isCorporate) {
             return false
         }
 
-        const _corporate = this.stores.corporates.corporate
-        const _corporateKyb = this.stores.corporates.kyb
+        const _corporate = this.corporatesStore.corporateState.corporate
+        const _corporateKyb = this.corporatesStore.corporateState.kyb
 
         if (_corporate && _corporateKyb) {
             return _corporateKyb.kybStatus !== KYBStatusEnum.APPROVED
@@ -27,14 +27,14 @@ export default class KyVerified extends mixins(BaseMixin) {
     }
 
     get showKycAlert() {
-        const _isConsumer = this.stores.auth.isConsumer
+        const _isConsumer = this.authStore.isConsumer
 
         if (!_isConsumer) {
             return false
         }
 
-        const _consumer = this.stores.consumers.consumer
-        const _consumerKyc = this.stores.consumers.kyc
+        const _consumer = this.consumersStore.consumerState.consumer
+        const _consumerKyc = this.consumersStore.consumerState.kyc
 
         if (this.showVerifyMobileAlert) {
             return false
@@ -48,10 +48,10 @@ export default class KyVerified extends mixins(BaseMixin) {
     }
 
     get showVerifyMobileAlert() {
-        return this.stores.identities.mobileNumberVerified === false
+        return this.identityStore.identityState.mobileNumberVerified === false
     }
 
     get showVerifyEmailAlert() {
-        return this.stores.identities.emailVerified === false
+        return this.identityStore.identityState.emailVerified === false
     }
 }

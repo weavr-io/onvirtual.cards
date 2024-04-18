@@ -138,11 +138,11 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
         this.showAlert()
         this.isLoading = true
         if (this.verifyPhone) {
-            await this.stores.auth
+            await this.authStore
                 .enrollAuthFactors(SCAOtpChannelEnum.SMS)
                 .finally(() => (this.isLoading = false))
         } else {
-            await this.stores.auth
+            await this.authStore
                 .enrollStepUp(SCAOtpChannelEnum.SMS)
                 .then(() => localStorage.setItem('scaSmsSent', 'TRUE'))
                 .finally(() => (this.isLoading = false))
@@ -165,16 +165,16 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
 
         try {
             if (this.verifyPhone) {
-                await this.stores.auth
+                await this.authStore
                     .verifyAuthFactors(req)
                     .then(() => {
-                        this.stores.identities.SET_MOBILE_VERIFIED(true)
+                        this.identityStore.setMobileVerified(true)
                         this.getConsumersOrCorporates()
                     })
                     .finally(() => {
                         this.isLoading = false
                     })
-                await this.stores.auth.indexAuthFactors()
+                await this.authStore.indexAuthFactors()
                 await this.$router.push({
                     path: '/login/sca',
                     query: {
@@ -182,7 +182,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
                     },
                 })
             } else {
-                await this.stores.auth
+                await this.authStore
                     .verifyStepUp(req)
                     .then(() => {
                         localStorage.setItem('stepUp', 'TRUE')
@@ -197,7 +197,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
     }
 
     getConsumersOrCorporates() {
-        return this.isConsumer ? this.stores.consumers.get() : this.stores.corporates.get()
+        return this.isConsumer ? this.consumersStore.get() : this.corporatesStore.get()
     }
 
     countDownChanged(dismissCountDown) {

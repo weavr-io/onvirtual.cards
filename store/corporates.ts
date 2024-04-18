@@ -1,159 +1,157 @@
-import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { StoreModule } from '~/store/storeModule'
-import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
-import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
+import { defineStore } from 'pinia'
+import { reactive, computed } from 'vue'
+import { useStore } from '@nuxtjs/composition-api'
+import type { Corporates as CorporateState } from '~/local/models/store/corporates'
+import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
+import type { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
+import type { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import type { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import type { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
+import type { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import { identitiesStore } from '~/utils/store-accessor'
-import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
-import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
-import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 import { PUK_COUNTRY_CODES } from '~/utils/jurisdiction'
-
-const defaultState = {
-    isLoading: false,
-    isLoadingRegistration: false,
-    corporate: null,
-    kyb: null,
+import { useIdentityStore } from '~/store/identity'
+const initState = (): CorporateState => {
+    return {
+        isLoading: false,
+        isLoadingRegistration: false,
+        corporate: null,
+        kyb: null,
+    }
 }
 
-@Module({
-    name: 'corporatesModule',
-    stateFactory: true,
-    namespaced: true,
-})
-export default class Corporates extends StoreModule {
-    isLoading: boolean = defaultState.isLoading
+export const useCorporatesStore = defineStore('corporates', () => {
+    const { $apiMulti } = useStore()
+    const identity = useIdentityStore()
+    const corporateState: CorporateState = reactive(initState())
 
-    isLoadingRegistration: boolean = defaultState.isLoadingRegistration
+    const regCountry = computed(() => corporateState.corporate?.company.countryOfRegistration ?? '')
+    const isUk = computed(() => PUK_COUNTRY_CODES.includes(regCountry.value))
 
-    corporate: CorporateModel | null = defaultState.corporate
-
-    kyb: GetCorporateKYBResponse | null = defaultState.corporate
-
-    get regCountry() {
-        return this.corporate?.company.countryOfRegistration || ''
+    const setIsLoading = (_isLoading: boolean) => {
+        corporateState.isLoading = _isLoading
     }
 
-    get isUk() {
-        return PUK_COUNTRY_CODES.includes(this.regCountry)
+    const setIsLoadingRegistration = (_isLoadingRegistration: boolean) => {
+        corporateState.isLoadingRegistration = _isLoadingRegistration
     }
 
-    @Mutation
-    SET_IS_LOADING(_isLoading: boolean) {
-        this.isLoading = _isLoading
-    }
-
-    @Mutation
-    SET_IS_LOADING_REGISTRATION(_isLoadingRegistration: boolean) {
-        this.isLoadingRegistration = _isLoadingRegistration
-    }
-
-    @Mutation
-    RESET_STATE() {
-        Object.keys(defaultState).forEach((key) => {
-            this[key] = defaultState[key]
+    const resetState = () => {
+        const data = initState()
+        Object.keys(data).forEach((key) => {
+            corporateState[key] = data[key]
         })
     }
 
-    @Mutation
-    SET_CORPORATE(corporate: CorporateModel) {
-        this.corporate = corporate
+    const setCorporate = (corporate: CorporateModel) => {
+        corporateState.corporate = corporate
     }
 
-    @Mutation
-    SET_KYB(kyb: GetCorporateKYBResponse) {
-        this.kyb = kyb
+    const setKyb = (kyb: GetCorporateKYBResponse) => {
+        corporateState.kyb = kyb
     }
 
-    @Action({ rawError: true })
-    create(request: CreateCorporateRequest) {
-        this.SET_IS_LOADING(true)
+    const create = (request: CreateCorporateRequest) => {
+        setIsLoading(true)
 
-        const req = this.store.$apiMulti.corporates.store(request)
+        const req = $apiMulti.corporates.store(request)
 
         req.then((res) => {
-            identitiesStore(this.store).SET_IDENTITY(res.data)
-            this.SET_CORPORATE(res.data)
-            this.SET_IS_LOADING(false)
+            identity.setIdentity(res.data)
+            setCorporate(res.data)
+            setIsLoading(false)
         })
         req.finally(() => {
-            this.SET_IS_LOADING(false)
+            setIsLoading(false)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    update(request: UpdateCorporateRequest) {
-        const req = this.store.$apiMulti.corporates.update(request)
+    const update = (request: UpdateCorporateRequest) => {
+        const req = $apiMulti.corporates.update(request)
         req.then((_res) => {
-            this.SET_CORPORATE(_res.data)
-            identitiesStore(this.store).SET_IDENTITY(_res.data)
+            setCorporate(_res.data)
+            identity.setIdentity(_res.data)
         })
 
         req.finally(() => {
-            this.SET_IS_LOADING(false)
+            setIsLoading(false)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    get() {
-        this.SET_IS_LOADING(true)
-
-        const req = this.store.$apiMulti.corporates.show()
+    const get = () => {
+        setIsLoading(true)
+        const req = $apiMulti.corporates.show()
 
         req.then((res) => {
-            this.SET_CORPORATE(res.data)
-            identitiesStore(this.store).SET_IDENTITY(res.data)
+            setCorporate(res.data)
+            identity.setIdentity(res.data)
         })
         req.finally(() => {
-            this.SET_IS_LOADING(false)
+            setIsLoading(false)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    getKyb() {
-        const req = this.store.$apiMulti.corporates.getCorporateKYB()
+    const getKyb = () => {
+        const req = $apiMulti.corporates.getCorporateKYB()
         req.then((res) => {
-            this.SET_KYB(res.data)
+            setKyb(res.data)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    verifyEmail(request: VerifyEmailRequest) {
-        return this.store.$apiMulti.corporates.verifyEmail(request)
+    const verifyEmail = (request: VerifyEmailRequest) => {
+        return $apiMulti.corporates.verifyEmail(request)
     }
 
-    @Action({ rawError: true })
-    sendVerificationCodeEmail(request: SendVerificationCodeRequest) {
-        return this.store.$apiMulti.corporates.sendVerificationCode(request)
+    const sendVerificationCodeEmail = (request: SendVerificationCodeRequest) => {
+        return $apiMulti.corporates.sendVerificationCode(request)
     }
 
-    @Action({ rawError: true })
-    async checkKYB() {
-        if (!this.corporate) {
-            await this.get()
-        }
-        if (!this.kyb) {
-            await this.getKyb()
+    const checkKYB = async () => {
+        if (!corporateState.corporate) {
+            await get()
         }
 
-        if (this.kyb?.kybStatus !== KYBStatusEnum.APPROVED) {
+        if (!corporateState.kyb) {
+            await getKyb()
+        }
+
+        if (corporateState.kyb?.kybStatus !== KYBStatusEnum.APPROVED) {
             return Promise.reject(new Error('KYB not approved'))
-        } else {
-            return Promise.resolve()
         }
+
+        return Promise.resolve()
     }
 
-    @Action({ rawError: true })
-    startKYB() {
-        return this.store.$apiMulti.corporates.startKYB()
+    const startKYB = () => {
+        return $apiMulti.corporates.startKYB()
     }
-}
+
+    return {
+        corporateState,
+        regCountry,
+        isUk,
+        setIsLoading,
+        setIsLoadingRegistration,
+        resetState,
+        setCorporate,
+        setKyb,
+        create,
+        update,
+        get,
+        getKyb,
+        verifyEmail,
+        sendVerificationCodeEmail,
+        checkKYB,
+        startKYB,
+    }
+})
+
+export type useCorporatesStore = ReturnType<typeof useCorporatesStore>

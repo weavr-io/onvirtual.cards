@@ -13,7 +13,7 @@ import Logo from '~/components/Logo.vue'
 import AccessCodeComponent from '~/components/registration/AccessCodeComponent.vue'
 import BusinessOrPersonalComponent from '~/components/registration/BusinessOrPersonalComponent.vue'
 import BaseMixin from '~/mixins/BaseMixin'
-import { authStore } from '~/utils/store-accessor'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 @Component({
     components: {
@@ -29,8 +29,9 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         return this.accessCodes.isValid
     }
 
-    asyncData({ store, redirect }) {
-        const isLoggedIn = authStore(store).isLoggedIn
+    asyncData({ redirect }) {
+        const { auth } = initialiseStores(['auth'])
+        const isLoggedIn = auth?.isLoggedIn
 
         if (isLoggedIn) {
             redirect('/dashboard')

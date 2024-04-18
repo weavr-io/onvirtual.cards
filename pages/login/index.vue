@@ -81,13 +81,13 @@
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
-import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { authStore } from '~/utils/store-accessor'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import Logo from '~/components/Logo.vue'
+import BaseMixin from '~/mixins/BaseMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 @Component({
     layout: 'auth',
@@ -156,11 +156,11 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
         if (!this.$v.$invalid) {
             try {
                 this.isLoading = true
-                this.stores.errors.SET_ERROR(null)
+                this.errorsStore.setError(null)
                 this.passwordField.createToken().then(
                     (tokens) => {
                         this.loginRequest.password.value = tokens.tokens.password
-                        this.stores.auth
+                        this.authStore
                             .loginWithPassword(this.loginRequest)
                             .then(() => {
                                 localStorage.setItem('stepUp', 'FALSE')
@@ -169,7 +169,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
                             })
                             .catch((err) => {
                                 this.isLoading = false
-                                this.stores.errors.SET_ERROR(err)
+                                this.errorsStore.setError(err)
                             })
                     },
                     (e) => {
@@ -183,11 +183,11 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     async goToDashboard() {
-        if (this.stores.auth.isConsumer) {
-            await this.stores.consumers.get()
+        if (this.authStore.isConsumer) {
+            await this.consumersStore.get()
         }
 
-        await this.stores.auth.indexAuthFactors()
+        await this.authStore.indexAuthFactors()
 
         await this.$router.push({
             path: '/login/sca',
@@ -198,8 +198,9 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
         this.isLoading = false
     }
 
-    asyncData({ store, redirect }) {
-        const isLoggedIn = authStore(store).isLoggedIn
+    asyncData({ redirect }) {
+        const { auth } = initialiseStores(['auth'])
+        const isLoggedIn = auth?.isLoggedIn
 
         if (isLoggedIn) {
             redirect('/')

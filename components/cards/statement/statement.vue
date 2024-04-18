@@ -195,7 +195,7 @@ export default class CardStatement extends mixins(
                             amount: this.managedCard.balances.availableBalance,
                         },
                     }
-                    await this.stores.transfers.execute(_request)
+                    await this.transfersStore.execute(_request)
                 }
             }
             await this.cardsStore.remove(this.cardId).then(() => {

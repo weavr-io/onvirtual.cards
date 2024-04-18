@@ -27,6 +27,10 @@ declare module 'vuex/types/index' {
 
 const weavrMultiPlugin: Plugin = (_context, _inject) => {
     _inject('apiMulti', new ApiModule())
+    // @ts-ignore
+    _context.$pinia.use(() => {
+        return { $apiMulti: _context.$apiMulti }
+    })
 }
 
 export default weavrMultiPlugin
