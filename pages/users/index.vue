@@ -35,16 +35,22 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { Component, Vue } from 'nuxt-property-decorator'
+import { useStores } from '~/composables/useStores'
+import type { useUsersStore } from '~/store/users'
 
 @Component({ middleware: ['kyVerified'] })
-export default class UsersPage extends mixins(BaseMixin) {
+export default class UsersPage extends Vue {
     mainProps = {
         blank: true,
         blankColor: '#EAEDF6',
         width: 45,
         height: 45,
+    }
+
+    // TODO: remove after changing to composition api
+    get usersStore() {
+        return useStores(['users']).users as useUsersStore
     }
 
     get users() {

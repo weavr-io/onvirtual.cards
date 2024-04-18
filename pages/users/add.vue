@@ -65,7 +65,6 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
 import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -94,7 +93,7 @@ import { Nullable } from '~/global'
     },
     middleware: ['kyVerified'],
 })
-export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
+export default class AddCardPage extends mixins(ValidationMixin) {
     isLoading = false
 
     request: Nullable<CreateUserRequestModel> = {
