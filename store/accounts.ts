@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { defineStore } from 'pinia'
-import { computed, getCurrentInstance, reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import type { Accounts as AccountState } from '~/local/models/store/accounts'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
@@ -13,6 +13,7 @@ import { TransactionTypeEnum } from '~/plugins/weavr-multi/api/models/managed-in
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
+import { useAuthStore } from '~/store/auth'
 
 const initState = (): AccountState => {
     return {
@@ -24,7 +25,7 @@ const initState = (): AccountState => {
 }
 
 export const useAccountsStore = defineStore('accounts', () => {
-    const { proxy: root } = getCurrentInstance() || {}
+    const store = useAuthStore()
     const accountState: AccountState = reactive(initState())
 
     const totalAvailableBalance = computed(() => {
@@ -117,7 +118,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const index = (filters: GetManagedAccountsRequest) => {
-        const req = root!.$apiMulti.managedAccounts.index(filters)
+        const req = store.$nuxt.$apiMulti.managedAccounts.index(filters)
 
         req.then((res) => {
             setAccounts(res.data)
@@ -130,13 +131,13 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const create = (request: CreateManagedAccountRequest) => {
-        const req = root!.$apiMulti.managedAccounts.store(request)
+        const req = store.$nuxt.$apiMulti.managedAccounts.store(request)
 
         return req
     }
 
     const get = (id: string) => {
-        const req = root!.$apiMulti.managedAccounts.show(id)
+        const req = store.$nuxt.$apiMulti.managedAccounts.show(id)
 
         req.then((res) => {
             setAccount(res.data)
@@ -146,7 +147,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const getStatements = (request: { id: string; filters: GetManagedAccountStatementRequest }) => {
-        const req = root!.$apiMulti.managedAccounts.statement(request)
+        const req = store.$nuxt.$apiMulti.managedAccounts.statement(request)
 
         req.then((res) => {
             setStatements(res.data)
@@ -156,7 +157,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const getIBANDetails = (id: IDModel) => {
-        const req = root!.$apiMulti.managedAccounts.retrieveIban(id)
+        const req = store.$nuxt.$apiMulti.managedAccounts.retrieveIban(id)
 
         req.then((res) => {
             setIban(res.data)
@@ -166,7 +167,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const upgradeIban = (id: IDModel) => {
-        const req = root!.$apiMulti.managedAccounts.assignIban(id)
+        const req = store.$nuxt.$apiMulti.managedAccounts.assignIban(id)
 
         req.then((res) => {
             setIban(res.data)

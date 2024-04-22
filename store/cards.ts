@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getCurrentInstance, reactive } from 'vue'
+import { reactive } from 'vue'
 import { computed } from '@nuxtjs/composition-api'
 import type { Cards as CardState } from '~/local/models/store/cards'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
@@ -13,6 +13,7 @@ import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/manag
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import { useAuthStore } from '~/store/auth'
 
 const initState = (): CardState => {
     return {
@@ -25,7 +26,7 @@ const initState = (): CardState => {
 }
 
 export const useCardsStore = defineStore('cards', () => {
-    const { proxy: root } = getCurrentInstance() || {}
+    const store = useAuthStore()
     const cardState: CardState = reactive(initState())
 
     const currency = computed(() =>
@@ -128,7 +129,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const getCards = (filters?: GetManagedCardsRequest) => {
-        const req = root!.$apiMulti.managedCards.index(filters)
+        const req = store.$nuxt.$apiMulti.managedCards.index(filters)
 
         req.then((res) => {
             setCards(res.data)
@@ -138,7 +139,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const hasDestroyedCards = () => {
-        return root!.$apiMulti.managedCards
+        return store.$nuxt.$apiMulti.managedCards
             .index({
                 state: ManagedInstrumentStateEnum.DESTROYED,
                 limit: 1,
@@ -150,7 +151,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const addCard = (request: CreateManagedCardRequest) => {
-        const req = root!.$apiMulti.managedCards.store(request)
+        const req = store.$nuxt.$apiMulti.managedCards.store(request)
 
         req.finally(() => {
             setIsLoading(false)
@@ -160,7 +161,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const update = (params: { id: IDModel; request: UpdateManagedCardRequest }) => {
-        const req = root!.$apiMulti.managedCards.update(params)
+        const req = store.$nuxt.$apiMulti.managedCards.update(params)
 
         req.finally(() => {
             setIsLoading(false)
@@ -172,7 +173,7 @@ export const useCardsStore = defineStore('cards', () => {
     const getCardStatement = (req: ManagedCardStatementRequest) => {
         setIsLoading(true)
 
-        const xhr = root!.$apiMulti.managedCards.statement(req.id, req.request)
+        const xhr = store.$nuxt.$apiMulti.managedCards.statement(req.id, req.request)
 
         xhr.then((res) => {
             setStatement(res.data)
@@ -189,7 +190,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const getManagedCard = (id: string) => {
-        const req = root!.$apiMulti.managedCards.show(id)
+        const req = store.$nuxt.$apiMulti.managedCards.show(id)
 
         req.then((res) => {
             setManagedCard(res.data)
@@ -201,7 +202,7 @@ export const useCardsStore = defineStore('cards', () => {
     const block = (id: IDModel) => {
         setIsLoading(true)
 
-        const req = root!.$apiMulti.managedCards.block(id)
+        const req = store.$nuxt.$apiMulti.managedCards.block(id)
 
         req.finally(() => {
             setIsLoading(false)
@@ -213,7 +214,7 @@ export const useCardsStore = defineStore('cards', () => {
     const unblock = (id: IDModel) => {
         setIsLoading(true)
 
-        const req = root!.$apiMulti.managedCards.unblock(id)
+        const req = store.$nuxt.$apiMulti.managedCards.unblock(id)
 
         req.finally(() => {
             setIsLoading(false)
@@ -225,7 +226,7 @@ export const useCardsStore = defineStore('cards', () => {
     const remove = (id: string) => {
         setIsLoading(true)
 
-        const req = root!.$apiMulti.managedCards.remove(id)
+        const req = store.$nuxt.$apiMulti.managedCards.remove(id)
 
         req.then(() => {
             clearManagedCard()

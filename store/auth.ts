@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive, computed, getCurrentInstance } from 'vue'
+import { computed, reactive } from 'vue'
 import { $axiosMulti } from '~/utils/api'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import type { Auth as AuthState } from '~/local/models/store/auth'
@@ -27,7 +27,8 @@ const initState = (): AuthState => {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-    const { proxy: root } = getCurrentInstance() || {}
+    const store = useAuthStore()
+
     const authState: AuthState = reactive(initState())
 
     const isLoggedIn = computed(() => authState.auth && authState.auth.token)
@@ -71,10 +72,10 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const loginWithPassword = (request: LoginWithPasswordRequest) => {
-        const _req = root!.$apiMulti.authentication.loginWithPassword(request)
+        const _req = store.$nuxt.$apiMulti.authentication.loginWithPassword(request)
 
         _req.then((res) => {
-            root!.$weavrSetUserToken('Bearer ' + res.data.token)
+            store.$nuxt.$weavrSetUserToken('Bearer ' + res.data.token)
             setAuth(res.data)
         })
 
@@ -82,7 +83,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const resetTokenAndStates = () => {
-        root!.$weavrSetUserToken(null)
+        store.$nuxt.$weavrSetUserToken(null)
         removeAuth(null)
         resetState()
         // TODO: refactor this if list gets too long
@@ -93,7 +94,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const logout = () => {
-        const _req = root!.$apiMulti.authentication.logout()
+        const _req = store.$nuxt.$apiMulti.authentication.logout()
 
         _req.finally(() => {
             resetTokenAndStates()
@@ -103,7 +104,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const updatePassword = (request: UpdatePasswordRequestModel) => {
-        const _req = root!.$apiMulti.passwords.update(request)
+        const _req = store.$nuxt.$apiMulti.passwords.update(request)
 
         _req.then((res) => {
             setToken(res.data)
@@ -113,7 +114,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const indexAuthFactors = () => {
-        const _req = root!.$apiMulti.additionalFactors.index()
+        const _req = store.$nuxt.$apiMulti.additionalFactors.index()
 
         _req.then((res) => {
             setAuthFactors(res.data)
@@ -123,13 +124,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const enrollAuthFactors = (channel: SCAOtpChannelEnum) => {
-        const _req = root!.$apiMulti.additionalFactors.enroll(channel)
+        const _req = store.$nuxt.$apiMulti.additionalFactors.enroll(channel)
 
         return _req
     }
 
     const enrollStepUp = (channel: SCAOtpChannelEnum) => {
-        const _req = root!.$apiMulti.stepUp.enroll(channel)
+        const _req = store.$nuxt.$apiMulti.stepUp.enroll(channel)
 
         return _req
     }
@@ -138,7 +139,7 @@ export const useAuthStore = defineStore('auth', () => {
         channel: SCAOtpChannelEnum
         body: AuthVerifyEnrolRequest
     }) => {
-        const _req = root!.$apiMulti.additionalFactors.verify(request)
+        const _req = store.$nuxt.$apiMulti.additionalFactors.verify(request)
 
         return _req
     }
@@ -147,25 +148,25 @@ export const useAuthStore = defineStore('auth', () => {
         channel: SCAOtpChannelEnum
         body: AuthVerifyEnrolRequest
     }) => {
-        const _req = root!.$apiMulti.stepUp.verify(request)
+        const _req = store.$nuxt.$apiMulti.stepUp.verify(request)
 
         return _req
     }
 
     const lostPasswordInitiate = (request: InitiateLostPasswordRequestModel) => {
-        const _req = root!.$apiMulti.passwords.initiate(request)
+        const _req = store.$nuxt.$apiMulti.passwords.initiate(request)
 
         return _req
     }
 
     const lostPasswordResume = (request: ResumeLostPasswordRequestModel) => {
-        const _req = root!.$apiMulti.passwords.resume(request)
+        const _req = store.$nuxt.$apiMulti.passwords.resume(request)
 
         return _req
     }
 
     const validatePassword = (request: ValidatePasswordRequestModel) => {
-        const _req = root!.$apiMulti.passwords.validate(request)
+        const _req = store.$nuxt.$apiMulti.passwords.validate(request)
 
         return _req
     }
