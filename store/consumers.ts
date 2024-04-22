@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, getCurrentInstance, reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import type { Consumers as ConsumerState } from '~/local/models/store/consumers'
 import type { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 import type { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
@@ -11,6 +11,7 @@ import type { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/id
 import { useIdentityStore } from '~/store/identity'
 import { useLoaderStore } from '~/store/loader'
 import { PUK_COUNTRY_CODES } from '~/utils/jurisdiction'
+import { useAuthStore } from '~/store/auth'
 
 const initState = (): ConsumerState => {
     return {
@@ -22,7 +23,7 @@ const initState = (): ConsumerState => {
 }
 
 export const useConsumersStore = defineStore('consumers', () => {
-    const { proxy: root } = getCurrentInstance() || {}
+    const store = useAuthStore()
     const loader = useLoaderStore()
     const identity = useIdentityStore()
     const consumerState: ConsumerState = reactive(initState())
@@ -56,7 +57,7 @@ export const useConsumersStore = defineStore('consumers', () => {
     const create = (request: CreateConsumerRequest) => {
         loader.start()
 
-        const req = root!.$apiMulti.consumers.store(request)
+        const req = store.$nuxt.$apiMulti.consumers.store(request)
 
         req.then((_res) => {
             setConsumer(_res.data)
@@ -72,7 +73,7 @@ export const useConsumersStore = defineStore('consumers', () => {
     }
 
     const update = (request: UpdateConsumerRequest) => {
-        const req = root!.$apiMulti.consumers.update(request)
+        const req = store.$nuxt.$apiMulti.consumers.update(request)
         req.then((_res) => {
             setConsumer(_res.data)
             identity.setIdentity(_res.data)
@@ -85,7 +86,7 @@ export const useConsumersStore = defineStore('consumers', () => {
         return req
     }
 
-    const get = (multi = root!.$apiMulti) => {
+    const get = (multi = store.$nuxt.$apiMulti) => {
         loader.start()
         setIsLoading(true)
 
@@ -103,7 +104,7 @@ export const useConsumersStore = defineStore('consumers', () => {
     }
 
     const getKYC = () => {
-        const req = root!.$apiMulti.consumers.showKYC()
+        const req = store.$nuxt.$apiMulti.consumers.showKYC()
         req.then((res) => {
             setKyc(res.data)
         })
@@ -128,21 +129,20 @@ export const useConsumersStore = defineStore('consumers', () => {
     }
 
     const verifyEmail = (request: VerifyEmailRequest) => {
-        return root!.$apiMulti.consumers.verifyEmail(request)
+        return store.$nuxt.$apiMulti.consumers.verifyEmail(request)
     }
 
     const sendVerificationCodeEmail = (request: SendVerificationCodeRequest) => {
-        return root!.$apiMulti.consumers.sendVerificationCode(request)
+        return store.$nuxt.$apiMulti.consumers.sendVerificationCode(request)
     }
 
     const startKYC = () => {
-        const _res = root!.$apiMulti.consumers.startKYC()
+        const _res = store.$nuxt.$apiMulti.consumers.startKYC()
 
         return _res
     }
 
     return {
-        root,
         consumerState,
         regCountry,
         isUk,

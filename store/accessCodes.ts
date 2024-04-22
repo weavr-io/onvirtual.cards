@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
-import { getCurrentInstance, ref } from 'vue'
+import { ref } from 'vue'
 import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
+import { useAuthStore } from '~/store/auth'
 
 export const useAccessCodesStore = defineStore('accessCodes', () => {
-    const { proxy: root } = getCurrentInstance() || {}
+    const store = useAuthStore()
     const isValid = ref<boolean>(false)
 
     const setAccessCode = (code: string) => {
@@ -16,7 +17,7 @@ export const useAccessCodesStore = defineStore('accessCodes', () => {
     }
 
     const verifyAccessCode = (request: AccessCodeModel) => {
-        const req = root!.$apiMulti.accessCodes.verifyAccessCode(request)
+        const req = store.$nuxt.$apiMulti.accessCodes.verifyAccessCode(request)
 
         req.then(() => {
             if (request.code) {
