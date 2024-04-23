@@ -135,7 +135,6 @@ import { Nullable } from '~/global'
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
         RegistrationNav: () => import('~/components/registration/RegistrationNav.vue'),
-        ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
     },
     middleware: ['authRouteGuard'],
 })
