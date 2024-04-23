@@ -12,7 +12,7 @@
             variant="bg-colored"
         >
             We need to verify your mobile number. Please click
-            <b-link to="/login/verify/mobile" class="link"> here. </b-link>
+            <b-link class="link" to="/login/verify/mobile"> here.</b-link>
         </b-alert>
         <b-alert
             id="verify-email"
@@ -21,7 +21,7 @@
             variant="bg-colored"
         >
             We need to verify your email address. Please click
-            <b-button variant="transparent" class="link mb-1" @click="goToVerify">here.</b-button>
+            <b-button class="link mb-1" variant="transparent" @click="goToVerify">here.</b-button>
         </b-alert>
         <div v-if="isLoading" id="loader">
             <div class="loader-spinner">
@@ -39,7 +39,6 @@ import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
     components: {
-        AppFooter: () => import('~/components/Footer.vue'),
         AppHeader: () => import('~/components/Header.vue'),
         DashboardHeader: () => import('~/components/DashboardHeader.vue'),
         KybAlert: () => import('~/components/corporates/KYBAlert.vue'),

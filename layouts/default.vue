@@ -7,7 +7,6 @@
                 <b-spinner />
             </div>
         </div>
-        <!-- <app-footer /> -->
         <cookie-policy />
     </div>
 </template>
@@ -18,7 +17,6 @@ import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
     components: {
-        AppFooter: () => import('~/components/Footer.vue'),
         AppHeader: () => import('~/components/Header.vue'),
         cookiePolicy: () => import('~/components/cookie.vue'),
     },
