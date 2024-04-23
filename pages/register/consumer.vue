@@ -221,9 +221,9 @@
                                 </div>
                                 <b-row align-v="center" class="mt-4">
                                     <b-col class="text-center">
-                                        <loader-button
+                                        <LoaderButton
                                             :is-loading="isLoadingRegistration"
-                                            button-text="continue"
+                                            text="continue"
                                         />
                                     </b-col>
                                 </b-row>
@@ -319,7 +319,7 @@ const touchMap = new WeakMap()
     components: {
         LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
         RegistrationNav: () => import('~/components/registration/RegistrationNav.vue'),
         ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
         DobPicker: () => import('~/components/fields/dob-picker.vue'),

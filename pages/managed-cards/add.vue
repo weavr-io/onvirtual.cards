@@ -118,11 +118,11 @@
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
-                                <loader-button
+                                <LoaderButton
                                     :disabled="$v.$invalid || numberIsValid === false"
                                     :is-loading="localIsBusy"
-                                    button-text="next"
                                     class="mt-5 text-center"
+                                    text="next"
                                 />
                             </b-form>
                         </b-card-body>
@@ -147,7 +147,7 @@ import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/con
 @Component({
     components: {
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
     validations: {
         createManagedCardRequest: {

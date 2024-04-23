@@ -27,8 +27,6 @@ import LogoOvc from '~/components/atoms/LogoOvc.vue'
     components: {
         LogoOvc,
         MobileComponent,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
     },
     middleware: ['kyVerified'],
 })

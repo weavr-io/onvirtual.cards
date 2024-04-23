@@ -28,11 +28,7 @@
                         This field must be a valid mobile number.
                     </b-form-invalid-feedback>
                 </b-form-group>
-                <loader-button
-                    :is-loading="isLoading"
-                    button-text="save number"
-                    class="text-center mt-5"
-                />
+                <LoaderButton :is-loading="isLoading" class="text-center mt-5" text="save number" />
             </b-form>
         </b-card>
     </b-col>
@@ -72,7 +68,7 @@ import LogoOvc from '~/components/atoms/LogoOvc.vue'
     },
     components: {
         LogoOvc,
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
     middleware: ['kyVerified'],
 })

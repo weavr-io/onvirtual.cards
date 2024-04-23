@@ -43,7 +43,7 @@ import LogoOvc from '~/components/atoms/LogoOvc.vue'
     layout: 'auth',
     components: {
         LogoOvc,
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
         RegisterForm: () => import('~/components/registration/RegisterForm.vue'),
         PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
         RegistrationNav: () => import('~/components/registration/RegistrationNav.vue'),

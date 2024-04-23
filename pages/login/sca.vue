@@ -27,7 +27,7 @@ import LogoOvc from '~/components/atoms/LogoOvc.vue'
         LogoOvc,
         MobileComponent,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
 })
 export default class Sca extends Vue {

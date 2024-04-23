@@ -60,10 +60,10 @@
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
-                                <loader-button
+                                <LoaderButton
                                     :is-loading="isLoading"
-                                    button-text="next"
                                     class="mt-5 text-center"
+                                    text="next"
                                 />
                             </b-form>
                         </b-card-body>
@@ -80,11 +80,12 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import BaseMixin from '~/mixins/BaseMixin'
 import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({
     components: {
+        LoaderButton,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
     },
     validations: {
         updateManagedCardRequest: {

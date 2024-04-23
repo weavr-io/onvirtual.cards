@@ -33,11 +33,7 @@
                             </b-form-group>
                         </b-col>
                     </b-row>
-                    <loader-button
-                        :is-loading="isLoading"
-                        button-text="verify"
-                        class="mt-5 text-center"
-                    />
+                    <LoaderButton :is-loading="isLoading" class="mt-5 text-center" text="verify" />
                 </form>
                 <div class="mt-4 text-center">
                     <small class="text-grey">
@@ -62,14 +58,14 @@ import ValidationMixin from '~/mixins/ValidationMixin'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
 import LogoOvc from '~/components/atoms/LogoOvc.vue'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({
     layout: 'auth',
     components: {
+        LoaderButton,
         LogoOvc,
-
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
     },
     validations: {
         verifyEmailRequest: {

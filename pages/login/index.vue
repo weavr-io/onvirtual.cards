@@ -49,20 +49,12 @@
                             Forgot password?
                         </b-link>
                     </div>
-
-                    <b-form-group class="mt-5 text-center">
-                        <b-overlay
-                            :show="isLoading"
-                            class="d-inline-block"
-                            rounded="pill"
-                            spinner-small
-                        >
-                            <b-button type="submit" variant="secondary">
-                                sign in
-                                <span class="pl-5">-></span>
-                            </b-button>
-                        </b-overlay>
-                    </b-form-group>
+                    <LoaderButton
+                        :is-loading="isLoading"
+                        class="text-center mt-4"
+                        show-arrow
+                        text="Sign In"
+                    />
                     <div class="mt-4 text-center">
                         <small class="text-grey">
                             Not yet registered? Register
@@ -88,13 +80,14 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LogoOvc from '~/components/atoms/LogoOvc.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({
     layout: 'auth',
     components: {
+        LoaderButton,
         LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
         WeavrPasswordInput,
     },
     validations: {

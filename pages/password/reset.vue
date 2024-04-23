@@ -30,10 +30,10 @@
                         />
                     </b-form-group>
                     <div class="form-group mt-5 pt-1">
-                        <loader-button
+                        <LoaderButton
                             :is-loading="isLoading"
-                            button-text="reset password"
                             class="text-center"
+                            text="reset password"
                         />
                     </div>
                 </b-form>
@@ -53,10 +53,10 @@
                         </div>
                         <div>
                             <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
-                                <loader-button
+                                <LoaderButton
                                     :is-loading="isLoading"
-                                    button-text="resend"
                                     class="text-center"
+                                    text="resend"
                                 />
                             </b-form>
                         </div>
@@ -73,13 +73,14 @@ import BaseMixin from '~/mixins/BaseMixin'
 import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LogoOvc from '~/components/atoms/LogoOvc.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({
     layout: 'auth',
     components: {
+        LoaderButton,
         LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
     },
     validations: {
         form: {

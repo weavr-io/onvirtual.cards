@@ -54,11 +54,7 @@
                         >
                     </client-only>
                     <div class="text-center">
-                        <loader-button
-                            :is-loading="isLoading"
-                            button-text="Set password"
-                            class="mt-5"
-                        />
+                        <LoaderButton :is-loading="isLoading" class="mt-5" text="Set password" />
                     </div>
                 </b-form>
             </b-card-body>
@@ -70,7 +66,7 @@
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
 import ErrorAlert from '~/components/ErrorAlert.vue'
-import LoaderButton from '~/components/LoaderButton.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'

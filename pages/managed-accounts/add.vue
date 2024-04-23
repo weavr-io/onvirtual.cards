@@ -21,10 +21,10 @@
                                     </b-form-group>
                                 </b-col>
                             </b-form-row>
-                            <loader-button
+                            <LoaderButton
                                 :is-loading="localIsBusy"
-                                button-text="finish"
                                 class="mt-5 text-center"
+                                text="finish"
                             />
                         </b-form>
                     </b-card>
@@ -47,7 +47,7 @@ import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/con
 @Component({
     components: {
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
     validations: {
         createManagedAccountRequest: {

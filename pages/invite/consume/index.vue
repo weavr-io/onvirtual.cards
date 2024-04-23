@@ -71,7 +71,6 @@ import LogoOvc from '~/components/atoms/LogoOvc.vue'
     components: {
         LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
         WeavrPasswordInput,
     },
 })
