@@ -1,38 +1,88 @@
 import { Component, Vue } from 'nuxt-property-decorator'
-import { initialiseStores } from '~/utils/store-accessor'
-import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import type { StoreType } from '~/local/models/store'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
-import type { StoreType } from '~/local/models/store'
-import type { useUsersStore } from '~/store/users'
 import Countries from '~/static/json/countries.json'
+import { useAccessCodesStore } from '~/store/accessCodes'
+import { useAccountsStore } from '~/store/accounts'
+import { useAuthStore } from '~/store/auth'
+import { useCardsStore } from '~/store/cards'
+import { useConsumersStore } from '~/store/consumers'
+import { useCorporatesStore } from '~/store/corporates'
+import { useErrorsStore } from '~/store/errors'
+import { useIdentityStore } from '~/store/identity'
+import { useLoaderStore } from '~/store/loader'
+import { useSecureClientStore } from '~/store/secureClient'
+import { useTransfersStore } from '~/store/transfers'
+import type { useUsersStore } from '~/store/users'
+import { initialiseStores as initialisePiniaStores } from '~/utils/pinia-store-accessor'
 
 @Component
 export default class BaseMixin extends Vue {
-    get stores() {
-        return initialiseStores(this.$store)
+    get accessCodes() {
+        return this.piniaStores(['accessCodes']).accessCodes as useAccessCodesStore
+    }
+
+    get accountsStore() {
+        return this.piniaStores(['accounts']).accounts as useAccountsStore
     }
 
     get usersStore() {
         return this.piniaStores(['users']).users as useUsersStore
     }
 
+    get loaderStore() {
+        return this.piniaStores(['loader']).loader as useLoaderStore
+    }
+
+    get cardsStore() {
+        return this.piniaStores(['cards']).cards as useCardsStore
+    }
+
+    get consumersStore() {
+        return this.piniaStores(['consumers']).consumers as useConsumersStore
+    }
+
+    get corporatesStore() {
+        return this.piniaStores(['corporates']).corporates as useCorporatesStore
+    }
+
+    get authStore() {
+        return this.piniaStores(['auth']).auth as useAuthStore
+    }
+
+    get errorsStore() {
+        return this.piniaStores(['errors']).errors as useErrorsStore
+    }
+
+    get identityStore() {
+        return this.piniaStores(['identity']).identity as useIdentityStore
+    }
+
+    get secureClientStore() {
+        return this.piniaStores(['secureClient']).secureClient as useSecureClientStore
+    }
+
+    get transfersStore() {
+        return this.piniaStores(['transfers']).transfers as useTransfersStore
+    }
+
     get isConsumer() {
-        return this.stores.auth.isConsumer
+        return this.authStore.isConsumer
     }
 
     get isCorporate() {
-        return this.stores.auth.isCorporate
+        return this.authStore.isCorporate
     }
 
     get isLoggedIn() {
-        return this.stores.auth.isLoggedIn
+        return this.authStore.isLoggedIn
     }
 
     get identityRegCountryIsUK() {
-        return this.isConsumer ? this.stores.consumers.isUk : this.stores.corporates.isUk
+        return this.isConsumer ? this.consumersStore.isUk : this.corporatesStore.isUk
     }
 
     get cardJurisdictionProfileId() {
@@ -66,13 +116,13 @@ export default class BaseMixin extends Vue {
     get profileBaseCurrency() {
         return (
             (this.isConsumer
-                ? this.stores.consumers.consumer?.baseCurrency
-                : this.stores.corporates.corporate?.baseCurrency) || null
+                ? this.consumersStore.consumerState.consumer?.baseCurrency
+                : this.corporatesStore.corporateState.corporate?.baseCurrency) ?? null
         )
     }
 
     get consumer(): ConsumerModel | null {
-        return this.stores.consumers.consumer
+        return this.consumersStore.consumerState.consumer
     }
 
     get isConsumerPopulated() {
@@ -85,9 +135,9 @@ export default class BaseMixin extends Vue {
 
     get rootName(): string {
         if (this.isConsumerPopulated) {
-            return this.stores.consumers.consumer!.rootUser.name
+            return this.consumersStore.consumerState.consumer!.rootUser.name
         } else if (this.isCorporatePopulated) {
-            return this.stores.corporates.corporate!.rootUser.name
+            return this.corporatesStore.corporateState.corporate!.rootUser.name
         } else {
             return 'noname'
         }
@@ -95,9 +145,9 @@ export default class BaseMixin extends Vue {
 
     get rootSurname(): string {
         if (this.isConsumerPopulated) {
-            return this.stores.consumers.consumer!.rootUser.surname
+            return this.consumersStore.consumerState.consumer!.rootUser.surname
         } else if (this.isCorporatePopulated) {
-            return this.stores.corporates.corporate!.rootUser.surname
+            return this.corporatesStore.corporateState.corporate!.rootUser.surname
         }
         return 'nosurname'
     }
@@ -107,7 +157,7 @@ export default class BaseMixin extends Vue {
     }
 
     get corporate() {
-        return this.stores.corporates.corporate
+        return this.corporatesStore.corporateState.corporate
     }
 
     get rootUserEmail() {
@@ -136,10 +186,12 @@ export default class BaseMixin extends Vue {
     }
 
     get identityVerified(): boolean {
-        if (this.stores.auth.isConsumer) {
-            return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+        if (this.authStore.isConsumer) {
+            return (
+                this.consumersStore.consumerState.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+            )
         } else {
-            return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
+            return this.corporatesStore.corporateState.kyb?.kybStatus === KYBStatusEnum.APPROVED
         }
     }
 
@@ -185,7 +237,7 @@ export default class BaseMixin extends Vue {
     }
 
     doLogout() {
-        return this.stores.auth.logout().then(this.redirectToLogin)
+        return this.authStore.logout().then(this.redirectToLogin)
     }
 
     redirectToLogin() {
@@ -193,15 +245,15 @@ export default class BaseMixin extends Vue {
     }
 
     showSuccessToast(msg?: string, title?: string) {
-        return this.$weavrToast(msg !== undefined ? msg : 'All changes have been saved', {
-            title: title !== undefined ? title : 'Changes saved',
+        return this.$weavrToast(msg ?? 'All changes have been saved', {
+            title: title ?? 'Changes saved',
             variant: 'success',
         })
     }
 
     showErrorToast(msg?: string, title?: string) {
-        return this.$weavrToast(msg !== undefined ? msg : 'An error has occurred while saving', {
-            title: title !== undefined ? title : 'Error',
+        return this.$weavrToast(msg ?? 'An error has occurred while saving', {
+            title: title ?? 'Error',
             variant: 'danger',
         })
     }

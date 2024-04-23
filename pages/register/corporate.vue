@@ -24,20 +24,20 @@
     </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
 import { AxiosResponse } from 'axios'
+import { Component, mixins } from 'nuxt-property-decorator'
+import Logo from '~/components/Logo.vue'
+import { DeepNullable, RecursivePartial } from '~/global'
 import BaseMixin from '~/mixins/BaseMixin'
-import { authStore } from '~/utils/store-accessor'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
-import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
-import { DeepNullable, RecursivePartial } from '~/global'
-import Logo from '~/components/Logo.vue'
+import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
+import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 @Component({
     layout: 'auth',
@@ -83,7 +83,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     get isLoadingRegistration() {
-        return this.stores.corporates.isLoadingRegistration
+        return this.corporatesStore.corporateState.isLoadingRegistration
     }
 
     strengthCheck(val) {
@@ -94,8 +94,9 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         this.screen--
     }
 
-    asyncData({ store, redirect }) {
-        const isLoggedIn = authStore(store).isLoggedIn
+    asyncData({ redirect }) {
+        const { auth } = initialiseStores(['auth'])
+        const isLoggedIn = auth?.isLoggedIn
         if (isLoggedIn) {
             redirect('/dashboard')
         }
@@ -138,15 +139,15 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     doRegister() {
-        this.stores.corporates.SET_IS_LOADING_REGISTRATION(true)
-        this.stores.corporates
+        this.corporatesStore.setIsLoadingRegistration(true)
+        this.corporatesStore
             .create(this.registrationRequest as CreateCorporateRequest)
             .then(this.onCorporateCreated)
             .catch(this.registrationFailed)
     }
 
     stopRegistrationLoading() {
-        this.stores.corporates.SET_IS_LOADING_REGISTRATION(false)
+        this.corporatesStore.setIsLoadingRegistration(false)
     }
 
     onCorporateCreated(res: AxiosResponse<ConsumerModel>) {
@@ -169,7 +170,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     onRegisteredSuccessfully() {
-        this.stores.accessCodes.DELETE_ACCESS_CODE()
+        this.accessCodes.deleteAccessCode()
         if (!this.registrationRequest.rootUser) {
             return
         }
@@ -179,7 +180,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
                 value: this.registrationRequest.password as string,
             },
         }
-        const _req = this.stores.auth.loginWithPassword(loginRequest)
+        const _req = this.authStore.loginWithPassword(loginRequest)
         _req.then(() => {
             this.setSCAstorage()
             this.stopRegistrationLoading()

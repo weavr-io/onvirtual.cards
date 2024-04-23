@@ -1,23 +1,23 @@
 <template>
     <b-container>
         <b-row
-            class="px-0 mb-4 border-bottom dashboard-header-height"
-            align-v="end"
             align-h="between"
+            align-v="end"
+            class="px-0 mb-4 border-bottom dashboard-header-height"
         >
             <b-col cols="7">
                 <b-nav class="dashboard-header">
-                    <b-nav-item to="/managed-cards" active-class="active"> Cards</b-nav-item>
-                    <b-nav-item to="/managed-accounts" active-class="active"> Account</b-nav-item>
+                    <b-nav-item active-class="active" to="/managed-cards"> Cards</b-nav-item>
+                    <b-nav-item active-class="active" to="/managed-accounts"> Account</b-nav-item>
                 </b-nav>
             </b-col>
             <b-col v-if="isManagedAccounts" class="pb-2">
                 <b-row v-if="account" align-h="end" align-v="end">
-                    <b-col v-if="canAddFunds" cols="2" lg="1" class="text-right mr-3 mr-sm-2">
+                    <b-col v-if="canAddFunds" class="text-right mr-3 mr-sm-2" cols="2" lg="1">
                         <b-button
                             :to="'/managed-accounts/' + account.id + '/topup'"
-                            variant="secondary"
                             class="add-funds"
+                            variant="secondary"
                         >
                             +
                         </b-button>
@@ -43,7 +43,7 @@
                         <div v-if="hasCards" class="account-balance">
                             <p class="mb-0 text-muted account-balance-label">total balance</p>
                             <p class="mb-0 account-balance-value">
-                                {{ cardsBalance | weavr_currency(cardCurrency.currency) }}
+                                {{ cardsBalance | weavr_currency(cardCurrency) }}
                             </p>
                         </div>
                     </b-row>
@@ -64,9 +64,11 @@ import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consu
 export default class DashboardHeader extends mixins(BaseMixin, CardsMixin, AccountsMixin) {
     get canAddFunds(): boolean {
         if (this.isConsumer) {
-            return this.stores.consumers.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+            return (
+                this.consumersStore.consumerState.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+            )
         } else if (this.isCorporate) {
-            return this.stores.corporates.kyb?.kybStatus === KYBStatusEnum.APPROVED
+            return this.corporatesStore.corporateState.kyb?.kybStatus === KYBStatusEnum.APPROVED
         } else {
             return false
         }

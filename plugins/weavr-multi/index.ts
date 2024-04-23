@@ -18,13 +18,6 @@ declare module '@nuxt/types' {
     }
 }
 
-declare module 'vuex/types/index' {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    interface Store<S> {
-        $apiMulti: ApiInterface
-    }
-}
-
 const weavrMultiPlugin: Plugin = (_context, _inject) => {
     _inject('apiMulti', new ApiModule())
 }

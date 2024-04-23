@@ -29,7 +29,7 @@ export default class KycPage extends mixins(BaseMixin) {
     }
 
     async KycApproved() {
-        const _res = await this.stores.consumers.getKYC()
+        const _res = await this.consumersStore.getKYC()
 
         if (
             _res.data.fullDueDiligence === KYCStatusEnum.APPROVED ||
@@ -49,7 +49,7 @@ export default class KycPage extends mixins(BaseMixin) {
     }
 
     async redirectToAccountPage() {
-        const _accounts = await this.stores.accounts.index({
+        const _accounts = await this.accountsStore.index({
             profileId: this.accountJurisdictionProfileId,
             state: ManagedInstrumentStateEnum.ACTIVE,
             offset: '0',

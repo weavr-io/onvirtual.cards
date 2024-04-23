@@ -110,7 +110,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
     }
 
     get noErrors() {
-        return !this.stores.errors.errors
+        return !this.errorsStore.errors
     }
 
     get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -136,7 +136,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
             this.form.nonce = this.$route.params.nonce.toString()
             this.form.email = this.$route.params.email.toString()
         } catch (e) {
-            this.stores.errors.SET_ERROR(e)
+            this.errorsStore.setError(e)
         }
     }
 
@@ -166,17 +166,17 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
             },
         }
 
-        this.stores.auth.validatePassword(_request).then(this.submitForm)
+        this.authStore.validatePassword(_request).then(this.submitForm)
     }
 
     submitForm() {
-        this.stores.auth
+        this.authStore
             .lostPasswordResume(this.form)
             .then(() => {
                 this.$router.push('/login')
             })
             .catch((err) => {
-                this.stores.errors.SET_ERROR(err)
+                this.errorsStore.setError(err)
             })
     }
 

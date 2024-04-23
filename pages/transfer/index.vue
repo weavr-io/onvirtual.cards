@@ -54,11 +54,11 @@ export default class TransfersPage extends mixins(BaseMixin) {
     ]
 
     get cards() {
-        return this.stores.cards.cards?.cards
+        return this.cardsStore.cardState.cards?.cards
     }
 
     get accounts() {
-        return this.stores.accounts.accounts
+        return this.accountsStore.accountState.accounts
     }
 
     get formattedCards(): { value: number; text: string }[] {
@@ -73,8 +73,8 @@ export default class TransfersPage extends mixins(BaseMixin) {
     }
 
     async fetch() {
-        await this.stores.cards.getCards()
-        const accounts = await this.stores.accounts.index({
+        await this.cardsStore.getCards()
+        const accounts = await this.accountsStore.index({
             profileId: this.accountJurisdictionProfileId,
             state: ManagedInstrumentStateEnum.ACTIVE,
             offset: '0',
@@ -118,7 +118,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
     }
 
     doTransfer() {
-        this.stores.transfers
+        this.transfersStore
             .execute(this.createTransferRequest as CreateTransferRequest)
             .then(() => {
                 this.createTransferRequest = {

@@ -229,12 +229,10 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
 
         this.isConsumer
             ? xhr.push(
-                  this.stores.consumers.update(
-                      this.updateIdentityRootUser as UpdateConsumerRequest,
-                  ),
+                  this.consumersStore.update(this.updateIdentityRootUser as UpdateConsumerRequest),
               )
             : xhr.push(
-                  this.stores.corporates.update(
+                  this.corporatesStore.update(
                       this.updateIdentityRootUser as UpdateCorporateRequest,
                   ),
               )

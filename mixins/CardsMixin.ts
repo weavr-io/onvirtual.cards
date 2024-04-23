@@ -18,7 +18,7 @@ export default class CardsMixin extends mixins(BaseMixin, CsvMixin) {
     }
 
     get managedCard() {
-        return this.stores.cards.managedCard
+        return this.cardsStore.cardState.managedCard
     }
 
     get cardId() {
@@ -26,7 +26,7 @@ export default class CardsMixin extends mixins(BaseMixin, CsvMixin) {
     }
 
     get cards() {
-        return this.stores.cards.cards?.cards
+        return this.cardsStore.cardState.cards?.cards
     }
 
     get hasCards(): boolean {
@@ -34,11 +34,11 @@ export default class CardsMixin extends mixins(BaseMixin, CsvMixin) {
     }
 
     get cardsBalance() {
-        return this.stores.cards.totalAvailableBalance
+        return this.cardsStore.totalAvailableBalance
     }
 
     get cardCurrency() {
-        return this.stores.cards
+        return this.cardsStore.currency
     }
 
     get isCardActive() {

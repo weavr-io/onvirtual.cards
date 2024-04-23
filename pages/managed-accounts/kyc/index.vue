@@ -64,11 +64,11 @@ export default class KycPage extends mixins(BaseMixin) {
         return this.kycErrorCode === KYCErrorCodeEnum.KYC_REJECTED
     }
 
-    fetch() {
-        return this.stores.consumers
+    async fetch() {
+        await this.consumersStore
             .startKYC()
             .then((res) => {
-                this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+                this.$weavrSetUserToken(`Bearer ${this.authStore.token}`)
                 this.reference = res.data.reference
             })
             .catch((res) => {

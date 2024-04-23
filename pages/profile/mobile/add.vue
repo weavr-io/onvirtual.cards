@@ -54,11 +54,11 @@ import { DeepNullable } from '~/global'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import { authStore } from '~/utils/store-accessor'
 import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 @Component({
     layout: 'auth',
@@ -94,12 +94,12 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
         },
     }
 
-    async asyncData({ redirect, store }) {
-        const auth = authStore(store)
+    async asyncData({ redirect }) {
+        const { auth } = initialiseStores(['auth'])
 
-        await auth.indexAuthFactors()
+        await auth?.indexAuthFactors()
 
-        const smsAuthFactors = auth.authFactors?.factors?.filter(
+        const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
             (factor) => factor.channel === SCAOtpChannelEnum.SMS,
         )
 
@@ -126,17 +126,15 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
                 return null
             }
 
-            if (this.stores.auth.auth?.credentials.type === CredentialTypeEnum.ROOT) {
+            if (this.authStore.authState.auth?.credentials.type === CredentialTypeEnum.ROOT) {
                 this.isConsumer
-                    ? await this.stores.consumers.update(
-                          this.updateRequest as UpdateConsumerRequest,
-                      )
-                    : await this.stores.corporates.update(
+                    ? await this.consumersStore.update(this.updateRequest as UpdateConsumerRequest)
+                    : await this.corporatesStore.update(
                           this.updateRequest as UpdateCorporateRequest,
                       )
             } else {
                 await this.usersStore.update({
-                    id: this.stores.auth.auth!.credentials.id,
+                    id: this.authStore.authState.auth!.credentials.id,
                     data: this.updateRequest as UpdateUserRequestModel,
                 })
             }

@@ -44,15 +44,15 @@ class ErrorAlert extends mixins(BaseMixin) {
     @Prop({ default: null }) readonly errorLink!: ErrorLink | null
 
     get errors() {
-        return this.stores.errors.errors
+        return this.errorsStore.errors
     }
 
     get conflict() {
-        return this.stores.errors.conflict
+        return this.errorsStore.conflict
     }
 
     get conflictMessage() {
-        return this.stores.errors.conflictMessage
+        return this.errorsStore.conflictMessage
     }
 
     get hasError(): boolean {
@@ -68,8 +68,8 @@ class ErrorAlert extends mixins(BaseMixin) {
             return ''
         } else if (this.message !== '') {
             return this.message
-        } else if (this.errors && this.errors.data && this.errors.data.errorCode) {
-            switch (this.errors.data.errorCode) {
+        } else if (this.errors && this.errors?.data && this.errors?.data.errorCode) {
+            switch (this.errors?.data.errorCode) {
                 case 'ROOT_EMAIL_NOT_UNIQUE':
                 case 'EMAIL_NOT_UNIQUE':
                     return 'This email address already exists in the system.  Do you want to log in instead?'
@@ -88,7 +88,7 @@ class ErrorAlert extends mixins(BaseMixin) {
     }
 
     @Emit('close') onClose() {
-        this.stores.errors.RESET_ERROR()
+        this.errorsStore.resetState()
     }
 }
 

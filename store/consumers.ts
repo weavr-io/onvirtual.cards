@@ -1,162 +1,165 @@
-import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { identitiesStore, loaderStore } from '~/utils/store-accessor'
-import { StoreModule } from '~/store/storeModule'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/identities/consumers/responses/GetConsumerKYCResponse'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
-import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
-import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
-import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
+import { defineStore } from 'pinia'
+import { computed, reactive } from 'vue'
+import type { Consumers as ConsumerState } from '~/local/models/store/consumers'
+import type { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
+import type { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import type { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
+import type { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
+import type { GetConsumerKYCResponse } from '~/plugins/weavr-multi/api/models/identities/consumers/responses/GetConsumerKYCResponse'
+import { useIdentityStore } from '~/store/identity'
+import { useLoaderStore } from '~/store/loader'
 import { PUK_COUNTRY_CODES } from '~/utils/jurisdiction'
+import { useAuthStore } from '~/store/auth'
 
-const defaultState = {
-    isLoadingRegistration: false,
-    isLoading: false,
-    consumer: null,
-    kyc: null,
+const initState = (): ConsumerState => {
+    return {
+        isLoading: false,
+        isLoadingRegistration: false,
+        consumer: null,
+        kyc: null,
+    }
 }
 
-@Module({
-    name: 'consumersModule',
-    namespaced: true,
-    stateFactory: true,
-})
-export default class Consumers extends StoreModule {
-    isLoading: boolean = defaultState.isLoading
+export const useConsumersStore = defineStore('consumers', () => {
+    const store = useAuthStore()
+    const loader = useLoaderStore()
+    const identity = useIdentityStore()
+    const consumerState: ConsumerState = reactive(initState())
 
-    isLoadingRegistration: boolean = defaultState.isLoadingRegistration
+    const regCountry = computed(() => consumerState.consumer?.rootUser.address?.country ?? '')
+    const isUk = computed(() => PUK_COUNTRY_CODES.includes(regCountry.value))
 
-    consumer: ConsumerModel | null = defaultState.consumer
-
-    kyc: GetConsumerKYCResponse | null = defaultState.kyc
-
-    get regCountry() {
-        return this.consumer?.rootUser.address?.country || ''
+    const setIsLoading = (isLoading: boolean) => {
+        consumerState.isLoading = isLoading
     }
 
-    get isUk() {
-        return PUK_COUNTRY_CODES.includes(this.regCountry)
+    const setIsLoadingRegistration = (isLoadingRegistration: boolean) => {
+        consumerState.isLoadingRegistration = isLoadingRegistration
     }
 
-    @Mutation
-    SET_IS_LOADING(isLoading: boolean) {
-        this.isLoading = isLoading
+    const setConsumer = (consumer: ConsumerModel) => {
+        consumerState.consumer = consumer
     }
 
-    @Mutation
-    SET_IS_LOADING_REGISTRATION(isLoadingRegistration: boolean) {
-        this.isLoadingRegistration = isLoadingRegistration
+    const setKyc = (_kyc: GetConsumerKYCResponse) => {
+        consumerState.kyc = _kyc
     }
 
-    @Mutation
-    SET_CONSUMER(consumer: ConsumerModel) {
-        this.consumer = consumer
-    }
-
-    @Mutation
-    SET_KYC(_kyc: GetConsumerKYCResponse) {
-        this.kyc = _kyc
-    }
-
-    @Mutation
-    RESET_STATE() {
-        Object.keys(defaultState).forEach((key) => {
-            this[key] = defaultState[key]
+    const resetState = () => {
+        const data = initState()
+        Object.keys(data).forEach((key) => {
+            consumerState[key] = data[key]
         })
     }
 
-    @Action({ rawError: true })
-    create(request: CreateConsumerRequest) {
-        loaderStore(this.store).start()
+    const create = (request: CreateConsumerRequest) => {
+        loader.start()
 
-        const req = this.store.$apiMulti.consumers.store(request)
+        const req = store.$nuxt.$apiMulti.consumers.store(request)
 
         req.then((_res) => {
-            this.SET_CONSUMER(_res.data)
-            identitiesStore(this.store).SET_IDENTITY(_res.data)
+            setConsumer(_res.data)
+            identity.setIdentity(_res.data)
         })
 
         req.finally(() => {
-            loaderStore(this.store).stop()
-            this.SET_IS_LOADING(false)
+            loader.stop()
+            setIsLoading(false)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    update(request: UpdateConsumerRequest) {
-        const req = this.store.$apiMulti.consumers.update(request)
+    const update = (request: UpdateConsumerRequest) => {
+        const req = store.$nuxt.$apiMulti.consumers.update(request)
         req.then((_res) => {
-            this.SET_CONSUMER(_res.data)
-            identitiesStore(this.store).SET_IDENTITY(_res.data)
+            setConsumer(_res.data)
+            identity.setIdentity(_res.data)
         })
 
         req.finally(() => {
-            this.SET_IS_LOADING(false)
+            setIsLoading(false)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    get() {
-        loaderStore(this.store).start()
-        this.SET_IS_LOADING(true)
+    const get = (multi = store.$nuxt.$apiMulti) => {
+        loader.start()
+        setIsLoading(true)
 
-        const req = this.store.$apiMulti.consumers.show()
+        const req = multi.consumers.show()
 
         req.then((_res) => {
-            this.SET_CONSUMER(_res.data)
-            identitiesStore(this.store).SET_IDENTITY(_res.data)
+            setConsumer(_res.data)
+            identity.setIdentity(_res.data)
         }).finally(() => {
-            loaderStore(this.store).stop()
-            this.SET_IS_LOADING(false)
+            loader.stop()
+            setIsLoading(false)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    getKYC() {
-        const req = this.store.$apiMulti.consumers.showKYC()
+    const getKYC = () => {
+        const req = store.$nuxt.$apiMulti.consumers.showKYC()
         req.then((res) => {
-            this.SET_KYC(res.data)
+            setKyc(res.data)
         })
 
         return req
     }
 
-    @Action({ rawError: true })
-    async checkKYC() {
-        if (!this.consumer) {
-            await this.get()
-        }
-        if (!this.kyc) {
-            await this.getKYC()
+    const checkKYC = async () => {
+        if (!consumerState.consumer) {
+            await get()
         }
 
-        if (this.kyc?.fullDueDiligence !== KYCStatusEnum.APPROVED) {
+        if (!consumerState.kyc) {
+            await getKYC()
+        }
+
+        if (consumerState.kyc?.fullDueDiligence !== KYCStatusEnum.APPROVED) {
             return Promise.reject(new Error('KYC not approved'))
-        } else {
-            return Promise.resolve()
         }
+
+        return Promise.resolve()
     }
 
-    @Action({ rawError: true })
-    verifyEmail(request: VerifyEmailRequest) {
-        return this.store.$apiMulti.consumers.verifyEmail(request)
+    const verifyEmail = (request: VerifyEmailRequest) => {
+        return store.$nuxt.$apiMulti.consumers.verifyEmail(request)
     }
 
-    @Action({ rawError: true })
-    sendVerificationCodeEmail(request: SendVerificationCodeRequest) {
-        return this.store.$apiMulti.consumers.sendVerificationCode(request)
+    const sendVerificationCodeEmail = (request: SendVerificationCodeRequest) => {
+        return store.$nuxt.$apiMulti.consumers.sendVerificationCode(request)
     }
 
-    @Action({ rawError: true })
-    startKYC() {
-        const _res = this.store.$apiMulti.consumers.startKYC()
+    const startKYC = () => {
+        const _res = store.$nuxt.$apiMulti.consumers.startKYC()
+
         return _res
     }
-}
+
+    return {
+        consumerState,
+        regCountry,
+        isUk,
+        setIsLoading,
+        setIsLoadingRegistration,
+        setConsumer,
+        setKyc,
+        resetState,
+        create,
+        update,
+        get,
+        getKYC,
+        checkKYC,
+        verifyEmail,
+        sendVerificationCodeEmail,
+        startKYC,
+    }
+})
+
+export type useConsumersStore = ReturnType<typeof useConsumersStore>

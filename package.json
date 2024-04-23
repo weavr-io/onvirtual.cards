@@ -32,8 +32,7 @@
         "vue-flatpickr-component": "^8.1.8",
         "vue-infinite-loading": "^2.4.5",
         "vue-phone-number-input": "^1.12.13",
-        "vuelidate": "^0.7.7",
-        "vuex-class": "^0.3.2"
+        "vuelidate": "^0.7.7"
     },
     "devDependencies": {
         "@types/luxon": "^3.4.2",
@@ -67,8 +66,7 @@
         "typescript": "4.9.5",
         "vue-property-decorator": "^9.1.2",
         "vue-svg-loader": "^0.16.0",
-        "vue-template-compiler": "^2.7.14",
-        "vuex-module-decorators": "^1.0.1"
+        "vue-template-compiler": "^2.7.14"
     },
     "lint-staged": {
         "*.{js,jsx,ts,html,vue}": "eslint --fix",

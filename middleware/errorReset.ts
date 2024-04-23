@@ -1,5 +1,7 @@
-import { errorsStore } from '~/utils/store-accessor'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
-export default function (ctxt) {
-    return errorsStore(ctxt.store).RESET_ERROR()
+export default function () {
+    const { errors } = initialiseStores(['errors'])
+
+    return errors?.resetState()
 }

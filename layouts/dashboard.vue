@@ -49,11 +49,11 @@ import BaseMixin from '~/mixins/BaseMixin'
 })
 export default class DefaultLayout extends mixins(KyVerified, BaseMixin) {
     get isLoading() {
-        return this.stores.loader.isLoading
+        return this.loaderStore.isLoading
     }
 
     get accounts() {
-        return this.stores.accounts.accounts
+        return this.accountsStore.accountState.accounts
     }
 }
 </script>

@@ -200,10 +200,10 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
             let xhr
 
             if (this.isConsumer) {
-                xhr = this.stores.consumers.update({ address: this.address as AddressModel })
+                xhr = this.consumersStore.update({ address: this.address as AddressModel })
             } else {
                 // treat as corporate
-                xhr = this.stores.corporates.update({
+                xhr = this.corporatesStore.update({
                     companyBusinessAddress: this.address as AddressModel,
                 })
             }
@@ -219,7 +219,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
         let identityRootVerified: CorporatesRootUserModel | ConsumersRootUserModel
 
         if (this.isConsumer) {
-            await this.stores.consumers.get().then((res) => {
+            await this.consumersStore.get().then((res) => {
                 identityRootVerified = res.data.rootUser
 
                 if (
@@ -232,7 +232,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
                 }
             })
         } else if (this.isCorporate) {
-            await this.stores.corporates.get().then((res) => {
+            await this.corporatesStore.get().then((res) => {
                 identityRootVerified = res.data.rootUser
 
                 if (

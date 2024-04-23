@@ -11,28 +11,32 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
-import { authStore, identitiesStore } from '~/utils/store-accessor'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 @Component({})
 export default class IndexPage extends mixins(BaseMixin) {
-    async asyncData({ store, redirect }) {
-        const isLoggedIn = authStore(store).isLoggedIn
+    async asyncData({ redirect }) {
+        const { auth, identity } = initialiseStores(['auth', 'identity'])
+        const isLoggedIn = auth?.isLoggedIn
 
         if (!isLoggedIn) {
             redirect('/login')
         } else {
-            const identities = identitiesStore(store)
-
-            if (identities.identity === null) {
-                await identities.getIdentity()
+            if (identity!.identityState.identity === null) {
+                await identity!.getIdentity()
             }
 
-            if (!identities.emailVerified) {
-                const email = window.encodeURIComponent(identities.identity!.rootUser?.email)
+            if (!identity!.identityState.emailVerified) {
+                const email = window.encodeURIComponent(
+                    identity!.identityState.identity!.rootUser?.email,
+                )
                 redirect(`/login/verify?send=true&email=${email}`)
-            } else if (!identities.mobileNumberVerified) {
+            } else if (!identity!.identityState.mobileNumberVerified) {
                 redirect('/login/verify/mobile')
-            } else if (identities.identity && typeof identities.identity.rootUser === 'undefined') {
+            } else if (
+                identity!.identityState.identity &&
+                typeof identity!.identityState.identity.rootUser === 'undefined'
+            ) {
                 redirect('/profile/address')
             } else {
                 redirect('/dashboard')

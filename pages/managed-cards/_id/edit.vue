@@ -112,11 +112,11 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
     updateManagedCardRequest: UpdateManagedCardRequest | null = null
 
     get isLoading() {
-        return this.stores.cards.isLoading || this.isUpdating || this.$fetchState.pending
+        return this.cardsStore.cardState.isLoading || this.isUpdating || this.$fetchState.pending
     }
 
     get auth() {
-        return this.stores.auth.auth
+        return this.authStore.authState.auth
     }
 
     get cardId() {
@@ -124,7 +124,7 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     async fetch() {
-        const card = await this.stores.cards.getManagedCard(this.cardId)
+        const card = await this.cardsStore.getManagedCard(this.cardId)
         const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
 
         // add key cardholderMobileNumber only if isCorporate
@@ -153,7 +153,7 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
 
         this.isUpdating = true
 
-        this.stores.cards
+        this.cardsStore
             .update({
                 id: this.cardId,
                 request: this.updateManagedCardRequest as UpdateManagedCardRequest,

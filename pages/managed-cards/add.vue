@@ -200,8 +200,9 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     fetch() {
-        if (this.stores.auth.isConsumer) {
-            const _consumer: ConsumerModel = this.stores.consumers.consumer as ConsumerModel
+        if (this.authStore.isConsumer) {
+            const _consumer: ConsumerModel = this.consumersStore.consumerState
+                .consumer as ConsumerModel
             this.createManagedCardRequest.nameOnCard =
                 _consumer.rootUser.name + ' ' + _consumer.rootUser.surname
             this.createManagedCardRequest.cardholderMobileNumber =
@@ -209,7 +210,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         }
 
         this.showNameOnCardField =
-            !this.stores.auth.isConsumer ||
+            !this.authStore.isConsumer ||
             (!!this.createManagedCardRequest.nameOnCard &&
                 this.createManagedCardRequest.nameOnCard.length > 27)
 
@@ -241,12 +242,13 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
             profileId: this.cardJurisdictionProfileId,
             billingAddress: {
                 ...(this.isConsumer
-                    ? (this.stores.consumers.consumer?.rootUser.address as AddressModel)
-                    : (this.stores.corporates.corporate?.company.businessAddress as AddressModel)),
+                    ? (this.consumersStore.consumerState.consumer?.rootUser.address as AddressModel)
+                    : (this.corporatesStore.corporateState.corporate?.company
+                          .businessAddress as AddressModel)),
             },
         }
 
-        await this.stores.cards
+        await this.cardsStore
             .addCard(this.createManagedCardRequest as CreateManagedCardRequest)
             .then(() => {
                 this.$router.push('/managed-cards')
