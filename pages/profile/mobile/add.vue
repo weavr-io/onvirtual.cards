@@ -1,13 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <div class="text-center pb-5">
-            <img
-                alt="onvirtual.cards"
-                class="d-inline-block align-top"
-                src="/img/logo.svg"
-                width="200"
-            />
-        </div>
+        <LogoOvc :link="false" classes="pb-5" />
         <b-card body-class="p-card">
             <h3 class="text-center font-weight-light mb-4">Add your phone number</h3>
             <p class="text-center mb-5">
@@ -59,6 +52,7 @@ import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/Cred
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
+import LogoOvc from '~/components/atoms/LogoOvc.vue'
 
 @Component({
     layout: 'auth',
@@ -77,6 +71,7 @@ import { initialiseStores } from '~/utils/pinia-store-accessor'
         },
     },
     components: {
+        LogoOvc,
         LoaderButton: () => import('~/components/LoaderButton.vue'),
     },
     middleware: ['kyVerified'],

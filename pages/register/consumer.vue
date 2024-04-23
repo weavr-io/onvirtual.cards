@@ -1,7 +1,7 @@
 <template>
     <b-col lg="6" md="9">
         <div class="mb-5">
-            <logo class="pb-5" />
+            <LogoOvc classes="mb-5" />
             <coming-soon-currencies />
             <b-card class="overflow-hidden" no-body>
                 <b-card-body class="px-4 mx-3 py-5 p-sm-card">
@@ -241,7 +241,7 @@ import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import { AxiosResponse } from 'axios'
 
-import Logo from '~/components/Logo.vue'
+import LogoOvc from '~/components/atoms/LogoOvc.vue'
 import { DeepNullable, RecursivePartial } from '~/global'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -317,7 +317,7 @@ const touchMap = new WeakMap()
         },
     },
     components: {
-        Logo,
+        LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/LoaderButton.vue'),
         RegistrationNav: () => import('~/components/registration/RegistrationNav.vue'),

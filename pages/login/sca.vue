@@ -1,13 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <div class="text-center pb-5">
-            <img
-                alt="onvirtual.cards"
-                class="d-inline-block align-top"
-                src="/img/logo.svg"
-                width="200"
-            />
-        </div>
+        <LogoOvc :link="false" classes="pb-5" />
         <MobileComponent :verify-phone="false">
             <template #title>Check your phone</template>
             <template #alert>The one-time password was resent by SMS.</template>
@@ -26,10 +19,12 @@ import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentica
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
+import LogoOvc from '~/components/atoms/LogoOvc.vue'
 
 @Component({
     layout: 'auth',
     components: {
+        LogoOvc,
         MobileComponent,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/LoaderButton.vue'),

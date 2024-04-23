@@ -1,13 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <div class="text-center pb-5">
-            <img
-                alt="onvirtual.cards"
-                class="d-inline-block align-top"
-                src="/img/logo.svg"
-                width="200"
-            />
-        </div>
+        <LogoOvc :link="false" classes="pb-5" />
         <div class="mb-5">
             <b-card class="px-4 py-5 p-md-card">
                 <h3 class="font-weight-light text-center">Check your inbox!</h3>
@@ -67,13 +60,14 @@ import BaseMixin from '~/mixins/BaseMixin'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
-import Logo from '~/components/Logo.vue'
+import LogoOvc from '~/components/atoms/LogoOvc.vue'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 @Component({
     layout: 'auth',
     components: {
-        Logo,
+        LogoOvc,
+
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/LoaderButton.vue'),
     },

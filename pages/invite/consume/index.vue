@@ -1,6 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <logo class="pb-5" />
+        <LogoOvc classes="mb-5" />
         <b-card body-class="p-6">
             <template v-if="showError">
                 <b-alert show variant="danger">
@@ -57,7 +57,7 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
-import Logo from '~/components/Logo.vue'
+import LogoOvc from '~/components/atoms/LogoOvc.vue'
 
 @Component({
     layout: 'auth',
@@ -69,7 +69,7 @@ import Logo from '~/components/Logo.vue'
         },
     },
     components: {
-        Logo,
+        LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/LoaderButton.vue'),
         WeavrPasswordInput,

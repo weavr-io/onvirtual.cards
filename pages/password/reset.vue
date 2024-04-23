@@ -1,6 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <logo class="pb-5" />
+        <LogoOvc classes="pb-5" />
         <b-card no-body>
             <b-card-body v-if="!passwordSent" class="px-4 mx-2 py-5 p-md-card">
                 <div class="text-center">
@@ -72,12 +72,12 @@ import { email, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/mixins/BaseMixin'
 import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
-import Logo from '~/components/Logo.vue'
+import LogoOvc from '~/components/atoms/LogoOvc.vue'
 
 @Component({
     layout: 'auth',
     components: {
-        Logo,
+        LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/LoaderButton.vue'),
     },

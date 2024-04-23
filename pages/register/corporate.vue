@@ -1,7 +1,7 @@
 <template>
     <b-col lg="6" md="9">
         <div class="mb-5">
-            <logo base-class="mb-5" />
+            <LogoOvc classes="mb-5" />
             <b-card class="overflow-hidden" no-body>
                 <b-card-body class="px-4 mx-3 py-5 p-sm-card">
                     <div class="form-screens">
@@ -26,7 +26,6 @@
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { Component, mixins } from 'nuxt-property-decorator'
-import Logo from '~/components/Logo.vue'
 import { DeepNullable, RecursivePartial } from '~/global'
 import BaseMixin from '~/mixins/BaseMixin'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
@@ -38,11 +37,12 @@ import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
+import LogoOvc from '~/components/atoms/LogoOvc.vue'
 
 @Component({
     layout: 'auth',
     components: {
-        Logo,
+        LogoOvc,
         LoaderButton: () => import('~/components/LoaderButton.vue'),
         RegisterForm: () => import('~/components/registration/RegisterForm.vue'),
         PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),

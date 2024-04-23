@@ -1,6 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <logo class="pb-5" />
+        <LogoOvc classes="mb-5" />
         <b-card class="overflow-hidden" no-body>
             <b-card-body class="px-4 mx-3 py-5 p-md-card">
                 <div class="text-center">
@@ -77,12 +77,12 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
-import Logo from '~/components/Logo.vue'
+import LogoOvc from '~/components/atoms/LogoOvc.vue'
 
 @Component({
     layout: 'auth',
     components: {
-        Logo,
+        LogoOvc,
         ErrorAlert,
         LoaderButton,
         WeavrPasswordInput,

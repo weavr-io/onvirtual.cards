@@ -1,6 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <logo base-class="mb-5" />
+        <LogoOvc classes="mb-5" />
         <div class="mb-3">
             <b-card body-class="px-4 mx-2 py-5 p-md-card">
                 <h3 class="text-center font-weight-light mb-5">Login</h3>
@@ -81,18 +81,18 @@
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { email, required } from 'vuelidate/lib/validators'
-import Logo from '~/components/Logo.vue'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
+import LogoOvc from '~/components/atoms/LogoOvc.vue'
 
 @Component({
     layout: 'auth',
     components: {
-        Logo,
+        LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/LoaderButton.vue'),
         WeavrPasswordInput,

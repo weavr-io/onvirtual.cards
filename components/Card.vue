@@ -3,19 +3,17 @@
         <div class="center">
             <div class="card" @click="showFront = !showFront">
                 <div v-if="showFront" class="front">
-                    <div class="logo">
-                        <img src="/img/logo.svg" alt height="15px" />
-                    </div>
+                    <LogoOvc :link="false" size="sm" />
                     <div class="card-number">
                         <weavr-card-number-span
-                            class="card-select-number"
-                            :token="card.cardNumber"
                             :base-style="{
                                 fontFamily: '\'Be Vietnam\', sans-serif',
                                 color: '#000',
                                 lineHeight: '1',
                                 fontSize: '20px',
                             }"
+                            :token="card.cardNumber"
+                            class="card-select-number"
                         />
                     </div>
                     <div class="exp">
@@ -29,14 +27,14 @@
                     <div class="cvv">
                         <label>CVV:</label>
                         <weavr-cvv-span
-                            class="card-select-number"
-                            :token="card.cvv"
                             :base-style="{
                                 fontFamily: '\'Be Vietnam\', sans-serif',
                                 color: '#000',
                                 lineHeight: '1',
                                 fontSize: '15px',
                             }"
+                            :token="card.cvv"
+                            class="card-select-number"
                         />
                     </div>
                 </div>
@@ -45,14 +43,17 @@
     </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import LogoOvc from '~/components/atoms/LogoOvc.vue'
 
 export interface ErrorLink {
     text: string
     link: string
 }
 
-@Component
+@Component({
+    components: { LogoOvc },
+})
 export default class Card extends Vue {
     @Prop({ default: null }) readonly card!: string
 
@@ -76,9 +77,11 @@ export default class Card extends Vue {
 
     .front {
         padding: 20px;
+
         .card-number {
             margin-top: 55px;
         }
+
         .exp,
         .card-holder {
             font-size: 13px;
@@ -92,6 +95,7 @@ export default class Card extends Vue {
             background: #000;
             height: 40px;
         }
+
         .cvv {
             padding: 20px;
             margin-top: 30px;

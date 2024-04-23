@@ -1,13 +1,14 @@
 <template>
     <div class="container-fluid px-0 mb-5 pb-5">
-        <b-navbar type="light" fixed="top" variant="white" class="navbar-padding-adjust">
+        <b-navbar class="navbar-padding-adjust" fixed="top" type="light" variant="white">
             <b-container>
                 <b-navbar-brand to="/">
                     <img
-                        src="/img/logo.svg"
-                        width="160"
+                        alt="onvirtual.cards"
                         class="d-inline-block align-center"
-                        alt="WEAVR"
+                        loading="eager"
+                        src="/img/logo.svg"
+                        width="160px"
                     />
                 </b-navbar-brand>
                 <b-collapse v-if="isLoggedIn" id="nav_collapse" is-nav>
