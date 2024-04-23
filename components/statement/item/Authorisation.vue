@@ -3,7 +3,7 @@
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction">
-                    <img src="~/assets/svg/statement/authorisation.svg" alt="" />
+                    <img alt="" src="~/assets/svg/statement/authorisation.svg" />
                 </div>
             </div>
         </b-col>
@@ -15,9 +15,9 @@
             </div>
             <b-row class="text-muted">
                 <b-col>
-                    <b-badge v-if="isPending" variant="grey-light" class="text-muted mr-2"
-                        >Pending</b-badge
-                    >
+                    <b-badge v-if="isPending" class="text-muted mr-2" variant="grey-light"
+                        >Pending
+                    </b-badge>
                     <span class="mr-2">Purchase</span>
                     <span
                         v-if="transaction.additionalFields.merchantTerminalCountry"
@@ -46,8 +46,8 @@ import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-in
 
 @Component({
     components: {
-        Amount: () => import('~/components/statement/item/common/amount.vue'),
-        CardFee: () => import('~/components/statement/item/common/cardFee.vue'),
+        Amount: () => import('~/components/statement/item/common/Amount.vue'),
+        CardFee: () => import('~/components/statement/item/common/CardFee.vue'),
     },
 })
 export default class StatementItemAdditionalField extends Vue {

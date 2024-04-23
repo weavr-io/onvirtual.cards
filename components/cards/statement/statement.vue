@@ -77,7 +77,7 @@ import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/In
     components: {
         DownloadIcon: () => import('~/assets/svg/download.svg?inline'),
         DeleteIcon: () => import('~/assets/svg/delete.svg?inline'),
-        StatementItem: () => import('~/components/statement/item.vue'),
+        StatementItem: () => import('~/components/ organisms/StatementItem.vue'),
     },
 })
 export default class CardStatement extends mixins(

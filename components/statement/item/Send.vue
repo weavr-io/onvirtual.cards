@@ -3,7 +3,12 @@
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction increase">
-                    <transfer-icon />
+                    <template v-if="isOut">
+                        <send-icon />
+                    </template>
+                    <template v-if="isIn">
+                        <receive-icon />
+                    </template>
                 </div>
             </div>
         </b-col>
@@ -14,12 +19,14 @@
                     <template v-if="isIn">From {{ source }}</template>
                 </div>
             </div>
-            <b-row class="text-muted">
-                <b-col> Personal Transfer </b-col>
-                <b-col class="text-right">
-                    <card-fee :transaction="transaction" />
-                </b-col>
-            </b-row>
+            <div class="text-muted">
+                <b-row>
+                    <b-col> Transfer</b-col>
+                    <b-col class="text-right">
+                        <card-fee :transaction="transaction" />
+                    </b-col>
+                </b-row>
+            </div>
         </b-col>
         <b-col class="text-right" cols="3" xl="2">
             <amount :transaction="transaction" />
@@ -32,9 +39,10 @@ import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-in
 
 @Component({
     components: {
-        TransferIcon: () => import('~/assets/svg/statement/transfer.svg?inline'),
-        Amount: () => import('~/components/statement/item/common/amount.vue'),
-        CardFee: () => import('~/components/statement/item/common/cardFee.vue'),
+        ReceiveIcon: () => import('~/assets/svg/statement/receive.svg?inline'),
+        SendIcon: () => import('~/assets/svg/statement/send.svg?inline'),
+        Amount: () => import('~/components/statement/item/common/Amount.vue'),
+        CardFee: () => import('~/components/statement/item/common/CardFee.vue'),
     },
 })
 export default class StatementItemAdditionalField extends Vue {
@@ -42,19 +50,19 @@ export default class StatementItemAdditionalField extends Vue {
     readonly transaction!: StatementEntryModel
 
     get source() {
-        return this.transaction.additionalFields?.sourceInstrumentFriendlyName
+        return this.transaction.additionalFields?.sourceIdentityName
     }
 
     get destination() {
-        return this.transaction.additionalFields?.destinationInstrumentFriendlyName
+        return this.transaction.additionalFields?.destinationIdentityName
     }
 
     get isOut() {
-        return this.destination !== undefined
+        return this.transaction.additionalFields?.destinationIdentityName !== undefined
     }
 
     get isIn() {
-        return this.source !== undefined
+        return this.transaction.additionalFields?.sourceIdentityName !== undefined
     }
 }
 </script>

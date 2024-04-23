@@ -2,17 +2,26 @@
     <b-row align-v="center">
         <b-col cols="1">
             <div class="transaction-type-icon">
-                <div class="transaction">
-                    <img src="~/assets/svg/statement/deposit.svg" alt="" />
+                <div class="transaction increase">
+                    <img alt="" src="~/assets/svg/statement/withdrawal.svg" />
                 </div>
             </div>
         </b-col>
         <b-col>
             <div class="transaction-type">
-                <div class="transaction">Deposit</div>
+                <div class="transaction text-capitalize">
+                    {{ chargeFeeType }}
+                </div>
             </div>
             <div class="text-muted">
                 <b-row>
+                    <b-col>
+                        <span v-if="transaction.sourceAmount">
+                            {{ 100 | weavr_currency(transaction.transactionAmount.currency) }} =
+                            {{ transaction.sourceAmount.currency | weavr_currency_symbol
+                            }}{{ transaction.additionalFields.exchangeRate }}
+                        </span>
+                    </b-col>
                     <b-col class="text-right">
                         <card-fee :transaction="transaction" />
                     </b-col>
@@ -30,12 +39,16 @@ import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-in
 
 @Component({
     components: {
-        Amount: () => import('~/components/statement/item/common/amount.vue'),
-        CardFee: () => import('~/components/statement/item/common/cardFee.vue'),
+        Amount: () => import('~/components/statement/item/common/Amount.vue'),
+        CardFee: () => import('~/components/statement/item/common/CardFee.vue'),
     },
 })
 export default class StatementItemAdditionalField extends Vue {
     @Prop()
     readonly transaction!: StatementEntryModel
+
+    get chargeFeeType(): string | undefined {
+        return this.transaction.additionalFields?.chargeFeeType.split('_').join(' ').toLowerCase()
+    }
 }
 </script>

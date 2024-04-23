@@ -75,7 +75,7 @@ import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEn
 
 @Component({
     components: {
-        StatementItem: () => import('~/components/statement/item.vue'),
+        StatementItem: () => import('~/components/ organisms/StatementItem.vue'),
         DownloadIcon: () => import('~/assets/svg/download.svg?inline'),
     },
 })

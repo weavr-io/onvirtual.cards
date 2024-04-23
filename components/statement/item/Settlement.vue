@@ -8,10 +8,10 @@
                             transaction.additionalFields.merchantTransactionType ==
                             'CASH_WITHDRAWAL'
                         "
-                        src="~/assets/svg/statement/atm_withdrawal.svg"
                         alt=""
+                        src="~/assets/svg/statement/atm_withdrawal.svg"
                     />
-                    <img v-else src="~/assets/svg/statement/settlement.svg" alt="" />
+                    <img v-else alt="" src="~/assets/svg/statement/settlement.svg" />
                 </div>
             </div>
         </b-col>
@@ -61,8 +61,8 @@ import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-in
 
 @Component({
     components: {
-        Amount: () => import('~/components/statement/item/common/amount.vue'),
-        CardFee: () => import('~/components/statement/item/common/cardFee.vue'),
+        Amount: () => import('~/components/statement/item/common/Amount.vue'),
+        CardFee: () => import('~/components/statement/item/common/CardFee.vue'),
     },
 })
 export default class StatementItemAdditionalField extends Vue {

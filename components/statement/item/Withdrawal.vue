@@ -1,9 +1,9 @@
 <template>
-    <b-row align-v="center" :class="{ 'text-muted': isPending }">
+    <b-row :class="{ 'text-muted': isPending }" align-v="center">
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction">
-                    <img src="~/assets/svg/statement/withdrawal.svg" alt="" />
+                    <img alt="" src="~/assets/svg/statement/withdrawal.svg" />
                 </div>
             </div>
         </b-col>
@@ -13,9 +13,9 @@
             </div>
             <b-row class="text-muted">
                 <b-col>
-                    <b-badge v-if="isPending" variant="grey-light" class="text-muted"
-                        >Pending</b-badge
-                    >
+                    <b-badge v-if="isPending" class="text-muted" variant="grey-light"
+                        >Pending
+                    </b-badge>
                 </b-col>
                 <b-col class="text-right">
                     <card-fee :transaction="transaction" />
@@ -28,13 +28,13 @@
     </b-row>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 @Component({
     components: {
-        Amount: () => import('~/components/statement/item/common/amount.vue'),
-        CardFee: () => import('~/components/statement/item/common/cardFee.vue'),
+        Amount: () => import('~/components/statement/item/common/Amount.vue'),
+        CardFee: () => import('~/components/statement/item/common/CardFee.vue'),
     },
 })
 export default class StatementItemAdditionalField extends Vue {
