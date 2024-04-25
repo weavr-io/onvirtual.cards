@@ -3,11 +3,7 @@
         <b-container>
             <b-row v-if="pendingDataOrError">
                 <b-col>
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="loader-spinner">
-                            <b-spinner />
-                        </div>
-                    </div>
+                    <LoadingSpinner center show />
                 </b-col>
             </b-row>
             <b-row v-else align-h="center">
@@ -81,9 +77,11 @@ import BaseMixin from '~/mixins/BaseMixin'
 import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 @Component({
     components: {
+        LoadingSpinner,
         LoaderButton,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     },

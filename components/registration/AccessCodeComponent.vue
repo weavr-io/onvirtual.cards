@@ -25,17 +25,7 @@
                     </b-form-group>
                     <b-form-row class="mt-5">
                         <b-col class="text-center">
-                            <b-overlay
-                                :show="isLoading"
-                                class="d-inline-block"
-                                rounded="pill"
-                                spinner-small
-                            >
-                                <b-button type="submit" variant="secondary">
-                                    submit
-                                    <span class="pl-5">-></span>
-                                </b-button>
-                            </b-overlay>
+                            <LoaderButton :is-loading="isLoading" text="submit" />
                         </b-col>
                     </b-form-row>
                 </b-form>
@@ -51,8 +41,10 @@ import { required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({
+    components: { LoaderButton },
     validations: {
         form: {
             code: { required },

@@ -17,6 +17,7 @@ const props = withDefaults(
         text?: string
     }>(),
     {
+        showArrow: true,
         text: '',
     },
 )

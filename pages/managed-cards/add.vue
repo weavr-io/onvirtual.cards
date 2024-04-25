@@ -3,11 +3,7 @@
         <b-container>
             <b-row v-if="pendingDataOrError">
                 <b-col>
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="loader-spinner">
-                            <b-spinner />
-                        </div>
-                    </div>
+                    <LoadingSpinner center show />
                 </b-col>
             </b-row>
             <b-row v-else align-h="center">
@@ -143,9 +139,11 @@ import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressMod
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 @Component({
     components: {
+        LoadingSpinner,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },

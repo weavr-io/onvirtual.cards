@@ -24,11 +24,7 @@
             </b-container>
         </template>
         <template v-else>
-            <div class="d-flex flex-column align-items-center">
-                <div class="loader-spinner">
-                    <b-spinner />
-                </div>
-            </div>
+            <LoadingSpinner center show />
         </template>
     </section>
 </template>
@@ -38,8 +34,10 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
 import AccountsMixin from '~/mixins/AccountsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 @Component({
+    components: { LoadingSpinner },
     layout: 'dashboard',
     middleware: ['kyVerified'],
 })

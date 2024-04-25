@@ -70,11 +70,7 @@
                     </b-row>
                 </b-col>
                 <b-col v-else>
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="loader-spinner">
-                            <b-spinner />
-                        </div>
-                    </div>
+                    <LoadingSpinner center show />
                 </b-col>
             </b-row>
         </b-container>
@@ -89,9 +85,11 @@ import { BankAccountDetailsModel } from '~/plugins/weavr-multi/api/models/manage
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
 import { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
 import { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SwiftBankDetailsModel'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 @Component({
     components: {
+        LoadingSpinner,
         BIcon,
         BIconBoxArrowUpRight,
     },

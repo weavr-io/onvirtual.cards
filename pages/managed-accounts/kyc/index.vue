@@ -5,11 +5,7 @@
             <b-row>
                 <b-col>
                     <template v-if="pendingDataOrError">
-                        <div class="d-flex justify-content-center">
-                            <div class="loader-spinner">
-                                <b-spinner />
-                            </div>
-                        </div>
+                        <LoadingSpinner center show />
                     </template>
                     <template v-else-if="isKycPending">
                         <div class="pt-5">
@@ -37,9 +33,11 @@ import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 import KYCAlert from '~/components/consumers/KYCAlert.vue'
 import DashboardHeader from '~/components/DashboardHeader.vue'
 import { KYCErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCErrorCodeEnum'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 @Component({
     components: {
+        LoadingSpinner,
         DashboardHeader,
         KYCAlert,
         WeavrKyc,

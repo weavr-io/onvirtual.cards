@@ -23,11 +23,7 @@
             We need to verify your email address. Please click
             <b-button class="link mb-1" variant="transparent" @click="goToVerify">here.</b-button>
         </b-alert>
-        <div v-if="isLoading" id="loader">
-            <div class="loader-spinner">
-                <b-spinner />
-            </div>
-        </div>
+        <LoadingSpinner id="loader" :is-loading="isLoading" />
         <cookie-policy />
     </div>
 </template>
@@ -36,9 +32,11 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import KyVerified from '~/mixins/kyVerified'
 import BaseMixin from '~/mixins/BaseMixin'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 @Component({
     components: {
+        LoadingSpinner,
         AppHeader: () => import('~/components/Header.vue'),
         DashboardHeader: () => import('~/components/DashboardHeader.vue'),
         KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
