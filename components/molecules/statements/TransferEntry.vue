@@ -3,7 +3,7 @@
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction increase">
-                    <TransferIcon />
+                    <img alt="Transfer" loading="lazy" src="@/assets/svg/statement/transfer.svg" />
                 </div>
             </div>
         </b-col>
@@ -32,7 +32,6 @@ import { computed } from 'vue'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import Amount from '~/components/statement/item/common/Amount.vue'
 import CardFee from '~/components/statement/item/common/CardFee.vue'
-import TransferIcon from '~/assets/svg/statement/transfer.svg?inline'
 
 const props = defineProps({
     transaction: {

@@ -3,7 +3,7 @@
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction">
-                    <img alt="" src="~/assets/svg/statement/refund.svg" />
+                    <img alt="Reversal" loading="lazy" src="@/assets/svg/statement/refund.svg" />
                 </div>
             </div>
         </b-col>

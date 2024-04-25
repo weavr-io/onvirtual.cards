@@ -6,7 +6,7 @@
                     <img
                         alt="Refund"
                         loading="lazy"
-                        src="~/assets/svg/statement/manual_transaction.svg"
+                        src="@/assets/svg/statement/manual_transaction.svg"
                     />
                 </div>
             </div>

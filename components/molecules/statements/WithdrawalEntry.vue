@@ -6,7 +6,7 @@
                     <img
                         alt="Withdrawal"
                         loading="lazy"
-                        src="~/assets/svg/statement/withdrawal.svg"
+                        src="@/assets/svg/statement/withdrawal.svg"
                     />
                 </div>
             </div>
