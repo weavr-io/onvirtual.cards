@@ -39,8 +39,8 @@
                             >{{ transaction.additionalFields.merchantTerminalCountry }}</span
                         >
                         <span v-if="transaction.sourceAmount">
-                            {{ 100 | weavr_currency(transaction.transactionAmount.currency) }}
-                            = {{ transaction.sourceAmount.currency | weavr_currency_symbol
+                            {{ getCurrency(100, transaction.transactionAmount.currency) }}
+                            = {{ getCurrencySymbol(transaction.sourceAmount.currency)
                             }}{{ transaction.additionalFields.exchangeRate }}
                         </span>
                     </b-col>
@@ -58,6 +58,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import { weavrCurrency, weavrCurrencySymbol } from '~/utils/helper'
 
 @Component({
     components: {
@@ -68,5 +69,13 @@ import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-in
 export default class StatementItemAdditionalField extends Vue {
     @Prop()
     readonly transaction!: StatementEntryModel
+
+    getCurrencySymbol(val: string) {
+        return weavrCurrencySymbol(val)
+    }
+
+    getCurrency(balance: number, currency: string) {
+        return weavrCurrency(balance, currency)
+    }
 }
 </script>

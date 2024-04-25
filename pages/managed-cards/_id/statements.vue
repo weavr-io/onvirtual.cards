@@ -19,8 +19,11 @@
                                     </span>
                                     <span class="card-expiry ml-2 ml-sm-5">
                                         <span class="card-expiry-label">EXP</span>
-                                        <span class="card-expiry-value">
-                                            {{ managedCard.expiryMmyy | expiryMmyy }}
+                                        <span
+                                            v-if="managedCard.expiryMmyy"
+                                            class="card-expiry-value"
+                                        >
+                                            {{ getExpiryDate(managedCard.expiryMmyy) }}
                                         </span>
                                     </span>
                                 </div>
@@ -39,10 +42,12 @@
                             </b-button>
                             <div class="card-balance">
                                 <div class="card-balance-label text-muted">balance</div>
-                                <div class="card-balance-value">
+                                <div v-if="managedCard.balances" class="card-balance-value">
                                     {{
-                                        managedCard.balances.availableBalance
-                                            | weavr_currency(managedCard.currency)
+                                        getCurrency(
+                                            managedCard.balances.availableBalance!,
+                                            managedCard.currency!,
+                                        )
                                     }}
                                 </div>
                             </div>
@@ -116,8 +121,11 @@
                                 <b-col cols="3">
                                     <div class="card-expiry">
                                         <div class="card-expiry-label">EXP</div>
-                                        <div class="card-expiry-value">
-                                            {{ managedCard.expiryMmyy | expiryMmyy }}
+                                        <div
+                                            v-if="managedCard.expiryMmyy"
+                                            class="card-expiry-value"
+                                        >
+                                            {{ getExpiryDate(managedCard.expiryMmyy) }}
                                         </div>
                                     </div>
                                 </b-col>
@@ -158,16 +166,17 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import dot from 'dot-object'
 import { DateTime } from 'luxon'
+import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
-import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
-import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import CardsMixin from '~/mixins/CardsMixin'
-import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import Statement from '~/components/cards/statement/statement.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
+import { weavrCurrency, expiryMmyy } from '~/utils/helper'
 
 @Component({
     watch: {
@@ -231,6 +240,14 @@ export default class ManagedCardsStatements extends mixins(
 
         this.cardsStore.clearCardStatements()
         await this.cardsStore.getCardStatement(_req)
+    }
+
+    getCurrency(balance: number, currency: string) {
+        return weavrCurrency(balance, currency)
+    }
+
+    getExpiryDate(val: string) {
+        return expiryMmyy(val)
     }
 
     toggleIsLoading() {

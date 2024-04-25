@@ -4,7 +4,7 @@
             <div class="card" @click="showFront = !showFront">
                 <div v-if="showFront" class="front">
                     <div class="logo">
-                        <img src="/img/logo.svg" alt height="15px" />
+                        <img src="/img/logo.svg" alt="logo" height="15px" />
                     </div>
                     <div class="card-number">
                         <weavr-card-number-span
@@ -20,7 +20,9 @@
                     </div>
                     <div class="exp">
                         <span class="end-text">VALID THRU:</span>
-                        <span class="end-date">{{ card.expiryMmyy | expiryMmyy }}</span>
+                        <span v-if="card.expiryMmyy" class="end-date">{{
+                            getExpiryDate(card.expiryMmyy)
+                        }}</span>
                     </div>
                     <div class="card-holder">{{ card.nameOnCard }}</div>
                 </div>
@@ -46,6 +48,8 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'nuxt-property-decorator'
+import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
+import { expiryMmyy } from '~/utils/helper'
 
 export interface ErrorLink {
     text: string
@@ -54,9 +58,13 @@ export interface ErrorLink {
 
 @Component
 export default class Card extends Vue {
-    @Prop({ default: null }) readonly card!: string
+    @Prop({ default: null }) readonly card!: ManagedCardModel
 
     public showFront = true
+
+    getExpiryDate(val: string) {
+        return expiryMmyy(val)
+    }
 }
 </script>
 
