@@ -20,9 +20,7 @@
                     </div>
                     <div class="exp">
                         <span class="end-text">VALID THRU:</span>
-                        <span v-if="card.expiryMmyy" class="end-date">{{
-                            getExpiryDate(card.expiryMmyy)
-                        }}</span>
+                        <span v-if="card.expiryMmyy" class="end-date">{{ expiryDate }}</span>
                     </div>
                     <div class="card-holder">{{ card.nameOnCard }}</div>
                 </div>
@@ -62,8 +60,8 @@ export default class Card extends Vue {
 
     public showFront = true
 
-    getExpiryDate(val: string) {
-        return expiryMmyy(val)
+    get expiryDate() {
+        return expiryMmyy(this.card.expiryMmyy)
     }
 }
 </script>
