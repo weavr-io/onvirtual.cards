@@ -3,16 +3,18 @@
 </template>
 
 <script>
-import { Component, Vue } from 'nuxt-property-decorator'
+import { defineComponent, useRouter } from '@nuxtjs/composition-api'
 import { initialiseStores } from '@/utils/pinia-store-accessor'
 
-@Component({})
-export default class Mobile extends Vue {
-    asyncData({ redirect }) {
+export default defineComponent({
+    setup() {
+        const router = useRouter()
+
         const { auth, identity } = initialiseStores(['auth', 'identity'])
+
         if (identity?.identityState.mobileNumberVerified || !auth?.isLoggedIn) {
-            return redirect('/dashboard')
+            return router.push('/dashboard')
         }
-    }
-}
+    },
+})
 </script>

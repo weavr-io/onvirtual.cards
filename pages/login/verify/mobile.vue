@@ -21,27 +21,21 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import Vue from 'vue'
-import MobileComponent from '~/components/MobileComponent.vue'
+import { defineComponent, useAsync, useRouter } from '@nuxtjs/composition-api'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
+import MobileComponent from '~/components/MobileComponent.vue'
 
-@Component({
+export default defineComponent({
+    components: { MobileComponent },
     layout: 'auth',
-    components: {
-        MobileComponent,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
-    },
-    middleware: ['kyVerified'],
-})
-export default class Mobile extends Vue {
-    async asyncData({ redirect }) {
+    setup() {
+        const router = useRouter()
+
         const { auth } = initialiseStores(['auth'])
 
-        await auth?.indexAuthFactors()
+        useAsync(() => auth?.indexAuthFactors())
 
         const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
             (factor) => factor.channel === SCAOtpChannelEnum.SMS,
@@ -51,8 +45,8 @@ export default class Mobile extends Vue {
             smsAuthFactors &&
             smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION
         ) {
-            return redirect('/')
+            return router.push('/')
         }
-    }
-}
+    },
+})
 </script>
