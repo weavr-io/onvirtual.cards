@@ -56,7 +56,7 @@ import BaseMixin from '~/mixins/BaseMixin'
 import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
-import LogoOvc from '~/components/atoms/LogoOvc.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 

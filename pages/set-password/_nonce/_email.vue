@@ -73,7 +73,7 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
-import LogoOvc from '~/components/atoms/LogoOvc.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
 @Component({
     layout: 'auth',

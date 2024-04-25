@@ -79,7 +79,7 @@ import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authe
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
-import LogoOvc from '~/components/atoms/LogoOvc.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({

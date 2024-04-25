@@ -57,7 +57,7 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
-import LogoOvc from '~/components/atoms/LogoOvc.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
 @Component({
     layout: 'auth',

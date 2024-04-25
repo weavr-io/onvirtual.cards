@@ -72,7 +72,7 @@ import { email, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/mixins/BaseMixin'
 import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
-import LogoOvc from '~/components/atoms/LogoOvc.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({

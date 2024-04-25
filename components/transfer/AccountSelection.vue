@@ -7,7 +7,7 @@
         </b-row>
         <b-row class="py-5 my-5">
             <b-col>
-                <b-form-group class="weavr-account-radio" :state="isInvalid($v.request.source.id)">
+                <b-form-group :state="isInvalid($v.request.source.id)" class="weavr-account-radio">
                     <b-form-radio-group
                         v-model="request.source.id"
                         :options="formattedAccounts"
@@ -46,10 +46,6 @@ import ValidationMixin from '~/mixins/ValidationMixin'
     },
 })
 export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMixin) {
-    get accounts() {
-        return this.accountsStore.accountState.accounts
-    }
-
     public request = {
         source: {
             type: 'managed_accounts',
@@ -57,19 +53,8 @@ export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMi
         },
     }
 
-    @Emit()
-    submitForm(e) {
-        e.preventDefault()
-
-        if (this.$v.request) {
-            this.$v.request.$touch()
-            if (this.$v.request.$anyError) {
-                this.showErrorToast('Please select an account to top up from.')
-                return null
-            }
-        }
-
-        return this.request
+    get accounts() {
+        return this.accountsStore.accountState.accounts
     }
 
     get formattedAccounts(): { value: string; text: string; html: string }[] {
@@ -118,6 +103,21 @@ export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMi
                 disabled: isDisabled,
             }
         })
+    }
+
+    @Emit()
+    submitForm(e) {
+        e.preventDefault()
+
+        if (this.$v.request) {
+            this.$v.request.$touch()
+            if (this.$v.request.$anyError) {
+                this.showErrorToast('Please select an account to top up from.')
+                return null
+            }
+        }
+
+        return this.request
     }
 }
 </script>

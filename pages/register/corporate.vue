@@ -37,7 +37,7 @@ import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
 import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
-import LogoOvc from '~/components/atoms/LogoOvc.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
 @Component({
     layout: 'auth',

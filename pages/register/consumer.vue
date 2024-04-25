@@ -241,7 +241,7 @@ import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import { AxiosResponse } from 'axios'
 
-import LogoOvc from '~/components/atoms/LogoOvc.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import { DeepNullable, RecursivePartial } from '~/global'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'

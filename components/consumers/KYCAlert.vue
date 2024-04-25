@@ -2,7 +2,7 @@
     <section>
         <b-container>
             <b-row v-if="isPendingReview" align-h="center">
-                <b-col md="9" lg="6" class="py-3 font-weight-lighter text-center">
+                <b-col class="py-3 font-weight-lighter text-center" lg="6" md="9">
                     <h3 class="font-weight-lighter mb-4">
                         Your documentation is currently under review.
                     </h3>
@@ -13,7 +13,7 @@
                 </b-col>
             </b-row>
             <b-row v-else align-h="center">
-                <b-col md="9" lg="6" class="py-3 font-weight-lighter">
+                <b-col class="py-3 font-weight-lighter" lg="6" md="9">
                     <div>
                         <h3 class="text-center font-weight-lighter mb-4">We need some documents</h3>
                         <p>
@@ -31,9 +31,9 @@
                         </ul>
 
                         <h5 class="mt-4 text-center">
-                            <b-link to="/managed-accounts/kyc" class="link pb-2">
-                                Start verification process</b-link
-                            >
+                            <b-link class="link pb-2" to="/managed-accounts/kyc">
+                                Start verification process
+                            </b-link>
                         </h5>
                     </div>
                 </b-col>

@@ -13,7 +13,7 @@ import AccessCodeComponent from '~/components/registration/AccessCodeComponent.v
 import BusinessOrPersonalComponent from '~/components/organisms/ProfileIdentitySelection.vue'
 import BaseMixin from '~/mixins/BaseMixin'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
-import LogoOvc from '~/components/atoms/LogoOvc.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
 @Component({
     components: {

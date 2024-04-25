@@ -1,5 +1,5 @@
 <template>
-    <b-col md="9" lg="6">
+    <b-col lg="6" md="9">
         <b-row class="my-5">
             <b-card body-class="p-6">
                 <b-form @submit.prevent="tryToSubmitAccessCode">
@@ -7,7 +7,7 @@
                         Enter the access code for registration
                     </h3>
                     <template v-if="inviteCodeError.showMsg">
-                        <b-alert show variant="danger" class="mb-4">
+                        <b-alert class="mb-4" show variant="danger">
                             {{ inviteCodeError.errorMsg }}
                         </b-alert>
                     </template>
@@ -27,11 +27,11 @@
                         <b-col class="text-center">
                             <b-overlay
                                 :show="isLoading"
-                                rounded="pill"
                                 class="d-inline-block"
+                                rounded="pill"
                                 spinner-small
                             >
-                                <b-button variant="secondary" type="submit">
+                                <b-button type="submit" variant="secondary">
                                     submit
                                     <span class="pl-5">-></span>
                                 </b-button>
