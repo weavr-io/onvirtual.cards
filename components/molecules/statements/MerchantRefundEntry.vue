@@ -3,43 +3,41 @@
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction increase">
-                    <img alt="" src="~/assets/svg/statement/refund.svg" />
+                    <img alt="Refund" loading="lazy" src="~/assets/svg/statement/refund.svg" />
                 </div>
             </div>
         </b-col>
         <b-col>
             <div class="transaction-type">
                 <div class="transaction">
-                    {{ transaction.additionalFields.merchantName }}
+                    {{ props.transaction.additionalFields.merchantName }}
                 </div>
             </div>
             <div class="text-muted">
                 <b-row>
                     <b-col> Refund</b-col>
                     <b-col class="text-right">
-                        <card-fee :transaction="transaction" />
+                        <CardFee :transaction="transaction" />
                     </b-col>
                 </b-row>
             </div>
         </b-col>
         <b-col class="text-right" cols="3" xl="2">
-            <amount :transaction="transaction" />
+            <Amount :transaction="props.transaction" />
         </b-col>
     </b-row>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import { defineProps } from 'vue'
+import { PropType } from '@nuxtjs/composition-api'
+import Amount from '~/components/statement/item/common/Amount.vue'
+import CardFee from '~/components/statement/item/common/CardFee.vue'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
-@Component({
-    components: {
-        RefundIcon: () => import('~/assets/svg/statement/refund.svg?inline'),
-        Amount: () => import('~/components/statement/item/common/Amount.vue'),
-        CardFee: () => import('~/components/statement/item/common/CardFee.vue'),
+const props = defineProps({
+    transaction: {
+        type: Object as PropType<StatementEntryModel>,
+        required: true,
     },
 })
-export default class StatementItemAdditionalField extends Vue {
-    @Prop()
-    readonly transaction!: StatementEntryModel
-}
 </script>
