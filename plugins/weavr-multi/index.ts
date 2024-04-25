@@ -1,4 +1,4 @@
-import { Plugin } from '@nuxt/types'
+import { defineNuxtPlugin } from '@nuxtjs/composition-api'
 import { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 import { ApiModule } from '~/plugins/weavr-multi/api/ApiModule'
 
@@ -18,8 +18,6 @@ declare module '@nuxt/types' {
     }
 }
 
-const weavrMultiPlugin: Plugin = (_context, _inject) => {
-    _inject('apiMulti', new ApiModule())
-}
-
-export default weavrMultiPlugin
+export default defineNuxtPlugin((_, inject) => {
+    inject('apiMulti', new ApiModule())
+})

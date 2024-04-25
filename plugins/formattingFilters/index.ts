@@ -1,4 +1,4 @@
-import { Plugin } from '@nuxt/types'
+import { defineNuxtPlugin } from '@nuxtjs/composition-api'
 import { FormattingFiltersModule } from '~/plugins/formattingFilters/FormattingFiltersModule'
 import { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
 
@@ -21,8 +21,6 @@ declare module '@nuxt/types' {
     }
 }
 
-const formattingFiltersPlugin: Plugin = (_context, _inject) => {
-    _inject('formattingFilters', new FormattingFiltersModule())
-}
-
-export default formattingFiltersPlugin
+export default defineNuxtPlugin((_, inject) => {
+    inject('formattingFilters', new FormattingFiltersModule())
+})
