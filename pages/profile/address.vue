@@ -134,7 +134,7 @@ import { Nullable } from '~/global'
     components: {
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
-        RegistrationNav: () => import('~/components/registration/RegistrationNav.vue'),
+        RegistrationNav: () => import('~/components/molecules/registration/RegistrationNav.vue'),
     },
     middleware: ['authRouteGuard'],
 })

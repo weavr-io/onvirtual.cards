@@ -46,7 +46,7 @@ import LogoOvc from '~/components/atoms/LogoOvc.vue'
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
         RegisterForm: () => import('~/components/registration/RegisterForm.vue'),
         PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
-        RegistrationNav: () => import('~/components/registration/RegistrationNav.vue'),
+        RegistrationNav: () => import('~/components/molecules/registration/RegistrationNav.vue'),
     },
     middleware: 'accessCodeVerified',
 })
