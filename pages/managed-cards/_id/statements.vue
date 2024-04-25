@@ -19,8 +19,11 @@
                                     </span>
                                     <span class="card-expiry ml-2 ml-sm-5">
                                         <span class="card-expiry-label">EXP</span>
-                                        <span class="card-expiry-value">
-                                            {{ managedCard.expiryMmyy | expiryMmyy }}
+                                        <span
+                                            v-if="managedCard.expiryMmyy"
+                                            class="card-expiry-value"
+                                        >
+                                            {{ expiryDate }}
                                         </span>
                                     </span>
                                 </div>
@@ -39,11 +42,11 @@
                             </b-button>
                             <div class="card-balance">
                                 <div class="card-balance-label text-muted">balance</div>
-                                <div class="card-balance-value">
-                                    {{
-                                        managedCard.balances.availableBalance
-                                            | weavr_currency(managedCard.currency)
-                                    }}
+                                <div
+                                    v-if="managedCard.balances?.availableBalance"
+                                    class="card-balance-value"
+                                >
+                                    {{ currency }}
                                 </div>
                             </div>
                         </div>
@@ -98,7 +101,7 @@
                                                         lineHeight: '1',
                                                         fontSize: '20px',
                                                     }"
-                                                    :token="managedCard.cardNumber.value"
+                                                    :token="managedCard.cardNumber?.value"
                                                     class="card-select-number"
                                                     @onChange="toggleIsLoading"
                                                 />
@@ -116,8 +119,11 @@
                                 <b-col cols="3">
                                     <div class="card-expiry">
                                         <div class="card-expiry-label">EXP</div>
-                                        <div class="card-expiry-value">
-                                            {{ managedCard.expiryMmyy | expiryMmyy }}
+                                        <div
+                                            v-if="managedCard.expiryMmyy"
+                                            class="card-expiry-value"
+                                        >
+                                            {{ expiryDate }}
                                         </div>
                                     </div>
                                 </b-col>
@@ -135,7 +141,7 @@
                                                     fontSize: '14.4px',
                                                     fontWeight: '300',
                                                 }"
-                                                :token="managedCard.cvv.value"
+                                                :token="managedCard.cvv?.value"
                                                 class="card-select-number"
                                             />
                                         </div>
@@ -158,13 +164,14 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import dot from 'dot-object'
 import { DateTime } from 'luxon'
+import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
+import { weavrCurrency, expiryMmyy } from '~/utils/helper'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
-import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
-import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import CardsMixin from '~/mixins/CardsMixin'
-import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import Statement from '~/components/cards/statement/statement.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
@@ -193,6 +200,17 @@ export default class ManagedCardsStatements extends mixins(
     isLoading: boolean | null = true
 
     fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
+
+    get currency() {
+        return weavrCurrency(
+            this.managedCard?.balances?.availableBalance,
+            this.managedCard?.currency,
+        )
+    }
+
+    get expiryDate() {
+        return expiryMmyy(this.managedCard?.expiryMmyy)
+    }
 
     async fetch() {
         this.page = 0

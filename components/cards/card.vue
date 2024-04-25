@@ -12,11 +12,11 @@
                         <b-link :to="statementsLink">
                             <b-container class="p-0" fluid>
                                 <b-row>
-                                    <b-col class="card-balance text-right">
-                                        {{
-                                            card.balances.availableBalance
-                                                | weavr_currency(card.currency)
-                                        }}
+                                    <b-col
+                                        v-if="card.balances?.availableBalance"
+                                        class="card-balance text-right"
+                                    >
+                                        {{ currency }}
                                     </b-col>
                                 </b-row>
                                 <b-row class="mt-3 mb-3">
@@ -46,8 +46,8 @@
                                     <b-col cols="3">
                                         <div class="card-expiry">
                                             <div class="card-expiry-label">EXP</div>
-                                            <div class="card-expiry-value">
-                                                {{ card.expiryMmyy | expiryMmyy }}
+                                            <div v-if="card.expiryMmyy" class="card-expiry-value">
+                                                {{ expiryDate }}
                                             </div>
                                         </div>
                                     </b-col>
@@ -106,9 +106,10 @@
 <script lang="ts">
 import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
-import BaseMixin from '~/mixins/BaseMixin'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { weavrCurrency, expiryMmyy } from '~/utils/helper'
+import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
     components: {
@@ -143,6 +144,14 @@ export default class WeavrCard extends mixins(BaseMixin) {
     get statementsLink() {
         if (!this.card) return undefined
         return `/managed-cards/${this.card.id}/statements`
+    }
+
+    get currency() {
+        return weavrCurrency(this.card.balances?.availableBalance, this.card.currency)
+    }
+
+    get expiryDate() {
+        return expiryMmyy(this.card.expiryMmyy)
     }
 
     async toggleBlock() {

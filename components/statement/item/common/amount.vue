@@ -1,18 +1,27 @@
 <template>
     <div>
-        {{ transaction.transactionAmount | weavr_currency }}
+        {{ currency }}
         <div v-if="transaction.sourceAmount" class="text-muted">
-            {{ transaction.sourceAmount | weavr_currency_with_operator }}
+            {{ currencyWithOp }}
         </div>
     </div>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import { weavrCurrency, weavrCurrencyWithOperator } from '~/utils/helper'
 
 @Component({ components: {} })
 export default class StatementItemAdditionalField extends Vue {
     @Prop()
     readonly transaction!: StatementEntryModel
+
+    get currency() {
+        return weavrCurrency(this.transaction.transactionAmount)
+    }
+
+    get currencyWithOp() {
+        return weavrCurrencyWithOperator(this.transaction.sourceAmount)
+    }
 }
 </script>
