@@ -42,11 +42,14 @@
                             </b-button>
                             <div class="card-balance">
                                 <div class="card-balance-label text-muted">balance</div>
-                                <div v-if="managedCard.balances" class="card-balance-value">
+                                <div
+                                    v-if="managedCard.balances?.availableBalance"
+                                    class="card-balance-value"
+                                >
                                     {{
                                         getCurrency(
-                                            managedCard.balances.availableBalance!,
-                                            managedCard.currency!,
+                                            managedCard.balances.availableBalance,
+                                            managedCard.currency,
                                         )
                                     }}
                                 </div>

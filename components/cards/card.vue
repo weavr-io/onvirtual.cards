@@ -12,10 +12,13 @@
                         <b-link :to="statementsLink">
                             <b-container class="p-0" fluid>
                                 <b-row>
-                                    <b-col v-if="card.balances" class="card-balance text-right">
+                                    <b-col
+                                        v-if="card.balances?.availableBalance"
+                                        class="card-balance text-right"
+                                    >
                                         {{
                                             getCurrency(
-                                                card.balances.availableBalance!,
+                                                card.balances.availableBalance,
                                                 card.currency,
                                             )
                                         }}

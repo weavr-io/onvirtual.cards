@@ -7,7 +7,7 @@
         >
             <b-col cols="7">
                 <b-nav class="dashboard-header">
-                    <b-nav-item active-class="active" to="/managed-cards"> Cards</b-nav-item>
+                    <b-nav-item active-class="active" to="/managed-cards">Cards</b-nav-item>
                     <b-nav-item active-class="active" to="/managed-accounts"> Account</b-nav-item>
                 </b-nav>
             </b-col>
@@ -27,12 +27,12 @@
                             <p class="mb-0 text-muted font-size-small account-balance-label">
                                 balance
                             </p>
-                            <p v-if="account.balances" class="mb-0 account-balance-value">
+                            <p
+                                v-if="account.balances?.availableBalance"
+                                class="mb-0 account-balance-value"
+                            >
                                 {{
-                                    getCurrency(
-                                        account.balances.availableBalance!,
-                                        account.currency,
-                                    )
+                                    getCurrency(account.balances.availableBalance, account.currency)
                                 }}
                             </p>
                         </div>
@@ -44,8 +44,8 @@
                     <b-row align-h="end" align-v="end">
                         <div v-if="hasCards" class="account-balance">
                             <p class="mb-0 text-muted account-balance-label">total balance</p>
-                            <p class="mb-0 account-balance-value">
-                                {{ getCurrency(cardsBalance, cardCurrency!) }}
+                            <p v-if="cardCurrency" class="mb-0 account-balance-value">
+                                {{ getCurrency(cardsBalance, cardCurrency) }}
                             </p>
                         </div>
                     </b-row>
