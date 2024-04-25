@@ -10,7 +10,7 @@
         <b-col>
             <div class="transaction-type">
                 <div class="transaction">
-                    {{ transaction.transactionId.type | weavr_underscore }}
+                    {{ formattedUnderscore }}
                 </div>
             </div>
             <div class="text-muted">
@@ -29,6 +29,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import { weavrUnderscore } from '~/utils/helper'
 
 @Component({
     components: {
@@ -39,5 +40,9 @@ import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-in
 export default class StatementItemAdditionalField extends Vue {
     @Prop()
     readonly transaction!: StatementEntryModel
+
+    get formattedUnderscore() {
+        return weavrUnderscore(this.transaction.transactionId.type)
+    }
 }
 </script>

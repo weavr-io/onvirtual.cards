@@ -7,7 +7,7 @@
         >
             <b-col cols="7">
                 <b-nav class="dashboard-header">
-                    <b-nav-item active-class="active" to="/managed-cards"> Cards</b-nav-item>
+                    <b-nav-item active-class="active" to="/managed-cards">Cards</b-nav-item>
                     <b-nav-item active-class="active" to="/managed-accounts"> Account</b-nav-item>
                 </b-nav>
             </b-col>
@@ -27,11 +27,11 @@
                             <p class="mb-0 text-muted font-size-small account-balance-label">
                                 balance
                             </p>
-                            <p class="mb-0 account-balance-value">
-                                {{
-                                    account.balances.availableBalance
-                                        | weavr_currency(account.currency)
-                                }}
+                            <p
+                                v-if="account.balances?.availableBalance"
+                                class="mb-0 account-balance-value"
+                            >
+                                {{ accountCurrency }}
                             </p>
                         </div>
                     </b-col>
@@ -42,8 +42,8 @@
                     <b-row align-h="end" align-v="end">
                         <div v-if="hasCards" class="account-balance">
                             <p class="mb-0 text-muted account-balance-label">total balance</p>
-                            <p class="mb-0 account-balance-value">
-                                {{ cardsBalance | weavr_currency(cardCurrency) }}
+                            <p v-if="cardCurrency" class="mb-0 account-balance-value">
+                                {{ currency }}
                             </p>
                         </div>
                     </b-row>
@@ -54,11 +54,12 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
+import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import { weavrCurrency } from '~/utils/helper'
 import BaseMixin from '~/mixins/BaseMixin'
 import CardsMixin from '~/mixins/CardsMixin'
 import AccountsMixin from '~/mixins/AccountsMixin'
-import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
-import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 @Component
 export default class DashboardHeader extends mixins(BaseMixin, CardsMixin, AccountsMixin) {
@@ -69,9 +70,17 @@ export default class DashboardHeader extends mixins(BaseMixin, CardsMixin, Accou
             )
         } else if (this.isCorporate) {
             return this.corporatesStore.corporateState.kyb?.kybStatus === KYBStatusEnum.APPROVED
-        } else {
-            return false
         }
+
+        return false
+    }
+
+    get accountCurrency() {
+        return weavrCurrency(this.account?.balances.availableBalance, this.account?.currency)
+    }
+
+    get currency() {
+        return weavrCurrency(this.cardsBalance, this.cardCurrency)
     }
 }
 </script>
