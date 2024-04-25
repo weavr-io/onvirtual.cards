@@ -2,6 +2,7 @@ import { Context, Plugin } from '@nuxt/types'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 const axiosPlugin: Plugin = (ctxt: Context, inject) => {
+    console.log(ctxt)
     const { auth, errors } = initialiseStores(['auth', 'errors'])
     const axiosMulti = ctxt.$axios.create({
         headers: {
