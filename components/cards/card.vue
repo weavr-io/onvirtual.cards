@@ -16,12 +16,7 @@
                                         v-if="card.balances?.availableBalance"
                                         class="card-balance text-right"
                                     >
-                                        {{
-                                            getCurrency(
-                                                card.balances.availableBalance,
-                                                card.currency,
-                                            )
-                                        }}
+                                        {{ currency }}
                                     </b-col>
                                 </b-row>
                                 <b-row class="mt-3 mb-3">
@@ -52,7 +47,7 @@
                                         <div class="card-expiry">
                                             <div class="card-expiry-label">EXP</div>
                                             <div v-if="card.expiryMmyy" class="card-expiry-value">
-                                                {{ getExpiryDate(card.expiryMmyy) }}
+                                                {{ expiryDate }}
                                             </div>
                                         </div>
                                     </b-col>
@@ -151,12 +146,12 @@ export default class WeavrCard extends mixins(BaseMixin) {
         return `/managed-cards/${this.card.id}/statements`
     }
 
-    getCurrency(balance: number, currency: string) {
-        return weavrCurrency(balance, currency)
+    get currency() {
+        return weavrCurrency(this.card.balances?.availableBalance, this.card.currency)
     }
 
-    getExpiryDate(val: string) {
-        return expiryMmyy(val)
+    get expiryDate() {
+        return expiryMmyy(this.card.expiryMmyy)
     }
 
     async toggleBlock() {

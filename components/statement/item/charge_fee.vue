@@ -17,8 +17,7 @@
                 <b-row>
                     <b-col>
                         <span v-if="transaction.sourceAmount">
-                            {{ getCurrency(100, transaction.transactionAmount.currency) }} =
-                            {{ getCurrencySymbol(transaction.sourceAmount.currency)
+                            {{ currency }} = {{ currencySymbol
                             }}{{ transaction.additionalFields.exchangeRate }}
                         </span>
                     </b-col>
@@ -52,12 +51,12 @@ export default class StatementItemAdditionalField extends Vue {
         return this.transaction.additionalFields?.chargeFeeType.split('_').join(' ').toLowerCase()
     }
 
-    getCurrencySymbol(val: string) {
-        return weavrCurrencySymbol(val)
+    get currencySymbol() {
+        return weavrCurrencySymbol(this.transaction.sourceAmount.currency)
     }
 
-    getCurrency(balance: number, currency: string) {
-        return weavrCurrency(balance, currency)
+    get currency() {
+        return weavrCurrency(100, this.transaction.transactionAmount.currency)
     }
 }
 </script>

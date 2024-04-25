@@ -23,7 +23,7 @@
                                             v-if="managedCard.expiryMmyy"
                                             class="card-expiry-value"
                                         >
-                                            {{ getExpiryDate(managedCard.expiryMmyy) }}
+                                            {{ expiryDate }}
                                         </span>
                                     </span>
                                 </div>
@@ -46,12 +46,7 @@
                                     v-if="managedCard.balances?.availableBalance"
                                     class="card-balance-value"
                                 >
-                                    {{
-                                        getCurrency(
-                                            managedCard.balances.availableBalance,
-                                            managedCard.currency,
-                                        )
-                                    }}
+                                    {{ currency }}
                                 </div>
                             </div>
                         </div>
@@ -106,7 +101,7 @@
                                                         lineHeight: '1',
                                                         fontSize: '20px',
                                                     }"
-                                                    :token="managedCard.cardNumber.value"
+                                                    :token="managedCard.cardNumber?.value"
                                                     class="card-select-number"
                                                     @onChange="toggleIsLoading"
                                                 />
@@ -128,7 +123,7 @@
                                             v-if="managedCard.expiryMmyy"
                                             class="card-expiry-value"
                                         >
-                                            {{ getExpiryDate(managedCard.expiryMmyy) }}
+                                            {{ expiryDate }}
                                         </div>
                                     </div>
                                 </b-col>
@@ -146,7 +141,7 @@
                                                     fontSize: '14.4px',
                                                     fontWeight: '300',
                                                 }"
-                                                :token="managedCard.cvv.value"
+                                                :token="managedCard.cvv?.value"
                                                 class="card-select-number"
                                             />
                                         </div>
@@ -172,6 +167,7 @@ import { DateTime } from 'luxon'
 import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
+import { weavrCurrency, expiryMmyy } from '~/utils/helper'
 import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
@@ -179,7 +175,6 @@ import CardsMixin from '~/mixins/CardsMixin'
 import Statement from '~/components/cards/statement/statement.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
-import { weavrCurrency, expiryMmyy } from '~/utils/helper'
 
 @Component({
     watch: {
@@ -205,6 +200,17 @@ export default class ManagedCardsStatements extends mixins(
     isLoading: boolean | null = true
 
     fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
+
+    get currency() {
+        return weavrCurrency(
+            this.managedCard?.balances?.availableBalance,
+            this.managedCard?.currency,
+        )
+    }
+
+    get expiryDate() {
+        return expiryMmyy(this.managedCard?.expiryMmyy)
+    }
 
     async fetch() {
         this.page = 0
@@ -243,14 +249,6 @@ export default class ManagedCardsStatements extends mixins(
 
         this.cardsStore.clearCardStatements()
         await this.cardsStore.getCardStatement(_req)
-    }
-
-    getCurrency(balance: number, currency: string) {
-        return weavrCurrency(balance, currency)
-    }
-
-    getExpiryDate(val: string) {
-        return expiryMmyy(val)
     }
 
     toggleIsLoading() {

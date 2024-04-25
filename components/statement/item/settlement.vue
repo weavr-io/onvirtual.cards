@@ -39,9 +39,8 @@
                             >{{ transaction.additionalFields.merchantTerminalCountry }}</span
                         >
                         <span v-if="transaction.sourceAmount">
-                            {{ getCurrency(100, transaction.transactionAmount.currency) }}
-                            = {{ getCurrencySymbol(transaction.sourceAmount.currency)
-                            }}{{ transaction.additionalFields.exchangeRate }}
+                            {{ currency }}
+                            = {{ currencySymbol }}{{ transaction.additionalFields.exchangeRate }}
                         </span>
                     </b-col>
                     <b-col class="text-right">
@@ -70,12 +69,12 @@ export default class StatementItemAdditionalField extends Vue {
     @Prop()
     readonly transaction!: StatementEntryModel
 
-    getCurrencySymbol(val: string) {
-        return weavrCurrencySymbol(val)
+    get currencySymbol() {
+        return weavrCurrencySymbol(this.transaction.sourceAmount.currency)
     }
 
-    getCurrency(balance: number, currency: string) {
-        return weavrCurrency(balance, currency)
+    get currency() {
+        return weavrCurrency(100, this.transaction.transactionAmount.currency)
     }
 }
 </script>

@@ -10,7 +10,7 @@
         <b-col>
             <div class="transaction-type">
                 <div class="transaction">
-                    {{ formatUnderscore(transaction.transactionId.type) }}
+                    {{ formattedUnderscore }}
                 </div>
             </div>
             <div class="text-muted">
@@ -41,8 +41,8 @@ export default class StatementItemAdditionalField extends Vue {
     @Prop()
     readonly transaction!: StatementEntryModel
 
-    formatUnderscore(val: string) {
-        return weavrUnderscore(val)
+    get formattedUnderscore() {
+        return weavrUnderscore(this.transaction.transactionId.type)
     }
 }
 </script>

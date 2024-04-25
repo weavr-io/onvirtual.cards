@@ -31,9 +31,7 @@
                                 v-if="account.balances?.availableBalance"
                                 class="mb-0 account-balance-value"
                             >
-                                {{
-                                    getCurrency(account.balances.availableBalance, account.currency)
-                                }}
+                                {{ accountCurrency }}
                             </p>
                         </div>
                     </b-col>
@@ -45,7 +43,7 @@
                         <div v-if="hasCards" class="account-balance">
                             <p class="mb-0 text-muted account-balance-label">total balance</p>
                             <p v-if="cardCurrency" class="mb-0 account-balance-value">
-                                {{ getCurrency(cardsBalance, cardCurrency) }}
+                                {{ currency }}
                             </p>
                         </div>
                     </b-row>
@@ -77,8 +75,12 @@ export default class DashboardHeader extends mixins(BaseMixin, CardsMixin, Accou
         return false
     }
 
-    getCurrency(balance: number, currency: string) {
-        return weavrCurrency(balance, currency)
+    get accountCurrency() {
+        return weavrCurrency(this.account?.balances.availableBalance, this.account?.currency)
+    }
+
+    get currency() {
+        return weavrCurrency(this.cardsBalance, this.cardCurrency)
     }
 }
 </script>
