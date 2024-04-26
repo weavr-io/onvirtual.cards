@@ -8,7 +8,7 @@
         >
             <b-card-body class="card-body onvirtual-card overflow-hidden shadow-hover-sm">
                 <b-aspect :aspect="'1.6:1'" class="overflow-hidden">
-                    <b-overlay :show="localIsBusy" class="overflow-hidden" spinner-small>
+                    <b-overlay :show="localIsBusy" class="overflow-hidden h-100" spinner-small>
                         <b-link :to="statementsLink">
                             <b-container class="p-0" fluid>
                                 <b-row>
@@ -108,7 +108,7 @@ import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import { weavrCurrency, expiryMmyy } from '~/utils/helper'
+import { expiryMmyy, weavrCurrency } from '~/utils/helper'
 import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
