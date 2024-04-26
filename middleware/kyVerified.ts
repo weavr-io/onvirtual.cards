@@ -1,16 +1,18 @@
-import type { Middleware } from '@nuxt/types'
+import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 
-const kyVerified: Middleware = async ({ route, redirect }) => {
+export default defineNuxtMiddleware(({ route, redirect }) => {
     const { auth, consumers, corporates } = initialiseStores(['auth', 'consumers', 'corporates'])
+
     if (auth?.isLoggedIn) {
         if (auth?.isConsumer) {
             try {
                 if (route.name === 'managed-accounts-kyb') {
+                    // TODO: use navigateTo() after full nuxt3 migration
                     return redirect('/managed-accounts/kyc')
                 }
 
-                await consumers?.checkKYC()
+                consumers?.checkKYC().catch(() => {})
 
                 if (route.name === 'managed-accounts-kyc') {
                     return redirect('/managed-accounts/add')
@@ -30,7 +32,7 @@ const kyVerified: Middleware = async ({ route, redirect }) => {
                     return redirect('/managed-accounts/kyb')
                 }
 
-                await corporates?.checkKYB()
+                corporates?.checkKYB().catch(() => {})
 
                 if (route.name === 'managed-accounts-kyb') {
                     return redirect('/managed-accounts')
@@ -48,5 +50,4 @@ const kyVerified: Middleware = async ({ route, redirect }) => {
     } else {
         return redirect('/login')
     }
-}
-export default kyVerified
+})
