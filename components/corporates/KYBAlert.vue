@@ -10,7 +10,7 @@
                 </b-col>
             </b-row>
             <b-row v-else align-h="center">
-                <b-col md="9" lg="6" class="py-3 font-weight-lighter">
+                <b-col class="py-3 font-weight-lighter" lg="6" md="9">
                     <h3 class="text-center font-weight-lighter mb-4">We need some documents</h3>
                     <p>
                         We are required by financial services regulations to perform due diligence
@@ -40,8 +40,8 @@
                     </ul>
                     <div class="text-center my-5">
                         <b-button to="/managed-accounts/kyb">
-                            start the verification process</b-button
-                        >
+                            start the verification process
+                        </b-button>
                     </div>
                 </b-col>
             </b-row>

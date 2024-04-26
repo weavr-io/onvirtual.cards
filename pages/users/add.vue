@@ -51,10 +51,10 @@
                                 </b-form-group>
                             </b-col>
                         </b-form-row>
-                        <loader-button
+                        <LoaderButton
                             :is-loading="isLoading"
-                            button-text="send invite"
                             class="mt-5 text-center"
+                            text="send invite"
                         />
                     </b-form>
                 </b-col>
@@ -70,11 +70,12 @@ import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/r
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({
     components: {
+        LoaderButton,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
     },
     validations: {
         request: {

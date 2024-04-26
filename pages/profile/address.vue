@@ -91,10 +91,7 @@
                                 </b-form-group>
                                 <b-row align-v="center" class="mt-4">
                                     <b-col class="text-center">
-                                        <loader-button
-                                            :is-loading="isLoading"
-                                            button-text="continue"
-                                        />
+                                        <LoaderButton :is-loading="isLoading" text="continue" />
                                     </b-col>
                                 </b-row>
                             </b-form>
@@ -136,9 +133,8 @@ import { Nullable } from '~/global'
     },
     components: {
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
-        RegistrationNav: () => import('~/components/registration/RegistrationNav.vue'),
-        ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
+        RegistrationNav: () => import('~/components/molecules/registration/RegistrationNav.vue'),
     },
     middleware: ['authRouteGuard'],
 })

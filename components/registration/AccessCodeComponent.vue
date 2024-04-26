@@ -1,5 +1,5 @@
 <template>
-    <b-col md="9" lg="6">
+    <b-col lg="6" md="9">
         <b-row class="my-5">
             <b-card body-class="p-6">
                 <b-form @submit.prevent="tryToSubmitAccessCode">
@@ -7,7 +7,7 @@
                         Enter the access code for registration
                     </h3>
                     <template v-if="inviteCodeError.showMsg">
-                        <b-alert show variant="danger" class="mb-4">
+                        <b-alert class="mb-4" show variant="danger">
                             {{ inviteCodeError.errorMsg }}
                         </b-alert>
                     </template>
@@ -25,17 +25,7 @@
                     </b-form-group>
                     <b-form-row class="mt-5">
                         <b-col class="text-center">
-                            <b-overlay
-                                :show="isLoading"
-                                rounded="pill"
-                                class="d-inline-block"
-                                spinner-small
-                            >
-                                <b-button variant="secondary" type="submit">
-                                    submit
-                                    <span class="pl-5">-></span>
-                                </b-button>
-                            </b-overlay>
+                            <LoaderButton :is-loading="isLoading" text="submit" />
                         </b-col>
                     </b-form-row>
                 </b-form>
@@ -51,8 +41,10 @@ import { required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({
+    components: { LoaderButton },
     validations: {
         form: {
             code: { required },

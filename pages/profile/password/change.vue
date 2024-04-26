@@ -51,10 +51,10 @@
                             </client-only>
 
                             <div class="text-center">
-                                <loader-button
+                                <LoaderButton
                                     :is-loading="isLoading"
-                                    button-text="Change Password"
                                     class="mt-5"
+                                    text="Change Password"
                                 />
                             </div>
                         </b-form>
@@ -68,7 +68,7 @@
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { required } from 'vuelidate/lib/validators'
-import LoaderButton from '~/components/LoaderButton.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'

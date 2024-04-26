@@ -30,14 +30,14 @@
         </b-form-group>
         <b-form-group label="MOBILE NUMBER*">
             <vue-phone-number-input
-                :value="form.rootUser.mobile.number"
-                :only-countries="mobileCountries"
                 :border-radius="0"
                 :error="numberIsValid === false"
+                :only-countries="mobileCountries"
+                :value="form.rootUser.mobile.number"
                 color="#6C1C5C"
+                default-country-code="GB"
                 error-color="#F50E4C"
                 valid-color="#6D7490"
-                default-country-code="GB"
                 @update="phoneUpdate"
             />
             <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
@@ -63,8 +63,8 @@
         <b-form-group label="Company Type*">
             <b-form-select
                 v-model="$v.form.company.type.$model"
-                :state="isInvalid($v.form.company.type)"
                 :options="companyTypeOptionsWithDefault"
+                :state="isInvalid($v.form.company.type)"
                 placeholder="Company Type"
             />
             <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -72,8 +72,8 @@
         <b-form-group label="Registration Country*">
             <b-form-select
                 v-model="$v.form.company.registrationCountry.$model"
-                :state="isInvalid($v.form.company.registrationCountry)"
                 :options="countryOptionsWithDefault"
+                :state="isInvalid($v.form.company.registrationCountry)"
                 placeholder="Registration Country"
             />
             <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
@@ -81,16 +81,16 @@
         <b-form-group :state="isInvalid($v.form.industry)" label="Industry*">
             <b-form-select
                 v-model="$v.form.industry.$model"
-                :state="isInvalid($v.form.industry)"
                 :options="industryOccupationOptions"
+                :state="isInvalid($v.form.industry)"
             />
             <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
         <b-form-group :state="isInvalid($v.form.sourceOfFunds)" label="Source of Funds*">
             <b-form-select
                 v-model="$v.form.sourceOfFunds.$model"
-                :state="isInvalid($v.form.sourceOfFunds)"
                 :options="sourceOfFundsOptions"
+                :state="isInvalid($v.form.sourceOfFunds)"
             />
             <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
@@ -130,10 +130,10 @@
         </p>
         <b-form-row class="mt-5">
             <b-col class="text-center">
-                <loader-button
+                <LoaderButton
                     :is-loading="isLoadingRegistration"
-                    button-text="continue"
                     class="text-center"
+                    text="continue"
                 />
             </b-col>
         </b-form-row>
@@ -205,7 +205,7 @@ import Countries from '~/static/json/countries.json'
     },
     components: {
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
 })
 export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {

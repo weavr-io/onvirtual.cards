@@ -3,13 +3,13 @@
         <b-alert
             id="cookie-alert"
             v-model="showCookieAlert"
-            variant="primary"
             class="text-uppercase"
+            variant="primary"
         >
             <div class="d-flex justify-content-between align-items-center">
                 <div class="flex-grow-1">
                     This site uses cookies. If you continue we'll assume you're ok with that.
-                    <b-link href="https://onvirtual.cards/policy/" target="_blank" class="link">
+                    <b-link class="link" href="https://onvirtual.cards/policy/" target="_blank">
                         View privacy policy
                     </b-link>
                 </div>
