@@ -32,7 +32,6 @@
     </b-row>
 </template>
 <script lang="ts" setup>
-import { defineProps } from 'vue'
 import { PropType } from '@nuxtjs/composition-api'
 import Amount from '~/components/statement/item/common/Amount.vue'
 import CardFee from '~/components/statement/item/common/CardFee.vue'

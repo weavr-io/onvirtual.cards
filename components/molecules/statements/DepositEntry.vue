@@ -3,11 +3,7 @@
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction">
-                    <img
-                        alt="Deposit"
-                        loading="lazy"
-                        src="../../../assets/svg/statement/deposit.svg"
-                    />
+                    <img alt="Deposit" loading="lazy" src="@/assets/svg/statement/deposit.svg" />
                 </div>
             </div>
         </b-col>
@@ -29,7 +25,6 @@
     </b-row>
 </template>
 <script lang="ts" setup>
-import { defineProps } from 'vue'
 import { PropType } from '@nuxtjs/composition-api'
 import Amount from '~/components/statement/item/common/Amount.vue'
 import CardFee from '~/components/statement/item/common/CardFee.vue'
