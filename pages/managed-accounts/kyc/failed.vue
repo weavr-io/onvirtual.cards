@@ -20,10 +20,9 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { defineComponent } from '@nuxtjs/composition-api'
 
-@Component({
+export default defineComponent({
     middleware: 'kyVerified',
 })
-export default class failed extends Vue {}
 </script>

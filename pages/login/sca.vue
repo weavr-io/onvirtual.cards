@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { defineComponent, useRouter } from '@nuxtjs/composition-api'
 import MobileComponent from '~/components/MobileComponent.vue'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
@@ -21,17 +21,14 @@ import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/Cred
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
-        LogoOvc,
         MobileComponent,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
+        LogoOvc,
     },
-})
-export default class Sca extends Vue {
-    asyncData({ redirect }) {
+    layout: 'auth',
+    setup() {
+        const router = useRouter()
         const { auth, identity } = initialiseStores(['auth', 'identity'])
 
         const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
@@ -42,15 +39,15 @@ export default class Sca extends Vue {
             auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT &&
             !identity?.identityState.emailVerified
         ) {
-            return redirect('/login/verify')
+            return router.push('/login/verify')
         } else if (
             !smsAuthFactors ||
             smsAuthFactors[0].status === SCAFactorStatusEnum.PENDING_VERIFICATION
         ) {
-            return redirect('/profile/mobile/add')
+            return router.push('/profile/mobile/add')
         } else if (localStorage.getItem('stepUp') === 'TRUE') {
-            return redirect('/')
+            return router.push('/')
         }
-    }
-}
+    },
+})
 </script>
