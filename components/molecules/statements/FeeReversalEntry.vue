@@ -16,33 +16,31 @@
             <div class="text-muted">
                 <b-row>
                     <b-col class="text-right">
-                        <card-fee :transaction="transaction" />
+                        <TransactionCardFee :transaction="props.transaction" />
                     </b-col>
                 </b-row>
             </div>
         </b-col>
         <b-col class="text-right" cols="3" xl="2">
-            <amount :transaction="transaction" />
+            <TransactionAmount :transaction="props.transaction" />
         </b-col>
     </b-row>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+<script lang="ts" setup>
+import { computed } from 'vue'
+import { PropType } from '@nuxtjs/composition-api'
+import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
+import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import { weavrUnderscore } from '~/utils/helper'
 
-@Component({
-    components: {
-        Amount: () => import('~/components/statement/item/common/Amount.vue'),
-        CardFee: () => import('~/components/statement/item/common/CardFee.vue'),
+const props = defineProps({
+    transaction: {
+        type: Object as PropType<StatementEntryModel>,
+        required: true,
     },
 })
-export default class StatementItemAdditionalField extends Vue {
-    @Prop()
-    readonly transaction!: StatementEntryModel
 
-    get formattedUnderscore() {
-        return weavrUnderscore(this.transaction.transactionId.type)
-    }
-}
+const formattedUnderscore = computed(() => weavrUnderscore(props.transaction.transactionId.type))
 </script>

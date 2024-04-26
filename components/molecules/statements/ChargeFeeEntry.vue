@@ -4,21 +4,26 @@
             <div class="transaction-type-icon">
                 <div class="transaction increase">
                     <img
-                        alt="Refund"
+                        alt="Charge Fee"
                         loading="lazy"
-                        src="@/assets/svg/statement/manual_transaction.svg"
+                        src="@/assets/svg/statement/withdrawal.svg"
                     />
                 </div>
             </div>
         </b-col>
         <b-col>
             <div class="transaction-type">
-                <div class="transaction">Manual Adjustment</div>
+                <div class="transaction text-capitalize">
+                    {{ chargeFeeType }}
+                </div>
             </div>
             <div class="text-muted">
                 <b-row>
                     <b-col>
-                        {{ props.transaction.additionalFields.note }}
+                        <span v-if="props.transaction.sourceAmount">
+                            {{ currency }} = {{ currencySymbol
+                            }}{{ props.transaction.additionalFields.exchangeRate }}
+                        </span>
                     </b-col>
                     <b-col class="text-right">
                         <TransactionCardFee :transaction="props.transaction" />
@@ -33,9 +38,11 @@
 </template>
 <script lang="ts" setup>
 import { PropType } from '@nuxtjs/composition-api'
-import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
-import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
+import { computed } from 'vue'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
+import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
+import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import { weavrCurrency, weavrCurrencySymbol } from '~/utils/helper'
 
 const props = defineProps({
     transaction: {
@@ -43,4 +50,11 @@ const props = defineProps({
         required: true,
     },
 })
+
+const chargeFeeType = computed(() =>
+    props.transaction?.additionalFields?.chargeFeeType.split('_').join(' ').toLowerCase(),
+)
+
+const currencySymbol = computed(() => weavrCurrencySymbol(props.transaction?.sourceAmount.currency))
+const currency = computed(() => weavrCurrency(100, props.transaction?.transactionAmount.currency))
 </script>

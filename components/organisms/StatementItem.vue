@@ -41,7 +41,7 @@
                     </div>
                 </b-col>
                 <b-col class="text-right">
-                    <Amount :transaction="transaction" />
+                    <TransactionAmount :transaction="transaction" />
                 </b-col>
             </b-row>
         </template>
@@ -52,17 +52,17 @@
 import { PropType } from '@nuxtjs/composition-api'
 import { computed } from 'vue'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
-import Authorisation from '~/components/statement/item/Authorisation.vue'
+import Authorisation from '~/components/molecules/statements/AuthorisationEntry.vue'
 import Deposit from '~/components/molecules/statements/DepositEntry.vue'
 import ManualTransaction from '~/components/molecules/statements/ManualTransactionEntry.vue'
-import ChargeFee from '~/components/statement/item/ChargeFee.vue'
+import ChargeFee from '~/components/molecules/statements/ChargeFeeEntry.vue'
 import MerchantRefund from '~/components/molecules/statements/MerchantRefundEntry.vue'
-import Settlement from '~/components/statement/item/Settlement.vue'
+import Settlement from '~/components/molecules/statements/SettlementEntry.vue'
 import Transfer from '~/components/molecules/statements/TransferEntry.vue'
 import Send from '~/components/molecules/statements/SendEntry.vue'
 import Withdrawal from '~/components/molecules/statements/WithdrawalEntry.vue'
-import FeeReversal from '~/components/statement/item/FeeReversalEntry.vue'
-import Amount from '~/components/statement/item/common/Amount.vue'
+import FeeReversal from '~/components/molecules/statements/FeeReversalEntry.vue'
+import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 
 const props = defineProps({
     transaction: {
