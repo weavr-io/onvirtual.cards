@@ -31,10 +31,8 @@
             </b-container>
             <b-container v-if="!hasAlert" class="mt-5">
                 <b-row v-if="pendingDataOrError">
-                    <b-col class="d-flex flex-column align-items-center">
-                        <div class="loader-spinner">
-                            <b-spinner />
-                        </div>
+                    <b-col>
+                        <LoadingSpinner center show />
                     </b-col>
                 </b-row>
                 <b-row v-else-if="hasCards" cols="1" cols-lg="3" cols-md="2">
@@ -68,10 +66,12 @@ import BaseMixin from '~/mixins/BaseMixin'
 import CardsMixin from '~/mixins/CardsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import KyVerified from '~/mixins/kyVerified'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 @Component({
     layout: 'dashboard',
     components: {
+        LoadingSpinner,
         WeavrCard: () => import('~/components/cards/card.vue'),
         KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
     },

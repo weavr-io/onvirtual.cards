@@ -184,7 +184,7 @@ import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.
         WeavrCardNumberSpan,
         WeavrCvvSpan,
         Statement,
-        StatementItem: () => import('~/components/statement/item.vue'),
+        StatementItem: () => import('~/components/organisms/StatementItem.vue'),
     },
 })
 export default class ManagedCardsStatements extends mixins(

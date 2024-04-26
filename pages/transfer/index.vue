@@ -32,7 +32,7 @@ import { DeepNullable } from '~/global'
 
 @Component({
     components: {
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
         AccountSelection: () => import('~/components/transfer/AccountSelection.vue'),
         TopUp: () => import('~/components/transfer/TopUp.vue'),
         TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue'),

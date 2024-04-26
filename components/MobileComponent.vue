@@ -5,8 +5,8 @@
                 <slot name="title"></slot>
             </h3>
             <b-row align-h="center">
-                <b-col md="6" class="text-center">
-                    <b-img fluid src="/img/mobile.svg" class="mt-5 mb-2" />
+                <b-col class="text-center" md="6">
+                    <b-img class="mt-5 mb-2" fluid src="/img/mobile.svg" />
                 </b-col>
             </b-row>
 
@@ -26,9 +26,9 @@
                         >
                             <b-form-input
                                 v-model="$v.request.verificationCode.$model"
+                                class="text-center"
                                 lazy
                                 placeholder="000000"
-                                class="text-center"
                             />
                         </b-form-group>
                     </b-col>
@@ -41,25 +41,21 @@
                     <small v-else>
                         Please contact our
                         <a
-                            href="https://support.weavr.io/support/login"
                             class="text-primary text-decoration-none"
+                            href="https://support.weavr.io/support/login"
                             target="_blank"
                             >customer support</a
                         >
                         if you have difficulties signing in.
                     </small>
                 </div>
-                <loader-button
-                    :is-loading="isLoading"
-                    button-text="verify"
-                    class="mt-4 text-center mb-0"
-                />
+                <LoaderButton :is-loading="isLoading" class="mt-4 text-center mb-0" text="verify" />
             </form>
             <div v-if="verifyPhone">
                 <b-alert
                     :show="dismissCountDown"
-                    variant="white"
                     class="text-center mt-4 mb-0 text-muted small"
+                    variant="white"
                     @dismiss-count-down="countDownChanged"
                 >
                     {{ dismissCountDown }}
@@ -88,7 +84,7 @@ import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authent
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
 import ErrorAlert from '~/components/ErrorAlert.vue'
-import LoaderButton from '~/components/LoaderButton.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({
     layout: 'auth',

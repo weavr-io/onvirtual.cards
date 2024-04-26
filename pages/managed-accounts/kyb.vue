@@ -41,11 +41,7 @@
             <b-row v-else>
                 <b-col>
                     <template v-if="pendingDataOrError">
-                        <div class="d-flex justify-content-center">
-                            <div class="loader-spinner">
-                                <b-spinner />
-                            </div>
-                        </div>
+                        <LoadingSpinner center show />
                     </template>
                     <template v-else-if="!kybErrorCode">
                         <weavr-kyb
@@ -91,9 +87,11 @@ import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
 import BaseMixin from '~/mixins/BaseMixin'
 import { KYBErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBErrorCodeEnum'
 import DashboardHeader from '~/components/DashboardHeader.vue'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 @Component({
     components: {
+        LoadingSpinner,
         DashboardHeader,
         BIcon,
         BIconBoxArrowUpRight,

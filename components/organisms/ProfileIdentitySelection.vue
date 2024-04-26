@@ -10,15 +10,15 @@
         <b-row class="justify-content-center">
             <b-col md="9">
                 <b-card-group deck>
-                    <registration-card
-                        title="Business"
+                    <RegistrationCard
                         description="Issue cards and assign them to employees. You decide when to stop cards or add more funds."
                         link="/register/corporate"
+                        title="Business"
                     />
-                    <registration-card
-                        title="Personal"
+                    <RegistrationCard
                         description="Take control of your online purchases and shop securely without exposing your bank card."
                         link="/register/consumer"
+                        title="Personal"
                     />
                 </b-card-group>
             </b-col>
@@ -26,12 +26,6 @@
     </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import RegistrationCard from '~/components/registration/RegistrationCard.vue'
-
-@Component({
-    components: { RegistrationCard },
-})
-export default class BusinessOrPersonalComponent extends Vue {}
+<script lang="ts" setup>
+import RegistrationCard from '~/components/molecules/registration/RegistrationCard.vue'
 </script>

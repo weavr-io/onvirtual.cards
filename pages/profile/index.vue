@@ -90,10 +90,10 @@
                         </b-form-row>
                         <b-row align-v="center" class="mt-5">
                             <b-col class="text-center">
-                                <loader-button
+                                <LoaderButton
                                     :disabled="isMobileVerified && isEmailVerified"
                                     :is-loading="isLoading"
-                                    button-text="save"
+                                    text="save"
                                 />
                             </b-col>
                         </b-row>
@@ -113,11 +113,12 @@ import { DeepNullable } from '~/global'
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({
     components: {
+        LoaderButton,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
     },
     validations: {
         updateIdentityRootUser: {

@@ -5,8 +5,8 @@
                 <h2 class="text-center font-weight-lighter">Card topped up</h2>
             </b-col>
         </b-row>
-        <b-row class="py-5 my-5" align-h="center">
-            <b-col md="9" lg="6">
+        <b-row align-h="center" class="py-5 my-5">
+            <b-col lg="6" md="9">
                 <b-img src="/img/success.svg" />
             </b-col>
         </b-row>

@@ -1,7 +1,7 @@
 <template>
     <b-container>
         <div class="d-flex flex-column align-items-center">
-            <logo />
+            <LogoOvc />
             <access-code-component v-if="$config.production && !isAccessCodeValid" />
             <business-or-personal-component v-else />
         </div>
@@ -9,15 +9,15 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import Logo from '~/components/Logo.vue'
 import AccessCodeComponent from '~/components/registration/AccessCodeComponent.vue'
-import BusinessOrPersonalComponent from '~/components/registration/BusinessOrPersonalComponent.vue'
+import BusinessOrPersonalComponent from '~/components/organisms/ProfileIdentitySelection.vue'
 import BaseMixin from '~/mixins/BaseMixin'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
 @Component({
     components: {
-        Logo,
+        LogoOvc,
         AccessCodeComponent,
         BusinessOrPersonalComponent,
     },

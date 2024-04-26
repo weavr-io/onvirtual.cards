@@ -1,8 +1,8 @@
 <template>
     <b-col lg="6" md="9">
         <div class="mb-5">
-            <logo class="pb-5" />
-            <coming-soon-currencies />
+            <LogoOvc classes="mb-5" />
+            <ComingSoonCurrencies />
             <b-card class="overflow-hidden" no-body>
                 <b-card-body class="px-4 mx-3 py-5 p-sm-card">
                     <div class="form-screens">
@@ -221,9 +221,9 @@
                                 </div>
                                 <b-row align-v="center" class="mt-4">
                                     <b-col class="text-center">
-                                        <loader-button
+                                        <LoaderButton
                                             :is-loading="isLoadingRegistration"
-                                            button-text="continue"
+                                            text="continue"
                                         />
                                     </b-col>
                                 </b-row>
@@ -241,7 +241,7 @@ import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import { AxiosResponse } from 'axios'
 
-import Logo from '~/components/Logo.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import { DeepNullable, RecursivePartial } from '~/global'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -255,6 +255,7 @@ import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consu
 import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import ComingSoonCurrencies from '~/components/atoms/ComingSoonCurrencies.vue'
 
 const touchMap = new WeakMap()
 
@@ -317,12 +318,12 @@ const touchMap = new WeakMap()
         },
     },
     components: {
-        Logo,
+        ComingSoonCurrencies,
+        LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
-        RegistrationNav: () => import('~/components/registration/RegistrationNav.vue'),
-        ComingSoonCurrencies: () => import('~/components/comingSoonCurrencies.vue'),
-        DobPicker: () => import('~/components/fields/dob-picker.vue'),
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
+        RegistrationNav: () => import('~/components/molecules/registration/RegistrationNav.vue'),
+        DobPicker: () => import('~/components/atoms/DobPicker.vue'),
         WeavrPasswordInput,
     },
     middleware: 'accessCodeVerified',

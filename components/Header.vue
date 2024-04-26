@@ -1,14 +1,9 @@
 <template>
     <div class="container-fluid px-0 mb-5 pb-5">
-        <b-navbar type="light" fixed="top" variant="white" class="navbar-padding-adjust">
+        <b-navbar class="navbar-padding-adjust" fixed="top" type="light" variant="white">
             <b-container>
                 <b-navbar-brand to="/">
-                    <img
-                        src="/img/logo.svg"
-                        width="160"
-                        class="d-inline-block align-center"
-                        alt="WEAVR"
-                    />
+                    <LogoImage class="align-center" size="md" />
                 </b-navbar-brand>
                 <b-collapse v-if="isLoggedIn" id="nav_collapse" is-nav>
                     <b-navbar-nav class="ml-auto">
@@ -29,8 +24,11 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
+import LogoImage from '~/components/atoms/LogoImage.vue'
 
-@Component
+@Component({
+    components: { LogoImage },
+})
 export default class Header extends mixins(BaseMixin) {
     fetch() {
         if (this.consumer === null && this.corporate === null) {

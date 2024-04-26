@@ -67,10 +67,10 @@
         </div>
         <b-form-row class="mt-5">
             <b-col class="text-center">
-                <loader-button
+                <LoaderButton
                     :is-loading="isLoadingRegistration"
-                    button-text="continue"
                     class="text-center"
+                    text="continue"
                 />
             </b-col>
         </b-form-row>
@@ -83,7 +83,7 @@ import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/
 import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import ValidationMixin from '~/mixins/ValidationMixin'
-import LoaderButton from '~/components/LoaderButton.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 @Component({
     validations: {

@@ -3,11 +3,7 @@
         <b-container>
             <b-row v-if="pendingDataOrError">
                 <b-col>
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="loader-spinner">
-                            <b-spinner />
-                        </div>
-                    </div>
+                    <LoadingSpinner center show />
                 </b-col>
             </b-row>
             <b-row v-else align-h="center">
@@ -60,10 +56,10 @@
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
-                                <loader-button
+                                <LoaderButton
                                     :is-loading="isLoading"
-                                    button-text="next"
                                     class="mt-5 text-center"
+                                    text="next"
                                 />
                             </b-form>
                         </b-card-body>
@@ -80,11 +76,14 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import BaseMixin from '~/mixins/BaseMixin'
 import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 @Component({
     components: {
+        LoadingSpinner,
+        LoaderButton,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
     },
     validations: {
         updateManagedCardRequest: {

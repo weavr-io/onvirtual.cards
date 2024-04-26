@@ -2,12 +2,7 @@
     <div>
         <app-header />
         <Nuxt />
-        <div v-if="isLoading" id="loader">
-            <div class="loader-spinner">
-                <b-spinner />
-            </div>
-        </div>
-        <!-- <app-footer /> -->
+        <LoadingSpinner id="loader" :is-loading="isLoading" />
         <cookie-policy />
     </div>
 </template>
@@ -15,10 +10,11 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 @Component({
     components: {
-        AppFooter: () => import('~/components/Footer.vue'),
+        LoadingSpinner,
         AppHeader: () => import('~/components/Header.vue'),
         cookiePolicy: () => import('~/components/cookie.vue'),
     },

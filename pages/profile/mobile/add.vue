@@ -1,13 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <div class="text-center pb-5">
-            <img
-                alt="onvirtual.cards"
-                class="d-inline-block align-top"
-                src="/img/logo.svg"
-                width="200"
-            />
-        </div>
+        <LogoOvc :link="false" classes="pb-5" />
         <b-card body-class="p-card">
             <h3 class="text-center font-weight-light mb-4">Add your phone number</h3>
             <p class="text-center mb-5">
@@ -35,11 +28,7 @@
                         This field must be a valid mobile number.
                     </b-form-invalid-feedback>
                 </b-form-group>
-                <loader-button
-                    :is-loading="isLoading"
-                    button-text="save number"
-                    class="text-center mt-5"
-                />
+                <LoaderButton :is-loading="isLoading" class="text-center mt-5" text="save number" />
             </b-form>
         </b-card>
     </b-col>
@@ -59,6 +48,7 @@ import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/Cred
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
 @Component({
     layout: 'auth',
@@ -77,7 +67,8 @@ import { initialiseStores } from '~/utils/pinia-store-accessor'
         },
     },
     components: {
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LogoOvc,
+        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
     middleware: ['kyVerified'],
 })
