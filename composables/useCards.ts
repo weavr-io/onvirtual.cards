@@ -51,10 +51,12 @@ export function useCards() {
         )
     })
 
-    async function downloadAsCSV(params: { id: IDModel; filters: GetManagedCardStatementRequest }) {
-        await downloadStatement(params).then((res) => {
-            downloadBlobToCsv(res)
-        })
+    const downloadAsCSV = async (params: {
+        id: IDModel
+        filters: GetManagedCardStatementRequest
+    }) => {
+        const response = await downloadStatement(params)
+        downloadBlobToCsv(response)
     }
 
     return {
