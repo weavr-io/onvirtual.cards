@@ -1,3 +1,12 @@
-export interface AccessCodeModel {
-    code: number | null
-}
+import { z } from 'zod'
+
+const AccessCodeSchema = z.object({
+    code: z.preprocess((val) => (val === '' ? undefined : val), z.number().min(1)),
+})
+
+type AccessCode = z.infer<typeof AccessCodeSchema>
+const INITIAL_ACCESS_CODE_REQUEST = {
+    code: undefined,
+} as unknown as AccessCode
+
+export { AccessCode, AccessCodeSchema, INITIAL_ACCESS_CODE_REQUEST }

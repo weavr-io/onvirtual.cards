@@ -1,5 +1,3 @@
-import { Ref } from '@nuxtjs/composition-api'
-
 export type Nullable<T> = {
     [P in keyof T]: Nullable<T[P]> | null
 }
@@ -13,8 +11,3 @@ export type RecursivePartial<T> = {
           ? RecursivePartial<T[P]>
           : T[P]
 }
-
-// Vue3 Helper Types
-type MaybeRefOrGetter<T> = T | Ref<T> | (() => T)
-
-declare function toValue<T>(r: MaybeRefOrGetter<T>): T

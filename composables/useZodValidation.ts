@@ -1,8 +1,13 @@
 import { z, type ZodTypeAny } from 'zod'
 import { get, groupBy } from 'lodash-es'
-import { watch } from '@nuxtjs/composition-api'
-import { ref } from 'vue'
-import { MaybeRefOrGetter, toValue } from '~/global'
+import { Ref, unref, watch } from '@nuxtjs/composition-api'
+import { computed, ref } from 'vue'
+
+type MaybeRefOrGetter<T> = T | Ref<T> | (() => T)
+
+function toValue<T>(r: MaybeRefOrGetter<T>): T {
+    return typeof r === 'function' ? (r as any)() : unref(r)
+}
 
 export default function <T extends ZodTypeAny>(
     schema: T,
@@ -20,6 +25,8 @@ export default function <T extends ZodTypeAny>(
     const clearErrors = () => {
         errors.value = null
     }
+
+    const isInvalid = computed(() => !isValid.value)
 
     const validationWatch = () => {
         if (unwatch !== null) {
@@ -66,7 +73,24 @@ export default function <T extends ZodTypeAny>(
         }
     }
 
-    const getError = (path: string) => get(errors.value, `${path.replaceAll('.', ',')}.0.message`)
+    const getInvalidFeedback = (path: string) =>
+        get(errors.value, `${path.replaceAll('.', ',')}.0.message`)
+
+    /**
+     * @return Returns null | false. If there is an error associated with the key it will return false [Invalid].
+     * Otherwise, it will only return null. We are returning null so that we don't mark the input as truthy [Valid].
+     * We can also alter this to return a truthy in the future if necessary. But at the time being we don't need truthy values.
+     * @param key
+     */
+    const getState = (key: string) => {
+        // Return null if there is no error for specified path
+        if (!errors?.value) return null
+
+        // Return falsey state if there is an error
+        if (errors.value[key]) {
+            return false
+        }
+    }
 
     if (opts.mode === 'eager') {
         validationWatch()
@@ -76,8 +100,10 @@ export default function <T extends ZodTypeAny>(
         validate,
         errors,
         isValid,
+        isInvalid,
         clearErrors,
-        getError,
+        getInvalidFeedback,
+        getState,
         scrollToError,
     }
 }

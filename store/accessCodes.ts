@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
 import { useAuthStore } from '~/store/auth'
+import { AccessCode } from '~/plugins/weavr-multi/api/models/access-codes'
 
 export const useAccessCodesStore = defineStore('accessCodes', () => {
     const store = useAuthStore()
@@ -16,7 +16,7 @@ export const useAccessCodesStore = defineStore('accessCodes', () => {
         localStorage.removeItem('onv-access-code')
     }
 
-    const verifyAccessCode = (request: AccessCodeModel) => {
+    const verifyAccessCode = (request: AccessCode) => {
         const req = store.$nuxt.$apiMulti.accessCodes.verifyAccessCode(request)
 
         req.then(() => {
