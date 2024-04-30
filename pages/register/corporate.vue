@@ -28,7 +28,7 @@ import { AxiosResponse } from 'axios'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { DeepNullable, RecursivePartial } from '~/global'
 import BaseMixin from '~/mixins/BaseMixin'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPassword'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
@@ -173,7 +173,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         if (!this.registrationRequest.rootUser) {
             return
         }
-        const loginRequest: LoginWithPasswordRequest = {
+        const loginRequest: LoginWithPassword = {
             email: this.registrationRequest.rootUser.email as string,
             password: {
                 value: this.registrationRequest.password as string,

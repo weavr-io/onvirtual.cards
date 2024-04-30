@@ -37,13 +37,14 @@
 </template>
 
 <script lang="ts">
-import { AxiosError } from 'axios'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { reactive } from 'vue'
+import { AxiosError } from 'axios'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import {
+    AccessCode,
     AccessCodeSchema,
     INITIAL_ACCESS_CODE_REQUEST,
 } from '~/plugins/weavr-multi/api/models/access-codes'
@@ -53,7 +54,7 @@ import useZodValidation from '~/composables/useZodValidation'
     components: { LoaderButton },
 })
 export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMixin) {
-    form = reactive(INITIAL_ACCESS_CODE_REQUEST)
+    form: AccessCode = reactive(INITIAL_ACCESS_CODE_REQUEST)
 
     isLoading = false
     inviteCodeError: { errorMsg: string; showMsg: boolean } = {
@@ -61,9 +62,7 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
         showMsg: false,
     }
 
-    validation = useZodValidation(AccessCodeSchema, this.form, {
-        mode: 'lazy',
-    })
+    validation = useZodValidation(AccessCodeSchema, this.form)
 
     async tryToSubmitAccessCode() {
         this.isLoading = true

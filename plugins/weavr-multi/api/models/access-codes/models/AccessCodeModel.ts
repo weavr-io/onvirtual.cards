@@ -1,10 +1,13 @@
 import { z } from 'zod'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const AccessCodeSchema = z.object({
-    code: z.preprocess((val) => (val === '' ? undefined : val), z.number().min(1)),
+    // code: z.preprocess(preprocessEmptyAsUndefined, z.number().min(1)),
+    code: preprocessEmptyAsUndefined(z.number().min(1)),
 })
 
 type AccessCode = z.infer<typeof AccessCodeSchema>
+
 const INITIAL_ACCESS_CODE_REQUEST = {
     code: undefined,
 } as unknown as AccessCode

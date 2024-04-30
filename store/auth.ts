@@ -4,7 +4,7 @@ import { $axiosMulti } from '~/utils/api'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import type { Auth as AuthState } from '~/local/models/store/auth'
 import type { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
-import type { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import type { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPassword'
 import type { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 import type { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'
 import type { GetAuthenticationFactorsResponse } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/responses/GetAuthenticationFactorsResponse'
@@ -71,7 +71,7 @@ export const useAuthStore = defineStore('auth', () => {
         })
     }
 
-    const loginWithPassword = (request: LoginWithPasswordRequest) => {
+    const loginWithPassword = (request: LoginWithPassword) => {
         const _req = store.$nuxt.$apiMulti.authentication.loginWithPassword(request)
 
         _req.then((res) => {

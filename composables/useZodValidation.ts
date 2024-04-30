@@ -82,12 +82,12 @@ export default function <T extends ZodTypeAny>(
      * We can also alter this to return a truthy in the future if necessary. But at the time being we don't need truthy values.
      * @param key
      */
-    const getState = (key: string) => {
+    const getState = (path: string) => {
         // Return null if there is no error for specified path
         if (!errors?.value) return null
 
         // Return falsey state if there is an error
-        if (errors.value[key]) {
+        if (errors.value[path]) {
             return false
         }
     }
