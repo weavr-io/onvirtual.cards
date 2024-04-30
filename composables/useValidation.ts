@@ -6,7 +6,7 @@ export const useValidation = () => {
         return item.$dirty ? !item.$error : null
     }
 
-    function validateVParams(params: {}, vuelidateSchema: {}): string | null {
+    const validateVParams = (params: {}, vuelidateSchema: {}): string | null => {
         const validatorKeys: string[] = Object.keys(params)
         const validationState: { key: string; value: string }[] = []
 
@@ -19,7 +19,7 @@ export const useValidation = () => {
         return validationState[0].key.toString() ?? null
     }
 
-    function invalidFeedback(_item, type, customMessage: string) {
+    const invalidFeedback = (_item, type, customMessage: string) => {
         return customMessage ?? INVALID_FEEDBACK_CONST[type] ?? 'Not Handled'
     }
 

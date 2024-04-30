@@ -18,7 +18,7 @@ export const useKyVerified = () => {
         return identity?.identityState.emailVerified === false
     })
 
-    function showKybAlert() {
+    const showKybAlert = () => {
         const _isCorporate = auth?.isCorporate
 
         if (!_isCorporate) {
@@ -34,7 +34,7 @@ export const useKyVerified = () => {
         return false
     }
 
-    function showKycAlert() {
+    const showKycAlert = () => {
         const _isConsumer = auth?.isConsumer
 
         if (!_isConsumer) {
