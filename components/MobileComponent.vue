@@ -82,7 +82,6 @@ import BaseMixin from '~/mixins/BaseMixin'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
 import ValidationMixin from '~/mixins/ValidationMixin'
-import { Nullable } from '~/global'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
@@ -107,7 +106,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
 
     isLoading = false
 
-    request: Nullable<AuthVerifyEnrolRequest> = {
+    request: AuthVerifyEnrolRequest = {
         verificationCode: null,
     }
 
