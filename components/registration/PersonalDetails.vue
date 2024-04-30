@@ -153,6 +153,7 @@ import ValidationMixin from '~/mixins/ValidationMixin'
 import { DeepNullable, RecursivePartial } from '~/global'
 import Countries from '~/static/json/countries.json'
 
+// @TODO[OLEG] - REFACTOR TO ZOD
 @Component({
     validations: {
         form: {

@@ -2,7 +2,6 @@ import { z } from 'zod'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const AccessCodeSchema = z.object({
-    // code: z.preprocess(preprocessEmptyAsUndefined, z.number().min(1)),
     code: preprocessEmptyAsUndefined(z.number().min(1)),
 })
 

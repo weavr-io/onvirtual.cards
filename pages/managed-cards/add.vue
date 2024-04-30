@@ -141,6 +141,8 @@ import { Nullable } from '~/global'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
+// @TODO[PETER] - REFACTOR TO ZOD
+
 @Component({
     components: {
         LoadingSpinner,

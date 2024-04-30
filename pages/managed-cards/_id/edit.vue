@@ -79,6 +79,8 @@ import ValidationMixin from '~/mixins/ValidationMixin'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
+// @TODO[PETER] - REFACTOR TO ZOD
+
 @Component({
     components: {
         LoadingSpinner,

@@ -59,6 +59,8 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
+// @TODO[JOSHUA] - REFACTOR TO ZOD
+
 @Component({
     layout: 'auth',
     validations: {

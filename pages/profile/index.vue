@@ -115,6 +115,8 @@ import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identiti
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
+// @TODO[OLEG] - REFACTOR TO ZOD
+
 @Component({
     components: {
         LoaderButton,

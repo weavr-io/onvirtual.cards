@@ -72,6 +72,8 @@ import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
+// @TODO[JOSHUA] - REFACTOR TO ZOD
+
 @Component({
     components: {
         LoaderButton,

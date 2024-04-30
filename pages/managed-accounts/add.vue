@@ -43,6 +43,7 @@ import AccountsMixin from '~/mixins/AccountsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
+// @TODO[PETER] - REFACTOR TO ZOD
 
 @Component({
     components: {

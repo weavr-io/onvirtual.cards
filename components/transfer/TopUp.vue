@@ -87,6 +87,8 @@ import { between, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 
+// @TODO[PETER] - REFACTOR TO ZOD
+
 @Component({
     validations: {
         request: {

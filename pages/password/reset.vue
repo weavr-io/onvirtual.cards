@@ -74,6 +74,7 @@ import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/mode
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+// @TODO[JOSHUA] - REFACTOR TO ZOD
 
 @Component({
     layout: 'auth',

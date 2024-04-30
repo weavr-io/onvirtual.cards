@@ -115,6 +115,7 @@ import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identi
 import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { Nullable } from '~/global'
+// @TODO[OLEG] - REFACTOR TO ZOD
 
 @Component({
     layout: 'auth',

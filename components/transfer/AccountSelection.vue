@@ -34,6 +34,8 @@ import BaseMixin from '~/mixins/BaseMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import ValidationMixin from '~/mixins/ValidationMixin'
 
+// @TODO[PETER] - REFACTOR TO ZOD
+
 @Component({
     validations: {
         request: {

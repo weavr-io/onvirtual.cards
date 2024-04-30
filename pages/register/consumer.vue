@@ -258,6 +258,7 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 import ComingSoonCurrencies from '~/components/atoms/ComingSoonCurrencies.vue'
 
 const touchMap = new WeakMap()
+// @TODO[OLEG] - REFACTOR TO ZOD
 
 @Component({
     layout: 'auth',

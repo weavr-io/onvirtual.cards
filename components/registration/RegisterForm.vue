@@ -84,7 +84,7 @@ import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
-
+// @TODO[OLEG] - REFACTOR TO ZOD
 @Component({
     validations: {
         form: {

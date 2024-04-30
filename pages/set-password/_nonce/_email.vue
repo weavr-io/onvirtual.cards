@@ -75,6 +75,8 @@ import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/a
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
+// @TODO[JOSHUA] - REFACTOR TO ZOD
+
 @Component({
     layout: 'auth',
     components: {
