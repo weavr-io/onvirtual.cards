@@ -8,7 +8,7 @@ import type { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authent
 import type { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 import type { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'
 import type { GetAuthenticationFactorsResponse } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/responses/GetAuthenticationFactorsResponse'
-import type { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
+import type { AuthVerifyEnrol } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
 import type { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 import type { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import type { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
@@ -135,19 +135,13 @@ export const useAuthStore = defineStore('auth', () => {
         return _req
     }
 
-    const verifyAuthFactors = (request: {
-        channel: SCAOtpChannelEnum
-        body: AuthVerifyEnrolRequest
-    }) => {
+    const verifyAuthFactors = (request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol }) => {
         const _req = store.$nuxt.$apiMulti.additionalFactors.verify(request)
 
         return _req
     }
 
-    const verifyStepUp = (request: {
-        channel: SCAOtpChannelEnum
-        body: AuthVerifyEnrolRequest
-    }) => {
+    const verifyStepUp = (request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol }) => {
         const _req = store.$nuxt.$apiMulti.stepUp.verify(request)
 
         return _req

@@ -1,3 +1,14 @@
-export interface AuthVerifyEnrolRequest {
-    verificationCode: string
-}
+import { z } from 'zod'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
+
+const AuthVerifyEnrolSchema = z.object({
+    verificationCode: preprocessEmptyAsUndefined(z.string().min(6).max(6)),
+})
+
+type AuthVerifyEnrol = z.infer<typeof AuthVerifyEnrolSchema>
+
+const INITIAL_AUTH_VERIFY_REQUEST = {
+    verificationCode: undefined,
+} as unknown as AuthVerifyEnrol
+
+export { AuthVerifyEnrolSchema, AuthVerifyEnrol, INITIAL_AUTH_VERIFY_REQUEST }

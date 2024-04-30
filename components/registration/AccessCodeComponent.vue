@@ -66,7 +66,6 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
 
     async tryToSubmitAccessCode() {
         this.isLoading = true
-
         await this.validation.validate()
 
         if (this.validation.isInvalid) {
