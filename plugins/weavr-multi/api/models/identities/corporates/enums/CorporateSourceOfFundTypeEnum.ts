@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export enum CorporateSourceOfFundTypeEnum {
     LABOUR_CONTRACT = 'LABOUR_CONTRACT',
     CIVIL_CONTRACT = 'CIVIL_CONTRACT',
@@ -12,3 +14,8 @@ export enum CorporateSourceOfFundTypeEnum {
     SALE_OF_COMPANY_SHARES_BUSINESS = 'SALE_OF_COMPANY_SHARES_BUSINESS',
     OTHER = 'OTHER',
 }
+
+const CorporateSourceOfFundTypeEnumSchema = z.nativeEnum(CorporateSourceOfFundTypeEnum)
+type CorporateSourceOfFundTypeEnumType = z.infer<typeof CorporateSourceOfFundTypeEnumSchema>
+
+export { CorporateSourceOfFundTypeEnumSchema, CorporateSourceOfFundTypeEnumType }

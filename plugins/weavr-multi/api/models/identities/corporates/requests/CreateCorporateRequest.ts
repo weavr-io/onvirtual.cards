@@ -1,9 +1,25 @@
-import { IDModel } from '../../../common/IDModel'
-import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
-import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
-import { CorporatesRootUserRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CorporatesRootUserRequest'
-import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import { CompanyRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CompanyRequest'
+import { z } from 'zod'
+import { IDModel, IDSchema } from '../../../common/IDModel'
+import {
+    IndustryTypeEnum,
+    IndustryTypeEnumSchema,
+} from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
+import {
+    CorporateSourceOfFundTypeEnum,
+    CorporateSourceOfFundTypeEnumSchema,
+} from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import {
+    CorporatesRootUserRequest,
+    CorporatesRootUserRequestSchema,
+} from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CorporatesRootUserRequest'
+import {
+    CurrencyEnum,
+    CurrencyEnumSchema,
+} from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import {
+    CompanyRequest,
+    CompanyRequestSchema,
+} from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CompanyRequest'
 
 export interface CreateCorporateRequest {
     profileId: IDModel
@@ -17,4 +33,39 @@ export interface CreateCorporateRequest {
     ipAddress: string
     baseCurrency: CurrencyEnum
     feeGroup?: string
+}
+
+const CreateCorporateRequestSchema = z.object({
+    profileId: IDSchema,
+    tag: z.string().optional(),
+    rootUser: CorporatesRootUserRequestSchema,
+    company: CompanyRequestSchema,
+    industry: IndustryTypeEnumSchema,
+    sourceOfFunds: CorporateSourceOfFundTypeEnumSchema,
+    sourceOfFundsOther: z.string().optional(),
+    acceptedTerms: z.boolean(),
+    ipAddress: z.string(),
+    baseCurrency: CurrencyEnumSchema,
+    feeGroup: z.string().optional(),
+})
+
+type CreateCorporatesRequestType = z.infer<typeof CreateCorporateRequestSchema>
+const INITIAL_CREATE_CORPORATE_REQUEST = {
+    profileId: undefined,
+    tag: undefined,
+    rootUser: undefined,
+    company: undefined,
+    industry: undefined,
+    sourceOfFunds: undefined,
+    sourceOfFundsOther: undefined,
+    acceptedTerms: undefined,
+    ipAddress: undefined,
+    baseCurrency: undefined,
+    feeGroup: undefined,
+} as unknown as CreateCorporatesRequestType
+
+export {
+    CreateCorporateRequestSchema,
+    CreateCorporatesRequestType,
+    INITIAL_CREATE_CORPORATE_REQUEST,
 }
