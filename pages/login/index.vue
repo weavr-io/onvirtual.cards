@@ -36,7 +36,7 @@
                                 ref="passwordField"
                                 :base-style="passwordBaseStyle"
                                 :class-name="[
-                                    'sign-in-password',
+                                    'sign-in-password form-control p-0',
                                     { 'is-invalid': isInvalidPassword },
                                 ]"
                                 :options="{ placeholder: 'Password' }"
@@ -45,9 +45,6 @@
                                 @onChange="passwordInteraction"
                                 @onKeyUp="checkOnKeyUp"
                             />
-                            <b-form-invalid-feedback v-if="isInvalidPassword">
-                                Please enter your password
-                            </b-form-invalid-feedback>
                         </client-only>
                     </b-form-group>
                     <div class="mt-2">
@@ -75,15 +72,6 @@
                     </div>
                 </form>
             </b-card>
-            <pre>
-                {{ validation }}
-            </pre>
-            <pre>
-                {{ loginRequest }}
-            </pre>
-            <pre>
-                {{ isInvalidPassword }}
-            </pre>
         </div>
     </b-col>
 </template>

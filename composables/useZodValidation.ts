@@ -80,7 +80,7 @@ export default function <T extends ZodTypeAny>(
      * @return Returns null | false. If there is an error associated with the key it will return false [Invalid].
      * Otherwise, it will only return null. We are returning null so that we don't mark the input as truthy [Valid].
      * We can also alter this to return a truthy in the future if necessary. But at the time being we don't need truthy values.
-     * @param key
+     * @param path
      */
     const getState = (path: string) => {
         // Return null if there is no error for specified path
