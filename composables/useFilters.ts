@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 
-export function useFilters() {
-    function monthsFilter(_start: number) {
+export const useFilters = () => {
+    const monthsFilter = (_start: number) => {
         const _out: { value: { start: number; end: number }; text: string }[] = []
 
         let _pointer = DateTime.fromMillis(_start)

@@ -1,15 +1,15 @@
 import { computed, getCurrentInstance, useRouter } from '@nuxtjs/composition-api'
-import { useStores } from './useStores'
+import { useStores } from '~/composables/useStores'
 import Countries from '~/static/json/countries.json'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 
-export function useBase() {
+export const useBase = () => {
     const { proxy: root } = getCurrentInstance() || {}
     const router = useRouter()
     const { auth, consumers, corporates } = useStores(['auth', 'consumers', 'corporates'])
 
-    function sleep(ms) {
+    const sleep = (ms) => {
         return new Promise((resolve) => setTimeout(resolve, ms))
     }
 
@@ -127,15 +127,15 @@ export function useBase() {
     const fetchHasError = computed(() => root!.$fetchState?.error !== null)
     const pendingDataOrError = computed(() => pendingData.value || fetchHasError.value)
 
-    function goToIndex() {
+    const goToIndex = () => {
         return router.push('/')
     }
 
-    function redirectToLogin() {
+    const redirectToLogin = () => {
         return router.push('/login')
     }
 
-    function goToVerify() {
+    const goToVerify = () => {
         return router.push({
             path: '/login/verify',
             query: {
@@ -145,25 +145,25 @@ export function useBase() {
         })
     }
 
-    function doLogout() {
+    const doLogout = () => {
         return auth?.logout().then(redirectToLogin)
     }
 
-    function showSuccessToast(msg?: string, title?: string) {
+    const showSuccessToast = (msg?: string, title?: string) => {
         return root?.$weavrToast(msg ?? 'All changes have been saved', {
             title: title ?? 'Changes saved',
             variant: 'success',
         })
     }
 
-    function showErrorToast(msg?: string, title?: string) {
+    const showErrorToast = (msg?: string, title?: string) => {
         return root?.$weavrToast(msg ?? 'An error has occurred while saving', {
             title: title ?? 'Error',
             variant: 'danger',
         })
     }
 
-    function setSCAStorage() {
+    const setSCAStorage = () => {
         localStorage.setItem('stepUp', 'FALSE')
         localStorage.setItem('scaSmsSent', 'FALSE')
     }

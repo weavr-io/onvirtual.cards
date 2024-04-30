@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 
-export function useCsv() {
+export const useCsv = () => {
     function downloadBlobToCsv(blob) {
         const url = window.URL.createObjectURL(new Blob([blob]))
         const link = document.createElement('a')

@@ -1,7 +1,7 @@
 import { INVALID_FEEDBACK_CONST } from '~/models/local/constants/InvalidFeedbackConst'
 
 // TODO: Handle new validation package
-export function useValidation() {
+export const useValidation = () => {
     function isInvalid(item) {
         return item.$dirty ? !item.$error : null
     }

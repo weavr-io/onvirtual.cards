@@ -1,8 +1,8 @@
 import { computed } from '@nuxtjs/composition-api'
-import { useStores } from './useStores'
+import { useStores } from '~/composables/useStores'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 
-export function useKyVerified() {
+export const useKyVerified = () => {
     const { auth, corporates, consumers, identity } = useStores([
         'auth',
         'corporates',

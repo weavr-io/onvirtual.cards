@@ -1,11 +1,11 @@
 import { computed, useRoute, useRouter } from '@nuxtjs/composition-api'
-import { useCsv } from './useCsv'
+import { useCsv } from '~/composables/useCsv'
 import { ManagedAccountsApi } from '~/plugins/weavr-multi/api/ManagedAccountsApi'
 import { useAccountsStore } from '~/store/accounts'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 
-export function useAccounts() {
+export const useAccounts = () => {
     const route = useRoute()
     const router = useRouter()
     const accountsStore = useAccountsStore()
@@ -42,7 +42,7 @@ export function useAccounts() {
         return undefined
     })
 
-    function goToManagedAccountIndex() {
+    const goToManagedAccountIndex = () => {
         return router.push('/managed-accounts')
     }
 

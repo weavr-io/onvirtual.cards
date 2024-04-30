@@ -10,10 +10,10 @@ const modules: Record<string, CustomStore> = {}
 const { text } = new FormattingFiltersModule()
 const moduleFiles = (require as unknown as Require).context('@/store', true, /\.ts$/)
 
-export function useStores<T extends keyof StoreType>(
+export const useStores = <T extends keyof StoreType>(
     storeNames: T[],
     resetOption?: boolean,
-): Partial<{ [K in T]: StoreType[K] }> {
+): Partial<{ [K in T]: StoreType[K] }> => {
     const stores: Partial<{ [K in T]: StoreType[K] }> = {}
 
     moduleFiles.keys().forEach((path: string) => {
