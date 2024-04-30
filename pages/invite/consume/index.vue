@@ -193,3 +193,41 @@ export default class IniteConsume extends mixins(BaseMixin) {
     }
 }
 </script>
+
+<!--<script lang="ts">-->
+<!--import { defineComponent, ref } from '@nuxtjs/composition-api'-->
+<!--import LogoOvc from '~/components/molecules/LogoOvc.vue'-->
+<!--import ErrorAlert from '~/components/molecules/ErrorAlert.vue'-->
+<!--import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'-->
+<!--import { reactive } from 'vue'-->
+<!--import { required } from 'vuelidate/lib/validators'-->
+<!--import Vuelidate from 'vuelidate'-->
+
+<!--export default defineComponent({-->
+<!--    layout: 'auth',-->
+<!--    components: {-->
+<!--        LogoOvc,-->
+<!--        ErrorAlert,-->
+<!--        WeavrPasswordInput,-->
+<!--    },-->
+<!--    setup() {-->
+<!--        const showError = ref(false)-->
+<!--        const passwordField: WeavrPasswordInput | null = ref(null)-->
+<!--        const passwordStrength = ref(0)-->
+
+<!--        const state = reactive({-->
+<!--            inviteForm: {-->
+<!--                password: '',-->
+<!--            },-->
+<!--        })-->
+
+<!--        const rules = {-->
+<!--            inviteForm: {-->
+<!--                password: { required }, // Matches state.contact.email-->
+<!--            },-->
+<!--        }-->
+
+<!--        // const v$ = Vuelidate(rules, state)-->
+<!--    }-->
+<!--})-->
+<!--</script>-->
