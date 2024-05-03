@@ -1,5 +1,5 @@
 <template>
-    <b-form @submit="submitForm">
+    <b-form @submit.prevent="submitForm">
         <b-row>
             <b-col>
                 <h2 class="text-center font-weight-lighter">Choose account to top up from</h2>
@@ -7,9 +7,9 @@
         </b-row>
         <b-row class="py-5 my-5">
             <b-col>
-                <b-form-group :state="isInvalid($v.request.source.id)" class="weavr-account-radio">
+                <b-form-group :state="validation.getState('id')" class="weavr-account-radio">
                     <b-form-radio-group
-                        v-model="request.source.id"
+                        v-model="source.id"
                         :options="formattedAccounts"
                         name="source-account-options"
                         stacked
@@ -28,31 +28,23 @@
     </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
-import { required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import { reactive } from 'vue'
+import { Emit, mixins } from 'nuxt-property-decorator'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import {
+    type Instrument,
+    InstrumentSchema,
+    INITIAL_INSTRUMENT_REQUEST,
+} from '~/plugins/weavr-multi/api/models/common/InstrumentIdModel'
+import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import useZodValidation from '~/composables/useZodValidation'
 
-// @TODO[PETER] - REFACTOR TO ZOD
-
-@Component({
-    validations: {
-        request: {
-            source: {
-                id: {
-                    required,
-                },
-            },
-        },
-    },
-})
 export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMixin) {
-    public request = {
-        source: {
-            type: 'managed_accounts',
-            id: null,
-        },
+    source: Instrument = reactive(INITIAL_INSTRUMENT_REQUEST)
+
+    get validation() {
+        return useZodValidation(InstrumentSchema, this.source)
     }
 
     get accounts() {
@@ -108,18 +100,15 @@ export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMi
     }
 
     @Emit()
-    submitForm(e) {
-        e.preventDefault()
+    async submitForm() {
+        await this.validation.validate()
 
-        if (this.$v.request) {
-            this.$v.request.$touch()
-            if (this.$v.request.$anyError) {
-                this.showErrorToast('Please select an account to top up from.')
-                return null
-            }
+        if (this.validation.isInvalid) {
+            this.showErrorToast('Please select an account to top up from.')
+            return null
         }
 
-        return this.request
+        return this.source
     }
 }
 </script>
