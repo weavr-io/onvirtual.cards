@@ -10,7 +10,7 @@ export interface InstrumentIdModel {
 
 const InstrumentSchema = z.object({
     type: z.nativeEnum(InstrumentEnum),
-    id: preprocessEmptyAsUndefined(z.string().min(1, INVALID_FEEDBACK_CONST.required)),
+    id: preprocessEmptyAsUndefined(z.string().min(1, { message: INVALID_FEEDBACK_CONST.required })),
 })
 
 type Instrument = z.infer<typeof InstrumentSchema>

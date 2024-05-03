@@ -54,13 +54,13 @@
                 <b-row>
                     <b-col>
                         <b-form-group
-                            :invalid-feedback="invalidMessage"
-                            :state="isInvalid($v.request.amount)"
+                            :invalid-feedback="validation.getInvalidFeedback('amount')"
+                            :state="validation.getState('amount')"
                             label="Amount:"
                         >
                             <b-input-group :prepend="accountDetails.currency">
                                 <b-form-input
-                                    v-model="$v.request.amount.$model"
+                                    v-model="request.amount"
                                     min="0.01"
                                     step="0.01"
                                     type="number"
@@ -82,43 +82,36 @@
     </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
-import { between, required } from 'vuelidate/lib/validators'
+import { reactive } from 'vue'
+import { z } from 'zod'
+import { Emit, mixins, Prop } from 'nuxt-property-decorator'
+import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
+import useZodValidation from '~/composables/useZodValidation'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 
-// @TODO[PETER] - REFACTOR TO ZOD
-
-@Component({
-    validations: {
-        request: {
-            amount: {
-                required,
-                between(this: TopUpForm, value) {
-                    return between(0.01, this.accountBalance)(value)
-                },
-            },
-        },
-    },
-})
 export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
     @Prop({ default: '' }) readonly selectedAccount
-    public request: {
-        amount: number | null
-    } = {
-        amount: null,
+
+    request = reactive({
+        amount: null as number | null,
+    })
+
+    get amountSchema() {
+        return z.object({
+            amount: z
+                .number()
+                .min(0.01, { message: INVALID_FEEDBACK_CONST.minBalance })
+                .max(this.accountBalance, { message: INVALID_FEEDBACK_CONST.maxBalance }),
+        })
+    }
+
+    get validation() {
+        return useZodValidation(this.amountSchema, this.request)
     }
 
     get accounts() {
         return this.accountsStore.accountState.accounts
-    }
-
-    get invalidMessage() {
-        const _min = this.$v.request.amount?.$params.between.min
-        const _max = this.$v.request.amount?.$params.between.max
-
-        const _currency = this.accountDetails ? this.accountDetails.currency : 'EUR'
-        return 'Should be between ' + _currency + ' ' + _min + ' and ' + _currency + ' ' + _max
     }
 
     get accountDetails() {
@@ -134,17 +127,16 @@ export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
     get accountBalance() {
         if (this.accountDetails && this.accountDetails.balances.availableBalance) {
             return this.accountDetails.balances.availableBalance / 100
-        } else {
-            return 0
         }
+
+        return 0
     }
 
     @Emit()
-    submitForm() {
-        this.$v.$touch()
-        if (this.$v.$invalid) {
-            return null
-        }
+    async submitForm() {
+        await this.validation.validate()
+
+        if (this.validation.isInvalid) return null
 
         return this.request
     }

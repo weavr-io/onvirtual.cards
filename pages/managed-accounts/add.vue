@@ -11,7 +11,7 @@
                             <b-form-row>
                                 <b-col>
                                     <b-form-group
-                                        :state="isInvalid($v.createManagedAccountRequest.currency)"
+                                        :state="validation.getState('currency')"
                                         label="Currency"
                                     >
                                         <b-form-select
@@ -34,42 +34,33 @@
     </section>
 </template>
 <script lang="ts">
+import { reactive } from 'vue'
 import { Component, mixins, Watch } from 'nuxt-property-decorator'
-import { maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
-import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
-import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import AccountsMixin from '~/mixins/AccountsMixin'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
-// @TODO[PETER] - REFACTOR TO ZOD
+import {
+    type ManagedAccount,
+    ManagedAccountSchema,
+    INITIAL_MA_REQUEST,
+} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
+import BaseMixin from '~/mixins/BaseMixin'
+import AccountsMixin from '~/mixins/AccountsMixin'
+import ValidationMixin from '~/mixins/ValidationMixin'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     components: {
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
-    validations: {
-        createManagedAccountRequest: {
-            friendlyName: {
-                required,
-                maxLength: maxLength(50),
-            },
-            currency: {
-                required,
-            },
-        },
-    },
     middleware: ['kyVerified'],
 })
 export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, ValidationMixin) {
     localIsBusy = false
+    createManagedAccountRequest: ManagedAccount = reactive(INITIAL_MA_REQUEST)
 
-    createManagedAccountRequest: CreateManagedAccountRequest = {
-        profileId: '',
-        friendlyName: 'Main Account',
-        currency: CurrencyEnum.EUR,
+    get validation() {
+        return useZodValidation(ManagedAccountSchema, this.createManagedAccountRequest)
     }
 
     get currencyOptions() {
@@ -109,12 +100,9 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
     }
 
     async doAdd() {
-        if (this.$v.createManagedAccountRequest) {
-            this.$v.createManagedAccountRequest.$touch()
-            if (this.$v.createManagedAccountRequest.$anyError) {
-                return
-            }
-        }
+        await this.validation.validate()
+
+        if (this.validation.isInvalid) return
 
         this.localIsBusy = true
 
