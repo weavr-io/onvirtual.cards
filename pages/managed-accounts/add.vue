@@ -102,7 +102,7 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
     async doAdd() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid) return
+        if (this.validation.isInvalid.value) return
 
         this.localIsBusy = true
 

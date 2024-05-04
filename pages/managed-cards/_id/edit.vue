@@ -38,21 +38,17 @@
                                 </b-form-row>
                                 <b-form-row>
                                     <b-col>
-                                        <b-form-group label="CUSTOM CARD NAME">
+                                        <b-form-group
+                                            label="CUSTOM CARD NAME"
+                                            :invalid-feedback="
+                                                validation.getInvalidFeedback('friendlyName')
+                                            "
+                                            :state="validation.getState('friendlyName')"
+                                        >
                                             <b-form-input
-                                                v-model="
-                                                    $v.updateManagedCardRequest.friendlyName.$model
-                                                "
-                                                :state="
-                                                    isInvalid(
-                                                        $v.updateManagedCardRequest.friendlyName,
-                                                    )
-                                                "
+                                                v-model="updateManagedCardRequest.friendlyName"
                                                 placeholder="eg. travel expenses"
                                             />
-                                            <b-form-invalid-feedback
-                                                >This field is required.
-                                            </b-form-invalid-feedback>
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
@@ -70,36 +66,26 @@
     </section>
 </template>
 <script lang="ts">
+import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { helpers, maxLength, required, requiredIf } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import BaseMixin from '~/mixins/BaseMixin'
 import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
+import {
+    type UpdateManagedCard,
+    ManagedCardUpdateSchema,
+    INITIAL_MC_UPDATE_REQUEST,
+} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
+import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
-
-// @TODO[PETER] - REFACTOR TO ZOD
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     components: {
         LoadingSpinner,
         LoaderButton,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    },
-    validations: {
-        updateManagedCardRequest: {
-            friendlyName: {
-                required,
-                maxLength: maxLength(50),
-            },
-            cardholderMobileNumber: {
-                required: requiredIf(function (this: EditCardPage) {
-                    return this.isCorporate
-                }),
-                cardholderMobileNumberReg: helpers.regex('cardholderMobileNumberReg', /^\+[0-9]+$/),
-            },
-        },
     },
 })
 export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
@@ -110,7 +96,11 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     isUpdating = false
-    updateManagedCardRequest: UpdateManagedCardRequest | null = null
+    updateManagedCardRequest: UpdateManagedCard = reactive(INITIAL_MC_UPDATE_REQUEST)
+
+    get validation() {
+        return useZodValidation(ManagedCardUpdateSchema, this.updateManagedCardRequest)
+    }
 
     get isLoading() {
         return this.cardsStore.cardState.isLoading || this.isUpdating || this.$fetchState.pending
@@ -138,7 +128,7 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
         this.mobile.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
     }
 
-    doUpdate() {
+    async doUpdate() {
         if (this.isConsumer) {
             this.numberIsValid = true
         }
@@ -147,8 +137,8 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
             this.numberIsValid = false
         }
 
-        this.$v.$touch()
-        if (this.$v.$anyError || !this.numberIsValid) {
+        await this.validation.validate()
+        if (this.validation.isInvalid.value || !this.numberIsValid) {
             return
         }
 
@@ -180,7 +170,7 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
         this.updateManagedCardRequest!.cardholderMobileNumber = number.formattedNumber
         this.numberIsValid = number.isValid
 
-        this.$v.$touch()
+        this.validation.validate()
     }
 }
 </script>

@@ -184,7 +184,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         }
 
         await this.validation.validate()
-        if (this.validation.isInvalid || !this.numberIsValid) {
+        if (this.validation.isInvalid.value || !this.numberIsValid) {
             return
         }
 
