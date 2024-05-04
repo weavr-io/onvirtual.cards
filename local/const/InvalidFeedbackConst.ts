@@ -1,7 +1,10 @@
 export const INVALID_FEEDBACK_CONST: Record<string, string> = {
     maxLength27: 'This field should not exceed 27 characters.',
     maxLength50: 'This field should not exceed 50 characters.',
+    maxLength100: 'This field should not exceed 100 characters.',
     minBalance: 'This field is below the limit.',
     maxBalance: 'This field exceeds the balance.',
     required: 'This is a required field.',
+    password:
+        'Please enter a valid password - must be between 8 and 30 characters, and must include lowercase, uppercase, number and special characters.',
 }

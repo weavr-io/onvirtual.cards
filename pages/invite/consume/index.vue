@@ -10,7 +10,7 @@
             <template v-else>
                 <h3 class="text-center font-weight-light mb-6">Accept Invite</h3>
                 <error-alert />
-                <b-form @submit="tryToSubmitForm">
+                <b-form @submit.prevent="tryToSubmitForm">
                     <client-only placeholder="Loading...">
                         <label class="d-block">PASSWORD:</label>
                         <weavr-password-input
@@ -49,27 +49,21 @@
     </b-col>
 </template>
 <script lang="ts">
+import { reactive } from 'vue'
+import { z } from 'zod'
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { required } from 'vuelidate/lib/validators'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
-import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
+import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
+import BaseMixin from '~/mixins/BaseMixin'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-
-// @TODO[JOSHUA] - REFACTOR TO ZOD
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     layout: 'auth',
-    validations: {
-        inviteForm: {
-            password: {
-                required,
-            },
-        },
-    },
     components: {
         LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
@@ -83,14 +77,27 @@ export default class IniteConsume extends mixins(BaseMixin) {
 
     passwordStrength = 0
     protected form!: { id: IDModel; data: InviteConsumeRequestModel }
-    private inviteForm = {
+
+    inviteForm = reactive({
         password: {
-            value: '',
+            value: '' as string | null,
         },
+    })
+
+    get inviteSchema() {
+        return z.object({
+            password: z.object({
+                value: z.string().min(1, { message: INVALID_FEEDBACK_CONST.password }),
+            }),
+        })
+    }
+
+    get validation() {
+        return useZodValidation(this.inviteSchema, this.inviteForm)
     }
 
     get isPasswordValidAndDirty() {
-        return !this.$v.inviteForm.password?.$dirty ? true : this.isPasswordValid
+        return !this.inviteForm.password?.value ? true : this.isPasswordValid
     }
 
     get isPasswordValid(): boolean {
@@ -131,7 +138,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
                 form: _consumeInviteRequest,
                 showError: false,
             }
-        } catch (e) {
+        } catch (_) {
             return {
                 showError: true,
             }
@@ -148,7 +155,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
             }
 
             return this.usersStore.inviteValidate(_validateRequest).catch(this.handleError)
-        } catch (e) {}
+        } catch (_) {}
     }
 
     strengthCheck(val) {
@@ -159,16 +166,15 @@ export default class IniteConsume extends mixins(BaseMixin) {
         !val.empty
             ? (this.inviteForm.password.value = '******')
             : (this.inviteForm.password.value = '')
-        this.$v.inviteForm.password?.$touch()
+        this.validation.validate()
     }
 
     handleError(e) {
         this.errorsStore.setError(e.response)
     }
 
-    tryToSubmitForm(e) {
-        e.preventDefault()
-        if (this.isPasswordValid) {
+    tryToSubmitForm() {
+        if (this.isPasswordValid && this.validation.isValid.value) {
             this.passwordField.createToken().then(
                 (tokens) => {
                     if (tokens.tokens.password !== '') {
@@ -190,7 +196,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
     checkOnKeyUp(e) {
         if (e.key === 'Enter') {
             e.preventDefault()
-            this.tryToSubmitForm(e)
+            this.tryToSubmitForm()
         }
     }
 }

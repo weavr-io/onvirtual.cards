@@ -17,24 +17,24 @@
                 >
                     <b-form-group
                         id="ig-email"
-                        :invalid-feedback="invalidFeedback($v.form.email, 'email')"
-                        :state="isInvalid($v.form.email)"
+                        :state="validation.getState('email')"
+                        :invalid-feedback="validation.getInvalidFeedback('email')"
                         label="Email"
                         label-for="setEmail"
                     >
                         <b-form-input
                             id="setEmail"
                             v-model="form.email"
-                            :state="isInvalid($v.form.email)"
-                            autocomplete="email"
+                            :state="validation.getState('email')"
                             class="form-control"
                             name="setEmail"
                             placeholder="Email"
                             type="text"
+                            autocomplete="on"
                         />
                     </b-form-group>
                     <client-only placeholder="Loading...">
-                        <div :class="{ 'is-dirty': $v.form.$dirty }">
+                        <div :class="{ 'is-dirty': isDirty }" @click="isDirty = !isDirty">
                             <label class="d-block">PASSWORD:</label>
                             <weavr-password-input
                                 ref="passwordField"
@@ -63,19 +63,23 @@
 </template>
 
 <script lang="ts">
+import { reactive } from 'vue'
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { email, required } from 'vuelidate/lib/validators'
-import ErrorAlert from '~/components/ErrorAlert.vue'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
-import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
+import {
+    type PasswordRequest,
+    PasswordRequestSchema,
+    INITIAL_PASSWORD_REQUEST,
+} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
+import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import ErrorAlert from '~/components/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-
-// @TODO[JOSHUA] - REFACTOR TO ZOD
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     layout: 'auth',
@@ -85,26 +89,17 @@ import LogoOvc from '~/components/molecules/LogoOvc.vue'
         LoaderButton,
         WeavrPasswordInput,
     },
-    validations: {
-        form: {
-            email: {
-                required,
-                email,
-            },
-        },
-    },
 })
 export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin) {
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
+    isDirty = false
     isLoading = false
-    protected form: ResumeLostPasswordRequestModel = {
-        nonce: '',
-        email: '',
-        newPassword: {
-            value: '',
-        },
+    form: PasswordRequest = reactive(INITIAL_PASSWORD_REQUEST)
+
+    get validation() {
+        return useZodValidation(PasswordRequestSchema, this.form)
     }
 
     get noErrors() {
@@ -138,9 +133,10 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
         }
     }
 
-    setPassword() {
-        this.$v.$touch()
-        if (this.$v.$invalid) return
+    async setPassword() {
+        await this.validation.validate()
+
+        if (this.validation.isInvalid.value) return
 
         this.passwordField.createToken().then(
             (tokens) => {
@@ -169,7 +165,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
 
     submitForm() {
         this.authStore
-            .lostPasswordResume(this.form)
+            .lostPasswordResume(this.form as ResumeLostPasswordRequestModel)
             .then(() => {
                 this.$router.push('/login')
             })
