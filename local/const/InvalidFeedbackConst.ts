@@ -1,4 +1,6 @@
 export const INVALID_FEEDBACK_CONST: Record<string, string> = {
+    maxLength2: 'This field should not exceed 2 characters.',
+    maxLength20: 'This field should not exceed 20 characters.',
     maxLength27: 'This field should not exceed 27 characters.',
     maxLength50: 'This field should not exceed 50 characters.',
     maxLength100: 'This field should not exceed 100 characters.',

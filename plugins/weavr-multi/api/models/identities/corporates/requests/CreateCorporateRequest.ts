@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { IDModel, IDSchema } from '../../../common/IDModel'
+import { IDModel, IDSchema } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import {
     IndustryTypeEnum,
     IndustryTypeEnumSchema,

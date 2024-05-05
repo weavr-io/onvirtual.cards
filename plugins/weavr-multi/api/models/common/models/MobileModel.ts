@@ -8,14 +8,14 @@ export interface MobileModel {
 
 const MobileSchema = z.object({
     countryCode: preprocessEmptyAsUndefined(z.string()),
-    mobile: preprocessEmptyAsUndefined(z.string()),
+    number: preprocessEmptyAsUndefined(z.string()),
 })
 
 type Mobile = z.infer<typeof MobileSchema>
 
 const INITIAL_MOBILE_REQUEST = {
     countryCode: undefined,
-    mobile: undefined,
+    number: undefined,
 } as unknown as Mobile
 
 export { MobileSchema, Mobile, INITIAL_MOBILE_REQUEST }

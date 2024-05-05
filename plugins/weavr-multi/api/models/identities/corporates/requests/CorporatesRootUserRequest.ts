@@ -8,6 +8,7 @@ import {
     CompanyPositionEnumSchema,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
 import { DateModel, DateSchema } from '~/plugins/weavr-multi/api/models/common/DateModel'
+import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
 
 export interface CorporatesRootUserRequest {
     name: string
@@ -19,8 +20,8 @@ export interface CorporatesRootUserRequest {
 }
 
 const CorporatesRootUserRequestSchema = z.object({
-    name: z.string(),
-    surname: z.string(),
+    name: z.string().max(20, { message: INVALID_FEEDBACK_CONST.maxLength20 }),
+    surname: z.string().max(20, { message: INVALID_FEEDBACK_CONST.maxLength20 }),
     email: z.string().email(),
     mobile: MobileSchema,
     companyPosition: CompanyPositionEnumSchema,
