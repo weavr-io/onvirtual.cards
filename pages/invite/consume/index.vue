@@ -50,17 +50,19 @@
 </template>
 <script lang="ts">
 import { reactive } from 'vue'
-import { z } from 'zod'
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
-import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
 import BaseMixin from '~/mixins/BaseMixin'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import useZodValidation from '~/composables/useZodValidation'
+import {
+    INITIAL_PASSWORD_REQUEST,
+    PasswordSchema,
+} from '~/plugins/weavr-multi/api/models/authentication/access'
 
 @Component({
     layout: 'auth',
@@ -72,28 +74,17 @@ import useZodValidation from '~/composables/useZodValidation'
 })
 export default class IniteConsume extends mixins(BaseMixin) {
     showError = false
+
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
     passwordStrength = 0
+    inviteForm = reactive(INITIAL_PASSWORD_REQUEST)
+
     protected form!: { id: IDModel; data: InviteConsumeRequestModel }
 
-    inviteForm = reactive({
-        password: {
-            value: '' as string | null,
-        },
-    })
-
-    get inviteSchema() {
-        return z.object({
-            password: z.object({
-                value: z.string().min(1, { message: INVALID_FEEDBACK_CONST.password }),
-            }),
-        })
-    }
-
     get validation() {
-        return useZodValidation(this.inviteSchema, this.inviteForm)
+        return useZodValidation(PasswordSchema, this.inviteForm)
     }
 
     get isPasswordValidAndDirty() {
@@ -174,7 +165,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
     }
 
     tryToSubmitForm() {
-        if (this.isPasswordValid && this.validation.isValid.value) {
+        if (this.isPasswordValid && this.validation.isValid) {
             this.passwordField.createToken().then(
                 (tokens) => {
                     if (tokens.tokens.password !== '') {
