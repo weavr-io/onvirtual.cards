@@ -1,5 +1,5 @@
 import { InstrumentIdModel } from '~/plugins/weavr-multi/api/models/common/InstrumentIdModel'
-import { CurrencyAmountModel } from '~/plugins/weavr-multi/api/models/common/CurrencyAmountModel'
+import { CurrencyAmount } from '~/plugins/weavr-multi/api/models/common'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
 
 export interface CreateTransferRequest {
@@ -7,5 +7,5 @@ export interface CreateTransferRequest {
     tag?: string
     source: InstrumentIdModel
     destination: InstrumentIdModel
-    destinationAmount: CurrencyAmountModel
+    destinationAmount: CurrencyAmount
 }

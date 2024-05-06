@@ -83,31 +83,21 @@
 </template>
 <script lang="ts">
 import { reactive } from 'vue'
-import { z } from 'zod'
 import { Emit, mixins, Prop } from 'nuxt-property-decorator'
-import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
 import useZodValidation from '~/composables/useZodValidation'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
+import { AmountSchema } from '~/plugins/weavr-multi/api/models/common'
 
 export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
     @Prop({ default: '' }) readonly selectedAccount
 
     request = reactive({
-        amount: null as number | null,
+        amount: undefined,
     })
 
-    get amountSchema() {
-        return z.object({
-            amount: z
-                .number()
-                .min(0.01, { message: INVALID_FEEDBACK_CONST.minBalance })
-                .max(this.accountBalance, { message: INVALID_FEEDBACK_CONST.maxBalance }),
-        })
-    }
-
     get validation() {
-        return useZodValidation(this.amountSchema, this.request)
+        return useZodValidation(AmountSchema(this.accountBalance), this.request)
     }
 
     get accounts() {
