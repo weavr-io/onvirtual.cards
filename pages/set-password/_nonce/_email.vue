@@ -17,8 +17,8 @@
                 >
                     <b-form-group
                         id="ig-email"
-                        :state="validation.getState('email')"
                         :invalid-feedback="validation.getInvalidFeedback('email')"
+                        :state="validation.getState('email')"
                         label="Email"
                         label-for="setEmail"
                     >
@@ -26,11 +26,11 @@
                             id="setEmail"
                             v-model="form.email"
                             :state="validation.getState('email')"
+                            autocomplete="on"
                             class="form-control"
                             name="setEmail"
                             placeholder="Email"
                             type="text"
-                            autocomplete="on"
                         />
                     </b-form-group>
                     <client-only placeholder="Loading...">
@@ -66,13 +66,13 @@
 import { reactive } from 'vue'
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
-import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 import {
+    INITIAL_PASSWORD_REQUEST,
     type PasswordRequest,
     PasswordRequestSchema,
-    INITIAL_PASSWORD_REQUEST,
+    ResumeLostPasswordRequestModel,
 } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
+import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import ErrorAlert from '~/components/ErrorAlert.vue'
@@ -136,7 +136,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
     async setPassword() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid.value) return
+        if (this.validation.isInvalid) return
 
         this.passwordField.createToken().then(
             (tokens) => {

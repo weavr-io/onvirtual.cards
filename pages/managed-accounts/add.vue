@@ -39,9 +39,9 @@ import { Component, mixins, Watch } from 'nuxt-property-decorator'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 import {
+    INITIAL_MA_REQUEST,
     type ManagedAccount,
     ManagedAccountSchema,
-    INITIAL_MA_REQUEST,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
 import BaseMixin from '~/mixins/BaseMixin'
 import AccountsMixin from '~/mixins/AccountsMixin'
@@ -102,7 +102,7 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
     async doAdd() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid.value) return
+        if (this.validation.isInvalid) return
 
         this.localIsBusy = true
 

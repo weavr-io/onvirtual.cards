@@ -136,7 +136,7 @@ export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
     async submitForm() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid.value) return null
+        if (this.validation.isInvalid) return null
 
         return this.request
     }

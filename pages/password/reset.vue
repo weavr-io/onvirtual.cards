@@ -14,8 +14,8 @@
                 <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
                     <b-form-group
                         id="ig-email"
-                        :state="validation.getState('email')"
                         :invalid-feedback="validation.getInvalidFeedback('email')"
+                        :state="validation.getState('email')"
                         label="Email:"
                         label-for="from-email"
                     >
@@ -69,11 +69,11 @@
 <script lang="ts">
 import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 import {
+    INITIAL_RESET_REQUEST,
+    InitiateLostPasswordRequestModel,
     type ResetRequest,
     ResetSchema,
-    INITIAL_RESET_REQUEST,
 } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -103,7 +103,7 @@ export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin
     async resetPassword() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid.value) return
+        if (this.validation.isInvalid) return
 
         this.isLoading = true
         this.errorsStore.setError(null)

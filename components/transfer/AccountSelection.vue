@@ -32,9 +32,9 @@ import { reactive } from 'vue'
 import { Emit, mixins } from 'nuxt-property-decorator'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import {
+    INITIAL_INSTRUMENT_REQUEST,
     type Instrument,
     InstrumentSchema,
-    INITIAL_INSTRUMENT_REQUEST,
 } from '~/plugins/weavr-multi/api/models/common/InstrumentIdModel'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -103,7 +103,7 @@ export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMi
     async submitForm() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid.value) {
+        if (this.validation.isInvalid) {
             this.showErrorToast('Please select an account to top up from.')
             return null
         }

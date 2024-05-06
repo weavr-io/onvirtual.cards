@@ -13,9 +13,9 @@
                         <b-form-row>
                             <b-col>
                                 <b-form-group
-                                    label="Name*"
-                                    :state="validation.getState('name')"
                                     :invalid-feedback="validation.getInvalidFeedback('name')"
+                                    :state="validation.getState('name')"
+                                    label="Name*"
                                 >
                                     <b-form-input v-model="request.name" />
                                 </b-form-group>
@@ -24,9 +24,9 @@
                         <b-form-row>
                             <b-col>
                                 <b-form-group
-                                    label="Surname*"
-                                    :state="validation.getState('surname')"
                                     :invalid-feedback="validation.getInvalidFeedback('surname')"
+                                    :state="validation.getState('surname')"
+                                    label="Surname*"
                                 >
                                     <b-form-input v-model="request.surname" />
                                 </b-form-group>
@@ -35,9 +35,9 @@
                         <b-form-row>
                             <b-col>
                                 <b-form-group
-                                    label="Email*"
-                                    :state="validation.getState('email')"
                                     :invalid-feedback="validation.getInvalidFeedback('email')"
+                                    :state="validation.getState('email')"
+                                    label="Email*"
                                 >
                                     <b-form-input v-model="request.email" lazy type="email" />
                                 </b-form-group>
@@ -57,13 +57,13 @@
 <script lang="ts">
 import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
-import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import {
+    CreateUserRequestModel,
+    INITIAL_USER_REQUEST,
     type UserRequest,
     UserSchema,
-    INITIAL_USER_REQUEST,
 } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
+import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
@@ -88,7 +88,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
     async doAdd() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid.value) {
+        if (this.validation.isInvalid) {
             return null
         }
 

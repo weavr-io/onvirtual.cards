@@ -39,11 +39,11 @@
                                 <b-form-row>
                                     <b-col>
                                         <b-form-group
-                                            label="CUSTOM CARD NAME"
                                             :invalid-feedback="
                                                 validation.getInvalidFeedback('friendlyName')
                                             "
                                             :state="validation.getState('friendlyName')"
+                                            label="CUSTOM CARD NAME"
                                         >
                                             <b-form-input
                                                 v-model="updateManagedCardRequest.friendlyName"
@@ -69,11 +69,11 @@
 import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 import {
-    type UpdateManagedCard,
-    ManagedCardUpdateSchema,
     INITIAL_MC_UPDATE_REQUEST,
+    ManagedCardUpdateSchema,
+    type UpdateManagedCard,
+    UpdateManagedCardRequest,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -138,7 +138,7 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
         }
 
         await this.validation.validate()
-        if (this.validation.isInvalid.value || !this.numberIsValid) {
+        if (this.validation.isInvalid || !this.numberIsValid) {
             return
         }
 

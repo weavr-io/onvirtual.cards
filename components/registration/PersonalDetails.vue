@@ -3,16 +3,16 @@
         <h3 class="text-center font-weight-light mb-5">A few more steps</h3>
         <error-alert />
         <b-form-group
-            label="First Name*"
             :invalid-feedback="validation.getInvalidFeedback('rootUser.name')"
             :state="validation.getState('rootUser.name')"
+            label="First Name*"
         >
             <b-form-input v-model="form.rootUser.name" placeholder="Name" />
         </b-form-group>
         <b-form-group
-            label="Last Name*"
             :invalid-feedback="validation.getInvalidFeedback('surname')"
             :state="validation.getState('surname')"
+            label="Last Name*"
         >
             <b-form-input v-model="form.rootUser.surname" placeholder="Last Name" />
         </b-form-group>
@@ -33,23 +33,23 @@
             </b-form-invalid-feedback>
         </b-form-group>
         <b-form-group
-            label="Company Name*"
             :invalid-feedback="validation.getInvalidFeedback('company.surname')"
             :state="validation.getState('company.surname')"
+            label="Company Name*"
         >
             <b-form-input v-model="form.company.name" placeholder="Company Name" />
         </b-form-group>
         <b-form-group
-            label="Company Registration Number*"
             :invalid-feedback="validation.getInvalidFeedback('registrationNumber')"
             :state="validation.getState('registrationNumber')"
+            label="Company Registration Number*"
         >
             <b-form-input v-model="form.company.registrationNumber" placeholder="C00000" />
         </b-form-group>
         <b-form-group
-            label="Company Type*"
             :invalid-feedback="validation.getInvalidFeedback('registrationNumber')"
             :state="validation.getState('registrationNumber')"
+            label="Company Type*"
         >
             <b-form-select
                 v-model="form.company.type"
@@ -59,9 +59,9 @@
             <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
         <b-form-group
-            label="Registration Country*"
             :invalid-feedback="validation.getInvalidFeedback('registrationCountry')"
             :state="validation.getState('registrationCountry')"
+            label="Registration Country*"
         >
             <b-form-select
                 v-model="form.company.registrationCountry"
@@ -70,23 +70,23 @@
             />
         </b-form-group>
         <b-form-group
-            label="Industry*"
             :invalid-feedback="validation.getInvalidFeedback('industry')"
             :state="validation.getState('industry')"
+            label="Industry*"
         >
             <b-form-select v-model="form.industry" :options="industryOccupationOptions" />
         </b-form-group>
         <b-form-group
-            label="Source of Funds*"
             :invalid-feedback="validation.getInvalidFeedback('sourceOfFunds')"
             :state="validation.getState('sourceOfFunds')"
+            label="Source of Funds*"
         >
             <b-form-select v-model="form.sourceOfFunds" :options="sourceOfFundsOptions" />
         </b-form-group>
         <b-form-group
             v-if="shouldShowOtherSourceOfFunds"
-            label="Other"
             :state="validation.getState('sourceOfFundsOther')"
+            label="Other"
         >
             <b-form-input
                 v-model="form.sourceOfFundsOther"
@@ -132,8 +132,8 @@ import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identit
 import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 import {
-    type CreateCorporatesRequestType,
     CreateCorporateRequestSchema,
+    type CreateCorporatesRequestType,
     INITIAL_CREATE_CORPORATE_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import BaseMixin from '~/mixins/BaseMixin'
@@ -210,7 +210,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
 
         await this.validation.validate()
 
-        if (this.validation.isInvalid.value || !this.numberIsValid) {
+        if (this.validation.isInvalid || !this.numberIsValid) {
             return null
         }
 

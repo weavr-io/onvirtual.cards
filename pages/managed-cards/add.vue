@@ -101,15 +101,15 @@
 <script lang="ts">
 import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
+import {
+    CreateManagedCardRequest,
+    INITIAL_MC_REQUEST,
+    type ManagedCard,
+    ManagedCardSchema,
+} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
-import {
-    type ManagedCard,
-    ManagedCardSchema,
-    INITIAL_MC_REQUEST,
-} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
@@ -184,7 +184,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         }
 
         await this.validation.validate()
-        if (this.validation.isInvalid.value || !this.numberIsValid) {
+        if (this.validation.isInvalid || !this.numberIsValid) {
             return
         }
 
