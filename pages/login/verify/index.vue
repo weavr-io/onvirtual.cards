@@ -37,9 +37,6 @@
                     </b-row>
                     <LoaderButton :is-loading="isLoading" class="mt-5 text-center" text="verify" />
                 </form>
-                <pre>
-                    {{ validation.isInvalid }}
-                </pre>
                 <div class="mt-4 text-center">
                     <small class="text-grey">
                         Didn’t receive a code?
@@ -185,7 +182,6 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
             return
         }
 
-        console.log('test')
         this.$route.query.cons
             ? await this.consumersStore
                   .verifyEmail(this.verifyEmailRequest)
