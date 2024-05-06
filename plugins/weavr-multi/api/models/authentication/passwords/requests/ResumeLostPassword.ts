@@ -1,29 +1,22 @@
 import { z } from 'zod'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 import {
-    SensitivePasswordModel,
-    SensitivePasswordSchema,
     INITIAL_SENSITIVE_PASSWORD_REQUEST,
+    SensitivePasswordSchema,
 } from '~/plugins/weavr-multi/api/models/authentication/access/models/SensitivePasswordModel'
 
-export interface ResumeLostPasswordRequestModel {
-    nonce: string
-    email: string
-    newPassword: SensitivePasswordModel
-}
-
-const PasswordRequestSchema = z.object({
+const ResumeLostPasswordSchema = z.object({
     nonce: preprocessEmptyAsUndefined(z.string().optional()),
     email: preprocessEmptyAsUndefined(z.string().email()),
     newPassword: SensitivePasswordSchema,
 })
 
-type PasswordRequest = z.infer<typeof PasswordRequestSchema>
+type ResumeLostPassword = z.infer<typeof ResumeLostPasswordSchema>
 
-const INITIAL_PASSWORD_REQUEST = {
+const INITIAL_RESUME_LOST_PASSWORD_REQUEST = {
     nonce: undefined,
     email: undefined,
     newPassword: INITIAL_SENSITIVE_PASSWORD_REQUEST,
-} as unknown as PasswordRequest
+} as unknown as ResumeLostPassword
 
-export { PasswordRequest, PasswordRequestSchema, INITIAL_PASSWORD_REQUEST }
+export { ResumeLostPassword, ResumeLostPasswordSchema, INITIAL_RESUME_LOST_PASSWORD_REQUEST }

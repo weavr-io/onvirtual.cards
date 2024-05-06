@@ -10,7 +10,7 @@ import type { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/mode
 import type { GetAuthenticationFactorsResponse } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/responses/GetAuthenticationFactorsResponse'
 import type { AuthVerifyEnrol } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
 import type { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
-import type { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
+import type { ResumeLostPassword } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPassword'
 import type { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
@@ -153,7 +153,7 @@ export const useAuthStore = defineStore('auth', () => {
         return _req
     }
 
-    const lostPasswordResume = (request: ResumeLostPasswordRequestModel) => {
+    const lostPasswordResume = (request: ResumeLostPassword) => {
         const _req = store.$nuxt.$apiMulti.passwords.resume(request)
 
         return _req

@@ -67,11 +67,9 @@ import { reactive } from 'vue'
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import {
-    INITIAL_PASSWORD_REQUEST,
-    type PasswordRequest,
-    PasswordRequestSchema,
-    ResumeLostPasswordRequestModel,
-} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
+    INITIAL_RESUME_LOST_PASSWORD_REQUEST,
+    ResumeLostPasswordSchema,
+} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -96,10 +94,10 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
 
     isDirty = false
     isLoading = false
-    form: PasswordRequest = reactive(INITIAL_PASSWORD_REQUEST)
+    form = reactive(INITIAL_RESUME_LOST_PASSWORD_REQUEST)
 
     get validation() {
-        return useZodValidation(PasswordRequestSchema, this.form)
+        return useZodValidation(ResumeLostPasswordSchema, this.form)
     }
 
     get noErrors() {
@@ -165,7 +163,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
 
     submitForm() {
         this.authStore
-            .lostPasswordResume(this.form as ResumeLostPasswordRequestModel)
+            .lostPasswordResume(this.form)
             .then(() => {
                 this.$router.push('/login')
             })

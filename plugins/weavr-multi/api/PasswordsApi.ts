@@ -5,9 +5,9 @@ import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/aut
 import { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'
 import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
-import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
 import { ResumeLostPasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/ResumeLostPasswordResponseModel'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
+import { ResumeLostPassword } from '~/plugins/weavr-multi/api/models/authentication/passwords'
 
 export class PasswordsApi {
     store(params: {
@@ -34,9 +34,7 @@ export class PasswordsApi {
         return $axiosMulti.post('/passwords/lost_password/start', request)
     }
 
-    resume(
-        request: ResumeLostPasswordRequestModel,
-    ): Promise<AxiosResponse<ResumeLostPasswordResponseModel>> {
+    resume(request: ResumeLostPassword): Promise<AxiosResponse<ResumeLostPasswordResponseModel>> {
         return $axiosMulti.post<ResumeLostPasswordResponseModel>(
             '/passwords/lost_password/resume',
             request,
