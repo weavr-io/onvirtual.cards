@@ -10,7 +10,7 @@ import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed
 import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import { useAuthStore } from '~/store/auth'

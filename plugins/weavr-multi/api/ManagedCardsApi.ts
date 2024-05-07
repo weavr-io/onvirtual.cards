@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios'
-import { IDModel } from './models/common/IDModel'
+import { IDModel } from './models/common/models/IDModel'
 import { $axiosMulti } from '~/utils/api'
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'

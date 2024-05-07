@@ -1,4 +1,4 @@
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
+import { AddressModel } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
 import { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
 import { FasterPaymentsBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/FasterPaymentsBankDetailsModel'
 import { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SwiftBankDetailsModel'

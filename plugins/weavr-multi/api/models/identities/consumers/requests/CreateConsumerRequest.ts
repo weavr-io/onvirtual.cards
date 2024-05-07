@@ -1,4 +1,4 @@
-import { IDModel } from '../../../common/IDModel'
+import { IDModel } from '../../../common/models/IDModel'
 import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { ConsumersRootUserRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/ConsumersRootUserRequest'

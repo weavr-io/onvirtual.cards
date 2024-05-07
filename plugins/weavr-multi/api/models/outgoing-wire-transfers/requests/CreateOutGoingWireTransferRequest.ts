@@ -1,4 +1,4 @@
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import { SourceInstrumentModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/SourceInstrumentModel'
 import { CurrencyAmount } from '~/plugins/weavr-multi/api/models/common'
 import { OutgoingWireTransferBeneficiaryModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/OutgoingWireTransferBeneficiaryModel'

@@ -35,7 +35,7 @@ import {
     INITIAL_INSTRUMENT_REQUEST,
     type Instrument,
     InstrumentSchema,
-} from '~/plugins/weavr-multi/api/models/common/InstrumentIdModel'
+} from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import useZodValidation from '~/composables/useZodValidation'

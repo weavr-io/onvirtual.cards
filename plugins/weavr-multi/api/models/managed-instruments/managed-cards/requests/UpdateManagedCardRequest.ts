@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
-import { DeliveryAddressModel } from '~/plugins/weavr-multi/api/models/common/DeliveryAddressModel'
+import { AddressModel } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
+import { DeliveryAddressModel } from '~/plugins/weavr-multi/api/models/common/models/DeliveryAddressModel'
 import { PhysicalCardDeliveryMethodEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/PhysicalCardDeliveryMethodEnum'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'

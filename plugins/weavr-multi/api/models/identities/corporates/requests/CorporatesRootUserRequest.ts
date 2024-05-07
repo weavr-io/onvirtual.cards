@@ -7,7 +7,7 @@ import {
     CompanyPositionEnum,
     CompanyPositionEnumSchema,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
-import { DateModel, DateSchema } from '~/plugins/weavr-multi/api/models/common/DateModel'
+import { DateModel, DateSchema } from '~/plugins/weavr-multi/api/models/common/models/DateModel'
 import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
 
 export interface CorporatesRootUserRequest {

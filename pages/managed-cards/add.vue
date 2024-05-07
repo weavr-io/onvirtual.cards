@@ -103,12 +103,12 @@ import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
 import {
     CreateManagedCardRequest,
-    INITIAL_MC_REQUEST,
+    INITIAL_MANAGED_CARD_REQUEST,
     type ManagedCard,
     ManagedCardSchema,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
+import { AddressModel } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -140,7 +140,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
 
     numberIsValid: boolean | null = null
 
-    createManagedCardRequest: ManagedCard = reactive(INITIAL_MC_REQUEST)
+    createManagedCardRequest: ManagedCard = reactive(INITIAL_MANAGED_CARD_REQUEST)
 
     get validation() {
         return useZodValidation(ManagedCardSchema, this.createManagedCardRequest)

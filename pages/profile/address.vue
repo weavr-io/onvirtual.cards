@@ -107,7 +107,7 @@
 import { Component, mixins } from 'nuxt-property-decorator'
 import { maxLength, required } from 'vuelidate/lib/validators'
 import BaseMixin from '~/mixins/BaseMixin'
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
+import { AddressModel } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
 import { LegalAddressModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/LegalAddressModel'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'

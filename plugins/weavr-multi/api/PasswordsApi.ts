@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios'
-import { IDModel } from './models/common/IDModel'
+import { IDModel } from './models/common/models/IDModel'
 import { $axiosMulti } from '~/utils/api'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'

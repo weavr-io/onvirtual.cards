@@ -2,7 +2,7 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
 import { ManagedCardTypeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardTypeEnum'
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
 import { ManufacturingStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManufacturingStateEnum'
-import { PagingModel } from '~/plugins/weavr-multi/api/models/common/PagingModel'
+import { PagingModel } from '~/plugins/weavr-multi/api/models/common/models/PagingModel'
 import { ManagedInstrumentBlockedReasonEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentBlockedReasonEnum'
 import { ManagedInstrumentDestroyedReasonEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentDestroyedReasonEnum'
 

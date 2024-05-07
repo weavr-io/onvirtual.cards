@@ -4,7 +4,7 @@ import { PaginatedOutgoingWireTransferResponse } from '~/plugins/weavr-multi/api
 import { OutgoingWireTransfersFilterRequest } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/requests/OutgoingWireTransfersFilterRequest'
 import { CreateOutGoingWireTransferRequest } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/requests/CreateOutGoingWireTransferRequest'
 import { OutgoingWiretransferModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/OutgoingWiretransferModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 
 export class OutgoingWireTransferApi {
     index(
