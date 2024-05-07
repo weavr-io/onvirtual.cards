@@ -12,20 +12,6 @@ import {
     INITIAL_COMPANY_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CompanyRequest' // export interface CreateCorporateRequest {
 
-// export interface CreateCorporateRequest {
-//     profileId: IDModel
-//     tag?: string
-//     rootUser: CorporatesRootUserRequest
-//     company: CompanyRequest
-//     industry: IndustryTypeEnum
-//     sourceOfFunds: CorporateSourceOfFundTypeEnum
-//     sourceOfFundsOther?: string
-//     acceptedTerms: boolean
-//     ipAddress: string
-//     baseCurrency: CurrencyEnum
-//     feeGroup?: string
-// }
-
 const CreateCorporateRequestSchema = z.object({
     profileId: IDSchema,
     tag: z.string().optional(),
@@ -44,10 +30,10 @@ type CreateCorporateRequest = z.infer<typeof CreateCorporateRequestSchema>
 const INITIAL_CREATE_CORPORATE_REQUEST = {
     profileId: undefined,
     tag: undefined,
-    rootUser: INITIAL_CORPORATES_ROOT_USER_REQUEST,
-    company: INITIAL_COMPANY_REQUEST,
-    industry: undefined,
-    sourceOfFunds: undefined,
+    rootUser: { ...INITIAL_CORPORATES_ROOT_USER_REQUEST },
+    company: { ...INITIAL_COMPANY_REQUEST },
+    industry: null,
+    sourceOfFunds: null,
     sourceOfFundsOther: undefined,
     acceptedTerms: undefined,
     ipAddress: undefined,

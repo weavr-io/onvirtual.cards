@@ -11,7 +11,7 @@
                             </div>
                             <div v-else key="2" class="form-screen">
                                 <personal-details-form
-                                    @submit-form="form2Submit"
+                                    @submit="form2Submit"
                                     @strength-check="strengthCheck"
                                     @go-back="goBack"
                                 />
@@ -27,6 +27,7 @@
 import { AxiosResponse } from 'axios'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { reactive } from 'vue'
+import { cloneDeep } from 'lodash-es'
 import BaseMixin from '~/mixins/BaseMixin'
 import { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPassword'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
@@ -38,10 +39,6 @@ import {
 } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import {
-    CorporateSourceOfFundTypeEnum,
-    IndustryTypeEnum,
-} from '~/plugins/weavr-multi/api/models/identities/corporates'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common'
 
 @Component({
@@ -59,17 +56,12 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     screen = 0
     passwordStrength = 0
 
-    registrationRequest: CreateCorporateRequest & { password?: string } = reactive(
-        Object.assign(INITIAL_CREATE_CORPORATE_REQUEST, {
+    registrationRequest: CreateCorporateRequest & {
+        password?: string
+    } = reactive(
+        cloneDeep({
+            ...INITIAL_CREATE_CORPORATE_REQUEST,
             profileId: this.$config.profileId.corporates,
-            tag: 'tag',
-            rootUser: {
-                mobile: {
-                    countryCode: '+356',
-                },
-            },
-            industry: IndustryTypeEnum.ACCOUNTING,
-            sourceOfFunds: CorporateSourceOfFundTypeEnum.CIVIL_CONTRACT,
             acceptedTerms: false,
             baseCurrency: CurrencyEnum.EUR,
             password: undefined,

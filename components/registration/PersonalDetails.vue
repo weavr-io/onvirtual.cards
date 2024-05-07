@@ -3,15 +3,15 @@
         <h3 class="text-center font-weight-light mb-5">A few more steps</h3>
         <error-alert />
         <b-form-group
-            :invalid-feedback="validation.getInvalidFeedback('rootUser.name')"
-            :state="validation.getState('rootUser.name')"
+            :invalid-feedback="validation.getInvalidFeedback('rootUser,name')"
+            :state="validation.getState('rootUser,name')"
             label="First Name*"
         >
             <b-form-input v-model="form.rootUser.name" placeholder="Name" />
         </b-form-group>
         <b-form-group
-            :invalid-feedback="validation.getInvalidFeedback('surname')"
-            :state="validation.getState('surname')"
+            :invalid-feedback="validation.getInvalidFeedback('rootUser,surname')"
+            :state="validation.getState('rootUser,surname')"
             label="Last Name*"
         >
             <b-form-input v-model="form.rootUser.surname" placeholder="Last Name" />
@@ -33,22 +33,22 @@
             </b-form-invalid-feedback>
         </b-form-group>
         <b-form-group
-            :invalid-feedback="validation.getInvalidFeedback('company.surname')"
-            :state="validation.getState('company.surname')"
+            :invalid-feedback="validation.getInvalidFeedback('company,name')"
+            :state="validation.getState('company,name')"
             label="Company Name*"
         >
             <b-form-input v-model="form.company.name" placeholder="Company Name" />
         </b-form-group>
         <b-form-group
-            :invalid-feedback="validation.getInvalidFeedback('registrationNumber')"
-            :state="validation.getState('registrationNumber')"
+            :invalid-feedback="validation.getInvalidFeedback('company,registrationNumber')"
+            :state="validation.getState('company,registrationNumber')"
             label="Company Registration Number*"
         >
             <b-form-input v-model="form.company.registrationNumber" placeholder="C00000" />
         </b-form-group>
         <b-form-group
-            :invalid-feedback="validation.getInvalidFeedback('registrationNumber')"
-            :state="validation.getState('registrationNumber')"
+            :invalid-feedback="validation.getInvalidFeedback('company,type')"
+            :state="validation.getState('company,type')"
             label="Company Type*"
         >
             <b-form-select
@@ -59,8 +59,8 @@
             <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
         <b-form-group
-            :invalid-feedback="validation.getInvalidFeedback('registrationCountry')"
-            :state="validation.getState('registrationCountry')"
+            :invalid-feedback="validation.getInvalidFeedback('company,registrationCountry')"
+            :state="validation.getState('company,registrationCountry')"
             label="Registration Country*"
         >
             <b-form-select
@@ -94,8 +94,8 @@
             />
         </b-form-group>
         <b-form-group
-            :invalid-feedback="validation.getInvalidFeedback('companyPosition')"
-            :state="validation.getState('companyPosition')"
+            :invalid-feedback="validation.getInvalidFeedback('rootUser,companyPosition')"
+            :state="validation.getState('rootUser,companyPosition')"
             label="My position within the company is*"
         >
             <b-form-radio v-model="firstCompanyPosition" name="company-position">
@@ -121,13 +121,14 @@
             </b-col>
         </b-form-row>
         <pre>
-            {{ form }}
+            {{ validation }}
         </pre>
     </b-form>
 </template>
 <script lang="ts">
 import { reactive } from 'vue'
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
+import { cloneDeep } from 'lodash-es'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
@@ -154,7 +155,9 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
     numberIsValid: boolean | null = null
 
-    form: CreateCorporateRequest = reactive(INITIAL_CREATE_CORPORATE_REQUEST)
+    @Prop() partialForm!: Partial<CreateCorporateRequest>
+
+    form: CreateCorporateRequest = reactive(cloneDeep(INITIAL_CREATE_CORPORATE_REQUEST))
 
     get validation() {
         return useZodValidation(CreateCorporateRequestSchema, this.form)
@@ -199,14 +202,12 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     }
 
     phoneUpdate(number) {
-        if (!this.form.rootUser!.mobile.number) return
+        this.form.rootUser.mobile.countryCode = number.countryCallingCode
+        this.form.rootUser.mobile.number = number.phoneNumber
 
-        this.$set(this.form.rootUser!.mobile!, 'countryCode', '+' + number.countryCallingCode)
-        this.$set(this.form.rootUser!.mobile!, 'number', number.phoneNumber)
         this.numberIsValid = number.isValid
     }
 
-    @Emit()
     async submitForm() {
         if (this.numberIsValid === null) {
             this.numberIsValid = false
@@ -218,6 +219,11 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
             return null
         }
 
+        this.submit()
+    }
+
+    @Emit()
+    submit() {
         return this.form
     }
 

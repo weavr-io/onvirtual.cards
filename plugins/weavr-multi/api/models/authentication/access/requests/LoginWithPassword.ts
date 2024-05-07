@@ -16,7 +16,7 @@ const PasswordSchema = LoginWithPasswordSchema.pick({ password: true })
 type Password = z.infer<typeof PasswordSchema>
 
 const INITIAL_PASSWORD_REQUEST = {
-    password: INITIAL_SENSITIVE_PASSWORD_REQUEST,
+    password: { ...INITIAL_SENSITIVE_PASSWORD_REQUEST },
 } as unknown as Password
 
 const INITIAL_LOGIN_WITH_PASSWORD_REQUEST = {
