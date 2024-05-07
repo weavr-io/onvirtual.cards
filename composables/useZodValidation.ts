@@ -16,6 +16,12 @@ export default function <T extends ZodTypeAny>(
 ) {
     const opts = Object.assign({}, { mode: 'lazy' }, options)
 
+    /**
+     * @return Boolean representing the state of the validation. If the form has been interacted with
+     * then the return will be dirty true else false.
+     */
+    const dirty = ref(false)
+
     const isValid = ref(true)
 
     let unwatch: null | (() => void) = null
@@ -28,6 +34,8 @@ export default function <T extends ZodTypeAny>(
 
     const isInvalid = computed(() => !isValid.value)
 
+    const touch = () => (dirty.value = true)
+
     const validationWatch = () => {
         if (unwatch !== null) {
             return
@@ -36,7 +44,7 @@ export default function <T extends ZodTypeAny>(
         unwatch = watch(
             () => toValue(data),
             async () => {
-                await validate()
+                touch() && (await validate())
             },
             { deep: true },
         )
@@ -98,6 +106,8 @@ export default function <T extends ZodTypeAny>(
 
     return {
         validate,
+        touch,
+        dirty,
         errors,
         isValid,
         isInvalid,

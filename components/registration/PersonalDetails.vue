@@ -120,6 +120,9 @@
                 />
             </b-col>
         </b-form-row>
+        <pre>
+            {{ form }}
+        </pre>
     </b-form>
 </template>
 <script lang="ts">
@@ -132,8 +135,8 @@ import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identit
 import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 import {
+    type CreateCorporateRequest,
     CreateCorporateRequestSchema,
-    type CreateCorporatesRequestType,
     INITIAL_CREATE_CORPORATE_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import BaseMixin from '~/mixins/BaseMixin'
@@ -150,7 +153,8 @@ import useZodValidation from '~/composables/useZodValidation'
 export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {
     companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
     numberIsValid: boolean | null = null
-    form: CreateCorporatesRequestType = reactive(INITIAL_CREATE_CORPORATE_REQUEST)
+
+    form: CreateCorporateRequest = reactive(INITIAL_CREATE_CORPORATE_REQUEST)
 
     get validation() {
         return useZodValidation(CreateCorporateRequestSchema, this.form)

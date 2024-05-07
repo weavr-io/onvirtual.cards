@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import {
+    INITIAL_MOBILE_REQUEST,
     MobileModel,
     MobileSchema,
 } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
@@ -34,7 +35,7 @@ const INITIAL_CORPORATES_ROOT_USER_REQUEST = {
     name: undefined,
     surname: undefined,
     email: undefined,
-    mobile: undefined,
+    mobile: INITIAL_MOBILE_REQUEST,
     companyPosition: undefined,
     dateOfBirth: undefined,
 } as unknown as CorporatesRootUserRequestType

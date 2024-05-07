@@ -129,7 +129,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     get isInvalidPassword() {
-        return this.validation.getState('password,value')
+        return !this.validation.getState('password,value')
     }
 
     passwordInteraction(val: { empty: boolean; valid: boolean }) {

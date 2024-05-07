@@ -3,25 +3,33 @@
         <h3 class="text-center font-weight-light mb-5">Register</h3>
         <error-alert />
         <b-form-group
-            :invalid-feedback="
-                invalidFeedback(
-                    $v.form.email,
-                    validateVParams($v.form.email.$params, $v.form.email),
-                )
-            "
-            :state="isInvalid($v.form.email)"
+            :invalid-feedback="validation.getInvalidFeedback('email')"
+            :state="validation.getState('email')"
             label="Email*"
+            label-for="form-email"
         >
-            <b-form-input v-model="$v.form.email.$model" lazy placeholder="name@email.com" />
+            <b-form-input
+                id="from-email"
+                v-model="form.email"
+                class="form-control"
+                lazy
+                placeholder="name@email.com"
+            />
         </b-form-group>
-        <client-only placeholder="Loading...">
-            <div>
-                <label class="d-block">PASSWORD*</label>
+        <b-form-group
+            :state="validation.getState('password,value')"
+            label="Password"
+            label-for="password"
+        >
+            <client-only placeholder="Loading...">
                 <weavr-password-input
                     ref="passwordField"
                     :base-style="passwordBaseStyle"
+                    :class-name="[
+                        'sign-in-password form-control p-0',
+                        { 'is-invalid': !isPasswordValidAndDirty },
+                    ]"
                     :options="{ placeholder: '****' }"
-                    class-name="sign-in-password"
                     name="password"
                     required="true"
                     @onChange="passwordInteraction"
@@ -34,14 +42,17 @@
                     >- min 8 characters <br />- uppercase letter <br />- digit and a special
                     character</small
                 >
-            </div>
-        </client-only>
+            </client-only>
+        </b-form-group>
         <b-form-row class="small mt-3 text-muted">
             <b-col>
-                <b-form-group>
+                <b-form-group
+                    :invalid-feedback="validation.getInvalidFeedback('acceptedTerms')"
+                    :state="validation.getState('acceptedTerms')"
+                >
                     <b-form-checkbox
-                        v-model="$v.form.acceptedTerms.$model"
-                        :state="isInvalid($v.form.acceptedTerms)"
+                        v-model="form.acceptedTerms"
+                        :state="validation.getState('acceptedTerms')"
                     >
                         I accept the
                         <a
@@ -58,7 +69,6 @@
                             >privacy policy</a
                         >*
                     </b-form-checkbox>
-                    <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                 </b-form-group>
             </b-col>
         </b-form-row>
@@ -78,31 +88,21 @@
 </template>
 <script lang="ts">
 import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
-import { email, required, sameAs } from 'vuelidate/lib/validators'
+import { reactive } from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
-// @TODO[OLEG] - REFACTOR TO ZOD
+import {
+    INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
+    LoginWithPassword,
+    LoginWithPasswordSchema,
+} from '~/plugins/weavr-multi/api/models/authentication'
+import useZodValidation from '~/composables/useZodValidation'
+import { CreateCorporateRequestSchema } from '~/plugins/weavr-multi/api/models/identities/corporates'
+
 @Component({
-    validations: {
-        form: {
-            email: {
-                required,
-                email,
-            },
-            password: {
-                value: {
-                    required,
-                },
-            },
-            acceptedTerms: {
-                required,
-                sameAs: sameAs(() => true),
-            },
-        },
-    },
     components: {
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         WeavrPasswordInput,
@@ -113,23 +113,20 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
-    form: {
-        email: string | null
-        password: {
-            value: string | null
-        }
-        acceptedTerms: boolean
-    } = {
-        email: null,
-        password: { value: null },
-        acceptedTerms: false,
-    }
+    form: LoginWithPassword & {
+        acceptedTerms?: boolean
+    } = reactive(INITIAL_LOGIN_WITH_PASSWORD_REQUEST)
+
+    validation = useZodValidation(
+        LoginWithPasswordSchema.merge(CreateCorporateRequestSchema.pick({ acceptedTerms: true })),
+        this.form,
+    )
 
     passwordStrength = 0
     private $recaptcha: any
 
     get isPasswordValidAndDirty(): boolean {
-        return !this.$v.form.password?.$dirty ? true : this.isPasswordValid
+        return !this.validation.dirty ? true : this.isPasswordValid
     }
 
     get isPasswordValid(): boolean {
@@ -162,11 +159,11 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
         return this.corporatesStore.corporateState.isLoadingRegistration
     }
 
-    tryToSubmitForm() {
+    async tryToSubmitForm() {
         this.errorsStore.resetState()
         try {
-            this.$v.$touch()
-            if (this.$v.$invalid || !this.isPasswordValid) {
+            this.validation.touch() && (await this.validation.validate())
+            if (this.validation.isInvalid || !this.isPasswordValid) {
                 return
             }
 
@@ -198,7 +195,6 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
 
     passwordInteraction(val: { empty: boolean; valid: boolean }) {
         !val.empty ? (this.form.password.value = '******') : (this.form.password.value = '')
-        this.$v.form.password?.$touch()
     }
 
     startRegistrationLoading() {
