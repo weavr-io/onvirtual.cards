@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { CompanyPositionEnumSchema } from '../enums'
+import { CompanyTypeEnumSchema } from '../enums'
 import { AddressModel, AddressSchema } from '~/plugins/weavr-multi/api/models/common'
 import { CompanyTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyTypeEnum'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
@@ -13,7 +13,7 @@ export interface CompanyRequest {
 }
 
 const CompanyRequestSchema = z.object({
-    type: CompanyPositionEnumSchema,
+    type: CompanyTypeEnumSchema,
     businessAddress: AddressSchema.optional(),
     name: preprocessEmptyAsUndefined(z.string().max(100)),
     registrationNumber: preprocessEmptyAsUndefined(z.string().max(20)),

@@ -11,6 +11,7 @@
                             </div>
                             <div v-else key="2" class="form-screen">
                                 <personal-details-form
+                                    :base-form="registrationRequest"
                                     @submit="form2Submit"
                                     @strength-check="strengthCheck"
                                     @go-back="goBack"
@@ -99,17 +100,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
     }
 
     form2Submit(_data) {
-        this.registrationRequest.rootUser.name = _data.rootUser.name
-        this.registrationRequest.rootUser.surname = _data.rootUser.surname
-        this.registrationRequest.rootUser.companyPosition = _data.rootUser.companyPosition
-        this.registrationRequest.rootUser.mobile! = { ..._data.rootUser.mobile }
-        this.registrationRequest.company.name = _data.company.name
-        this.registrationRequest.company.type = _data.company.type
-        this.registrationRequest.company.registrationNumber = _data.company.registrationNumber
-        this.registrationRequest.company.registrationCountry = _data.company.registrationCountry
-        this.registrationRequest.industry = _data.industry
-        this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
-        this.registrationRequest.sourceOfFundsOther = _data.sourceOfFundsOther
+        this.registrationRequest = { ..._data }
         this.doRegister()
     }
 

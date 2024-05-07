@@ -120,9 +120,6 @@
                 />
             </b-col>
         </b-form-row>
-        <pre>
-            {{ validation }}
-        </pre>
     </b-form>
 </template>
 <script lang="ts">
@@ -155,9 +152,11 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
     numberIsValid: boolean | null = null
 
-    @Prop() partialForm!: Partial<CreateCorporateRequest>
+    @Prop() baseForm!: CreateCorporateRequest
 
-    form: CreateCorporateRequest = reactive(cloneDeep(INITIAL_CREATE_CORPORATE_REQUEST))
+    form: CreateCorporateRequest = reactive(
+        cloneDeep({ ...INITIAL_CREATE_CORPORATE_REQUEST, ...this.baseForm }),
+    )
 
     get validation() {
         return useZodValidation(CreateCorporateRequestSchema, this.form)
@@ -215,7 +214,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
 
         await this.validation.validate()
 
-        if (this.validation.isInvalid || !this.numberIsValid) {
+        if (!this.validation.isInvalid || !this.numberIsValid) {
             return null
         }
 
@@ -224,6 +223,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
 
     @Emit()
     submit() {
+        this.errorsStore.resetState()
         return this.form
     }
 

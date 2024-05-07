@@ -10,7 +10,7 @@ import { CurrencyEnumSchema } from '~/plugins/weavr-multi/api/models/common/enum
 import {
     CompanyRequestSchema,
     INITIAL_COMPANY_REQUEST,
-} from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CompanyRequest' // export interface CreateCorporateRequest {
+} from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CompanyRequest'
 
 const CreateCorporateRequestSchema = z.object({
     profileId: IDSchema,
