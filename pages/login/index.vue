@@ -107,7 +107,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
-    loginRequest: LoginWithPassword = reactive(INITIAL_LOGIN_WITH_PASSWORD_REQUEST)
+    loginRequest: LoginWithPassword = reactive(INITIAL_LOGIN_WITH_PASSWORD_REQUEST())
     validation = useZodValidation(LoginWithPasswordSchema, this.loginRequest)
 
     get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -129,7 +129,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     get isInvalidPassword() {
-        return !this.validation.getState('password,value')
+        return this.validation.getState('password,value') === false && this.validation.dirty
     }
 
     passwordInteraction(val: { empty: boolean; valid: boolean }) {

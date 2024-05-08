@@ -7,8 +7,9 @@ const AuthVerifyEnrolSchema = z.object({
 
 type AuthVerifyEnrol = z.infer<typeof AuthVerifyEnrolSchema>
 
-const INITIAL_AUTH_VERIFY_REQUEST = {
-    verificationCode: undefined,
-} as unknown as AuthVerifyEnrol
-
+const INITIAL_AUTH_VERIFY_REQUEST = () => {
+    return {
+        verificationCode: undefined,
+    } as unknown as AuthVerifyEnrol
+}
 export { AuthVerifyEnrolSchema, AuthVerifyEnrol, INITIAL_AUTH_VERIFY_REQUEST }

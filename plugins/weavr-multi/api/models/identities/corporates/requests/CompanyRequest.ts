@@ -22,12 +22,14 @@ const CompanyRequestSchema = z.object({
 
 type CompanyRequestType = z.infer<typeof CompanyRequestSchema>
 
-const INITIAL_COMPANY_REQUEST = {
-    type: null,
-    businessAddress: undefined,
-    name: undefined,
-    registrationNumber: undefined,
-    registrationCountry: null,
+const INITIAL_COMPANY_REQUEST = () => {
+    return {
+        type: null,
+        businessAddress: undefined,
+        name: undefined,
+        registrationNumber: undefined,
+        registrationCountry: null,
+    } as unknown as CompanyRequestType
 }
 
 export { CompanyRequestSchema, CompanyRequestType, INITIAL_COMPANY_REQUEST }

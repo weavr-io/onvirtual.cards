@@ -103,7 +103,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
 
     isLoading = false
 
-    request: AuthVerifyEnrol = reactive(INITIAL_AUTH_VERIFY_REQUEST)
+    request: AuthVerifyEnrol = reactive(INITIAL_AUTH_VERIFY_REQUEST())
     validation = useZodValidation(AuthVerifyEnrolSchema, this.request)
 
     showSmsResentSuccess = false

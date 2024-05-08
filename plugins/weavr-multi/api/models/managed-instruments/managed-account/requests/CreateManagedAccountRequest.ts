@@ -19,10 +19,12 @@ const ManagedAccountSchema = z.object({
 
 type ManagedAccount = z.infer<typeof ManagedAccountSchema>
 
-const INITIAL_MA_REQUEST = {
-    profileId: '',
-    friendlyName: DEFAULT_FRIENDLY_NAME,
-    currency: CurrencyEnum.EUR,
-} as unknown as ManagedAccount
+const INITIAL_MA_REQUEST = () => {
+    return {
+        profileId: '',
+        friendlyName: DEFAULT_FRIENDLY_NAME,
+        currency: CurrencyEnum.EUR,
+    } as unknown as ManagedAccount
+}
 
 export { ManagedAccount, ManagedAccountSchema, INITIAL_MA_REQUEST }

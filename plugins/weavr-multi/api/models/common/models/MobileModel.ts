@@ -13,9 +13,11 @@ const MobileSchema = z.object({
 
 type Mobile = z.infer<typeof MobileSchema>
 
-const INITIAL_MOBILE_REQUEST = {
-    countryCode: undefined,
-    number: undefined,
-} as unknown as Mobile
+const INITIAL_MOBILE_REQUEST = () => {
+    return {
+        countryCode: undefined,
+        number: undefined,
+    } as unknown as Mobile
+}
 
 export { MobileSchema, Mobile, INITIAL_MOBILE_REQUEST }

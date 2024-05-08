@@ -28,7 +28,6 @@
 import { AxiosResponse } from 'axios'
 import { Component, mixins } from 'nuxt-property-decorator'
 import { reactive } from 'vue'
-import { cloneDeep } from 'lodash-es'
 import BaseMixin from '~/mixins/BaseMixin'
 import { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPassword'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
@@ -59,15 +58,13 @@ export default class RegistrationPage extends mixins(BaseMixin) {
 
     registrationRequest: CreateCorporateRequest & {
         password?: string
-    } = reactive(
-        cloneDeep({
-            ...INITIAL_CREATE_CORPORATE_REQUEST,
-            profileId: this.$config.profileId.corporates,
-            acceptedTerms: false,
-            baseCurrency: CurrencyEnum.EUR,
-            password: undefined,
-        }),
-    )
+    } = reactive({
+        ...INITIAL_CREATE_CORPORATE_REQUEST(),
+        profileId: this.$config.profileId.corporates,
+        acceptedTerms: false,
+        baseCurrency: CurrencyEnum.EUR,
+        password: undefined,
+    })
 
     strengthCheck(val) {
         this.passwordStrength = val.id

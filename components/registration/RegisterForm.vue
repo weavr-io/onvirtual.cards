@@ -115,7 +115,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
 
     form: LoginWithPassword & {
         acceptedTerms?: boolean
-    } = reactive({ ...INITIAL_LOGIN_WITH_PASSWORD_REQUEST })
+    } = reactive({ ...INITIAL_LOGIN_WITH_PASSWORD_REQUEST() })
 
     validation = useZodValidation(
         LoginWithPasswordSchema.merge(CreateCorporateRequestSchema.pick({ acceptedTerms: true })),

@@ -125,7 +125,6 @@
 <script lang="ts">
 import { reactive } from 'vue'
 import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
-import { cloneDeep } from 'lodash-es'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
@@ -154,9 +153,10 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
 
     @Prop() baseForm!: CreateCorporateRequest
 
-    form: CreateCorporateRequest = reactive(
-        cloneDeep({ ...INITIAL_CREATE_CORPORATE_REQUEST, ...this.baseForm }),
-    )
+    form: CreateCorporateRequest = reactive({
+        ...INITIAL_CREATE_CORPORATE_REQUEST(),
+        ...this.baseForm,
+    })
 
     get validation() {
         return useZodValidation(CreateCorporateRequestSchema, this.form)

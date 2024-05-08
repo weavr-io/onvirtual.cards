@@ -31,14 +31,16 @@ const CorporatesRootUserRequestSchema = z.object({
 
 type CorporatesRootUserRequestType = z.infer<typeof CorporatesRootUserRequestSchema>
 
-const INITIAL_CORPORATES_ROOT_USER_REQUEST = {
-    name: undefined,
-    surname: undefined,
-    email: undefined,
-    mobile: { ...INITIAL_MOBILE_REQUEST },
-    companyPosition: undefined,
-    dateOfBirth: undefined,
-} as unknown as CorporatesRootUserRequestType
+const INITIAL_CORPORATES_ROOT_USER_REQUEST = () => {
+    return {
+        name: undefined,
+        surname: undefined,
+        email: undefined,
+        mobile: { ...INITIAL_MOBILE_REQUEST() },
+        companyPosition: undefined,
+        dateOfBirth: undefined,
+    } as unknown as CorporatesRootUserRequestType
+}
 
 export {
     CorporatesRootUserRequestSchema,

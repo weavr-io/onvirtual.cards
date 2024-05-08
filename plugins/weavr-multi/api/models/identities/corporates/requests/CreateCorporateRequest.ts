@@ -27,18 +27,20 @@ const CreateCorporateRequestSchema = z.object({
 })
 
 type CreateCorporateRequest = z.infer<typeof CreateCorporateRequestSchema>
-const INITIAL_CREATE_CORPORATE_REQUEST = {
-    profileId: undefined,
-    tag: undefined,
-    rootUser: { ...INITIAL_CORPORATES_ROOT_USER_REQUEST },
-    company: { ...INITIAL_COMPANY_REQUEST },
-    industry: null,
-    sourceOfFunds: null,
-    sourceOfFundsOther: undefined,
-    acceptedTerms: undefined,
-    ipAddress: undefined,
-    baseCurrency: undefined,
-    feeGroup: undefined,
-} as unknown as CreateCorporateRequest
+const INITIAL_CREATE_CORPORATE_REQUEST = () => {
+    return {
+        profileId: undefined,
+        tag: undefined,
+        rootUser: { ...INITIAL_CORPORATES_ROOT_USER_REQUEST() },
+        company: { ...INITIAL_COMPANY_REQUEST() },
+        industry: null,
+        sourceOfFunds: null,
+        sourceOfFundsOther: undefined,
+        acceptedTerms: undefined,
+        ipAddress: undefined,
+        baseCurrency: undefined,
+        feeGroup: undefined,
+    } as unknown as CreateCorporateRequest
+}
 
 export { CreateCorporateRequestSchema, CreateCorporateRequest, INITIAL_CREATE_CORPORATE_REQUEST }

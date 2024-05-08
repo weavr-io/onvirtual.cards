@@ -79,7 +79,7 @@ export default class IniteConsume extends mixins(BaseMixin) {
     passwordField!: WeavrPasswordInput
 
     passwordStrength = 0
-    inviteForm = reactive(INITIAL_PASSWORD_REQUEST)
+    inviteForm = reactive(INITIAL_PASSWORD_REQUEST())
 
     protected form!: { id: IDModel; data: InviteConsumeRequestModel }
 

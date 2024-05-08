@@ -11,8 +11,10 @@ const SensitivePasswordSchema = z.object({
 
 type SensitivePassword = z.infer<typeof SensitivePasswordSchema>
 
-const INITIAL_SENSITIVE_PASSWORD_REQUEST = {
-    value: undefined,
-} as unknown as SensitivePassword
+const INITIAL_SENSITIVE_PASSWORD_REQUEST = () => {
+    return {
+        value: undefined,
+    } as unknown as SensitivePassword
+}
 
 export { SensitivePassword, SensitivePasswordSchema, INITIAL_SENSITIVE_PASSWORD_REQUEST }

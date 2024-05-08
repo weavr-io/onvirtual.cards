@@ -2,6 +2,7 @@ import { z, type ZodTypeAny } from 'zod'
 import { get, groupBy } from 'lodash-es'
 import { Ref, unref, watch } from '@nuxtjs/composition-api'
 import { computed, ref } from 'vue'
+import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
 
 type MaybeRefOrGetter<T> = T | Ref<T> | (() => T)
 
@@ -50,10 +51,28 @@ export default function <T extends ZodTypeAny>(
         )
     }
 
+    const customErroMap: z.ZodErrorMap = (error, ctx) => {
+        switch (error.code) {
+            case z.ZodIssueCode.invalid_literal:
+            case z.ZodIssueCode.invalid_type:
+                // Casting to string to avoid type errors. This will return the default message for any required field.
+                if (['undefined', 'null'].includes(`${error.received}`)) {
+                    return { message: INVALID_FEEDBACK_CONST.required }
+                }
+                break
+            case z.ZodIssueCode.invalid_string:
+                if (error.validation === 'email') {
+                    return { message: INVALID_FEEDBACK_CONST.email }
+                }
+        }
+
+        return { message: ctx.defaultError }
+    }
+
     const validate = async () => {
         clearErrors()
 
-        const result = await schema.safeParseAsync(toValue(data))
+        const result = await schema.safeParseAsync(toValue(data), { errorMap: customErroMap })
 
         isValid.value = result.success
 

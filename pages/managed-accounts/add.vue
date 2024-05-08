@@ -57,7 +57,7 @@ import useZodValidation from '~/composables/useZodValidation'
 })
 export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, ValidationMixin) {
     localIsBusy = false
-    createManagedAccountRequest: ManagedAccount = reactive(INITIAL_MA_REQUEST)
+    createManagedAccountRequest: ManagedAccount = reactive(INITIAL_MA_REQUEST())
 
     get validation() {
         return useZodValidation(ManagedAccountSchema, this.createManagedAccountRequest)
