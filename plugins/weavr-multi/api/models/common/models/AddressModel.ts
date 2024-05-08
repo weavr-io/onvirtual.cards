@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
 
 export interface AddressModel {
     addressLine1?: string
@@ -15,7 +16,7 @@ const AddressSchema = z.object({
     city: z.string().optional(),
     postCode: z.string().optional(),
     state: z.string().optional(),
-    country: z.string(),
+    country: z.string().max(2, { message: INVALID_FEEDBACK_CONST.maxLength2 }),
 })
 
 type AddressType = z.infer<typeof AddressSchema>
