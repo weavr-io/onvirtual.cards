@@ -27,6 +27,7 @@ const CreateCorporateRequestSchema = z.object({
 })
 
 type CreateCorporateRequest = z.infer<typeof CreateCorporateRequestSchema>
+
 const INITIAL_CREATE_CORPORATE_REQUEST = () => {
     return {
         profileId: undefined,
