@@ -52,6 +52,7 @@ export default function <T extends ZodTypeAny>(
     }
 
     const customErroMap: z.ZodErrorMap = (error, ctx) => {
+        console.log(error)
         switch (error.code) {
             case z.ZodIssueCode.invalid_literal:
             case z.ZodIssueCode.invalid_type:
