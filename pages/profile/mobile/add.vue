@@ -36,54 +36,46 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { required } from 'vuelidate/lib/validators'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import { reactive } from 'vue'
 import BaseMixin from '~/mixins/BaseMixin'
-import { DeepNullable } from '~/global'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
+import {
+    INITIAL_MOBILE_REQUEST,
+    Mobile,
+    MobileSchema,
+} from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/CredentialTypeEnum'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-// @TODO[OLEG] - REFACTOR TO ZOD
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     layout: 'auth',
-    validations: {
-        registrationRequest: {
-            rootUser: {
-                mobile: {
-                    countryCode: {
-                        required,
-                    },
-                    number: {
-                        required,
-                    },
-                },
-            },
-        },
-    },
     components: {
         LogoOvc,
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
     middleware: ['kyVerified'],
 })
-export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
+export default class LoginPage extends mixins(BaseMixin) {
     isLoading = false
 
     rootMobileNumber = ''
     numberIsValid: boolean | null = null
 
-    updateRequest: DeepNullable<{ mobile: MobileModel }> = {
+    updateRequest: { mobile: Mobile } = reactive({
         mobile: {
-            number: null,
+            ...INITIAL_MOBILE_REQUEST,
             countryCode: '+356',
         },
+    })
+
+    get validation() {
+        return useZodValidation(MobileSchema, this.updateRequest)
     }
 
     async asyncData({ redirect }) {
@@ -109,11 +101,14 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
         try {
             e.preventDefault()
 
+            await this.validation.validate()
+
             if (this.numberIsValid === null) {
                 this.numberIsValid = false
             }
 
-            if (this.$v.$anyError || !this.numberIsValid) {
+            if (!this.validation.isInvalid || !this.numberIsValid) {
+                this.numberIsValid = false
                 this.isLoading = false
                 return null
             }
