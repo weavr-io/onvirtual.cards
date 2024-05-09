@@ -1,12 +1,13 @@
 import { z } from 'zod'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const AddressSchema = z.object({
-    addressLine1: z.string(),
+    addressLine1: preprocessEmptyAsUndefined(z.string()),
     addressLine2: z.string().optional(),
-    city: z.string(),
-    postCode: z.string(),
+    city: preprocessEmptyAsUndefined(z.string()),
+    postCode: preprocessEmptyAsUndefined(z.string()),
     state: z.string().optional(),
-    country: z.string().max(2),
+    country: preprocessEmptyAsUndefined(z.string().max(2)),
 })
 
 type Address = z.infer<typeof AddressSchema>

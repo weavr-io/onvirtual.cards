@@ -84,9 +84,6 @@
                 </b-card-body>
             </b-card>
         </div>
-        <pre>
-            {{ validation }}
-        </pre>
     </b-col>
 </template>
 
@@ -152,13 +149,14 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
     }
 
     async submitForm() {
+        this.isLoading = true
         await this.validation.validate()
 
-        if (this.validation.isInvalid) return
+        if (this.validation.isInvalid.value) {
+            this.isLoading = false
+            return
+        }
 
-        console.log('here')
-
-        this.isLoading = true
         let xhr: Promise<unknown>
 
         if (this.isConsumer) {

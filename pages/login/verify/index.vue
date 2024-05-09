@@ -110,22 +110,24 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
             verificationCode: route.query.nonce ? `${route.query.nonce}` : undefined,
         }
 
-        if (request.verificationCode !== '') {
-            if (route.query.cons) {
-                consumers?.verifyEmail(request).then(() => {
-                    redirect('/')
-                })
-            } else {
-                // else treat as Corporate
-                corporates?.verifyEmail(request).then(() => {
-                    if (auth?.isLoggedIn) {
+        try {
+            if (request.verificationCode !== undefined) {
+                if (route.query.cons) {
+                    consumers?.verifyEmail(request).then(() => {
                         redirect('/')
-                    } else {
-                        redirect('/login')
-                    }
-                })
+                    })
+                } else {
+                    // else treat as Corporate
+                    corporates?.verifyEmail(request).then(() => {
+                        if (auth?.isLoggedIn) {
+                            redirect('/')
+                        } else {
+                            redirect('/login')
+                        }
+                    })
+                }
             }
-        }
+        } catch (e) {}
 
         return {
             verifyEmailRequest: request,
@@ -141,12 +143,14 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
     async sendVerifyEmail() {
         this.isLoading = true
 
-        if (this.$route.query.cons) {
-            await this.sendVerifyEmailConsumers().catch()
-        } else {
-            // else treat as corporate
-            await this.sendVerifyEmailCorporates().catch()
-        }
+        try {
+            if (this.$route.query.cons) {
+                await this.sendVerifyEmailConsumers()
+            } else {
+                // else treat as corporate
+                await this.sendVerifyEmailCorporates()
+            }
+        } catch (e) {}
 
         this.removeLoader()
     }
@@ -177,7 +181,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
         this.isLoading = true
         await this.validation.validate()
 
-        if (this.validation.isInvalid) {
+        if (this.validation.isInvalid.value) {
             this.removeLoader()
             return
         }

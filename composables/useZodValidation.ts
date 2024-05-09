@@ -100,7 +100,6 @@ export default function <T extends ZodTypeAny>(
         clearErrors()
 
         const result = await schema.safeParseAsync(toValue(data), { errorMap: customErroMap })
-
         isValid.value = result.success
 
         if (!result.success) {

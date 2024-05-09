@@ -8,7 +8,11 @@
                 not share this with anyone.
             </p>
             <b-form novalidate @submit.prevent="submitForm">
-                <b-form-group label="MOBILE NUMBER*">
+                <b-form-group
+                    :invalid-feedback="validation.getInvalidFeedback('state')"
+                    :state="validation.getState('state')"
+                    label="MOBILE NUMBER*"
+                >
                     <vue-phone-number-input
                         v-model="rootMobileNumber"
                         :border-radius="0"
@@ -28,6 +32,7 @@
                         This field must be a valid mobile number.
                     </b-form-invalid-feedback>
                 </b-form-group>
+
                 <LoaderButton :is-loading="isLoading" class="text-center mt-5" text="save number" />
             </b-form>
         </b-card>
@@ -69,7 +74,7 @@ export default class LoginPage extends mixins(BaseMixin) {
 
     updateRequest: { mobile: Mobile } = reactive({
         mobile: {
-            ...INITIAL_MOBILE_REQUEST,
+            ...INITIAL_MOBILE_REQUEST(),
             countryCode: '+356',
         },
     })
@@ -95,19 +100,17 @@ export default class LoginPage extends mixins(BaseMixin) {
         }
     }
 
-    async submitForm(e) {
+    async submitForm() {
         this.isLoading = true
 
         try {
-            e.preventDefault()
-
             await this.validation.validate()
 
             if (this.numberIsValid === null) {
                 this.numberIsValid = false
             }
 
-            if (!this.validation.isInvalid || !this.numberIsValid) {
+            if (this.validation.isInvalid.value || !this.numberIsValid) {
                 this.numberIsValid = false
                 this.isLoading = false
                 return null

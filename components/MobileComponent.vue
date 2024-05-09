@@ -104,11 +104,13 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
     isLoading = false
 
     request: AuthVerifyEnrol = reactive(INITIAL_AUTH_VERIFY_REQUEST())
-    validation = useZodValidation(AuthVerifyEnrolSchema, this.request)
-
     showSmsResentSuccess = false
     dismissSecs = 60
     dismissCountDown = 0
+
+    get validation() {
+        return useZodValidation(AuthVerifyEnrolSchema, this.request)
+    }
 
     mounted() {
         if (
@@ -144,7 +146,7 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
         this.isLoading = true
         await this.validation.validate()
 
-        if (this.validation.isInvalid) {
+        if (this.validation.isInvalid.value) {
             this.isLoading = false
             return
         }
