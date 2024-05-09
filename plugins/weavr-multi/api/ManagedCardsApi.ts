@@ -4,7 +4,7 @@ import { $axiosMulti } from '~/utils/api'
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
-import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
+import { UpdateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
 import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { ManagedCardsSpendRulesModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardsSpendRulesModel'
@@ -32,7 +32,7 @@ export class ManagedCardsApi {
 
     update(params: {
         id: IDModel
-        request: UpdateManagedCardRequest
+        request: UpdateManagedCard
     }): Promise<AxiosResponse<ManagedCardModel>> {
         return $axiosMulti.patch<ManagedCardModel>(`/managed_cards/${params.id}`, params.request)
     }

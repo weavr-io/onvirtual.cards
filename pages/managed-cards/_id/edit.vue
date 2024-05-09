@@ -16,7 +16,13 @@
                             <b-form @submit.prevent="doUpdate">
                                 <b-form-row v-if="!isConsumer">
                                     <b-col>
-                                        <b-form-group label="CARDHOLDER MOBILE NUMBER">
+                                        <b-form-group
+                                            :invalid-feedback="
+                                                validation.getInvalidFeedback('friendlyName')
+                                            "
+                                            :state="validation.getState('friendlyName')"
+                                            label="CARDHOLDER MOBILE NUMBER"
+                                        >
                                             <vue-phone-number-input
                                                 :border-radius="0"
                                                 :default-country-code="mobile.countryCode"
@@ -73,8 +79,7 @@ import {
     INITIAL_MC_UPDATE_REQUEST,
     ManagedCardUpdateSchema,
     type UpdateManagedCard,
-    UpdateManagedCardRequest,
-} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
+} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
@@ -96,10 +101,16 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     isUpdating = false
-    updateManagedCardRequest: UpdateManagedCard = reactive(INITIAL_MC_UPDATE_REQUEST)
+    updateManagedCardRequest: UpdateManagedCard = reactive(INITIAL_MC_UPDATE_REQUEST())
 
     get validation() {
-        return useZodValidation(ManagedCardUpdateSchema, this.updateManagedCardRequest)
+        return useZodValidation(
+            ManagedCardUpdateSchema.pick({
+                friendlyName: true,
+                ...(this.isCorporate && { cardholderMobileNumber: true }),
+            }).required(),
+            this.updateManagedCardRequest,
+        )
     }
 
     get isLoading() {
@@ -119,10 +130,10 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
         const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
 
         // add key cardholderMobileNumber only if isCorporate
-        this.updateManagedCardRequest = {
+        Object.assign(this.updateManagedCardRequest, {
             friendlyName: card.data.friendlyName,
             ...(this.isCorporate && { cardholderMobileNumber: '' }),
-        }
+        })
 
         this.mobile.countryCode = parsedNumber?.country || ''
         this.mobile.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
@@ -138,7 +149,8 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
         }
 
         await this.validation.validate()
-        if (this.validation.isInvalid || !this.numberIsValid) {
+
+        if (this.validation.isInvalid.value || !this.numberIsValid) {
             return
         }
 
@@ -147,7 +159,7 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
         this.cardsStore
             .update({
                 id: this.cardId,
-                request: this.updateManagedCardRequest as UpdateManagedCardRequest,
+                request: this.updateManagedCardRequest as UpdateManagedCard,
             })
             .then(() => {
                 this.showSuccessToast('Card name changed')

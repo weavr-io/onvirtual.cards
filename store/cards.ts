@@ -11,7 +11,7 @@ import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
-import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
+import { UpdateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import { useAuthStore } from '~/store/auth'
 
@@ -160,7 +160,7 @@ export const useCardsStore = defineStore('cards', () => {
         return req
     }
 
-    const update = (params: { id: IDModel; request: UpdateManagedCardRequest }) => {
+    const update = (params: { id: IDModel; request: UpdateManagedCard }) => {
         const req = store.$nuxt.$apiMulti.managedCards.update(params)
 
         req.finally(() => {
