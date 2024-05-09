@@ -7,14 +7,12 @@ export default defineNuxtMiddleware(async ({ route, $config }) => {
     const { auth, accounts } = initialiseStores(['auth', 'accounts'])
 
     if (!accounts?.accountState.accounts && route.name?.includes('managed-accounts')) {
-        await accounts
-            ?.index({
-                profileId: auth?.isConsumer
-                    ? $config.profileId.managed_accounts_consumers!
-                    : $config.profileId.managed_accounts_corporates!,
-                state: ManagedInstrumentStateEnum.ACTIVE,
-                offset: '0',
-            })
-            .catch(() => {})
+        await accounts?.index({
+            profileId: auth?.isConsumer
+                ? $config.profileId.managed_accounts_consumers!
+                : $config.profileId.managed_accounts_corporates!,
+            state: ManagedInstrumentStateEnum.ACTIVE,
+            offset: '0',
+        })
     }
 })

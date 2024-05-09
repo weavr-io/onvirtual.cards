@@ -3,18 +3,19 @@ import { useAccessCodesStore } from '~/store/accessCodes'
 
 export default defineNuxtMiddleware(async ({ route, redirect, $config }) => {
     if (!$config.production) return
+    try {
+        const accessCodeStore = useAccessCodesStore()
 
-    const accessCodeStore = useAccessCodesStore()
+        const accessCode = () => {
+            return +localStorage.getItem('onv-access-code')! ?? undefined
+        }
 
-    const accessCode = () => {
-        return +localStorage.getItem('onv-access-code')! ?? undefined
-    }
-
-    if (accessCode()) {
-        await accessCodeStore.verifyAccessCode({ code: accessCode() }).catch(() => {
+        if (accessCode()) {
+            await accessCodeStore.verifyAccessCode({ code: accessCode() })
+        } else if (route.name !== 'register') {
             redirect('/register')
-        })
-    } else if (route.name !== 'register') {
+        }
+    } catch (_) {
         redirect('/register')
     }
 })

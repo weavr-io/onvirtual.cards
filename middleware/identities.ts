@@ -6,10 +6,10 @@ export default defineNuxtMiddleware(async (_) => {
     const { auth, consumers, corporates } = initialiseStores(['auth', 'consumers', 'corporates'])
 
     if (auth?.isConsumer && !consumers?.consumerState.consumer) {
-        await consumers?.get().catch(() => {})
+        await consumers?.get()
     }
 
     if (auth?.isCorporate && !corporates?.corporateState.corporate) {
-        await corporates?.get().catch(() => {})
+        await corporates?.get()
     }
 })

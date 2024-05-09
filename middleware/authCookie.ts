@@ -23,12 +23,12 @@ export default defineNuxtMiddleware(async ({ route, redirect }) => {
     if (authCookie) {
         try {
             const authCookieJson = JSON.parse(authCookie)
-            await auth.setAuth(authCookieJson).then(() => {
-                scaCheck(route, redirect)
-            })
+            await auth.setAuth(authCookieJson)
+
+            scaCheck(route, redirect)
         } catch (err) {
             // No valid cookie found
-            await auth.logout().catch(() => {})
+            await auth.logout()
         }
     } else {
         localStorage.removeItem('stepUp')
