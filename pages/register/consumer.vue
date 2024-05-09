@@ -241,8 +241,8 @@ import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import { AxiosResponse } from 'axios'
 
+import { reactive } from 'vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import { DeepNullable, RecursivePartial } from '~/global'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
@@ -252,7 +252,10 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/Curr
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
+import {
+    CreateConsumerRequest,
+    INITIAL_CREATE_CONSUMER_REQUEST,
+} from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import ComingSoonCurrencies from '~/components/atoms/ComingSoonCurrencies.vue'
@@ -336,36 +339,16 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     rootMobileNumber = ''
     numberIsValid: boolean | null = null
     passwordStrength = 0
-    public registrationRequest: DeepNullable<
-        RecursivePartial<CreateConsumerRequest> & { password: string }
-    > = {
+
+    public registrationRequest: CreateConsumerRequest & {
+        password?: string
+    } = reactive({
+        ...INITIAL_CREATE_CONSUMER_REQUEST(),
         profileId: this.$config.profileId.consumers,
-        tag: 'tag',
-        rootUser: {
-            name: null,
-            surname: null,
-            email: null,
-            mobile: {
-                number: null,
-                countryCode: '+356',
-            },
-            dateOfBirth: {
-                day: null,
-                month: null,
-                year: null,
-            },
-            address: {
-                country: null,
-            },
-            occupation: null,
-        },
-        baseCurrency: CurrencyEnum.EUR,
-        ipAddress: null,
         acceptedTerms: false,
-        sourceOfFunds: null,
-        sourceOfFundsOther: null,
-        password: null,
-    }
+        baseCurrency: CurrencyEnum.EUR,
+        password: undefined,
+    })
 
     private $recaptcha: any
 

@@ -109,7 +109,7 @@ import useZodValidation from '~/composables/useZodValidation'
     middleware: ['authRouteGuard'],
 })
 export default class ConsumerAddressPage extends mixins(BaseMixin) {
-    address: AddressType = reactive(INITIAL_ADDRESS)
+    address: AddressType = reactive(INITIAL_ADDRESS())
 
     get validation() {
         return useZodValidation(AddressSchema, this.address)

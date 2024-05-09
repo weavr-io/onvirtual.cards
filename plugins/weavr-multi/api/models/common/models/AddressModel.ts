@@ -21,13 +21,15 @@ const AddressSchema = z.object({
 
 type AddressType = z.infer<typeof AddressSchema>
 
-const INITIAL_ADDRESS = {
-    addressLine1: undefined,
-    addressLine2: undefined,
-    city: undefined,
-    postCode: undefined,
-    state: undefined,
-    country: undefined,
-} as unknown as AddressType
+const INITIAL_ADDRESS = () => {
+    return {
+        addressLine1: undefined,
+        addressLine2: undefined,
+        city: undefined,
+        postCode: undefined,
+        state: undefined,
+        country: undefined,
+    } as unknown as AddressType
+}
 
 export { AddressSchema, AddressType, INITIAL_ADDRESS }
