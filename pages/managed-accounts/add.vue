@@ -12,6 +12,7 @@
                                 <b-col>
                                     <b-form-group
                                         :state="validation.getState('currency')"
+                                        :valid-feedback="validation.getInvalidFeedback('currency')"
                                         label="Currency"
                                     >
                                         <b-form-select
@@ -102,7 +103,7 @@ export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, Val
     async doAdd() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid) return
+        if (this.validation.isInvalid.value) return
 
         this.localIsBusy = true
 

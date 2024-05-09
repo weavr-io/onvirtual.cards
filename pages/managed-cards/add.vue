@@ -58,6 +58,9 @@
                                 <b-form-row>
                                     <b-col>
                                         <b-form-group
+                                            :invalid-feedback="
+                                                validation.getInvalidFeedback('currency')
+                                            "
                                             :state="validation.getState('currency')"
                                             label="Currency"
                                         >
@@ -85,7 +88,6 @@
                                     </b-col>
                                 </b-form-row>
                                 <LoaderButton
-                                    :disabled="validation.isInvalid || numberIsValid === false"
                                     :is-loading="localIsBusy"
                                     class="mt-5 text-center"
                                     text="next"
@@ -102,11 +104,10 @@
 import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
 import {
-    CreateManagedCardRequest,
+    CreateManagedCard,
+    CreateManagedCardSchema,
     INITIAL_MANAGED_CARD_REQUEST,
-    type ManagedCard,
-    ManagedCardSchema,
-} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
+} from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCard'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
@@ -124,8 +125,6 @@ import useZodValidation from '~/composables/useZodValidation'
     middleware: ['kyVerified'],
 })
 export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
-    showNameOnCardField = false
-
     showError = false
 
     localIsBusy = false
@@ -140,10 +139,16 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
 
     numberIsValid: boolean | null = null
 
-    createManagedCardRequest: ManagedCard = reactive(INITIAL_MANAGED_CARD_REQUEST)
+    createManagedCardRequest: CreateManagedCard = reactive(INITIAL_MANAGED_CARD_REQUEST())
 
     get validation() {
-        return useZodValidation(ManagedCardSchema, this.createManagedCardRequest)
+        return useZodValidation(
+            CreateManagedCardSchema.pick({
+                friendlyName: true,
+                currency: true,
+            }),
+            this.createManagedCardRequest,
+        )
     }
 
     get currencyOptions() {
@@ -152,20 +157,24 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         })
     }
 
-    fetch() {
-        if (this.authStore.isConsumer) {
-            const _consumer: ConsumerModel = this.consumersStore.consumerState
-                .consumer as ConsumerModel
-            this.createManagedCardRequest.nameOnCard =
-                _consumer.rootUser.name + ' ' + _consumer.rootUser.surname
-            this.createManagedCardRequest.cardholderMobileNumber =
-                _consumer.rootUser.mobile.countryCode + _consumer.rootUser.mobile.number
-        }
-
-        this.showNameOnCardField =
+    get showNameOnCardField() {
+        return (
             !this.authStore.isConsumer ||
             (!!this.createManagedCardRequest.nameOnCard &&
                 this.createManagedCardRequest.nameOnCard.length > 27)
+        )
+    }
+
+    async fetch() {
+        if (this.authStore.isConsumer && !this.consumersStore.consumerState.consumer) {
+            await this.consumersStore.get()
+            const _consumer: ConsumerModel = this.consumersStore.consumerState
+                .consumer as ConsumerModel
+            this.createManagedCardRequest.nameOnCard = `${_consumer.rootUser.name} ${_consumer.rootUser.surname}`
+            this.createManagedCardRequest.cardholderMobileNumber =
+                _consumer.rootUser.mobile.countryCode + _consumer.rootUser.mobile.number
+            this.createManagedCardRequest.profileId = this.$config.profileId.consumers
+        }
 
         this.createManagedCardRequest.currency = this.profileBaseCurrency
     }
@@ -184,13 +193,13 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         }
 
         await this.validation.validate()
-        if (this.validation.isInvalid || !this.numberIsValid) {
+        if (this.validation.isInvalid.value || !this.numberIsValid) {
             return
         }
 
         this.localIsBusy = true
 
-        this.createManagedCardRequest = {
+        Object.assign(this.createManagedCardRequest, {
             ...this.createManagedCardRequest,
             profileId: this.cardJurisdictionProfileId,
             billingAddress: {
@@ -199,10 +208,10 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
                     : (this.corporatesStore.corporateState.corporate?.company
                           .businessAddress as Address)),
             },
-        }
+        })
 
         await this.cardsStore
-            .addCard(this.createManagedCardRequest as CreateManagedCardRequest)
+            .addCard(this.createManagedCardRequest as CreateManagedCard)
             .then(() => {
                 this.$router.push('/managed-cards')
             })
