@@ -94,7 +94,7 @@ export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin
 
     passwordSent = false
 
-    form: ResetRequest = reactive(INITIAL_RESET_REQUEST)
+    form: ResetRequest = reactive(INITIAL_RESET_REQUEST())
 
     get validation() {
         return useZodValidation(ResetSchema, this.form)

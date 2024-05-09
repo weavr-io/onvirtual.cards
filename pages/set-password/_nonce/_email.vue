@@ -94,7 +94,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
 
     isDirty = false
     isLoading = false
-    form = reactive(INITIAL_RESUME_LOST_PASSWORD_REQUEST)
+    form = reactive(INITIAL_RESUME_LOST_PASSWORD_REQUEST())
 
     get validation() {
         return useZodValidation(ResumeLostPasswordSchema, this.form)

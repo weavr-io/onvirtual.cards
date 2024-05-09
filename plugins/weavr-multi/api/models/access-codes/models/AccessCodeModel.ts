@@ -7,8 +7,10 @@ const AccessCodeSchema = z.object({
 
 type AccessCode = z.infer<typeof AccessCodeSchema>
 
-const INITIAL_ACCESS_CODE_REQUEST = {
-    code: undefined,
-} as unknown as AccessCode
+const INITIAL_ACCESS_CODE_REQUEST = () => {
+    return {
+        code: undefined,
+    } as unknown as AccessCode
+}
 
 export { AccessCode, AccessCodeSchema, INITIAL_ACCESS_CODE_REQUEST }

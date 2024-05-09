@@ -13,12 +13,14 @@ const ResumeLostPasswordSchema = z.object({
 
 type ResumeLostPassword = z.infer<typeof ResumeLostPasswordSchema>
 
-const INITIAL_RESUME_LOST_PASSWORD_REQUEST = {
-    nonce: undefined,
-    email: undefined,
-    newPassword: {
-        ...INITIAL_SENSITIVE_PASSWORD_REQUEST(),
-    },
-} as unknown as ResumeLostPassword
+const INITIAL_RESUME_LOST_PASSWORD_REQUEST = () => {
+    return {
+        nonce: undefined,
+        email: undefined,
+        newPassword: {
+            ...INITIAL_SENSITIVE_PASSWORD_REQUEST(),
+        },
+    } as unknown as ResumeLostPassword
+}
 
 export { ResumeLostPassword, ResumeLostPasswordSchema, INITIAL_RESUME_LOST_PASSWORD_REQUEST }

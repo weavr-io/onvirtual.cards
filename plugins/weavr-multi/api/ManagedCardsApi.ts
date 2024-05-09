@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios'
 import { IDModel } from './models/common/models/IDModel'
 import { $axiosMulti } from '~/utils/api'
-import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
+import { CreateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCard'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
 import { UpdateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
@@ -22,7 +22,7 @@ export class ManagedCardsApi {
         return $axiosMulti.get<PaginatedManagedCardsResponse>('/managed_cards', { params: filters })
     }
 
-    store(request: CreateManagedCardRequest): Promise<AxiosResponse<ManagedCardModel>> {
+    store(request: CreateManagedCard): Promise<AxiosResponse<ManagedCardModel>> {
         return $axiosMulti.post<ManagedCardModel>('/managed_cards', request)
     }
 

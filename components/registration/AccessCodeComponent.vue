@@ -54,7 +54,7 @@ import useZodValidation from '~/composables/useZodValidation'
     components: { LoaderButton },
 })
 export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMixin) {
-    form: AccessCode = reactive(INITIAL_ACCESS_CODE_REQUEST)
+    form: AccessCode = reactive(INITIAL_ACCESS_CODE_REQUEST())
 
     isLoading = false
     inviteCodeError: { errorMsg: string; showMsg: boolean } = {

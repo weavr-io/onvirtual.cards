@@ -11,8 +11,10 @@ const ResetSchema = z.object({
 
 type ResetRequest = z.infer<typeof ResetSchema>
 
-const INITIAL_RESET_REQUEST = {
-    email: undefined,
-} as unknown as ResetRequest
+const INITIAL_RESET_REQUEST = () => {
+    return {
+        undefined,
+    } as unknown as ResetRequest
+}
 
 export { ResetRequest, ResetSchema, INITIAL_RESET_REQUEST }

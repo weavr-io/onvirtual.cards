@@ -41,7 +41,7 @@ import ValidationMixin from '~/mixins/ValidationMixin'
 import useZodValidation from '~/composables/useZodValidation'
 
 export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMixin) {
-    source: Instrument = reactive(INITIAL_INSTRUMENT_REQUEST)
+    source: Instrument = reactive(INITIAL_INSTRUMENT_REQUEST())
 
     get validation() {
         return useZodValidation(InstrumentSchema, this.source)

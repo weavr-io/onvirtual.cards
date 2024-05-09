@@ -26,12 +26,14 @@ const UserSchema = z.object({
 
 type UserRequest = z.infer<typeof UserSchema>
 
-const INITIAL_USER_REQUEST = {
-    name: undefined,
-    surname: undefined,
-    email: undefined,
-    mobile: undefined,
-    dateOfBirth: undefined,
-} as unknown as UserRequest
+const INITIAL_USER_REQUEST = () => {
+    return {
+        name: undefined,
+        surname: undefined,
+        email: undefined,
+        mobile: undefined,
+        dateOfBirth: undefined,
+    } as unknown as UserRequest
+}
 
 export { UserRequest, UserSchema, INITIAL_USER_REQUEST }

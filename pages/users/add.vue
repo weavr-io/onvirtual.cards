@@ -79,7 +79,7 @@ import useZodValidation from '~/composables/useZodValidation'
 export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
     isLoading = false
 
-    request: UserRequest = reactive(INITIAL_USER_REQUEST)
+    request: UserRequest = reactive(INITIAL_USER_REQUEST())
 
     get validation() {
         return useZodValidation(UserSchema, this.request)
