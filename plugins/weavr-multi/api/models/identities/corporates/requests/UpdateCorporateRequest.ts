@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { IndustryTypeEnumSchema } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
 import { CorporateSourceOfFundTypeEnumSchema } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
-import { AddressSchema } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
+import { AddressSchema } from '~/plugins/weavr-multi/api/models/common/models/Address'
 import { MobileSchema } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 import { CurrencyEnumSchema } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { DateSchema } from '~/plugins/weavr-multi/api/models/common/models/DateModel'

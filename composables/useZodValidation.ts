@@ -57,8 +57,11 @@ export default function <T extends ZodTypeAny>(
         console.log(error)
         switch (error.code) {
             case z.ZodIssueCode.invalid_literal:
+                if (error.received === undefined || error.received === false) {
+                    return { message: INVALID_FEEDBACK_CONST.required }
+                }
+                break
             case z.ZodIssueCode.invalid_type:
-                // Casting to string to avoid type errors. This will return the default message for any required field.
                 if (['undefined', 'null'].includes(`${error.received}`)) {
                     return { message: INVALID_FEEDBACK_CONST.required }
                 }

@@ -1,13 +1,13 @@
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
+import { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
 import { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
 import { FasterPaymentsBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/FasterPaymentsBankDetailsModel'
 import { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SwiftBankDetailsModel'
 
 export interface OutgoingWireTransferBeneficiaryModel {
     name: string
-    address?: AddressModel
+    address?: Address
     bankName?: string
-    bankAddress?: AddressModel
+    bankAddress?: Address
     bankCountry?: string
     bankAccountDetails:
         | SepaBankDetailsModel

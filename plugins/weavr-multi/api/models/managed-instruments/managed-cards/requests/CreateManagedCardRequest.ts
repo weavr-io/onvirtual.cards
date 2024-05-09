@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common'
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
+import { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
 import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
@@ -12,7 +12,7 @@ export interface CreateManagedCardRequest {
     friendlyName: string
     nameOnCard: string
     cardholderMobileNumber: string
-    billingAddress: AddressModel
+    billingAddress: Address
     mode: ManagedCardModeEnum
     currency: CurrencyEnum
 }

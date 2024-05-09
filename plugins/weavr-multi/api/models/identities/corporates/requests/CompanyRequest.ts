@@ -1,12 +1,12 @@
 import { z } from 'zod'
 import { CompanyTypeEnumSchema } from '../enums'
-import { AddressModel, AddressSchema } from '~/plugins/weavr-multi/api/models/common'
+import { Address, AddressSchema } from '~/plugins/weavr-multi/api/models/common'
 import { CompanyTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyTypeEnum'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 export interface CompanyRequest {
     type: CompanyTypeEnum
-    businessAddress?: AddressModel
+    businessAddress?: Address
     name: string
     registrationNumber: string
     registrationCountry: string

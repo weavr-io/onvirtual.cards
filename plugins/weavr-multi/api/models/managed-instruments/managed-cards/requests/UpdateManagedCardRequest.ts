@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
+import { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
 import { DeliveryAddressModel } from '~/plugins/weavr-multi/api/models/common/models/DeliveryAddressModel'
 import { PhysicalCardDeliveryMethodEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/PhysicalCardDeliveryMethodEnum'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
@@ -9,7 +9,7 @@ export interface UpdateManagedCardRequest {
     tag?: string
     friendlyName?: string
     cardholderMobileNumber?: string
-    billingAddress?: AddressModel
+    billingAddress?: Address
     deliveryAddress?: DeliveryAddressModel
     deliveryMethod?: PhysicalCardDeliveryMethodEnum
 }

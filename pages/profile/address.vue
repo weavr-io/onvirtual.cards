@@ -71,7 +71,11 @@
                                 </b-form-group>
                                 <b-row align-v="center" class="mt-4">
                                     <b-col class="text-center">
-                                        <LoaderButton :is-loading="isLoading" text="continue" />
+                                        <LoaderButton
+                                            :is-loading="isLoading"
+                                            text="continue"
+                                            type="submit"
+                                        />
                                     </b-col>
                                 </b-row>
                             </b-form>
@@ -80,22 +84,24 @@
                 </b-card-body>
             </b-card>
         </div>
+        <pre>
+            {{ validation }}
+        </pre>
     </b-col>
 </template>
 
 <script lang="ts">
 import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
+import {
+    type Address,
+    AddressSchema,
+    INITIAL_ADDRESS,
+} from '~/plugins/weavr-multi/api/models/common/models/Address'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
 import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
-import {
-    type AddressType,
-    AddressSchema,
-    INITIAL_ADDRESS,
-} from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
 import BaseMixin from '~/mixins/BaseMixin'
 import useZodValidation from '~/composables/useZodValidation'
 
@@ -109,13 +115,12 @@ import useZodValidation from '~/composables/useZodValidation'
     middleware: ['authRouteGuard'],
 })
 export default class ConsumerAddressPage extends mixins(BaseMixin) {
-    address: AddressType = reactive(INITIAL_ADDRESS)
+    address: Address = reactive(INITIAL_ADDRESS())
+    isLoading = false
 
     get validation() {
         return useZodValidation(AddressSchema, this.address)
     }
-
-    isLoading = false
 
     get country() {
         return this.address?.country
@@ -135,13 +140,13 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
 
     fetch() {
         if (this.isConsumer && this.consumer) {
-            if (Object.keys(this.consumer.rootUser.address as AddressModel).length) {
-                this.address = { ...this.consumer.rootUser.address! }
+            if (Object.keys(this.consumer.rootUser.address as Address).length) {
+                Object.assign(this.address, this.consumer.rootUser.address)
             }
         } else if (this.isCorporate && this.corporate) {
-            if (Object.keys(this.corporate.company.registeredAddress as AddressModel).length) {
+            if (Object.keys(this.corporate.company.registeredAddress as Address).length) {
                 // treat as corporate
-                this.address = { ...this.corporate.company.registeredAddress! }
+                Object.assign(this.address, this.corporate.company.registeredAddress)
             }
         }
     }
@@ -149,17 +154,19 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
     async submitForm() {
         await this.validation.validate()
 
-        if (!this.validation.isInvalid) return null
+        if (this.validation.isInvalid) return
+
+        console.log('here')
 
         this.isLoading = true
         let xhr: Promise<unknown>
 
         if (this.isConsumer) {
-            xhr = this.consumersStore.update({ address: this.address as AddressModel })
+            xhr = this.consumersStore.update({ address: this.address })
         } else {
             // treat as corporate
             xhr = this.corporatesStore.update({
-                companyBusinessAddress: this.address as AddressModel,
+                companyBusinessAddress: this.address,
             })
         }
         xhr.then(this.addressUpdated).finally(() => {

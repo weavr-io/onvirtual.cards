@@ -108,7 +108,7 @@ import {
     ManagedCardSchema,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
+import { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -195,9 +195,9 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
             profileId: this.cardJurisdictionProfileId,
             billingAddress: {
                 ...(this.isConsumer
-                    ? (this.consumersStore.consumerState.consumer?.rootUser.address as AddressModel)
+                    ? (this.consumersStore.consumerState.consumer?.rootUser.address as Address)
                     : (this.corporatesStore.corporateState.corporate?.company
-                          .businessAddress as AddressModel)),
+                          .businessAddress as Address)),
             },
         }
 

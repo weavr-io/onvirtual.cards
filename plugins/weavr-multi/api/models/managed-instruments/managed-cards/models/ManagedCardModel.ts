@@ -6,7 +6,7 @@ import { SensitiveCvvModel } from '~/plugins/weavr-multi/api/models/managed-inst
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
 import { RenewalTypeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/RenewalTypeEnum'
 import { PhysicalCardDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/PhysicalCardDetailsModel'
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
+import { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
 import { ManagedCardTypeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardTypeEnum'
 import { ManagedCardBrandEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardBrandEnum'
 import { ManagedCardModeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/enums/ManagedCardModeEnum'
@@ -34,7 +34,7 @@ export interface ManagedCardModel extends CreationTimestamp {
     expiryPeriodMonths: number
     renewalType: RenewalTypeEnum
     cardholderMobileNumber: string
-    billingAddress?: AddressModel
+    billingAddress?: Address
     physicalCardDetails?: PhysicalCardDetailsModel
     mode: ManagedCardModeEnum
 }
