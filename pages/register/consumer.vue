@@ -10,42 +10,34 @@
                         <div class="form-screen">
                             <b-form novalidate @submit.prevent="submitForm">
                                 <h3 class="text-center font-weight-light mb-5">Register</h3>
-                                <b-form-group label="First Name*">
+                                <b-form-group
+                                    label="First Name*"
+                                    :state="validation.getState('rootUser,name')"
+                                    :invalid-feedback="
+                                        validation.getInvalidFeedback('rootUser,name')
+                                    "
+                                >
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.name"
-                                        :state="isInvalid($v.registrationRequest.rootUser.name)"
                                         placeholder="First Name"
                                     />
-                                    <b-form-invalid-feedback
-                                        v-if="!$v.registrationRequest.rootUser.name.required"
-                                    >
-                                        This field is required
-                                    </b-form-invalid-feedback>
-                                    <b-form-invalid-feedback
-                                        v-if="!$v.registrationRequest.rootUser.name.maxLength"
-                                    >
-                                        Name is too long.
-                                    </b-form-invalid-feedback>
                                 </b-form-group>
-                                <b-form-group label="Last Name*">
+                                <b-form-group
+                                    label="Last Name*"
+                                    :state="validation.getState('rootUser,surname')"
+                                    :invalid-feedback="
+                                        validation.getInvalidFeedback('rootUser,surname')
+                                    "
+                                >
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.surname"
-                                        :state="isInvalid($v.registrationRequest.rootUser.surname)"
                                         placeholder="Last Name"
                                     />
-                                    <b-form-invalid-feedback
-                                        v-if="!$v.registrationRequest.rootUser.surname.required"
-                                    >
-                                        This field is required
-                                    </b-form-invalid-feedback>
-                                    <b-form-invalid-feedback
-                                        v-if="!$v.registrationRequest.rootUser.surname.maxLength"
-                                    >
-                                        Surname is too long.
-                                    </b-form-invalid-feedback>
                                 </b-form-group>
-
-                                <b-form-group label="Date of Birth*">
+                                <b-form-group
+                                    label="Date of Birth*"
+                                    :state="validation.getState('rootUser,dateOfBirth')"
+                                >
                                     <dob-picker
                                         :placeholders="['Day', 'Month', 'Year']"
                                         class="d-flex"
@@ -56,27 +48,15 @@
                                         @change="updateDOB"
                                         @input="updateDOB"
                                     />
-                                    <b-form-invalid-feedback
-                                        :state="
-                                            isInvalid($v.registrationRequest.rootUser.dateOfBirth)
-                                        "
-                                    >
-                                        This field is required.
-                                    </b-form-invalid-feedback>
                                 </b-form-group>
                                 <b-form-group
-                                    :state="isInvalid($v.registrationRequest.rootUser.email)"
+                                    :state="validation.getState('rootUser,email')"
                                     label="Email*"
                                 >
                                     <b-form-input
-                                        v-model="$v.registrationRequest.rootUser.email.$model"
-                                        :state="isInvalid($v.registrationRequest.rootUser.email)"
+                                        v-model="registrationRequest.rootUser.email"
                                         placeholder="name@email.com"
-                                        @input="delayTouch($v.registrationRequest.rootUser.email)"
                                     />
-                                    <b-form-invalid-feedback
-                                        >Email address invalid.
-                                    </b-form-invalid-feedback>
                                 </b-form-group>
                                 <b-form-group label="MOBILE NUMBER*">
                                     <vue-phone-number-input
@@ -98,72 +78,57 @@
                                     </b-form-invalid-feedback>
                                 </b-form-group>
                                 <b-form-group
-                                    :state="
-                                        isInvalid($v.registrationRequest.rootUser.address.country)
-                                    "
+                                    :state="validation.getState('rootUser,address,country')"
                                     label="Country*"
                                 >
                                     <b-form-select
-                                        v-model="
-                                            $v.registrationRequest.rootUser.address.country.$model
-                                        "
+                                        v-model="registrationRequest.rootUser.address.country"
                                         :options="countryOptionsWithDefault"
-                                        :state="
-                                            isInvalid(
-                                                $v.registrationRequest.rootUser.address.country,
-                                            )
-                                        "
                                         placeholder="Registration Country"
                                     />
-                                    <b-form-invalid-feedback>
-                                        This field is required.
-                                    </b-form-invalid-feedback>
                                 </b-form-group>
                                 <b-form-group
-                                    :state="isInvalid($v.registrationRequest.rootUser.occupation)"
+                                    :state="validation.getState('rootUser,occupation')"
                                     label="Industry*"
                                 >
                                     <b-form-select
-                                        v-model="$v.registrationRequest.rootUser.occupation.$model"
+                                        v-model="registrationRequest.rootUser.occupation"
                                         :options="industryOccupationOptions"
-                                        :state="
-                                            isInvalid($v.registrationRequest.rootUser.occupation)
-                                        "
                                     />
-                                    <b-form-invalid-feedback
-                                        >This field is required.
-                                    </b-form-invalid-feedback>
                                 </b-form-group>
                                 <b-form-group
-                                    :state="isInvalid($v.registrationRequest.sourceOfFunds)"
+                                    :state="validation.getState('sourceOfFunds')"
                                     label="Source of Funds*"
                                 >
                                     <b-form-select
-                                        v-model="$v.registrationRequest.sourceOfFunds.$model"
+                                        v-model="registrationRequest.sourceOfFunds"
                                         :options="sourceOfFundsOptions"
-                                        :state="isInvalid($v.registrationRequest.sourceOfFunds)"
                                     />
-                                    <b-form-invalid-feedback
-                                        >This field is required.
-                                    </b-form-invalid-feedback>
                                 </b-form-group>
-                                <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
+                                <b-form-group
+                                    v-if="shouldShowOtherSourceOfFunds"
+                                    label="Other"
+                                    :state="validation.getState('sourceOfFundsOther')"
+                                >
                                     <b-form-input
                                         v-model="registrationRequest.sourceOfFundsOther"
-                                        :state="
-                                            isInvalid($v.registrationRequest.sourceOfFundsOther)
-                                        "
                                         placeholder="Specify Other Source of Funds"
                                     />
                                 </b-form-group>
                                 <client-only placeholder="Loading...">
-                                    <div>
+                                    <b-form-group
+                                        :state="validation.getState('password,value')"
+                                        label-for="password"
+                                    >
                                         <label class="d-block">PASSWORD*</label>
                                         <weavr-password-input
                                             ref="passwordField"
                                             :base-style="passwordBaseStyle"
                                             :options="{ placeholder: '****' }"
-                                            class-name="sign-in-password"
+                                            :class-name="[
+                                                'sign-in-password',
+                                                { 'is-invalid': !isPasswordValidAndDirty },
+                                            ]"
                                             name="password"
                                             required="true"
                                             @onChange="passwordInteraction"
@@ -179,18 +144,13 @@
                                             >- min 8 characters <br />- uppercase letter <br />-
                                             digit and a special character</small
                                         >
-                                    </div>
+                                    </b-form-group>
                                 </client-only>
                                 <b-form-row class="small mt-3 text-muted">
                                     <b-col>
-                                        <b-form-group>
+                                        <b-form-group :state="validation.getState('acceptedTerms')">
                                             <b-form-checkbox
-                                                v-model="
-                                                    $v.registrationRequest.acceptedTerms.$model
-                                                "
-                                                :state="
-                                                    isInvalid($v.registrationRequest.acceptedTerms)
-                                                "
+                                                v-model="registrationRequest.acceptedTerms"
                                             >
                                                 I accept the
                                                 <a
@@ -207,9 +167,6 @@
                                                     >privacy policy</a
                                                 >*
                                             </b-form-checkbox>
-                                            <b-form-invalid-feedback
-                                                >This field is required.
-                                            </b-form-invalid-feedback>
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
@@ -237,7 +194,6 @@
 </template>
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { email, maxLength, required, sameAs } from 'vuelidate/lib/validators'
 
 import { AxiosResponse } from 'axios'
 
@@ -254,73 +210,21 @@ import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/i
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import {
     CreateConsumerRequest,
+    CreateConsumerRequestSchema,
     INITIAL_CREATE_CONSUMER_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import ComingSoonCurrencies from '~/components/atoms/ComingSoonCurrencies.vue'
-
-const touchMap = new WeakMap()
-// @TODO[OLEG] - REFACTOR TO ZOD
+import useZodValidation from '~/composables/useZodValidation'
+import {
+    INITIAL_SENSITIVE_PASSWORD_REQUEST,
+    LoginWithPasswordSchema,
+    SensitivePassword,
+} from '~/plugins/weavr-multi/api/models/authentication'
 
 @Component({
     layout: 'auth',
-    validations: {
-        registrationRequest: {
-            rootUser: {
-                name: {
-                    required,
-                    maxLength: maxLength(20),
-                },
-                surname: {
-                    required,
-                    maxLength: maxLength(20),
-                },
-                email: {
-                    required,
-                    email,
-                },
-                mobile: {
-                    countryCode: {
-                        required,
-                    },
-                    number: {
-                        required,
-                    },
-                },
-                occupation: {
-                    required,
-                },
-                dateOfBirth: {
-                    day: {
-                        required,
-                    },
-                    month: {
-                        required,
-                    },
-                    year: {
-                        required,
-                    },
-                },
-                address: {
-                    country: {
-                        required,
-                    },
-                },
-            },
-            acceptedTerms: {
-                required,
-                sameAs: sameAs(() => true),
-            },
-            sourceOfFunds: {
-                required,
-            },
-            sourceOfFundsOther: {},
-            password: {
-                required,
-            },
-        },
-    },
     components: {
         ComingSoonCurrencies,
         LogoOvc,
@@ -340,20 +244,25 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     numberIsValid: boolean | null = null
     passwordStrength = 0
 
-    public registrationRequest: CreateConsumerRequest & {
-        password?: string
-    } = reactive({
+    public registrationRequest: CreateConsumerRequest & { password: SensitivePassword } = reactive({
         ...INITIAL_CREATE_CONSUMER_REQUEST(),
         profileId: this.$config.profileId.consumers,
         acceptedTerms: false,
         baseCurrency: CurrencyEnum.EUR,
-        password: undefined,
+        password: INITIAL_SENSITIVE_PASSWORD_REQUEST(),
     })
 
     private $recaptcha: any
 
+    get validation() {
+        return useZodValidation(
+            CreateConsumerRequestSchema.merge(LoginWithPasswordSchema.pick({ password: true })),
+            this.registrationRequest,
+        )
+    }
+
     get isPasswordValidAndDirty() {
-        return !this.$v.registrationRequest.password?.$dirty ? true : this.isPasswordValid
+        return !this.validation.dirty ? true : this.isPasswordValid
     }
 
     get industryOccupationOptions() {
@@ -417,18 +326,18 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         })
     }
 
-    submitForm(e) {
+    async submitForm(e) {
         this.errorsStore.resetState()
         try {
             e.preventDefault()
 
-            this.$v.$touch()
+            await this.validation.validate()
 
             if (this.numberIsValid === null) {
                 this.numberIsValid = false
             }
 
-            if (this.$v.$invalid || !this.numberIsValid) {
+            if (!this.validation.isInvalid || !this.numberIsValid) {
                 return
             }
 
@@ -437,7 +346,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
                 this.passwordField.createToken().then(
                     (tokens) => {
                         if (tokens.tokens.password !== '') {
-                            this.registrationRequest.password = tokens.tokens.password
+                            this.registrationRequest.password.value = tokens.tokens.password
                             this.doRegister()
                         } else {
                             return null
@@ -460,9 +369,8 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
 
     passwordInteraction(val: { empty: boolean; valid: boolean }) {
         !val.empty
-            ? (this.registrationRequest.password = '******')
-            : (this.registrationRequest.password = '')
-        this.$v.registrationRequest.password?.$touch()
+            ? (this.registrationRequest.password.value = '******')
+            : (this.registrationRequest.password.value = '')
     }
 
     doRegister() {
@@ -479,7 +387,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     createPassword(rootUserId: IDModel) {
         const passwordRequest: CreatePasswordRequestModel = {
             password: {
-                value: this.registrationRequest.password as string,
+                value: this.registrationRequest.password.value as string,
             },
         }
         this.$apiMulti.passwords
@@ -516,14 +424,6 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         this.registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
         this.registrationRequest.rootUser!.mobile!.number = number.nationalNumber
         this.numberIsValid = number.isValid
-    }
-
-    delayTouch($v) {
-        $v.$reset()
-        if (touchMap.has($v)) {
-            clearTimeout(touchMap.get($v))
-        }
-        touchMap.set($v, setTimeout($v.$touch, 1000))
     }
 
     updateDOB(val) {

@@ -14,9 +14,9 @@ import {
 } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
 
 const ConsumersRootUserRequestSchema = z.object({
-    name: z.string(),
-    surname: z.string(),
-    email: z.string(),
+    name: z.string().max(20),
+    surname: z.string().max(20),
+    email: z.string().email(),
     mobile: MobileSchema,
     dateOfBirth: DateSchema,
     occupation: OccupationTypeEnumSchema,
@@ -32,7 +32,7 @@ const INITIAL_CONSUMERS_ROOT_USER_REQUEST = () => {
         email: undefined,
         mobile: { ...INITIAL_MOBILE_REQUEST() },
         dateOfBirth: { ...INITIAL_DATE_REQUEST() },
-        occupation: undefined,
+        occupation: null,
         address: { ...INITIAL_ADDRESS() },
     } as unknown as ConsumersRootUserRequest
 }

@@ -28,7 +28,7 @@ const INITIAL_ADDRESS = () => {
         city: undefined,
         postCode: undefined,
         state: undefined,
-        country: undefined,
+        country: null,
     } as unknown as AddressType
 }
 
