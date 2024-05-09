@@ -1,7 +1,7 @@
 import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
 import { useAccessCodesStore } from '~/store/accessCodes'
 
-export default defineNuxtMiddleware(({ route, redirect, $config }) => {
+export default defineNuxtMiddleware(async ({ route, redirect, $config }) => {
     if (!$config.production) return
 
     const accessCodeStore = useAccessCodesStore()
@@ -11,7 +11,7 @@ export default defineNuxtMiddleware(({ route, redirect, $config }) => {
     }
 
     if (accessCode()) {
-        accessCodeStore.verifyAccessCode({ code: accessCode() }).catch(() => {
+        await accessCodeStore.verifyAccessCode({ code: accessCode() }).catch(() => {
             redirect('/register')
         })
     } else if (route.name !== 'register') {

@@ -1,7 +1,7 @@
 import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 
-export default defineNuxtMiddleware(({ route, redirect }) => {
+export default defineNuxtMiddleware(async ({ route, redirect }) => {
     const { auth, consumers, corporates } = initialiseStores(['auth', 'consumers', 'corporates'])
 
     if (auth?.isLoggedIn) {
@@ -12,7 +12,7 @@ export default defineNuxtMiddleware(({ route, redirect }) => {
                     return redirect('/managed-accounts/kyc')
                 }
 
-                consumers?.checkKYC().catch(() => {})
+                await consumers?.checkKYC().catch(() => {})
 
                 if (route.name === 'managed-accounts-kyc') {
                     return redirect('/managed-accounts/add')
@@ -32,7 +32,7 @@ export default defineNuxtMiddleware(({ route, redirect }) => {
                     return redirect('/managed-accounts/kyb')
                 }
 
-                corporates?.checkKYB().catch(() => {})
+                await corporates?.checkKYB().catch(() => {})
 
                 if (route.name === 'managed-accounts-kyb') {
                     return redirect('/managed-accounts')
