@@ -15,9 +15,10 @@ const InstrumentSchema = z.object({
 
 type Instrument = z.infer<typeof InstrumentSchema>
 
-const INITIAL_INSTRUMENT_REQUEST = {
-    type: InstrumentEnum.managedAccounts,
-    id: undefined,
-} as unknown as Instrument
-
+const INITIAL_INSTRUMENT_REQUEST = () => {
+    return {
+        type: InstrumentEnum.managedAccounts,
+        id: undefined,
+    } as unknown as Instrument
+}
 export { Instrument, InstrumentSchema, INITIAL_INSTRUMENT_REQUEST }

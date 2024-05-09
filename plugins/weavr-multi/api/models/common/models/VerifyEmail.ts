@@ -8,9 +8,11 @@ const VerifyEmailSchema = z.object({
 
 type VerifyEmail = z.infer<typeof VerifyEmailSchema>
 
-const INITIAL_VERIFY_EMAIL_REQUEST = {
-    email: undefined,
-    verificationCode: undefined,
-} as unknown as VerifyEmail
+const INITIAL_VERIFY_EMAIL_REQUEST = () => {
+    return {
+        email: undefined,
+        verificationCode: undefined,
+    } as unknown as VerifyEmail
+}
 
 export { VerifyEmailSchema, VerifyEmail, INITIAL_VERIFY_EMAIL_REQUEST }
