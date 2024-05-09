@@ -12,7 +12,7 @@ export default defineNuxtMiddleware(async ({ route, redirect }) => {
                     return redirect('/managed-accounts/kyc')
                 }
 
-                await consumers?.checkKYC().catch(() => {})
+                await consumers?.checkKYC()
 
                 if (route.name === 'managed-accounts-kyc') {
                     return redirect('/managed-accounts/add')
@@ -32,7 +32,7 @@ export default defineNuxtMiddleware(async ({ route, redirect }) => {
                     return redirect('/managed-accounts/kyb')
                 }
 
-                await corporates?.checkKYB().catch(() => {})
+                await corporates?.checkKYB()
 
                 if (route.name === 'managed-accounts-kyb') {
                     return redirect('/managed-accounts')
