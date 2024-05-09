@@ -51,6 +51,8 @@ export default function <T extends ZodTypeAny>(
         )
     }
 
+    const placeHolderReplace = (str: string, replaceValue) => str.replace('[0]', replaceValue)
+
     const customErroMap: z.ZodErrorMap = (error, ctx) => {
         console.log(error)
         switch (error.code) {
@@ -65,6 +67,27 @@ export default function <T extends ZodTypeAny>(
                 if (error.validation === 'email') {
                     return { message: INVALID_FEEDBACK_CONST.email }
                 }
+                break
+            case z.ZodIssueCode.too_small:
+                if (error.type === 'string') {
+                    return {
+                        message: placeHolderReplace(
+                            INVALID_FEEDBACK_CONST.minString,
+                            error.minimum,
+                        ),
+                    }
+                }
+                break
+            case z.ZodIssueCode.too_big:
+                if (error.type === 'string') {
+                    return {
+                        message: placeHolderReplace(
+                            INVALID_FEEDBACK_CONST.maxString,
+                            error.maximum,
+                        ),
+                    }
+                }
+                break
         }
 
         return { message: ctx.defaultError }
