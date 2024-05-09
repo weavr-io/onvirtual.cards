@@ -14,10 +14,12 @@ const DateSchema = z.object({
 
 type Date = z.infer<typeof DateSchema>
 
-const INITIAL_DATE_REQUEST = {
-    year: undefined,
-    month: undefined,
-    day: undefined,
-} as unknown as Date
+const INITIAL_DATE_REQUEST = () => {
+    return {
+        year: undefined,
+        month: undefined,
+        day: undefined,
+    } as unknown as Date
+}
 
 export { DateSchema, Date, INITIAL_DATE_REQUEST }
