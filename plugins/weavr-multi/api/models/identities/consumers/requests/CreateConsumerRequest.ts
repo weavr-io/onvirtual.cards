@@ -30,8 +30,8 @@ const INITIAL_CREATE_CONSUMER_REQUEST = () => {
         acceptedTerms: undefined,
         baseCurrency: undefined,
         feeGroup: undefined,
-        sourceOfFunds: undefined,
-        sourceOfFundsOther: undefined,
+        sourceOfFunds: null,
+        sourceOfFundsOther: null,
     } as unknown as CreateConsumerRequest
 }
 
