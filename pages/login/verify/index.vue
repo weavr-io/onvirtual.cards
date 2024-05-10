@@ -113,12 +113,12 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
         try {
             if (request.verificationCode !== undefined) {
                 if (route.query.cons) {
-                    consumers?.verifyEmail(request).then(() => {
+                    await consumers?.verifyEmail(request).then(() => {
                         redirect('/')
                     })
                 } else {
                     // else treat as Corporate
-                    corporates?.verifyEmail(request).then(() => {
+                    await corporates?.verifyEmail(request).then(() => {
                         if (auth?.isLoggedIn) {
                             redirect('/')
                         } else {
@@ -134,7 +134,7 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
         }
     }
 
-    async mounted() {
+    async fetch() {
         if (this.$route.query.send === 'true') {
             await this.sendVerifyEmail()
         }
@@ -189,14 +189,14 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
         this.$route.query.cons
             ? await this.consumersStore
                   .verifyEmail(this.verifyEmailRequest)
-                  .then(this.onMobileVerified)
+                  .then(this.onEmailVerified)
                   .catch((e) => {
                       this.removeLoader()
                       this.errorsStore.setConflict(e)
                   })
             : await this.corporatesStore
                   .verifyEmail(this.verifyEmailRequest)
-                  .then(this.onMobileVerified)
+                  .then(this.onEmailVerified)
                   .catch((e) => {
                       this.removeLoader()
                       this.errorsStore.setConflict(e)
@@ -207,9 +207,8 @@ export default class EmailVerificationPage extends mixins(BaseMixin, ValidationM
         this.isLoading = false
     }
 
-    onMobileVerified() {
+    onEmailVerified() {
         this.identityStore.setEmailVerified(true)
-
         return this.$router.push({
             path: '/login/verify/mobile',
             query: {
