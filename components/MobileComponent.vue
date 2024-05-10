@@ -112,12 +112,12 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
         return useZodValidation(AuthVerifyEnrolSchema, this.request)
     }
 
-    mounted() {
+    async fetch() {
         if (
             this.$route.query.send === 'true' &&
             (this.verifyPhone || localStorage.getItem('scaSmsSent') === 'FALSE')
         ) {
-            this.sendSms()
+            await this.sendSms()
         }
     }
 

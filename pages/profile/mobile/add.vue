@@ -8,16 +8,12 @@
                 not share this with anyone.
             </p>
             <b-form novalidate @submit.prevent="submitForm">
-                <b-form-group
-                    :invalid-feedback="validation.getInvalidFeedback('state')"
-                    :state="validation.getState('state')"
-                    label="MOBILE NUMBER*"
-                >
+                <b-form-group label="MOBILE NUMBER*">
                     <vue-phone-number-input
-                        v-model="rootMobileNumber"
                         :border-radius="0"
                         :error="numberIsValid === false"
                         :only-countries="mobileCountries"
+                        :value="updateRequest.mobile.number"
                         color="#6C1C5C"
                         default-country-code="GB"
                         error-color="#F50E4C"
@@ -32,7 +28,6 @@
                         This field must be a valid mobile number.
                     </b-form-invalid-feedback>
                 </b-form-group>
-
                 <LoaderButton :is-loading="isLoading" class="text-center mt-5" text="save number" />
             </b-form>
         </b-card>
@@ -48,7 +43,6 @@ import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identit
 import {
     INITIAL_MOBILE_REQUEST,
     Mobile,
-    MobileSchema,
 } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/CredentialTypeEnum'
@@ -57,6 +51,7 @@ import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentica
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import useZodValidation from '~/composables/useZodValidation'
+import { RootUserMobileSchema } from '~/plugins/weavr-multi/api/models/identities/corporates'
 
 @Component({
     layout: 'auth',
@@ -69,18 +64,16 @@ import useZodValidation from '~/composables/useZodValidation'
 export default class LoginPage extends mixins(BaseMixin) {
     isLoading = false
 
-    rootMobileNumber = ''
     numberIsValid: boolean | null = null
 
     updateRequest: { mobile: Mobile } = reactive({
         mobile: {
             ...INITIAL_MOBILE_REQUEST(),
-            countryCode: '+356',
         },
     })
 
     get validation() {
-        return useZodValidation(MobileSchema, this.updateRequest)
+        return useZodValidation(RootUserMobileSchema, this.updateRequest)
     }
 
     async asyncData({ redirect }) {
@@ -103,15 +96,14 @@ export default class LoginPage extends mixins(BaseMixin) {
     async submitForm() {
         this.isLoading = true
 
+        if (this.numberIsValid === null) {
+            this.numberIsValid = false
+        }
+
         try {
             await this.validation.validate()
 
-            if (this.numberIsValid === null) {
-                this.numberIsValid = false
-            }
-
             if (this.validation.isInvalid.value || !this.numberIsValid) {
-                this.numberIsValid = false
                 this.isLoading = false
                 return null
             }
@@ -142,8 +134,10 @@ export default class LoginPage extends mixins(BaseMixin) {
     }
 
     phoneUpdate(number) {
-        this.updateRequest.mobile!.countryCode = `+${number.countryCallingCode}`
-        this.updateRequest.mobile!.number = number.nationalNumber
+        this.updateRequest.mobile.countryCode =
+            number.countryCallingCode && `+${number.countryCallingCode}`
+        this.updateRequest.mobile.number = number.phoneNumber
+
         this.numberIsValid = number.isValid
     }
 }

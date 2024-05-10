@@ -29,6 +29,8 @@ const CorporatesRootUserRequestSchema = z.object({
     dateOfBirth: DateSchema.optional(),
 })
 
+const RootUserMobileSchema = CorporatesRootUserRequestSchema.pick({ mobile: true })
+
 type CorporatesRootUserRequestType = z.infer<typeof CorporatesRootUserRequestSchema>
 
 const INITIAL_CORPORATES_ROOT_USER_REQUEST = () => {
@@ -45,5 +47,6 @@ const INITIAL_CORPORATES_ROOT_USER_REQUEST = () => {
 export {
     CorporatesRootUserRequestSchema,
     CorporatesRootUserRequestType,
+    RootUserMobileSchema,
     INITIAL_CORPORATES_ROOT_USER_REQUEST,
 }

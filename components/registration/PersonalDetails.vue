@@ -201,7 +201,8 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     }
 
     phoneUpdate(number) {
-        this.form.rootUser.mobile.countryCode = `+${number.countryCallingCode}`
+        this.form.rootUser.mobile.countryCode =
+            number.countryCallingCode && `+${number.countryCallingCode}`
         this.form.rootUser.mobile.number = number.phoneNumber
 
         this.numberIsValid = number.isValid
