@@ -1,11 +1,9 @@
 import { z } from 'zod'
 
-export type IDModel = string
-
 const IDSchema = z.string()
 
-type ID = z.infer<typeof IDSchema>
+type IDModel = z.infer<typeof IDSchema>
 
-const INITIAL_ID_REQUEST = undefined as unknown as ID
+const INITIAL_ID_REQUEST = undefined as unknown as IDModel
 
-export { IDSchema, ID, INITIAL_ID_REQUEST }
+export { IDSchema, IDModel, INITIAL_ID_REQUEST }

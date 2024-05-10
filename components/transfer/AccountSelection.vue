@@ -32,19 +32,19 @@ import { reactive } from 'vue'
 import { Emit, mixins } from 'nuxt-property-decorator'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import {
-    INITIAL_INSTRUMENT_REQUEST,
-    type Instrument,
-    InstrumentSchema,
+    INITIAL_INSTRUMENT_ID,
+    type InstrumentID,
+    InstrumentIDSchema,
 } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
 import useZodValidation from '~/composables/useZodValidation'
 
 export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMixin) {
-    source: Instrument = reactive(INITIAL_INSTRUMENT_REQUEST())
+    source: InstrumentID = reactive(INITIAL_INSTRUMENT_ID())
 
     get validation() {
-        return useZodValidation(InstrumentSchema, this.source)
+        return useZodValidation(InstrumentIDSchema, this.source)
     }
 
     get accounts() {

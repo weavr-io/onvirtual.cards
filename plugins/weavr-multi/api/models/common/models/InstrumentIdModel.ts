@@ -3,22 +3,17 @@ import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
 
-export interface InstrumentIdModel {
-    type: InstrumentEnum
-    id: string
-}
-
-const InstrumentSchema = z.object({
-    type: preprocessEmptyAsUndefined(z.nativeEnum(InstrumentEnum)),
+const InstrumentIDSchema = z.object({
+    type: z.nativeEnum(InstrumentEnum),
     id: preprocessEmptyAsUndefined(z.string().min(1, { message: INVALID_FEEDBACK_CONST.required })),
 })
 
-type Instrument = z.infer<typeof InstrumentSchema>
+type InstrumentID = z.infer<typeof InstrumentIDSchema>
 
-const INITIAL_INSTRUMENT_REQUEST = () => {
+const INITIAL_INSTRUMENT_ID = () => {
     return {
         type: InstrumentEnum.managedAccounts,
         id: undefined,
-    } as unknown as Instrument
+    } as unknown as InstrumentID
 }
-export { Instrument, InstrumentSchema, INITIAL_INSTRUMENT_REQUEST }
+export { InstrumentID, InstrumentIDSchema, INITIAL_INSTRUMENT_ID }
