@@ -32,20 +32,12 @@
                         <b-form-row>
                             <b-col>
                                 <b-form-group
-                                    :invalid-feedback="
-                                        invalidFeedback(
-                                            $v.updateIdentityRootUser.email,
-                                            validateVParams(
-                                                $v.updateIdentityRootUser.email.$params,
-                                                $v.updateIdentityRootUser.email,
-                                            ),
-                                        )
-                                    "
-                                    :state="isInvalid($v.updateIdentityRootUser.email)"
+                                    :invalid-feedback="validation.getInvalidFeedback('email')"
+                                    :state="validation.getState('email')"
                                     label="E-Mail"
                                 >
                                     <b-form-input
-                                        v-model="$v.updateIdentityRootUser.email.$model"
+                                        v-model="updateIdentityRootUser.email"
                                         :disabled="isEmailVerified"
                                         class="form-control"
                                         placeholder="example@email.com"
@@ -105,48 +97,39 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { email, required } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { reactive } from 'vue'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
-import { DeepNullable } from '~/global'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
+import {
+    INITIAL_UPDATE_CONSUMER_REQUEST,
+    UpdateConsumerRequest,
+    UpdateConsumerRequestSchema,
+} from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
-
-// @TODO[OLEG] - REFACTOR TO ZOD
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     components: {
         LoaderButton,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     },
-    validations: {
-        updateIdentityRootUser: {
-            mobile: {
-                number: {
-                    required,
-                },
-                countryCode: { required },
-            },
-            email: {
-                required,
-                email,
-            },
-        },
-    },
     middleware: ['kyVerified'],
 })
 export default class Profile extends mixins(BaseMixin, ValidationMixin) {
     numberIsValid: boolean | null = null
 
-    updateIdentityRootUser: DeepNullable<{ mobile: MobileModel; email: string }> = {
-        mobile: {
-            number: null,
-            countryCode: null,
-        },
-        email: null,
+    updateIdentityRootUser = reactive(INITIAL_UPDATE_CONSUMER_REQUEST())
+
+    get validation() {
+        return useZodValidation(
+            UpdateConsumerRequestSchema.partial({
+                mobile: true,
+                email: true,
+            }),
+            this.updateIdentityRootUser,
+        )
     }
 
     isLoading = false
