@@ -216,9 +216,7 @@
 </template>
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
-
 import { AxiosResponse } from 'axios'
-
 import { reactive } from 'vue'
 import { ComputedRef } from '@nuxtjs/composition-api'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
@@ -423,13 +421,13 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         this.createPassword(res.data.rootUser.id.id!)
     }
 
-    createPassword(rootUserId: IDModel) {
+    async createPassword(rootUserId: IDModel) {
         const passwordRequest: CreatePasswordRequestModel = {
             password: {
                 value: this.registrationRequest.password.value as string,
             },
         }
-        this.$apiMulti.passwords
+        await this.$apiMulti.passwords
             .store({
                 userId: rootUserId,
                 data: passwordRequest,
