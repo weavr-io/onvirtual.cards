@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const VerifyEmailSchema = z.object({
-    email: z.string().email(),
+    email: preprocessEmptyAsUndefined(z.string().email()),
     verificationCode: preprocessEmptyAsUndefined(z.string().min(6).max(6)),
 })
 

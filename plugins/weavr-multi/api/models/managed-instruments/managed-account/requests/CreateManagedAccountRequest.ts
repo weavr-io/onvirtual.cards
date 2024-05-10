@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const DEFAULT_FRIENDLY_NAME = 'Main Account'
 
@@ -12,9 +13,9 @@ export interface CreateManagedAccountRequest {
 }
 
 const ManagedAccountSchema = z.object({
-    profileId: z.string(),
-    friendlyName: z.literal(DEFAULT_FRIENDLY_NAME),
-    currency: z.nativeEnum(CurrencyEnum),
+    profileId: preprocessEmptyAsUndefined(z.string()),
+    friendlyName: preprocessEmptyAsUndefined(z.literal(DEFAULT_FRIENDLY_NAME)),
+    currency: preprocessEmptyAsUndefined(z.nativeEnum(CurrencyEnum)),
 })
 
 type ManagedAccount = z.infer<typeof ManagedAccountSchema>

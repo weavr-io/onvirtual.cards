@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const AmountSchema = (maxValue: number) =>
     z
@@ -9,8 +10,8 @@ const AmountSchema = (maxValue: number) =>
 
 const CurrencyAmountSchema = (maxValue: number) =>
     z.object({
-        currency: z.string(),
-        amount: AmountSchema(maxValue),
+        currency: preprocessEmptyAsUndefined(z.string()),
+        amount: preprocessEmptyAsUndefined(AmountSchema(maxValue)),
     })
 
 type CurrencyAmount = z.infer<ReturnType<typeof CurrencyAmountSchema>>

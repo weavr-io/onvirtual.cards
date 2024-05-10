@@ -3,7 +3,7 @@ import {
     INITIAL_SENSITIVE_PASSWORD_REQUEST,
     SensitivePasswordSchema,
 } from '~/plugins/weavr-multi/api/models/authentication/access/models/SensitivePasswordModel'
-import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers' // export interface LoginWithPasswordRequest {
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const LoginWithPasswordSchema = z.object({
     email: preprocessEmptyAsUndefined(z.string().email()),
