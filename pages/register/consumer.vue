@@ -35,21 +35,25 @@
                                     />
                                 </b-form-group>
                                 <b-form-group
-                                    :state="validation.getState('rootUser,dateOfBirth')"
+                                    :invalid-feedback="dobInvalidFeedback"
+                                    :state="!dobInvalidFeedback"
                                     label="Date of Birth*"
                                 >
                                     <dob-picker
                                         :placeholders="['Day', 'Month', 'Year']"
+                                        :state="dobState"
                                         class="d-flex"
                                         label-class="small flex-fill"
                                         month-format="long"
                                         select-class="form-control"
                                         show-labels="false"
-                                        @change="updateDOB"
-                                        @input="updateDOB"
+                                        @blur="updateDOB"
                                     />
                                 </b-form-group>
                                 <b-form-group
+                                    :invalid-feedback="
+                                        validation.getInvalidFeedback('rootUser,email')
+                                    "
                                     :state="validation.getState('rootUser,email')"
                                     label="Email*"
                                 >
@@ -78,6 +82,9 @@
                                     </b-form-invalid-feedback>
                                 </b-form-group>
                                 <b-form-group
+                                    :invalid-feedback="
+                                        validation.getInvalidFeedback('rootUser,address,country')
+                                    "
                                     :state="validation.getState('rootUser,address,country')"
                                     label="Country*"
                                 >
@@ -88,6 +95,9 @@
                                     />
                                 </b-form-group>
                                 <b-form-group
+                                    :invalid-feedback="
+                                        validation.getInvalidFeedback('rootUser,occupation')
+                                    "
                                     :state="validation.getState('rootUser,occupation')"
                                     label="Industry*"
                                 >
@@ -97,6 +107,9 @@
                                     />
                                 </b-form-group>
                                 <b-form-group
+                                    :invalid-feedback="
+                                        validation.getInvalidFeedback('sourceOfFunds')
+                                    "
                                     :state="validation.getState('sourceOfFunds')"
                                     label="Source of Funds*"
                                 >
@@ -107,6 +120,9 @@
                                 </b-form-group>
                                 <b-form-group
                                     v-if="shouldShowOtherSourceOfFunds"
+                                    :invalid-feedback="
+                                        validation.getInvalidFeedback('sourceOfFundsOther')
+                                    "
                                     :state="validation.getState('sourceOfFundsOther')"
                                     label="Other"
                                 >
@@ -118,15 +134,15 @@
                                 <client-only placeholder="Loading...">
                                     <b-form-group
                                         :state="validation.getState('password,value')"
+                                        label="Password"
                                         label-for="password"
                                     >
-                                        <label class="d-block">PASSWORD*</label>
                                         <weavr-password-input
                                             ref="passwordField"
                                             :base-style="passwordBaseStyle"
                                             :class-name="[
                                                 'sign-in-password',
-                                                { 'is-invalid': !isPasswordValidAndDirty },
+                                                { 'is-invalid': isPasswordInvalidAndDirty },
                                             ]"
                                             :options="{ placeholder: '****' }"
                                             name="password"
@@ -136,7 +152,7 @@
                                         />
                                         <small
                                             :class="
-                                                !isPasswordValidAndDirty
+                                                isPasswordInvalidAndDirty
                                                     ? 'text-danger'
                                                     : 'text-muted'
                                             "
@@ -148,9 +164,15 @@
                                 </client-only>
                                 <b-form-row class="small mt-3 text-muted">
                                     <b-col>
-                                        <b-form-group :state="validation.getState('acceptedTerms')">
+                                        <b-form-group
+                                            :invalid-feedback="
+                                                validation.getInvalidFeedback('acceptedTerms')
+                                            "
+                                            :state="validation.getState('acceptedTerms')"
+                                        >
                                             <b-form-checkbox
                                                 v-model="registrationRequest.acceptedTerms"
+                                                :state="validation.getState('acceptedTerms')"
                                             >
                                                 I accept the
                                                 <a
@@ -198,6 +220,7 @@ import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { AxiosResponse } from 'axios'
 
 import { reactive } from 'vue'
+import { ComputedRef } from '@nuxtjs/composition-api'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import BaseMixin from '~/mixins/BaseMixin'
 import ValidationMixin from '~/mixins/ValidationMixin'
@@ -261,12 +284,28 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         )
     }
 
-    get isPasswordValidAndDirty() {
-        return !this.validation.dirty.value ? true : this.isPasswordValid
+    get isPasswordInvalidAndDirty(): boolean {
+        return !this.isPasswordValid && this.validation.dirty.value
     }
 
     get industryOccupationOptions() {
         return IndustryTypeSelectConst
+    }
+
+    get dobState() {
+        return {
+            day: this.validation.getState('rootUser,dateOfBirth,day'),
+            month: this.validation.getState('rootUser,dateOfBirth,month'),
+            year: this.validation.getState('rootUser,dateOfBirth,year'),
+        }
+    }
+
+    get dobInvalidFeedback() {
+        return (
+            this.validation.getInvalidFeedback('rootUser,dateOfBirth,day') ||
+            this.validation.getInvalidFeedback('rootUser,dateOfBirth,month') ||
+            this.validation.getInvalidFeedback('rootUser,dateOfBirth,year')
+        )
     }
 
     get sourceOfFundsOptions() {
@@ -331,7 +370,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         try {
             e.preventDefault()
 
-            await this.validation.validate()
+            this.validation.touch() && (await this.validation.validate())
 
             if (this.numberIsValid === null) {
                 this.numberIsValid = false
@@ -426,12 +465,12 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
         this.numberIsValid = number.isValid
     }
 
-    updateDOB(val) {
-        this.registrationRequest.rootUser!.dateOfBirth = {
-            year: val.getFullYear(),
-            month: val.getMonth() + 1,
-            day: val.getDate(),
-        }
+    updateDOB(val: ComputedRef) {
+        Object.assign(this.registrationRequest.rootUser.dateOfBirth, {
+            year: val.value.year,
+            month: val.value.month === null ? null : val.value.month + 1,
+            day: val.value.day,
+        })
     }
 
     stopRegistrationLoading() {

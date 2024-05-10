@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 export interface DateModel {
     year: number
@@ -7,9 +8,9 @@ export interface DateModel {
 }
 
 const DateSchema = z.object({
-    year: z.number(),
-    month: z.number(),
-    day: z.number(),
+    year: preprocessEmptyAsUndefined(z.number()),
+    month: preprocessEmptyAsUndefined(z.number()),
+    day: preprocessEmptyAsUndefined(z.number()),
 })
 
 type Date = z.infer<typeof DateSchema>

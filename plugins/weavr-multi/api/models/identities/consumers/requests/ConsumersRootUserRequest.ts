@@ -12,11 +12,12 @@ import {
     AddressSchema,
     INITIAL_ADDRESS,
 } from '~/plugins/weavr-multi/api/models/common/models/AddressModel'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const ConsumersRootUserRequestSchema = z.object({
-    name: z.string().max(20),
-    surname: z.string().max(20),
-    email: z.string().email(),
+    name: preprocessEmptyAsUndefined(z.string().max(20)),
+    surname: preprocessEmptyAsUndefined(z.string().max(20)),
+    email: preprocessEmptyAsUndefined(z.string().email()),
     mobile: MobileSchema,
     dateOfBirth: DateSchema,
     occupation: OccupationTypeEnumSchema,
