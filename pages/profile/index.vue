@@ -90,6 +90,12 @@
                             </b-col>
                         </b-row>
                     </b-form>
+                    <pre>
+                        {{ updateIdentityRootUser }}
+                    </pre>
+                    <pre>
+                        {{ validation }}
+                    </pre>
                 </b-col>
             </b-row>
         </b-container>
@@ -122,24 +128,17 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
 
     updateIdentityRootUser = reactive(INITIAL_UPDATE_CONSUMER_REQUEST())
 
-    get validation() {
-        return useZodValidation(
-            UpdateConsumerRequestSchema.partial({
-                mobile: true,
-                email: true,
-            }),
-            this.updateIdentityRootUser,
-        )
-    }
-
     isLoading = false
-
     mobile: {
         countryCode: string
         number: string
     } = {
         countryCode: '',
         number: '',
+    }
+
+    get validation() {
+        return useZodValidation(UpdateConsumerRequestSchema, this.updateIdentityRootUser)
     }
 
     get isMobileVerified() {
@@ -155,7 +154,7 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
     }
 
     fetch() {
-        this.updateIdentityRootUser = {
+        Object.assign(this.updateIdentityRootUser, {
             mobile: {
                 countryCode: this.isConsumer
                     ? this.consumer?.rootUser?.mobile.countryCode ?? null
@@ -167,7 +166,7 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
             email: this.isConsumer
                 ? this.consumer?.rootUser?.email ?? null
                 : this.corporate?.rootUser?.email ?? null,
-        }
+        })
 
         if (
             !(
@@ -190,26 +189,27 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
     }
 
     phoneUpdate(number) {
-        this.$set(this.mobile, 'number', number.phoneNumber)
-        this.$set(this.mobile, 'countryCode', '+' + number.countryCallingCode)
+        this.mobile.countryCode = this.mobile.countryCode && `+${number.countryCallingCode}`
+        this.mobile.number = number.phoneNumber
+
         this.updateIdentityRootUser.mobile = { ...this.mobile }
         this.numberIsValid = number.isValid
     }
 
-    doUpdateIdentityRoot(e) {
-        e.preventDefault()
+    async doUpdateIdentityRoot() {
+        this.isLoading = true
 
         if (this.numberIsValid === null) {
             this.numberIsValid = false
         }
 
-        this.$v.$touch()
+        await this.validation.validate()
 
-        if (this.$v.$invalid) {
+        if (this.validation.isInvalid.value || !this.numberIsValid) {
+            this.isLoading = false
+
             return
         }
-
-        this.isLoading = true
 
         const xhr: Promise<any>[] = []
 
