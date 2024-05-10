@@ -11,11 +11,11 @@
                             <b-form novalidate @submit.prevent="submitForm">
                                 <h3 class="text-center font-weight-light mb-5">Register</h3>
                                 <b-form-group
-                                    label="First Name*"
-                                    :state="validation.getState('rootUser,name')"
                                     :invalid-feedback="
                                         validation.getInvalidFeedback('rootUser,name')
                                     "
+                                    :state="validation.getState('rootUser,name')"
+                                    label="First Name*"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.name"
@@ -23,11 +23,11 @@
                                     />
                                 </b-form-group>
                                 <b-form-group
-                                    label="Last Name*"
-                                    :state="validation.getState('rootUser,surname')"
                                     :invalid-feedback="
                                         validation.getInvalidFeedback('rootUser,surname')
                                     "
+                                    :state="validation.getState('rootUser,surname')"
+                                    label="Last Name*"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.surname"
@@ -35,8 +35,8 @@
                                     />
                                 </b-form-group>
                                 <b-form-group
-                                    label="Date of Birth*"
                                     :state="validation.getState('rootUser,dateOfBirth')"
+                                    label="Date of Birth*"
                                 >
                                     <dob-picker
                                         :placeholders="['Day', 'Month', 'Year']"
@@ -107,8 +107,8 @@
                                 </b-form-group>
                                 <b-form-group
                                     v-if="shouldShowOtherSourceOfFunds"
-                                    label="Other"
                                     :state="validation.getState('sourceOfFundsOther')"
+                                    label="Other"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.sourceOfFundsOther"
@@ -124,11 +124,11 @@
                                         <weavr-password-input
                                             ref="passwordField"
                                             :base-style="passwordBaseStyle"
-                                            :options="{ placeholder: '****' }"
                                             :class-name="[
                                                 'sign-in-password',
                                                 { 'is-invalid': !isPasswordValidAndDirty },
                                             ]"
+                                            :options="{ placeholder: '****' }"
                                             name="password"
                                             required="true"
                                             @onChange="passwordInteraction"
@@ -262,7 +262,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
     }
 
     get isPasswordValidAndDirty() {
-        return !this.validation.dirty ? true : this.isPasswordValid
+        return !this.validation.dirty.value ? true : this.isPasswordValid
     }
 
     get industryOccupationOptions() {

@@ -11,7 +11,7 @@
                     </h5>
                 </div>
                 <error-alert />
-                <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
+                <b-form id="contact-form" class="mt-5" novalidate @submit.prevent="resetPassword">
                     <b-form-group
                         id="ig-email"
                         :invalid-feedback="validation.getInvalidFeedback('email')"
@@ -103,7 +103,7 @@ export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin
     async resetPassword() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid) return
+        if (this.validation.isInvalid.value) return
 
         this.isLoading = true
         this.errorsStore.setError(null)

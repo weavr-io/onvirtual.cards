@@ -165,11 +165,9 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
         )
     }
 
-    async fetch() {
-        if (this.authStore.isConsumer && !this.consumersStore.consumerState.consumer) {
-            await this.consumersStore.get()
-            const _consumer: ConsumerModel = this.consumersStore.consumerState
-                .consumer as ConsumerModel
+    fetch() {
+        if (this.authStore.isConsumer) {
+            const _consumer = this.consumersStore.consumerState.consumer as unknown as ConsumerModel
             this.createManagedCardRequest.nameOnCard = `${_consumer.rootUser.name} ${_consumer.rootUser.surname}`
             this.createManagedCardRequest.cardholderMobileNumber =
                 _consumer.rootUser.mobile.countryCode + _consumer.rootUser.mobile.number

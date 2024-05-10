@@ -117,16 +117,20 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
         acceptedTerms?: boolean
     } = reactive({ ...INITIAL_LOGIN_WITH_PASSWORD_REQUEST() })
 
-    validation = useZodValidation(
-        LoginWithPasswordSchema.merge(CreateCorporateRequestSchema.pick({ acceptedTerms: true })),
-        this.form,
-    )
-
     passwordStrength = 0
     private $recaptcha: any
 
+    get validation() {
+        return useZodValidation(
+            LoginWithPasswordSchema.merge(
+                CreateCorporateRequestSchema.pick({ acceptedTerms: true }),
+            ),
+            this.form,
+        )
+    }
+
     get isPasswordValidAndDirty(): boolean {
-        return !this.validation.dirty ? true : this.isPasswordValid
+        return !this.validation.dirty.value ? true : this.isPasswordValid
     }
 
     get isPasswordValid(): boolean {

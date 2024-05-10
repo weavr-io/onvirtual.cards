@@ -33,26 +33,34 @@
                             type="text"
                         />
                     </b-form-group>
-                    <client-only placeholder="Loading...">
-                        <div :class="{ 'is-dirty': isDirty }" @click="isDirty = !isDirty">
-                            <label class="d-block">PASSWORD:</label>
+                    <b-form-group
+                        :state="validation.getState('newPassword,value')"
+                        label="Password"
+                        label-for="password"
+                    >
+                        <client-only placeholder="Loading...">
                             <weavr-password-input
                                 ref="passwordField"
                                 :base-style="passwordBaseStyle"
-                                :options="{
-                                    placeholder: '****',
-                                    classNames: { empty: 'is-invalid' },
-                                }"
-                                class-name="sign-in-password"
+                                :class-name="[
+                                    'sign-in-password form-control p-0',
+                                    { 'is-invalid': isPasswordInvalidAndDirty },
+                                ]"
+                                :options="{ placeholder: '****' }"
                                 name="password"
                                 required="true"
-                                @onKeyUp.prevent="checkOnKeyUp"
+                                @onChange="passwordInteraction"
+                                @onKeyUp="checkOnKeyUp"
+                                @onStrength="strengthCheck"
                             />
-                        </div>
-                        <small class="form-text text-muted"
-                            >Minimum 8, Maximum 50 characters.</small
-                        >
-                    </client-only>
+                            <small
+                                :class="isPasswordInvalidAndDirty ? 'text-danger' : 'text-muted'"
+                                class="form-text mb-3"
+                                >- min 8 characters <br />- uppercase letter <br />- digit and a
+                                special character</small
+                            >
+                        </client-only>
+                    </b-form-group>
                     <div class="text-center">
                         <LoaderButton :is-loading="isLoading" class="mt-5" text="Set password" />
                     </div>
@@ -64,7 +72,7 @@
 
 <script lang="ts">
 import { reactive } from 'vue'
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import {
     INITIAL_RESUME_LOST_PASSWORD_REQUEST,
@@ -95,6 +103,7 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
     isDirty = false
     isLoading = false
     form = reactive(INITIAL_RESUME_LOST_PASSWORD_REQUEST())
+    passwordStrength = 0
 
     get validation() {
         return useZodValidation(ResumeLostPasswordSchema, this.form)
@@ -122,6 +131,14 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
         }
     }
 
+    get isPasswordInvalidAndDirty(): boolean {
+        return !this.isPasswordValid && this.validation.dirty.value
+    }
+
+    get isPasswordValid(): boolean {
+        return this.passwordStrength >= 2
+    }
+
     fetch() {
         try {
             this.form.nonce = this.$route.params.nonce.toString()
@@ -132,11 +149,11 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
     }
 
     async setPassword() {
-        await this.validation.validate()
+        this.validation.touch() && (await this.validation.validate())
 
-        if (this.validation.isInvalid) return
+        if (this.validation.isInvalid.value) return
 
-        this.passwordField.createToken().then(
+        await this.passwordField.createToken().then(
             (tokens) => {
                 if (tokens.tokens.password !== '') {
                     this.validatePassword(tokens.tokens.password)
@@ -177,6 +194,15 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
             e.preventDefault()
             this.setPassword()
         }
+    }
+
+    passwordInteraction(val: { empty: boolean; valid: boolean }) {
+        !val.empty ? (this.form.newPassword.value = '******') : (this.form.newPassword.value = '')
+    }
+
+    @Emit()
+    strengthCheck(val) {
+        this.passwordStrength = val.id
     }
 }
 </script>
