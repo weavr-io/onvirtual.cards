@@ -9,7 +9,7 @@ const CreateManagedCardSchema = z.object({
     nameOnCard: preprocessEmptyAsUndefined(z.string().max(27)),
     cardholderMobileNumber: preprocessEmptyAsUndefined(z.string().optional()),
     billingAddress: preprocessEmptyAsUndefined(z.string().optional()),
-    mode: z.nativeEnum(ManagedCardModeEnum),
+    mode: preprocessEmptyAsUndefined(z.nativeEnum(ManagedCardModeEnum)),
     currency: preprocessEmptyAsUndefined(z.nativeEnum(CurrencyEnum)),
 })
 

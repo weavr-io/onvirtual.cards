@@ -6,17 +6,18 @@ import {
     INITIAL_CONSUMERS_ROOT_USER_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/ConsumersRootUserRequest'
 import { ConsumerSourceOfFundTypeEnumSchema } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const CreateConsumerRequestSchema = z.object({
     profileId: IDSchema,
-    tag: z.string().optional(),
+    tag: preprocessEmptyAsUndefined(z.string().optional()),
     rootUser: ConsumersRootUserRequestSchema,
-    ipAddress: z.string(),
-    acceptedTerms: z.literal<boolean>(true),
+    ipAddress: preprocessEmptyAsUndefined(z.string()),
+    acceptedTerms: preprocessEmptyAsUndefined(z.literal<boolean>(true)),
     baseCurrency: CurrencyEnumSchema,
-    feeGroup: z.string().optional(),
+    feeGroup: preprocessEmptyAsUndefined(z.string().optional()),
     sourceOfFunds: ConsumerSourceOfFundTypeEnumSchema,
-    sourceOfFundsOther: z.string().optional(),
+    sourceOfFundsOther: preprocessEmptyAsUndefined(z.string().optional()),
 })
 
 type CreateConsumerRequest = z.infer<typeof CreateConsumerRequestSchema>

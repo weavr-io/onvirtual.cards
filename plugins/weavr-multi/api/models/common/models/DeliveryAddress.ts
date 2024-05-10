@@ -1,15 +1,16 @@
 import { z } from 'zod'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const DeliveryAddressSchema = z.object({
-    name: z.string(),
-    surname: z.string(),
-    addressLine1: z.string(),
-    addressLine2: z.string().optional(),
-    city: z.string(),
-    postCode: z.string(),
-    state: z.string().optional(),
-    country: z.string(),
-    contactNumber: z.string().optional(),
+    name: preprocessEmptyAsUndefined(z.string()),
+    surname: preprocessEmptyAsUndefined(z.string()),
+    addressLine1: preprocessEmptyAsUndefined(z.string()),
+    addressLine2: preprocessEmptyAsUndefined(z.string().optional()),
+    city: preprocessEmptyAsUndefined(z.string()),
+    postCode: preprocessEmptyAsUndefined(z.string()),
+    state: preprocessEmptyAsUndefined(z.string().optional()),
+    country: preprocessEmptyAsUndefined(z.string()),
+    contactNumber: preprocessEmptyAsUndefined(z.string().optional()),
 })
 
 type DeliveryAddress = z.infer<typeof DeliveryAddressSchema>

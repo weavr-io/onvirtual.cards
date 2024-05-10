@@ -5,20 +5,21 @@ import { MobileSchema } from '~/plugins/weavr-multi/api/models/common/models/Mob
 import { OccupationTypeEnumSchema } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/OccupationTypeEnum'
 import { DateSchema } from '~/plugins/weavr-multi/api/models/common/models/DateModel'
 import { CurrencyEnumSchema } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const UpdateConsumerRequestSchema = z.object({
-    tag: z.string().optional(),
-    name: z.string().optional(),
-    surname: z.string().optional(),
-    email: z.string().email().nullable().optional(),
+    tag: preprocessEmptyAsUndefined(z.string().optional()),
+    name: preprocessEmptyAsUndefined(z.string().optional()),
+    surname: preprocessEmptyAsUndefined(z.string().optional()),
+    email: preprocessEmptyAsUndefined(z.string().email().nullable().optional()),
     mobile: MobileSchema.optional(),
     dateOfBirth: DateSchema.optional(),
     address: AddressSchema.optional(),
-    feeGroup: z.string().optional(),
+    feeGroup: preprocessEmptyAsUndefined(z.string().optional()),
     baseCurrency: CurrencyEnumSchema.optional(),
     occupation: OccupationTypeEnumSchema.optional(),
     sourceOfFunds: CorporateSourceOfFundTypeEnumSchema.optional(),
-    sourceOfFundsOther: z.string().optional(),
+    sourceOfFundsOther: preprocessEmptyAsUndefined(z.string().optional()),
 })
 
 type UpdateConsumerRequest = z.infer<typeof UpdateConsumerRequestSchema>

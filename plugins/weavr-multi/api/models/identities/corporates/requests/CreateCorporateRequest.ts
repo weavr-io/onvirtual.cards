@@ -11,19 +11,20 @@ import {
     CompanyRequestSchema,
     INITIAL_COMPANY_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CompanyRequest'
+import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const CreateCorporateRequestSchema = z.object({
     profileId: IDSchema,
-    tag: z.string().optional(),
+    tag: preprocessEmptyAsUndefined(z.string().optional()),
     rootUser: CorporatesRootUserRequestSchema,
     company: CompanyRequestSchema,
     industry: IndustryTypeEnumSchema,
     sourceOfFunds: CorporateSourceOfFundTypeEnumSchema,
-    sourceOfFundsOther: z.string().optional(),
-    acceptedTerms: z.literal<boolean>(true),
-    ipAddress: z.string(),
+    sourceOfFundsOther: preprocessEmptyAsUndefined(z.string().optional()),
+    acceptedTerms: preprocessEmptyAsUndefined(z.literal<boolean>(true)),
+    ipAddress: preprocessEmptyAsUndefined(z.string()),
     baseCurrency: CurrencyEnumSchema,
-    feeGroup: z.string().optional(),
+    feeGroup: preprocessEmptyAsUndefined(z.string().optional()),
 })
 
 type CreateCorporateRequest = z.infer<typeof CreateCorporateRequestSchema>

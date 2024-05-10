@@ -3,10 +3,9 @@ import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const AddressSchema = z.object({
     addressLine1: preprocessEmptyAsUndefined(z.string()),
-    addressLine2: z.string().optional(),
     city: preprocessEmptyAsUndefined(z.string()),
     postCode: preprocessEmptyAsUndefined(z.string()),
-    state: z.string().optional(),
+    state: preprocessEmptyAsUndefined(z.string().optional()),
     country: preprocessEmptyAsUndefined(z.string().max(2)),
 })
 
