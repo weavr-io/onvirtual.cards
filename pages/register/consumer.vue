@@ -36,7 +36,11 @@
                                 </b-form-group>
                                 <b-form-group
                                     :invalid-feedback="dobInvalidFeedback"
-                                    :state="!dobInvalidFeedback"
+                                    :state="
+                                        dobInvalidFeedback === undefined
+                                            ? null
+                                            : !!dobInvalidFeedback
+                                    "
                                     label="Date of Birth*"
                                 >
                                     <dob-picker
