@@ -24,27 +24,6 @@ export default defineComponent({
     },
     layout: 'auth',
     middleware: 'authFactors',
-    setup() {
-        // const router = useRouter()
-        // const { auth, identity } = initialiseStores(['auth', 'identity'])
-        // const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
-        //     (factor) => factor.channel === SCAOtpChannelEnum.SMS,
-        // )
-        // useAsync(() => {
-        //     if (
-        //         auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT &&
-        //         !identity?.identityState.emailVerified
-        //     ) {
-        //         return router.push('/login/verify')
-        //     } else if (
-        //         !smsAuthFactors ||
-        //         smsAuthFactors[0].status === SCAFactorStatusEnum.PENDING_VERIFICATION
-        //     ) {
-        //         return router.push('/profile/mobile/add')
-        //     } else if (localStorage.getItem('stepUp') === 'TRUE') {
-        //         return router.push('/')
-        //     }
-        // })
-    },
+    setup() {},
 })
 </script>
