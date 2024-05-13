@@ -90,12 +90,6 @@
                             </b-col>
                         </b-row>
                     </b-form>
-                    <pre>
-                        {{ updateIdentityRootUser }}
-                    </pre>
-                    <pre>
-                        {{ validation }}
-                    </pre>
                 </b-col>
             </b-row>
         </b-container>

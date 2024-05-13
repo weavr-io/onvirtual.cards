@@ -1,19 +1,13 @@
 import { z } from 'zod'
-import { CorporateSourceOfFundTypeEnumSchema } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
-import {
-    AddressSchema,
-    INITIAL_ADDRESS,
-} from '~/plugins/weavr-multi/api/models/common/models/Address'
+import { CurrencyEnumSchema } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { AddressSchema } from '~/plugins/weavr-multi/api/models/common/models/Address'
+import { DateSchema } from '~/plugins/weavr-multi/api/models/common/models/DateModel'
 import {
     INITIAL_MOBILE_REQUEST,
     MobileSchema,
 } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 import { OccupationTypeEnumSchema } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/OccupationTypeEnum'
-import {
-    DateSchema,
-    INITIAL_DATE_REQUEST,
-} from '~/plugins/weavr-multi/api/models/common/models/DateModel'
-import { CurrencyEnumSchema } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { CorporateSourceOfFundTypeEnumSchema } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 const UpdateConsumerRequestSchema = z
@@ -42,12 +36,8 @@ const INITIAL_UPDATE_CONSUMER_REQUEST = () => {
         surname: undefined,
         email: undefined,
         mobile: { ...INITIAL_MOBILE_REQUEST() },
-        dateOfBirth: {
-            ...INITIAL_DATE_REQUEST(),
-        },
-        address: {
-            ...INITIAL_ADDRESS(),
-        },
+        dateOfBirth: undefined,
+        address: undefined,
         feeGroup: undefined,
         baseCurrency: undefined,
         occupation: undefined,
@@ -56,4 +46,4 @@ const INITIAL_UPDATE_CONSUMER_REQUEST = () => {
     } as unknown as UpdateConsumerRequest
 }
 
-export { UpdateConsumerRequestSchema, UpdateConsumerRequest, INITIAL_UPDATE_CONSUMER_REQUEST }
+export { INITIAL_UPDATE_CONSUMER_REQUEST, UpdateConsumerRequest, UpdateConsumerRequestSchema }
