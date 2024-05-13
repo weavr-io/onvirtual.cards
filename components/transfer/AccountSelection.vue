@@ -103,7 +103,7 @@ export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMi
     async submitForm() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid) {
+        if (this.validation.isInvalid.value) {
             this.showErrorToast('Please select an account to top up from.')
             return null
         }

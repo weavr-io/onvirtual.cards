@@ -167,7 +167,7 @@ export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
         this.errorsStore.resetState()
         try {
             this.validation.touch() && (await this.validation.validate())
-            if (this.validation.isInvalid || !this.isPasswordValid) {
+            if (this.validation.isInvalid.value || !this.isPasswordValid) {
                 return
             }
 

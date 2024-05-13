@@ -215,7 +215,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
 
         await this.validation.validate()
 
-        if (!this.validation.isInvalid || !this.numberIsValid) {
+        if (this.validation.isInvalid.value || !this.numberIsValid) {
             return null
         }
 

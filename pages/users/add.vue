@@ -88,7 +88,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
     async doAdd() {
         await this.validation.validate()
 
-        if (this.validation.isInvalid) {
+        if (this.validation.isInvalid.value) {
             return null
         }
 

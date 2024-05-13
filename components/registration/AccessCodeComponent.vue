@@ -62,13 +62,15 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
         showMsg: false,
     }
 
-    validation = useZodValidation(AccessCodeSchema, this.form)
+    get validation() {
+        return useZodValidation(AccessCodeSchema, this.form)
+    }
 
     async tryToSubmitAccessCode() {
         this.isLoading = true
         await this.validation.validate()
 
-        if (this.validation.isInvalid) {
+        if (this.validation.isInvalid.value) {
             this.isLoading = false
             return
         }

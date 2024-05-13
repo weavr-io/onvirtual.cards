@@ -378,7 +378,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin, Validati
                 this.numberIsValid = false
             }
 
-            if (!this.validation.isInvalid || !this.numberIsValid) {
+            if (this.validation.isInvalid.value || !this.numberIsValid) {
                 return
             }
 

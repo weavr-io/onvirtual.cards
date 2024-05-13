@@ -201,7 +201,6 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
 
         if (this.validation.isInvalid.value || !this.numberIsValid) {
             this.isLoading = false
-
             return
         }
 
