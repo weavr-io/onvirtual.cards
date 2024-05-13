@@ -18,9 +18,11 @@
                                     <b-col>
                                         <b-form-group
                                             :invalid-feedback="
-                                                validation.getInvalidFeedback('friendlyName')
+                                                validation.getInvalidFeedback(
+                                                    'cardholderMobileNumber',
+                                                )
                                             "
-                                            :state="validation.getState('friendlyName')"
+                                            :state="validation.getState('cardholderMobileNumber')"
                                             label="CARDHOLDER MOBILE NUMBER"
                                         >
                                             <vue-phone-number-input
@@ -33,12 +35,6 @@
                                                 valid-color="#6D7490"
                                                 @update="phoneUpdate"
                                             />
-                                            <b-form-invalid-feedback
-                                                v-if="numberIsValid === false"
-                                                force-show
-                                            >
-                                                This field must be a valid mobile number.
-                                            </b-form-invalid-feedback>
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
@@ -101,7 +97,10 @@ export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     isUpdating = false
-    updateManagedCardRequest: UpdateManagedCard = reactive(INITIAL_MC_UPDATE_REQUEST())
+    updateManagedCardRequest: UpdateManagedCard = reactive({
+        ...INITIAL_MC_UPDATE_REQUEST(),
+        cardholderMobileNumber: this.mobile,
+    })
 
     get validation() {
         return useZodValidation(

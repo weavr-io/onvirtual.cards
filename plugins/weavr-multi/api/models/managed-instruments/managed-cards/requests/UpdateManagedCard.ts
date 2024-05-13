@@ -20,6 +20,13 @@ type UpdateManagedCard = z.infer<typeof ManagedCardUpdateSchema>
 const INITIAL_MC_UPDATE_REQUEST = () => {
     return {
         friendlyName: undefined,
+        tag: undefined,
+        nameOnCard: undefined,
+        nameOnCardLine2: undefined,
+        cardholderMobileNumber: undefined,
+        billingAddress: undefined,
+        deliveryAddress: undefined,
+        deliveryMethod: undefined,
     } as unknown as UpdateManagedCard
 }
 

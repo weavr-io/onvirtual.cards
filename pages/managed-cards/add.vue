@@ -146,6 +146,7 @@ export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
             CreateManagedCardSchema.pick({
                 friendlyName: true,
                 currency: true,
+                nameOnCard: true,
             }),
             this.createManagedCardRequest,
         )
