@@ -19,6 +19,15 @@ export enum ConsumerSourceOfFundTypeEnum {
 }
 
 const ConsumerSourceOfFundTypeEnumSchema = z.nativeEnum(ConsumerSourceOfFundTypeEnum)
+
+const PREDEFINED_CONSUMER_SOURCE_OF_FUND = Object.values(ConsumerSourceOfFundTypeEnum).filter(
+    (value) => value !== ConsumerSourceOfFundTypeEnum.OTHER,
+)
+
 type ConsumerSourceOfFundTypeEnumType = z.infer<typeof ConsumerSourceOfFundTypeEnumSchema>
 
-export { ConsumerSourceOfFundTypeEnumSchema, ConsumerSourceOfFundTypeEnumType }
+export {
+    ConsumerSourceOfFundTypeEnumSchema,
+    ConsumerSourceOfFundTypeEnumType,
+    PREDEFINED_CONSUMER_SOURCE_OF_FUND,
+}

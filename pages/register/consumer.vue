@@ -219,13 +219,19 @@
     </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { AxiosResponse } from 'axios'
-import { reactive } from 'vue'
 import { ComputedRef } from '@nuxtjs/composition-api'
+import { AxiosResponse } from 'axios'
+import { Component, mixins, Ref } from 'nuxt-property-decorator'
+import { reactive } from 'vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import BaseMixin from '~/mixins/BaseMixin'
 
+import ComingSoonCurrencies from '~/components/atoms/ComingSoonCurrencies.vue'
+import useZodValidation from '~/composables/useZodValidation'
+import {
+    INITIAL_SENSITIVE_PASSWORD_REQUEST,
+    SensitivePassword,
+} from '~/plugins/weavr-multi/api/models/authentication'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
@@ -234,19 +240,12 @@ import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import {
+    CreateConsumerFormSchema,
     CreateConsumerRequest,
-    CreateConsumerRequestSchema,
     INITIAL_CREATE_CONSUMER_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import ComingSoonCurrencies from '~/components/atoms/ComingSoonCurrencies.vue'
-import useZodValidation from '~/composables/useZodValidation'
-import {
-    INITIAL_SENSITIVE_PASSWORD_REQUEST,
-    LoginWithPasswordSchema,
-    SensitivePassword,
-} from '~/plugins/weavr-multi/api/models/authentication'
 
 @Component({
     layout: 'auth',
@@ -280,10 +279,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     private $recaptcha: any
 
     get validation() {
-        return useZodValidation(
-            CreateConsumerRequestSchema.merge(LoginWithPasswordSchema.pick({ password: true })),
-            this.registrationRequest,
-        )
+        return useZodValidation(CreateConsumerFormSchema, this.registrationRequest)
     }
 
     get isPasswordInvalidAndDirty(): boolean {
