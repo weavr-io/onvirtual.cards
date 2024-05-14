@@ -112,7 +112,7 @@ import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consu
 import { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
 import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import useZodValidation from '~/composables/useZodValidation'
 
@@ -124,7 +124,7 @@ import useZodValidation from '~/composables/useZodValidation'
     },
     middleware: ['kyVerified'],
 })
-export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
+export default class AddCardPage extends mixins(BaseMixin) {
     showError = false
 
     localIsBusy = false

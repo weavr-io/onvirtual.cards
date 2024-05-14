@@ -41,7 +41,7 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { reactive } from 'vue'
 import { AxiosError } from 'axios'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import {
     AccessCode,
@@ -53,7 +53,7 @@ import useZodValidation from '~/composables/useZodValidation'
 @Component({
     components: { LoaderButton },
 })
-export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMixin) {
+export default class AccessCodeComponent extends mixins(BaseMixin) {
     form: AccessCode = reactive(INITIAL_ACCESS_CODE_REQUEST())
 
     isLoading = false

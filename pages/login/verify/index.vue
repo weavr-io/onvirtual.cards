@@ -58,7 +58,7 @@ import {
     VerifyEmail,
     VerifyEmailSchema,
 } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmail'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/CredentialTypeEnum'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
@@ -73,7 +73,7 @@ import useZodValidation from '~/composables/useZodValidation'
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     },
 })
-export default class EmailVerificationPage extends mixins(BaseMixin, ValidationMixin) {
+export default class EmailVerificationPage extends mixins(BaseMixin) {
     showEmailResentSuccess = false
     isLoading = false
 

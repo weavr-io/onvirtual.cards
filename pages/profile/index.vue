@@ -100,7 +100,7 @@ import { Component, mixins } from 'nuxt-property-decorator'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { reactive } from 'vue'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import {
     INITIAL_UPDATE_CONSUMER_REQUEST,
     UpdateConsumerRequest,
@@ -117,7 +117,7 @@ import useZodValidation from '~/composables/useZodValidation'
     },
     middleware: ['kyVerified'],
 })
-export default class Profile extends mixins(BaseMixin, ValidationMixin) {
+export default class Profile extends mixins(BaseMixin) {
     numberIsValid: boolean | null = null
 
     updateIdentityRootUser = reactive(INITIAL_UPDATE_CONSUMER_REQUEST())

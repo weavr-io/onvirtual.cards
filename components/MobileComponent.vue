@@ -81,7 +81,6 @@ import { reactive } from 'vue'
 import BaseMixin from '~/mixins/BaseMixin'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 
-import ValidationMixin from '~/mixins/ValidationMixin'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import {
@@ -98,7 +97,7 @@ import useZodValidation from '~/composables/useZodValidation'
         LoaderButton,
     },
 })
-export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) {
+export default class MobileComponent extends mixins(BaseMixin) {
     @Prop() readonly verifyPhone!: boolean
 
     isLoading = false

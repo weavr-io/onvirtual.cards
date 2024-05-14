@@ -37,10 +37,10 @@ import {
     InstrumentIDSchema,
 } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import useZodValidation from '~/composables/useZodValidation'
 
-export default class AccountSelectionForm extends mixins(BaseMixin, ValidationMixin) {
+export default class AccountSelectionForm extends mixins(BaseMixin) {
     source: InstrumentID = reactive(INITIAL_INSTRUMENT_ID())
 
     get validation() {

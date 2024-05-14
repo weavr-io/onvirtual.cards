@@ -32,8 +32,7 @@
         "vue-flatpickr-component": "^8.1.8",
         "vue-infinite-loading": "^2.4.5",
         "vue-phone-number-input": "^1.12.13",
-        "vuelidate": "^0.7.7",
-        "zod": "^3.23.4"
+        "zod": "^3.23.8"
     },
     "devDependencies": {
         "@types/luxon": "^3.4.2",
@@ -44,7 +43,6 @@
         "@nuxtjs/eslint-module": "^3.1.0",
         "@nuxtjs/recaptcha": "^1.1.2",
         "@nuxtjs/svg": "^0.4.0",
-        "@types/vuelidate": "^0.7.18",
         "@typescript-eslint/eslint-plugin": "^6.13.2",
         "@typescript-eslint/parser": "^6.13.2",
         "eslint": "^8.47.0",

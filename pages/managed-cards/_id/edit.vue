@@ -77,7 +77,7 @@ import {
     type UpdateManagedCard,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import useZodValidation from '~/composables/useZodValidation'
@@ -89,7 +89,7 @@ import useZodValidation from '~/composables/useZodValidation'
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     },
 })
-export default class EditCardPage extends mixins(BaseMixin, ValidationMixin) {
+export default class EditCardPage extends mixins(BaseMixin) {
     numberIsValid: boolean | null = null
     mobile = {
         countryCode: 'GB',

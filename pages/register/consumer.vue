@@ -225,7 +225,7 @@ import { reactive } from 'vue'
 import { ComputedRef } from '@nuxtjs/composition-api'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
@@ -261,7 +261,7 @@ import {
     },
     middleware: 'accessCodeVerified',
 })
-export default class ConsumerRegistrationPage extends mixins(BaseMixin, ValidationMixin) {
+export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 

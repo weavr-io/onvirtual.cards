@@ -65,7 +65,7 @@ import {
 } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import useZodValidation from '~/composables/useZodValidation'
 
@@ -76,7 +76,7 @@ import useZodValidation from '~/composables/useZodValidation'
     },
     middleware: ['kyVerified'],
 })
-export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
+export default class AddCardPage extends mixins(BaseMixin) {
     isLoading = false
 
     request: UserRequest = reactive(INITIAL_USER_REQUEST())

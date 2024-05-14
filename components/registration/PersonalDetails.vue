@@ -149,7 +149,7 @@ import {
     INITIAL_CREATE_CORPORATE_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import Countries from '~/static/json/countries.json'
 import useZodValidation from '~/composables/useZodValidation'
 
@@ -159,7 +159,7 @@ import useZodValidation from '~/composables/useZodValidation'
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
 })
-export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {
+export default class PersonalDetailsForm extends mixins(BaseMixin) {
     companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
     numberIsValid: boolean | null = null
 

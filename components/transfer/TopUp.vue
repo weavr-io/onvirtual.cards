@@ -86,10 +86,10 @@ import { reactive } from 'vue'
 import { Emit, mixins, Prop } from 'nuxt-property-decorator'
 import useZodValidation from '~/composables/useZodValidation'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import { AmountSchema } from '~/plugins/weavr-multi/api/models/common'
 
-export default class TopUpForm extends mixins(BaseMixin, ValidationMixin) {
+export default class TopUpForm extends mixins(BaseMixin) {
     @Prop({ default: '' }) readonly selectedAccount
 
     request = reactive({

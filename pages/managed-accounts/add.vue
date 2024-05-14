@@ -46,7 +46,7 @@ import {
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
 import BaseMixin from '~/mixins/BaseMixin'
 import AccountsMixin from '~/mixins/AccountsMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
@@ -56,7 +56,7 @@ import useZodValidation from '~/composables/useZodValidation'
     },
     middleware: ['kyVerified'],
 })
-export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin, ValidationMixin) {
+export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin) {
     localIsBusy = false
     createManagedAccountRequest: ManagedAccount = reactive(INITIAL_MA_REQUEST())
 

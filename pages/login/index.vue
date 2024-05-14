@@ -80,7 +80,7 @@
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
 import { reactive } from 'vue'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
@@ -102,7 +102,7 @@ import useZodValidation from '~/composables/useZodValidation'
         WeavrPasswordInput,
     },
 })
-export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
+export default class LoginPage extends mixins(BaseMixin) {
     isLoading = false
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput

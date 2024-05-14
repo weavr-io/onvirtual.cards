@@ -80,7 +80,6 @@ import {
 } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
@@ -96,7 +95,7 @@ import useZodValidation from '~/composables/useZodValidation'
         WeavrPasswordInput,
     },
 })
-export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin) {
+export default class PasswordSentPage extends mixins(BaseMixin) {
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 

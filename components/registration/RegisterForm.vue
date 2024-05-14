@@ -92,7 +92,7 @@ import { reactive } from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import {
     INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
@@ -109,7 +109,7 @@ import { CreateCorporateRequestSchema } from '~/plugins/weavr-multi/api/models/i
         LoaderButton,
     },
 })
-export default class RegisterForm extends mixins(BaseMixin, ValidationMixin) {
+export default class RegisterForm extends mixins(BaseMixin) {
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 

@@ -76,7 +76,7 @@ import {
     ResetSchema,
 } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import useZodValidation from '~/composables/useZodValidation'
@@ -89,7 +89,7 @@ import useZodValidation from '~/composables/useZodValidation'
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     },
 })
-export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin) {
+export default class ResetPasswordPage extends mixins(BaseMixin) {
     isLoading = false
 
     passwordSent = false
