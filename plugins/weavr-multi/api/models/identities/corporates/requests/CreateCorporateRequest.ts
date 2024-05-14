@@ -32,12 +32,14 @@ const CreateCorporateRequestSchema = z.object({
 
 const CreateCorporateFormSchema = z.intersection(
     z.discriminatedUnion('sourceOfFunds', [
-        CreateCorporateRequestSchema.extend({
-            sourceOfFunds: z.nativeEnum(PREDEFINED_CORPORATE_SOURCE_OF_FUND),
+        z.object({
+            // Ignoring for the time being because z.enum is giving type error when used with referenced object.
+            // @ts-ignore
+            sourceOfFunds: z.enum(PREDEFINED_CORPORATE_SOURCE_OF_FUND),
             sourceOfFundsOther: preprocessEmptyAsUndefined(z.string().optional()),
         }),
 
-        CreateCorporateRequestSchema.extend({
+        z.object({
             sourceOfFunds: z.literal('OTHER'),
             sourceOfFundsOther: preprocessEmptyAsUndefined(z.string()),
         }),

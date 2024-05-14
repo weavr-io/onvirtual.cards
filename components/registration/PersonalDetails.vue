@@ -120,6 +120,9 @@
             our customer due diligence process, we will later ask you to upload the relevant ID and
             power of attorney documents.
         </p>
+        <pre>
+            {{ test }}
+        </pre>
         <b-form-row class="mt-5">
             <b-col class="text-center">
                 <LoaderButton
@@ -136,7 +139,10 @@ import { reactive } from 'vue'
 import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
-import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import {
+    CorporateSourceOfFundTypeEnum,
+    PREDEFINED_CORPORATE_SOURCE_OF_FUND,
+} from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
 import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
@@ -207,6 +213,10 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
 
     get shouldShowOtherSourceOfFunds(): boolean {
         return this.form.sourceOfFunds === CorporateSourceOfFundTypeEnum.OTHER
+    }
+
+    get test() {
+        return PREDEFINED_CORPORATE_SOURCE_OF_FUND
     }
 
     phoneUpdate(number) {
