@@ -120,9 +120,6 @@
             our customer due diligence process, we will later ask you to upload the relevant ID and
             power of attorney documents.
         </p>
-        <pre>
-            {{ test }}
-        </pre>
         <b-form-row class="mt-5">
             <b-col class="text-center">
                 <LoaderButton
