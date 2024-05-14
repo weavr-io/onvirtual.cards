@@ -238,7 +238,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
             return null
         }
 
-        // this.submit()
+        this.submit()
     }
 
     @Emit()
