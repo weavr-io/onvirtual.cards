@@ -85,6 +85,7 @@
         </b-form-group>
         <b-form-group
             v-if="shouldShowOtherSourceOfFunds"
+            :invalid-feedback="validation.getInvalidFeedback('sourceOfFundsOther')"
             :state="validation.getState('sourceOfFundsOther')"
             label="Other"
         >
@@ -98,10 +99,18 @@
             :state="validation.getState('rootUser,companyPosition')"
             label="My position within the company is*"
         >
-            <b-form-radio v-model="firstCompanyPosition" name="company-position">
+            <b-form-radio
+                v-model="firstCompanyPosition"
+                :state="validation.getState('rootUser,companyPosition')"
+                name="company-position"
+            >
                 I am a representative (with the relevant power of attorney)
             </b-form-radio>
-            <b-form-radio v-model="lastCompanyPosition" name="company-position">
+            <b-form-radio
+                v-model="lastCompanyPosition"
+                :state="validation.getState('rootUser,companyPosition')"
+                name="company-position"
+            >
                 I am a director
             </b-form-radio>
         </b-form-group>
@@ -132,8 +141,8 @@ import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identit
 import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 import {
+    CreateCorporateFormSchema,
     type CreateCorporateRequest,
-    CreateCorporateRequestSchema,
     INITIAL_CREATE_CORPORATE_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import BaseMixin from '~/mixins/BaseMixin'
@@ -159,7 +168,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     })
 
     get validation() {
-        return useZodValidation(CreateCorporateRequestSchema, this.form)
+        return useZodValidation(CreateCorporateFormSchema, this.form)
     }
 
     public get firstCompanyPosition() {
@@ -219,7 +228,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
             return null
         }
 
-        this.submit()
+        // this.submit()
     }
 
     @Emit()

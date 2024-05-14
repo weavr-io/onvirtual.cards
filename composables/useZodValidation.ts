@@ -56,6 +56,9 @@ export default function <T extends ZodTypeAny>(
     const customErroMap: z.ZodErrorMap = (error, ctx) => {
         console.log(error)
         switch (error.code) {
+            case z.ZodIssueCode.invalid_union_discriminator:
+                return { message: INVALID_FEEDBACK_CONST.required }
+
             case z.ZodIssueCode.invalid_literal:
                 if (error.received === undefined || error.received === false) {
                     return { message: INVALID_FEEDBACK_CONST.required }

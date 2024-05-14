@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { IDSchema } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import { IndustryTypeEnumSchema } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
-import { CorporateSourceOfFundTypeEnumSchema } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import {
     CorporatesRootUserRequestSchema,
     INITIAL_CORPORATES_ROOT_USER_REQUEST,
@@ -12,6 +11,10 @@ import {
     INITIAL_COMPANY_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CompanyRequest'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
+import {
+    CorporateSourceOfFundTypeEnumSchema,
+    PREDEFINED_CORPORATE_SOURCE_OF_FUND,
+} from '~/plugins/weavr-multi/api/models/identities/corporates'
 
 const CreateCorporateRequestSchema = z.object({
     profileId: IDSchema,
@@ -26,6 +29,24 @@ const CreateCorporateRequestSchema = z.object({
     baseCurrency: CurrencyEnumSchema,
     feeGroup: preprocessEmptyAsUndefined(z.string().optional()),
 })
+
+const CreateCorporateFormSchema = z.intersection(
+    z.discriminatedUnion('sourceOfFunds', [
+        CreateCorporateRequestSchema.extend({
+            sourceOfFunds: z.nativeEnum(PREDEFINED_CORPORATE_SOURCE_OF_FUND),
+            sourceOfFundsOther: preprocessEmptyAsUndefined(z.string().optional()),
+        }),
+
+        CreateCorporateRequestSchema.extend({
+            sourceOfFunds: z.literal('OTHER'),
+            sourceOfFundsOther: preprocessEmptyAsUndefined(z.string()),
+        }),
+    ]),
+    CreateCorporateRequestSchema.omit({
+        sourceOfFunds: true,
+        sourceOfFundsOther: true,
+    }),
+)
 
 type CreateCorporateRequest = z.infer<typeof CreateCorporateRequestSchema>
 
@@ -45,4 +66,9 @@ const INITIAL_CREATE_CORPORATE_REQUEST = () => {
     } as unknown as CreateCorporateRequest
 }
 
-export { CreateCorporateRequestSchema, CreateCorporateRequest, INITIAL_CREATE_CORPORATE_REQUEST }
+export {
+    CreateCorporateFormSchema,
+    CreateCorporateRequestSchema,
+    CreateCorporateRequest,
+    INITIAL_CREATE_CORPORATE_REQUEST,
+}
