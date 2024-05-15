@@ -27,6 +27,7 @@ export default defineComponent({
         LogoOvc,
     },
     layout: 'auth',
+    middleware: 'kyVerified',
     setup() {
         const router = useRouter()
 

@@ -7,6 +7,7 @@ import { defineComponent, useRouter } from '@nuxtjs/composition-api'
 import { initialiseStores } from '@/utils/pinia-store-accessor'
 
 export default defineComponent({
+    middleware: 'kyVerified',
     setup() {
         const router = useRouter()
 

@@ -1,6 +1,6 @@
 import { Component, mixins } from '~/node_modules/nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import CsvMixin from '~/mixins/CsvMixin'
 
@@ -35,7 +35,9 @@ export default class AccountsMixin extends mixins(BaseMixin, CsvMixin) {
     get accountId(): IDModel | undefined {
         if (this.hasAccount) {
             return this.account?.id
-        } else return undefined
+        } else {
+            return undefined
+        }
     }
 
     goToManagedAccountIndex() {

@@ -9,9 +9,9 @@ import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import { CreateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCardRequest'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { UpdateManagedCardRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCardRequest'
+import { CreateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCard'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import { UpdateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import { useAuthStore } from '~/store/auth'
 
@@ -150,7 +150,7 @@ export const useCardsStore = defineStore('cards', () => {
             })
     }
 
-    const addCard = (request: CreateManagedCardRequest) => {
+    const addCard = (request: CreateManagedCard) => {
         const req = store.$nuxt.$apiMulti.managedCards.store(request)
 
         req.finally(() => {
@@ -160,7 +160,7 @@ export const useCardsStore = defineStore('cards', () => {
         return req
     }
 
-    const update = (params: { id: IDModel; request: UpdateManagedCardRequest }) => {
+    const update = (params: { id: IDModel; request: UpdateManagedCard }) => {
         const req = store.$nuxt.$apiMulti.managedCards.update(params)
 
         req.finally(() => {

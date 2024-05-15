@@ -8,6 +8,7 @@ export default defineNuxtMiddleware(({ route, redirect }) => {
 
     if (!authCookie) {
         const queryParam = route.query
+
         if (queryParam.cons && queryParam.email) {
             return redirect(`/login/verify?email=${queryParam.email}&cons=${queryParam.cons}`)
         }

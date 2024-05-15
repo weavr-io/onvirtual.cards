@@ -32,20 +32,12 @@
                         <b-form-row>
                             <b-col>
                                 <b-form-group
-                                    :invalid-feedback="
-                                        invalidFeedback(
-                                            $v.updateIdentityRootUser.email,
-                                            validateVParams(
-                                                $v.updateIdentityRootUser.email.$params,
-                                                $v.updateIdentityRootUser.email,
-                                            ),
-                                        )
-                                    "
-                                    :state="isInvalid($v.updateIdentityRootUser.email)"
+                                    :invalid-feedback="validation.getInvalidFeedback('email')"
+                                    :state="validation.getState('email')"
                                     label="E-Mail"
                                 >
                                     <b-form-input
-                                        v-model="$v.updateIdentityRootUser.email.$model"
+                                        v-model="updateIdentityRootUser.email"
                                         :disabled="isEmailVerified"
                                         class="form-control"
                                         placeholder="example@email.com"
@@ -105,56 +97,42 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { email, required } from 'vuelidate/lib/validators'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { reactive } from 'vue'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { DeepNullable } from '~/global'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
+
+import {
+    INITIAL_UPDATE_CONSUMER_REQUEST,
+    UpdateConsumerRequest,
+    UpdateConsumerRequestSchema,
+} from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     components: {
         LoaderButton,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     },
-    validations: {
-        updateIdentityRootUser: {
-            mobile: {
-                number: {
-                    required,
-                },
-                countryCode: { required },
-            },
-            email: {
-                required,
-                email,
-            },
-        },
-    },
     middleware: ['kyVerified'],
 })
-export default class Profile extends mixins(BaseMixin, ValidationMixin) {
+export default class Profile extends mixins(BaseMixin) {
     numberIsValid: boolean | null = null
 
-    updateIdentityRootUser: DeepNullable<{ mobile: MobileModel; email: string }> = {
-        mobile: {
-            number: null,
-            countryCode: null,
-        },
-        email: null,
-    }
+    updateIdentityRootUser = reactive(INITIAL_UPDATE_CONSUMER_REQUEST())
 
     isLoading = false
-
     mobile: {
         countryCode: string
         number: string
     } = {
         countryCode: '',
         number: '',
+    }
+
+    get validation() {
+        return useZodValidation(UpdateConsumerRequestSchema, this.updateIdentityRootUser)
     }
 
     get isMobileVerified() {
@@ -170,7 +148,7 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
     }
 
     fetch() {
-        this.updateIdentityRootUser = {
+        Object.assign(this.updateIdentityRootUser, {
             mobile: {
                 countryCode: this.isConsumer
                     ? this.consumer?.rootUser?.mobile.countryCode ?? null
@@ -182,7 +160,7 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
             email: this.isConsumer
                 ? this.consumer?.rootUser?.email ?? null
                 : this.corporate?.rootUser?.email ?? null,
-        }
+        })
 
         if (
             !(
@@ -205,26 +183,26 @@ export default class Profile extends mixins(BaseMixin, ValidationMixin) {
     }
 
     phoneUpdate(number) {
-        this.$set(this.mobile, 'number', number.phoneNumber)
-        this.$set(this.mobile, 'countryCode', '+' + number.countryCallingCode)
+        this.mobile.countryCode = this.mobile.countryCode && `+${number.countryCallingCode}`
+        this.mobile.number = number.phoneNumber
+
         this.updateIdentityRootUser.mobile = { ...this.mobile }
         this.numberIsValid = number.isValid
     }
 
-    doUpdateIdentityRoot(e) {
-        e.preventDefault()
+    async doUpdateIdentityRoot() {
+        this.isLoading = true
 
         if (this.numberIsValid === null) {
             this.numberIsValid = false
         }
 
-        this.$v.$touch()
+        await this.validation.validate()
 
-        if (this.$v.$invalid) {
+        if (this.validation.isInvalid.value || !this.numberIsValid) {
+            this.isLoading = false
             return
         }
-
-        this.isLoading = true
 
         const xhr: Promise<any>[] = []
 

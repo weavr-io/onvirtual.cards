@@ -27,10 +27,7 @@
                             <p class="mb-0 text-muted font-size-small account-balance-label">
                                 balance
                             </p>
-                            <p
-                                v-if="account.balances?.availableBalance"
-                                class="mb-0 account-balance-value"
-                            >
+                            <p class="mb-0 account-balance-value">
                                 {{ accountCurrency }}
                             </p>
                         </div>

@@ -24,11 +24,10 @@
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
 import BaseMixin from '~/mixins/BaseMixin'
-import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import { DeepNullable } from '~/global'
+import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 
 @Component({
     components: {
@@ -40,7 +39,7 @@ import { DeepNullable } from '~/global'
     middleware: ['kyVerified'],
 })
 export default class TransfersPage extends mixins(BaseMixin) {
-    createTransferRequest: DeepNullable<CreateTransferRequest> | null = null
+    createTransferRequest: CreateTransferRequest | null = null
     screen = 1
     public accountTypes = [
         {
@@ -135,7 +134,7 @@ export default class TransfersPage extends mixins(BaseMixin) {
                         currency: 'EUR',
                         amount: 0,
                     },
-                }
+                } as unknown as CreateTransferRequest
                 this.screen = 2
             })
             .catch((err) => {

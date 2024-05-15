@@ -5,7 +5,7 @@ import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities
 import type { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
 import type { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import type { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
-import type { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
+import type { VerifyEmail } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmail'
 import type { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { PUK_COUNTRY_CODES } from '~/utils/jurisdiction'
@@ -108,7 +108,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
         return req
     }
 
-    const verifyEmail = (request: VerifyEmailRequest) => {
+    const verifyEmail = (request: VerifyEmail) => {
         return store.$nuxt.$apiMulti.corporates.verifyEmail(request)
     }
 

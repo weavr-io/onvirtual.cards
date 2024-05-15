@@ -4,13 +4,13 @@ import { $axiosMulti } from '~/utils/api'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import type { Auth as AuthState } from '~/local/models/store/auth'
 import type { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
-import type { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import type { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPassword'
 import type { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 import type { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'
 import type { GetAuthenticationFactorsResponse } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/responses/GetAuthenticationFactorsResponse'
-import type { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
+import type { AuthVerifyEnrol } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
 import type { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
-import type { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
+import type { ResumeLostPassword } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPassword'
 import type { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
@@ -71,7 +71,7 @@ export const useAuthStore = defineStore('auth', () => {
         })
     }
 
-    const loginWithPassword = (request: LoginWithPasswordRequest) => {
+    const loginWithPassword = (request: LoginWithPassword) => {
         const _req = store.$nuxt.$apiMulti.authentication.loginWithPassword(request)
 
         _req.then((res) => {
@@ -135,19 +135,13 @@ export const useAuthStore = defineStore('auth', () => {
         return _req
     }
 
-    const verifyAuthFactors = (request: {
-        channel: SCAOtpChannelEnum
-        body: AuthVerifyEnrolRequest
-    }) => {
+    const verifyAuthFactors = (request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol }) => {
         const _req = store.$nuxt.$apiMulti.additionalFactors.verify(request)
 
         return _req
     }
 
-    const verifyStepUp = (request: {
-        channel: SCAOtpChannelEnum
-        body: AuthVerifyEnrolRequest
-    }) => {
+    const verifyStepUp = (request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol }) => {
         const _req = store.$nuxt.$apiMulti.stepUp.verify(request)
 
         return _req
@@ -159,7 +153,7 @@ export const useAuthStore = defineStore('auth', () => {
         return _req
     }
 
-    const lostPasswordResume = (request: ResumeLostPasswordRequestModel) => {
+    const lostPasswordResume = (request: ResumeLostPassword) => {
         const _req = store.$nuxt.$apiMulti.passwords.resume(request)
 
         return _req
