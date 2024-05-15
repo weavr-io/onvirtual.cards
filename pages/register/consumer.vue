@@ -233,8 +233,8 @@ import {
     SensitivePassword,
 } from '~/plugins/weavr-multi/api/models/authentication'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import { ConsumerSourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
-import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
@@ -307,7 +307,7 @@ export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
     }
 
     get sourceOfFundsOptions() {
-        return SourceOfFundsSelectConst
+        return ConsumerSourceOfFundsSelectConst
     }
 
     get shouldShowOtherSourceOfFunds(): boolean {

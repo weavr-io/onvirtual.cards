@@ -135,7 +135,7 @@
 import { reactive } from 'vue'
 import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
-import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
+import { CorporateSourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CorporateSourceOfFundsSelectConst'
 import {
     CorporateSourceOfFundTypeEnum,
     PREDEFINED_CORPORATE_SOURCE_OF_FUND,
@@ -205,7 +205,7 @@ export default class PersonalDetailsForm extends mixins(BaseMixin) {
     }
 
     get sourceOfFundsOptions() {
-        return SourceOfFundsSelectConst
+        return CorporateSourceOfFundsSelectConst
     }
 
     get shouldShowOtherSourceOfFunds(): boolean {

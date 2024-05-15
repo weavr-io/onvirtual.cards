@@ -54,7 +54,6 @@ export default function <T extends ZodTypeAny>(
     const placeHolderReplace = (str: string, replaceValue) => str.replace('[0]', replaceValue)
 
     const customErroMap: z.ZodErrorMap = (error, ctx) => {
-        console.log(error)
         switch (error.code) {
             case z.ZodIssueCode.invalid_union_discriminator:
                 return { message: INVALID_FEEDBACK_CONST.required }

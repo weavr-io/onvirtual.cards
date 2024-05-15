@@ -1,3 +1,4 @@
 export * from './CurrencySelectConst'
 export * from './IndustryTypeSelectConst'
-export * from './SourceOfFundsSelectConst'
+export * from './CorporateSourceOfFundsSelectConst'
+export * from './ConsumerSourceOfFundsSelectConst'

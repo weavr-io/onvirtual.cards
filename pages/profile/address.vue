@@ -95,7 +95,7 @@ import {
     AddressSchema,
     INITIAL_ADDRESS,
 } from '~/plugins/weavr-multi/api/models/common/models/Address'
-import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
+import { CorporateSourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CorporateSourceOfFundsSelectConst'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
 import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
@@ -128,7 +128,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin) {
     }
 
     get sourceOfFundsOptions() {
-        return SourceOfFundsSelectConst
+        return CorporateSourceOfFundsSelectConst
     }
 
     get industryOccupationOptions() {
