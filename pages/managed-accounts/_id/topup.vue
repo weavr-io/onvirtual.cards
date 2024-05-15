@@ -77,98 +77,116 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
-import BaseMixin from '~/mixins/BaseMixin'
-import AccountsMixin from '~/mixins/AccountsMixin'
+import { computed, ComputedRef, defineComponent, useFetch, useRoute } from '@nuxtjs/composition-api'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import { BankAccountDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/BankAccountDetailsModel'
-import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
+import { useStores } from '~/composables/useStores'
 import { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
 import { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SwiftBankDetailsModel'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+import { useBase } from '~/composables/useBase'
+import { useAccounts } from '~/composables/useAccounts'
 
-@Component({
+export default defineComponent({
     components: {
         LoadingSpinner,
-        BIcon,
-        BIconBoxArrowUpRight,
     },
     middleware: ['kyVerified', 'instruments'],
-})
-export default class AccountTopupPage extends mixins(BaseMixin, AccountsMixin) {
-    get address() {
-        return this.bankAccountDetails?.beneficiaryBankAddress?.split(',').join(',<br>')
-    }
+    setup() {
+        const route = useRoute()
+        const { pendingDataOrError } = useBase()
+        const { account, accountId } = useAccounts()
+        const { accounts } = useStores(['accounts'])
 
-    get sepaBic() {
-        if (!this.ibanDetails?.bankAccountDetails) return ''
-        const i = this.ibanDetails?.bankAccountDetails.findIndex((details) => {
-            return (details.details as SepaBankDetailsModel).bankIdentifierCode !== undefined
+        const address = computed(() => {
+            return bankAccountDetails.value?.beneficiaryBankAddress?.split(',').join(',<br>')
         })
 
-        if (i >= 0) {
-            return (
-                (this.ibanDetails?.bankAccountDetails[i!] as BankAccountDetailsModel)
-                    .details as SepaBankDetailsModel
-            ).bankIdentifierCode
-        } else {
-            return ''
-        }
-    }
+        const sepaBic = computed(() => {
+            if (!ibanDetails.value?.bankAccountDetails) return ''
+            const i = ibanDetails.value?.bankAccountDetails.findIndex((details) => {
+                return (details.details as SepaBankDetailsModel).bankIdentifierCode !== undefined
+            })
 
-    get swiftCode() {
-        if (!this.ibanDetails?.bankAccountDetails) return ''
-        const i = this.ibanDetails?.bankAccountDetails.findIndex((details) => {
-            return (details.details as SwiftBankDetailsModel).code !== undefined
+            if (i >= 0) {
+                return (
+                    (ibanDetails.value?.bankAccountDetails[i!] as BankAccountDetailsModel)
+                        .details as SepaBankDetailsModel
+                ).bankIdentifierCode
+            } else {
+                return ''
+            }
         })
 
-        if (i! >= 0) {
-            return (
-                (this.ibanDetails?.bankAccountDetails[i!] as BankAccountDetailsModel)
-                    .details as SwiftBankDetailsModel
-            ).code
-        } else {
-            return false
-        }
-    }
+        const swiftCode = computed(() => {
+            if (!ibanDetails.value?.bankAccountDetails) return ''
+            const i = ibanDetails.value?.bankAccountDetails.findIndex((details) => {
+                return (details.details as SwiftBankDetailsModel).code !== undefined
+            })
 
-    get bankAccountDetails(): BankAccountDetailsModel | undefined {
-        try {
-            return this.ibanDetails?.bankAccountDetails[0]
-        } catch (e) {
-            return undefined
-        }
-    }
+            if (i! >= 0) {
+                return (
+                    (ibanDetails.value?.bankAccountDetails[i!] as BankAccountDetailsModel)
+                        .details as SwiftBankDetailsModel
+                ).code
+            } else {
+                return false
+            }
+        })
 
-    get ibanDetails(): ManagedAccountIBANModel | null {
-        return this.accountsStore.accountState.ibanDetails
-    }
-
-    get beneficiaryNameAndSurname() {
-        return this.bankAccountDetails?.beneficiaryNameAndSurname
-    }
-
-    get beneficiaryBank() {
-        return this.bankAccountDetails?.beneficiaryBank
-    }
-
-    get iban() {
-        return (
-            (this.bankAccountDetails?.details &&
-                'iban' in this.bankAccountDetails.details &&
-                this.bankAccountDetails.details.iban) ||
-            ''
+        const bankAccountDetails: ComputedRef<BankAccountDetailsModel | undefined> = computed(
+            () => {
+                try {
+                    return ibanDetails.value?.bankAccountDetails[0]
+                } catch (e) {
+                    return undefined
+                }
+            },
         )
-    }
 
-    get paymentReference() {
-        return this.bankAccountDetails?.paymentReference
-    }
+        const ibanDetails = computed(() => {
+            return accounts?.accountState.ibanDetails
+        })
 
-    fetch() {
-        return this.accountsStore.getIBANDetails(this.$route.params.id)
-    }
-}
+        const beneficiaryNameAndSurname = computed(() => {
+            return bankAccountDetails.value?.beneficiaryNameAndSurname
+        })
+
+        const beneficiaryBank = computed(() => {
+            return bankAccountDetails.value?.beneficiaryBank
+        })
+
+        const iban = computed(() => {
+            return (
+                (bankAccountDetails.value?.details &&
+                    'iban' in bankAccountDetails.value.details &&
+                    bankAccountDetails.value.details.iban) ||
+                ''
+            )
+        })
+
+        const paymentReference = computed(() => {
+            return bankAccountDetails.value?.paymentReference
+        })
+
+        useFetch(async () => {
+            await accounts?.getIBANDetails(route.value.params.id)
+        })
+
+        return {
+            account,
+            pendingDataOrError,
+            bankAccountDetails,
+            beneficiaryNameAndSurname,
+            iban,
+            sepaBic,
+            swiftCode,
+            beneficiaryBank,
+            address,
+            paymentReference,
+            accountId,
+        }
+    },
+})
 </script>
 <style lang="scss" scoped>
 ol {
