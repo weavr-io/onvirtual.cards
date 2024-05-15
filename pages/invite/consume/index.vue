@@ -48,185 +48,168 @@
         </b-card>
     </b-col>
 </template>
+
 <script lang="ts">
+import {
+    computed,
+    ComputedRef,
+    defineComponent,
+    Ref,
+    ref,
+    useAsync,
+    useFetch,
+    useRoute,
+    useRouter,
+} from '@nuxtjs/composition-api'
 import { reactive } from 'vue'
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
-import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
-import BaseMixin from '~/mixins/BaseMixin'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import ErrorAlert from '~/components/ErrorAlert.vue'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import useZodValidation from '~/composables/useZodValidation'
 import {
     INITIAL_PASSWORD_REQUEST,
     PasswordSchema,
-} from '~/plugins/weavr-multi/api/models/authentication/access'
+} from '~/plugins/weavr-multi/api/models/authentication'
+import useZodValidation from '~/composables/useZodValidation'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import { IDModel, INITIAL_ID_REQUEST } from '~/plugins/weavr-multi/api/models/common'
+import {
+    INITIAL_INVITE_CONSUME_REQUEST,
+    InviteConsumeRequestModel,
+} from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
+import { useStores } from '~/composables/useStores'
+import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
         LogoOvc,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+        ErrorAlert,
         WeavrPasswordInput,
     },
-})
-export default class IniteConsume extends mixins(BaseMixin) {
-    showError = false
+    layout: 'auth',
+    setup() {
+        const route = useRoute()
+        const router = useRouter()
+        const { errors, users } = useStores(['errors', 'users'])
 
-    @Ref('passwordField')
-    passwordField!: WeavrPasswordInput
+        const showError = ref(false)
+        const passwordField: Ref<WeavrPasswordInput | null> = ref(null)
+        const passwordStrength = ref(0)
+        const form: Ref<{
+            id: IDModel
+            data: InviteConsumeRequestModel
+        }> = ref({ id: INITIAL_ID_REQUEST, data: INITIAL_INVITE_CONSUME_REQUEST() })
+        const inviteForm = reactive(INITIAL_PASSWORD_REQUEST())
 
-    passwordStrength = 0
-    inviteForm = reactive(INITIAL_PASSWORD_REQUEST())
+        const validation = computed(() => {
+            return useZodValidation(PasswordSchema, inviteForm)
+        })
 
-    protected form!: { id: IDModel; data: InviteConsumeRequestModel }
+        const isPasswordValidAndDirty = computed(() => {
+            return !inviteForm.password?.value ? true : isPasswordValid
+        })
 
-    get validation() {
-        return useZodValidation(PasswordSchema, this.inviteForm)
-    }
+        const isPasswordValid = computed(() => {
+            return passwordStrength.value >= 2
+        })
 
-    get isPasswordValidAndDirty() {
-        return !this.inviteForm.password?.value ? true : this.isPasswordValid
-    }
-
-    get isPasswordValid(): boolean {
-        return this.passwordStrength >= 2
-    }
-
-    get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
-        return {
-            color: '#495057',
-            fontSize: '16px',
-            fontSmoothing: 'antialiased',
-            fontFamily: "'Be Vietnam', sans-serif",
-            fontWeight: '400',
-            lineHeight: '24px',
-            margin: '0',
-            padding: '6px 12px',
-            textIndent: '0px',
-            '::placeholder': {
-                color: '#B6B9C7',
+        const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
+            return {
+                color: '#495057',
+                fontSize: '16px',
+                fontSmoothing: 'antialiased',
+                fontFamily: "'Be Vietnam', sans-serif",
                 fontWeight: '400',
-            },
-        }
-    }
+                lineHeight: '24px',
+                margin: '0',
+                padding: '6px 12px',
+                textIndent: '0px',
+                '::placeholder': {
+                    color: '#B6B9C7',
+                    fontWeight: '400',
+                },
+            }
+        })
 
-    asyncData({ route }) {
-        try {
-            const _consumeInviteRequest: { id: IDModel; data: InviteConsumeRequestModel } = {
-                id: route.query.user_id.toString(),
-                data: {
-                    inviteCode: route.query.nonce.toString(),
-                    password: {
-                        value: '',
+        useAsync(() => {
+            try {
+                const _consumeInviteRequest: { id: IDModel; data: InviteConsumeRequestModel } = {
+                    id: route.value.query.user_id.toString(),
+                    data: {
+                        inviteCode: route.value.query.nonce.toString(),
+                        password: {
+                            value: '',
+                        },
                     },
-                },
+                }
+                form.value = _consumeInviteRequest
+                showError.value = false
+            } catch (_) {
+                showError.value = true
             }
+        })
 
-            return {
-                form: _consumeInviteRequest,
-                showError: false,
-            }
-        } catch (_) {
-            return {
-                showError: true,
-            }
+        useFetch(() => {
+            try {
+                const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
+                    id: route.value.query.user_id.toString(),
+                    data: {
+                        inviteCode: route.value.query.nonce.toString(),
+                    },
+                }
+
+                users?.inviteValidate(_validateRequest).catch(handleError)
+            } catch (_) {}
+        })
+
+        const strengthCheck = (val) => {
+            passwordStrength.value = val.id
         }
-    }
 
-    fetch() {
-        try {
-            const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
-                id: this.$route.query.user_id.toString(),
-                data: {
-                    inviteCode: this.$route.query.nonce.toString(),
-                },
-            }
+        const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
+            !val.empty ? (inviteForm.password.value = '******') : (inviteForm.password.value = '')
+            validation.value.validate()
+        }
 
-            return this.usersStore.inviteValidate(_validateRequest).catch(this.handleError)
-        } catch (_) {}
-    }
+        const handleError = (e) => {
+            errors?.setError(e.response)
+        }
 
-    strengthCheck(val) {
-        this.passwordStrength = val.id
-    }
-
-    passwordInteraction(val: { empty: boolean; valid: boolean }) {
-        !val.empty
-            ? (this.inviteForm.password.value = '******')
-            : (this.inviteForm.password.value = '')
-        this.validation.validate()
-    }
-
-    handleError(e) {
-        this.errorsStore.setError(e.response)
-    }
-
-    tryToSubmitForm() {
-        if (this.isPasswordValid && this.validation.isValid) {
-            this.passwordField.createToken().then(
-                (tokens) => {
-                    if (tokens.tokens.password !== '') {
-                        this.form.data.password!.value = tokens.tokens.password
-                        this.usersStore.inviteConsume(this.form).then(() => {
-                            this.$router.push('/login')
-                        })
-                    } else {
+        const tryToSubmitForm = () => {
+            if (isPasswordValid.value && validation.value.isValid) {
+                passwordField.value?.createToken().then(
+                    (tokens) => {
+                        if (tokens.tokens.password !== '') {
+                            form.value.data.password!.value = tokens.tokens.password
+                            users?.inviteConsume(form.value).then(() => {
+                                router.push('/login')
+                            })
+                        } else {
+                            return null
+                        }
+                    },
+                    () => {
                         return null
-                    }
-                },
-                () => {
-                    return null
-                },
-            )
+                    },
+                )
+            }
         }
-    }
 
-    checkOnKeyUp(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault()
-            this.tryToSubmitForm()
+        const checkOnKeyUp = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault()
+                tryToSubmitForm()
+            }
         }
-    }
-}
+
+        return {
+            passwordBaseStyle,
+            passwordInteraction,
+            showError,
+            tryToSubmitForm,
+            checkOnKeyUp,
+            strengthCheck,
+            isPasswordValidAndDirty,
+        }
+    },
+})
 </script>
-
-<!--<script lang="ts">-->
-<!--import { defineComponent, ref } from '@nuxtjs/composition-api'-->
-<!--import LogoOvc from '~/components/molecules/LogoOvc.vue'-->
-<!--import ErrorAlert from '~/components/molecules/ErrorAlert.vue'-->
-<!--import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'-->
-<!--import { reactive } from 'vue'-->
-<!--import { required } from 'vuelidate/lib/validators'-->
-<!--import Vuelidate from 'vuelidate'-->
-
-<!--export default defineComponent({-->
-<!--    layout: 'auth',-->
-<!--    components: {-->
-<!--        LogoOvc,-->
-<!--        ErrorAlert,-->
-<!--        WeavrPasswordInput,-->
-<!--    },-->
-<!--    setup() {-->
-<!--        const showError = ref(false)-->
-<!--        const passwordField: WeavrPasswordInput | null = ref(null)-->
-<!--        const passwordStrength = ref(0)-->
-
-<!--        const state = reactive({-->
-<!--            inviteForm: {-->
-<!--                password: '',-->
-<!--            },-->
-<!--        })-->
-
-<!--        const rules = {-->
-<!--            inviteForm: {-->
-<!--                password: { required }, // Matches state.contact.email-->
-<!--            },-->
-<!--        }-->
-
-<!--        // const v$ = Vuelidate(rules, state)-->
-<!--    }-->
-<!--})-->
-<!--</script>-->
