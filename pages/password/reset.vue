@@ -11,18 +11,18 @@
                     </h5>
                 </div>
                 <error-alert />
-                <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
+                <b-form id="contact-form" class="mt-5" novalidate @submit.prevent="resetPassword">
                     <b-form-group
                         id="ig-email"
-                        :invalid-feedback="invalidFeedback($v.form.email, 'email')"
-                        :state="isInvalid($v.form.email)"
+                        :invalid-feedback="validation.getInvalidFeedback('email')"
+                        :state="validation.getState('email')"
                         label="Email:"
                         label-for="from-email"
                     >
                         <b-form-input
                             id="from-email"
                             v-model="form.email"
-                            :state="isInvalid($v.form.email)"
+                            :state="validation.getState('email')"
                             class="form-control"
                             name="setEmail"
                             placeholder="name@email.com"
@@ -67,13 +67,19 @@
     </b-col>
 </template>
 <script lang="ts">
+import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { email, required } from 'vuelidate/lib/validators'
+import {
+    INITIAL_RESET_REQUEST,
+    InitiateLostPasswordRequestModel,
+    type ResetRequest,
+    ResetSchema,
+} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
 import BaseMixin from '~/mixins/BaseMixin'
-import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
+
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     layout: 'auth',
@@ -82,32 +88,27 @@ import LoaderButton from '~/components/atoms/LoaderButton.vue'
         LogoOvc,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     },
-    validations: {
-        form: {
-            email: {
-                required,
-                email,
-            },
-        },
-    },
 })
-export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin) {
+export default class ResetPasswordPage extends mixins(BaseMixin) {
     isLoading = false
 
     passwordSent = false
 
-    protected form: InitiateLostPasswordRequestModel = {
-        email: '',
+    form: ResetRequest = reactive(INITIAL_RESET_REQUEST())
+
+    get validation() {
+        return useZodValidation(ResetSchema, this.form)
     }
 
-    resetPassword() {
-        this.$v.$touch()
-        if (this.$v.$invalid) return
+    async resetPassword() {
+        await this.validation.validate()
+
+        if (this.validation.isInvalid.value) return
 
         this.isLoading = true
         this.errorsStore.setError(null)
         this.authStore
-            .lostPasswordInitiate(this.form)
+            .lostPasswordInitiate(this.form as InitiateLostPasswordRequestModel)
             .then(() => {
                 this.passwordSent = true
             })

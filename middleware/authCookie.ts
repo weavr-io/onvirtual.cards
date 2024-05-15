@@ -16,19 +16,19 @@ const scaCheck = (route, redirect) => {
     }
 }
 
-export default defineNuxtMiddleware(({ route, redirect }) => {
+export default defineNuxtMiddleware(async ({ route, redirect }) => {
     const auth = useAuthStore()
     const authCookie = Cookie.get(config.ONV_COOKIE_NAME)
 
     if (authCookie) {
         try {
             const authCookieJson = JSON.parse(authCookie)
-            auth.setAuth(authCookieJson).then(() => {
-                scaCheck(route, redirect)
-            })
+            await auth.setAuth(authCookieJson)
+
+            scaCheck(route, redirect)
         } catch (err) {
             // No valid cookie found
-            auth.logout().catch(() => {})
+            await auth.logout()
         }
     } else {
         localStorage.removeItem('stepUp')

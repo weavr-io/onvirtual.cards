@@ -11,8 +11,8 @@
                     />
                     <b-form-group
                         id="login-email"
-                        :invalid-feedback="invalidFeedback($v.loginRequest.email, 'email')"
-                        :state="isInvalid($v.loginRequest.email)"
+                        :invalid-feedback="validation.getInvalidFeedback('email')"
+                        :state="validation.getState('email')"
                         label="Email"
                         label-for="form-email"
                     >
@@ -24,23 +24,29 @@
                             placeholder="Email"
                         />
                     </b-form-group>
-                    <client-only placeholder="Loading...">
-                        <label class="d-block">PASSWORD</label>
-                        <weavr-password-input
-                            ref="passwordField"
-                            :base-style="passwordBaseStyle"
-                            :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
-                            :options="{ placeholder: 'Password' }"
-                            aria-invalid="true"
-                            name="password"
-                            @onChange="passwordInteraction"
-                            @onKeyUp="checkOnKeyUp"
-                        />
-                        <b-form-invalid-feedback v-if="isInvalidPassword">
-                            Please enter your password
-                        </b-form-invalid-feedback>
-                    </client-only>
-
+                    <b-form-group
+                        id="login-password"
+                        :invalid-feedback="validation.getInvalidFeedback('password,value')"
+                        :state="validation.getState('password,value')"
+                        label="Password"
+                        label-for="password"
+                    >
+                        <client-only placeholder="Loading...">
+                            <weavr-password-input
+                                ref="passwordField"
+                                :base-style="passwordBaseStyle"
+                                :class-name="[
+                                    'sign-in-password form-control p-0',
+                                    { 'is-invalid': isInvalidPassword },
+                                ]"
+                                :options="{ placeholder: 'Password' }"
+                                aria-invalid="true"
+                                name="password"
+                                @onChange="passwordInteraction"
+                                @onKeyUp="checkOnKeyUp"
+                            />
+                        </client-only>
+                    </b-form-group>
                     <div class="mt-2">
                         <b-link
                             class="small text-decoration-underline text-grey"
@@ -72,15 +78,20 @@
 
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { email, required } from 'vuelidate/lib/validators'
+import { reactive } from 'vue'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import {
+    INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
+    LoginWithPassword,
+    LoginWithPasswordSchema,
+} from '~/plugins/weavr-multi/api/models/authentication/access'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     layout: 'auth',
@@ -90,30 +101,16 @@ import LoaderButton from '~/components/atoms/LoaderButton.vue'
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         WeavrPasswordInput,
     },
-    validations: {
-        loginRequest: {
-            email: {
-                required,
-                email,
-            },
-            password: {
-                value: {
-                    required,
-                },
-            },
-        },
-    },
 })
-export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
+export default class LoginPage extends mixins(BaseMixin) {
     isLoading = false
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
-    private loginRequest: LoginWithPasswordRequest = {
-        email: '',
-        password: {
-            value: '',
-        },
+    loginRequest: LoginWithPassword = reactive(INITIAL_LOGIN_WITH_PASSWORD_REQUEST())
+
+    get validation() {
+        return useZodValidation(LoginWithPasswordSchema, this.loginRequest)
     }
 
     get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -135,7 +132,7 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
     }
 
     get isInvalidPassword() {
-        return this.$v.loginRequest?.password?.value.$anyError
+        return this.validation.getState('password,value') === false && this.validation.dirty
     }
 
     passwordInteraction(val: { empty: boolean; valid: boolean }) {
@@ -144,34 +141,41 @@ export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
             : (this.loginRequest.password.value = '')
     }
 
-    login() {
-        this.$v.$touch()
-        if (!this.$v.$invalid) {
-            try {
-                this.isLoading = true
-                this.errorsStore.setError(null)
-                this.passwordField.createToken().then(
-                    (tokens) => {
-                        this.loginRequest.password.value = tokens.tokens.password
-                        this.authStore
-                            .loginWithPassword(this.loginRequest)
-                            .then(() => {
-                                localStorage.setItem('stepUp', 'FALSE')
-                                localStorage.setItem('scaSmsSent', 'FALSE')
-                                this.goToDashboard()
-                            })
-                            .catch((err) => {
-                                this.isLoading = false
-                                this.errorsStore.setError(err)
-                            })
-                    },
-                    (e) => {
-                        this.showErrorToast(e, 'Tokenization Error')
-                    },
-                )
-            } catch (error: any) {
-                this.showErrorToast(error, 'Login Error')
-            }
+    async login() {
+        this.isLoading = true
+
+        await this.validation.validate()
+
+        if (this.validation.isInvalid.value) {
+            this.isLoading = false
+            return
+        }
+
+        try {
+            this.errorsStore.setError(null)
+            this.passwordField.createToken().then(
+                (tokens) => {
+                    this.loginRequest.password.value = tokens.tokens.password
+                    this.authStore
+                        .loginWithPassword(this.loginRequest)
+                        .then(() => {
+                            localStorage.setItem('stepUp', 'FALSE')
+                            localStorage.setItem('scaSmsSent', 'FALSE')
+                            this.goToDashboard()
+                        })
+                        .catch((err) => {
+                            this.isLoading = false
+                            this.errorsStore.setError(err)
+                        })
+                },
+                (e) => {
+                    this.isLoading = false
+                    this.showErrorToast(e, 'Tokenization Error')
+                },
+            )
+        } catch (error: any) {
+            this.isLoading = false
+            this.showErrorToast(error, 'Login Error')
         }
     }
 

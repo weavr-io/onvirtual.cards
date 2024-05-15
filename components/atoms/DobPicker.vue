@@ -2,7 +2,12 @@
     <div class="vue-dob-picker">
         <label :class="labelClass" :style="{ flex: proportions[0] }">
             <div v-if="showLabels !== 'false'">{{ labels[0] }}</div>
-            <select v-model="day" :class="dayClass" @blur="onBlur" @focus="onFocus">
+            <select
+                v-model="day"
+                :class="[dayClass, { 'is-invalid': state?.day === false }]"
+                @blur="onBlur"
+                @focus="onFocus"
+            >
                 <option v-if="placeholders[0]" value="null">
                     {{ placeholders[0] }}
                 </option>
@@ -16,7 +21,12 @@
         </label>
         <label :class="labelClass" :style="{ flex: proportions[1] }">
             <div v-if="showLabels !== 'false'">{{ labels[1] }}</div>
-            <select v-model="month" :class="monthClass" @blur="onBlur" @focus="onFocus">
+            <select
+                v-model="month"
+                :class="[monthClass, { 'is-invalid': state?.month === false }]"
+                @blur="onBlur"
+                @focus="onFocus"
+            >
                 <option v-if="placeholders[1]" value="null">
                     {{ placeholders[1] }}
                 </option>
@@ -27,7 +37,12 @@
         </label>
         <label :class="labelClass" :style="{ flex: proportions[2] }">
             <div v-if="showLabels !== 'false'">{{ labels[2] }}</div>
-            <select v-model="year" :class="yearClass" @blur="onBlur" @focus="onFocus">
+            <select
+                v-model="year"
+                :class="[yearClass, { 'is-invalid': state?.year === false }]"
+                @blur="onBlur"
+                @focus="onFocus"
+            >
                 <option v-if="placeholders[2]" value="null">
                     {{ placeholders[2] }}
                 </option>
@@ -62,6 +77,7 @@ const props = withDefaults(
         proportions?: number[]
         labels?: string[]
         placeholders?: string[]
+        state?: { day?: boolean; month?: boolean; year?: boolean }
     }>(),
     {
         value: undefined,
@@ -74,6 +90,7 @@ const props = withDefaults(
         proportions: () => [1, 1, 2],
         labels: () => ['Date', 'Month', 'Year'],
         placeholders: () => [],
+        state: undefined,
     },
 )
 
@@ -150,9 +167,17 @@ const getDisplayedMonth = (monthNum: number) => {
     return monthDateObj.toLocaleString(locale, { month: props.monthFormat })
 }
 
+const fullDob = computed(() => {
+    return {
+        day: day.value,
+        month: month.value,
+        year: year.value,
+    }
+})
+
 const onBlur = () => {
     blurTimeout.value = window.setTimeout(() => {}, 50)
-    emit('blur')
+    emit('blur', fullDob)
 }
 
 const onFocus = () => {

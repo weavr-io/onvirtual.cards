@@ -11,7 +11,8 @@
                             </div>
                             <div v-else key="2" class="form-screen">
                                 <personal-details-form
-                                    @submit-form="form2Submit"
+                                    :base-form="registrationRequest"
+                                    @submit="form2Submit"
                                     @strength-check="strengthCheck"
                                     @go-back="goBack"
                                 />
@@ -26,18 +27,19 @@
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { DeepNullable, RecursivePartial } from '~/global'
+import { reactive } from 'vue'
 import BaseMixin from '~/mixins/BaseMixin'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
+import { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPassword'
 import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
-import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
-import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import {
+    CreateCorporateRequest,
+    INITIAL_CREATE_CORPORATE_REQUEST,
+} from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common'
 
 @Component({
     layout: 'auth',
@@ -53,37 +55,16 @@ import LogoOvc from '~/components/molecules/LogoOvc.vue'
 export default class RegistrationPage extends mixins(BaseMixin) {
     screen = 0
     passwordStrength = 0
-    private registrationRequest: DeepNullable<
-        RecursivePartial<CreateCorporateRequest & { password: string }>
-    > = {
-        profileId: this.$config.profileId.corporates,
-        tag: 'tag',
-        rootUser: {
-            name: null,
-            surname: null,
-            email: null,
-            mobile: {
-                number: null,
-                countryCode: '+356',
-            },
-            companyPosition: null,
-        },
-        company: {
-            type: null,
-            name: '',
-            registrationNumber: '',
-            registrationCountry: '',
-        },
-        industry: IndustryTypeEnum.ACCOUNTING,
-        sourceOfFunds: CorporateSourceOfFundTypeEnum.CIVIL_CONTRACT,
-        acceptedTerms: false,
-        ipAddress: '',
-        baseCurrency: CurrencyEnum.EUR,
-    }
 
-    get isLoadingRegistration() {
-        return this.corporatesStore.corporateState.isLoadingRegistration
-    }
+    registrationRequest: CreateCorporateRequest & {
+        password?: string
+    } = reactive({
+        ...INITIAL_CREATE_CORPORATE_REQUEST(),
+        profileId: this.$config.profileId.corporates,
+        acceptedTerms: false,
+        baseCurrency: CurrencyEnum.EUR,
+        password: undefined,
+    })
 
     strengthCheck(val) {
         this.passwordStrength = val.id
@@ -107,40 +88,23 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         })
     }
 
-    form1Submit(
-        _data: { email: string | null; password: string | null; acceptedTerms: boolean } | null,
-    ) {
-        if (_data !== null) {
-            this.registrationRequest.rootUser!.email = _data.email
-            this.registrationRequest.password = _data.password
-            this.registrationRequest.acceptedTerms = _data.acceptedTerms
-            this.screen = 1
-            this.stopRegistrationLoading()
-        }
+    form1Submit(_data: { email: string; password: string; acceptedTerms: boolean }) {
+        this.registrationRequest.rootUser.email = _data.email
+        this.registrationRequest.password = _data.password
+        this.registrationRequest.acceptedTerms = _data.acceptedTerms
+        this.screen = 1
+        this.stopRegistrationLoading()
     }
 
     form2Submit(_data) {
-        if (_data != null) {
-            this.registrationRequest.rootUser!.name = _data.rootUser.name
-            this.registrationRequest.rootUser!.surname = _data.rootUser.surname
-            this.registrationRequest.rootUser!.companyPosition = _data.rootUser.companyPosition
-            this.registrationRequest.rootUser!.mobile! = { ..._data.rootUser.mobile }
-            this.registrationRequest.company!.name = _data.company.name
-            this.registrationRequest.company!.type = _data.company.type
-            this.registrationRequest.company!.registrationNumber = _data.company.registrationNumber
-            this.registrationRequest.company!.registrationCountry =
-                _data.company.registrationCountry
-            this.registrationRequest.industry = _data.industry
-            this.registrationRequest.sourceOfFunds = _data.sourceOfFunds
-            this.registrationRequest.sourceOfFundsOther = _data.sourceOfFundsOther
-            this.doRegister()
-        }
+        this.registrationRequest = { ..._data }
+        this.doRegister()
     }
 
     doRegister() {
         this.corporatesStore.setIsLoadingRegistration(true)
         this.corporatesStore
-            .create(this.registrationRequest as CreateCorporateRequest)
+            .create(this.registrationRequest)
             .then(this.onCorporateCreated)
             .catch(this.registrationFailed)
     }
@@ -173,7 +137,7 @@ export default class RegistrationPage extends mixins(BaseMixin) {
         if (!this.registrationRequest.rootUser) {
             return
         }
-        const loginRequest: LoginWithPasswordRequest = {
+        const loginRequest: LoginWithPassword = {
             email: this.registrationRequest.rootUser.email as string,
             password: {
                 value: this.registrationRequest.password as string,

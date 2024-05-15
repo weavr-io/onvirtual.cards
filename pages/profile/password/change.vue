@@ -9,7 +9,7 @@
                     <div class="mx-md-3 px-md-5">
                         <b-form id="contact-form" @submit.prevent="submitChangePassword">
                             <client-only placeholder="Loading...">
-                                <div :class="{ 'is-dirty': $v.form.$dirty }">
+                                <div :class="{ 'is-dirty': validation.dirty }">
                                     <label class="d-block text-left">OLD PASSWORD:</label>
                                     <weavr-password-input
                                         ref="oldPassword"
@@ -67,33 +67,23 @@
 
 <script lang="ts">
 import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { required } from 'vuelidate/lib/validators'
+import { reactive } from 'vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import useZodValidation from '~/composables/useZodValidation'
 import BaseMixin from '~/mixins/BaseMixin'
+import {
+    INITIAL_UPDATE_PASSWORD_REQUEST,
+    UpdatePasswordRequestModel,
+    UpdatePasswordRequestSchema,
+} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 
 @Component({
     components: {
         LoaderButton,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         WeavrPasswordInput,
-    },
-    validations: {
-        form: {},
-        changePasswordRequest: {
-            oldPassword: {
-                value: {
-                    required,
-                },
-            },
-            newPassword: {
-                value: {
-                    required,
-                },
-            },
-        },
     },
 })
 export default class BundlesPage extends mixins(BaseMixin) {
@@ -107,13 +97,10 @@ export default class BundlesPage extends mixins(BaseMixin) {
 
     passwordStrength = 0
 
-    changePasswordRequest: UpdatePasswordRequestModel = {
-        oldPassword: {
-            value: '',
-        },
-        newPassword: {
-            value: '',
-        },
+    changePasswordRequest: UpdatePasswordRequestModel = reactive(INITIAL_UPDATE_PASSWORD_REQUEST())
+
+    get validation() {
+        return useZodValidation(UpdatePasswordRequestSchema, this.changePasswordRequest)
     }
 
     get isPasswordValid(): boolean {
@@ -121,14 +108,7 @@ export default class BundlesPage extends mixins(BaseMixin) {
     }
 
     get isPasswordValidAndDirty(): boolean {
-        return !this.$v.changePasswordRequest.newPassword?.$dirty ? true : this.isPasswordValid
-    }
-
-    get isAnyPasswordEmpty(): boolean {
-        return (
-            this.changePasswordRequest.oldPassword.value === '' ||
-            this.changePasswordRequest.newPassword.value === ''
-        )
+        return !this.validation.dirty.value ? true : this.isPasswordValid
     }
 
     get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
@@ -153,14 +133,12 @@ export default class BundlesPage extends mixins(BaseMixin) {
         !val.empty
             ? (this.changePasswordRequest.oldPassword.value = '******')
             : (this.changePasswordRequest.oldPassword.value = '')
-        this.$v.changePasswordRequest.$touch()
     }
 
     passwordInteraction(val: { empty: boolean; valid: boolean }) {
         !val.empty
             ? (this.changePasswordRequest.newPassword.value = '******')
             : (this.changePasswordRequest.newPassword.value = '')
-        this.$v.changePasswordRequest.$touch()
     }
 
     strengthCheck(val) {
@@ -178,41 +156,43 @@ export default class BundlesPage extends mixins(BaseMixin) {
         let tokenizedOld = ''
         let tokenizedNew = ''
 
-        this.$v.$touch()
+        this.validation.touch() && (await this.validation.validate())
 
-        if (this.isPasswordValid && !this.isAnyPasswordEmpty) {
-            this.isLoading = true
+        if (this.validation.isInvalid.value || !this.isPasswordValid) {
+            return null
+        }
 
-            await this.oldPassword.createToken().then((res) => {
-                tokenizedOld = res.tokens['old-password']
-            })
-            await this.newPassword.createToken().then((res) => {
-                tokenizedNew = res.tokens['new-password']
-            })
+        this.isLoading = true
 
-            if (tokenizedOld && tokenizedNew) {
-                this.changePasswordRequest.oldPassword.value = tokenizedOld
-                this.changePasswordRequest.newPassword.value = tokenizedNew
-                this.authStore
-                    .validatePassword({ password: this.changePasswordRequest.newPassword })
-                    .then(() => {
-                        this.authStore
-                            .updatePassword(this.changePasswordRequest)
-                            .then(() => {
-                                this.showSuccessToast('Password changed successfully')
-                                this.$router.push('/profile')
-                            })
-                            .catch((err) => {
-                                const data = err.response.data
-                                const error = data.message ? data.message : data.errorCode
+        await this.oldPassword.createToken().then((res) => {
+            tokenizedOld = res.tokens['old-password']
+        })
+        await this.newPassword.createToken().then((res) => {
+            tokenizedNew = res.tokens['new-password']
+        })
 
-                                this.showErrorToast(error)
-                            })
-                            .finally(() => {
-                                this.isLoading = false
-                            })
-                    })
-            }
+        if (tokenizedOld && tokenizedNew) {
+            this.changePasswordRequest.oldPassword.value = tokenizedOld
+            this.changePasswordRequest.newPassword.value = tokenizedNew
+            this.authStore
+                .validatePassword({ password: this.changePasswordRequest.newPassword })
+                .then(() => {
+                    this.authStore
+                        .updatePassword(this.changePasswordRequest)
+                        .then(() => {
+                            this.showSuccessToast('Password changed successfully')
+                            this.$router.push('/profile')
+                        })
+                        .catch((err) => {
+                            const data = err.response.data
+                            const error = data.message ? data.message : data.errorCode
+
+                            this.showErrorToast(error)
+                        })
+                        .finally(() => {
+                            this.isLoading = false
+                        })
+                })
         }
     }
 }

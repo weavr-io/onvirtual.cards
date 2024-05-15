@@ -21,11 +21,11 @@
                 <b-row align-h="center">
                     <b-col cols="6">
                         <b-form-group
-                            :state="isInvalid($v.request.verificationCode)"
-                            invalid-feedback="This field is required and must be 6 characters"
+                            :invalid-feedback="validation.getInvalidFeedback('verificationCode')"
+                            :state="validation.getState('verificationCode')"
                         >
                             <b-form-input
-                                v-model="$v.request.verificationCode.$model"
+                                v-model="request.verificationCode"
                                 class="text-center"
                                 lazy
                                 placeholder="000000"
@@ -77,14 +77,18 @@
 
 <script lang="ts">
 import { Component, mixins, Prop } from 'nuxt-property-decorator'
-import { maxLength, minLength, required } from 'vuelidate/lib/validators'
+import { reactive } from 'vue'
 import BaseMixin from '~/mixins/BaseMixin'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
-import { AuthVerifyEnrolRequest } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { Nullable } from '~/global'
+
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import {
+    AuthVerifyEnrol,
+    AuthVerifyEnrolSchema,
+    INITIAL_AUTH_VERIFY_REQUEST,
+} from '~/plugins/weavr-multi/api/models/authentication/additional-factors'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     layout: 'auth',
@@ -92,35 +96,27 @@ import LoaderButton from '~/components/atoms/LoaderButton.vue'
         ErrorAlert,
         LoaderButton,
     },
-    validations: {
-        request: {
-            verificationCode: {
-                required,
-                minLength: minLength(6),
-                maxLength: maxLength(6),
-            },
-        },
-    },
 })
-export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) {
+export default class MobileComponent extends mixins(BaseMixin) {
     @Prop() readonly verifyPhone!: boolean
 
     isLoading = false
 
-    request: Nullable<AuthVerifyEnrolRequest> = {
-        verificationCode: null,
-    }
-
+    request: AuthVerifyEnrol = reactive(INITIAL_AUTH_VERIFY_REQUEST())
     showSmsResentSuccess = false
     dismissSecs = 60
     dismissCountDown = 0
 
-    mounted() {
+    get validation() {
+        return useZodValidation(AuthVerifyEnrolSchema, this.request)
+    }
+
+    async fetch() {
         if (
             this.$route.query.send === 'true' &&
             (this.verifyPhone || localStorage.getItem('scaSmsSent') === 'FALSE')
         ) {
-            this.sendSms()
+            await this.sendSms()
         }
     }
 
@@ -146,17 +142,17 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
     }
 
     async doVerify() {
-        this.$v.$touch()
+        this.isLoading = true
+        await this.validation.validate()
 
-        if (this.$v.$invalid) {
+        if (this.validation.isInvalid.value) {
+            this.isLoading = false
             return
         }
 
-        this.isLoading = true
-
-        const req: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrolRequest } = {
+        const req: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol } = {
             channel: SCAOtpChannelEnum.SMS,
-            body: this.request as AuthVerifyEnrolRequest,
+            body: this.request,
         }
 
         try {
@@ -189,7 +185,9 @@ export default class MobileComponent extends mixins(BaseMixin, ValidationMixin) 
                         this.isLoading = false
                     })
             }
-        } catch (e) {}
+        } catch (e) {
+            this.isLoading = false
+        }
     }
 
     getConsumersOrCorporates() {

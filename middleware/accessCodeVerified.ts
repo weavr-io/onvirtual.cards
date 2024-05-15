@@ -1,20 +1,22 @@
 import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
 import { useAccessCodesStore } from '~/store/accessCodes'
 
-export default defineNuxtMiddleware(({ route, redirect, $config }) => {
+const accessCode = () => {
+    return +localStorage.getItem('onv-access-code')! ?? undefined
+}
+
+export default defineNuxtMiddleware(async ({ route, redirect, $config }) => {
     if (!$config.production) return
 
-    const accessCodeStore = useAccessCodesStore()
+    try {
+        const accessCodeStore = useAccessCodesStore()
 
-    const accessCode = () => {
-        return +localStorage.getItem('onv-access-code')! ?? undefined
-    }
-
-    if (accessCode()) {
-        accessCodeStore.verifyAccessCode({ code: accessCode() }).catch(() => {
+        if (accessCode()) {
+            await accessCodeStore.verifyAccessCode({ code: accessCode() })
+        } else if (route.name !== 'register') {
             redirect('/register')
-        })
-    } else if (route.name !== 'register') {
+        }
+    } catch (_) {
         redirect('/register')
     }
 })

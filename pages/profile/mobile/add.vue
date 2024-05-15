@@ -10,10 +10,10 @@
             <b-form novalidate @submit.prevent="submitForm">
                 <b-form-group label="MOBILE NUMBER*">
                     <vue-phone-number-input
-                        v-model="rootMobileNumber"
                         :border-radius="0"
                         :error="numberIsValid === false"
                         :only-countries="mobileCountries"
+                        :value="updateRequest.mobile.number"
                         color="#6C1C5C"
                         default-country-code="GB"
                         error-color="#F50E4C"
@@ -36,53 +36,44 @@
 
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import { required } from 'vuelidate/lib/validators'
-import ValidationMixin from '~/mixins/ValidationMixin'
+import { reactive } from 'vue'
 import BaseMixin from '~/mixins/BaseMixin'
-import { DeepNullable } from '~/global'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
+import {
+    INITIAL_MOBILE_REQUEST,
+    Mobile,
+} from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
-import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
+import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/CredentialTypeEnum'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import useZodValidation from '~/composables/useZodValidation'
+import { RootUserMobileSchema } from '~/plugins/weavr-multi/api/models/identities/corporates'
 
 @Component({
     layout: 'auth',
-    validations: {
-        registrationRequest: {
-            rootUser: {
-                mobile: {
-                    countryCode: {
-                        required,
-                    },
-                    number: {
-                        required,
-                    },
-                },
-            },
-        },
-    },
     components: {
         LogoOvc,
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
     middleware: ['kyVerified'],
 })
-export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
+export default class LoginPage extends mixins(BaseMixin) {
     isLoading = false
 
-    rootMobileNumber = ''
     numberIsValid: boolean | null = null
 
-    updateRequest: DeepNullable<{ mobile: MobileModel }> = {
+    updateRequest: { mobile: Mobile } = reactive({
         mobile: {
-            number: null,
-            countryCode: '+356',
+            ...INITIAL_MOBILE_REQUEST(),
         },
+    })
+
+    get validation() {
+        return useZodValidation(RootUserMobileSchema, this.updateRequest)
     }
 
     async asyncData({ redirect }) {
@@ -102,17 +93,17 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
         }
     }
 
-    async submitForm(e) {
+    async submitForm() {
         this.isLoading = true
 
+        if (this.numberIsValid === null) {
+            this.numberIsValid = false
+        }
+
         try {
-            e.preventDefault()
+            await this.validation.validate()
 
-            if (this.numberIsValid === null) {
-                this.numberIsValid = false
-            }
-
-            if (this.$v.$anyError || !this.numberIsValid) {
+            if (this.validation.isInvalid.value || !this.numberIsValid) {
                 this.isLoading = false
                 return null
             }
@@ -143,8 +134,10 @@ export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
     }
 
     phoneUpdate(number) {
-        this.updateRequest.mobile!.countryCode = `+${number.countryCallingCode}`
-        this.updateRequest.mobile!.number = number.nationalNumber
+        this.updateRequest.mobile.countryCode =
+            number.countryCallingCode && `+${number.countryCallingCode}`
+        this.updateRequest.mobile.number = number.phoneNumber
+
         this.numberIsValid = number.isValid
     }
 }
