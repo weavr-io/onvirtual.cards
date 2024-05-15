@@ -17,42 +17,50 @@
                 >
                     <b-form-group
                         id="ig-email"
-                        :invalid-feedback="invalidFeedback($v.form.email, 'email')"
-                        :state="isInvalid($v.form.email)"
+                        :invalid-feedback="validation.getInvalidFeedback('email')"
+                        :state="validation.getState('email')"
                         label="Email"
                         label-for="setEmail"
                     >
                         <b-form-input
                             id="setEmail"
                             v-model="form.email"
-                            :state="isInvalid($v.form.email)"
-                            autocomplete="email"
+                            :state="validation.getState('email')"
+                            autocomplete="on"
                             class="form-control"
                             name="setEmail"
                             placeholder="Email"
                             type="text"
                         />
                     </b-form-group>
-                    <client-only placeholder="Loading...">
-                        <div :class="{ 'is-dirty': $v.form.$dirty }">
-                            <label class="d-block">PASSWORD:</label>
+                    <b-form-group
+                        :state="validation.getState('newPassword,value')"
+                        label="Password"
+                        label-for="password"
+                    >
+                        <client-only placeholder="Loading...">
                             <weavr-password-input
                                 ref="passwordField"
                                 :base-style="passwordBaseStyle"
-                                :options="{
-                                    placeholder: '****',
-                                    classNames: { empty: 'is-invalid' },
-                                }"
-                                class-name="sign-in-password"
+                                :class-name="[
+                                    'sign-in-password form-control p-0',
+                                    { 'is-invalid': isPasswordInvalidAndDirty },
+                                ]"
+                                :options="{ placeholder: '****' }"
                                 name="password"
                                 required="true"
-                                @onKeyUp.prevent="checkOnKeyUp"
+                                @onChange="passwordInteraction"
+                                @onKeyUp="checkOnKeyUp"
+                                @onStrength="strengthCheck"
                             />
-                        </div>
-                        <small class="form-text text-muted"
-                            >Minimum 8, Maximum 50 characters.</small
-                        >
-                    </client-only>
+                            <small
+                                :class="isPasswordInvalidAndDirty ? 'text-danger' : 'text-muted'"
+                                class="form-text mb-3"
+                                >- min 8 characters <br />- uppercase letter <br />- digit and a
+                                special character</small
+                            >
+                        </client-only>
+                    </b-form-group>
                     <div class="text-center">
                         <LoaderButton :is-loading="isLoading" class="mt-5" text="Set password" />
                     </div>
@@ -63,17 +71,20 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { email, required } from 'vuelidate/lib/validators'
+import { reactive } from 'vue'
+import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import {
+    INITIAL_RESUME_LOST_PASSWORD_REQUEST,
+    ResumeLostPasswordSchema,
+} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests'
+import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
+import BaseMixin from '~/mixins/BaseMixin'
 import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
-import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { ResumeLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ResumeLostPasswordRequestModel'
-import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     layout: 'auth',
@@ -83,26 +94,18 @@ import LogoOvc from '~/components/molecules/LogoOvc.vue'
         LoaderButton,
         WeavrPasswordInput,
     },
-    validations: {
-        form: {
-            email: {
-                required,
-                email,
-            },
-        },
-    },
 })
-export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin) {
+export default class PasswordSentPage extends mixins(BaseMixin) {
     @Ref('passwordField')
     passwordField!: WeavrPasswordInput
 
+    isDirty = false
     isLoading = false
-    protected form: ResumeLostPasswordRequestModel = {
-        nonce: '',
-        email: '',
-        newPassword: {
-            value: '',
-        },
+    form = reactive(INITIAL_RESUME_LOST_PASSWORD_REQUEST())
+    passwordStrength = 0
+
+    get validation() {
+        return useZodValidation(ResumeLostPasswordSchema, this.form)
     }
 
     get noErrors() {
@@ -127,6 +130,14 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
         }
     }
 
+    get isPasswordInvalidAndDirty(): boolean {
+        return !this.isPasswordValid && this.validation.dirty.value
+    }
+
+    get isPasswordValid(): boolean {
+        return this.passwordStrength >= 2
+    }
+
     fetch() {
         try {
             this.form.nonce = this.$route.params.nonce.toString()
@@ -136,11 +147,12 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
         }
     }
 
-    setPassword() {
-        this.$v.$touch()
-        if (this.$v.$invalid) return
+    async setPassword() {
+        this.validation.touch() && (await this.validation.validate())
 
-        this.passwordField.createToken().then(
+        if (this.validation.isInvalid.value) return
+
+        await this.passwordField.createToken().then(
             (tokens) => {
                 if (tokens.tokens.password !== '') {
                     this.validatePassword(tokens.tokens.password)
@@ -181,6 +193,15 @@ export default class PasswordSentPage extends mixins(BaseMixin, ValidationMixin)
             e.preventDefault()
             this.setPassword()
         }
+    }
+
+    passwordInteraction(val: { empty: boolean; valid: boolean }) {
+        !val.empty ? (this.form.newPassword.value = '******') : (this.form.newPassword.value = '')
+    }
+
+    @Emit()
+    strengthCheck(val) {
+        this.passwordStrength = val.id
     }
 }
 </script>

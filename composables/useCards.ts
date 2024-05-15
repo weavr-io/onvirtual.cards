@@ -4,7 +4,7 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
 import { useCardsStore } from '~/store/cards'
 import { ManagedCardsApi } from '~/plugins/weavr-multi/api/ManagedCardsApi'
 import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/IDModel'
+import { IDModel } from '~/plugins/weavr-multi/api/models/common'
 
 export const useCards = () => {
     const route = useRoute()

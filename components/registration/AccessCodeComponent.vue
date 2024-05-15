@@ -15,13 +15,15 @@
                         If you need an access code please send us an email at
                         <a href="mailto: sales@weavr.io">sales@weavr.io</a>
                     </div>
-                    <b-form-group>
+                    <b-form-group
+                        :invalid-feedback="validation.getInvalidFeedback('code')"
+                        :state="validation.getState('code')"
+                    >
                         <b-form-input
-                            v-model="$v.form.code.$model"
-                            :state="isInvalid($v.form.code)"
+                            v-model="form.code"
+                            number
                             placeholder="Enter your access code"
                         />
-                        <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
                     </b-form-group>
                     <b-form-row class="mt-5">
                         <b-col class="text-center">
@@ -35,47 +37,46 @@
 </template>
 
 <script lang="ts">
-import { AxiosError } from 'axios'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { required } from 'vuelidate/lib/validators'
+import { reactive } from 'vue'
+import { AxiosError } from 'axios'
 import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { AccessCodeModel } from '~/plugins/weavr-multi/api/models/access-codes/models/AccessCodeModel'
+
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import {
+    AccessCode,
+    AccessCodeSchema,
+    INITIAL_ACCESS_CODE_REQUEST,
+} from '~/plugins/weavr-multi/api/models/access-codes'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     components: { LoaderButton },
-    validations: {
-        form: {
-            code: { required },
-        },
-    },
 })
-export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMixin) {
-    form: AccessCodeModel = {
-        code: null,
-    }
+export default class AccessCodeComponent extends mixins(BaseMixin) {
+    form: AccessCode = reactive(INITIAL_ACCESS_CODE_REQUEST())
 
     isLoading = false
-
     inviteCodeError: { errorMsg: string; showMsg: boolean } = {
         errorMsg: '',
         showMsg: false,
     }
 
-    tryToSubmitAccessCode() {
-        this.isLoading = true
+    get validation() {
+        return useZodValidation(AccessCodeSchema, this.form)
+    }
 
-        this.$v.$touch()
-        if (this.$v.$invalid) {
+    async tryToSubmitAccessCode() {
+        this.isLoading = true
+        await this.validation.validate()
+
+        if (this.validation.isInvalid.value) {
             this.isLoading = false
             return
         }
 
         if (this.form.code) {
-            this.form = {
-                code: +this.form.code,
-            }
+            this.form.code = +this.form.code
 
             return this.accessCodes
                 .verifyAccessCode(this.form)
@@ -88,12 +89,10 @@ export default class AccessCodeComponent extends mixins(BaseMixin, ValidationMix
                             : 'An error occurred. Please try again.',
                         showMsg: true,
                     }
-
-                    this.form.code = null
                 })
                 .finally(() => {
                     this.isLoading = false
-                    this.$v.$reset()
+                    this.validation.clearErrors()
                 })
         }
     }

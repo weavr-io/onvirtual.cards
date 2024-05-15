@@ -1,6 +1,6 @@
 import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import { DateModel } from '~/plugins/weavr-multi/api/models/common/DateModel'
-import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
+import { DateModel } from '~/plugins/weavr-multi/api/models/common/models/DateModel'
+import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/models/IdentityIdModel'
 
 export interface RootUserModel {
     id: IdentityIdModel

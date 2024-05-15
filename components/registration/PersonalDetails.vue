@@ -1,32 +1,20 @@
 <template>
-    <b-form novalidate @submit="submitForm">
+    <b-form novalidate @submit.prevent="submitForm">
         <h3 class="text-center font-weight-light mb-5">A few more steps</h3>
         <error-alert />
-        <b-form-group label="First Name*">
-            <b-form-input
-                v-model="$v.form.rootUser.name.$model"
-                :state="isInvalid($v.form.rootUser.name)"
-                placeholder="Name"
-            />
-            <b-form-invalid-feedback v-if="!$v.form.rootUser.name.required">
-                This field is required
-            </b-form-invalid-feedback>
-            <b-form-invalid-feedback v-if="!$v.form.rootUser.name.maxLength">
-                Name is too long.
-            </b-form-invalid-feedback>
+        <b-form-group
+            :invalid-feedback="validation.getInvalidFeedback('rootUser,name')"
+            :state="validation.getState('rootUser,name')"
+            label="First Name*"
+        >
+            <b-form-input v-model="form.rootUser.name" placeholder="Name" />
         </b-form-group>
-        <b-form-group label="Last Name*">
-            <b-form-input
-                v-model="$v.form.rootUser.surname.$model"
-                :state="isInvalid($v.form.rootUser.surname)"
-                placeholder="Last Name"
-            />
-            <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.required">
-                This field is required
-            </b-form-invalid-feedback>
-            <b-form-invalid-feedback v-if="!$v.form.rootUser.surname.maxLength">
-                Surname is too long.
-            </b-form-invalid-feedback>
+        <b-form-group
+            :invalid-feedback="validation.getInvalidFeedback('rootUser,surname')"
+            :state="validation.getState('rootUser,surname')"
+            label="Last Name*"
+        >
+            <b-form-input v-model="form.rootUser.surname" placeholder="Last Name" />
         </b-form-group>
         <b-form-group label="MOBILE NUMBER*">
             <vue-phone-number-input
@@ -44,80 +32,84 @@
                 This field must be a valid mobile number.
             </b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group label="Company Name*">
-            <b-form-input
-                v-model="$v.form.company.name.$model"
-                :state="isInvalid($v.form.company.name)"
-                placeholder="Company Name"
-            />
-            <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        <b-form-group
+            :invalid-feedback="validation.getInvalidFeedback('company,name')"
+            :state="validation.getState('company,name')"
+            label="Company Name*"
+        >
+            <b-form-input v-model="form.company.name" placeholder="Company Name" />
         </b-form-group>
-        <b-form-group label="Company Registration Number*">
-            <b-form-input
-                v-model="$v.form.company.registrationNumber.$model"
-                :state="isInvalid($v.form.company.registrationNumber)"
-                placeholder="C00000"
-            />
-            <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        <b-form-group
+            :invalid-feedback="validation.getInvalidFeedback('company,registrationNumber')"
+            :state="validation.getState('company,registrationNumber')"
+            label="Company Registration Number*"
+        >
+            <b-form-input v-model="form.company.registrationNumber" placeholder="C00000" />
         </b-form-group>
-        <b-form-group label="Company Type*">
+        <b-form-group
+            :invalid-feedback="validation.getInvalidFeedback('company,type')"
+            :state="validation.getState('company,type')"
+            label="Company Type*"
+        >
             <b-form-select
-                v-model="$v.form.company.type.$model"
+                v-model="form.company.type"
                 :options="companyTypeOptionsWithDefault"
-                :state="isInvalid($v.form.company.type)"
                 placeholder="Company Type"
             />
             <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group label="Registration Country*">
+        <b-form-group
+            :invalid-feedback="validation.getInvalidFeedback('company,registrationCountry')"
+            :state="validation.getState('company,registrationCountry')"
+            label="Registration Country*"
+        >
             <b-form-select
-                v-model="$v.form.company.registrationCountry.$model"
+                v-model="form.company.registrationCountry"
                 :options="countryOptionsWithDefault"
-                :state="isInvalid($v.form.company.registrationCountry)"
                 placeholder="Registration Country"
             />
-            <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
-        <b-form-group :state="isInvalid($v.form.industry)" label="Industry*">
-            <b-form-select
-                v-model="$v.form.industry.$model"
-                :options="industryOccupationOptions"
-                :state="isInvalid($v.form.industry)"
-            />
-            <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        <b-form-group
+            :invalid-feedback="validation.getInvalidFeedback('industry')"
+            :state="validation.getState('industry')"
+            label="Industry*"
+        >
+            <b-form-select v-model="form.industry" :options="industryOccupationOptions" />
         </b-form-group>
-        <b-form-group :state="isInvalid($v.form.sourceOfFunds)" label="Source of Funds*">
-            <b-form-select
-                v-model="$v.form.sourceOfFunds.$model"
-                :options="sourceOfFundsOptions"
-                :state="isInvalid($v.form.sourceOfFunds)"
-            />
-            <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
+        <b-form-group
+            :invalid-feedback="validation.getInvalidFeedback('sourceOfFunds')"
+            :state="validation.getState('sourceOfFunds')"
+            label="Source of Funds*"
+        >
+            <b-form-select v-model="form.sourceOfFunds" :options="sourceOfFundsOptions" />
         </b-form-group>
-        <b-form-group v-if="shouldShowOtherSourceOfFunds" label="Other">
+        <b-form-group
+            v-if="shouldShowOtherSourceOfFunds"
+            :invalid-feedback="validation.getInvalidFeedback('sourceOfFundsOther')"
+            :state="validation.getState('sourceOfFundsOther')"
+            label="Other"
+        >
             <b-form-input
                 v-model="form.sourceOfFundsOther"
-                :state="isInvalid($v.form.sourceOfFundsOther)"
                 placeholder="Specify Other Source of Funds"
             />
         </b-form-group>
         <b-form-group
-            :state="isInvalid($v.form.rootUser.companyPosition)"
+            :invalid-feedback="validation.getInvalidFeedback('rootUser,companyPosition')"
+            :state="validation.getState('rootUser,companyPosition')"
             label="My position within the company is*"
         >
             <b-form-radio
-                v-model="$v.form.rootUser.companyPosition.$model"
-                :state="isInvalid($v.form.rootUser.companyPosition)"
+                v-model="firstCompanyPosition"
+                :state="validation.getState('rootUser,companyPosition')"
                 name="company-position"
-                value="AUTHORISED_REPRESENTATIVE"
             >
                 I am a representative (with the relevant power of attorney)
             </b-form-radio>
             <b-form-radio
-                v-model="$v.form.rootUser.companyPosition.$model"
-                :state="isInvalid($v.form.rootUser.companyPosition)"
+                v-model="lastCompanyPosition"
+                :state="validation.getState('rootUser,companyPosition')"
                 name="company-position"
-                value="DIRECTOR"
             >
                 I am a director
             </b-form-radio>
@@ -140,96 +132,62 @@
     </b-form>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins } from 'nuxt-property-decorator'
-import { maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
+import { reactive } from 'vue'
+import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
-import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
-import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import { CorporateSourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CorporateSourceOfFundsSelectConst'
+import {
+    CorporateSourceOfFundTypeEnum,
+    PREDEFINED_CORPORATE_SOURCE_OF_FUND,
+} from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
+import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { DeepNullable, RecursivePartial } from '~/global'
+import {
+    CreateCorporateFormSchema,
+    type CreateCorporateRequest,
+    INITIAL_CREATE_CORPORATE_REQUEST,
+} from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import BaseMixin from '~/mixins/BaseMixin'
+
 import Countries from '~/static/json/countries.json'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
-    validations: {
-        form: {
-            rootUser: {
-                name: {
-                    required,
-                    maxLength: maxLength(20),
-                },
-                surname: {
-                    required,
-                    maxLength: maxLength(20),
-                },
-                mobile: {
-                    number: {
-                        required,
-                    },
-                    countryCode: {
-                        required,
-                    },
-                },
-                companyPosition: {
-                    required,
-                },
-            },
-            company: {
-                type: {
-                    required,
-                },
-                name: {
-                    required,
-                    maxLength: maxLength(100),
-                },
-                registrationNumber: {
-                    required,
-                    maxLength: maxLength(20),
-                },
-                registrationCountry: {
-                    required,
-                    maxLength: maxLength(2),
-                },
-            },
-            industry: {
-                required,
-            },
-            sourceOfFunds: {
-                required,
-            },
-            sourceOfFundsOther: {},
-        },
-    },
     components: {
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
 })
-export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMixin) {
+export default class PersonalDetailsForm extends mixins(BaseMixin) {
     companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
     numberIsValid: boolean | null = null
-    public form: DeepNullable<RecursivePartial<CreateCorporateRequest>> = {
-        rootUser: {
-            name: null,
-            surname: null,
-            mobile: {
-                number: null,
-                countryCode: '',
-            },
-            companyPosition: null,
-        },
-        company: {
-            type: null,
-            name: null,
-            registrationNumber: null,
-            registrationCountry: null,
-        },
-        industry: null,
-        sourceOfFunds: null,
-        sourceOfFundsOther: null,
+
+    @Prop() baseForm!: CreateCorporateRequest
+
+    form: CreateCorporateRequest = reactive({
+        ...INITIAL_CREATE_CORPORATE_REQUEST(),
+        ...this.baseForm,
+    })
+
+    get validation() {
+        return useZodValidation(CreateCorporateFormSchema, this.form)
+    }
+
+    public get firstCompanyPosition() {
+        return this.form.rootUser.companyPosition
+    }
+
+    public set firstCompanyPosition(val: CompanyPositionEnum) {
+        this.form.rootUser.companyPosition = val ?? 'AUTHORISED_REPRESENTATIVE'
+    }
+
+    public get lastCompanyPosition() {
+        return this.form.rootUser.companyPosition
+    }
+
+    public set lastCompanyPosition(val: CompanyPositionEnum) {
+        this.form.rootUser.companyPosition = val ?? 'DIRECTOR'
     }
 
     get mobileCountries(): string[] {
@@ -247,32 +205,42 @@ export default class PersonalDetailsForm extends mixins(BaseMixin, ValidationMix
     }
 
     get sourceOfFundsOptions() {
-        return SourceOfFundsSelectConst
+        return CorporateSourceOfFundsSelectConst
     }
 
     get shouldShowOtherSourceOfFunds(): boolean {
         return this.form.sourceOfFunds === CorporateSourceOfFundTypeEnum.OTHER
     }
 
+    get test() {
+        return PREDEFINED_CORPORATE_SOURCE_OF_FUND
+    }
+
     phoneUpdate(number) {
-        this.$v.form.rootUser!.mobile.number.$touch()
-        this.$set(this.form.rootUser!.mobile!, 'countryCode', '+' + number.countryCallingCode)
-        this.$set(this.form.rootUser!.mobile!, 'number', number.phoneNumber)
+        this.form.rootUser.mobile.countryCode =
+            number.countryCallingCode && `+${number.countryCallingCode}`
+        this.form.rootUser.mobile.number = number.phoneNumber
+
         this.numberIsValid = number.isValid
     }
 
-    @Emit()
-    submitForm(e) {
-        e.preventDefault()
+    async submitForm() {
         if (this.numberIsValid === null) {
             this.numberIsValid = false
         }
-        if (this.$v.form) {
-            this.$v.form.$touch()
-            if (this.$v.form.$anyError || !this.numberIsValid) {
-                return null
-            }
+
+        await this.validation.validate()
+
+        if (this.validation.isInvalid.value || !this.numberIsValid) {
+            return null
         }
+
+        this.submit()
+    }
+
+    @Emit()
+    submit() {
+        this.errorsStore.resetState()
         return this.form
     }
 

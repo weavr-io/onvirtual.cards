@@ -6,21 +6,15 @@
                     <div class="form-screens">
                         <error-alert />
                         <div class="form-screen">
-                            <b-form novalidate @submit="submitForm">
+                            <b-form novalidate @submit.prevent="submitForm">
                                 <h3 class="text-center font-weight-light mb-5">
                                     Your address details
                                 </h3>
                                 <b-form-group
                                     :invalid-feedback="
-                                        invalidFeedback(
-                                            $v.address.addressLine1,
-                                            validateVParams(
-                                                $v.address.addressLine1.$params,
-                                                $v.address.addressLine1,
-                                            ),
-                                        )
+                                        validation.getInvalidFeedback('addressLine1')
                                     "
-                                    :state="isInvalid($v.address.addressLine1)"
+                                    :state="validation.getState('addressLine1')"
                                     label="Address Line 1*"
                                 >
                                     <b-form-input
@@ -28,38 +22,28 @@
                                         placeholder="Address Line 1"
                                     />
                                 </b-form-group>
-                                <b-form-group label="Address Line 2">
+                                <b-form-group
+                                    :invalid-feedback="
+                                        validation.getInvalidFeedback('addressLine2')
+                                    "
+                                    :state="validation.getState('addressLine2')"
+                                    label="Address Line 2"
+                                >
                                     <b-form-input
                                         v-model="address.addressLine2"
                                         placeholder="Address Line 2"
                                     />
                                 </b-form-group>
                                 <b-form-group
-                                    :invalid-feedback="
-                                        invalidFeedback(
-                                            $v.address.city,
-                                            validateVParams(
-                                                $v.address.city.$params,
-                                                $v.address.city,
-                                            ),
-                                        )
-                                    "
-                                    :state="isInvalid($v.address.city)"
+                                    :invalid-feedback="validation.getInvalidFeedback('city')"
+                                    :state="validation.getState('city')"
                                     label="City*"
                                 >
                                     <b-form-input v-model="address.city" placeholder="City" />
                                 </b-form-group>
                                 <b-form-group
-                                    :invalid-feedback="
-                                        invalidFeedback(
-                                            $v.address.country,
-                                            validateVParams(
-                                                $v.address.country.$params,
-                                                $v.address.country,
-                                            ),
-                                        )
-                                    "
-                                    :state="isInvalid($v.address.country)"
+                                    :invalid-feedback="validation.getInvalidFeedback('country')"
+                                    :state="validation.getState('country')"
                                     label="Country*"
                                 >
                                     <b-form-select
@@ -69,16 +53,8 @@
                                     />
                                 </b-form-group>
                                 <b-form-group
-                                    :invalid-feedback="
-                                        invalidFeedback(
-                                            $v.address.postCode,
-                                            validateVParams(
-                                                $v.address.postCode.$params,
-                                                $v.address.postCode,
-                                            ),
-                                        )
-                                    "
-                                    :state="isInvalid($v.address.postCode)"
+                                    :invalid-feedback="validation.getInvalidFeedback('postCode')"
+                                    :state="validation.getState('postCode')"
                                     label="Post Code*"
                                 >
                                     <b-form-input
@@ -86,12 +62,20 @@
                                         placeholder="Post Code"
                                     />
                                 </b-form-group>
-                                <b-form-group label="State">
+                                <b-form-group
+                                    :invalid-feedback="validation.getInvalidFeedback('state')"
+                                    :state="validation.getState('state')"
+                                    label="State"
+                                >
                                     <b-form-input v-model="address.state" placeholder="State" />
                                 </b-form-group>
                                 <b-row align-v="center" class="mt-4">
                                     <b-col class="text-center">
-                                        <LoaderButton :is-loading="isLoading" text="continue" />
+                                        <LoaderButton
+                                            :is-loading="isLoading"
+                                            text="continue"
+                                            type="submit"
+                                        />
                                     </b-col>
                                 </b-row>
                             </b-form>
@@ -104,33 +88,22 @@
 </template>
 
 <script lang="ts">
+import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
-import { AddressModel } from '~/plugins/weavr-multi/api/models/common/AddressModel'
-import { LegalAddressModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/LegalAddressModel'
-import { SourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/SourceOfFundsSelectConst'
+import {
+    type Address,
+    AddressSchema,
+    INITIAL_ADDRESS,
+} from '~/plugins/weavr-multi/api/models/common/models/Address'
+import { CorporateSourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CorporateSourceOfFundsSelectConst'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
 import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { Nullable } from '~/global'
+import BaseMixin from '~/mixins/BaseMixin'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     layout: 'auth',
-    validations: {
-        address: {
-            addressLine1: {
-                required,
-            },
-            city: { required },
-            postCode: { required },
-            country: {
-                required,
-                maxLength: maxLength(2),
-            },
-        },
-    },
     components: {
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
@@ -138,20 +111,16 @@ import { Nullable } from '~/global'
     },
     middleware: ['authRouteGuard'],
 })
-export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMixin) {
-    address: Nullable<AddressModel | LegalAddressModel> = {
-        addressLine1: null,
-        addressLine2: null,
-        city: null,
-        postCode: null,
-        state: null,
-        country: null,
-    }
-
+export default class ConsumerAddressPage extends mixins(BaseMixin) {
+    address: Address = reactive(INITIAL_ADDRESS())
     isLoading = false
 
+    get validation() {
+        return useZodValidation(AddressSchema, this.address)
+    }
+
     get country() {
-        return this.address.country !== undefined ? this.address.country : null
+        return this.address?.country
     }
 
     set country(val) {
@@ -159,7 +128,7 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
     }
 
     get sourceOfFundsOptions() {
-        return SourceOfFundsSelectConst
+        return CorporateSourceOfFundsSelectConst
     }
 
     get industryOccupationOptions() {
@@ -168,47 +137,39 @@ export default class ConsumerAddressPage extends mixins(BaseMixin, ValidationMix
 
     fetch() {
         if (this.isConsumer && this.consumer) {
-            if (Object.keys(this.consumer.rootUser.address as AddressModel).length !== 0) {
-                this.address = { ...this.consumer.rootUser.address! }
+            if (Object.keys(this.consumer.rootUser.address as Address).length) {
+                Object.assign(this.address, this.consumer.rootUser.address)
             }
         } else if (this.isCorporate && this.corporate) {
-            if (
-                Object.keys(this.corporate.company.registeredAddress as LegalAddressModel)
-                    .length !== 0
-            ) {
+            if (Object.keys(this.corporate.company.registeredAddress as Address).length) {
                 // treat as corporate
-                this.address = { ...this.corporate.company.registeredAddress! }
+                Object.assign(this.address, this.corporate.company.registeredAddress)
             }
         }
     }
 
-    submitForm(e) {
-        e.preventDefault()
+    async submitForm() {
+        this.isLoading = true
+        await this.validation.validate()
 
-        this.$v.$touch()
-
-        if (this.$v.$invalid) {
+        if (this.validation.isInvalid.value) {
+            this.isLoading = false
             return
         }
 
-        if (this.$v.$anyDirty) {
-            this.isLoading = true
-            let xhr
+        let xhr: Promise<unknown>
 
-            if (this.isConsumer) {
-                xhr = this.consumersStore.update({ address: this.address as AddressModel })
-            } else {
-                // treat as corporate
-                xhr = this.corporatesStore.update({
-                    companyBusinessAddress: this.address as AddressModel,
-                })
-            }
-            xhr.then(this.addressUpdated).finally(() => {
-                this.isLoading = false
-            })
+        if (this.isConsumer) {
+            xhr = this.consumersStore.update({ address: this.address })
         } else {
-            this.addressUpdated()
+            // treat as corporate
+            xhr = this.corporatesStore.update({
+                companyBusinessAddress: this.address,
+            })
         }
+        xhr.then(this.addressUpdated).finally(() => {
+            this.isLoading = false
+        })
     }
 
     async addressUpdated() {

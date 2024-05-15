@@ -13,12 +13,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useRouter } from '@nuxtjs/composition-api'
+import { defineComponent } from '@nuxtjs/composition-api'
 import MobileComponent from '~/components/MobileComponent.vue'
-import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
-import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
-import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
-import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
 export default defineComponent({
@@ -27,27 +23,7 @@ export default defineComponent({
         LogoOvc,
     },
     layout: 'auth',
-    setup() {
-        const router = useRouter()
-        const { auth, identity } = initialiseStores(['auth', 'identity'])
-
-        const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
-            (factor) => factor.channel === SCAOtpChannelEnum.SMS,
-        )
-
-        if (
-            auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT &&
-            !identity?.identityState.emailVerified
-        ) {
-            return router.push('/login/verify')
-        } else if (
-            !smsAuthFactors ||
-            smsAuthFactors[0].status === SCAFactorStatusEnum.PENDING_VERIFICATION
-        ) {
-            return router.push('/profile/mobile/add')
-        } else if (localStorage.getItem('stepUp') === 'TRUE') {
-            return router.push('/')
-        }
-    },
+    middleware: 'authFactors',
+    setup() {},
 })
 </script>

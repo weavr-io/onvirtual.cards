@@ -106,7 +106,6 @@ const config = {
             src: '~/plugins/weavr/security.client.ts',
             ssr: false,
         },
-        { src: '~/plugins/vuelidate' },
         {
             src: '~/plugins/WeavrVueFilters.ts',
             ssr: false,

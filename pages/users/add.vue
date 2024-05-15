@@ -9,45 +9,37 @@
             <b-row align-h="center">
                 <b-col lg="6" md="9">
                     <error-alert />
-                    <b-form @submit="doAdd">
+                    <b-form @submit.prevent="doAdd">
                         <b-form-row>
                             <b-col>
-                                <b-form-group label="Name*">
-                                    <b-form-input
-                                        v-model="$v.request.name.$model"
-                                        :state="isInvalid($v.request.name)"
-                                    />
-                                    <b-form-invalid-feedback
-                                        >This field is required.
-                                    </b-form-invalid-feedback>
+                                <b-form-group
+                                    :invalid-feedback="validation.getInvalidFeedback('name')"
+                                    :state="validation.getState('name')"
+                                    label="Name*"
+                                >
+                                    <b-form-input v-model="request.name" />
                                 </b-form-group>
                             </b-col>
                         </b-form-row>
                         <b-form-row>
                             <b-col>
-                                <b-form-group label="Surname*">
-                                    <b-form-input
-                                        v-model="$v.request.surname.$model"
-                                        :state="isInvalid($v.request.surname)"
-                                    />
-                                    <b-form-invalid-feedback
-                                        >This field is required.
-                                    </b-form-invalid-feedback>
+                                <b-form-group
+                                    :invalid-feedback="validation.getInvalidFeedback('surname')"
+                                    :state="validation.getState('surname')"
+                                    label="Surname*"
+                                >
+                                    <b-form-input v-model="request.surname" />
                                 </b-form-group>
                             </b-col>
                         </b-form-row>
                         <b-form-row>
                             <b-col>
-                                <b-form-group label="Email*">
-                                    <b-form-input
-                                        v-model="$v.request.email.$model"
-                                        :state="isInvalid($v.request.email)"
-                                        lazy
-                                        type="email"
-                                    />
-                                    <b-form-invalid-feedback
-                                        >This field is required and must be a valid email.
-                                    </b-form-invalid-feedback>
+                                <b-form-group
+                                    :invalid-feedback="validation.getInvalidFeedback('email')"
+                                    :state="validation.getState('email')"
+                                    label="Email*"
+                                >
+                                    <b-form-input v-model="request.email" lazy type="email" />
                                 </b-form-group>
                             </b-col>
                         </b-form-row>
@@ -63,57 +55,41 @@
     </section>
 </template>
 <script lang="ts">
+import { reactive } from 'vue'
 import { Component, mixins } from 'nuxt-property-decorator'
-import { email, maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
-import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
+import {
+    CreateUserRequestModel,
+    INITIAL_USER_REQUEST,
+    type UserRequest,
+    UserSchema,
+} from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { Nullable } from '~/global'
+import BaseMixin from '~/mixins/BaseMixin'
+
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     components: {
         LoaderButton,
         ErrorAlert: () => import('~/components/ErrorAlert.vue'),
     },
-    validations: {
-        request: {
-            name: {
-                required,
-                maxLength: maxLength(100),
-            },
-            surname: {
-                required,
-                maxLength: maxLength(100),
-            },
-            email: {
-                required,
-                email,
-            },
-        },
-    },
     middleware: ['kyVerified'],
 })
-export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
+export default class AddCardPage extends mixins(BaseMixin) {
     isLoading = false
 
-    request: Nullable<CreateUserRequestModel> = {
-        name: null,
-        surname: null,
-        email: null,
-        mobile: null,
-        dateOfBirth: null,
+    request: UserRequest = reactive(INITIAL_USER_REQUEST())
+
+    get validation() {
+        return useZodValidation(UserSchema, this.request)
     }
 
-    async doAdd(evt) {
-        evt.preventDefault()
+    async doAdd() {
+        await this.validation.validate()
 
-        if (this.$v.request) {
-            this.$v.request.$touch()
-            if (this.$v.request.$anyError) {
-                return null
-            }
+        if (this.validation.isInvalid.value) {
+            return null
         }
 
         this.isLoading = true

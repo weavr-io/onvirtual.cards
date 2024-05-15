@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed, reactive } from 'vue'
 import type { Consumers as ConsumerState } from '~/local/models/store/consumers'
 import type { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
-import type { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
+import type { VerifyEmail } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmail'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import type { CreateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
@@ -128,7 +128,7 @@ export const useConsumersStore = defineStore('consumers', () => {
         return Promise.resolve()
     }
 
-    const verifyEmail = (request: VerifyEmailRequest) => {
+    const verifyEmail = (request: VerifyEmail) => {
         return store.$nuxt.$apiMulti.consumers.verifyEmail(request)
     }
 
@@ -137,9 +137,7 @@ export const useConsumersStore = defineStore('consumers', () => {
     }
 
     const startKYC = () => {
-        const _res = store.$nuxt.$apiMulti.consumers.startKYC()
-
-        return _res
+        return store.$nuxt.$apiMulti.consumers.startKYC()
     }
 
     return {
