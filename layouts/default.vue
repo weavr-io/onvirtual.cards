@@ -1,6 +1,6 @@
 <template>
     <div>
-        <NavHeader />
+        <AppHeader />
         <Nuxt />
         <LoadingSpinner id="loader" :is-loading="isLoading" />
         <Cookie />
@@ -10,7 +10,7 @@
 <script lang="ts">
 import { defineComponent } from '@nuxtjs/composition-api'
 import { computed } from 'vue'
-import NavHeader from '~/components/Header.vue'
+import AppHeader from '~/components/Header.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import Cookie from '~/components/cookie.vue'
 import { useStores } from '~/composables/useStores'
@@ -19,7 +19,7 @@ export default defineComponent({
     components: {
         Cookie,
         LoadingSpinner,
-        NavHeader,
+        AppHeader,
     },
     middleware: 'authRouteGuard',
     setup() {

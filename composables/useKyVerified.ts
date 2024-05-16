@@ -18,7 +18,7 @@ export const useKyVerified = () => {
         return identity?.identityState.emailVerified === false
     })
 
-    const showKybAlert = () => {
+    const showKybAlert = computed(() => {
         const _isCorporate = auth?.isCorporate
 
         if (!_isCorporate) {
@@ -32,9 +32,9 @@ export const useKyVerified = () => {
             return _corporateKyb.kybStatus !== KYBStatusEnum.APPROVED
         }
         return false
-    }
+    })
 
-    const showKycAlert = () => {
+    const showKycAlert = computed(() => {
         const _isConsumer = auth?.isConsumer
 
         if (!_isConsumer) {
@@ -48,6 +48,12 @@ export const useKyVerified = () => {
             return _consumerKyc
         }
         return false
+    })
+
+    return {
+        showKybAlert,
+        showKycAlert,
+        showVerifyEmailAlert,
+        showVerifyMobileAlert,
     }
-    return { showKybAlert, showKycAlert, showVerifyEmailAlert, showVerifyMobileAlert }
 }
