@@ -38,12 +38,12 @@ import { useBase } from '~/composables/useBase'
 
 export default defineComponent({
     setup() {
-        const ctx = useContext()
+        const { $config } = useContext()
         const route = useRoute()
         const { isLoggedIn, doLogout } = useBase()
 
         const showHeader = computed(() => {
-            return ctx.$config.app.view_register
+            return $config.app.view_register
         })
 
         const showLogin = computed(() => {

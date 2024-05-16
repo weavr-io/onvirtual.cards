@@ -28,8 +28,7 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
 import { computed } from 'vue'
 import AppHeader from '~/components/Header.vue'
 import Cookie from '~/components/cookie.vue'
@@ -41,36 +40,11 @@ import { useStores } from '~/composables/useStores'
 import { useKyVerified } from '~/composables/useKyVerified'
 import { useBase } from '~/composables/useBase'
 
-export default defineComponent({
-    components: {
-        Cookie,
-        DashboardHeader,
-        KYCAlert,
-        KYBAlert,
-        LoadingSpinner,
-        AppHeader,
-    },
-    setup() {
-        const { loader } = useStores(['loader'])
-        const { accounts } = useStores(['accounts'])
-        const { showKybAlert, showKycAlert, showVerifyEmailAlert, showVerifyMobileAlert } =
-            useKyVerified()
-        const { goToVerify } = useBase()
+const { loader } = useStores(['loader'])
+const { showKybAlert, showKycAlert, showVerifyEmailAlert, showVerifyMobileAlert } = useKyVerified()
+const { goToVerify } = useBase()
 
-        const isLoading = computed(() => loader?.isLoading)
-        const allAccounts = computed(() => accounts?.accountState.accounts)
-
-        return {
-            isLoading,
-            allAccounts,
-            showKycAlert,
-            showKybAlert,
-            showVerifyMobileAlert,
-            showVerifyEmailAlert,
-            goToVerify,
-        }
-    },
-})
+const isLoading = computed(() => loader?.isLoading)
 </script>
 
 <style lang="scss" scoped>
