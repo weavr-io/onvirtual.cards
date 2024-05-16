@@ -2,6 +2,7 @@ import { defineNuxtPlugin } from '@nuxtjs/composition-api'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 export default defineNuxtPlugin((ctxt, inject) => {
+    console.log(ctxt)
     const { auth, errors } = initialiseStores(['auth', 'errors'])
     const axiosMulti = ctxt.$axios.create({
         headers: {

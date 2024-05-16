@@ -3,6 +3,7 @@ import { useStores } from '~/composables/useStores'
 import Countries from '~/static/json/countries.json'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 
 export const useBase = () => {
     const { proxy: root } = getCurrentInstance() || {}
@@ -123,6 +124,13 @@ export const useBase = () => {
         return _c['alpha-2']
     })
 
+    const countryOptionsWithDefault = computed(() => {
+        const _default: [any] = [{ ...DefaultSelectValueConst }]
+        _default.push(...countriesOptions)
+
+        return _default
+    })
+
     const pendingData = computed(() => !root!.$fetchState || root!.$fetchState.pending)
     const fetchHasError = computed(() => root!.$fetchState?.error !== null)
     const pendingDataOrError = computed(() => pendingData.value || fetchHasError.value)
@@ -189,6 +197,7 @@ export const useBase = () => {
         countriesOptions,
         mobileCountries,
         pendingDataOrError,
+        countryOptionsWithDefault,
         goToIndex,
         goToVerify,
         redirectToLogin,

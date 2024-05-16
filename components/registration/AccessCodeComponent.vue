@@ -36,12 +36,10 @@
     </b-col>
 </template>
 
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { reactive } from 'vue'
+<script lang="ts" setup>
+import { computed, ref, reactive } from '@nuxtjs/composition-api'
 import { AxiosError } from 'axios'
-import BaseMixin from '~/mixins/BaseMixin'
-
+import { useStores } from '~/composables/useStores'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import {
     AccessCode,
@@ -50,51 +48,50 @@ import {
 } from '~/plugins/weavr-multi/api/models/access-codes'
 import useZodValidation from '~/composables/useZodValidation'
 
-@Component({
-    components: { LoaderButton },
+interface IInviteCodeError {
+    errorMsg: string
+    showMsg: boolean
+}
+
+const form = reactive<AccessCode>(INITIAL_ACCESS_CODE_REQUEST())
+const { accessCodes } = useStores(['accessCodes'])
+
+const isLoading = ref<boolean>(false)
+const inviteCodeError = ref<IInviteCodeError>({
+    errorMsg: '',
+    showMsg: false,
 })
-export default class AccessCodeComponent extends mixins(BaseMixin) {
-    form: AccessCode = reactive(INITIAL_ACCESS_CODE_REQUEST())
 
-    isLoading = false
-    inviteCodeError: { errorMsg: string; showMsg: boolean } = {
-        errorMsg: '',
-        showMsg: false,
+const validation = computed(() => useZodValidation(AccessCodeSchema, form))
+
+const tryToSubmitAccessCode = async () => {
+    isLoading.value = true
+    await validation.value.validate()
+
+    if (validation.value.isInvalid.value) {
+        isLoading.value = false
+        return
     }
 
-    get validation() {
-        return useZodValidation(AccessCodeSchema, this.form)
-    }
+    if (form.code) {
+        form.code = +form.code
 
-    async tryToSubmitAccessCode() {
-        this.isLoading = true
-        await this.validation.validate()
+        return accessCodes
+            ?.verifyAccessCode(form)
+            .catch((err: AxiosError) => {
+                const is403: boolean = err.response?.status === 403
 
-        if (this.validation.isInvalid.value) {
-            this.isLoading = false
-            return
-        }
-
-        if (this.form.code) {
-            this.form.code = +this.form.code
-
-            return this.accessCodes
-                .verifyAccessCode(this.form)
-                .catch((err: AxiosError) => {
-                    const is403: boolean = err.response?.status === 403
-
-                    this.inviteCodeError = {
-                        errorMsg: is403
-                            ? 'Invite code is invalid.'
-                            : 'An error occurred. Please try again.',
-                        showMsg: true,
-                    }
-                })
-                .finally(() => {
-                    this.isLoading = false
-                    this.validation.clearErrors()
-                })
-        }
+                inviteCodeError.value = {
+                    errorMsg: is403
+                        ? 'Invite code is invalid.'
+                        : 'An error occurred. Please try again.',
+                    showMsg: true,
+                }
+            })
+            .finally(() => {
+                isLoading.value = false
+                validation.value.clearErrors()
+            })
     }
 }
 </script>

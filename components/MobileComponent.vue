@@ -103,13 +103,12 @@ export default defineComponent({
         LoaderButton,
     },
     layout: 'auth',
-    setup() {
-        const props = defineProps({
-            verifyPhone: {
-                type: Boolean,
-            },
-        })
-
+    props: {
+        verifyPhone: {
+            type: Boolean,
+        },
+    },
+    setup(props) {
         const { auth, consumers, corporates, identity } = useStores([
             'auth',
             'identity',
@@ -220,9 +219,9 @@ export default defineComponent({
         }
 
         return {
+            showSmsResentSuccess,
             isLoading,
             dismissCountDown,
-            showSmsResentSuccess,
             request,
             validation,
             props,
