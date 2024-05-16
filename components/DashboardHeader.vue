@@ -49,37 +49,38 @@
         </b-row>
     </b-container>
 </template>
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import { ComputedRef, computed } from '@nuxtjs/composition-api'
+import { useBase } from '~/composables/useBase'
+import { useAccounts } from '~/composables/useAccounts'
+import { useCards } from '~/composables/useCards'
+import { useStores } from '~/composables/useStores'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { weavrCurrency } from '~/utils/helper'
-import BaseMixin from '~/mixins/BaseMixin'
-import CardsMixin from '~/mixins/CardsMixin'
-import AccountsMixin from '~/mixins/AccountsMixin'
 
-@Component
-export default class DashboardHeader extends mixins(BaseMixin, CardsMixin, AccountsMixin) {
-    get canAddFunds(): boolean {
-        if (this.isConsumer) {
-            return (
-                this.consumersStore.consumerState.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
-            )
-        } else if (this.isCorporate) {
-            return this.corporatesStore.corporateState.kyb?.kybStatus === KYBStatusEnum.APPROVED
-        }
+const { isConsumer, isCorporate } = useBase()
+const { account, isManagedAccounts } = useAccounts()
+const { cardsBalance, cardCurrency, isManagedCards, hasCards } = useCards()
+const { consumers, corporates } = useStores(['consumers', 'corporates'])
 
-        return false
+const canAddFunds: ComputedRef<boolean> = computed(() => {
+    if (isConsumer.value) {
+        return consumers?.consumerState.kyc?.fullDueDiligence === KYCStatusEnum.APPROVED
+    } else if (isCorporate.value) {
+        return corporates?.corporateState.kyb?.kybStatus === KYBStatusEnum.APPROVED
     }
 
-    get accountCurrency() {
-        return weavrCurrency(this.account?.balances.availableBalance, this.account?.currency)
-    }
+    return false
+})
 
-    get currency() {
-        return weavrCurrency(this.cardsBalance, this.cardCurrency)
-    }
-}
+const accountCurrency = computed(() => {
+    return weavrCurrency(account?.value?.balances?.availableBalance, account?.value?.currency)
+})
+
+const currency = computed(() => {
+    return weavrCurrency(cardsBalance, cardCurrency)
+})
 </script>
 
 <style lang="scss" scoped>

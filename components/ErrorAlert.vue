@@ -23,76 +23,72 @@
         </div>
     </div>
 </template>
-<script lang="ts">
-import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+<script lang="ts" setup>
+import { computed, ComputedRef, PropType } from '@nuxtjs/composition-api'
+import { useStores } from '~/composables/useStores'
+import { ErrorLink } from '~/local/models/ErrorLink'
 
-export interface ErrorLink {
-    text: string
-    link: string
-}
-
-@Component
-class ErrorAlert extends mixins(BaseMixin) {
-    @Prop({
+const props = defineProps({
+    baseClass: {
         type: String,
         default: 'my-5',
-    })
-    baseClass?: string
+    },
+    message: {
+        type: String,
+        default: '',
+    },
+    errorLink: {
+        type: Object as PropType<ErrorLink>,
+        default: null,
+    },
+})
 
-    @Prop({ default: '' }) readonly message!: string
-    @Prop({ default: null }) readonly errorLink!: ErrorLink | null
+const emit = defineEmits(['close'])
 
-    get errors() {
-        return this.errorsStore.errors
-    }
+const { errors } = useStores(['errors'])
 
-    get conflict() {
-        return this.errorsStore.conflict
-    }
+const _errors = computed(() => errors?.errors)
 
-    get conflictMessage() {
-        return this.errorsStore.conflictMessage
-    }
+const conflict = computed(() => errors?.conflict)
 
-    get hasError(): boolean {
-        return this.errors != null
-    }
+const conflictMessage = computed(() => errors?.conflictMessage)
 
-    get hasConflict(): boolean {
-        return this.conflict != null
-    }
+const hasError: ComputedRef<boolean> = computed(() => !!_errors.value)
 
-    get errorMessage(): string {
-        if (this.errors == null) {
-            return ''
-        } else if (this.message !== '') {
-            return this.message
-        } else if (this.errors && this.errors?.data && this.errors?.data.errorCode) {
-            switch (this.errors?.data.errorCode) {
-                case 'ROOT_EMAIL_NOT_UNIQUE':
-                case 'EMAIL_NOT_UNIQUE':
-                    return 'This email address already exists in the system.  Do you want to log in instead?'
-                case 'INVALID_CREDENTIALS':
-                    return 'Invalid Credentials'
-                case 'ROOT_USERNAME_NOT_UNIQUE':
-                    return 'Username already exists in the system. Please try a different username.'
-                case 'INVALID_NONCE_OR_MOBILE':
-                    return 'There is something wrong with your verification code.'
-                default:
-                    return 'An error occurred. Please try again.'
-            }
-        } else {
+const hasConflict: ComputedRef<boolean> = computed(() => !!conflict.value)
+
+const getErrorMsgs: ComputedRef<string> = computed(() => {
+    switch (_errors.value.data.errorCode) {
+        case 'ROOT_EMAIL_NOT_UNIQUE':
+        case 'EMAIL_NOT_UNIQUE':
+            return 'This email address already exists in the system.  Do you want to log in instead?'
+        case 'INVALID_CREDENTIALS':
+            return 'Invalid Credentials'
+        case 'ROOT_USERNAME_NOT_UNIQUE':
+            return 'Username already exists in the system. Please try a different username.'
+        case 'INVALID_NONCE_OR_MOBILE':
+            return 'There is something wrong with your verification code.'
+        default:
             return 'An error occurred. Please try again.'
-        }
     }
+})
 
-    @Emit('close') onClose() {
-        this.errorsStore.resetState()
+const errorMessage: ComputedRef<string> = computed(() => {
+    if (_errors.value == null) {
+        return ''
+    } else if (props.message) {
+        return props.message
+    } else if (_errors.value?.data && _errors.value.data.errorCode) {
+        return getErrorMsgs.value
+    } else {
+        return 'An error occurred. Please try again.'
     }
+})
+
+const onClose = () => {
+    errors?.resetState()
+    emit('close')
 }
-
-export default ErrorAlert
 </script>
 
 <style lang="scss" scoped>

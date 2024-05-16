@@ -46,18 +46,18 @@ export const useBase = () => {
     })
 
     const rootName = computed(() => {
-        if (isConsumerPopulated) {
+        if (isConsumerPopulated.value) {
             return consumer.value?.rootUser.name
-        } else if (isCorporatePopulated) {
+        } else if (isCorporatePopulated.value) {
             return corporate.value?.rootUser.name
         }
         return 'noname'
     })
 
     const rootSurname = computed(() => {
-        if (isConsumerPopulated) {
+        if (isConsumerPopulated.value) {
             return consumer.value?.rootUser.surname
-        } else if (isCorporatePopulated) {
+        } else if (isCorporatePopulated.value) {
             return corporate.value?.rootUser.surname
         }
         return 'nosurname'

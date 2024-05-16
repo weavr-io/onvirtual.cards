@@ -34,7 +34,7 @@
                     </b-col>
                 </b-row>
                 <div class="text-center mt-3 text-grey font-italic">
-                    <small v-if="verifyPhone">
+                    <small v-if="props.verifyPhone">
                         Once this step is complete, we will send you another SMS that should be used
                         for login on the next screen.
                     </small>
@@ -51,7 +51,7 @@
                 </div>
                 <LoaderButton :is-loading="isLoading" class="mt-4 text-center mb-0" text="verify" />
             </form>
-            <div v-if="verifyPhone">
+            <div v-if="props.verifyPhone">
                 <b-alert
                     :show="dismissCountDown"
                     class="text-center mt-4 mb-0 text-muted small"
@@ -76,130 +76,160 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Prop } from 'nuxt-property-decorator'
-import { reactive } from 'vue'
-import BaseMixin from '~/mixins/BaseMixin'
+import {
+    defineComponent,
+    ref,
+    computed,
+    reactive,
+    useRoute,
+    useRouter,
+    useFetch,
+} from '@nuxtjs/composition-api'
+import { useStores } from '~/composables/useStores'
+import { useBase } from '~/composables/useBase'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
-
-import ErrorAlert from '~/components/ErrorAlert.vue'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import {
     AuthVerifyEnrol,
     AuthVerifyEnrolSchema,
     INITIAL_AUTH_VERIFY_REQUEST,
 } from '~/plugins/weavr-multi/api/models/authentication/additional-factors'
+import ErrorAlert from '~/components/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import useZodValidation from '~/composables/useZodValidation'
 
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
         ErrorAlert,
         LoaderButton,
     },
-})
-export default class MobileComponent extends mixins(BaseMixin) {
-    @Prop() readonly verifyPhone!: boolean
-
-    isLoading = false
-
-    request: AuthVerifyEnrol = reactive(INITIAL_AUTH_VERIFY_REQUEST())
-    showSmsResentSuccess = false
-    dismissSecs = 60
-    dismissCountDown = 0
-
-    get validation() {
-        return useZodValidation(AuthVerifyEnrolSchema, this.request)
-    }
-
-    async fetch() {
-        if (
-            this.$route.query.send === 'true' &&
-            (this.verifyPhone || localStorage.getItem('scaSmsSent') === 'FALSE')
-        ) {
-            await this.sendSms()
-        }
-    }
-
-    resendSms() {
-        this.sendSms().then(() => {
-            this.showSmsResentSuccess = true
+    layout: 'auth',
+    setup() {
+        const props = defineProps({
+            verifyPhone: {
+                type: Boolean,
+            },
         })
-    }
 
-    async sendSms() {
-        this.showAlert()
-        this.isLoading = true
-        if (this.verifyPhone) {
-            await this.authStore
-                .enrollAuthFactors(SCAOtpChannelEnum.SMS)
-                .finally(() => (this.isLoading = false))
-        } else {
-            await this.authStore
-                .enrollStepUp(SCAOtpChannelEnum.SMS)
-                .then(() => localStorage.setItem('scaSmsSent', 'TRUE'))
-                .finally(() => (this.isLoading = false))
-        }
-    }
+        const { auth, consumers, corporates, identity } = useStores([
+            'auth',
+            'identity',
+            'consumers',
+            'corporates',
+        ])
+        const { isConsumer, goToIndex } = useBase()
 
-    async doVerify() {
-        this.isLoading = true
-        await this.validation.validate()
+        const route = useRoute()
+        const router = useRouter()
 
-        if (this.validation.isInvalid.value) {
-            this.isLoading = false
-            return
-        }
+        const isLoading = ref<boolean>(false)
+        const request = reactive<AuthVerifyEnrol>(INITIAL_AUTH_VERIFY_REQUEST())
+        const showSmsResentSuccess = ref<boolean>(false)
+        const dismissSecs = ref<number>(60)
+        const dismissCountDown = ref<number | boolean>(0)
+        const validation = computed(() => useZodValidation(AuthVerifyEnrolSchema, request))
 
-        const req: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol } = {
-            channel: SCAOtpChannelEnum.SMS,
-            body: this.request,
-        }
-
-        try {
-            if (this.verifyPhone) {
-                await this.authStore
-                    .verifyAuthFactors(req)
-                    .then(() => {
-                        this.identityStore.setMobileVerified(true)
-                        this.getConsumersOrCorporates()
-                    })
-                    .finally(() => {
-                        this.isLoading = false
-                    })
-                await this.authStore.indexAuthFactors()
-                await this.$router.push({
-                    path: '/login/sca',
-                    query: {
-                        send: 'true',
-                    },
-                })
-            } else {
-                await this.authStore
-                    .verifyStepUp(req)
-                    .then(() => {
-                        localStorage.setItem('stepUp', 'TRUE')
-                        this.getConsumersOrCorporates()
-                        this.goToIndex()
-                    })
-                    .finally(() => {
-                        this.isLoading = false
-                    })
+        useFetch(async () => {
+            if (
+                route.value.query.send === 'true' &&
+                (props.verifyPhone || localStorage.getItem('scaSmsSent') === 'FALSE')
+            ) {
+                await sendSms()
             }
-        } catch (e) {
-            this.isLoading = false
+        })
+
+        const resendSms = () => {
+            sendSms().then(() => {
+                showSmsResentSuccess.value = true
+            })
         }
-    }
 
-    getConsumersOrCorporates() {
-        return this.isConsumer ? this.consumersStore.get() : this.corporatesStore.get()
-    }
+        const getConsumersOrCorporates = () => {
+            isConsumer.value ? consumers?.get() : corporates?.get()
+        }
 
-    countDownChanged(dismissCountDown) {
-        this.dismissCountDown = dismissCountDown
-    }
+        const countDownChanged = (countDown: number) => {
+            dismissCountDown.value = countDown
+        }
 
-    showAlert() {
-        this.dismissCountDown = this.dismissSecs
-    }
-}
+        const showAlert = () => {
+            dismissCountDown.value = dismissSecs.value
+        }
+
+        const sendSms = async () => {
+            showAlert()
+            isLoading.value = true
+            if (props.verifyPhone) {
+                await auth
+                    ?.enrollAuthFactors(SCAOtpChannelEnum.SMS)
+                    .finally(() => (isLoading.value = false))
+            } else {
+                await auth
+                    ?.enrollStepUp(SCAOtpChannelEnum.SMS)
+                    .then(() => localStorage.setItem('scaSmsSent', 'TRUE'))
+                    .finally(() => (isLoading.value = false))
+            }
+        }
+
+        const doVerify = async () => {
+            isLoading.value = true
+            await validation.value.validate()
+
+            if (validation.value.isInvalid.value) {
+                isLoading.value = false
+                return
+            }
+
+            const req: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol } = {
+                channel: SCAOtpChannelEnum.SMS,
+                body: request,
+            }
+
+            try {
+                if (props.verifyPhone) {
+                    await auth
+                        ?.verifyAuthFactors(req)
+                        .then(() => {
+                            identity?.setMobileVerified(true)
+                            getConsumersOrCorporates()
+                        })
+                        .finally(() => {
+                            isLoading.value = false
+                        })
+                    await auth?.indexAuthFactors()
+                    await router.push({
+                        path: '/login/sca',
+                        query: {
+                            send: 'true',
+                        },
+                    })
+                } else {
+                    await auth
+                        ?.verifyStepUp(req)
+                        .then(() => {
+                            localStorage.setItem('stepUp', 'TRUE')
+                            getConsumersOrCorporates()
+                            goToIndex()
+                        })
+                        .finally(() => {
+                            isLoading.value = false
+                        })
+                }
+            } catch (_) {
+                isLoading.value = false
+            }
+        }
+
+        return {
+            isLoading,
+            dismissCountDown,
+            showSmsResentSuccess,
+            request,
+            validation,
+            props,
+            doVerify,
+            countDownChanged,
+            resendSms,
+        }
+    },
+})
 </script>
