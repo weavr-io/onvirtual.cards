@@ -188,6 +188,7 @@ export const useBase = () => {
         identityVerified,
         countriesOptions,
         mobileCountries,
+        pendingData,
         pendingDataOrError,
         goToIndex,
         goToVerify,

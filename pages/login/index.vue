@@ -170,6 +170,7 @@ export default defineComponent({
             }
 
             try {
+                console.log('peter', passwordField.value)
                 errors?.setError(null)
                 passwordField.value?.createToken().then(
                     (tokens) => {
