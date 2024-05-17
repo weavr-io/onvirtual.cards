@@ -61,65 +61,90 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import CardsMixin from '~/mixins/CardsMixin'
+import {
+    computed,
+    defineComponent,
+    ref,
+    useFetch,
+    useRoute,
+    useRouter,
+} from '@nuxtjs/composition-api'
+import WeavrCard from '~/components/cards/card.vue'
+import { useBase } from '~/composables/useBase'
+import { useCards } from '~/composables/useCards'
+import { useKyVerified } from '~/composables/useKyVerified'
+import { useStores } from '~/composables/useStores'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import KyVerified from '~/mixins/kyVerified'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
-@Component({
-    layout: 'dashboard',
+export default defineComponent({
     components: {
-        LoadingSpinner,
-        WeavrCard: () => import('~/components/cards/card.vue'),
-        KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
+        WeavrCard,
     },
-    middleware: ['kyVerified'],
-})
-export default class CardsPage extends mixins(BaseMixin, CardsMixin, KyVerified) {
-    showDestroyedSwitch = false
+    layout: 'dashboard',
+    middleware: 'kyVerified',
+    setup() {
+        const route = useRoute()
+        const router = useRouter()
+        const { identityVerified, pendingDataOrError } = useBase()
+        const { hasAlert } = useKyVerified()
+        const { cards, hasCards } = useCards()
+        const { cards: cardsStore } = useStores(['cards'])
 
-    get showDestroyed() {
-        return this.$route.query.showDestroyed === 'true'
-    }
+        const showDestroyedSwitch = ref(false)
 
-    get identityVerificationMessage() {
-        if (!this.identityVerified) return 'Pending identity verification'
-        return undefined
-    }
+        const showDestroyed = computed(() => {
+            return route.value.query.showDestroyed === 'true'
+        })
 
-    get cardStateFilters() {
-        return this.showDestroyed
-            ? []
-            : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
-    }
+        const identityVerificationMessage = computed(() => {
+            if (!identityVerified) return 'Pending identity verification'
+            return undefined
+        })
 
-    fetch() {
-        return this.getCards(this.cardStateFilters).then(() => {
-            return this.cardsStore.hasDestroyedCards().then((res) => {
-                this.showDestroyedSwitch = res
+        const cardStateFilters = computed(() => {
+            return showDestroyed.value
+                ? []
+                : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
+        })
+
+        useFetch(() => {
+            return getCards(cardStateFilters.value).then(() => {
+                return cardsStore?.hasDestroyedCards().then((res) => {
+                    showDestroyedSwitch.value = res
+                })
             })
         })
-    }
 
-    async getCards(_state: ManagedInstrumentStateEnum[]) {
-        await this.cardsStore.getCards({
-            state: _state.join(','),
-        })
-    }
+        const getCards = async (_state: ManagedInstrumentStateEnum[]) => {
+            await cardsStore?.getCards({
+                state: _state.join(','),
+            })
+        }
 
-    async showDestroyedChanged(val) {
-        await this.$router.push({
-            path: this.$route.path,
-            query: { showDestroyed: val },
-        })
+        const showDestroyedChanged = async (val) => {
+            await router.push({
+                path: route.value.path,
+                query: { showDestroyed: val },
+            })
 
-        const state = val
-            ? []
-            : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
+            const state = val
+                ? []
+                : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
 
-        await this.getCards(state).catch(() => {})
-    }
-}
+            await getCards(state).catch(() => {})
+        }
+
+        return {
+            showDestroyedSwitch,
+            showDestroyed,
+            showDestroyedChanged,
+            identityVerificationMessage,
+            identityVerified,
+            hasAlert,
+            pendingDataOrError,
+            cards,
+            hasCards,
+        }
+    },
+})
 </script>

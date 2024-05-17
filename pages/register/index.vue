@@ -8,14 +8,13 @@
     </b-container>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+import { computed, defineComponent, useAsync, useRouter } from '@nuxtjs/composition-api'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import AccessCodeComponent from '~/components/registration/AccessCodeComponent.vue'
 import BusinessOrPersonalComponent from '~/components/organisms/ProfileIdentitySelection.vue'
-import BaseMixin from '~/mixins/BaseMixin'
-import { initialiseStores } from '~/utils/pinia-store-accessor'
-import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import { useStores } from '~/composables/useStores'
 
-@Component({
+export default defineComponent({
     components: {
         LogoOvc,
         AccessCodeComponent,
@@ -23,19 +22,25 @@ import LogoOvc from '~/components/molecules/LogoOvc.vue'
     },
     layout: 'auth',
     middleware: 'accessCodeVerified',
-})
-export default class RegistrationPage extends mixins(BaseMixin) {
-    get isAccessCodeValid() {
-        return this.accessCodes.isValid
-    }
+    setup() {
+        const { replace } = useRouter()
+        const { accessCodes, auth } = useStores(['accessCodes', 'auth'])
 
-    asyncData({ redirect }) {
-        const { auth } = initialiseStores(['auth'])
-        const isLoggedIn = auth?.isLoggedIn
+        const isAccessCodeValid = computed(() => {
+            return accessCodes?.isValid
+        })
 
-        if (isLoggedIn) {
-            redirect('/dashboard')
+        useAsync(() => {
+            const isLoggedIn = auth?.isLoggedIn
+
+            if (isLoggedIn) {
+                replace('/dashboard')
+            }
+        })
+
+        return {
+            isAccessCodeValid,
         }
-    }
-}
+    },
+})
 </script>

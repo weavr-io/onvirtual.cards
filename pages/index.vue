@@ -8,40 +8,38 @@
     </section>
 </template>
 
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import { initialiseStores } from '~/utils/pinia-store-accessor'
+<script lang="ts" setup>
+import { useAsync, useRouter } from '@nuxtjs/composition-api'
+import { useStores } from '~/composables/useStores'
 
-@Component({})
-export default class IndexPage extends mixins(BaseMixin) {
-    async asyncData({ redirect }) {
-        const { auth, identity } = initialiseStores(['auth', 'identity'])
-        const isLoggedIn = auth?.isLoggedIn
+const { replace } = useRouter()
+const { auth, identity } = useStores(['auth', 'identity'])
 
-        if (!isLoggedIn) {
-            redirect('/login')
+useAsync(async () => {
+    const isLoggedIn = auth?.isLoggedIn
+
+    if (!isLoggedIn) {
+        replace('/login')
+    } else {
+        if (identity!.identityState.identity === null) {
+            await identity!.getIdentity()
+        }
+
+        if (!identity!.identityState.emailVerified) {
+            const email = window.encodeURIComponent(
+                identity!.identityState.identity!.rootUser?.email,
+            )
+            replace(`/login/verify?send=true&email=${email}`)
+        } else if (!identity!.identityState.mobileNumberVerified) {
+            replace('/login/verify/mobile')
+        } else if (
+            identity!.identityState.identity &&
+            typeof identity!.identityState.identity.rootUser === 'undefined'
+        ) {
+            replace('/profile/address')
         } else {
-            if (identity!.identityState.identity === null) {
-                await identity!.getIdentity()
-            }
-
-            if (!identity!.identityState.emailVerified) {
-                const email = window.encodeURIComponent(
-                    identity!.identityState.identity!.rootUser?.email,
-                )
-                redirect(`/login/verify?send=true&email=${email}`)
-            } else if (!identity!.identityState.mobileNumberVerified) {
-                redirect('/login/verify/mobile')
-            } else if (
-                identity!.identityState.identity &&
-                typeof identity!.identityState.identity.rootUser === 'undefined'
-            ) {
-                redirect('/profile/address')
-            } else {
-                redirect('/dashboard')
-            }
+            replace('/dashboard')
         }
     }
-}
+})
 </script>
