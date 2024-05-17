@@ -104,100 +104,122 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
-import { BIcon, BIconThreeDotsVertical } from 'bootstrap-vue'
+import { defineComponent, ref, computed, PropType } from '@nuxtjs/composition-api'
+import { BIcon } from 'bootstrap-vue'
+import { useStores } from '~/composables/useStores'
+import { useBase } from '~/composables/useBase'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { expiryMmyy, weavrCurrency } from '~/utils/helper'
-import BaseMixin from '~/mixins/BaseMixin'
 
-@Component({
+export default defineComponent({
+    name: 'CardComponent',
     components: {
         BIcon,
-        BIconThreeDotsVertical,
+    },
+    props: {
+        card: {
+            type: Object as PropType<ManagedCardModel>,
+            required: true,
+        },
+    },
+    setup(props) {
+        const emit = defineEmits(['blocked', 'unblocked'])
+        const { cards } = useStores(['cards'])
+        const { showErrorToast } = useBase()
+        const showOptions = ref<boolean>(false)
+
+        const localIsBusy = ref<boolean>(false)
+
+        const isBlocked = computed(
+            () => props.card.state.state === ManagedInstrumentStateEnum.BLOCKED,
+        )
+        const isActive = computed(
+            () => props.card.state.state === ManagedInstrumentStateEnum.ACTIVE,
+        )
+        const isDestroyed = computed(
+            () => props.card.state.state === ManagedInstrumentStateEnum.DESTROYED,
+        )
+
+        const editLink = computed(() => {
+            if (!props.card) return undefined
+
+            return `/managed-cards/${props.card.id}/edit`
+        })
+
+        const statementsLink = computed(() => {
+            if (!props.card) return undefined
+
+            return `/managed-cards/${props.card.id}/statements`
+        })
+
+        const currency = computed(() =>
+            weavrCurrency(props.card.balances?.availableBalance, props.card.currency),
+        )
+
+        const expiryDate = computed(() => expiryMmyy(props.card.expiryMmyy))
+
+        const toggleBlock = async () => {
+            toggleBusy()
+            if (isBlocked.value) {
+                await unblockCard()
+            } else {
+                await blockCard()
+            }
+            toggleBusy()
+        }
+
+        const blockCard = async () => {
+            await cards
+                ?.block(props.card.id)
+                .then(blocked)
+                .catch((err) => {
+                    const data = err.response.data
+                    const error = data.message ? data.message : data.errorCode
+                    showErrorToast(error)
+                })
+        }
+
+        const unblockCard = async () => {
+            await cards
+                ?.unblock(props.card.id)
+                .then(unblocked)
+                .catch((err) => {
+                    const data = err.response.data
+                    const error = data.message ? data.message : data.errorCode
+                    showErrorToast(error)
+                })
+        }
+
+        const toggleShowOptions = () => {
+            showOptions.value = !showOptions.value
+        }
+
+        const toggleBusy = () => {
+            localIsBusy.value = !localIsBusy.value
+        }
+
+        const blocked = () => {
+            emit('blocked')
+        }
+
+        const unblocked = () => {
+            emit('unblocked')
+        }
+
+        return {
+            showOptions,
+            localIsBusy,
+            isBlocked,
+            isActive,
+            isDestroyed,
+            editLink,
+            statementsLink,
+            currency,
+            expiryDate,
+            toggleShowOptions,
+            toggleBlock,
+        }
     },
 })
-export default class WeavrCard extends mixins(BaseMixin) {
-    @Prop() readonly card!: ManagedCardModel
-
-    showOptions = false
-
-    localIsBusy = false
-
-    get isBlocked() {
-        return this.card.state.state === ManagedInstrumentStateEnum.BLOCKED
-    }
-
-    get isActive() {
-        return this.card.state.state === ManagedInstrumentStateEnum.ACTIVE
-    }
-
-    get isDestroyed() {
-        return this.card.state.state === ManagedInstrumentStateEnum.DESTROYED
-    }
-
-    get editLink() {
-        if (!this.card) return undefined
-        return `/managed-cards/${this.card.id}/edit`
-    }
-
-    get statementsLink() {
-        if (!this.card) return undefined
-        return `/managed-cards/${this.card.id}/statements`
-    }
-
-    get currency() {
-        return weavrCurrency(this.card.balances?.availableBalance, this.card.currency)
-    }
-
-    get expiryDate() {
-        return expiryMmyy(this.card.expiryMmyy)
-    }
-
-    async toggleBlock() {
-        this.toggleBusy()
-        if (this.isBlocked) {
-            await this.unblockCard()
-        } else {
-            await this.blockCard()
-        }
-        this.toggleBusy()
-    }
-
-    async blockCard() {
-        await this.cardsStore
-            .block(this.card.id)
-            .then(this.blocked)
-            .catch((err) => {
-                const data = err.response.data
-                const error = data.message ? data.message : data.errorCode
-                this.showErrorToast(error)
-            })
-    }
-
-    async unblockCard() {
-        await this.cardsStore
-            .unblock(this.card.id)
-            .then(this.unblocked)
-            .catch((err) => {
-                const data = err.response.data
-                const error = data.message ? data.message : data.errorCode
-                this.showErrorToast(error)
-            })
-    }
-
-    toggleShowOptions() {
-        this.showOptions = !this.showOptions
-    }
-
-    toggleBusy() {
-        this.localIsBusy = !this.localIsBusy
-    }
-
-    @Emit('blocked')
-    blocked() {}
-
-    @Emit('unblocked')
-    unblocked() {}
-}
 </script>
