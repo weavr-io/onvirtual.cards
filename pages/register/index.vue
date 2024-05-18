@@ -9,7 +9,7 @@
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
-import AccessCodeComponent from '~/components/registration/AccessCodeComponent.vue'
+import AccessCodeComponent from '~/components/organisms/registration/AccessCodeComponent.vue'
 import BusinessOrPersonalComponent from '~/components/organisms/ProfileIdentitySelection.vue'
 import BaseMixin from '~/mixins/BaseMixin'
 import { initialiseStores } from '~/utils/pinia-store-accessor'

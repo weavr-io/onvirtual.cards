@@ -19,7 +19,7 @@ import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authenticati
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import MobileComponent from '~/components/MobileComponent.vue'
+import MobileComponent from '~/components/molecules/MobileComponent.vue'
 
 export default defineComponent({
     components: {

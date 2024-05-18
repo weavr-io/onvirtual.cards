@@ -72,8 +72,8 @@ import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
     layout: 'dashboard',
     components: {
         LoadingSpinner,
-        WeavrCard: () => import('~/components/cards/card.vue'),
-        KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
+        WeavrCard: () => import('~/components/organisms/cards/card.vue'),
+        KybAlert: () => import('~/components/molecules/corporates/KYBAlert.vue'),
     },
     middleware: ['kyVerified'],
 })

@@ -37,7 +37,7 @@ import BaseMixin from '~/mixins/BaseMixin'
 
 @Component({
     components: {
-        cookiePolicy: () => import('~/components/cookie.vue'),
+        cookiePolicy: () => import('~/components/molecules/cookie.vue'),
     },
     head: {
         bodyAttrs: {

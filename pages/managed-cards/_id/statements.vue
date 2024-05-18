@@ -172,7 +172,7 @@ import BaseMixin from '~/mixins/BaseMixin'
 import RouterMixin from '~/mixins/RouterMixin'
 import FiltersMixin from '~/mixins/FiltersMixin'
 import CardsMixin from '~/mixins/CardsMixin'
-import Statement from '~/components/cards/statement/statement.vue'
+import Statement from '~/components/organisms/cards/statement/statement.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
 

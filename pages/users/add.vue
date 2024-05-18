@@ -72,7 +72,7 @@ import useZodValidation from '~/composables/useZodValidation'
 @Component({
     components: {
         LoaderButton,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
     },
     middleware: ['kyVerified'],
 })

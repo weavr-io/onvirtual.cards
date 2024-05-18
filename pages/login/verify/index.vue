@@ -70,7 +70,7 @@ import useZodValidation from '~/composables/useZodValidation'
     components: {
         LoaderButton,
         LogoOvc,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
     },
 })
 export default class EmailVerificationPage extends mixins(BaseMixin) {

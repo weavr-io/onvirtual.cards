@@ -252,7 +252,7 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
     components: {
         ComingSoonCurrencies,
         LogoOvc,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
         RegistrationNav: () => import('~/components/molecules/registration/RegistrationNav.vue'),
         DobPicker: () => import('~/components/atoms/DobPicker.vue'),

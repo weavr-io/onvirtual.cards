@@ -51,7 +51,7 @@ import useZodValidation from '~/composables/useZodValidation'
 
 @Component({
     components: {
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
     },
     middleware: ['kyVerified'],

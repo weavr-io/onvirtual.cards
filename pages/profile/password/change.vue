@@ -82,7 +82,7 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 @Component({
     components: {
         LoaderButton,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
         WeavrPasswordInput,
     },
 })

@@ -32,9 +32,9 @@ import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfer
 @Component({
     components: {
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
-        AccountSelection: () => import('~/components/transfer/AccountSelection.vue'),
-        TopUp: () => import('~/components/transfer/TopUp.vue'),
-        TopUpSuccess: () => import('~/components/transfer/TopUpSuccess.vue'),
+        AccountSelection: () => import('~/components/organisms/transfer/AccountSelection.vue'),
+        TopUp: () => import('~/components/organisms/transfer/TopUp.vue'),
+        TopUpSuccess: () => import('~/components/molecules/transfer/TopUpSuccess.vue'),
     },
     middleware: ['kyVerified'],
 })

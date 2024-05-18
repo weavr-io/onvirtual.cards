@@ -15,8 +15,8 @@ import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 @Component({
     components: {
         LoadingSpinner,
-        AppHeader: () => import('~/components/Header.vue'),
-        cookiePolicy: () => import('~/components/cookie.vue'),
+        AppHeader: () => import('~/components/molecules/Header.vue'),
+        cookiePolicy: () => import('~/components/molecules/cookie.vue'),
     },
     middleware: ['authRouteGuard'],
 })

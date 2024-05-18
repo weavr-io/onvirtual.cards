@@ -86,7 +86,7 @@ import useZodValidation from '~/composables/useZodValidation'
     components: {
         LoadingSpinner,
         LoaderButton,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
     },
 })
 export default class EditCardPage extends mixins(BaseMixin) {

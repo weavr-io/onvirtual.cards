@@ -37,11 +37,11 @@ import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 @Component({
     components: {
         LoadingSpinner,
-        AppHeader: () => import('~/components/Header.vue'),
-        DashboardHeader: () => import('~/components/DashboardHeader.vue'),
-        KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
-        KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
-        cookiePolicy: () => import('~/components/cookie.vue'),
+        AppHeader: () => import('~/components/molecules/Header.vue'),
+        DashboardHeader: () => import('~/components/organisms/DashboardHeader.vue'),
+        KybAlert: () => import('~/components/molecules/corporates/KYBAlert.vue'),
+        KycAlert: () => import('~/components/molecules/consumers/KYCAlert.vue'),
+        cookiePolicy: () => import('~/components/molecules/cookie.vue'),
     },
 })
 export default class DefaultLayout extends mixins(KyVerified, BaseMixin) {

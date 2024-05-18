@@ -93,7 +93,7 @@ import {
     AuthVerifyEnrolSchema,
     INITIAL_AUTH_VERIFY_REQUEST,
 } from '~/plugins/weavr-multi/api/models/authentication/additional-factors'
-import ErrorAlert from '~/components/ErrorAlert.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import useZodValidation from '~/composables/useZodValidation'
 

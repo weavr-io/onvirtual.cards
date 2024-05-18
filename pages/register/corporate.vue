@@ -46,8 +46,9 @@ import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common'
     components: {
         LogoOvc,
         LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
-        RegisterForm: () => import('~/components/registration/RegisterForm.vue'),
-        PersonalDetailsForm: () => import('~/components/registration/PersonalDetails.vue'),
+        RegisterForm: () => import('~/components/organisms/registration/RegisterForm.vue'),
+        PersonalDetailsForm: () =>
+            import('~/components/organisms/registration/PersonalDetails.vue'),
         RegistrationNav: () => import('~/components/molecules/registration/RegistrationNav.vue'),
     },
     middleware: 'accessCodeVerified',

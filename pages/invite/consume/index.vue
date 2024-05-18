@@ -68,7 +68,7 @@ import {
     layout: 'auth',
     components: {
         LogoOvc,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
         WeavrPasswordInput,
     },
 })

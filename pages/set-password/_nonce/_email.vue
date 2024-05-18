@@ -80,7 +80,7 @@ import {
 } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests'
 import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
 import BaseMixin from '~/mixins/BaseMixin'
-import ErrorAlert from '~/components/ErrorAlert.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'

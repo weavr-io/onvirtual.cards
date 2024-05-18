@@ -1,13 +1,5 @@
 <template>
-    <div>
-        <section v-if="!hasAlert && !pendingDataOrError">
-            <statement :filters="filters" />
-            <infinite-loading spinner="spiral" @infinite="infiniteScroll">
-                <span slot="no-more" />
-                <div slot="no-results" />
-            </infinite-loading>
-        </section>
-    </div>
+    <div></div>
 </template>
 <script lang="ts">
 import { Component, mixins } from 'nuxt-property-decorator'
@@ -28,7 +20,7 @@ import { initialiseStores } from '~/utils/pinia-store-accessor'
     },
     layout: 'dashboard',
     components: {
-        Statement: () => import('~/components/accounts/statement/statement.vue'),
+        Statement: () => import('~/components/organisms/accounts/statement/statement.vue'),
     },
     middleware: 'kyVerified',
 })
