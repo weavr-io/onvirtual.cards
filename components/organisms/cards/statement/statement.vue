@@ -92,7 +92,7 @@ export default defineComponent({
     props: {
         filters: {
             type: Object as PropType<GetManagedCardStatementRequest>,
-            required: true,
+            default: null,
         },
     },
     setup(props) {
