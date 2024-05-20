@@ -27,6 +27,11 @@
 import { computed, ComputedRef, PropType } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
 import { ErrorLink } from '~/local/models/ErrorLink'
+import {
+    CreateIdentityConflictsEnum,
+    AuthenticationConflictsEnum,
+    VerificationConflictsEnum,
+} from '~/plugins/weavr-multi/api/models/error/conflicts/identities/common'
 
 const props = defineProps({
     baseClass: {
@@ -44,29 +49,24 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close'])
-
 const { errors } = useStores(['errors'])
 
 const _errors = computed(() => errors?.errors)
-
 const conflict = computed(() => errors?.conflict)
-
 const conflictMessage = computed(() => errors?.conflictMessage)
-
 const hasError: ComputedRef<boolean> = computed(() => !!_errors.value)
-
 const hasConflict: ComputedRef<boolean> = computed(() => !!conflict.value)
 
 const getErrorMsgs: ComputedRef<string> = computed(() => {
     switch (_errors.value.data.errorCode) {
-        case 'ROOT_EMAIL_NOT_UNIQUE':
-        case 'EMAIL_NOT_UNIQUE':
-            return 'This email address already exists in the system.  Do you want to log in instead?'
-        case 'INVALID_CREDENTIALS':
+        case CreateIdentityConflictsEnum.ROOT_EMAIL_NOT_UNIQUE:
+        case AuthenticationConflictsEnum.EMAIL_NOT_UNIQUE:
+            return 'This email address already exists in the system. Do you want to log in instead?'
+        case AuthenticationConflictsEnum.INVALID_CREDENTIALS:
             return 'Invalid Credentials'
-        case 'ROOT_USERNAME_NOT_UNIQUE':
+        case CreateIdentityConflictsEnum.ROOT_USERNAME_NOT_UNIQUE:
             return 'Username already exists in the system. Please try a different username.'
-        case 'INVALID_NONCE_OR_MOBILE':
+        case VerificationConflictsEnum.INVALID_NONCE_OR_MOBILE:
             return 'There is something wrong with your verification code.'
         default:
             return 'An error occurred. Please try again.'
