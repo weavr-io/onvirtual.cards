@@ -23,7 +23,7 @@ export default defineComponent({
     layout: 'auth',
     middleware: 'accessCodeVerified',
     setup() {
-        const { replace } = useRouter()
+        const router = useRouter()
         const { accessCodes, auth } = useStores(['accessCodes', 'auth'])
 
         const isAccessCodeValid = computed(() => {
@@ -34,7 +34,7 @@ export default defineComponent({
             const isLoggedIn = auth?.isLoggedIn
 
             if (isLoggedIn) {
-                replace('/dashboard')
+                router.replace('/dashboard')
             }
         })
 

@@ -30,7 +30,7 @@ export default defineComponent({
         },
     },
     setup(props) {
-        const { replace } = useRouter()
+        const router = useRouter()
 
         const statusCode = computed(() => {
             return (props.error && props.error.statusCode) || 500
@@ -43,10 +43,10 @@ export default defineComponent({
         onMounted(() => {
             switch (statusCode.value) {
                 case 401:
-                    replace('/login')
+                    router.replace('/login')
                     break
                 case 403:
-                    replace('/forbidden')
+                    router.replace('/forbidden')
                     break
             }
         })

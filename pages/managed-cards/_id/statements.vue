@@ -161,7 +161,16 @@
 </template>
 
 <script lang="ts" setup>
-import { Ref, computed, ref, useContext, useFetch, useRoute, watch } from '@nuxtjs/composition-api'
+import {
+    Ref,
+    computed,
+    getCurrentInstance,
+    ref,
+    useContext,
+    useFetch,
+    useRoute,
+    watch,
+} from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { DateTime } from 'luxon'
 import Statement from '~/components/organisms/cards/statement/statement.vue'
@@ -177,6 +186,7 @@ import { expiryMmyy, weavrCurrency } from '~/utils/helper'
 
 const route = useRoute()
 
+const { proxy: root } = getCurrentInstance() || {}
 const { $weavrSetUserToken } = useContext()
 const { managedCard, cardId, isCardActive } = useCards()
 const { pendingDataOrError } = useBase()
@@ -261,11 +271,10 @@ const infiniteScroll = ($state) => {
 }
 
 const toggleModal = () => {
-    // TO CHECK
-    // $bvModal.show('cardModal')
+    root!.$bvModal.show('cardModal')
 }
 
-watch(route.value.query, fetchCardStatements)
+watch(route, fetchCardStatements)
 </script>
 
 <style lang="scss" scoped>

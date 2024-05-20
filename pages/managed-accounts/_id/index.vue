@@ -16,6 +16,7 @@ import {
     Ref,
     ref,
     useAsync,
+    useFetch,
     useRoute,
     watch,
 } from '@nuxtjs/composition-api'
@@ -42,50 +43,59 @@ export default defineComponent({
 
         const filters: Ref<GetManagedAccountStatementRequest | null> = ref(null)
         const page = ref(0)
+        const usingFetch = ref(true)
 
         const filteredStatement = computed(() => {
             return accounts?.filteredStatement
         })
 
+        const getStatements = async () => {
+            const _accountId = route.value.params.id
+
+            await accounts?.get(_accountId)
+
+            const _routeQueries = dot.object(route.value.query)
+            const _filters = _routeQueries.filters ? _routeQueries.filters : {}
+
+            if (!_filters.fromTimestamp) {
+                _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
+            }
+
+            if (!_filters.toTimestamp) {
+                _filters.toTimestamp = DateTime.now().endOf('month').toMillis()
+            }
+
+            const _statementFilters: GetManagedAccountStatementRequest = {
+                showFundMovementsOnly: false,
+                orderByTimestamp: OrderEnum.DESC,
+                limit: 10,
+                offset: 0,
+                ..._filters,
+            }
+
+            const _req = {
+                id: _accountId,
+                filters: _statementFilters,
+            }
+
+            filters.value = { ..._statementFilters }
+
+            page.value = 0
+            await accounts?.getStatements(_req)
+        }
+
         useAsync(() => {
             accounts?.setStatements(null)
         })
 
+        useFetch(async () => {
+            await getStatements().finally(() => (usingFetch.value = false))
+        })
+
         watch(
-            route.value.query,
+            route,
             async () => {
-                const _accountId = route.value.params.id
-
-                await accounts?.get(_accountId)
-
-                const _routeQueries = dot.object(route.value.query)
-                const _filters = _routeQueries.filters ? _routeQueries.filters : {}
-
-                if (!_filters.fromTimestamp) {
-                    _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
-                }
-
-                if (!_filters.toTimestamp) {
-                    _filters.toTimestamp = DateTime.now().endOf('month').toMillis()
-                }
-
-                const _statementFilters: GetManagedAccountStatementRequest = {
-                    showFundMovementsOnly: false,
-                    orderByTimestamp: OrderEnum.DESC,
-                    limit: 10,
-                    offset: 0,
-                    ..._filters,
-                }
-
-                const _req = {
-                    id: _accountId,
-                    filters: _statementFilters,
-                }
-
-                filters.value = { ..._statementFilters }
-
-                page.value = 0
-                await accounts?.getStatements(_req)
+                if (!usingFetch.value) await getStatements()
             },
             { immediate: true },
         )
