@@ -63,7 +63,7 @@
                         class="card-options-button"
                         @click="toggleShowOptions"
                     >
-                        <b-icon icon="three-dots-vertical" />
+                        <b-icon-three-dots-vertical />
                     </b-button>
                 </b-aspect>
             </b-card-body>
@@ -105,7 +105,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, computed, PropType } from '@nuxtjs/composition-api'
-import { BIcon } from 'bootstrap-vue'
+import { BIconThreeDotsVertical } from 'bootstrap-vue'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
