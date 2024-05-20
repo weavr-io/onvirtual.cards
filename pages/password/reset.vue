@@ -68,7 +68,7 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref } from '@nuxtjs/composition-api'
-import ErrorAlert from '~/omponents/molecules/ErrorAlert.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import { useStores } from '~/composables/useStores'

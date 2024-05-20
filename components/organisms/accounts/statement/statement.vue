@@ -53,7 +53,7 @@
                 <b-row v-else-if="availableBalance === 0" class="py-5">
                     <b-col class="text-center">
                         <h5 class="font-weight-light">Your transactions will appear here.</h5>
-                        <b-button :to="`/managed-accounts/${account!.id}/topup`" variant="link">
+                        <b-button :to="`/managed-accounts/${account?.id}/topup`" variant="link">
                             Start by topping up your account.
                         </b-button>
                     </b-col>
