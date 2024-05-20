@@ -18,6 +18,7 @@ import {
     useAsync,
     useFetch,
     useRoute,
+    watch,
 } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { DateTime } from 'luxon'
@@ -42,16 +43,13 @@ export default defineComponent({
 
         const filters: Ref<GetManagedAccountStatementRequest | null> = ref(null)
         const page = ref(0)
+        const usingFetch = ref(true)
 
         const filteredStatement = computed(() => {
             return accounts?.filteredStatement
         })
 
-        useAsync(() => {
-            accounts?.setStatements(null)
-        })
-
-        useFetch(async () => {
+        const getStatements = async () => {
             const _accountId = route.value.params.id
 
             await accounts?.get(_accountId)
@@ -84,7 +82,23 @@ export default defineComponent({
 
             page.value = 0
             await accounts?.getStatements(_req)
+        }
+
+        useAsync(() => {
+            accounts?.setStatements(null)
         })
+
+        useFetch(async () => {
+            await getStatements().finally(() => (usingFetch.value = false))
+        })
+
+        watch(
+            route,
+            async () => {
+                if (!usingFetch.value) await getStatements()
+            },
+            { immediate: true },
+        )
 
         const infiniteScroll = ($state) => {
             setTimeout(() => {

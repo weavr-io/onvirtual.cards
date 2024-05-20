@@ -39,7 +39,7 @@
                                     :state="validation.getState('email')"
                                     label="Email*"
                                 >
-                                    <b-form-input v-model="request.email" lazy type="email" />
+                                    <b-form-input v-model="request.email" type="email" />
                                 </b-form-group>
                             </b-col>
                         </b-form-row>
