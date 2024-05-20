@@ -11,7 +11,7 @@ export const useKyVerified = () => {
     ])
 
     const hasAlert = computed(() => {
-        return showKybAlert() || showKycAlert()
+        return showKybAlert || showKycAlert
     })
 
     const showVerifyMobileAlert = computed(() => {
@@ -22,7 +22,7 @@ export const useKyVerified = () => {
         return identity?.identityState.emailVerified === false
     })
 
-    const showKybAlert = () => {
+    const showKybAlert = computed(() => {
         const _isCorporate = auth?.isCorporate
 
         if (!_isCorporate) {
@@ -36,9 +36,9 @@ export const useKyVerified = () => {
             return _corporateKyb.kybStatus !== KYBStatusEnum.APPROVED
         }
         return false
-    }
+    })
 
-    const showKycAlert = () => {
+    const showKycAlert = computed(() => {
         const _isConsumer = auth?.isConsumer
 
         if (!_isConsumer) {
@@ -52,7 +52,7 @@ export const useKyVerified = () => {
             return _consumerKyc
         }
         return false
-    }
+    })
 
     return { hasAlert, showKybAlert, showKycAlert, showVerifyEmailAlert, showVerifyMobileAlert }
 }
