@@ -83,6 +83,7 @@ import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/In
 
 export default defineComponent({
     name: 'CardStatementComponent',
+    // TODO: Update this after nuxt bridge
     components: {
         DownloadIcon: () => import('~/assets/svg/download.svg?inline'),
         DeleteIcon: () => import('~/assets/svg/delete.svg?inline'),

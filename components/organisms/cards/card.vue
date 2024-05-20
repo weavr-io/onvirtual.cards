@@ -103,8 +103,8 @@
         </transition>
     </div>
 </template>
-<script lang="ts">
-import { defineComponent, ref, computed, PropType } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
+import { ref, computed, PropType } from '@nuxtjs/composition-api'
 import { BIcon } from 'bootstrap-vue'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
@@ -112,114 +112,92 @@ import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instr
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { expiryMmyy, weavrCurrency } from '~/utils/helper'
 
-export default defineComponent({
-    name: 'CardComponent',
-    components: {
-        BIcon,
-    },
-    props: {
-        card: {
-            type: Object as PropType<ManagedCardModel>,
-            required: true,
-        },
-    },
-    setup(props) {
-        const emit = defineEmits(['blocked', 'unblocked'])
-        const { cards } = useStores(['cards'])
-        const { showErrorToast } = useBase()
-        const showOptions = ref<boolean>(false)
-
-        const localIsBusy = ref<boolean>(false)
-
-        const isBlocked = computed(
-            () => props.card.state.state === ManagedInstrumentStateEnum.BLOCKED,
-        )
-        const isActive = computed(
-            () => props.card.state.state === ManagedInstrumentStateEnum.ACTIVE,
-        )
-        const isDestroyed = computed(
-            () => props.card.state.state === ManagedInstrumentStateEnum.DESTROYED,
-        )
-
-        const editLink = computed(() => {
-            if (!props.card) return undefined
-
-            return `/managed-cards/${props.card.id}/edit`
-        })
-
-        const statementsLink = computed(() => {
-            if (!props.card) return undefined
-
-            return `/managed-cards/${props.card.id}/statements`
-        })
-
-        const currency = computed(() =>
-            weavrCurrency(props.card.balances?.availableBalance, props.card.currency),
-        )
-
-        const expiryDate = computed(() => expiryMmyy(props.card.expiryMmyy))
-
-        const toggleBlock = async () => {
-            toggleBusy()
-            if (isBlocked.value) {
-                await unblockCard()
-            } else {
-                await blockCard()
-            }
-            toggleBusy()
-        }
-
-        const blockCard = async () => {
-            await cards
-                ?.block(props.card.id)
-                .then(blocked)
-                .catch((err) => {
-                    const data = err.response.data
-                    const error = data.message ? data.message : data.errorCode
-                    showErrorToast(error)
-                })
-        }
-
-        const unblockCard = async () => {
-            await cards
-                ?.unblock(props.card.id)
-                .then(unblocked)
-                .catch((err) => {
-                    const data = err.response.data
-                    const error = data.message ? data.message : data.errorCode
-                    showErrorToast(error)
-                })
-        }
-
-        const toggleShowOptions = () => {
-            showOptions.value = !showOptions.value
-        }
-
-        const toggleBusy = () => {
-            localIsBusy.value = !localIsBusy.value
-        }
-
-        const blocked = () => {
-            emit('blocked')
-        }
-
-        const unblocked = () => {
-            emit('unblocked')
-        }
-
-        return {
-            showOptions,
-            localIsBusy,
-            isBlocked,
-            isActive,
-            isDestroyed,
-            editLink,
-            statementsLink,
-            currency,
-            expiryDate,
-            toggleShowOptions,
-            toggleBlock,
-        }
+const props = defineProps({
+    card: {
+        type: Object as PropType<ManagedCardModel>,
+        required: true,
     },
 })
+
+const emit = defineEmits(['blocked', 'unblocked'])
+const { cards } = useStores(['cards'])
+const { showErrorToast } = useBase()
+const showOptions = ref<boolean>(false)
+
+const localIsBusy = ref<boolean>(false)
+
+const isBlocked = computed(() => props.card.state.state === ManagedInstrumentStateEnum.BLOCKED)
+const isDestroyed = computed(() => props.card.state.state === ManagedInstrumentStateEnum.DESTROYED)
+
+const editLink = computed(() => {
+    if (!props.card) return undefined
+
+    return `/managed-cards/${props.card.id}/edit`
+})
+
+const statementsLink = computed(() => {
+    if (!props.card) return undefined
+
+    return `/managed-cards/${props.card.id}/statements`
+})
+
+const currency = computed(() =>
+    weavrCurrency(props.card.balances?.availableBalance, props.card.currency),
+)
+
+const expiryDate = computed(() => expiryMmyy(props.card.expiryMmyy))
+
+const toggleBlock = async () => {
+    toggleBusy()
+    if (isBlocked.value) {
+        await unblockCard()
+    } else {
+        await blockCard()
+    }
+    toggleBusy()
+}
+
+const blockCard = async () => {
+    await cards
+        ?.block(props.card.id)
+        .then(blocked)
+        .catch((err) => {
+            const data = err.response.data
+            const error = data.message ? data.message : data.errorCode
+            showErrorToast(error)
+        })
+}
+
+const unblockCard = async () => {
+    await cards
+        ?.unblock(props.card.id)
+        .then(unblocked)
+        .catch((err) => {
+            const data = err.response.data
+            const error = data.message ? data.message : data.errorCode
+            showErrorToast(error)
+        })
+}
+
+const toggleShowOptions = () => {
+    showOptions.value = !showOptions.value
+}
+
+const toggleBusy = () => {
+    localIsBusy.value = !localIsBusy.value
+}
+
+const blocked = () => {
+    emit('blocked')
+}
+
+const unblocked = () => {
+    emit('unblocked')
+}
+</script>
+
+<script lang="ts">
+export default {
+    name: 'CardComponent',
+}
 </script>

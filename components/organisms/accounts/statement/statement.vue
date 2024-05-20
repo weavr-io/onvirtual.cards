@@ -75,6 +75,7 @@ import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEn
 
 export default defineComponent({
     name: 'AccountStatementComponent',
+    // TODO: Update this after nuxt bridge
     components: {
         StatementItem: () => import('~/components/organisms/StatementItem.vue'),
         DownloadIcon: () => import('~/assets/svg/download.svg?inline'),

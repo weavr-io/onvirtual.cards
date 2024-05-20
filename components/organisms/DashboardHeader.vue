@@ -74,13 +74,11 @@ const canAddFunds: ComputedRef<boolean> = computed(() => {
     return false
 })
 
-const accountCurrency = computed(() => {
-    return weavrCurrency(account?.value?.balances?.availableBalance, account?.value?.currency)
-})
+const accountCurrency = computed(() =>
+    weavrCurrency(account?.value?.balances?.availableBalance, account?.value?.currency),
+)
 
-const currency = computed(() => {
-    return weavrCurrency(cardsBalance, cardCurrency)
-})
+const currency = computed(() => weavrCurrency(cardsBalance.value, cardCurrency.value))
 </script>
 
 <style lang="scss" scoped>
