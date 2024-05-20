@@ -215,14 +215,14 @@ useFetch(async () => {
 
 const fetchCardStatements = async () => {
     const routeQueries = dot.object(route.value.query)
-    const filters = routeQueries.filters || {}
+    let filters = routeQueries.filters || {}
 
-    if (!filters.value?.fromTimestamp) {
-        filters.value.fromTimestamp = DateTime.now().startOf('month').toMillis()
+    if (!filters?.fromTimestamp) {
+        filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
     }
 
-    if (!filters.value?.toTimestamp) {
-        filters.value.toTimestamp = DateTime.now().endOf('month').toMillis()
+    if (!filters?.toTimestamp) {
+        filters.toTimestamp = DateTime.now().endOf('month').toMillis()
     }
 
     const statementFilters: StatementFiltersRequest = {
@@ -230,7 +230,7 @@ const fetchCardStatements = async () => {
         orderByTimestamp: OrderEnum.DESC,
         limit: 100,
         offset: 0,
-        ...filters.value,
+        ...filters,
     }
 
     const _req: ManagedCardStatementRequest = {
@@ -238,7 +238,7 @@ const fetchCardStatements = async () => {
         request: statementFilters,
     }
 
-    filters.value = statementFilters
+    filters = statementFilters
 
     cards?.clearCardStatements()
     await cards?.getCardStatement(_req)
@@ -253,7 +253,7 @@ const infiniteScroll = ($state) => {
         page.value++
 
         const request: StatementFiltersRequest = { ...filters.value }
-        request.offset = page.value * +request.limit!
+        request.offset = page.value * +request.limit! || 0
 
         cards
             ?.getCardStatement({
