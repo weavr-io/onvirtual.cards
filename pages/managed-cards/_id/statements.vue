@@ -274,7 +274,7 @@ const toggleModal = () => {
     root!.$bvModal.show('cardModal')
 }
 
-watch(route.value.query, fetchCardStatements)
+watch(route, fetchCardStatements)
 </script>
 
 <style lang="scss" scoped>

@@ -75,10 +75,12 @@ import { useCards } from '~/composables/useCards'
 import { useKyVerified } from '~/composables/useKyVerified'
 import { useStores } from '~/composables/useStores'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 export default defineComponent({
     components: {
         WeavrCard,
+        LoadingSpinner,
     },
     layout: 'dashboard',
     middleware: 'kyVerified',

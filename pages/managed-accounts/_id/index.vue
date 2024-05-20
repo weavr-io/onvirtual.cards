@@ -16,8 +16,8 @@ import {
     Ref,
     ref,
     useAsync,
+    useFetch,
     useRoute,
-    watch,
 } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { DateTime } from 'luxon'
@@ -51,44 +51,40 @@ export default defineComponent({
             accounts?.setStatements(null)
         })
 
-        watch(
-            route.value.query,
-            async () => {
-                const _accountId = route.value.params.id
+        useFetch(async () => {
+            const _accountId = route.value.params.id
 
-                await accounts?.get(_accountId)
+            await accounts?.get(_accountId)
 
-                const _routeQueries = dot.object(route.value.query)
-                const _filters = _routeQueries.filters ? _routeQueries.filters : {}
+            const _routeQueries = dot.object(route.value.query)
+            const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
-                if (!_filters.fromTimestamp) {
-                    _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
-                }
+            if (!_filters.fromTimestamp) {
+                _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
+            }
 
-                if (!_filters.toTimestamp) {
-                    _filters.toTimestamp = DateTime.now().endOf('month').toMillis()
-                }
+            if (!_filters.toTimestamp) {
+                _filters.toTimestamp = DateTime.now().endOf('month').toMillis()
+            }
 
-                const _statementFilters: GetManagedAccountStatementRequest = {
-                    showFundMovementsOnly: false,
-                    orderByTimestamp: OrderEnum.DESC,
-                    limit: 10,
-                    offset: 0,
-                    ..._filters,
-                }
+            const _statementFilters: GetManagedAccountStatementRequest = {
+                showFundMovementsOnly: false,
+                orderByTimestamp: OrderEnum.DESC,
+                limit: 10,
+                offset: 0,
+                ..._filters,
+            }
 
-                const _req = {
-                    id: _accountId,
-                    filters: _statementFilters,
-                }
+            const _req = {
+                id: _accountId,
+                filters: _statementFilters,
+            }
 
-                filters.value = { ..._statementFilters }
+            filters.value = { ..._statementFilters }
 
-                page.value = 0
-                await accounts?.getStatements(_req)
-            },
-            { immediate: true },
-        )
+            page.value = 0
+            await accounts?.getStatements(_req)
+        })
 
         const infiniteScroll = ($state) => {
             setTimeout(() => {
