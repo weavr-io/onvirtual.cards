@@ -65,135 +65,124 @@
     </section>
 </template>
 
-<script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { reactive } from 'vue'
+<script lang="ts" setup>
+import { computed, ComputedRef, reactive, ref, useRouter } from '@nuxtjs/composition-api'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
 import useZodValidation from '~/composables/useZodValidation'
-import BaseMixin from '~/mixins/BaseMixin'
 import {
     INITIAL_UPDATE_PASSWORD_REQUEST,
     UpdatePasswordRequestModel,
     UpdatePasswordRequestSchema,
-} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
+} from '~/plugins/weavr-multi/api/models/authentication'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
-@Component({
-    components: {
-        LoaderButton,
-        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
-        WeavrPasswordInput,
-    },
+const router = useRouter()
+const { showSuccessToast, showErrorToast } = useBase()
+const { auth } = useStores(['auth'])
+
+const oldPassword = ref<WeavrPasswordInput | null>(null)
+const newPassword = ref<WeavrPasswordInput | null>(null)
+const isLoading = ref(false)
+const passwordStrength = ref(0)
+const changePasswordRequest: UpdatePasswordRequestModel = reactive(
+    INITIAL_UPDATE_PASSWORD_REQUEST(),
+)
+
+const validation = computed(() => {
+    return useZodValidation(UpdatePasswordRequestSchema, changePasswordRequest)
 })
-export default class BundlesPage extends mixins(BaseMixin) {
-    @Ref('oldPassword')
-    oldPassword!: WeavrPasswordInput
 
-    @Ref('newPassword')
-    newPassword!: WeavrPasswordInput
+const isPasswordValid = computed(() => {
+    return passwordStrength.value >= 2
+})
 
-    isLoading = false
+const isPasswordValidAndDirty = computed(() => {
+    return !validation.value.dirty.value ? true : isPasswordValid.value
+})
 
-    passwordStrength = 0
-
-    changePasswordRequest: UpdatePasswordRequestModel = reactive(INITIAL_UPDATE_PASSWORD_REQUEST())
-
-    get validation() {
-        return useZodValidation(UpdatePasswordRequestSchema, this.changePasswordRequest)
-    }
-
-    get isPasswordValid(): boolean {
-        return this.passwordStrength >= 2
-    }
-
-    get isPasswordValidAndDirty(): boolean {
-        return !this.validation.dirty.value ? true : this.isPasswordValid
-    }
-
-    get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
-        return {
-            color: '#495057',
-            fontSize: '16px',
-            fontSmoothing: 'antialiased',
-            fontFamily: "'Be Vietnam', sans-serif",
+const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
+    return {
+        color: '#495057',
+        fontSize: '16px',
+        fontSmoothing: 'antialiased',
+        fontFamily: "'Be Vietnam', sans-serif",
+        fontWeight: '400',
+        lineHeight: '24px',
+        margin: '0',
+        padding: '6px 12px',
+        textIndent: '0px',
+        '::placeholder': {
+            color: '#B6B9C7',
             fontWeight: '400',
-            lineHeight: '24px',
-            margin: '0',
-            padding: '6px 12px',
-            textIndent: '0px',
-            '::placeholder': {
-                color: '#B6B9C7',
-                fontWeight: '400',
-            },
-        }
+        },
+    }
+})
+
+const oldPasswordInteraction = (val: { empty: boolean; valid: boolean }) => {
+    !val.empty
+        ? (changePasswordRequest.oldPassword.value = '******')
+        : (changePasswordRequest.oldPassword.value = '')
+}
+
+const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
+    !val.empty
+        ? (changePasswordRequest.newPassword.value = '******')
+        : (changePasswordRequest.newPassword.value = '')
+}
+
+const strengthCheck = (val) => {
+    passwordStrength.value = val.id
+}
+
+const checkOnKeyUp = (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault()
+        submitChangePassword()
+    }
+}
+
+const submitChangePassword = async () => {
+    let tokenizedOld = ''
+    let tokenizedNew = ''
+
+    validation.value.touch() && (await validation.value.validate())
+
+    if (validation.value.isInvalid.value || !isPasswordValid.value) {
+        return null
     }
 
-    oldPasswordInteraction(val: { empty: boolean; valid: boolean }) {
-        !val.empty
-            ? (this.changePasswordRequest.oldPassword.value = '******')
-            : (this.changePasswordRequest.oldPassword.value = '')
-    }
+    isLoading.value = true
 
-    passwordInteraction(val: { empty: boolean; valid: boolean }) {
-        !val.empty
-            ? (this.changePasswordRequest.newPassword.value = '******')
-            : (this.changePasswordRequest.newPassword.value = '')
-    }
+    await oldPassword.value?.createToken().then((res) => {
+        tokenizedOld = res.tokens['old-password']
+    })
+    await newPassword.value?.createToken().then((res) => {
+        tokenizedNew = res.tokens['new-password']
+    })
 
-    strengthCheck(val) {
-        this.passwordStrength = val.id
-    }
-
-    checkOnKeyUp(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault()
-            this.submitChangePassword()
-        }
-    }
-
-    async submitChangePassword() {
-        let tokenizedOld = ''
-        let tokenizedNew = ''
-
-        this.validation.touch() && (await this.validation.validate())
-
-        if (this.validation.isInvalid.value || !this.isPasswordValid) {
-            return null
-        }
-
-        this.isLoading = true
-
-        await this.oldPassword.createToken().then((res) => {
-            tokenizedOld = res.tokens['old-password']
-        })
-        await this.newPassword.createToken().then((res) => {
-            tokenizedNew = res.tokens['new-password']
-        })
-
-        if (tokenizedOld && tokenizedNew) {
-            this.changePasswordRequest.oldPassword.value = tokenizedOld
-            this.changePasswordRequest.newPassword.value = tokenizedNew
-            this.authStore
-                .validatePassword({ password: this.changePasswordRequest.newPassword })
+    if (tokenizedOld && tokenizedNew) {
+        changePasswordRequest.oldPassword.value = tokenizedOld
+        changePasswordRequest.newPassword.value = tokenizedNew
+        auth?.validatePassword({ password: changePasswordRequest.newPassword }).then(() => {
+            auth
+                ?.updatePassword(changePasswordRequest)
                 .then(() => {
-                    this.authStore
-                        .updatePassword(this.changePasswordRequest)
-                        .then(() => {
-                            this.showSuccessToast('Password changed successfully')
-                            this.$router.push('/profile')
-                        })
-                        .catch((err) => {
-                            const data = err.response.data
-                            const error = data.message ? data.message : data.errorCode
-
-                            this.showErrorToast(error)
-                        })
-                        .finally(() => {
-                            this.isLoading = false
-                        })
+                    showSuccessToast('Password changed successfully')
+                    router.push('/profile')
                 })
-        }
+                .catch((err) => {
+                    const data = err.response.data
+                    const error = data.message ? data.message : data.errorCode
+
+                    showErrorToast(error)
+                })
+                .finally(() => {
+                    isLoading.value = false
+                })
+        })
     }
 }
 </script>

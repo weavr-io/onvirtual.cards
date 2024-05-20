@@ -55,60 +55,66 @@
     </section>
 </template>
 <script lang="ts">
-import { reactive } from 'vue'
-import { Component, mixins } from 'nuxt-property-decorator'
+import { computed, defineComponent, reactive, ref, useRouter } from '@nuxtjs/composition-api'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import { useStores } from '~/composables/useStores'
+import useZodValidation from '~/composables/useZodValidation'
+import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import {
     CreateUserRequestModel,
     INITIAL_USER_REQUEST,
-    type UserRequest,
+    UserRequest,
     UserSchema,
 } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
-import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
-import BaseMixin from '~/mixins/BaseMixin'
 
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import useZodValidation from '~/composables/useZodValidation'
-
-@Component({
+export default defineComponent({
     components: {
         LoaderButton,
-        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
+        ErrorAlert,
     },
-    middleware: ['kyVerified'],
-})
-export default class AddCardPage extends mixins(BaseMixin) {
-    isLoading = false
+    middleware: 'kyVerified',
+    setup() {
+        const router = useRouter()
 
-    request: UserRequest = reactive(INITIAL_USER_REQUEST())
+        const { errors, users } = useStores(['errors', 'users'])
+        const isLoading = ref(false)
+        const request: UserRequest = reactive(INITIAL_USER_REQUEST())
 
-    get validation() {
-        return useZodValidation(UserSchema, this.request)
-    }
+        const validation = computed(() => {
+            return useZodValidation(UserSchema, request)
+        })
 
-    async doAdd() {
-        await this.validation.validate()
+        const doAdd = async () => {
+            await validation.value.validate()
 
-        if (this.validation.isInvalid.value) {
-            return null
+            if (validation.value.isInvalid.value) {
+                return null
+            }
+
+            await users
+                ?.add(request as CreateUserRequestModel)
+                .then((res) => {
+                    userAdded(res.data)
+                })
+                .catch((err) => {
+                    errors?.setError(err)
+                    isLoading.value = false
+                })
         }
 
-        this.isLoading = true
+        const userAdded = async (res: UserModel) => {
+            await users?.inviteSend(res.id)
+            await router.push('/users')
+            isLoading.value = false
+        }
 
-        await this.usersStore
-            .add(this.request as CreateUserRequestModel)
-            .then((res) => {
-                this.userAdded(res.data)
-            })
-            .catch((err) => {
-                this.errorsStore.setError(err)
-                this.isLoading = false
-            })
-    }
-
-    async userAdded(res: UserModel) {
-        await this.usersStore.inviteSend(res.id)
-        await this.$router.push('/users')
-        this.isLoading = false
-    }
-}
+        return {
+            doAdd,
+            validation,
+            request,
+            isLoading,
+        }
+    },
+})
 </script>

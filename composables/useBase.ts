@@ -120,6 +120,12 @@ export const useBase = () => {
         }
     })
 
+    const countryOptionsWithDefault = computed(() => {
+        const _default: [any] = [{ ...DefaultSelectValueConst }]
+        _default.push(...countriesOptions)
+        return _default
+    })
+
     const mobileCountries = Countries.map((_c) => {
         return _c['alpha-2']
     })
@@ -195,7 +201,9 @@ export const useBase = () => {
         profileBaseCurrency,
         identityVerified,
         countriesOptions,
+        countryOptionsWithDefault,
         mobileCountries,
+        pendingData,
         pendingDataOrError,
         countryOptionsWithDefault,
         goToIndex,

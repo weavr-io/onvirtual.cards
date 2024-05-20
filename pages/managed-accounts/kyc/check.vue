@@ -13,54 +13,59 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import { defineComponent, ref, useRouter, onMounted } from '@nuxtjs/composition-api'
+import { useStores } from '~/composables/useStores'
+import { useBase } from '~/composables/useBase'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
-@Component({
-    middleware: ['kyVerified'],
-})
-export default class KycPage extends mixins(BaseMixin) {
-    private tries = 0
+export default defineComponent({
+    middleware: 'kyVerified',
+    setup() {
+        const { accounts, consumers } = useStores(['accounts', 'consumers'])
+        const { accountJurisdictionProfileId, sleep } = useBase()
+        const router = useRouter()
 
-    mounted() {
-        this.KycApproved()
-    }
+        const tries = ref(0)
 
-    async KycApproved() {
-        const _res = await this.consumersStore.getKYC()
+        const KycApproved = async () => {
+            const _res = await consumers?.getKYC()
 
-        if (
-            _res.data.fullDueDiligence === KYCStatusEnum.APPROVED ||
-            _res.data.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
-        ) {
-            this.redirectToAccountPage()
-        } else {
-            this.tries++
-
-            if (this.tries > 3) {
-                this.redirectToAccountPage()
+            if (
+                _res &&
+                (_res.data.fullDueDiligence === KYCStatusEnum.APPROVED ||
+                    _res.data.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW)
+            ) {
+                await redirectToAccountPage()
             } else {
-                await this.sleep(5000)
-                this.KycApproved()
+                tries.value++
+                if (tries.value > 3) {
+                    await redirectToAccountPage()
+                } else {
+                    await sleep(5000)
+                    await KycApproved()
+                }
             }
         }
-    }
 
-    async redirectToAccountPage() {
-        const _accounts = await this.accountsStore.index({
-            profileId: this.accountJurisdictionProfileId,
-            state: ManagedInstrumentStateEnum.ACTIVE,
-            offset: '0',
-        })
+        const redirectToAccountPage = async () => {
+            const _accounts = await accounts?.index({
+                profileId: accountJurisdictionProfileId.value,
+                state: ManagedInstrumentStateEnum.ACTIVE,
+                offset: '0',
+            })
 
-        if (+_accounts.data.count! >= 1 && _accounts.data.accounts) {
-            const _accountId = _accounts.data.accounts[0].id
-            this.$router.push('/managed-accounts/' + _accountId)
-        } else {
-            this.$router.push('/managed-accounts')
+            if (_accounts && +_accounts.data.count! >= 1 && _accounts.data.accounts) {
+                const _accountId = _accounts.data.accounts[0].id
+                router.push('/managed-accounts/' + _accountId)
+            } else {
+                router.push('/managed-accounts')
+            }
         }
-    }
-}
+
+        onMounted(() => {
+            KycApproved()
+        })
+    },
+})
 </script>

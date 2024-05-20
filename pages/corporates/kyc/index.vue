@@ -25,38 +25,25 @@
         </b-container>
     </section>
 </template>
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { BIcon, BIconBoxArrowUpRight } from 'bootstrap-vue'
+<script lang="ts" setup>
+import { computed, ref, useRoute } from '@nuxtjs/composition-api'
 import { KYBOptions } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 
-@Component({
-    components: {
-        BIcon,
-        BIconBoxArrowUpRight,
-    },
+const route = useRoute()
+
+const reference = ref(route.value.query.reference)
+const accessTokenError = ref(false)
+
+const kybOptions = computed(() => {
+    return {
+        customCSS: '',
+    } as KYBOptions
 })
-export default class KybPage extends mixins(BaseMixin) {
-    reference!: string
 
-    accessTokenError = false
-
-    get kybOptions(): KYBOptions {
-        return {
-            customCss: '',
-        }
-    }
-
-    asyncData({ route }) {
-        return { reference: route.query.reference }
-    }
-
-    handleSumSubMessage(message) {
-        if (message.messageType === 'idCheck.onError') {
-            if (message.payload.error === 'Access token required') {
-                this.accessTokenError = true
-            }
+const handleSumSubMessage = (message) => {
+    if (message.messageType === 'idCheck.onError') {
+        if (message.payload.error === 'Access token required') {
+            accessTokenError.value = true
         }
     }
 }

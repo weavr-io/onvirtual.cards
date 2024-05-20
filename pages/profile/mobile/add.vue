@@ -35,110 +35,133 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { reactive } from 'vue'
-import BaseMixin from '~/mixins/BaseMixin'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
-import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
 import {
+    computed,
+    defineComponent,
+    reactive,
+    ref,
+    useAsync,
+    useRouter,
+} from '@nuxtjs/composition-api'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
+import useZodValidation from '~/composables/useZodValidation'
+import {
+    SCAFactorStatusEnum,
+    SCAOtpChannelEnum,
+} from '~/plugins/weavr-multi/api/models/authentication'
+import {
+    CredentialTypeEnum,
     INITIAL_MOBILE_REQUEST,
     Mobile,
-} from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
+} from '~/plugins/weavr-multi/api/models/common'
+import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
+import {
+    RootUserMobileSchema,
+    UpdateCorporateRequest,
+} from '~/plugins/weavr-multi/api/models/identities/corporates'
 import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
-import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/CredentialTypeEnum'
-import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
-import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
-import { initialiseStores } from '~/utils/pinia-store-accessor'
-import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import useZodValidation from '~/composables/useZodValidation'
-import { RootUserMobileSchema } from '~/plugins/weavr-multi/api/models/identities/corporates'
 
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
         LogoOvc,
-        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
+        LoaderButton,
     },
-    middleware: ['kyVerified'],
-})
-export default class LoginPage extends mixins(BaseMixin) {
-    isLoading = false
+    layout: 'auth',
+    middleware: 'kyVerified',
+    setup() {
+        const router = useRouter()
+        const { isConsumer, showErrorToast, mobileCountries } = useBase()
+        const { auth, consumers, corporates, users } = useStores([
+            'auth',
+            'consumers',
+            'corporates',
+            'users',
+        ])
 
-    numberIsValid: boolean | null = null
+        const isLoading = ref(false)
+        const numberIsValid = ref<boolean | null>(null)
+        const updateRequest: { mobile: Mobile } = reactive({
+            mobile: {
+                ...INITIAL_MOBILE_REQUEST(),
+            },
+        })
 
-    updateRequest: { mobile: Mobile } = reactive({
-        mobile: {
-            ...INITIAL_MOBILE_REQUEST(),
-        },
-    })
+        const validation = computed(() => {
+            return useZodValidation(RootUserMobileSchema, updateRequest)
+        })
 
-    get validation() {
-        return useZodValidation(RootUserMobileSchema, this.updateRequest)
-    }
+        useAsync(async () => {
+            await auth?.indexAuthFactors()
 
-    async asyncData({ redirect }) {
-        const { auth } = initialiseStores(['auth'])
+            const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
+                (factor) => factor.channel === SCAOtpChannelEnum.SMS,
+            )
 
-        await auth?.indexAuthFactors()
+            if (
+                smsAuthFactors &&
+                smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION
+            ) {
+                return router.replace('/dashboard')
+            }
+        })
 
-        const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
-            (factor) => factor.channel === SCAOtpChannelEnum.SMS,
-        )
+        const submitForm = async () => {
+            isLoading.value = true
 
-        if (
-            smsAuthFactors &&
-            smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION
-        ) {
-            return redirect('/dashboard')
-        }
-    }
-
-    async submitForm() {
-        this.isLoading = true
-
-        if (this.numberIsValid === null) {
-            this.numberIsValid = false
-        }
-
-        try {
-            await this.validation.validate()
-
-            if (this.validation.isInvalid.value || !this.numberIsValid) {
-                this.isLoading = false
-                return null
+            if (numberIsValid.value === null) {
+                numberIsValid.value = false
             }
 
-            if (this.authStore.authState.auth?.credentials.type === CredentialTypeEnum.ROOT) {
-                this.isConsumer
-                    ? await this.consumersStore.update(this.updateRequest as UpdateConsumerRequest)
-                    : await this.corporatesStore.update(
-                          this.updateRequest as UpdateCorporateRequest,
-                      )
-            } else {
-                await this.usersStore.update({
-                    id: this.authStore.authState.auth!.credentials.id,
-                    data: this.updateRequest as UpdateUserRequestModel,
+            try {
+                await validation.value.validate()
+
+                if (validation.value.isInvalid.value || !numberIsValid.value) {
+                    isLoading.value = false
+                    return null
+                }
+
+                if (auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT) {
+                    isConsumer.value
+                        ? await consumers?.update(updateRequest as UpdateConsumerRequest)
+                        : await corporates?.update(updateRequest as UpdateCorporateRequest)
+                } else {
+                    await users?.update({
+                        id: auth!.authState.auth!.credentials.id,
+                        data: updateRequest as UpdateUserRequestModel,
+                    })
+                }
+                await router.push({
+                    path: '/login/verify/mobile',
+                    query: {
+                        send: 'true',
+                    },
                 })
+            } catch (error: any) {
+                showErrorToast(error)
+            } finally {
+                isLoading.value = false
             }
-            await this.$router.push({
-                path: '/login/verify/mobile',
-                query: {
-                    send: 'true',
-                },
-            })
-        } catch (error: any) {
-            this.showErrorToast(error)
-        } finally {
-            this.isLoading = false
         }
-    }
 
-    phoneUpdate(number) {
-        this.updateRequest.mobile.countryCode =
-            number.countryCallingCode && `+${number.countryCallingCode}`
-        this.updateRequest.mobile.number = number.phoneNumber
+        const phoneUpdate = (number) => {
+            updateRequest.mobile.countryCode =
+                number.countryCallingCode && `+${number.countryCallingCode}`
+            updateRequest.mobile.number = number.phoneNumber
 
-        this.numberIsValid = number.isValid
-    }
-}
+            numberIsValid.value = number.isValid
+        }
+
+        return {
+            submitForm,
+            numberIsValid,
+            mobileCountries,
+            updateRequest,
+            phoneUpdate,
+            isLoading,
+        }
+    },
+})
 </script>

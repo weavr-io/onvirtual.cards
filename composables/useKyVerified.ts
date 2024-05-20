@@ -11,7 +11,7 @@ export const useKyVerified = () => {
     ])
 
     const hasAlert = computed(() => {
-        return showKybAlert || showKycAlert
+        return showKybAlert.value || showKycAlert.value
     })
 
     const showVerifyMobileAlert = computed(() => {

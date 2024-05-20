@@ -35,24 +35,36 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { computed, defineComponent, useFetch } from '@nuxtjs/composition-api'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
 
-@Component({ middleware: ['kyVerified'] })
-export default class UsersPage extends mixins(BaseMixin) {
-    mainProps = {
-        blank: true,
-        blankColor: '#EAEDF6',
-        width: 45,
-        height: 45,
-    }
+export default defineComponent({
+    middleware: 'kyVerified',
+    setup() {
+        const { pendingDataOrError } = useBase()
+        const { users: usersStores } = useStores(['users'])
 
-    get users() {
-        return this.usersStore.userState.users
-    }
+        const mainProps = {
+            blank: true,
+            blankColor: '#EAEDF6',
+            width: 45,
+            height: 45,
+        }
 
-    fetch() {
-        return this.usersStore.index()
-    }
-}
+        const users = computed(() => {
+            return usersStores?.userState.users
+        })
+
+        useFetch(() => {
+            usersStores?.index()
+        })
+
+        return {
+            pendingDataOrError,
+            users,
+            mainProps,
+        }
+    },
+})
 </script>

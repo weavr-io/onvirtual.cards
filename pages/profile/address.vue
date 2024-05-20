@@ -88,120 +88,144 @@
 </template>
 
 <script lang="ts">
-import { reactive } from 'vue'
-import { Component, mixins } from 'nuxt-property-decorator'
-import {
-    type Address,
-    AddressSchema,
-    INITIAL_ADDRESS,
-} from '~/plugins/weavr-multi/api/models/common/models/Address'
-import { CorporateSourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CorporateSourceOfFundsSelectConst'
-import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
-import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
-import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
-import BaseMixin from '~/mixins/BaseMixin'
+import { computed, defineComponent, reactive, ref, useFetch } from '@nuxtjs/composition-api'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
 import useZodValidation from '~/composables/useZodValidation'
+import {
+    Address,
+    AddressSchema,
+    CorporateSourceOfFundsSelectConst,
+    INITIAL_ADDRESS,
+    IndustryTypeSelectConst,
+} from '~/plugins/weavr-multi/api/models/common'
+import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
+import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
 
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
-        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
-        RegistrationNav: () => import('~/components/molecules/registration/RegistrationNav.vue'),
+        ErrorAlert,
+        LoaderButton,
     },
-    middleware: ['authRouteGuard'],
-})
-export default class ConsumerAddressPage extends mixins(BaseMixin) {
-    address: Address = reactive(INITIAL_ADDRESS())
-    isLoading = false
+    layout: 'auth',
+    middleware: 'authRouteGuard',
+    setup() {
+        const {
+            consumer,
+            corporate,
+            isConsumer,
+            isCorporate,
+            goToVerify,
+            goToIndex,
+            countryOptionsWithDefault,
+        } = useBase()
+        const { consumers, corporates } = useStores(['consumers', 'corporates'])
 
-    get validation() {
-        return useZodValidation(AddressSchema, this.address)
-    }
+        const isLoading = ref(false)
+        const address: Address = reactive(INITIAL_ADDRESS())
 
-    get country() {
-        return this.address?.country
-    }
-
-    set country(val) {
-        this.$set(this.address, 'country', val)
-    }
-
-    get sourceOfFundsOptions() {
-        return CorporateSourceOfFundsSelectConst
-    }
-
-    get industryOccupationOptions() {
-        return IndustryTypeSelectConst
-    }
-
-    fetch() {
-        if (this.isConsumer && this.consumer) {
-            if (Object.keys(this.consumer.rootUser.address as Address).length) {
-                Object.assign(this.address, this.consumer.rootUser.address)
-            }
-        } else if (this.isCorporate && this.corporate) {
-            if (Object.keys(this.corporate.company.registeredAddress as Address).length) {
-                // treat as corporate
-                Object.assign(this.address, this.corporate.company.registeredAddress)
-            }
-        }
-    }
-
-    async submitForm() {
-        this.isLoading = true
-        await this.validation.validate()
-
-        if (this.validation.isInvalid.value) {
-            this.isLoading = false
-            return
-        }
-
-        let xhr: Promise<unknown>
-
-        if (this.isConsumer) {
-            xhr = this.consumersStore.update({ address: this.address })
-        } else {
-            // treat as corporate
-            xhr = this.corporatesStore.update({
-                companyBusinessAddress: this.address,
-            })
-        }
-        xhr.then(this.addressUpdated).finally(() => {
-            this.isLoading = false
+        const validation = computed(() => {
+            return useZodValidation(AddressSchema, address)
         })
-    }
 
-    async addressUpdated() {
-        let identityRootVerified: CorporatesRootUserModel | ConsumersRootUserModel
+        const country = computed({
+            get() {
+                return address.country
+            },
+            set(value) {
+                address.country = value
+            },
+        })
 
-        if (this.isConsumer) {
-            await this.consumersStore.get().then((res) => {
-                identityRootVerified = res.data.rootUser
+        const sourceOfFundsOptions = computed(() => {
+            return CorporateSourceOfFundsSelectConst
+        })
 
-                if (
-                    identityRootVerified &&
-                    !(identityRootVerified as ConsumersRootUserModel).emailVerified
-                ) {
-                    this.goToVerify()
-                } else {
-                    this.goToIndex()
+        const industryOccupationOptions = computed(() => {
+            return IndustryTypeSelectConst
+        })
+
+        useFetch(() => {
+            if (isConsumer.value && consumer.value) {
+                if (Object.keys(consumer.value.rootUser.address as Address).length) {
+                    Object.assign(address, consumer.value.rootUser.address)
                 }
-            })
-        } else if (this.isCorporate) {
-            await this.corporatesStore.get().then((res) => {
-                identityRootVerified = res.data.rootUser
-
-                if (
-                    identityRootVerified &&
-                    !(identityRootVerified as CorporatesRootUserModel).emailVerified
-                ) {
-                    this.goToVerify()
-                } else {
-                    this.goToIndex()
+            } else if (isCorporate.value && corporate.value) {
+                if (Object.keys(corporate.value.company.registeredAddress as Address).length) {
+                    // treat as corporate
+                    Object.assign(address, corporate.value.company.registeredAddress)
                 }
+            }
+        })
+
+        const submitForm = async () => {
+            isLoading.value = true
+            await validation.value.validate()
+
+            if (validation.value.isInvalid.value) {
+                isLoading.value = false
+                return
+            }
+
+            let xhr: Promise<unknown>
+
+            if (isConsumer.value) {
+                xhr = consumers!.update({ address })
+            } else {
+                // treat as corporate
+                xhr = corporates!.update({
+                    companyBusinessAddress: address,
+                })
+            }
+            xhr.then(addressUpdated).finally(() => {
+                isLoading.value = false
             })
         }
-    }
-}
+
+        const addressUpdated = async () => {
+            let identityRootVerified: CorporatesRootUserModel | ConsumersRootUserModel
+
+            if (isConsumer.value) {
+                await consumers?.get().then((res) => {
+                    identityRootVerified = res.data.rootUser
+
+                    if (
+                        identityRootVerified &&
+                        !(identityRootVerified as ConsumersRootUserModel).emailVerified
+                    ) {
+                        goToVerify()
+                    } else {
+                        goToIndex()
+                    }
+                })
+            } else if (isCorporate.value) {
+                await corporates?.get().then((res) => {
+                    identityRootVerified = res.data.rootUser
+
+                    if (
+                        identityRootVerified &&
+                        !(identityRootVerified as CorporatesRootUserModel).emailVerified
+                    ) {
+                        goToVerify()
+                    } else {
+                        goToIndex()
+                    }
+                })
+            }
+        }
+
+        return {
+            submitForm,
+            validation,
+            address,
+            countryOptionsWithDefault,
+            isLoading,
+            country,
+            sourceOfFundsOptions,
+            industryOccupationOptions,
+        }
+    },
+})
 </script>

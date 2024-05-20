@@ -22,136 +22,125 @@
     </b-container>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
+import { defineComponent, ref, useContext, useFetch, useRoute } from '@nuxtjs/composition-api'
+import AccountSelection from '~/components/organisms/transfer/AccountSelection.vue'
+import TopUp from '~/components/organisms/transfer/TopUp.vue'
+import TopUpSuccess from '~/components/molecules/transfer/TopUpSuccess.vue'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
+import { CurrencyEnum, InstrumentEnum } from '~/plugins/weavr-multi/api/models/common'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 
-@Component({
+export default defineComponent({
     components: {
-        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
-        AccountSelection: () => import('~/components/organisms/transfer/AccountSelection.vue'),
-        TopUp: () => import('~/components/organisms/transfer/TopUp.vue'),
-        TopUpSuccess: () => import('~/components/molecules/transfer/TopUpSuccess.vue'),
+        AccountSelection,
+        TopUp,
+        TopUpSuccess,
     },
-    middleware: ['kyVerified'],
-})
-export default class TransfersPage extends mixins(BaseMixin) {
-    createTransferRequest: CreateTransferRequest | null = null
-    screen = 1
-    public accountTypes = [
-        {
-            value: 'managed_accounts',
-            text: 'Managed Accounts',
-        },
-        {
-            value: 'managed_cards',
-            text: 'Managed Cards',
-        },
-    ]
+    middleware: 'kyVerified',
+    setup() {
+        const route = useRoute()
+        const { $config } = useContext()
+        const { accountJurisdictionProfileId, showErrorToast } = useBase()
+        const {
+            cards,
+            accounts: accountsStore,
+            transfers,
+        } = useStores(['accounts', 'cards', 'transfers'])
 
-    get cards() {
-        return this.cardsStore.cardState.cards?.cards
-    }
+        const createTransferRequest = ref<CreateTransferRequest | null>(null)
+        const screen = ref(1)
 
-    get accounts() {
-        return this.accountsStore.accountState.accounts
-    }
+        useFetch(async () => {
+            await cards?.getCards()
+            const accounts = await accountsStore?.index({
+                profileId: accountJurisdictionProfileId.value,
+                state: ManagedInstrumentStateEnum.ACTIVE,
+                offset: '0',
+            })
+            const firstAccount = accounts?.data.accounts && accounts.data.accounts[0]
 
-    get formattedCards(): { value: number; text: string }[] {
-        return (
-            this.cards?.map((val) => {
-                return {
-                    value: +val.id, // Todo: Check if valid conversion - remove need for conversion
-                    text: val.friendlyName,
-                }
-            }) || []
-        )
-    }
-
-    async fetch() {
-        await this.cardsStore.getCards()
-        const accounts = await this.accountsStore.index({
-            profileId: this.accountJurisdictionProfileId,
-            state: ManagedInstrumentStateEnum.ACTIVE,
-            offset: '0',
+            createTransferRequest.value = {
+                profileId: $config.profileId.transfers!,
+                source: {
+                    type: InstrumentEnum.managedAccounts,
+                    id: firstAccount?.id || '',
+                },
+                destination: {
+                    type: InstrumentEnum.managedCards,
+                    id: route.value.query.destination as string,
+                },
+                destinationAmount: {
+                    currency: firstAccount?.currency || CurrencyEnum.EUR,
+                    amount: 0,
+                },
+            }
         })
-        const firstAccount = accounts.data.accounts && accounts.data.accounts[0]
 
-        this.createTransferRequest = {
-            profileId: this.$config.profileId.transfers!,
-            source: {
-                type: InstrumentEnum.managedAccounts,
-                id: firstAccount?.id || '',
-            },
-            destination: {
-                type: InstrumentEnum.managedCards,
-                id: this.$route.query.destination as string,
-            },
-            destinationAmount: {
-                currency: firstAccount?.currency || CurrencyEnum.EUR,
-                amount: 0,
-            },
+        const nextScreen = () => {
+            screen.value++
         }
-    }
 
-    nextScreen() {
-        this.screen++
-    }
-
-    accountSelected(_data) {
-        if (_data != null && this.createTransferRequest) {
-            this.createTransferRequest.source!.type = _data.source.type
-            this.createTransferRequest.source!.id = _data.source.id
-            this.nextScreen()
+        const accountSelected = (_data) => {
+            if (_data != null && createTransferRequest) {
+                createTransferRequest.value!.source!.type = _data.source.type
+                createTransferRequest.value!.source!.id = _data.source.id
+                nextScreen()
+            }
         }
-    }
 
-    topUpSelected(_data) {
-        if (_data != null && this.createTransferRequest) {
-            this.createTransferRequest.destinationAmount!.amount = _data.amount * 100
-            this.doTransfer()
+        const topUpSelected = (_data) => {
+            if (_data != null && createTransferRequest) {
+                createTransferRequest.value!.destinationAmount!.amount = _data.amount * 100
+                doTransfer()
+            }
         }
-    }
 
-    doTransfer() {
-        this.transfersStore
-            .execute(this.createTransferRequest as CreateTransferRequest)
-            .then(() => {
-                this.createTransferRequest = {
-                    profileId: null,
-                    source: {
-                        type: InstrumentEnum.managedAccounts,
-                        id: null,
-                    },
-                    destination: {
-                        type: InstrumentEnum.managedCards,
-                        id: null,
-                    },
-                    destinationAmount: {
-                        currency: 'EUR',
-                        amount: 0,
-                    },
-                } as unknown as CreateTransferRequest
-                this.screen = 2
-            })
-            .catch((err) => {
-                this.screen = 1
+        const doTransfer = () => {
+            transfers
+                ?.execute(createTransferRequest.value as CreateTransferRequest)
+                .then(() => {
+                    createTransferRequest.value = {
+                        profileId: null,
+                        source: {
+                            type: InstrumentEnum.managedAccounts,
+                            id: null,
+                        },
+                        destination: {
+                            type: InstrumentEnum.managedCards,
+                            id: null,
+                        },
+                        destinationAmount: {
+                            currency: 'EUR',
+                            amount: 0,
+                        },
+                    } as unknown as CreateTransferRequest
+                    screen.value = 2
+                })
+                .catch((err) => {
+                    screen.value = 1
 
-                const data = err.response.data
+                    const data = err.response.data
 
-                let error = data.message ? data.message : data.errorCode
+                    let error = data.message ? data.message : data.errorCode
 
-                if (error === 'DENIED_BY_INSTRUMENT') {
-                    error = 'Amount is higher than available balance'
-                }
+                    if (error === 'DENIED_BY_INSTRUMENT') {
+                        error = 'Amount is higher than available balance'
+                    }
 
-                this.showErrorToast(error)
-            })
-    }
-}
+                    showErrorToast(error)
+                })
+        }
+
+        return {
+            screen,
+            accountSelected,
+            createTransferRequest,
+            topUpSelected,
+        }
+    },
+})
 </script>
 <style lang="scss" scoped>
 label > span {

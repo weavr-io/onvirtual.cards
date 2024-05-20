@@ -219,24 +219,36 @@
     </b-col>
 </template>
 <script lang="ts">
-import { ComputedRef } from '@nuxtjs/composition-api'
+import {
+    ComputedRef,
+    computed,
+    defineComponent,
+    reactive,
+    ref,
+    useContext,
+    useFetch,
+    useRouter,
+} from '@nuxtjs/composition-api'
 import { AxiosResponse } from 'axios'
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { reactive } from 'vue'
-import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import BaseMixin from '~/mixins/BaseMixin'
-
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import ComingSoonCurrencies from '~/components/atoms/ComingSoonCurrencies.vue'
+import DobPicker from '~/components/atoms/DobPicker.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
 import useZodValidation from '~/composables/useZodValidation'
 import {
+    CreatePasswordRequestModel,
     INITIAL_SENSITIVE_PASSWORD_REQUEST,
     SensitivePassword,
 } from '~/plugins/weavr-multi/api/models/authentication'
-import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import { ConsumerSourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common'
-import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
-import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import {
+    ConsumerSourceOfFundsSelectConst,
+    CurrencyEnum,
+    IDModel,
+    IndustryTypeSelectConst,
+} from '~/plugins/weavr-multi/api/models/common'
 import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import {
@@ -244,235 +256,263 @@ import {
     CreateConsumerRequest,
     INITIAL_CREATE_CONSUMER_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
         ComingSoonCurrencies,
         LogoOvc,
-        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
-        RegistrationNav: () => import('~/components/molecules/registration/RegistrationNav.vue'),
-        DobPicker: () => import('~/components/atoms/DobPicker.vue'),
+        ErrorAlert,
+        LoaderButton,
+        DobPicker,
         WeavrPasswordInput,
     },
+    layout: 'auth',
     middleware: 'accessCodeVerified',
-})
-export default class ConsumerRegistrationPage extends mixins(BaseMixin) {
-    @Ref('passwordField')
-    passwordField!: WeavrPasswordInput
+    setup() {
+        const router = useRouter()
+        const { $apiMulti, $config } = useContext()
+        const { consumer, showErrorToast, mobileCountries, countryOptionsWithDefault } = useBase()
+        const { accessCodes, consumers, errors } = useStores(['accessCodes', 'consumers', 'errors'])
 
-    rootMobileNumber = ''
-    numberIsValid: boolean | null = null
-    passwordStrength = 0
+        const passwordField = ref<WeavrPasswordInput | null>(null)
+        const rootMobileNumber = ref('')
+        const numberIsValid = ref<boolean | null>(null)
+        const passwordStrength = ref(0)
 
-    public registrationRequest: CreateConsumerRequest & { password: SensitivePassword } = reactive({
-        ...INITIAL_CREATE_CONSUMER_REQUEST(),
-        profileId: this.$config.profileId.consumers,
-        acceptedTerms: false,
-        baseCurrency: CurrencyEnum.EUR,
-        password: INITIAL_SENSITIVE_PASSWORD_REQUEST(),
-    })
+        const registrationRequest: CreateConsumerRequest & { password: SensitivePassword } =
+            reactive({
+                ...INITIAL_CREATE_CONSUMER_REQUEST(),
+                profileId: $config.profileId.consumers,
+                acceptedTerms: false,
+                baseCurrency: CurrencyEnum.EUR,
+                password: INITIAL_SENSITIVE_PASSWORD_REQUEST(),
+            })
 
-    private $recaptcha: any
+        const $recaptcha = ref(undefined)
 
-    get validation() {
-        return useZodValidation(CreateConsumerFormSchema, this.registrationRequest)
-    }
-
-    get isPasswordInvalidAndDirty(): boolean {
-        return !this.isPasswordValid && this.validation.dirty.value
-    }
-
-    get industryOccupationOptions() {
-        return IndustryTypeSelectConst
-    }
-
-    get dobState() {
-        return {
-            day: this.validation.getState('rootUser,dateOfBirth,day'),
-            month: this.validation.getState('rootUser,dateOfBirth,month'),
-            year: this.validation.getState('rootUser,dateOfBirth,year'),
-        }
-    }
-
-    get dobInvalidFeedback() {
-        return (
-            this.validation.getInvalidFeedback('rootUser,dateOfBirth,day') ||
-            this.validation.getInvalidFeedback('rootUser,dateOfBirth,month') ||
-            this.validation.getInvalidFeedback('rootUser,dateOfBirth,year')
-        )
-    }
-
-    get sourceOfFundsOptions() {
-        return ConsumerSourceOfFundsSelectConst
-    }
-
-    get shouldShowOtherSourceOfFunds(): boolean {
-        return this.registrationRequest.sourceOfFunds === ConsumerSourceOfFundTypeEnum.OTHER
-    }
-
-    get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
-        return {
-            color: '#495057',
-            fontSize: '16px',
-            fontSmoothing: 'antialiased',
-            fontFamily: "'Be Vietnam', sans-serif",
-            fontWeight: '400',
-            lineHeight: '24px',
-            margin: '0',
-            padding: '6px 12px',
-            textIndent: '0px',
-            '::placeholder': {
-                color: '#B6B9C7',
-                fontWeight: '400',
-            },
-        }
-    }
-
-    get config() {
-        return {
-            wrap: false,
-            enableTime: false,
-            altInput: true,
-            altFormat: 'd/m/Y',
-            maxDate: new Date(),
-            locale: {
-                firstDayOfWeek: 1,
-            },
-        }
-    }
-
-    get isRecaptchaEnabled(): boolean {
-        return typeof process.env.RECAPTCHA !== 'undefined'
-    }
-
-    get isLoadingRegistration(): boolean {
-        return this.consumersStore.consumerState.isLoadingRegistration
-    }
-
-    get isPasswordValid(): boolean {
-        return this.passwordStrength >= 2
-    }
-
-    fetch() {
-        this.$apiMulti.ipify.get().then((ip) => {
-            this.registrationRequest.ipAddress = ip.data.ip
+        const validation = computed(() => {
+            return useZodValidation(CreateConsumerFormSchema, registrationRequest)
         })
-    }
 
-    async submitForm(e) {
-        this.errorsStore.resetState()
-        try {
-            e.preventDefault()
+        const isPasswordInvalidAndDirty = computed(() => {
+            return !isPasswordValid && validation.value.dirty.value
+        })
 
-            this.validation.touch() && (await this.validation.validate())
+        const industryOccupationOptions = computed(() => {
+            return IndustryTypeSelectConst
+        })
 
-            if (this.numberIsValid === null) {
-                this.numberIsValid = false
+        const dobState = computed(() => {
+            return {
+                day: validation.value.getState('rootUser,dateOfBirth,day') ?? undefined,
+                month: validation.value.getState('rootUser,dateOfBirth,month') ?? undefined,
+                year: validation.value.getState('rootUser,dateOfBirth,year') ?? undefined,
             }
+        })
 
-            if (this.validation.isInvalid.value || !this.numberIsValid) {
+        const dobInvalidFeedback = computed(() => {
+            return (
+                validation.value.getInvalidFeedback('rootUser,dateOfBirth,day') ||
+                validation.value.getInvalidFeedback('rootUser,dateOfBirth,month') ||
+                validation.value.getInvalidFeedback('rootUser,dateOfBirth,year')
+            )
+        })
+
+        const sourceOfFundsOptions = computed(() => {
+            return ConsumerSourceOfFundsSelectConst
+        })
+        const shouldShowOtherSourceOfFunds = computed(() => {
+            return registrationRequest.sourceOfFunds === ConsumerSourceOfFundTypeEnum.OTHER
+        })
+
+        const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
+            return {
+                color: '#495057',
+                fontSize: '16px',
+                fontSmoothing: 'antialiased',
+                fontFamily: "'Be Vietnam', sans-serif",
+                fontWeight: '400',
+                lineHeight: '24px',
+                margin: '0',
+                padding: '6px 12px',
+                textIndent: '0px',
+                '::placeholder': {
+                    color: '#B6B9C7',
+                    fontWeight: '400',
+                },
+            }
+        })
+
+        const config = computed(() => {
+            return {
+                wrap: false,
+                enableTime: false,
+                altInput: true,
+                altFormat: 'd/m/Y',
+                maxDate: new Date(),
+                locale: {
+                    firstDayOfWeek: 1,
+                },
+            }
+        })
+
+        const isRecaptchaEnabled = computed(() => {
+            return typeof process.env.RECAPTCHA !== 'undefined'
+        })
+
+        const isLoadingRegistration = computed(() => {
+            return consumers?.consumerState.isLoadingRegistration
+        })
+
+        const isPasswordValid = computed(() => {
+            return passwordStrength.value >= 2
+        })
+
+        useFetch(() => {
+            $apiMulti.ipify.get().then((ip) => {
+                registrationRequest.ipAddress = ip.data.ip
+            })
+        })
+
+        const submitForm = async (e) => {
+            errors?.resetState()
+            try {
+                e.preventDefault()
+
+                validation.value.touch() && (await validation.value.validate())
+
+                if (numberIsValid.value === null) {
+                    numberIsValid.value = false
+                }
+
+                if (validation.value.isInvalid.value || !numberIsValid.value) {
+                    return
+                }
+
+                if (isPasswordValid.value) {
+                    consumers?.setIsLoadingRegistration(true)
+                    passwordField.value?.createToken().then(
+                        (tokens) => {
+                            if (tokens.tokens.password !== '') {
+                                registrationRequest.password.value = tokens.tokens.password
+                                doRegister()
+                            } else {
+                                return null
+                            }
+                        },
+                        () => {
+                            return null
+                        },
+                    )
+                }
+            } catch (error: any) {
+                stopRegistrationLoading()
+                showErrorToast(error)
+            }
+        }
+
+        const strengthCheck = (val) => {
+            passwordStrength.value = val.id
+        }
+
+        const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
+            !val.empty
+                ? (registrationRequest.password.value = '******')
+                : (registrationRequest.password.value = '')
+        }
+
+        const doRegister = () => {
+            consumers
+                ?.create(registrationRequest as CreateConsumerRequest)
+                .then(onConsumerCreated)
+                .catch(registrationFailed)
+        }
+
+        const onConsumerCreated = (res: AxiosResponse<ConsumerModel>) => {
+            createPassword(res.data.rootUser.id.id!)
+        }
+
+        const createPassword = async (rootUserId: IDModel) => {
+            const passwordRequest: CreatePasswordRequestModel = {
+                password: {
+                    value: registrationRequest.password.value as string,
+                },
+            }
+            await $apiMulti.passwords
+                .store({
+                    userId: rootUserId,
+                    data: passwordRequest,
+                })
+                .then(onRegisteredSuccessfully.bind(this))
+        }
+
+        const onRegisteredSuccessfully = () => {
+            accessCodes?.deleteAccessCode()
+
+            if (!registrationRequest.rootUser) {
                 return
             }
-
-            if (this.isPasswordValid) {
-                this.consumersStore.setIsLoadingRegistration(true)
-                this.passwordField.createToken().then(
-                    (tokens) => {
-                        if (tokens.tokens.password !== '') {
-                            this.registrationRequest.password.value = tokens.tokens.password
-                            this.doRegister()
-                        } else {
-                            return null
-                        }
-                    },
-                    () => {
-                        return null
-                    },
-                )
-            }
-        } catch (error: any) {
-            this.stopRegistrationLoading()
-            this.showErrorToast(error)
-        }
-    }
-
-    strengthCheck(val) {
-        this.passwordStrength = val.id
-    }
-
-    passwordInteraction(val: { empty: boolean; valid: boolean }) {
-        !val.empty
-            ? (this.registrationRequest.password.value = '******')
-            : (this.registrationRequest.password.value = '')
-    }
-
-    doRegister() {
-        this.consumersStore
-            .create(this.registrationRequest as CreateConsumerRequest)
-            .then(this.onConsumerCreated)
-            .catch(this.registrationFailed)
-    }
-
-    onConsumerCreated(res: AxiosResponse<ConsumerModel>) {
-        this.createPassword(res.data.rootUser.id.id!)
-    }
-
-    async createPassword(rootUserId: IDModel) {
-        const passwordRequest: CreatePasswordRequestModel = {
-            password: {
-                value: this.registrationRequest.password.value as string,
-            },
-        }
-        await this.$apiMulti.passwords
-            .store({
-                userId: rootUserId,
-                data: passwordRequest,
+            return router.push({
+                path: '/login/verify',
+                query: {
+                    send: 'true',
+                    cons: consumer.value?.id.id,
+                    email: registrationRequest.rootUser.email,
+                },
             })
-            .then(this.onRegisteredSuccessfully.bind(this))
-    }
-
-    onRegisteredSuccessfully() {
-        this.accessCodes.deleteAccessCode()
-
-        if (!this.registrationRequest.rootUser) {
-            return
         }
-        return this.$router.push({
-            path: '/login/verify',
-            query: {
-                send: 'true',
-                cons: this.consumer?.id.id,
-                email: this.registrationRequest.rootUser.email,
-            },
-        })
-    }
 
-    registrationFailed(err) {
-        this.stopRegistrationLoading()
-        const _errCode = err.response.data.errorCode
-        this.showErrorToast(_errCode)
-    }
+        const registrationFailed = (err) => {
+            stopRegistrationLoading()
+            const _errCode = err.response.data.errorCode
+            showErrorToast(_errCode)
+        }
 
-    phoneUpdate(number) {
-        this.registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
-        this.registrationRequest.rootUser!.mobile!.number = number.nationalNumber
-        this.numberIsValid = number.isValid
-    }
+        const phoneUpdate = (number) => {
+            registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
+            registrationRequest.rootUser!.mobile!.number = number.nationalNumber
+            numberIsValid.value = number.isValid
+        }
 
-    updateDOB(val: ComputedRef) {
-        Object.assign(this.registrationRequest.rootUser.dateOfBirth, {
-            year: val.value.year,
-            month: val.value.month === null ? null : val.value.month + 1,
-            day: val.value.day,
-        })
-    }
+        const updateDOB = (val: ComputedRef) => {
+            Object.assign(registrationRequest.rootUser.dateOfBirth, {
+                year: val.value.year,
+                month: val.value.month === null ? null : val.value.month + 1,
+                day: val.value.day,
+            })
+        }
 
-    stopRegistrationLoading() {
-        this.consumersStore.setIsLoadingRegistration(false)
-    }
-}
+        const stopRegistrationLoading = () => {
+            consumers?.setIsLoadingRegistration(false)
+        }
+
+        return {
+            $recaptcha,
+            config,
+            passwordField,
+            submitForm,
+            validation,
+            registrationRequest,
+            dobInvalidFeedback,
+            rootMobileNumber,
+            dobState,
+            updateDOB,
+            numberIsValid,
+            mobileCountries,
+            phoneUpdate,
+            countryOptionsWithDefault,
+            industryOccupationOptions,
+            sourceOfFundsOptions,
+            shouldShowOtherSourceOfFunds,
+            passwordBaseStyle,
+            isPasswordInvalidAndDirty,
+            passwordInteraction,
+            strengthCheck,
+            isRecaptchaEnabled,
+            isLoadingRegistration,
+        }
+    },
+})
 </script>

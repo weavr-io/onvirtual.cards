@@ -35,97 +35,118 @@
     </section>
 </template>
 <script lang="ts">
+import { computed, defineComponent, ref, useFetch, watch } from '@nuxtjs/composition-api'
 import { reactive } from 'vue'
-import { Component, mixins, Watch } from 'nuxt-property-decorator'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import { useAccounts } from '~/composables/useAccounts'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
+import useZodValidation from '~/composables/useZodValidation'
+import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import { CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CurrencySelectConst'
 import {
     INITIAL_MA_REQUEST,
-    type ManagedAccount,
     ManagedAccountSchema,
+    type ManagedAccount,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
-import BaseMixin from '~/mixins/BaseMixin'
-import AccountsMixin from '~/mixins/AccountsMixin'
 
-import useZodValidation from '~/composables/useZodValidation'
-
-@Component({
+export default defineComponent({
     components: {
-        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
+        LoaderButton,
     },
-    middleware: ['kyVerified'],
-})
-export default class AddAccountPage extends mixins(BaseMixin, AccountsMixin) {
-    localIsBusy = false
-    createManagedAccountRequest: ManagedAccount = reactive(INITIAL_MA_REQUEST())
+    middleware: 'kyVerified',
+    setup() {
+        const {
+            profileBaseCurrency,
+            showErrorToast,
+            isConsumer,
+            accountJurisdictionProfileId,
+            isCorporate,
+        } = useBase()
+        const { goToManagedAccountIndex } = useAccounts()
+        const { accounts } = useStores(['accounts'])
+        const localIsBusy = ref(false)
+        const createManagedAccountRequest: ManagedAccount = reactive(INITIAL_MA_REQUEST())
 
-    get validation() {
-        return useZodValidation(ManagedAccountSchema, this.createManagedAccountRequest)
-    }
-
-    get currencyOptions() {
-        return CurrencySelectConst.filter((item) => {
-            return item.value === this.profileBaseCurrency
+        const validation = computed(() => {
+            return useZodValidation(ManagedAccountSchema, createManagedAccountRequest)
         })
-    }
 
-    async fetch() {
-        await this.accountsStore
-            .index({
-                profileId: this.accountJurisdictionProfileId,
-                state: ManagedInstrumentStateEnum.ACTIVE,
-                offset: '0',
+        const currencyOptions = computed(() => {
+            return CurrencySelectConst.filter((item) => {
+                return item.value === profileBaseCurrency.value
             })
-            .then(async (res) => {
-                if (parseInt(res.data.count!) < 1) {
-                    if (this.isConsumer) {
-                        await this.accountsStore
-                            .create(this.createManagedAccountRequest)
-                            .then(async (res) => {
-                                await this.accountsStore.upgradeIban(res.data.id)
-                                return this.goToManagedAccountIndex()
-                            })
-                            .catch((err) => {
-                                const data = err.response.data
-                                const error = data.message ? data.message : data.errorCode
+        })
 
-                                this.showErrorToast(error)
-                                this.goToManagedAccountIndex()
-                            })
+        useFetch(async () => {
+            await accounts
+                ?.index({
+                    profileId: accountJurisdictionProfileId.value,
+                    state: ManagedInstrumentStateEnum.ACTIVE,
+                    offset: '0',
+                })
+                .then(async (res) => {
+                    if (parseInt(res.data.count!) < 1) {
+                        if (isConsumer) {
+                            await accounts
+                                ?.create(createManagedAccountRequest)
+                                .then(async (res) => {
+                                    await accounts.upgradeIban(res.data.id)
+                                    return goToManagedAccountIndex()
+                                })
+                                .catch((err) => {
+                                    const data = err.response.data
+                                    const error = data.message ? data.message : data.errorCode
+
+                                    showErrorToast(error)
+                                    goToManagedAccountIndex()
+                                })
+                        }
+                    } else {
+                        goToManagedAccountIndex()
                     }
-                } else {
-                    return this.goToManagedAccountIndex()
-                }
-            })
-    }
+                })
+        })
 
-    async doAdd() {
-        await this.validation.validate()
+        const doAdd = async () => {
+            await validation.value.validate()
 
-        if (this.validation.isInvalid.value) return
+            if (validation.value.isInvalid.value) return
 
-        this.localIsBusy = true
+            localIsBusy.value = true
 
-        await this.accountsStore
-            .create(this.createManagedAccountRequest)
-            .then(async (res) => {
-                await this.accountsStore.upgradeIban(res.data.id)
-                return this.goToManagedAccountIndex()
-            })
-            .catch((err) => {
-                const data = err.response.data
-                const error = data.message ? data.message : data.errorCode
+            await accounts
+                ?.create(createManagedAccountRequest)
+                .then(async (res) => {
+                    await accounts.upgradeIban(res.data.id)
+                    return goToManagedAccountIndex()
+                })
+                .catch((err) => {
+                    const data = err.response.data
+                    const error = data.message ? data.message : data.errorCode
 
-                this.showErrorToast(error)
-            })
+                    showErrorToast(error)
+                })
 
-        this.localIsBusy = false
-    }
+            localIsBusy.value = false
+        }
 
-    @Watch('isConsumer', { immediate: true })
-    updateProfileId() {
-        this.createManagedAccountRequest.profileId = this.accountJurisdictionProfileId
-    }
-}
+        watch(
+            isConsumer,
+            () => {
+                createManagedAccountRequest.profileId = accountJurisdictionProfileId.value
+            },
+            { immediate: true },
+        )
+
+        return {
+            isCorporate,
+            doAdd,
+            validation,
+            createManagedAccountRequest,
+            currencyOptions,
+            localIsBusy,
+        }
+    },
+})
 </script>

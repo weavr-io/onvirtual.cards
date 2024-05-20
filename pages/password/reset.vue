@@ -67,57 +67,64 @@
     </b-col>
 </template>
 <script lang="ts">
-import { reactive } from 'vue'
-import { Component, mixins } from 'nuxt-property-decorator'
+import { computed, defineComponent, reactive, ref } from '@nuxtjs/composition-api'
+import ErrorAlert from '~/omponents/molecules/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import { useStores } from '~/composables/useStores'
+import useZodValidation from '~/composables/useZodValidation'
 import {
     INITIAL_RESET_REQUEST,
     InitiateLostPasswordRequestModel,
-    type ResetRequest,
+    ResetRequest,
     ResetSchema,
-} from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
-import BaseMixin from '~/mixins/BaseMixin'
+} from '~/plugins/weavr-multi/api/models/authentication'
 
-import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import useZodValidation from '~/composables/useZodValidation'
-
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
         LoaderButton,
         LogoOvc,
-        ErrorAlert: () => import('~/components/molecules/ErrorAlert.vue'),
+        ErrorAlert,
+    },
+    layout: 'auth',
+    setup() {
+        const { auth, errors } = useStores(['auth', 'errors'])
+
+        const isLoading = ref(false)
+        const passwordSent = ref(false)
+        const form: ResetRequest = reactive(INITIAL_RESET_REQUEST())
+
+        const validation = computed(() => {
+            return useZodValidation(ResetSchema, form)
+        })
+
+        const resetPassword = async () => {
+            await validation.value.validate()
+
+            if (validation.value.isInvalid.value) return
+
+            isLoading.value = true
+            errors?.setError(null)
+            auth
+                ?.lostPasswordInitiate(form as InitiateLostPasswordRequestModel)
+                .then(() => {
+                    passwordSent.value = true
+                })
+                .catch((err) => {
+                    errors?.setError(err)
+                })
+                .finally(() => {
+                    isLoading.value = false
+                })
+        }
+
+        return {
+            passwordSent,
+            resetPassword,
+            validation,
+            form,
+            isLoading,
+        }
     },
 })
-export default class ResetPasswordPage extends mixins(BaseMixin) {
-    isLoading = false
-
-    passwordSent = false
-
-    form: ResetRequest = reactive(INITIAL_RESET_REQUEST())
-
-    get validation() {
-        return useZodValidation(ResetSchema, this.form)
-    }
-
-    async resetPassword() {
-        await this.validation.validate()
-
-        if (this.validation.isInvalid.value) return
-
-        this.isLoading = true
-        this.errorsStore.setError(null)
-        this.authStore
-            .lostPasswordInitiate(this.form as InitiateLostPasswordRequestModel)
-            .then(() => {
-                this.passwordSent = true
-            })
-            .catch((err) => {
-                this.errorsStore.setError(err)
-            })
-            .finally(() => {
-                this.isLoading = false
-            })
-    }
-}
 </script>
