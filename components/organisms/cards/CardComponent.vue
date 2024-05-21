@@ -195,9 +195,3 @@ const unblocked = () => {
     emit('unblocked')
 }
 </script>
-
-<script lang="ts">
-export default {
-    name: 'CardComponent',
-}
-</script>

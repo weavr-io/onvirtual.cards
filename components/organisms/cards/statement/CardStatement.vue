@@ -82,7 +82,6 @@ import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfer
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 
 export default defineComponent({
-    name: 'CardStatementComponent',
     // TODO: Update this after nuxt bridge
     components: {
         DownloadIcon: () => import('~/assets/svg/download.svg?inline'),

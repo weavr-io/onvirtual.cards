@@ -173,7 +173,7 @@ import {
 } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { DateTime } from 'luxon'
-import Statement from '~/components/organisms/cards/statement/statement.vue'
+import Statement from '~/components/organisms/cards/statement/CardStatement.vue'
 import { useBase } from '~/composables/useBase'
 import { useCards } from '~/composables/useCards'
 import { useStores } from '~/composables/useStores'

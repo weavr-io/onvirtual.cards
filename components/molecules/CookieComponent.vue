@@ -34,9 +34,3 @@ const dismissCookie = () => {
     showCookieAlert.value = false
 }
 </script>
-
-<script lang="ts">
-export default {
-    name: 'CookieComponent',
-}
-</script>

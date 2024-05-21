@@ -10,9 +10,9 @@
 <script lang="ts">
 import { defineComponent, computed } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
-import AppHeader from '~/components/molecules/Header.vue'
+import AppHeader from '~/components/molecules/HeaderComponent.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
-import Cookie from '~/components/molecules/cookie.vue'
+import Cookie from '~/components/molecules/CookieComponent.vue'
 
 export default defineComponent({
     components: {

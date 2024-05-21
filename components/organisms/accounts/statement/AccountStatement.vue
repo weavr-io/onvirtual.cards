@@ -74,7 +74,6 @@ import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/mod
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 
 export default defineComponent({
-    name: 'AccountStatementComponent',
     // TODO: Update this after nuxt bridge
     components: {
         StatementItem: () => import('~/components/organisms/StatementItem.vue'),

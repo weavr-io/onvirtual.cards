@@ -43,11 +43,6 @@ useFetch(async () => {
 })
 </script>
 
-<script lang="ts">
-export default {
-    name: 'HeaderComponent',
-}
-</script>
 <style lang="scss" scoped>
 .dropdown-toggle {
     border-bottom: 2px solid;
