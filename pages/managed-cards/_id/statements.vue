@@ -215,7 +215,7 @@ useFetch(async () => {
 
 const fetchCardStatements = async () => {
     const routeQueries = dot.object(route.value.query)
-    let filters = routeQueries.filters || {}
+    const filters = routeQueries.filters || {}
 
     if (!filters?.fromTimestamp) {
         filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
@@ -238,7 +238,7 @@ const fetchCardStatements = async () => {
         request: statementFilters,
     }
 
-    filters = statementFilters
+    filters.value = { ...statementFilters }
 
     cards?.clearCardStatements()
     await cards?.getCardStatement(_req)
