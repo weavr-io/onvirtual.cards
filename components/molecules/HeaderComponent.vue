@@ -21,26 +21,28 @@
         </b-navbar>
     </div>
 </template>
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+
+<script lang="ts" setup>
+import { useFetch } from '@nuxtjs/composition-api'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
 import LogoImage from '~/components/atoms/LogoImage.vue'
 
-@Component({
-    components: { LogoImage },
-})
-export default class Header extends mixins(BaseMixin) {
-    fetch() {
-        if (this.consumer === null && this.corporate === null) {
-            if (this.isConsumer) {
-                this.consumersStore.get()
-            } else if (this.isCorporate) {
-                this.corporatesStore.get()
-            }
+const { consumer, corporate, isConsumer, isCorporate, isLoggedIn, rootFullName, doLogout } =
+    useBase()
+const { consumers, corporates } = useStores(['consumers', 'corporates'])
+
+useFetch(async () => {
+    if (!consumer.value && !corporate.value) {
+        if (isConsumer.value) {
+            await consumers?.get()
+        } else if (isCorporate.value) {
+            await corporates?.get()
         }
     }
-}
+})
 </script>
+
 <style lang="scss" scoped>
 .dropdown-toggle {
     border-bottom: 2px solid;

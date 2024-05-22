@@ -167,7 +167,7 @@ import {
 import { reactive } from 'vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import ErrorAlert from '~/components/ErrorAlert.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import {
     INITIAL_LOGIN_WITH_PASSWORD_REQUEST,

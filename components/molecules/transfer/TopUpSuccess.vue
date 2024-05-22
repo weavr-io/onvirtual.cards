@@ -12,7 +12,7 @@
         </b-row>
         <b-row>
             <b-col class="text-center">
-                <b-button type="submit" variant="secondary" @click="goToCards">
+                <b-button type="submit" variant="secondary" @click.prevent="goToCards">
                     continue
                     <span class="pl-5">-></span>
                 </b-button>
@@ -20,15 +20,12 @@
         </b-row>
     </div>
 </template>
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+<script lang="ts" setup>
+import { useRouter } from '@nuxtjs/composition-api'
 
-@Component({})
-export default class TopUpSuccess extends mixins(BaseMixin) {
-    goToCards(e: Event) {
-        e.preventDefault()
-        this.$router.push('/managed-cards')
-    }
+const router = useRouter()
+
+const goToCards = () => {
+    router.push('/managed-cards')
 }
 </script>

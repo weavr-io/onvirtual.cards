@@ -83,7 +83,7 @@
 </template>
 <script lang="ts">
 import { Ref, computed, defineComponent, ref, useContext, useFetch } from '@nuxtjs/composition-api'
-import DashboardHeader from '~/components/DashboardHeader.vue'
+import DashboardHeader from '~/components/organisms/DashboardHeader.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'

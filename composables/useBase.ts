@@ -47,18 +47,18 @@ export const useBase = () => {
     })
 
     const rootName = computed(() => {
-        if (isConsumerPopulated) {
+        if (isConsumerPopulated.value) {
             return consumer.value?.rootUser.name
-        } else if (isCorporatePopulated) {
+        } else if (isCorporatePopulated.value) {
             return corporate.value?.rootUser.name
         }
         return 'noname'
     })
 
     const rootSurname = computed(() => {
-        if (isConsumerPopulated) {
+        if (isConsumerPopulated.value) {
             return consumer.value?.rootUser.surname
-        } else if (isCorporatePopulated) {
+        } else if (isCorporatePopulated.value) {
             return corporate.value?.rootUser.surname
         }
         return 'nosurname'
@@ -120,14 +120,15 @@ export const useBase = () => {
         }
     })
 
+    const mobileCountries = Countries.map((_c) => {
+        return _c['alpha-2']
+    })
+
     const countryOptionsWithDefault = computed(() => {
         const _default: [any] = [{ ...DefaultSelectValueConst }]
         _default.push(...countriesOptions)
-        return _default
-    })
 
-    const mobileCountries = Countries.map((_c) => {
-        return _c['alpha-2']
+        return _default
     })
 
     const pendingData = computed(() => !root!.$fetchState || root!.$fetchState.pending)
@@ -194,10 +195,10 @@ export const useBase = () => {
         profileBaseCurrency,
         identityVerified,
         countriesOptions,
-        countryOptionsWithDefault,
         mobileCountries,
         pendingData,
         pendingDataOrError,
+        countryOptionsWithDefault,
         goToIndex,
         goToVerify,
         redirectToLogin,
