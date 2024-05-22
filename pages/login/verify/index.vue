@@ -64,7 +64,7 @@ import {
 import { reactive } from 'vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import ErrorAlert from '~/components/ErrorAlert.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import {
     CredentialTypeEnum,
     INITIAL_VERIFY_EMAIL_REQUEST,

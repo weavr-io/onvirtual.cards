@@ -69,7 +69,7 @@ import {
     useRoute,
     useRouter,
 } from '@nuxtjs/composition-api'
-import WeavrCard from '~/components/cards/card.vue'
+import WeavrCard from '~/components/organisms/cards/CardComponent.vue'
 import { useBase } from '~/composables/useBase'
 import { useCards } from '~/composables/useCards'
 import { useKyVerified } from '~/composables/useKyVerified'
@@ -100,6 +100,7 @@ export default defineComponent({
 
         const identityVerificationMessage = computed(() => {
             if (!identityVerified) return 'Pending identity verification'
+
             return undefined
         })
 

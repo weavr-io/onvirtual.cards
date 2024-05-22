@@ -81,7 +81,7 @@ import {
     useRoute,
     useRouter,
 } from '@nuxtjs/composition-api'
-import ErrorAlert from '~/components/ErrorAlert.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import { useStores } from '~/composables/useStores'

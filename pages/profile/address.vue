@@ -89,7 +89,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, useFetch } from '@nuxtjs/composition-api'
-import ErrorAlert from '~/components/ErrorAlert.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'

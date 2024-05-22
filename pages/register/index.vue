@@ -10,7 +10,7 @@
 <script lang="ts">
 import { computed, defineComponent, useAsync, useRouter } from '@nuxtjs/composition-api'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import AccessCodeComponent from '~/components/registration/AccessCodeComponent.vue'
+import AccessCodeComponent from '~/components/organisms/registration/AccessCodeComponent.vue'
 import BusinessOrPersonalComponent from '~/components/organisms/ProfileIdentitySelection.vue'
 import { useStores } from '~/composables/useStores'
 

@@ -30,15 +30,15 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import AppHeader from '~/components/Header.vue'
-import Cookie from '~/components/cookie.vue'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
-import KYBAlert from '~/components/corporates/KYBAlert.vue'
-import KYCAlert from '~/components/consumers/KYCAlert.vue'
-import DashboardHeader from '~/components/DashboardHeader.vue'
 import { useStores } from '~/composables/useStores'
 import { useKyVerified } from '~/composables/useKyVerified'
 import { useBase } from '~/composables/useBase'
+import AppHeader from '~/components/molecules/HeaderComponent.vue'
+import Cookie from '~/components/molecules/CookieComponent.vue'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+import KYBAlert from '~/components/molecules/corporates/KYBAlert.vue'
+import KYCAlert from '~/components/molecules/consumers/KYCAlert.vue'
+import DashboardHeader from '~/components/organisms/DashboardHeader.vue'
 
 const { loader } = useStores(['loader'])
 const { showKybAlert, showKycAlert, showVerifyEmailAlert, showVerifyMobileAlert } = useKyVerified()

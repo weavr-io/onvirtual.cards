@@ -131,15 +131,13 @@
         </b-form-row>
     </b-form>
 </template>
-<script lang="ts">
-import { reactive } from 'vue'
-import { Component, Emit, mixins, Prop } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import { computed, ref, ComputedRef, PropType, reactive } from '@nuxtjs/composition-api'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
 import { CorporateSourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/CorporateSourceOfFundsSelectConst'
-import {
-    CorporateSourceOfFundTypeEnum,
-    PREDEFINED_CORPORATE_SOURCE_OF_FUND,
-} from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
+import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
 import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
 import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
@@ -148,106 +146,76 @@ import {
     type CreateCorporateRequest,
     INITIAL_CREATE_CORPORATE_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import BaseMixin from '~/mixins/BaseMixin'
-
-import Countries from '~/static/json/countries.json'
 import useZodValidation from '~/composables/useZodValidation'
 
-@Component({
-    components: {
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/atoms/LoaderButton.vue'),
+const props = defineProps({
+    baseForm: {
+        type: Object as PropType<CreateCorporateRequest>,
+        required: true,
     },
 })
-export default class PersonalDetailsForm extends mixins(BaseMixin) {
-    companyTypeOptionsWithDefault: SelectOptionsModel[] = CompanyTypeSelectConst
-    numberIsValid: boolean | null = null
 
-    @Prop() baseForm!: CreateCorporateRequest
+const emit = defineEmits(['submit', 'go-back'])
 
-    form: CreateCorporateRequest = reactive({
-        ...INITIAL_CREATE_CORPORATE_REQUEST(),
-        ...this.baseForm,
-    })
+const { countryOptionsWithDefault, mobileCountries } = useBase()
+const { corporates, errors } = useStores(['corporates', 'errors'])
 
-    get validation() {
-        return useZodValidation(CreateCorporateFormSchema, this.form)
+const companyTypeOptionsWithDefault = ref<SelectOptionsModel[]>(CompanyTypeSelectConst)
+const numberIsValid = ref<boolean | null>(null)
+
+const form = reactive<CreateCorporateRequest>({
+    ...INITIAL_CREATE_CORPORATE_REQUEST(),
+    ...props.baseForm,
+})
+
+const validation = computed(() => useZodValidation(CreateCorporateFormSchema, form))
+
+const firstCompanyPosition = computed({
+    get: () => form.rootUser.companyPosition,
+    set: (val: CompanyPositionEnum) => {
+        form.rootUser.companyPosition = val ?? 'AUTHORISED_REPRESENTATIVE'
+    },
+})
+
+const lastCompanyPosition = computed({
+    get: () => form.rootUser.companyPosition,
+    set: (val: CompanyPositionEnum) => {
+        form.rootUser.companyPosition = val ?? 'DIRECTOR'
+    },
+})
+
+const isLoadingRegistration = computed(() => corporates?.corporateState.isLoadingRegistration)
+const industryOccupationOptions = computed(() => IndustryTypeSelectConst)
+const sourceOfFundsOptions = computed(() => CorporateSourceOfFundsSelectConst)
+
+const shouldShowOtherSourceOfFunds: ComputedRef<boolean> = computed(
+    () => form.sourceOfFunds === CorporateSourceOfFundTypeEnum.OTHER,
+)
+
+const phoneUpdate = (number) => {
+    form.rootUser.mobile.countryCode = number.countryCallingCode && `+${number.countryCallingCode}`
+    form.rootUser.mobile.number = number.phoneNumber
+
+    numberIsValid.value = number.isValid
+}
+
+const submitForm = async () => {
+    if (!numberIsValid.value) {
+        numberIsValid.value = false
     }
 
-    public get firstCompanyPosition() {
-        return this.form.rootUser.companyPosition
+    await validation.value.validate()
+
+    if (validation.value.isInvalid.value || !numberIsValid) {
+        return null
     }
 
-    public set firstCompanyPosition(val: CompanyPositionEnum) {
-        this.form.rootUser.companyPosition = val ?? 'AUTHORISED_REPRESENTATIVE'
-    }
+    submit()
+}
 
-    public get lastCompanyPosition() {
-        return this.form.rootUser.companyPosition
-    }
-
-    public set lastCompanyPosition(val: CompanyPositionEnum) {
-        this.form.rootUser.companyPosition = val ?? 'DIRECTOR'
-    }
-
-    get mobileCountries(): string[] {
-        return Countries.map((_c) => {
-            return _c['alpha-2']
-        })
-    }
-
-    get isLoadingRegistration() {
-        return this.corporatesStore.corporateState.isLoadingRegistration
-    }
-
-    get industryOccupationOptions() {
-        return IndustryTypeSelectConst
-    }
-
-    get sourceOfFundsOptions() {
-        return CorporateSourceOfFundsSelectConst
-    }
-
-    get shouldShowOtherSourceOfFunds(): boolean {
-        return this.form.sourceOfFunds === CorporateSourceOfFundTypeEnum.OTHER
-    }
-
-    get test() {
-        return PREDEFINED_CORPORATE_SOURCE_OF_FUND
-    }
-
-    phoneUpdate(number) {
-        this.form.rootUser.mobile.countryCode =
-            number.countryCallingCode && `+${number.countryCallingCode}`
-        this.form.rootUser.mobile.number = number.phoneNumber
-
-        this.numberIsValid = number.isValid
-    }
-
-    async submitForm() {
-        if (this.numberIsValid === null) {
-            this.numberIsValid = false
-        }
-
-        await this.validation.validate()
-
-        if (this.validation.isInvalid.value || !this.numberIsValid) {
-            return null
-        }
-
-        this.submit()
-    }
-
-    @Emit()
-    submit() {
-        this.errorsStore.resetState()
-        return this.form
-    }
-
-    @Emit()
-    goBack(e) {
-        e.preventDefault()
-    }
+const submit = () => {
+    errors?.resetState()
+    emit('submit', form)
 }
 </script>
 

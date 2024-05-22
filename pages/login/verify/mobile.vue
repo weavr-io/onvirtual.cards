@@ -18,7 +18,7 @@ import { defineComponent, useAsync, useRouter } from '@nuxtjs/composition-api'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import MobileComponent from '~/components/MobileComponent.vue'
+import MobileComponent from '~/components/molecules/MobileComponent.vue'
 import { useStores } from '~/composables/useStores'
 
 export default defineComponent({

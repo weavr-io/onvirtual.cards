@@ -23,9 +23,9 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, useContext, useFetch, useRoute } from '@nuxtjs/composition-api'
-import AccountSelection from '~/components/transfer/AccountSelection.vue'
-import TopUp from '~/components/transfer/TopUp.vue'
-import TopUpSuccess from '~/components/transfer/TopUpSuccess.vue'
+import AccountSelection from '~/components/organisms/transfer/AccountSelection.vue'
+import TopUp from '~/components/organisms/transfer/TopUp.vue'
+import TopUpSuccess from '~/components/molecules/transfer/TopUpSuccess.vue'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import { CurrencyEnum, InstrumentEnum } from '~/plugins/weavr-multi/api/models/common'
