@@ -48,14 +48,17 @@
         </b-container>
     </section>
 </template>
-<script lang="ts" setup>
-import { computed, ComputedRef } from '@nuxtjs/composition-api'
-import { useStores } from '~/composables/useStores'
+<script lang="ts">
+import { Component, mixins } from 'nuxt-property-decorator'
+
+import BaseMixin from '~/mixins/BaseMixin'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import KyVerified from '~/mixins/kyVerified'
 
-const { corporates } = useStores(['corporates'])
-
-const isPendingReview: ComputedRef<boolean> = computed(
-    () => corporates?.corporateState.kyb?.kybStatus === KYBStatusEnum.PENDING_REVIEW,
-)
+@Component
+export default class KYBAlert extends mixins(BaseMixin, KyVerified) {
+    get isPendingReview(): boolean {
+        return this.corporatesStore.corporateState.kyb?.kybStatus === KYBStatusEnum.PENDING_REVIEW
+    }
+}
 </script>

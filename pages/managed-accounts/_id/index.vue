@@ -22,7 +22,7 @@ import {
 } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { DateTime } from 'luxon'
-import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
+import Statement from '~/components/accounts/statement/statement.vue'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { useStores } from '~/composables/useStores'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'

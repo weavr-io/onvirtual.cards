@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent } from '@nuxtjs/composition-api'
-import MobileComponent from '~/components/molecules/MobileComponent.vue'
+import MobileComponent from '~/components/MobileComponent.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
 export default defineComponent({

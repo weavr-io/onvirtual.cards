@@ -86,119 +86,134 @@
         </b-form-row>
     </b-form>
 </template>
-<script lang="ts" setup>
-import { computed, Ref, ref, ComputedRef, reactive } from '@nuxtjs/composition-api'
-import { useStores } from '~/composables/useStores'
-import { useBase } from '~/composables/useBase'
+<script lang="ts">
+import { Component, Emit, mixins, Ref } from 'nuxt-property-decorator'
+import { reactive } from 'vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import BaseMixin from '~/mixins/BaseMixin'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import {
     INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
     LoginWithPassword,
     LoginWithPasswordSchema,
 } from '~/plugins/weavr-multi/api/models/authentication'
-import { CreateCorporateRequestSchema } from '~/plugins/weavr-multi/api/models/identities/corporates'
 import useZodValidation from '~/composables/useZodValidation'
-import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import { CreateCorporateRequestSchema } from '~/plugins/weavr-multi/api/models/identities/corporates'
 
-const emit = defineEmits(['submit-form'])
-const { corporates, errors } = useStores(['corporates', 'errors'])
-const { showErrorToast } = useBase()
+@Component({
+    components: {
+        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
+        WeavrPasswordInput,
+        LoaderButton,
+    },
+})
+export default class RegisterForm extends mixins(BaseMixin) {
+    @Ref('passwordField')
+    passwordField!: WeavrPasswordInput
 
-const form = reactive<
-    LoginWithPassword & {
+    form: LoginWithPassword & {
         acceptedTerms?: boolean
-    }
->({ ...INITIAL_LOGIN_WITH_PASSWORD_REQUEST() })
+    } = reactive({ ...INITIAL_LOGIN_WITH_PASSWORD_REQUEST() })
 
-const passwordField: Ref<WeavrPasswordInput | null> = ref(null)
-const passwordStrength = ref<number>(0)
+    passwordStrength = 0
+    private $recaptcha: any
 
-const validation = computed(() => {
-    return useZodValidation(
-        LoginWithPasswordSchema.merge(CreateCorporateRequestSchema.pick({ acceptedTerms: true })),
-        form,
-    )
-})
-
-const isPasswordValidAndDirty: ComputedRef<boolean> = computed(() =>
-    !validation.value.dirty.value ? true : isPasswordValid.value,
-)
-
-const isPasswordValid: ComputedRef<boolean> = computed(() => passwordStrength.value >= 2)
-
-const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
-    return {
-        color: '#495057',
-        fontSize: '16px',
-        fontSmoothing: 'antialiased',
-        fontFamily: "'Be Vietnam', sans-serif",
-        fontWeight: '400',
-        lineHeight: '24px',
-        margin: '0',
-        padding: '6px 12px',
-        textIndent: '0px',
-        '::placeholder': {
-            color: '#B6B9C7',
-            fontWeight: '400',
-        },
-    }
-})
-
-const isRecaptchaEnabled: ComputedRef<boolean> = computed(
-    () => typeof process.env.RECAPTCHA !== 'undefined',
-)
-
-const isLoadingRegistration = computed(() => corporates?.corporateState.isLoadingRegistration)
-
-const tryToSubmitForm = async () => {
-    errors?.resetState()
-    try {
-        validation.value.touch() && (await validation.value.validate())
-        if (validation.value.isInvalid.value || !isPasswordValid.value) {
-            return
-        }
-
-        startRegistrationLoading()
-        passwordField.value?.createToken().then(
-            (tokens) => {
-                if (tokens.tokens.password !== '') {
-                    form.password = tokens.tokens.password
-                    submitForm()
-                } else {
-                    return null
-                }
-            },
-            (e) => {
-                showErrorToast(e, 'Tokenization Error')
-            },
+    get validation() {
+        return useZodValidation(
+            LoginWithPasswordSchema.merge(
+                CreateCorporateRequestSchema.pick({ acceptedTerms: true }),
+            ),
+            this.form,
         )
-    } catch (error: any) {
-        showErrorToast(error, 'Registration Error')
     }
-}
 
-const checkOnKeyUp = (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault()
-        tryToSubmitForm()
+    get isPasswordValidAndDirty(): boolean {
+        return !this.validation.dirty.value ? true : this.isPasswordValid
     }
-}
 
-const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
-    !val.empty ? (form.password.value = '******') : (form.password.value = '')
-}
+    get isPasswordValid(): boolean {
+        return this.passwordStrength >= 2
+    }
 
-const startRegistrationLoading = () => {
-    corporates?.setIsLoadingRegistration(true)
-}
+    get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
+        return {
+            color: '#495057',
+            fontSize: '16px',
+            fontSmoothing: 'antialiased',
+            fontFamily: "'Be Vietnam', sans-serif",
+            fontWeight: '400',
+            lineHeight: '24px',
+            margin: '0',
+            padding: '6px 12px',
+            textIndent: '0px',
+            '::placeholder': {
+                color: '#B6B9C7',
+                fontWeight: '400',
+            },
+        }
+    }
 
-const submitForm = () => {
-    errors?.resetState()
-    emit('submit-form', form)
-}
+    get isRecaptchaEnabled(): boolean {
+        return typeof process.env.RECAPTCHA !== 'undefined'
+    }
 
-const strengthCheck = (val) => {
-    passwordStrength.value = val.id
+    get isLoadingRegistration() {
+        return this.corporatesStore.corporateState.isLoadingRegistration
+    }
+
+    async tryToSubmitForm() {
+        this.errorsStore.resetState()
+        try {
+            this.validation.touch() && (await this.validation.validate())
+            if (this.validation.isInvalid.value || !this.isPasswordValid) {
+                return
+            }
+
+            this.startRegistrationLoading()
+            this.passwordField.createToken().then(
+                (tokens) => {
+                    if (tokens.tokens.password !== '') {
+                        this.form.password = tokens.tokens.password
+                        this.submitForm()
+                    } else {
+                        return null
+                    }
+                },
+                (e) => {
+                    this.showErrorToast(e, 'Tokenization Error')
+                },
+            )
+        } catch (error: any) {
+            this.showErrorToast(error, 'Registration Error')
+        }
+    }
+
+    checkOnKeyUp(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            this.tryToSubmitForm()
+        }
+    }
+
+    passwordInteraction(val: { empty: boolean; valid: boolean }) {
+        !val.empty ? (this.form.password.value = '******') : (this.form.password.value = '')
+    }
+
+    startRegistrationLoading() {
+        this.corporatesStore.setIsLoadingRegistration(true)
+    }
+
+    @Emit()
+    submitForm() {
+        this.errorsStore.resetState()
+        return this.form
+    }
+
+    @Emit()
+    strengthCheck(val) {
+        this.passwordStrength = val.id
+    }
 }
 </script>

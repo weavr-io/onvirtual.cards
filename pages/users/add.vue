@@ -56,7 +56,7 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, reactive, ref, useRouter } from '@nuxtjs/composition-api'
-import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import ErrorAlert from '~/components/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import { useStores } from '~/composables/useStores'
 import useZodValidation from '~/composables/useZodValidation'

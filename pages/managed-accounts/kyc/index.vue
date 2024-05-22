@@ -36,8 +36,8 @@ import {
     useRouter,
 } from '@nuxtjs/composition-api'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
-import KYCAlert from '~/components/molecules/consumers/KYCAlert.vue'
-import DashboardHeader from '~/components/organisms/DashboardHeader.vue'
+import KYCAlert from '~/components/consumers/KYCAlert.vue'
+import DashboardHeader from '~/components/DashboardHeader.vue'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import { KYCErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCErrorCodeEnum'

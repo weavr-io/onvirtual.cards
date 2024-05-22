@@ -36,8 +36,8 @@ import {
 } from '@nuxtjs/composition-api'
 import { AxiosResponse } from 'axios'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import PersonalDetailsForm from '~/components/organisms/registration/PersonalDetails.vue'
-import RegisterForm from '~/components/organisms/registration/RegisterForm.vue'
+import PersonalDetailsForm from '~/components/registration/PersonalDetails.vue'
+import RegisterForm from '~/components/registration/RegisterForm.vue'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import {

@@ -41,14 +41,17 @@
         </b-container>
     </section>
 </template>
-<script lang="ts" setup>
-import { computed, ComputedRef } from '@nuxtjs/composition-api'
-import { useStores } from '~/composables/useStores'
+<script lang="ts">
+import { Component, mixins } from 'nuxt-property-decorator'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
+import KyVerified from '~/mixins/kyVerified'
 
-const { consumers } = useStores(['consumers'])
-
-const isPendingReview: ComputedRef<boolean> = computed(
-    () => consumers?.consumerState.kyc?.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW,
-)
+@Component
+export default class KYCAlert extends mixins(KyVerified) {
+    get isPendingReview(): boolean {
+        return (
+            this.consumersStore.consumerState.kyc?.fullDueDiligence === KYCStatusEnum.PENDING_REVIEW
+        )
+    }
+}
 </script>

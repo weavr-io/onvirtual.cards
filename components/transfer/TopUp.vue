@@ -81,54 +81,54 @@
         </b-row>
     </b-form>
 </template>
-<script lang="ts" setup>
-import { computed, PropType, reactive } from '@nuxtjs/composition-api'
-import { AmountSchema } from '~/plugins/weavr-multi/api/models/common'
-import { InstrumentID } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
-import { useStores } from '~/composables/useStores'
+<script lang="ts">
+import { reactive } from 'vue'
+import { Emit, mixins, Prop } from 'nuxt-property-decorator'
 import useZodValidation from '~/composables/useZodValidation'
+import BaseMixin from '~/mixins/BaseMixin'
 
-const props = defineProps({
-    selectedAccount: {
-        type: Object as PropType<InstrumentID>,
-        default: () => {},
-    },
-})
+import { AmountSchema } from '~/plugins/weavr-multi/api/models/common'
 
-const emit = defineEmits(['submit-form'])
-const { accounts } = useStores(['accounts'])
+export default class TopUpForm extends mixins(BaseMixin) {
+    @Prop({ default: '' }) readonly selectedAccount
 
-const request = reactive({
-    amount: undefined,
-})
+    request = reactive({
+        amount: undefined,
+    })
 
-const validation = computed(() => useZodValidation(AmountSchema(accountBalance.value), request))
-const _accounts = computed(() => accounts?.accountState.accounts)
-
-const accountDetails = computed(() => {
-    if (_accounts.value) {
-        return _accounts.value.accounts?.find((account) => {
-            return account.id === props.selectedAccount.id
-        })
+    get validation() {
+        return useZodValidation(AmountSchema(this.accountBalance), this.request)
     }
 
-    return undefined
-})
-
-const accountBalance = computed(() => {
-    const balance = accountDetails.value?.balances.availableBalance
-    if (balance) {
-        return balance / 100
+    get accounts() {
+        return this.accountsStore.accountState.accounts
     }
 
-    return 0
-})
+    get accountDetails() {
+        if (this.accounts) {
+            return this.accounts.accounts?.find((account) => {
+                return account.id === this.selectedAccount.id
+            })
+        }
 
-const submitForm = async () => {
-    await validation.value.validate()
+        return undefined
+    }
 
-    if (validation.value.isInvalid.value) return null
+    get accountBalance() {
+        if (this.accountDetails && this.accountDetails.balances.availableBalance) {
+            return this.accountDetails.balances.availableBalance / 100
+        }
 
-    emit('submit-form', request)
+        return 0
+    }
+
+    @Emit()
+    async submitForm() {
+        await this.validation.validate()
+
+        if (this.validation.isInvalid.value) return null
+
+        return this.request
+    }
 }
 </script>

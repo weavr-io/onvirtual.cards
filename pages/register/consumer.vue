@@ -230,7 +230,7 @@ import {
     useRouter,
 } from '@nuxtjs/composition-api'
 import { AxiosResponse } from 'axios'
-import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import ErrorAlert from '~/components/ErrorAlert.vue'
 import ComingSoonCurrencies from '~/components/atoms/ComingSoonCurrencies.vue'
 import DobPicker from '~/components/atoms/DobPicker.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
