@@ -67,121 +67,126 @@
         </b-container>
     </section>
 </template>
-<script lang="ts">
-import { reactive } from 'vue'
-import { Component, mixins } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import {
+    Ref,
+    computed,
+    reactive,
+    ref,
+    useFetch,
+    useRoute,
+    useRouter,
+} from '@nuxtjs/composition-api'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
+import useZodValidation from '~/composables/useZodValidation'
 import {
     INITIAL_MC_UPDATE_REQUEST,
     ManagedCardUpdateSchema,
     type UpdateManagedCard,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
-import BaseMixin from '~/mixins/BaseMixin'
 
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
-import useZodValidation from '~/composables/useZodValidation'
+const route = useRoute()
+const router = useRouter()
+const {
+    pendingDataOrError,
+    pendingData,
+    isCorporate,
+    isConsumer,
+    showSuccessToast,
+    showErrorToast,
+} = useBase()
+const { cards } = useStores(['cards'])
 
-@Component({
-    components: {
-        LoadingSpinner,
-        LoaderButton,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-    },
+const numberIsValid: Ref<boolean | null> = ref(null)
+const mobile = ref({
+    countryCode: 'GB',
+    cardholderMobileNumber: '',
 })
-export default class EditCardPage extends mixins(BaseMixin) {
-    numberIsValid: boolean | null = null
-    mobile = {
-        countryCode: 'GB',
-        cardholderMobileNumber: '',
-    }
+const isUpdating = ref(false)
+const updateManagedCardRequest: UpdateManagedCard = reactive({
+    ...INITIAL_MC_UPDATE_REQUEST(),
+    cardholderMobileNumber: mobile.value,
+})
 
-    isUpdating = false
-    updateManagedCardRequest: UpdateManagedCard = reactive({
-        ...INITIAL_MC_UPDATE_REQUEST(),
-        cardholderMobileNumber: this.mobile,
-    })
+const validation = computed(() => {
+    return useZodValidation(
+        ManagedCardUpdateSchema.pick({
+            friendlyName: true,
+            ...(isCorporate.value && { cardholderMobileNumber: true }),
+        }).required(),
+        updateManagedCardRequest,
+    )
+})
 
-    get validation() {
-        return useZodValidation(
-            ManagedCardUpdateSchema.pick({
-                friendlyName: true,
-                ...(this.isCorporate && { cardholderMobileNumber: true }),
-            }).required(),
-            this.updateManagedCardRequest,
-        )
-    }
+const isLoading = computed(() => {
+    return cards?.cardState.isLoading || isUpdating.value || pendingData.value
+})
 
-    get isLoading() {
-        return this.cardsStore.cardState.isLoading || this.isUpdating || this.$fetchState.pending
-    }
+const cardId = computed(() => {
+    return route.value.params.id
+})
 
-    get auth() {
-        return this.authStore.authState.auth
-    }
-
-    get cardId() {
-        return this.$route.params.id
-    }
-
-    async fetch() {
-        const card = await this.cardsStore.getManagedCard(this.cardId)
+useFetch(async () => {
+    const card = await cards?.getManagedCard(cardId.value)
+    if (card) {
         const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
 
         // add key cardholderMobileNumber only if isCorporate
-        Object.assign(this.updateManagedCardRequest, {
+        Object.assign(updateManagedCardRequest, {
             friendlyName: card.data.friendlyName,
-            ...(this.isCorporate && { cardholderMobileNumber: '' }),
+            ...(isCorporate.value && { cardholderMobileNumber: '' }),
         })
 
-        this.mobile.countryCode = parsedNumber?.country || ''
-        this.mobile.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
+        mobile.value.countryCode = parsedNumber?.country || ''
+        mobile.value.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
+    }
+})
+
+const doUpdate = async () => {
+    if (isConsumer) {
+        numberIsValid.value = true
     }
 
-    async doUpdate() {
-        if (this.isConsumer) {
-            this.numberIsValid = true
-        }
-
-        if (this.numberIsValid === null) {
-            this.numberIsValid = false
-        }
-
-        await this.validation.validate()
-
-        if (this.validation.isInvalid.value || !this.numberIsValid) {
-            return
-        }
-
-        this.isUpdating = true
-
-        this.cardsStore
-            .update({
-                id: this.cardId,
-                request: this.updateManagedCardRequest as UpdateManagedCard,
-            })
-            .then(() => {
-                this.showSuccessToast('Card name changed')
-                this.$router.push('/managed-cards')
-            })
-            .finally(() => {
-                this.isUpdating = false
-            })
-            .catch(() => {
-                this.showErrorToast('Card name change error')
-            })
+    if (numberIsValid.value === null) {
+        numberIsValid.value = false
     }
 
-    phoneUpdate(number) {
-        this.$set(
-            this.mobile,
-            'cardholderMobileNumber',
-            number.formatNational ? number.formatNational : number.phoneNumber,
-        )
-        this.updateManagedCardRequest!.cardholderMobileNumber = number.formattedNumber
-        this.numberIsValid = number.isValid
+    await validation.value.validate()
 
-        this.validation.validate()
+    if (validation.value.isInvalid.value || !numberIsValid.value) {
+        return
     }
+
+    isUpdating.value = true
+
+    await cards
+        ?.update({
+            id: cardId.value,
+            request: updateManagedCardRequest as UpdateManagedCard,
+        })
+        .then(() => {
+            showSuccessToast('Card name changed')
+            router.push('/managed-cards')
+        })
+        .finally(() => {
+            isUpdating.value = false
+        })
+        .catch(() => {
+            showErrorToast('Card name change error')
+        })
+}
+
+const phoneUpdate = (number) => {
+    mobile.value.cardholderMobileNumber = number.formatNational
+        ? number.formatNational
+        : number.phoneNumber
+    updateManagedCardRequest.cardholderMobileNumber = number.formattedNumber
+    numberIsValid.value = number.isInvalid
+
+    validation.value.validate()
 }
 </script>

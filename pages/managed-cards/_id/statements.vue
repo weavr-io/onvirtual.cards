@@ -160,130 +160,121 @@
     </section>
 </template>
 
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import {
+    Ref,
+    computed,
+    getCurrentInstance,
+    ref,
+    useContext,
+    useFetch,
+    useRoute,
+    watch,
+} from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { DateTime } from 'luxon'
-import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
-import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
-import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
-import { expiryMmyy, weavrCurrency } from '~/utils/helper'
-import BaseMixin from '~/mixins/BaseMixin'
-import RouterMixin from '~/mixins/RouterMixin'
-import FiltersMixin from '~/mixins/FiltersMixin'
-import CardsMixin from '~/mixins/CardsMixin'
 import Statement from '~/components/cards/statement/statement.vue'
+import { useBase } from '~/composables/useBase'
+import { useCards } from '~/composables/useCards'
+import { useStores } from '~/composables/useStores'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
+import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
+import { expiryMmyy, weavrCurrency } from '~/utils/helper'
 
-@Component({
-    watch: {
-        '$route.query': 'fetchCardStatements',
-    },
-    components: {
-        WeavrCardNumberSpan,
-        WeavrCvvSpan,
-        Statement,
-        StatementItem: () => import('~/components/organisms/StatementItem.vue'),
-    },
+const route = useRoute()
+
+const { proxy: root } = getCurrentInstance() || {}
+const { $weavrSetUserToken } = useContext()
+const { managedCard, cardId, isCardActive } = useCards()
+const { pendingDataOrError } = useBase()
+const { auth, cards } = useStores(['auth', 'cards'])
+
+const filters: Ref<StatementFiltersRequest | null> = ref(null)
+const page = ref(0)
+const isLoading: Ref<boolean | null> = ref(null)
+
+const currency = computed(() => {
+    return weavrCurrency(managedCard.value?.balances?.availableBalance, managedCard.value?.currency)
 })
-export default class ManagedCardsStatements extends mixins(
-    BaseMixin,
-    RouterMixin,
-    FiltersMixin,
-    CardsMixin,
-) {
-    filters: StatementFiltersRequest | null = null
 
-    page = 0
+const expiryDate = computed(() => {
+    return expiryMmyy(managedCard.value?.expiryMmyy)
+})
 
-    isLoading: boolean | null = true
+useFetch(async () => {
+    page.value = 0
 
-    fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
+    $weavrSetUserToken(`Bearer ${auth?.token}`)
 
-    get currency() {
-        return weavrCurrency(
-            this.managedCard?.balances?.availableBalance,
-            this.managedCard?.currency,
-        )
+    await cards?.getManagedCard(cardId.value)
+    await fetchCardStatements()
+})
+
+const fetchCardStatements = async () => {
+    const routeQueries = dot.object(route.value.query)
+    const localFilters = routeQueries.filters || {}
+
+    if (!localFilters?.fromTimestamp) {
+        localFilters.fromTimestamp = DateTime.now().startOf('month').toMillis()
     }
 
-    get expiryDate() {
-        return expiryMmyy(this.managedCard?.expiryMmyy)
+    if (!localFilters?.toTimestamp) {
+        localFilters.toTimestamp = DateTime.now().endOf('month').toMillis()
     }
 
-    async fetch() {
-        this.page = 0
-        this.$weavrSetUserToken(`Bearer ${this.authStore.token}`)
-
-        await this.cardsStore.getManagedCard(this.cardId)
-        await this.fetchCardStatements()
+    const statementFilters: StatementFiltersRequest = {
+        showFundMovementsOnly: false,
+        orderByTimestamp: OrderEnum.DESC,
+        limit: 100,
+        offset: 0,
+        ...localFilters,
     }
 
-    async fetchCardStatements() {
-        const routeQueries = dot.object(this.$route.query)
-        const filters = routeQueries.filters || {}
-
-        if (!filters?.fromTimestamp) {
-            filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
-        }
-
-        if (!filters?.toTimestamp) {
-            filters.toTimestamp = DateTime.now().endOf('month').toMillis()
-        }
-
-        const statementFilters: StatementFiltersRequest = {
-            showFundMovementsOnly: false,
-            orderByTimestamp: OrderEnum.DESC,
-            limit: 100,
-            offset: 0,
-            ...filters,
-        }
-
-        const _req: ManagedCardStatementRequest = {
-            id: this.cardId,
-            request: statementFilters,
-        }
-
-        this.filters = statementFilters
-
-        this.cardsStore.clearCardStatements()
-        await this.cardsStore.getCardStatement(_req)
+    const _req: ManagedCardStatementRequest = {
+        id: cardId.value,
+        request: statementFilters,
     }
 
-    toggleIsLoading() {
-        this.isLoading = !this.isLoading
-    }
+    filters.value = { ...statementFilters }
 
-    toggleModal() {
-        this.$bvModal.show('cardModal')
-    }
-
-    infiniteScroll($state) {
-        setTimeout(() => {
-            this.page++
-
-            const request: StatementFiltersRequest = { ...this.filters }
-            request.offset = this.page * +request.limit!
-
-            this.cardsStore
-                .getCardStatement({
-                    id: this.$route.params.id,
-                    request,
-                })
-                .then((response) => {
-                    if (
-                        !response.data.responseCount ||
-                        response.data.responseCount < request.limit!
-                    ) {
-                        $state.complete()
-                    } else {
-                        $state.loaded()
-                    }
-                })
-        }, 500)
-    }
+    cards?.clearCardStatements()
+    await cards?.getCardStatement(_req)
 }
+
+const toggleIsLoading = () => {
+    isLoading.value = !isLoading.value
+}
+
+const infiniteScroll = ($state) => {
+    setTimeout(() => {
+        page.value++
+
+        const request: StatementFiltersRequest = { ...filters.value }
+        request.offset = page.value * +request.limit! || 0
+
+        cards
+            ?.getCardStatement({
+                id: route.value.params.id,
+                request,
+            })
+            .then((response) => {
+                if (!response.data.responseCount || response.data.responseCount < request.limit!) {
+                    $state.complete()
+                } else {
+                    $state.loaded()
+                }
+            })
+    }, 500)
+}
+
+const toggleModal = () => {
+    root!.$bvModal.show('cardModal')
+}
+
+watch(route, fetchCardStatements)
 </script>
 
 <style lang="scss" scoped>

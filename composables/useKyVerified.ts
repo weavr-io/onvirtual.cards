@@ -10,6 +10,10 @@ export const useKyVerified = () => {
         'identity',
     ])
 
+    const hasAlert = computed(() => {
+        return showKybAlert.value || showKycAlert.value
+    })
+
     const showVerifyMobileAlert = computed(() => {
         return identity?.identityState.mobileNumberVerified === false
     })
@@ -50,10 +54,5 @@ export const useKyVerified = () => {
         return false
     })
 
-    return {
-        showKybAlert,
-        showKycAlert,
-        showVerifyEmailAlert,
-        showVerifyMobileAlert,
-    }
+    return { hasAlert, showKybAlert, showKycAlert, showVerifyEmailAlert, showVerifyMobileAlert }
 }
