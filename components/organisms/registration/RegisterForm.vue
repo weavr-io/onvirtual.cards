@@ -1,7 +1,7 @@
 <template>
     <b-form @submit.prevent="tryToSubmitForm">
         <h3 class="text-center font-weight-light mb-5">Register</h3>
-        <error-alert />
+        <ErrorAlert />
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('email')"
             :state="validation.getState('email')"
@@ -87,7 +87,7 @@
     </b-form>
 </template>
 <script lang="ts" setup>
-import { computed, Ref, ref, ComputedRef, reactive } from '@nuxtjs/composition-api'
+import { computed, ComputedRef, reactive, Ref, ref } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
@@ -100,6 +100,7 @@ import { CreateCorporateRequestSchema } from '~/plugins/weavr-multi/api/models/i
 import useZodValidation from '~/composables/useZodValidation'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 
 const emit = defineEmits(['submit-form'])
 const { corporates, errors } = useStores(['corporates', 'errors'])
