@@ -1,7 +1,7 @@
 <template>
     <b-form novalidate @submit.prevent="submitForm">
         <h3 class="text-center font-weight-light mb-5">A few more steps</h3>
-        <error-alert />
+        <ErrorAlert />
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('rootUser,name')"
             :state="validation.getState('rootUser,name')"
@@ -132,7 +132,7 @@
     </b-form>
 </template>
 <script lang="ts" setup>
-import { computed, ref, ComputedRef, PropType, reactive } from '@nuxtjs/composition-api'
+import { computed, ComputedRef, PropType, reactive, ref } from '@nuxtjs/composition-api'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
@@ -147,6 +147,8 @@ import {
     INITIAL_CREATE_CORPORATE_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import useZodValidation from '~/composables/useZodValidation'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 
 const props = defineProps({
     baseForm: {
@@ -194,7 +196,7 @@ const shouldShowOtherSourceOfFunds: ComputedRef<boolean> = computed(
 
 const phoneUpdate = (number) => {
     form.rootUser.mobile.countryCode = number.countryCallingCode && `+${number.countryCallingCode}`
-    form.rootUser.mobile.number = number.phoneNumber
+    form.rootUser.mobile.number = number.phoneNumber && number.phoneNumber.replace(/\s+/g, '')
 
     numberIsValid.value = number.isValid
 }

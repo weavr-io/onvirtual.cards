@@ -7,10 +7,10 @@
                     <div class="form-screens">
                         <transition mode="out-in" name="fade">
                             <div v-if="screen === 0" key="1" class="form-screen">
-                                <register-form @submit-form="form1Submit" />
+                                <RegisterForm @submit-form="form1Submit" />
                             </div>
                             <div v-else key="2" class="form-screen">
-                                <personal-details-form
+                                <PersonalDetailsForm
                                     :base-form="registrationRequest"
                                     @submit="form2Submit"
                                     @strength-check="strengthCheck"

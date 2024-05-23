@@ -118,9 +118,9 @@ import useZodValidation from '~/composables/useZodValidation'
 import { Address, CurrencyEnum, CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common'
 import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import {
+    type CreateManagedCard,
     CreateManagedCardSchema,
     INITIAL_MANAGED_CARD_REQUEST,
-    type CreateManagedCard,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCard'
 
 export default defineComponent({
@@ -207,15 +207,14 @@ export default defineComponent({
 
             localIsBusy.value = true
 
+            const address = isConsumer.value
+                ? (consumers?.consumerState.consumer?.rootUser.address as Address)
+                : (corporates?.corporateState.corporate?.company.businessAddress as Address)
+
             Object.assign(createManagedCardRequest, {
                 ...createManagedCardRequest,
                 profileId: cardJurisdictionProfileId.value,
-                billingAddress: {
-                    ...(isConsumer
-                        ? (consumers?.consumerState.consumer?.rootUser.address as Address)
-                        : (corporates?.corporateState.corporate?.company
-                              .businessAddress as Address)),
-                },
+                billingAddress: address,
             })
 
             await cards
