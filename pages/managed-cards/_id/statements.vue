@@ -162,9 +162,9 @@
 
 <script lang="ts" setup>
 import {
-    Ref,
     computed,
     getCurrentInstance,
+    Ref,
     ref,
     useContext,
     useFetch,
@@ -194,7 +194,7 @@ const { auth, cards } = useStores(['auth', 'cards'])
 
 const filters: Ref<StatementFiltersRequest | null> = ref(null)
 const page = ref(0)
-const isLoading: Ref<boolean | null> = ref(null)
+const isLoading: Ref<boolean> = ref(true)
 
 const currency = computed(() => {
     return weavrCurrency(managedCard.value?.balances?.availableBalance, managedCard.value?.currency)
