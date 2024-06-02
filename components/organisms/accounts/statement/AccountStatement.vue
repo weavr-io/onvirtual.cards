@@ -65,8 +65,8 @@
 <script lang="ts">
 import { defineComponent, computed, ComputedRef, PropType, useRoute } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
-import { DateTime } from 'luxon'
 import { useStores } from '~/composables/useStores'
+import { useLuxon } from '~/composables/useLuxon'
 import { useAccounts } from '~/composables/useAccounts'
 import { useFilters } from '~/composables/useFilters'
 import { useRouterFilter } from '~/composables/useRouterFilter'
@@ -88,6 +88,7 @@ export default defineComponent({
     setup(props) {
         const route = useRoute()
         const { accounts } = useStores(['accounts'])
+        const { formatDate, getStartOfMonth, getEndOfMonth } = useLuxon()
         const { account, downloadAsCSV } = useAccounts()
         const { monthsFilter } = useFilters()
         const { setFilters } = useRouterFilter()
@@ -122,17 +123,6 @@ export default defineComponent({
             return monthsFilter(account.value.creationTimestamp)
         })
 
-        // TODO: Resolve to useBase Composable
-        // Move all luxon function calls to utils for reusability
-        const formatDate = (val) => {
-            const dateTime = DateTime.fromJSDate(val)
-            if (dateTime.hasSame(DateTime.now(), 'year')) {
-                return dateTime.toFormat('d MMMM')
-            }
-
-            return dateTime.toFormat('d MMMM yyyy')
-        }
-
         const filterMonthChange = (val) => {
             setFilters({
                 fromTimestamp: val.start,
@@ -145,11 +135,11 @@ export default defineComponent({
             const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
             if (!_filters.fromTimestamp) {
-                _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
+                _filters.fromTimestamp = getStartOfMonth.value
             }
 
             if (!_filters.toTimestamp) {
-                _filters.toTimestamp = DateTime.now().endOf('month').toMillis()
+                _filters.toTimestamp = getEndOfMonth.value
             }
 
             const _req: GetManagedAccountStatementRequest = {
