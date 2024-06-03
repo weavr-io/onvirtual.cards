@@ -76,84 +76,6 @@
     </b-col>
 </template>
 
-<template>
-    <b-col lg="6" md="9">
-        <LogoOvc classes="mb-5" />
-        <div class="mb-3">
-            <b-card body-class="px-4 mx-2 py-5 p-md-card">
-                <h3 class="text-center font-weight-light mb-5">Login</h3>
-
-                <form id="contact-form" class="mt-5" @submit.prevent="login">
-                    <error-alert
-                        message="Incorrect email and password combination. If you do not have an account please click on Register."
-                    />
-                    <b-form-group
-                        id="login-email"
-                        :invalid-feedback="validation.getInvalidFeedback('email')"
-                        :state="validation.getState('email')"
-                        label="Email"
-                        label-for="form-email"
-                    >
-                        <b-form-input
-                            id="from-email"
-                            v-model="loginRequest.email"
-                            class="form-control"
-                            name="Email"
-                            placeholder="Email"
-                        />
-                    </b-form-group>
-                    <b-form-group
-                        id="login-password"
-                        :invalid-feedback="validation.getInvalidFeedback('password,value')"
-                        :state="validation.getState('password,value')"
-                        label="Password"
-                        label-for="password"
-                    >
-                        <client-only placeholder="Loading...">
-                            <weavr-password-input
-                                ref="passwordField"
-                                :base-style="passwordBaseStyle"
-                                :class-name="[
-                                    'sign-in-password form-control p-0',
-                                    { 'is-invalid': isInvalidPassword },
-                                ]"
-                                :options="{ placeholder: 'Password' }"
-                                aria-invalid="true"
-                                name="password"
-                                @onChange="passwordInteraction"
-                                @onKeyUp="checkOnKeyUp"
-                            />
-                        </client-only>
-                    </b-form-group>
-                    <div class="mt-2">
-                        <b-link
-                            class="small text-decoration-underline text-grey"
-                            to="/password/reset"
-                        >
-                            Forgot password?
-                        </b-link>
-                    </div>
-                    <LoaderButton
-                        :is-loading="isLoading"
-                        class="text-center mt-4"
-                        show-arrow
-                        text="Sign In"
-                    />
-                    <div class="mt-4 text-center">
-                        <small class="text-grey">
-                            Not yet registered? Register
-                            <b-link class="text-decoration-underline text-grey" to="/register"
-                                >here
-                            </b-link>
-                            .
-                        </small>
-                    </div>
-                </form>
-            </b-card>
-        </div>
-    </b-col>
-</template>
-
 <script lang="ts">
 import {
     computed,
@@ -193,7 +115,7 @@ export default defineComponent({
         const { auth, consumers, errors } = useStores(['auth', 'consumers', 'errors'])
 
         const isLoading = ref(false)
-        const passwordField: Ref<WeavrPasswordInput | null> = ref(null)
+        const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
 
         const loginRequest: LoginWithPassword = reactive(INITIAL_LOGIN_WITH_PASSWORD_REQUEST())
 
@@ -223,8 +145,8 @@ export default defineComponent({
             return validation.value.getState('password,value') === false && validation.value.dirty
         })
 
-        const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
-            !val.empty
+        const passwordInteraction = (val: { empty?: boolean; valid?: boolean }) => {
+            !val?.empty
                 ? (loginRequest.password.value = '******')
                 : (loginRequest.password.value = '')
         }
@@ -246,6 +168,8 @@ export default defineComponent({
                 isLoading.value = false
                 return
             }
+
+            console.log('password', passwordField.value?.createToken())
 
             try {
                 errors?.setError(null)

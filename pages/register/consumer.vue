@@ -276,7 +276,7 @@ export default defineComponent({
         const { consumer, showErrorToast, mobileCountries, countryOptionsWithDefault } = useBase()
         const { accessCodes, consumers, errors } = useStores(['accessCodes', 'consumers', 'errors'])
 
-        const passwordField = ref<WeavrPasswordInput | null>(null)
+        const passwordField = ref<typeof WeavrPasswordInput | null>(null)
         const rootMobileNumber = ref('')
         const numberIsValid = ref<boolean | null>(null)
         const passwordStrength = ref(0)

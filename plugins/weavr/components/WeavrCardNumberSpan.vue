@@ -1,55 +1,85 @@
 <template>
-    <div :class="className" :style="baseStyle" />
+    <div :class="props.className" :style="props.baseStyle" />
 </template>
-<script lang="ts">
-import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import {
+    Ref,
+    computed,
+    getCurrentInstance,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+} from '@nuxtjs/composition-api'
 
-@Component
-class WeavrCardNumberSpan extends Vue {
-    @Prop() readonly token!: string
+const { proxy: root } = getCurrentInstance() || {}
 
-    @Prop() readonly options!: object
+const props = defineProps({
+    token: {
+        type: String,
+        required: true,
+    },
+    options: {
+        type: Object,
+        required: true,
+    },
+    className: {
+        type: String,
+        required: true,
+    },
+    baseStyle: {
+        type: Object,
+        required: true,
+    },
+})
 
-    @Prop() readonly className!: string
+const emit = defineEmits(['onReady', 'onChange'])
 
-    @Prop() readonly baseStyle!: object
+const span: Ref<any> = ref(null)
 
-    @Emit('onReady') onReady() {}
+const _span = computed({
+    get() {
+        return span.value
+    },
+    set(newValue) {
+        span.value = newValue
+    },
+})
 
-    @Emit('onChange') onChange() {}
-
-    protected _span
-
-    mounted() {
-        this._span = this.$weavrComponents.display.cardNumber(this.token, this.spanOptions)
-        this._span.mount(this.$el)
-        this._addListeners()
-    }
-
-    beforeDestroy() {
-        this._removeListeners()
-        this._span.destroy()
-    }
-
-    _addListeners() {
-        this.onReady && this._span.on('ready', this.onReady)
-        this.onChange && this._span.on('change', this.onChange)
-    }
-
-    _removeListeners() {
-        this.onReady && this._span.off('ready', this.onReady)
-        this.onChange && this._span.off('change', this.onChange)
-    }
-
-    get spanOptions() {
-        return {
-            ...this.options,
-            style: this.baseStyle,
-        }
-    }
+const onReady = () => {
+    emit('onReady')
 }
 
-export default WeavrCardNumberSpan
+const onChange = (val) => {
+    emit('onChange', val)
+}
+
+onMounted(() => {
+    _span.value = root?.$weavrComponents.display.cardNumber(props.token, spanOptions)
+    _span.value.mount(root?.$el)
+    _addListeners()
+})
+
+onBeforeUnmount(() => {
+    _removeListeners()
+    _span.value.destroy()
+})
+
+const _addListeners = () => {
+    _span.value.on('ready', onReady)
+    _span.value.on('change', onChange)
+}
+
+const _removeListeners = () => {
+    _span.value.off('ready', onReady)
+    _span.value.off('change', onChange)
+}
+
+const spanOptions = computed(() => {
+    return {
+        ...props.options,
+        style: props.baseStyle,
+    }
+})
 </script>
 
 <style lang="scss" scoped></style>
