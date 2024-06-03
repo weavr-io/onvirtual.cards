@@ -92,7 +92,7 @@ export default defineComponent({
         const { errors, users } = useStores(['errors', 'users'])
 
         const showError = ref(false)
-        const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
+        const passwordField: Ref<WeavrPasswordInput | null> = ref(null)
         const passwordStrength = ref(0)
         const form: Ref<{
             id: IDModel

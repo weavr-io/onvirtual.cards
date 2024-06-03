@@ -107,7 +107,7 @@ export default defineComponent({
         const router = useRouter()
         const { auth, errors } = useStores(['auth', 'errors'])
 
-        const passwordField = ref<typeof WeavrPasswordInput | null>(null)
+        const passwordField = ref<WeavrPasswordInput | null>(null)
         const isLoading = ref(false)
         const form = reactive(INITIAL_RESUME_LOST_PASSWORD_REQUEST())
         const passwordStrength = ref(0)

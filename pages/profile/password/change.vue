@@ -83,8 +83,8 @@ const router = useRouter()
 const { showSuccessToast, showErrorToast } = useBase()
 const { auth } = useStores(['auth'])
 
-const oldPassword = ref<typeof WeavrPasswordInput | null>(null)
-const newPassword = ref<typeof WeavrPasswordInput | null>(null)
+const oldPassword = ref<WeavrPasswordInput | null>(null)
+const newPassword = ref<WeavrPasswordInput | null>(null)
 const isLoading = ref(false)
 const passwordStrength = ref(0)
 const changePasswordRequest: UpdatePasswordRequestModel = reactive(
