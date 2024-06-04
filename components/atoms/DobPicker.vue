@@ -61,7 +61,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { onBeforeMount, watch } from '@nuxtjs/composition-api'
-import { DateTimeFormatOptions } from 'luxon'
+import { DateTimeFormatOptions } from '~/composables/useLuxon'
 
 const datesInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
