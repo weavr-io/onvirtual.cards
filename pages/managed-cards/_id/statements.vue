@@ -172,24 +172,24 @@ import {
     watch,
 } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
-import { DateTime } from 'luxon'
-import Statement from '~/components/organisms/cards/statement/CardStatement.vue'
+import { useLuxon } from '~/composables/useLuxon'
 import { useBase } from '~/composables/useBase'
 import { useCards } from '~/composables/useCards'
 import { useStores } from '~/composables/useStores'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import { expiryMmyy, weavrCurrency } from '~/utils/helper'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
-import { expiryMmyy, weavrCurrency } from '~/utils/helper'
+import Statement from '~/components/organisms/cards/statement/CardStatement.vue'
 
 const route = useRoute()
-
 const { proxy: root } = getCurrentInstance() || {}
 const { $weavrSetUserToken } = useContext()
 const { managedCard, cardId, isCardActive } = useCards()
 const { pendingDataOrError } = useBase()
+const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { auth, cards } = useStores(['auth', 'cards'])
 
 const filters: Ref<StatementFiltersRequest | null> = ref(null)
@@ -218,11 +218,11 @@ const fetchCardStatements = async () => {
     const localFilters = routeQueries.filters || {}
 
     if (!localFilters?.fromTimestamp) {
-        localFilters.fromTimestamp = DateTime.now().startOf('month').toMillis()
+        localFilters.fromTimestamp = getStartOfMonth.value
     }
 
     if (!localFilters?.toTimestamp) {
-        localFilters.toTimestamp = DateTime.now().endOf('month').toMillis()
+        localFilters.toTimestamp = getEndOfMonth.value
     }
 
     const statementFilters: StatementFiltersRequest = {

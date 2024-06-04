@@ -69,8 +69,8 @@ import {
 } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { AxiosError } from 'axios'
-import { DateTime } from 'luxon'
 import { useStores } from '~/composables/useStores'
+import { useLuxon } from '~/composables/useLuxon'
 import { useCards } from '~/composables/useCards'
 import { useBase } from '~/composables/useBase'
 import { useFilters } from '~/composables/useFilters'
@@ -99,6 +99,7 @@ export default defineComponent({
         const router = useRouter()
         const { proxy: root } = getCurrentInstance() || {}
         const { cards, accounts, transfers } = useStores(['cards', 'accounts', 'transfers'])
+        const { formatDate, getStartOfMonth, getEndOfMonth } = useLuxon()
         const { managedCard, cardId, isCardActive, downloadAsCSV } = useCards()
         const { monthsFilter } = useFilters()
         const { showErrorToast, showSuccessToast, accountJurisdictionProfileId } = useBase()
@@ -128,26 +129,16 @@ export default defineComponent({
             })
         }
 
-        const formatDate = (val) => {
-            const dateTime = DateTime.fromJSDate(val)
-
-            if (dateTime.hasSame(DateTime.now(), 'year')) {
-                return dateTime.toFormat('d MMMM')
-            }
-
-            return dateTime.toFormat('d MMMM yyyy')
-        }
-
         const downloadStatement = () => {
             const _routeQueries = dot.object(route.value.query)
             const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
             if (!_filters.fromTimestamp) {
-                _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
+                _filters.fromTimestamp = getStartOfMonth.value
             }
 
             if (!_filters.toTimestamp) {
-                _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
+                _filters.fromTimestamp = getEndOfMonth.value
             }
 
             const filters: GetManagedCardStatementRequest = {

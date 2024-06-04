@@ -21,13 +21,13 @@ import {
     watch,
 } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
-import { DateTime } from 'luxon'
-import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import { useLuxon } from '~/composables/useLuxon'
 import { useStores } from '~/composables/useStores'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
 import { useBase } from '~/composables/useBase'
 import { useKyVerified } from '~/composables/useKyVerified'
+import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
 
 export default defineComponent({
     components: {
@@ -40,6 +40,7 @@ export default defineComponent({
         const { accounts } = useStores(['accounts'])
         const { pendingDataOrError } = useBase()
         const { hasAlert } = useKyVerified()
+        const { getStartOfMonth, getEndOfMonth } = useLuxon()
 
         const filters: Ref<GetManagedAccountStatementRequest | null> = ref(null)
         const page = ref(0)
@@ -58,11 +59,11 @@ export default defineComponent({
             const _filters = _routeQueries.filters ? _routeQueries.filters : {}
 
             if (!_filters.fromTimestamp) {
-                _filters.fromTimestamp = DateTime.now().startOf('month').toMillis()
+                _filters.fromTimestamp = getStartOfMonth.value
             }
 
             if (!_filters.toTimestamp) {
-                _filters.toTimestamp = DateTime.now().endOf('month').toMillis()
+                _filters.toTimestamp = getEndOfMonth.value
             }
 
             const _statementFilters: GetManagedAccountStatementRequest = {
