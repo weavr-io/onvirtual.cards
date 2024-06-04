@@ -1,6 +1,7 @@
 import { computed } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
+import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 export const useKyVerified = () => {
     const { auth, corporates, consumers, identity } = useStores([
@@ -48,11 +49,22 @@ export const useKyVerified = () => {
         const _consumer = consumers?.consumerState.consumer
         const _consumerKyc = consumers?.consumerState.kyc
 
-        if (_consumer && _consumerKyc) {
-            return _consumerKyc
+        if (showVerifyMobileAlert) {
+            return false
+        } else if (_consumer && _consumerKyc) {
+            return _consumerKyc.fullDueDiligence
+                ? _consumerKyc.fullDueDiligence !== KYCStatusEnum.APPROVED
+                : true
+        } else {
+            return false
         }
-        return false
     })
 
-    return { hasAlert, showKybAlert, showKycAlert, showVerifyEmailAlert, showVerifyMobileAlert }
+    return {
+        hasAlert,
+        showKybAlert,
+        showKycAlert,
+        showVerifyEmailAlert,
+        showVerifyMobileAlert,
+    }
 }
