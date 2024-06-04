@@ -112,7 +112,7 @@ const form = reactive<
     }
 >({ ...INITIAL_LOGIN_WITH_PASSWORD_REQUEST() })
 
-const passwordField: Ref<WeavrPasswordInput | null> = ref(null)
+const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
 const passwordStrength = ref<number>(0)
 
 const validation = computed(() => {
