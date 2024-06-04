@@ -2,21 +2,21 @@
     <div id="director-kyc" />
 </template>
 <script lang="ts" setup>
-import { PropType, getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
+import { getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
 import { KYCOptions } from '~/plugins/weavr/components/api'
 
 const { proxy: root } = getCurrentInstance() || {}
 
-const props = defineProps({
-    reference: {
-        type: String,
-        required: true,
+const props = withDefaults(
+    defineProps<{
+        reference: string
+        options: KYCOptions
+    }>(),
+    {
+        reference: undefined,
+        options: undefined,
     },
-    options: {
-        type: Object as PropType<KYCOptions>,
-        required: true,
-    },
-})
+)
 
 const emit = defineEmits(['message'])
 

@@ -10,27 +10,24 @@ import {
     onMounted,
     ref,
 } from '@nuxtjs/composition-api'
+import { SecureElementStyle, SecureSpan } from '~/plugins/weavr/components/api'
 
 const { proxy: root } = getCurrentInstance() || {}
 
-const props = defineProps({
-    token: {
-        type: String,
-        required: true,
+const props = withDefaults(
+    defineProps<{
+        token: string
+        options?: SecureSpan
+        className?: string
+        baseStyle?: SecureElementStyle
+    }>(),
+    {
+        token: undefined,
+        options: undefined,
+        className: undefined,
+        baseStyle: undefined,
     },
-    options: {
-        type: Object,
-        required: true,
-    },
-    className: {
-        type: String,
-        required: true,
-    },
-    baseStyle: {
-        type: Object,
-        required: true,
-    },
-})
+)
 
 const emit = defineEmits(['onReady', 'onChange'])
 

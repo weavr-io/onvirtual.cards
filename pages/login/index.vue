@@ -169,8 +169,6 @@ export default defineComponent({
                 return
             }
 
-            console.log('password', passwordField.value?.createToken())
-
             try {
                 errors?.setError(null)
                 passwordField.value?.createToken().then(

@@ -2,21 +2,21 @@
     <div id="kyb-container" />
 </template>
 <script lang="ts" setup>
-import { PropType, getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
+import { getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
 import { KYBOptions } from '~/plugins/weavr/components/api'
 
 const { proxy: root } = getCurrentInstance() || {}
 
-const props = defineProps({
-    reference: {
-        type: String,
-        required: true,
+const props = withDefaults(
+    defineProps<{
+        reference: string
+        options: KYBOptions
+    }>(),
+    {
+        reference: undefined,
+        options: undefined,
     },
-    options: {
-        type: Object as PropType<KYBOptions>,
-        required: true,
-    },
-})
+)
 
 const emit = defineEmits(['message'])
 

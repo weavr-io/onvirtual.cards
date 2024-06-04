@@ -2,21 +2,21 @@
     <div id="consumer-kyc" />
 </template>
 <script lang="ts" setup>
-import { PropType, getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
+import { getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
 import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 
 const { proxy: root } = getCurrentInstance() || {}
 
-const props = defineProps({
-    reference: {
-        type: String,
-        required: true,
+const props = withDefaults(
+    defineProps<{
+        reference: string
+        options: ConsumerVerificationFlowOptions
+    }>(),
+    {
+        reference: undefined,
+        options: undefined,
     },
-    options: {
-        type: Object as PropType<ConsumerVerificationFlowOptions>,
-        required: true,
-    },
-})
+)
 
 onMounted(() => {
     root?.$weavrComponents.capture
