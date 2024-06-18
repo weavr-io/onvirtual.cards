@@ -67,7 +67,7 @@
                                     />
                                 </b-form-group>
                                 <b-form-group label="MOBILE NUMBER*">
-                                    <vue-phone-number-input
+                                    <phone-number-input
                                         v-model="rootMobileNumber"
                                         :border-radius="0"
                                         :error="numberIsValid === false"
@@ -258,9 +258,11 @@ import {
 } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import PhoneNumberInput from '~/components/atoms/PhoneNumberInput/index.vue'
 
 export default defineComponent({
     components: {
+        PhoneNumberInput,
         ComingSoonCurrencies,
         LogoOvc,
         ErrorAlert,
