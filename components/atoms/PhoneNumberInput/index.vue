@@ -61,7 +61,7 @@ import { parsePhoneNumberFromString, AsYouType, getExampleNumber } from 'libphon
 import { countries, countriesIso } from './assets/js/phoneCodeCountries.js'
 import InputTel from './InputTel'
 import locales from './assets/locales'
-import CountrySelector from './CountrySelector/index.vue'
+import CountrySelector from './CountrySelector/CountrySelectorIndex.vue'
 
 const getShadowColor = (color) => {
     return color
