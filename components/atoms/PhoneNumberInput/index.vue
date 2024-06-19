@@ -59,7 +59,7 @@ import examples from 'libphonenumber-js/examples.mobile.json'
 import { parsePhoneNumberFromString, AsYouType, getExampleNumber } from 'libphonenumber-js'
 // import { hexToRgba, isColorName, colorNameToHex } from 'color-transformer-ui'
 import { countries, countriesIso } from './assets/js/phoneCodeCountries.js'
-import InputTel from './InputTel'
+import InputTel from './InputTelephone/InputTelephoneIndex.vue'
 import locales from './assets/locales'
 import CountrySelector from './CountrySelector/CountrySelectorIndex.vue'
 

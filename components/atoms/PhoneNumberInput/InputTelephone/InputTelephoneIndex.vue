@@ -30,12 +30,9 @@
             :required="required"
             :class="{ 'no-country-selector': noCountrySelector }"
             :style="[
-                noCountrySelector ? radiusStyle : radiusRightStyle,
-                inputCaretStyle,
-                inputBorderStyle,
-                inputBoxShadowStyle,
-                inputBgColor,
-                textColor,
+                noCountrySelector
+                    ? { borderRadius: '4px' }
+                    : { borderTopRightRadius: '4px', borderBottomRightRadius: '4px' },
             ]"
             @keydown="keyDown"
             @keyup="keyUp"
@@ -48,7 +45,6 @@
             :for="id"
             :class="error ? 'text-danger' : null"
             class="input-tel__label"
-            :style="[labelColorStyle]"
             @click="focusInput"
         >
             {{ hintValue || labelValue }}
@@ -67,84 +63,82 @@
         </button>
 
         <div v-if="loader" class="input-tel__loader">
-            <div :style="[loaderBgColor]" class="input-tel__loader__progress-bar" />
+            <div class="input-tel__loader__progress-bar" />
         </div>
     </div>
 </template>
 
-<script lang="ts">
-import StylesHandler from '../mixins/StyleHandler'
+<script lang="ts" setup>
+import { ref, computed, defineProps, defineEmits } from 'vue'
 
-export default {
-    name: 'InputTel',
-    mixins: [StylesHandler],
-    props: {
-        value: { type: [String, Number], default: null },
-        label: { type: String, default: 'Enter text' },
-        hint: { type: String, default: null },
-        error: { type: Boolean, default: Boolean },
-        disabled: { type: Boolean, default: false },
-        dark: { type: Boolean, default: false },
-        id: { type: String, default: 'InputTel' },
-        size: { type: String, default: null },
-        type: { type: String, default: 'tel' },
-        readonly: { type: Boolean, default: false },
-        valid: { type: Boolean, default: false },
-        required: { type: Boolean, default: false },
-        loader: { type: Boolean, default: false },
-        clearable: { type: Boolean, default: false },
-        noCountrySelector: { type: Boolean, default: false },
-    },
-    data() {
-        return {
-            isFocus: false,
-            isHover: false,
-        }
-    },
-    computed: {
-        inputValue: {
-            get() {
-                return this.value
-            },
-            set(value) {
-                this.$emit('input', value)
-            },
-        },
-        labelValue() {
-            const { label } = this
-            return this.required && label ? `${label} *` : label
-        },
-        hintValue() {
-            const { hint } = this
-            return this.required && hint ? `${hint} *` : hint
-        },
-    },
-    methods: {
-        updateHoverState(value) {
-            this.isHover = value
-        },
-        focusInput() {
-            this.$refs.InputTel.focus()
-        },
-        onFocus: function () {
-            this.$emit('focus')
-            this.isFocus = true
-        },
-        onBlur: function () {
-            this.$emit('blur')
-            this.isFocus = false
-        },
-        clear() {
-            this.$emit('input', null)
-            this.$emit('clear')
-        },
-        keyUp(e) {
-            this.$emit('keyup', e)
-        },
-        keyDown(e) {
-            this.$emit('keydown', e)
-        },
-    },
+const props = defineProps({
+    value: { type: [String, Number], default: null },
+    label: { type: String, default: 'Enter text' },
+    hint: { type: String, default: null },
+    error: { type: Boolean, default: Boolean },
+    disabled: { type: Boolean, default: false },
+    dark: { type: Boolean, default: false },
+    id: { type: String, default: 'InputTel' },
+    size: { type: String, default: null },
+    type: { type: String, default: 'tel' },
+    readonly: { type: Boolean, default: false },
+    valid: { type: Boolean, default: false },
+    required: { type: Boolean, default: false },
+    loader: { type: Boolean, default: false },
+    clearable: { type: Boolean, default: false },
+    noCountrySelector: { type: Boolean, default: false },
+})
+
+const inputTel = ref<HTMLElement | null>(null)
+const emit = defineEmits(['click', 'input', 'focus', 'blur', 'clear', 'keyup', 'keydown'])
+
+const isFocus = ref(false)
+const isHover = ref(false)
+
+const inputValue = computed({
+    get: () => props.value,
+    set: (value) => emit('input', value),
+})
+
+const labelValue = computed(() => {
+    return props.required && props.label ? `${props.label} *` : props.label
+})
+
+const hintValue = computed(() => {
+    return props.required && props.hint ? `${props.hint} *` : props.hint
+})
+
+const updateHoverState = (value: boolean) => {
+    isHover.value = value
+}
+
+const focusInput = () => {
+    if (inputTel.value) {
+        inputTel.value.focus()
+    }
+}
+
+const onFocus = () => {
+    emit('focus')
+    isFocus.value = true
+}
+
+const onBlur = () => {
+    emit('blur')
+    isFocus.value = false
+}
+
+const clear = () => {
+    emit('input', null)
+    emit('clear')
+}
+
+const keyUp = (e: KeyboardEvent) => {
+    emit('keyup', e)
+}
+
+const keyDown = (e: KeyboardEvent) => {
+    emit('keydown', e)
 }
 </script>
 
