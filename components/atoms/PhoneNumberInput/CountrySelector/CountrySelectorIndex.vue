@@ -62,7 +62,7 @@
         <Transition name="slide">
             <div
                 v-show="hasListOpen"
-                ref="countriesList"
+                ref="countriesListRef"
                 :class="{ 'has-calling-code': showCodeOnList }"
                 :style="[{ borderRadius: '4px' }, listHeight]"
                 class="country-selector__list"
@@ -81,7 +81,7 @@
                         ]"
                         :style="[
                             itemHeight,
-                            value === item.iso2 ? { backgroundColor: '#21222E' } : {},
+                            value === item.iso2 ? { backgroundColor: '#6d1c5d' } : {},
                         ]"
                         class="flex align-center country-selector__list__item"
                         tabindex="-1"
