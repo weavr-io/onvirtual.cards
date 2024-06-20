@@ -220,8 +220,8 @@
 </template>
 <script lang="ts">
 import {
-    ComputedRef,
     computed,
+    ComputedRef,
     defineComponent,
     reactive,
     ref,
@@ -258,7 +258,7 @@ import {
 } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import PhoneNumberInput from '~/components/atoms/PhoneNumberInput/index.vue'
+import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 export default defineComponent({
     components: {
@@ -292,7 +292,7 @@ export default defineComponent({
                 password: INITIAL_SENSITIVE_PASSWORD_REQUEST(),
             })
 
-        const $recaptcha = ref(undefined)
+        const recaptcha = ref(undefined)
 
         const validation = computed(() => {
             return useZodValidation(CreateConsumerFormSchema, registrationRequest)
@@ -491,7 +491,7 @@ export default defineComponent({
         }
 
         return {
-            $recaptcha,
+            recaptcha,
             config,
             passwordField,
             submitForm,

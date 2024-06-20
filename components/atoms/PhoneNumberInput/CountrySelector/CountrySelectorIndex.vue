@@ -16,9 +16,9 @@
             size,
         ]"
         class="country-selector"
-        @blur.capture="handleBlur"
         @mouseenter="updateHoverState(true)"
         @mouseleave="updateHoverState(false)"
+        @blur.capture="handleBlur"
     >
         <div
             v-if="value && !noFlags"
@@ -30,9 +30,9 @@
         <input
             :id="id"
             ref="CountrySelector"
-            :value="callingCode"
-            :placeholder="label"
             :disabled="disabled"
+            :placeholder="label"
+            :value="callingCode"
             class="country-selector__input"
             readonly
             @focus="isFocus = true"
@@ -42,17 +42,17 @@
         <div class="country-selector__toggle" @click.stop="toggleList">
             <slot name="arrow">
                 <svg
-                    mlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
                     class="country-selector__toggle__arrow"
+                    height="24"
+                    mlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="24"
                 >
                     <path
                         class="arrow"
                         d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
                     />
-                    <path fill="none" d="M0 0h24v24H0V0z" />
+                    <path d="M0 0h24v24H0V0z" fill="none" />
                 </svg>
             </slot>
         </div>
@@ -63,14 +63,14 @@
             <div
                 v-show="hasListOpen"
                 ref="countriesList"
-                class="country-selector__list"
                 :class="{ 'has-calling-code': showCodeOnList }"
                 :style="[{ borderRadius: '4px' }, listHeight]"
+                class="country-selector__list"
             >
                 <RecycleScroller
                     v-slot="{ item }"
-                    :items="countriesSorted"
                     :item-size="1"
+                    :items="countriesSorted"
                     key-field="iso2"
                 >
                     <button
@@ -79,11 +79,11 @@
                             { selected: value === item.iso2 },
                             { 'keyboard-selected': value !== item.iso2 && tmpValue === item.iso2 },
                         ]"
-                        class="flex align-center country-selector__list__item"
                         :style="[
-                            { height: '33px' },
+                            itemHeight,
                             value === item.iso2 ? { backgroundColor: '#21222E' } : {},
                         ]"
+                        class="flex align-center country-selector__list__item"
                         tabindex="-1"
                         type="button"
                         @click.stop="updateValue(item.iso2)"
@@ -107,7 +107,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, defineProps, watch } from 'vue'
+import { computed, defineProps, ref, watch } from 'vue'
 import { getCountryCallingCode } from 'libphonenumber-js'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import { nextTick } from '@nuxtjs/composition-api'
@@ -116,7 +116,7 @@ const emit = defineEmits(['input', 'open', 'close'])
 
 const props = defineProps({
     id: { type: String, default: 'CountrySelector' },
-    value: { type: [String, Object], default: null },
+    value: { type: String, default: null },
     label: { type: String, default: 'Choose country' },
     hint: { type: String, default: '' },
     size: { type: String, default: '' },
@@ -135,13 +135,14 @@ const props = defineProps({
 
 const isFocus = ref(false)
 const hasListOpen = ref(false)
-const tmpValue = ref(props.value)
+const tmpValue = ref<string | null>(props.value)
 const query = ref('')
 const isHover = ref(false)
 const countriesListRef = ref<HTMLElement | null>(null)
 const CountrySelectorRef = ref<HTMLElement | null>(null)
 let queryTimer: number | undefined
-computed(() => {
+
+const itemHeight = computed(() => {
     return { height: `${props.countriesHeight}px` }
 })
 const listHeight = computed(() => {
@@ -151,21 +152,21 @@ const listHeight = computed(() => {
     }
 })
 
-const countriesList = computed(() => {
-    return props.items.filter((item: any) => !props.ignoredCountries?.includes(item.iso2))
-})
+const countriesList = props.items.filter(
+    (item: any) => !props.ignoredCountries?.includes(item.iso2),
+)
 
 const countriesFiltered = computed(() => {
     const countries = props.onlyCountries || props.preferredCountries
     return countries
         ? countries.map((country: any) =>
-              countriesList.value.find((item: any) => item.iso2.includes(country)),
+              countriesList.find((item: any) => item.iso2.includes(country)),
           )
         : []
 })
 
 const otherCountries = computed(() => {
-    return countriesList.value.filter((item: any) => !props.preferredCountries?.includes(item.iso2))
+    return countriesList.filter((item: any) => !props.preferredCountries?.includes(item.iso2))
 })
 
 const countriesSorted = computed(() => {
@@ -173,7 +174,7 @@ const countriesSorted = computed(() => {
         ? [...countriesFiltered.value, ...otherCountries.value]
         : props.onlyCountries
           ? countriesFiltered.value
-          : countriesList.value
+          : countriesList
 })
 
 const selectedValueIndex = computed(() => {
@@ -192,21 +193,7 @@ const updateHoverState = (value: boolean) => {
     isHover.value = value
 }
 
-const handleBlur = (e: FocusEvent) => {
-    if (countriesListRef.value?.contains(e.relatedTarget as Node)) return
-    isFocus.value = false
-    closeList()
-}
-
-const toggleList = () => {
-    if (countriesListRef.value?.offsetParent) {
-        closeList()
-    } else {
-        openList()
-    }
-}
-
-const openList = () => {
+function openList() {
     if (!props.disabled) {
         CountrySelectorRef.value?.focus()
         emit('open')
@@ -216,9 +203,22 @@ const openList = () => {
     }
 }
 
-const closeList = () => {
+function closeList() {
     emit('close')
     hasListOpen.value = false
+}
+
+const handleBlur = () => {
+    isFocus.value = false
+    closeList()
+}
+
+function toggleList() {
+    if (hasListOpen.value) {
+        closeList()
+    } else {
+        openList()
+    }
 }
 
 const updateValue = async (val: string | null) => {
