@@ -138,7 +138,14 @@ const keyUp = (e: KeyboardEvent) => {
 }
 
 const keyDown = (e: KeyboardEvent) => {
-    emit('keydown', e)
+    if (
+        !isFinite(Number(e.key)) &&
+        e.key !== 'Backspace' &&
+        e.key !== 'ArrowLeft' &&
+        e.key !== 'ArrowRight'
+    ) {
+        e.preventDefault()
+    }
 }
 </script>
 

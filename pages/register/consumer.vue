@@ -138,7 +138,7 @@
                                 <client-only placeholder="Loading...">
                                     <b-form-group
                                         :state="validation.getState('password,value')"
-                                        label="Password"
+                                        label="PASSWORD*"
                                         label-for="password"
                                     >
                                         <weavr-password-input
