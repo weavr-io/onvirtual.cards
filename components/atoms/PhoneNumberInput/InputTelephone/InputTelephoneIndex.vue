@@ -22,28 +22,28 @@
             :id="id"
             ref="InputTel"
             v-model="inputValue"
-            v-bind="$attrs"
-            :placeholder="labelValue"
-            :type="type"
-            class="input-tel__input"
-            :disabled="disabled"
-            :required="required"
             :class="{ 'no-country-selector': noCountrySelector }"
+            :disabled="disabled"
+            :placeholder="labelValue"
+            :required="required"
             :style="[
                 noCountrySelector
                     ? { borderRadius: '4px' }
                     : { borderTopRightRadius: '4px', borderBottomRightRadius: '4px' },
             ]"
-            @keydown="keyDown"
-            @keyup="keyUp"
-            @focus="onFocus"
+            :type="type"
+            class="input-tel__input"
+            v-bind="$attrs"
             @blur="onBlur"
             @click="$emit('click', $event)"
+            @focus="onFocus"
+            @keydown="keyDown"
+            @keyup="keyUp"
         />
         <label
             ref="label"
-            :for="id"
             :class="error ? 'text-danger' : null"
+            :for="id"
             class="input-tel__label"
             @click="focusInput"
         >
@@ -53,9 +53,9 @@
         <button
             v-if="clearable && inputValue"
             class="input-tel__clear"
+            tabindex="-1"
             title="clear"
             type="button"
-            tabindex="-1"
             @click="clear"
         >
             <span class="input-tel__clear__effect" />
@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, defineProps, defineEmits } from 'vue'
+import { computed, defineEmits, defineProps, ref } from 'vue'
 
 const props = defineProps({
     value: { type: [String, Number], default: null },
@@ -166,7 +166,7 @@ const keyDown = (e: KeyboardEvent) => {
     &__label {
         position: absolute;
         top: 4px;
-        cursor: pointer;
+        cursor: text;
         left: 13px;
         transform: translateY(25%);
         opacity: 0;
@@ -176,7 +176,7 @@ const keyDown = (e: KeyboardEvent) => {
     }
 
     &__input {
-        cursor: pointer;
+        cursor: text;
         background-color: $bg-color;
         transition-duration: 0.3s;
         position: relative;
@@ -249,7 +249,7 @@ const keyDown = (e: KeyboardEvent) => {
         background: transparent;
         color: $secondary-color;
         border-radius: $clear-size;
-        cursor: pointer;
+        cursor: text;
         font-size: 12px;
 
         &:focus {

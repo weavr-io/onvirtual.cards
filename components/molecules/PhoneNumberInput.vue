@@ -129,7 +129,6 @@ const countryCode = computed({
     set(newCountry) {
         setLocale(newCountry)
         phoneNumberInputEl.value?.$el.querySelector('input').focus()
-        // this.$refs.PhoneNumberInput.$el.querySelector('input').focus()
     },
 })
 
