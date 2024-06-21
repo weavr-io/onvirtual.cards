@@ -9,7 +9,7 @@
                 :dark="dark"
                 :disabled="disabled"
                 :error="shouldChooseCountry"
-                :hint="shouldChooseCountry ? t.countrySelectorError : null"
+                :hint="shouldChooseCountry ? t.countrySelectorError : ''"
                 :ignored-countries="ignoredCountries"
                 :items="codesCountries"
                 :label="t.countrySelectorLabel"
@@ -81,7 +81,7 @@ const isCountryAvailable = (locale) => {
 
 const props = withDefaults(
     defineProps<{
-        value: string | null
+        value: string
         id: string
         color: string
         validColor: string
@@ -107,7 +107,7 @@ const props = withDefaults(
         borderRadius: number
     }>(),
     {
-        value: null,
+        value: '',
         id: 'MazPhoneNumberInput',
         color: 'dodgerblue',
         validColor: 'yellowgreen',
@@ -270,9 +270,7 @@ async function fetchCountryCode() {
         const responseText = await response.text()
         const result = (responseText || '').toString()
         if (result && result[0] === '1') setLocale(result.substring(2, 2))
-    } catch (err) {
-        throw new Error(err)
-    }
+    } catch (err) {}
 }
 
 onMounted(() => {
@@ -283,18 +281,6 @@ onMounted(() => {
                 phoneNumber: phoneNumber.value,
             })
 
-        if (props.defaultCountryCode && props.fetchCountry) {
-            throw new Error(
-                'MazPhoneNumberInput: Do not use "fetch-country" and "default-country-code" options in the same time',
-            )
-        }
-
-        if (props.defaultCountryCode && props.noUseBrowserLocale) {
-            throw new Error(
-                'MazPhoneNumberInput: If you use a "default-country-code", do not use "no-use-browser-locale" options',
-            )
-        }
-
         if (props.defaultCountryCode) return
 
         return props.fetchCountry
@@ -302,9 +288,7 @@ onMounted(() => {
             : !props.noUseBrowserLocale
               ? setLocale(browserLocale())
               : null
-    } catch (err) {
-        throw new Error(err)
-    }
+    } catch (err) {}
 })
 
 function getAsYouTypeFormat(payload) {
