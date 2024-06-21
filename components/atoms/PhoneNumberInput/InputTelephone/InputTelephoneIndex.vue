@@ -4,14 +4,11 @@
         :class="[
             {
                 'is-focused': isFocus,
-                'is-valid': valid,
                 'has-value': value,
                 'has-error': error,
                 'is-disabled': disabled,
-                'is-dark': dark,
                 'has-hint': hint,
             },
-            size,
         ]"
         class="input-tel"
         @click="focusInput"
@@ -22,15 +19,10 @@
             :id="id"
             ref="InputTel"
             v-model="inputValue"
-            :class="{ 'no-country-selector': noCountrySelector }"
             :disabled="disabled"
             :placeholder="labelValue"
-            :required="required"
-            :style="[
-                noCountrySelector
-                    ? { borderRadius: '4px' }
-                    : { borderTopRightRadius: '4px', borderBottomRightRadius: '4px' },
-            ]"
+            :required="true"
+            :style="[{ borderTopRightRadius: '4px', borderBottomRightRadius: '4px' }]"
             :type="type"
             class="input-tel__input"
             v-bind="$attrs"
@@ -38,7 +30,6 @@
             @click="$emit('click', $event)"
             @focus="onFocus"
             @keydown="keyDown"
-            @keyup="keyUp"
         />
         <label
             ref="label"
@@ -49,18 +40,6 @@
         >
             {{ hintValue || labelValue }}
         </label>
-
-        <button
-            v-if="clearable && inputValue"
-            class="input-tel__clear"
-            tabindex="-1"
-            title="clear"
-            type="button"
-            @click="clear"
-        >
-            <span class="input-tel__clear__effect" />
-            <span> ✕ </span>
-        </button>
 
         <div v-if="loader" class="input-tel__loader">
             <div class="input-tel__loader__progress-bar" />
@@ -78,16 +57,11 @@ const props = withDefaults(
         hint: string | null
         error: boolean
         disabled: boolean
-        dark: boolean
         id: string
-        size: string | null
         type: string
         readonly: boolean
         valid: boolean
-        required: boolean
         loader: boolean
-        clearable: boolean
-        noCountrySelector: boolean
     }>(),
     {
         value: null,
@@ -95,21 +69,16 @@ const props = withDefaults(
         hint: null,
         error: false,
         disabled: false,
-        dark: false,
         id: 'InputTel',
-        size: null,
         type: 'tel',
         readonly: false,
         valid: false,
-        required: false,
         loader: false,
-        clearable: false,
-        noCountrySelector: false,
     },
 )
 
 const inputTel = ref<HTMLElement | null>(null)
-const emit = defineEmits(['click', 'input', 'focus', 'blur', 'clear', 'keyup', 'keydown'])
+const emit = defineEmits(['click', 'input', 'focus', 'blur', 'keydown'])
 
 const isFocus = ref(false)
 const isHover = ref(false)
@@ -120,11 +89,11 @@ const inputValue = computed({
 })
 
 const labelValue = computed(() => {
-    return props.required && props.label ? `${props.label} *` : props.label
+    return props.label ? `${props.label} *` : props.label
 })
 
 const hintValue = computed(() => {
-    return props.required && props.hint ? `${props.hint} *` : props.hint
+    return props.hint ? `${props.hint} *` : props.hint
 })
 
 const updateHoverState = (value: boolean) => {
@@ -145,15 +114,6 @@ const onFocus = () => {
 const onBlur = () => {
     emit('blur')
     isFocus.value = false
-}
-
-const clear = () => {
-    emit('input', null)
-    emit('clear')
-}
-
-const keyUp = (e: KeyboardEvent) => {
-    emit('keyup', e)
 }
 
 const keyDown = (e: KeyboardEvent) => {
@@ -220,11 +180,6 @@ const keyDown = (e: KeyboardEvent) => {
 
         &:hover {
             border-color: $primary-color;
-        }
-
-        &:not(.no-country-selector) {
-            border-top-left-radius: 0 !important;
-            border-bottom-left-radius: 0 !important;
         }
 
         &::-webkit-input-placeholder {
@@ -311,56 +266,6 @@ const keyDown = (e: KeyboardEvent) => {
         }
     }
 
-    &.is-dark {
-        .input-tel {
-            &__input {
-                &::-webkit-input-placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &::-moz-placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &:-ms-input-placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &::-ms-input-placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &:-moz-placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &::placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &__input:-webkit-autofill,
-                &__input:-webkit-autofill:hover,
-                &__input:-webkit-autofill:focus,
-                &__input:-webkit-autofill:active {
-                    box-shadow: 0 0 0 1000px $bg-color-dark inset !important;
-                    -webkit-text-fill-color: $secondary-color-dark !important;
-                }
-            }
-
-            &__clear {
-                color: $secondary-color-dark;
-
-                &__effect {
-                    background-color: $muted-color-dark;
-                }
-
-                &:hover {
-                    color: white;
-                }
-            }
-        }
-    }
-
     &.is-focused {
         z-index: 1;
 
@@ -378,13 +283,6 @@ const keyDown = (e: KeyboardEvent) => {
         &.has-error {
             .input-tel__input {
                 box-shadow: 0 0 0 0.125rem $danger-color-transparency;
-            }
-        }
-
-        &.is-valid {
-            .input-tel__input {
-                border-color: $success-color;
-                box-shadow: 0 0 0 0.125rem $success-color-transparency;
             }
         }
     }
@@ -411,17 +309,6 @@ const keyDown = (e: KeyboardEvent) => {
 
         .input-tel__input {
             padding-top: 14px;
-        }
-    }
-
-    &.is-valid {
-        .input-tel__input,
-        .input-tel__input:hover {
-            border-color: $success-color;
-        }
-
-        .input-tel__label {
-            color: $success-color;
         }
     }
 

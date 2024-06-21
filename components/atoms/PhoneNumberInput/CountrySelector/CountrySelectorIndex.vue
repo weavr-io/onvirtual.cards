@@ -7,30 +7,21 @@
                 'has-value': value,
                 'has-hint': hint,
                 'has-error': error,
-                'is-disabled': disabled,
-                'is-dark': dark,
-                'no-flags': noFlags,
                 'has-list-open': hasListOpen,
                 'is-valid': valid,
             },
-            size,
         ]"
         class="country-selector"
         @mouseenter="updateHoverState(true)"
         @mouseleave="updateHoverState(false)"
         @blur.capture="handleBlur"
     >
-        <div
-            v-if="value && !noFlags"
-            class="country-selector__country-flag"
-            @click.stop="toggleList"
-        >
+        <div v-if="value" class="country-selector__country-flag" @click.stop="toggleList">
             <div :class="`iti-flag-small iti-flag ${value.toLowerCase()}`" />
         </div>
         <input
             :id="id"
             ref="CountrySelector"
-            :disabled="disabled"
             :placeholder="label"
             :value="callingCode"
             class="country-selector__input"
@@ -63,7 +54,6 @@
             <div
                 v-show="hasListOpen"
                 ref="countriesListRef"
-                :class="{ 'has-calling-code': showCodeOnList }"
                 :style="[{ borderRadius: '4px' }, listHeight]"
                 class="country-selector__list"
             >
@@ -88,14 +78,9 @@
                         type="button"
                         @click.stop="updateValue(item.iso2)"
                     >
-                        <div v-if="!noFlags" class="country-selector__list__item__flag-container">
+                        <div class="country-selector__list__item__flag-container">
                             <div :class="`iti-flag-small iti-flag ${item.iso2.toLowerCase()}`" />
                         </div>
-                        <span
-                            v-if="showCodeOnList"
-                            class="country-selector__list__item__calling-code flex-fixed"
-                            >+{{ item.dialCode }}</span
-                        >
                         <div class="dots-text">
                             {{ item.name }}
                         </div>
@@ -120,36 +105,26 @@ const props = withDefaults(
         value: any
         label: string
         hint: string
-        size: string
         error: boolean
-        disabled: boolean
         valid: boolean
-        dark: boolean
         items: string[]
         preferredCountries: string[]
         onlyCountries: string[]
         ignoredCountries: string[]
-        noFlags: boolean
         countriesHeight: number
-        showCodeOnList: boolean
     }>(),
     {
         id: 'CountrySelector',
         value: null,
         label: 'Choose country',
         hint: '',
-        size: '',
         error: false,
-        disabled: false,
         valid: false,
-        dark: false,
         items: () => [''],
         preferredCountries: () => [''],
         onlyCountries: () => [''],
         ignoredCountries: () => [''],
-        noFlags: false,
         countriesHeight: 35,
-        showCodeOnList: false,
     },
 )
 
@@ -214,13 +189,11 @@ const updateHoverState = (value: boolean) => {
 }
 
 function openList() {
-    if (!props.disabled) {
-        CountrySelectorRef.value?.focus()
-        emit('open')
-        isFocus.value = true
-        hasListOpen.value = true
-        if (props.value) scrollToSelectedOnFocus(selectedValueIndex.value)
-    }
+    CountrySelectorRef.value?.focus()
+    emit('open')
+    isFocus.value = true
+    hasListOpen.value = true
+    if (props.value) scrollToSelectedOnFocus(selectedValueIndex.value)
 }
 
 function closeList() {
@@ -422,10 +395,6 @@ watch(
         padding: 0;
         margin: 0;
 
-        &.has-calling-code {
-            min-width: 270px;
-        }
-
         &__item {
             padding: 0 10px;
             text-overflow: ellipsis;
@@ -460,70 +429,6 @@ watch(
                     color: #fff;
                 }
             }
-        }
-    }
-
-    // Dark Theme
-    &.is-dark {
-        .country-selector {
-            &__input {
-                cursor: pointer;
-                color: $secondary-color-dark;
-
-                &::-webkit-input-placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &::-moz-placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &:-ms-input-placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &::-ms-input-placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &:-moz-placeholder {
-                    color: $secondary-color-dark;
-                }
-
-                &::placeholder {
-                    color: $secondary-color-dark;
-                }
-            }
-
-            &__toggle {
-                &__arrow {
-                    color: $secondary-color-dark;
-
-                    path.arrow {
-                        fill: $secondary-color-dark;
-                    }
-                }
-            }
-
-            &__list {
-                &__item {
-                    color: $text-color-dark;
-
-                    &:hover,
-                    &.keyboard-selected {
-                        background-color: lighten($hover-color-dark, 10%);
-                    }
-                }
-
-                &__calling-code {
-                    color: $muted-color-dark;
-                }
-            }
-        }
-
-        .country-selector__input,
-        .country-selector__list {
-            color: $secondary-color-dark;
         }
     }
 
@@ -567,58 +472,6 @@ watch(
 
         .country-selector__input {
             padding-top: 14px;
-        }
-    }
-
-    // Disable theme
-    &.is-disabled {
-        .country-selector {
-            cursor: not-allowed;
-
-            &__input {
-                border-color: #ccc;
-                background-color: #f2f2f2;
-                color: $disabled-color;
-
-                &::-webkit-input-placeholder {
-                    color: $disabled-color;
-                }
-
-                &::-moz-placeholder {
-                    color: $disabled-color;
-                }
-
-                &:-ms-input-placeholder {
-                    color: $disabled-color;
-                }
-
-                &::-ms-input-placeholder {
-                    color: $disabled-color;
-                }
-
-                &:-moz-placeholder {
-                    color: $disabled-color;
-                }
-
-                &::placeholder {
-                    color: $disabled-color;
-                }
-            }
-
-            &__label,
-            &__input,
-            &__toggle__arrow,
-            &__country-flag,
-            &__country-flag > div {
-                cursor: not-allowed;
-                color: $disabled-color;
-            }
-        }
-    }
-
-    &.no-flags {
-        .country-selector__input {
-            padding-left: 10px;
         }
     }
 
@@ -687,21 +540,6 @@ watch(
                 padding-top: 18px;
             }
         }
-    }
-
-    .slide-enter-active,
-    .slide-leave-active {
-        opacity: 1;
-        z-index: 998;
-        transition: all 0.3s;
-        transform: translateY(0);
-    }
-
-    .slide-enter,
-    .slide-leave-to /* .fade-leave-active below version 2.1.8 */ {
-        opacity: 0;
-        z-index: 998;
-        transform: translateY(-20px);
     }
 }
 </style>

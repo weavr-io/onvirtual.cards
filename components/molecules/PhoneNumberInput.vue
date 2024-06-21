@@ -1,23 +1,18 @@
 <template>
-    <div :id="id" :class="[{ dark: dark }, size]" class="vue-phone-number-input flex">
-        <div v-if="!noCountrySelector" class="select-country-container">
+    <div :id="id" class="vue-phone-number-input flex">
+        <div class="select-country-container">
             <CountrySelectorIndex
                 :id="`${uniqueId}_country_selector`"
                 ref="CountrySelector"
                 v-model="countryCode"
                 :countries-height="countriesHeight"
-                :dark="dark"
-                :disabled="disabled"
                 :error="shouldChooseCountry"
-                :hint="shouldChooseCountry ? t.countrySelectorError : ''"
+                :hint="shouldChooseCountry ? translatedCountryName.countrySelectorError : ''"
                 :ignored-countries="ignoredCountries"
                 :items="codesCountries"
-                :label="t.countrySelectorLabel"
-                :no-flags="noFlags"
+                :label="translatedCountryName.countrySelectorLabel"
                 :only-countries="onlyCountries"
                 :preferred-countries="preferredCountries"
-                :show-code-on-list="showCodeOnList"
-                :size="size"
                 :theme="theme"
                 :valid="isValid && !noValidatorState"
                 class="input-country-selector"
@@ -30,14 +25,9 @@
                 :id="`${uniqueId}_phone_number`"
                 ref="phoneNumberInputEl"
                 v-model="phoneNumber"
-                :dark="dark"
-                :disabled="disabled"
                 :error="error"
                 :hint="hintValue"
-                :label="t.phoneNumberLabel"
-                :no-country-selector="noCountrySelector"
-                :required="required"
-                :size="size"
+                :label="translatedCountryName.phoneNumberLabel"
                 :theme="theme"
                 :valid="isValid && !noValidatorState"
                 class="input-phone-number"
@@ -84,52 +74,36 @@ const props = withDefaults(
         value: string
         id: string
         color: string
-        validColor: string
         errorColor: string
-        disabled: boolean
         defaultCountryCode: string | null
-        size: string
         preferredCountries: string[]
         onlyCountries: string[]
         ignoredCountries: string[]
         translations: {} | null
         noValidatorState: boolean
-        noFlags: boolean
         error: boolean
         noExample: boolean
-        required: boolean
         countriesHeight: number
         noUseBrowserLocale: boolean
         fetchCountry: boolean
-        noCountrySelector: boolean
-        showCodeOnList: boolean
-        dark: boolean
         borderRadius: number
     }>(),
     {
         value: '',
         id: 'MazPhoneNumberInput',
         color: 'dodgerblue',
-        validColor: 'yellowgreen',
         errorColor: 'orangered',
-        disabled: false,
         defaultCountryCode: null,
-        size: '',
         preferredCountries: null,
         onlyCountries: () => [''],
         ignoredCountries: () => [''],
         translations: null,
         noValidatorState: false,
-        noFlags: false,
         error: false,
         noExample: false,
-        required: false,
         countriesHeight: 30,
         noUseBrowserLocale: false,
         fetchCountry: false,
-        noCountrySelector: false,
-        showCodeOnList: false,
-        dark: false,
         borderRadius: 4,
     },
 )
@@ -142,7 +116,7 @@ const phoneNumber = ref<string[] | string | number[] | null | undefined>('')
 
 const uniqueId = computed(() => `${props.id}-${Math.random().toString(36).substring(2, 9)}`)
 
-const t = computed(() => ({
+const translatedCountryName = computed(() => ({
     ...locales,
     ...props.translations,
 }))
@@ -177,11 +151,11 @@ const hintValue = computed(() => {
         ? null
         : hasEmptyPhone.value || isValid.value
           ? null
-          : `${t.value.example} ${phoneNumberExample.value}`
+          : `${translatedCountryName.value.example} ${phoneNumberExample.value}`
 })
 
 const theme = computed(() => {
-    const getShadowColor = (color) => {
+    const getShadowColor = (color: string) => {
         return color
     }
 
@@ -189,16 +163,13 @@ const theme = computed(() => {
         colorValue: props.color,
         color: { color: props.color },
         textDarkColor: { color: 'rgba(255, 255, 255, 0.7)' },
-        validColor: { color: props.validColor },
         errorColor: { color: props.errorColor },
         bgColor: { backgroundColor: props.color },
-        bgValidColor: { backgroundColor: props.validColor },
         bgErrorColor: { backgroundColor: props.errorColor },
         borderColor: { borderColor: props.color },
-        borderValidColor: { borderColor: props.validColor },
         borderErrorColor: { borderColor: props.errorColor },
         boxShadowColor: { boxShadow: `0 0 0 0.125rem ${getShadowColor(props.color)}` },
-        boxShadowValid: { boxShadow: `0 0 0 0.125rem ${getShadowColor(props.validColor)}` },
+        boxShadowValid: { boxShadow: `0 0 0 0.125rem` },
         boxShadowError: { boxShadow: `0 0 0 0.125rem ${getShadowColor(props.errorColor)}` },
         borderRadius: { borderRadius: `${props.borderRadius}px` },
         borderLeftRadius: {
