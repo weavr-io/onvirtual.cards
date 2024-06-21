@@ -88,10 +88,10 @@ const props = withDefaults(
         errorColor: string
         disabled: boolean
         defaultCountryCode: string | null
-        size: string | null
-        preferredCountries: ArrayConstructor | null
-        onlyCountries: ArrayConstructor | null
-        ignoredCountries: ArrayConstructor | null
+        size: string
+        preferredCountries: string[]
+        onlyCountries: string[]
+        ignoredCountries: string[]
         translations: {} | null
         noValidatorState: boolean
         noFlags: boolean
@@ -114,10 +114,10 @@ const props = withDefaults(
         errorColor: 'orangered',
         disabled: false,
         defaultCountryCode: null,
-        size: null,
+        size: '',
         preferredCountries: null,
-        onlyCountries: null,
-        ignoredCountries: null,
+        onlyCountries: () => [''],
+        ignoredCountries: () => [''],
         translations: null,
         noValidatorState: false,
         noFlags: false,

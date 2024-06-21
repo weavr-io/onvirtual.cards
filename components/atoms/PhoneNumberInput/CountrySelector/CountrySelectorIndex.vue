@@ -117,7 +117,7 @@ const emit = defineEmits(['input', 'open', 'close'])
 const props = withDefaults(
     defineProps<{
         id: string
-        value: string
+        value: any
         label: string
         hint: string
         size: string
@@ -125,10 +125,10 @@ const props = withDefaults(
         disabled: boolean
         valid: boolean
         dark: boolean
-        items: ArrayConstructor
-        preferredCountries: ArrayConstructor
-        onlyCountries: ArrayConstructor
-        ignoredCountries: ArrayConstructor
+        items: string[]
+        preferredCountries: string[]
+        onlyCountries: string[]
+        ignoredCountries: string[]
         noFlags: boolean
         countriesHeight: number
         showCodeOnList: boolean
@@ -143,10 +143,10 @@ const props = withDefaults(
         disabled: false,
         valid: false,
         dark: false,
-        items: () => [],
-        preferredCountries: () => null,
-        onlyCountries: () => null,
-        ignoredCountries: () => null,
+        items: () => [''],
+        preferredCountries: () => [''],
+        onlyCountries: () => [''],
+        ignoredCountries: () => [''],
         noFlags: false,
         countriesHeight: 35,
         showCodeOnList: false,
@@ -267,7 +267,7 @@ const keyboardNav = (e: KeyboardEvent) => {
         if (index === -1 || index >= countriesSorted.value.length) {
             index = index === -1 ? countriesSorted.value.length - 1 : 0
         }
-        tmpValue.value = countriesSorted.value[index].iso2
+        tmpValue.value = countriesSorted.value[index]?.iso2
         scrollToSelectedOnFocus(index)
     } else if (code === 'Enter') {
         hasListOpen.value ? updateValue(tmpValue.value) : openList()
