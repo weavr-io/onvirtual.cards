@@ -79,39 +79,66 @@ const isCountryAvailable = (locale) => {
     return countriesIso.includes(locale)
 }
 
-const props = defineProps({
-    value: { type: String, default: null },
-    id: { type: String, default: 'MazPhoneNumberInput' },
-    color: { type: String, default: 'dodgerblue' },
-    validColor: { type: String, default: 'yellowgreen' },
-    errorColor: { type: String, default: 'orangered' },
-    darkColor: { type: String, default: '#424242' },
-    disabled: { type: Boolean, default: false },
-    defaultCountryCode: { type: String, default: null },
-    size: { type: String, default: null },
-    preferredCountries: { type: Array, default: null },
-    onlyCountries: { type: Array, default: null },
-    ignoredCountries: { type: Array, default: Array },
-    translations: { type: Object, default: null },
-    noValidatorState: { type: Boolean, default: false },
-    noFlags: { type: Boolean, default: false },
-    error: { type: Boolean, default: false },
-    noExample: { type: Boolean, default: false },
-    required: { type: Boolean, default: false },
-    countriesHeight: { type: Number, default: 30 },
-    noUseBrowserLocale: { type: Boolean, default: false },
-    fetchCountry: { type: Boolean, default: false },
-    noCountrySelector: { type: Boolean, default: false },
-    showCodeOnList: { type: Boolean, default: false },
-    dark: { type: Boolean, default: false },
-    borderRadius: { type: Number, default: 4 },
-})
+const props = withDefaults(
+    defineProps<{
+        value: string | null
+        id: string
+        color: string
+        validColor: string
+        errorColor: string
+        disabled: boolean
+        defaultCountryCode: string | null
+        size: string | null
+        preferredCountries: ArrayConstructor | null
+        onlyCountries: ArrayConstructor | null
+        ignoredCountries: ArrayConstructor | null
+        translations: {} | null
+        noValidatorState: boolean
+        noFlags: boolean
+        error: boolean
+        noExample: boolean
+        required: boolean
+        countriesHeight: number
+        noUseBrowserLocale: boolean
+        fetchCountry: boolean
+        noCountrySelector: boolean
+        showCodeOnList: boolean
+        dark: boolean
+        borderRadius: number
+    }>(),
+    {
+        value: null,
+        id: 'MazPhoneNumberInput',
+        color: 'dodgerblue',
+        validColor: 'yellowgreen',
+        errorColor: 'orangered',
+        disabled: false,
+        defaultCountryCode: null,
+        size: null,
+        preferredCountries: null,
+        onlyCountries: null,
+        ignoredCountries: null,
+        translations: null,
+        noValidatorState: false,
+        noFlags: false,
+        error: false,
+        noExample: false,
+        required: false,
+        countriesHeight: 30,
+        noUseBrowserLocale: false,
+        fetchCountry: false,
+        noCountrySelector: false,
+        showCodeOnList: false,
+        dark: false,
+        borderRadius: 4,
+    },
+)
 
 const emit = defineEmits(['update', 'input', 'phone-number-focused', 'phone-number-blur'])
 const results = ref({ countryCode: undefined, formatInternational: undefined, isValid: undefined })
 const userLocale = ref(props.defaultCountryCode)
 const lastKeyPressed = ref(0)
-const phoneNumber = ref('')
+const phoneNumber = ref<string[] | string | number[] | null | undefined>('')
 
 const uniqueId = computed(() => `${props.id}-${Math.random().toString(36).substring(2, 9)}`)
 
@@ -161,19 +188,15 @@ const theme = computed(() => {
     return {
         colorValue: props.color,
         color: { color: props.color },
-        textColor: { color: '#747474' },
         textDarkColor: { color: 'rgba(255, 255, 255, 0.7)' },
         validColor: { color: props.validColor },
         errorColor: { color: props.errorColor },
-        darkColor: { color: props.darkColor },
         bgColor: { backgroundColor: props.color },
         bgValidColor: { backgroundColor: props.validColor },
         bgErrorColor: { backgroundColor: props.errorColor },
-        bgDarkColor: { backgroundColor: props.darkColor },
         borderColor: { borderColor: props.color },
         borderValidColor: { borderColor: props.validColor },
         borderErrorColor: { borderColor: props.errorColor },
-        borderDarkColor: { borderColor: props.darkColor },
         boxShadowColor: { boxShadow: `0 0 0 0.125rem ${getShadowColor(props.color)}` },
         boxShadowValid: { boxShadow: `0 0 0 0.125rem ${getShadowColor(props.validColor)}` },
         boxShadowError: { boxShadow: `0 0 0 0.125rem ${getShadowColor(props.errorColor)}` },

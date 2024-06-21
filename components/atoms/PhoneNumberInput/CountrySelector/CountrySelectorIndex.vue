@@ -114,24 +114,44 @@ import { nextTick } from '@nuxtjs/composition-api'
 
 const emit = defineEmits(['input', 'open', 'close'])
 
-const props = defineProps({
-    id: { type: String, default: 'CountrySelector' },
-    value: { type: String, default: null },
-    label: { type: String, default: 'Choose country' },
-    hint: { type: String, default: '' },
-    size: { type: String, default: '' },
-    error: { type: Boolean, default: false },
-    disabled: { type: Boolean, default: false },
-    valid: { type: Boolean, default: false },
-    dark: { type: Boolean, default: false },
-    items: { type: Array, default: () => [], required: true },
-    preferredCountries: { type: Array, default: () => null },
-    onlyCountries: { type: Array, default: () => null },
-    ignoredCountries: { type: Array, default: () => null },
-    noFlags: { type: Boolean, default: false },
-    countriesHeight: { type: Number, default: 35 },
-    showCodeOnList: { type: Boolean, default: false },
-})
+const props = withDefaults(
+    defineProps<{
+        id: string
+        value: string
+        label: string
+        hint: string
+        size: string
+        error: boolean
+        disabled: boolean
+        valid: boolean
+        dark: boolean
+        items: ArrayConstructor
+        preferredCountries: ArrayConstructor
+        onlyCountries: ArrayConstructor
+        ignoredCountries: ArrayConstructor
+        noFlags: boolean
+        countriesHeight: number
+        showCodeOnList: boolean
+    }>(),
+    {
+        id: 'CountrySelector',
+        value: null,
+        label: 'Choose country',
+        hint: '',
+        size: '',
+        error: false,
+        disabled: false,
+        valid: false,
+        dark: false,
+        items: () => [],
+        preferredCountries: () => null,
+        onlyCountries: () => null,
+        ignoredCountries: () => null,
+        noFlags: false,
+        countriesHeight: 35,
+        showCodeOnList: false,
+    },
+)
 
 const isFocus = ref(false)
 const hasListOpen = ref(false)

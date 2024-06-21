@@ -71,23 +71,42 @@
 <script lang="ts" setup>
 import { computed, defineEmits, defineProps, ref } from 'vue'
 
-const props = defineProps({
-    value: { type: [String, Number], default: null },
-    label: { type: String, default: 'Enter text' },
-    hint: { type: String, default: null },
-    error: { type: Boolean, default: Boolean },
-    disabled: { type: Boolean, default: false },
-    dark: { type: Boolean, default: false },
-    id: { type: String, default: 'InputTel' },
-    size: { type: String, default: null },
-    type: { type: String, default: 'tel' },
-    readonly: { type: Boolean, default: false },
-    valid: { type: Boolean, default: false },
-    required: { type: Boolean, default: false },
-    loader: { type: Boolean, default: false },
-    clearable: { type: Boolean, default: false },
-    noCountrySelector: { type: Boolean, default: false },
-})
+const props = withDefaults(
+    defineProps<{
+        value: string[] | number[] | null
+        label: string
+        hint: string | null
+        error: boolean
+        disabled: boolean
+        dark: boolean
+        id: string
+        size: string | null
+        type: string
+        readonly: boolean
+        valid: boolean
+        required: boolean
+        loader: boolean
+        clearable: boolean
+        noCountrySelector: boolean
+    }>(),
+    {
+        value: null,
+        label: 'Enter text',
+        hint: null,
+        error: false,
+        disabled: false,
+        dark: false,
+        id: 'InputTel',
+        size: null,
+        type: 'tel',
+        readonly: false,
+        valid: false,
+        required: false,
+        loader: false,
+        clearable: false,
+        noCountrySelector: false,
+    },
+)
 
 const inputTel = ref<HTMLElement | null>(null)
 const emit = defineEmits(['click', 'input', 'focus', 'blur', 'clear', 'keyup', 'keydown'])
