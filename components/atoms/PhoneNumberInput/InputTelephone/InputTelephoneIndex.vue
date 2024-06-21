@@ -22,7 +22,7 @@
             :required="true"
             :style="[{ borderTopRightRadius: '4px', borderBottomRightRadius: '4px' }]"
             :type="type"
-            class="input-tel__input"
+            class="input-tel-input"
             v-bind="$attrs"
             @blur="onBlur"
             @click="$emit('click', $event)"
@@ -33,7 +33,7 @@
             ref="label"
             :class="error ? 'text-danger' : null"
             :for="id"
-            class="input-tel__label"
+            class="input-tel-label"
             @click="focusInput"
         >
             {{ hintValue || labelValue }}
@@ -121,134 +121,5 @@ const keyDown = (e: KeyboardEvent) => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/components/atoms/PhoneNumberInput/assets/variables.scss';
 @import 'style-helpers';
-
-.input-tel {
-    position: relative;
-    height: 40px;
-    min-height: 40px;
-
-    &__label {
-        position: absolute;
-        top: 4px;
-        cursor: text;
-        left: 13px;
-        transform: translateY(25%);
-        opacity: 0;
-        transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
-        font-size: 11px;
-        color: $secondary-color;
-    }
-
-    &__input {
-        cursor: text;
-        background-color: $bg-color;
-        transition-duration: 0.3s;
-        position: relative;
-        width: 100%;
-        padding: 0 12px;
-        font-weight: 400;
-        appearance: none;
-        outline: none;
-        border: 1px solid $third-color;
-        font-size: 14px;
-        z-index: 0;
-        margin-left: -1px;
-        height: 40px;
-        min-height: 40px;
-
-        &:hover {
-            border-color: $primary-color;
-        }
-
-        &::-webkit-input-placeholder {
-            color: $secondary-color;
-        }
-
-        &::-moz-placeholder {
-            color: $secondary-color;
-        }
-
-        &:-ms-input-placeholder {
-            color: $secondary-color;
-        }
-
-        &::-ms-input-placeholder {
-            color: $secondary-color;
-        }
-
-        &:-moz-placeholder {
-            color: $secondary-color;
-        }
-
-        &::placeholder {
-            color: $secondary-color;
-        }
-
-        &__input:-webkit-autofill,
-        &__input:-webkit-autofill:hover,
-        &__input:-webkit-autofill:focus,
-        &__input:-webkit-autofill:active {
-            box-shadow: 0 0 0 1000px $bg-color inset !important;
-            -webkit-text-fill-color: $secondary-color !important;
-        }
-    }
-
-    &.is-focused {
-        z-index: 1;
-
-        .input-tel {
-            &__input {
-                border-color: $primary-color;
-                box-shadow: 0 0 0 0.125rem $primary-color-transparency;
-            }
-
-            &__label {
-                color: $primary-color;
-            }
-        }
-
-        &.has-error {
-            .input-tel__input {
-                box-shadow: 0 0 0 0.125rem $danger-color-transparency;
-            }
-        }
-    }
-
-    &.has-value {
-        .input-tel__label {
-            opacity: 1;
-            transform: translateY(0);
-            font-size: 11px;
-        }
-
-        .input-tel__input {
-            padding-top: 14px;
-        }
-    }
-
-    &.has-value,
-    &.has-hint {
-        .input-tel__label {
-            opacity: 1;
-            transform: translateY(0);
-            font-size: 11px;
-        }
-
-        .input-tel__input {
-            padding-top: 14px;
-        }
-    }
-
-    &.has-error:not(.is-valid) {
-        .input-tel__input {
-            border-color: $danger-color;
-        }
-
-        .input-tel__label {
-            color: $danger-color;
-        }
-    }
-}
 </style>

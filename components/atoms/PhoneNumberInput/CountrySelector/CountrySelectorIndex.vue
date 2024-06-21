@@ -15,7 +15,7 @@
         @mouseleave="updateHoverState(false)"
         @blur.capture="handleBlur"
     >
-        <div v-if="value" class="country-selector__country-flag" @click.stop="toggleList">
+        <div v-if="value" class="country-selector-country-flag" @click.stop="toggleList">
             <div :class="`iti-flag-small iti-flag ${value.toLowerCase()}`" />
         </div>
         <input
@@ -23,21 +23,15 @@
             ref="CountrySelector"
             :placeholder="label"
             :value="callingCode"
-            class="country-selector__input"
+            class="country-selector-input"
             readonly
             @focus="isFocus = true"
             @keydown="keyboardNav"
             @click.stop="toggleList"
         />
-        <div class="country-selector__toggle" @click.stop="toggleList">
+        <div class="country-selector-toggle" @click.stop="toggleList">
             <slot name="arrow">
-                <svg
-                    class="country-selector__toggle__arrow"
-                    height="24"
-                    mlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="24"
-                >
+                <svg height="24" mlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24">
                     <path
                         class="arrow"
                         d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
@@ -46,7 +40,7 @@
                 </svg>
             </slot>
         </div>
-        <label ref="label" class="country-selector__label" @click.stop="toggleList">
+        <label ref="label" class="country-selector-label" @click.stop="toggleList">
             {{ hint || label }}
         </label>
         <Transition name="slide">
@@ -54,7 +48,7 @@
                 v-show="hasListOpen"
                 ref="countriesListRef"
                 :style="[{ borderRadius: '4px' }, listHeight]"
-                class="country-selector__list"
+                class="country-selector-list"
             >
                 <RecycleScroller
                     v-slot="{ item }"
@@ -72,12 +66,12 @@
                             itemHeight,
                             value === item.iso2 ? { backgroundColor: '#6d1c5d' } : {},
                         ]"
-                        class="flex align-center country-selector__list__item"
+                        class="flex align-center country-selector-list-item"
                         tabindex="-1"
                         type="button"
                         @click.stop="updateValue(item.iso2)"
                     >
-                        <div class="country-selector__list__item__flag-container">
+                        <div class="country-selector-list-item-flag-container">
                             <div :class="`iti-flag-small iti-flag ${item.iso2.toLowerCase()}`" />
                         </div>
                         <div class="dots-text">
@@ -284,148 +278,6 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-@import '@/components/atoms/PhoneNumberInput/assets/variables.scss';
 @import 'style-helpers';
 @import './assets/iti-flags/flags.css';
-
-.country-selector {
-    position: relative;
-    height: 40px;
-    min-height: 40px;
-    z-index: 0;
-    user-select: none;
-
-    &__label {
-        position: absolute;
-        top: 3px;
-        cursor: pointer;
-        left: 11px;
-        transform: translateY(25%);
-        opacity: 0;
-        transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
-        font-size: 11px;
-        color: $secondary-color;
-    }
-
-    &__input {
-        cursor: pointer;
-        background-color: $bg-color;
-        position: relative;
-        width: 100%;
-        height: 40px;
-        min-height: 40px;
-        padding-right: 22px;
-        font-weight: 400;
-        appearance: none;
-        outline: none;
-        border: 1px solid $third-color;
-        font-size: 13px;
-        z-index: 0;
-        padding-left: 8px;
-        color: $text-color;
-    }
-
-    &__toggle {
-        position: absolute;
-        right: 5px;
-        top: calc(50% - 10px);
-        transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
-        text-align: center;
-        display: inline-block;
-        cursor: pointer;
-        height: 24px;
-    }
-
-    &__country-flag {
-        margin: auto 0;
-        position: absolute;
-        top: 21px;
-        left: 11px;
-        z-index: 1;
-        cursor: pointer;
-
-        img {
-            position: absolute;
-        }
-    }
-
-    &__list {
-        max-width: 100%;
-        top: 100%;
-        width: 100%;
-        min-width: 230px;
-        position: absolute;
-        background-color: $bg-color;
-        overflow: hidden;
-        box-shadow:
-            0 2px 2px 0 rgba(0, 0, 0, 0.14),
-            0 1px 5px 0 rgba(0, 0, 0, 0.12);
-        z-index: 9;
-        list-style: none;
-        overflow-y: auto;
-        overflow-x: hidden;
-        padding: 0;
-        margin: 0;
-
-        &__item {
-            padding: 0 10px;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-            font-size: 12px;
-            cursor: pointer;
-            background-color: transparent;
-            width: 100%;
-            border: 0;
-            outline: none;
-
-            &__flag-container {
-                margin-right: 10px;
-            }
-
-            &.hover,
-            &.keyboard-selected {
-                background-color: $hover-color;
-            }
-
-            &.selected {
-                color: #fff;
-                font-weight: 600;
-            }
-        }
-    }
-
-    &.has-list-open {
-        z-index: 1;
-
-        .country-selector {
-            &__toggle {
-                transform: rotate(180deg);
-            }
-        }
-    }
-
-    &.is-focused {
-        z-index: 1;
-    }
-
-    &.has-value {
-        .country-selector__input {
-            padding-left: 40px;
-        }
-    }
-
-    &.has-value,
-    &.has-hint {
-        .country-selector__label {
-            opacity: 1;
-            transform: translateY(0);
-            font-size: 11px;
-        }
-
-        .country-selector__input {
-            padding-top: 14px;
-        }
-    }
-}
 </style>
