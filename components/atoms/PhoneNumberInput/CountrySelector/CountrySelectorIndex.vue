@@ -6,7 +6,6 @@
                 'is-focused': isFocus,
                 'has-value': value,
                 'has-hint': hint,
-                'has-error': error,
                 'has-list-open': hasListOpen,
                 'is-valid': valid,
             },
@@ -105,7 +104,6 @@ const props = withDefaults(
         value: any
         label: string
         hint: string
-        error: boolean
         valid: boolean
         items: string[]
         preferredCountries: string[]
@@ -118,7 +116,6 @@ const props = withDefaults(
         value: null,
         label: 'Choose country',
         hint: '',
-        error: false,
         valid: false,
         items: () => [''],
         preferredCountries: () => [''],
@@ -291,29 +288,12 @@ watch(
 @import 'style-helpers';
 @import './assets/iti-flags/flags.css';
 
-// Light Theme
 .country-selector {
-    font-family:
-        Roboto,
-        -apple-system,
-        BlinkMacSystemFont,
-        Segoe UI,
-        Oxygen,
-        Ubuntu,
-        Cantarell,
-        Fira Sans,
-        Droid Sans,
-        Helvetica Neue,
-        sans-serif;
     position: relative;
     height: 40px;
     min-height: 40px;
     z-index: 0;
     user-select: none;
-
-    &:hover {
-        z-index: 1;
-    }
 
     &__label {
         position: absolute;
@@ -354,14 +334,6 @@ watch(
         display: inline-block;
         cursor: pointer;
         height: 24px;
-
-        &__arrow {
-            color: $secondary-color;
-
-            path.arrow {
-                fill: $secondary-color;
-            }
-        }
     }
 
     &__country-flag {
@@ -411,11 +383,6 @@ watch(
                 margin-right: 10px;
             }
 
-            &__calling-code {
-                width: 45px;
-                color: $muted-color;
-            }
-
             &.hover,
             &.keyboard-selected {
                 background-color: $hover-color;
@@ -424,10 +391,6 @@ watch(
             &.selected {
                 color: #fff;
                 font-weight: 600;
-
-                .country-selector__list__item__calling-code {
-                    color: #fff;
-                }
             }
         }
     }
@@ -446,16 +409,6 @@ watch(
         z-index: 1;
     }
 
-    &.has-error {
-        .country-selector__input {
-            border-color: $danger-color;
-        }
-
-        .country-selector__label {
-            color: $danger-color;
-        }
-    }
-
     &.has-value {
         .country-selector__input {
             padding-left: 40px;
@@ -472,73 +425,6 @@ watch(
 
         .country-selector__input {
             padding-top: 14px;
-        }
-    }
-
-    &.sm {
-        height: 36px;
-        min-height: 36px;
-
-        .country-selector__input {
-            height: 36px;
-            min-height: 36px;
-            font-size: 12px;
-        }
-
-        .country-selector__label {
-            font-size: 10px;
-        }
-
-        .country-selector__country-flag {
-            top: 16px;
-
-            img {
-                zoom: 0.3;
-                color: red;
-                /* stylelint-disable */
-                -moz-transform: scale(0.3);
-                -moz-transform-origin: 0 0;
-                /* stylelint-enable */
-            }
-        }
-
-        &.has-value {
-            .country-selector__input {
-                padding-top: 12px;
-            }
-        }
-    }
-
-    &.lg {
-        height: 48px;
-        min-height: 48px;
-
-        .country-selector__input {
-            height: 48px;
-            min-height: 48px;
-            font-size: 14px;
-        }
-
-        .country-selector__label {
-            font-size: 14px;
-        }
-
-        .country-selector__country-flag {
-            top: 25px;
-
-            img {
-                zoom: 0.45;
-                /* stylelint-disable */
-                -moz-transform: scale(0.45);
-                -moz-transform-origin: 0 0;
-                /* stylelint-enable */
-            }
-        }
-
-        &.has-value {
-            .country-selector__input {
-                padding-top: 18px;
-            }
         }
     }
 }

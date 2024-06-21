@@ -6,7 +6,6 @@
                 ref="CountrySelector"
                 v-model="countryCode"
                 :countries-height="countriesHeight"
-                :error="shouldChooseCountry"
                 :hint="shouldChooseCountry ? translatedCountryName.countrySelectorError : ''"
                 :ignored-countries="ignoredCountries"
                 :items="codesCountries"
@@ -155,31 +154,15 @@ const hintValue = computed(() => {
 })
 
 const theme = computed(() => {
-    const getShadowColor = (color: string) => {
-        return color
-    }
-
     return {
         colorValue: props.color,
         color: { color: props.color },
-        textDarkColor: { color: 'rgba(255, 255, 255, 0.7)' },
         errorColor: { color: props.errorColor },
         bgColor: { backgroundColor: props.color },
         bgErrorColor: { backgroundColor: props.errorColor },
         borderColor: { borderColor: props.color },
         borderErrorColor: { borderColor: props.errorColor },
-        boxShadowColor: { boxShadow: `0 0 0 0.125rem ${getShadowColor(props.color)}` },
-        boxShadowValid: { boxShadow: `0 0 0 0.125rem` },
-        boxShadowError: { boxShadow: `0 0 0 0.125rem ${getShadowColor(props.errorColor)}` },
         borderRadius: { borderRadius: `${props.borderRadius}px` },
-        borderLeftRadius: {
-            borderTopLeftRadius: `${props.borderRadius}px`,
-            borderBottomLeftRadius: `${props.borderRadius}px`,
-        },
-        borderRightRadius: {
-            borderTopRightRadius: `${props.borderRadius}px`,
-            borderBottomRightRadius: `${props.borderRadius}px`,
-        },
     }
 })
 
@@ -310,20 +293,6 @@ function getParsePhoneNumberFromString({ phoneNumber, countryCode }) {
         width: 120px;
         min-width: 120px;
         max-width: 120px;
-    }
-
-    &.sm .select-country-container {
-        flex: 0 0 110px;
-        width: 110px;
-        min-width: 110px;
-        max-width: 110px;
-    }
-
-    &.lg .select-country-container {
-        flex: 0 0 130px;
-        width: 130px;
-        min-width: 130px;
-        max-width: 130px;
     }
 }
 </style>
