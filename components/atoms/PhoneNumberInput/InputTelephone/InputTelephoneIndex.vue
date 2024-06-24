@@ -46,20 +46,20 @@ import { computed, defineEmits, defineProps, ref } from 'vue'
 
 const props = withDefaults(
     defineProps<{
-        value: string[] | number[] | null
+        value: string
         label: string
-        hint: string | null
+        hint: string
         error: boolean
         id: string
-        type: string
-        readonly: boolean
+        type?: string
+        readonly?: boolean
         valid: boolean
-        loader: boolean
+        loader?: boolean
     }>(),
     {
-        value: null,
+        value: '',
         label: 'Enter text',
-        hint: null,
+        hint: '',
         error: false,
         id: 'InputTel',
         type: 'tel',
@@ -119,7 +119,3 @@ const keyDown = (e: KeyboardEvent) => {
     }
 }
 </script>
-
-<style lang="scss" scoped>
-@import 'style-helpers';
-</style>

@@ -11,7 +11,6 @@
                 :items="codesCountries"
                 :label="translatedCountryName.countrySelectorLabel"
                 :only-countries="onlyCountries"
-                :preferred-countries="preferredCountries"
                 :theme="theme"
                 :valid="isValid && !noValidatorState"
                 class="input-country-selector"
@@ -19,7 +18,7 @@
                 <slot slot="arrow" name="arrow" />
             </CountrySelectorIndex>
         </div>
-        <div class="flex-1">
+        <div class="flex-1 w-100">
             <InputTel
                 :id="`${uniqueId}_phone_number`"
                 ref="phoneNumberInputEl"
@@ -48,21 +47,16 @@ import examples from 'libphonenumber-js/examples.mobile.json'
 import { AsYouType, getExampleNumber, parsePhoneNumberFromString } from 'libphonenumber-js'
 import { computed, defineProps } from 'vue'
 import { nextTick, onMounted, ref, watch } from '@nuxtjs/composition-api'
-import { countries, countriesIso } from '../atoms/PhoneNumberInput/assets/js/phoneCodeCountries.js'
 import InputTel from '../atoms/PhoneNumberInput/InputTelephone/InputTelephoneIndex.vue'
 import locales from '../atoms/PhoneNumberInput/assets/locales'
 import CountrySelectorIndex from '../atoms/PhoneNumberInput/CountrySelector/CountrySelectorIndex.vue'
+import {
+    countries,
+    countriesIso,
+} from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 const phoneNumberInputEl = ref<typeof PhoneNumberInput | undefined>(undefined)
-
-const browserLocale = () => {
-    if (!window) return null
-    const browserLocale = window.navigator.language || window.navigator.language
-    let locale = browserLocale ? browserLocale.substring(3, 4).toUpperCase() : null
-    if (locale === '') locale = browserLocale.substring(0, 2).toUpperCase()
-    return locale
-}
 
 const isCountryAvailable = (locale) => {
     return countriesIso.includes(locale)
@@ -70,22 +64,21 @@ const isCountryAvailable = (locale) => {
 
 const props = withDefaults(
     defineProps<{
-        value: string
-        id: string
+        value?: string
+        id?: string
         color: string
         errorColor: string
         defaultCountryCode: string | null
-        preferredCountries: string[]
-        onlyCountries: string[]
-        ignoredCountries: string[]
-        translations: {} | null
-        noValidatorState: boolean
+        onlyCountries?: string[]
+        ignoredCountries?: string[]
+        translations?: {} | null
+        noValidatorState?: boolean
         error: boolean
-        noExample: boolean
-        countriesHeight: number
-        noUseBrowserLocale: boolean
-        fetchCountry: boolean
-        borderRadius: number
+        noExample?: boolean
+        countriesHeight?: number
+        noUseBrowserLocale?: boolean
+        fetchCountry?: boolean
+        borderRadius?: number
     }>(),
     {
         value: '',
@@ -93,7 +86,6 @@ const props = withDefaults(
         color: 'dodgerblue',
         errorColor: 'orangered',
         defaultCountryCode: null,
-        preferredCountries: null,
         onlyCountries: () => [''],
         ignoredCountries: () => [''],
         translations: null,
@@ -111,7 +103,7 @@ const emit = defineEmits(['update', 'input', 'phone-number-focused', 'phone-numb
 const results = ref({ countryCode: undefined, formatInternational: undefined, isValid: undefined })
 const userLocale = ref(props.defaultCountryCode)
 const lastKeyPressed = ref(0)
-const phoneNumber = ref<string[] | string | number[] | null | undefined>('')
+const phoneNumber = ref<string | undefined>('')
 
 const uniqueId = computed(() => `${props.id}-${Math.random().toString(36).substring(2, 9)}`)
 
@@ -140,16 +132,16 @@ const isValid = computed(() => results.value.isValid)
 
 const phoneNumberExample = computed(() => {
     const exampleNumber = countryCode.value ? getExampleNumber(countryCode.value, examples) : null
-    return exampleNumber ? exampleNumber.formatNational() : null
+    return exampleNumber?.formatNational() ?? null
 })
 
 const hasEmptyPhone = computed(() => phoneNumber.value === '' || phoneNumber.value === null)
 
 const hintValue = computed(() => {
     return props.noExample || !phoneNumberExample.value
-        ? null
+        ? ''
         : hasEmptyPhone.value || isValid.value
-          ? null
+          ? ''
           : `${translatedCountryName.value.example} ${phoneNumberExample.value}`
 })
 
@@ -218,31 +210,12 @@ watch(
     { immediate: true },
 )
 
-async function fetchCountryCode() {
-    try {
-        const response = await fetch('https://ip2c.org/s')
-        const responseText = await response.text()
-        const result = (responseText || '').toString()
-        if (result && result[0] === '1') setLocale(result.substring(2, 2))
-    } catch (err) {}
-}
-
 onMounted(() => {
-    try {
-        if (phoneNumber && props.defaultCountryCode)
-            emitValues({
-                countryCode: props.defaultCountryCode,
-                phoneNumber: phoneNumber.value,
-            })
-
-        if (props.defaultCountryCode) return
-
-        return props.fetchCountry
-            ? fetchCountryCode()
-            : !props.noUseBrowserLocale
-              ? setLocale(browserLocale())
-              : null
-    } catch (err) {}
+    if (phoneNumber && props.defaultCountryCode)
+        emitValues({
+            countryCode: props.defaultCountryCode,
+            phoneNumber: phoneNumber.value,
+        })
 })
 
 function getAsYouTypeFormat(payload) {
@@ -256,8 +229,6 @@ function setLocale(locale) {
     if (countryAvailable && locale) {
         userLocale.value = countryAvailable ? locale : null
         emitValues({ countryCode: locale, phoneNumber: props.value })
-    } else if (!countryAvailable && locale) {
-        window.console.warn(`The locale ${locale} is not available`)
     }
 }
 
@@ -285,9 +256,9 @@ function getParsePhoneNumberFromString({ phoneNumber, countryCode }) {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../node_modules/style-helpers';
-
 .vue-phone-number-input {
+    display: flex;
+
     .select-country-container {
         flex: 0 0 120px;
         width: 120px;

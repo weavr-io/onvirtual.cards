@@ -385,7 +385,7 @@ export default defineComponent({
 
                 validation.value.touch() && (await validation.value.validate())
 
-                if (rootMobileNumber.value === '' || rootMobileNumber.value == null) {
+                if (numberIsValid.value === null) {
                     numberIsValid.value = false
                 }
 
@@ -475,9 +475,8 @@ export default defineComponent({
         const phoneUpdate = (number) => {
             registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
             registrationRequest.rootUser!.mobile!.number = number.nationalNumber
-            number.phoneNumber === '' || number.phoneNumber == null
-                ? (numberIsValid.value = true)
-                : (numberIsValid.value = number.isValid)
+            numberIsValid.value =
+                number.phoneNumber === '' || number.phoneNumber == null ? true : number.isValid
         }
 
         const updateDOB = (val: ComputedRef) => {

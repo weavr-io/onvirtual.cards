@@ -30,15 +30,7 @@
             @click.stop="toggleList"
         />
         <div class="country-selector-toggle" @click.stop="toggleList">
-            <slot name="arrow">
-                <svg height="24" mlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24">
-                    <path
-                        class="arrow"
-                        d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"
-                    />
-                    <path d="M0 0h24v24H0V0z" fill="none" />
-                </svg>
-            </slot>
+            <img src="@/assets/svg/statement/down_arrow.svg" />
         </div>
         <label ref="label" class="country-selector-label" @click.stop="toggleList">
             {{ hint || label }}
@@ -95,24 +87,22 @@ const emit = defineEmits(['input', 'open', 'close'])
 const props = withDefaults(
     defineProps<{
         id: string
-        value: any
+        value: string
         label: string
         hint: string
         valid: boolean
         items: string[]
-        preferredCountries: string[]
         onlyCountries: string[]
         ignoredCountries: string[]
         countriesHeight: number
     }>(),
     {
         id: 'CountrySelector',
-        value: null,
+        value: '',
         label: 'Choose country',
         hint: '',
         valid: false,
         items: () => [''],
-        preferredCountries: () => [''],
         onlyCountries: () => [''],
         ignoredCountries: () => [''],
         countriesHeight: 35,
@@ -143,7 +133,7 @@ const countriesList = props.items.filter(
 )
 
 const countriesFiltered = computed(() => {
-    const countries = props.onlyCountries || props.preferredCountries
+    const countries = props.onlyCountries
     return countries
         ? countries.map((country: any) =>
               countriesList.find((item: any) => item.iso2.includes(country)),
@@ -151,16 +141,8 @@ const countriesFiltered = computed(() => {
         : []
 })
 
-const otherCountries = computed(() => {
-    return countriesList.filter((item: any) => !props.preferredCountries?.includes(item.iso2))
-})
-
 const countriesSorted = computed(() => {
-    return props.preferredCountries
-        ? [...countriesFiltered.value, ...otherCountries.value]
-        : props.onlyCountries
-          ? countriesFiltered.value
-          : countriesList
+    return props.onlyCountries ? countriesFiltered.value : countriesList
 })
 
 const selectedValueIndex = computed(() => {
@@ -198,11 +180,7 @@ const handleBlur = () => {
 }
 
 function toggleList() {
-    if (hasListOpen.value) {
-        closeList()
-    } else {
-        openList()
-    }
+    return hasListOpen.value ? closeList() : openList()
 }
 
 const updateValue = async (val: string | null) => {
@@ -224,21 +202,29 @@ const scrollToSelectedOnFocus = (arrayIndex: number | null) => {
 
 const keyboardNav = (e: KeyboardEvent) => {
     const code = e.key
-    if (code === 'ArrowDown' || code === 'ArrowUp') {
-        e.preventDefault()
-        if (!hasListOpen.value) openList()
-        let index = code === 'ArrowDown' ? tmpValueIndex.value + 1 : tmpValueIndex.value - 1
-        if (index === -1 || index >= countriesSorted.value.length) {
-            index = index === -1 ? countriesSorted.value.length - 1 : 0
-        }
-        tmpValue.value = countriesSorted.value[index]?.iso2
-        scrollToSelectedOnFocus(index)
-    } else if (code === 'Enter') {
-        hasListOpen.value ? updateValue(tmpValue.value) : openList()
-    } else if (code === 'Escape') {
-        closeList()
-    } else {
-        searching(e)
+    let index
+
+    switch (code) {
+        case 'ArrowDown':
+        case 'ArrowUp':
+            e.preventDefault()
+            if (!hasListOpen.value) openList()
+            index = code === 'ArrowDown' ? tmpValueIndex.value + 1 : tmpValueIndex.value - 1
+            if (index === -1 || index >= countriesSorted.value.length) {
+                index = index === -1 ? countriesSorted.value.length - 1 : 0
+            }
+            tmpValue.value = countriesSorted.value[index]?.iso2
+            scrollToSelectedOnFocus(index)
+            break
+        case 'Enter':
+            hasListOpen.value ? updateValue(tmpValue.value) : openList()
+            break
+        case 'Escape':
+            closeList()
+            break
+        default:
+            searching(e)
+            break
     }
 }
 
@@ -254,17 +240,13 @@ const searching = (e: KeyboardEvent) => {
     } else if (/[a-zA-Z-e ]/.test(q)) {
         if (!hasListOpen.value) openList()
         query.value += e.key
-        const countries = props.preferredCountries
-            ? countriesSorted.value.slice(props.preferredCountries.length)
-            : countriesSorted.value
+        const countries = countriesSorted.value
         const resultIndex = countries.findIndex((c: any) => {
             tmpValue.value = c.iso2
             return c.name.toLowerCase().startsWith(query.value)
         })
         if (resultIndex !== -1) {
-            scrollToSelectedOnFocus(
-                resultIndex + (props.preferredCountries ? props.preferredCountries.length : 0),
-            )
+            scrollToSelectedOnFocus(resultIndex)
         }
     }
 }
@@ -278,6 +260,5 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-@import 'style-helpers';
 @import './assets/iti-flags/flags.css';
 </style>
