@@ -199,9 +199,10 @@ watch(
             const parsedPhoneNumber = parsePhoneNumberFromString(newPhoneNumber, {
                 defaultCountry: newCountryCode,
             })
-            if (parsedPhoneNumber) {
+
+            if (newPhoneNumber) {
                 emitValues({
-                    phoneNumber: parsedPhoneNumber.nationalNumber,
+                    phoneNumber: newPhoneNumber,
                     countryCode: countryCode.value ? countryCode.value : parsedPhoneNumber.country,
                 })
             }
@@ -211,11 +212,12 @@ watch(
 )
 
 onMounted(() => {
-    if (phoneNumber && props.defaultCountryCode)
+    if (phoneNumber && props.defaultCountryCode) {
         emitValues({
             countryCode: props.defaultCountryCode,
             phoneNumber: phoneNumber.value,
         })
+    }
 })
 
 function getAsYouTypeFormat(payload) {

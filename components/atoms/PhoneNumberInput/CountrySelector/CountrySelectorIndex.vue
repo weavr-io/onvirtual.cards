@@ -124,7 +124,6 @@ const itemHeight = computed(() => {
 const listHeight = computed(() => {
     return {
         height: `${(props.countriesHeight + 1) * 7}px`,
-        maxHeight: `${(props.countriesHeight + 1) * 7}px`,
     }
 })
 

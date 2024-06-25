@@ -473,10 +473,11 @@ export default defineComponent({
         }
 
         const phoneUpdate = (number) => {
-            registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
-            registrationRequest.rootUser!.mobile!.number = number.nationalNumber
-            numberIsValid.value =
-                number.phoneNumber === '' || number.phoneNumber == null ? true : number.isValid
+            if (number.phoneNumber) {
+                registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
+                registrationRequest.rootUser!.mobile!.number = number.nationalNumber
+                numberIsValid.value = number.isValid
+            }
         }
 
         const updateDOB = (val: ComputedRef) => {
