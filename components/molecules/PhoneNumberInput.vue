@@ -45,7 +45,7 @@
 <script lang="ts" setup>
 import examples from 'libphonenumber-js/examples.mobile.json'
 import { AsYouType, getExampleNumber, parsePhoneNumberFromString } from 'libphonenumber-js'
-import { computed, defineProps } from 'vue'
+import { computed } from 'vue'
 import { nextTick, onMounted, ref, watch } from '@nuxtjs/composition-api'
 import InputTel from '../atoms/PhoneNumberInput/InputTelephone/InputTelephoneIndex.vue'
 import locales from '../atoms/PhoneNumberInput/assets/locales'

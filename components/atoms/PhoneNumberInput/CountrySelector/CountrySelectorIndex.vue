@@ -77,7 +77,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { getCountryCallingCode } from 'libphonenumber-js'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import { nextTick } from '@nuxtjs/composition-api'
