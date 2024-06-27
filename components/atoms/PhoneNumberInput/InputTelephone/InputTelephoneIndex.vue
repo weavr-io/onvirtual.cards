@@ -7,6 +7,7 @@
                 'has-value': value,
                 'has-error': error,
                 'has-hint': hint,
+                'is-disabled': disabled,
             },
         ]"
         class="input-tel"
@@ -18,6 +19,7 @@
             :id="id"
             ref="InputTel"
             v-model="inputValue"
+            :disabled="disabled"
             :placeholder="labelValue"
             :required="true"
             :style="[{ borderTopRightRadius: '4px', borderBottomRightRadius: '4px' }]"
@@ -46,7 +48,7 @@ import { computed, ref } from 'vue'
 
 const props = withDefaults(
     defineProps<{
-        value: string
+        value?: string
         label: string
         hint: string
         error: boolean
@@ -55,6 +57,7 @@ const props = withDefaults(
         readonly?: boolean
         valid: boolean
         loader?: boolean
+        disabled?: boolean
     }>(),
     {
         value: '',
@@ -66,6 +69,7 @@ const props = withDefaults(
         readonly: false,
         valid: false,
         loader: false,
+        disabled: false,
     },
 )
 

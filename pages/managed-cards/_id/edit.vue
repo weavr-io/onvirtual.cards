@@ -25,7 +25,7 @@
                                             :state="validation.getState('cardholderMobileNumber')"
                                             label="CARDHOLDER MOBILE NUMBER"
                                         >
-                                            <vue-phone-number-input
+                                            <phone-number-input
                                                 :border-radius="0"
                                                 :default-country-code="mobile.countryCode"
                                                 :error="numberIsValid === false"
@@ -69,9 +69,9 @@
 </template>
 <script lang="ts" setup>
 import {
-    Ref,
     computed,
     reactive,
+    Ref,
     ref,
     useFetch,
     useRoute,
@@ -88,6 +88,7 @@ import {
     ManagedCardUpdateSchema,
     type UpdateManagedCard,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
+import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -185,8 +186,10 @@ const phoneUpdate = (number) => {
         ? number.formatNational
         : number.phoneNumber
     updateManagedCardRequest.cardholderMobileNumber = number.formattedNumber
-    numberIsValid.value = number.isInvalid
+    if (number.phoneNumber) {
+        numberIsValid.value = number.isInvalid
 
-    validation.value.validate()
+        validation.value.validate()
+    }
 }
 </script>

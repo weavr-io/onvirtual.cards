@@ -8,6 +8,7 @@
                 'has-hint': hint,
                 'has-list-open': hasListOpen,
                 'is-valid': valid,
+                'is-disabled': disabled,
             },
         ]"
         class="country-selector"
@@ -21,6 +22,7 @@
         <input
             :id="id"
             ref="CountrySelector"
+            :disabled="disabled"
             :placeholder="label"
             :value="callingCode"
             class="country-selector-input"
@@ -95,6 +97,7 @@ const props = withDefaults(
         onlyCountries: string[]
         ignoredCountries: string[]
         countriesHeight: number
+        disabled?: boolean
     }>(),
     {
         id: 'CountrySelector',
@@ -106,6 +109,7 @@ const props = withDefaults(
         onlyCountries: () => [''],
         ignoredCountries: () => [''],
         countriesHeight: 35,
+        disabled: false,
     },
 )
 
@@ -141,7 +145,7 @@ const countriesFiltered = computed(() => {
 })
 
 const countriesSorted = computed(() => {
-    return props.onlyCountries ? countriesFiltered.value : countriesList
+    return props.onlyCountries.length > 1 ? countriesFiltered.value : countriesList
 })
 
 const selectedValueIndex = computed(() => {
@@ -161,11 +165,13 @@ const updateHoverState = (value: boolean) => {
 }
 
 function openList() {
-    CountrySelectorRef.value?.focus()
-    emit('open')
-    isFocus.value = true
-    hasListOpen.value = true
-    if (props.value) scrollToSelectedOnFocus(selectedValueIndex.value)
+    if (!props.disabled) {
+        CountrySelectorRef.value?.focus()
+        emit('open')
+        isFocus.value = true
+        hasListOpen.value = true
+        if (props.value) scrollToSelectedOnFocus(selectedValueIndex.value)
+    }
 }
 
 function closeList() {

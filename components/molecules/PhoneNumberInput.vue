@@ -6,6 +6,7 @@
                 ref="CountrySelector"
                 v-model="countryCode"
                 :countries-height="countriesHeight"
+                :disabled="disabled"
                 :hint="shouldChooseCountry ? translatedCountryName.countrySelectorError : ''"
                 :ignored-countries="ignoredCountries"
                 :items="codesCountries"
@@ -23,6 +24,7 @@
                 :id="`${uniqueId}_phone_number`"
                 ref="phoneNumberInputEl"
                 v-model="phoneNumber"
+                :disabled="disabled"
                 :error="error"
                 :hint="hintValue"
                 :label="translatedCountryName.phoneNumberLabel"
@@ -79,6 +81,7 @@ const props = withDefaults(
         noUseBrowserLocale?: boolean
         fetchCountry?: boolean
         borderRadius?: number
+        disabled?: boolean
     }>(),
     {
         value: '',
@@ -96,6 +99,7 @@ const props = withDefaults(
         noUseBrowserLocale: false,
         fetchCountry: false,
         borderRadius: 4,
+        disabled: false,
     },
 )
 
@@ -103,8 +107,6 @@ const emit = defineEmits(['update', 'input', 'phone-number-focused', 'phone-numb
 const results = ref({ countryCode: undefined, formatInternational: undefined, isValid: undefined })
 const userLocale = ref(props.defaultCountryCode)
 const lastKeyPressed = ref(0)
-const phoneNumber = ref<string | undefined>('')
-
 const uniqueId = computed(() => `${props.id}-${Math.random().toString(36).substring(2, 9)}`)
 
 const translatedCountryName = computed(() => ({
@@ -121,6 +123,15 @@ const countryCode = computed({
     set(newCountry) {
         setLocale(newCountry)
         phoneNumberInputEl.value?.$el.querySelector('input').focus()
+    },
+})
+
+const phoneNumber = computed({
+    get() {
+        return props.value
+    },
+    set(newPhone) {
+        emitValues({ countryCode, phoneNumber: newPhone })
     },
 })
 
@@ -212,7 +223,7 @@ watch(
 )
 
 onMounted(() => {
-    if (phoneNumber && props.defaultCountryCode) {
+    if (phoneNumber.value && props.defaultCountryCode) {
         emitValues({
             countryCode: props.defaultCountryCode,
             phoneNumber: phoneNumber.value,

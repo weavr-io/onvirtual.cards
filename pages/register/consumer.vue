@@ -473,9 +473,9 @@ export default defineComponent({
         }
 
         const phoneUpdate = (number) => {
+            registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
+            registrationRequest.rootUser!.mobile!.number = number.nationalNumber
             if (number.phoneNumber) {
-                registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
-                registrationRequest.rootUser!.mobile!.number = number.nationalNumber
                 numberIsValid.value = number.isValid
             }
         }

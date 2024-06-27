@@ -55,6 +55,7 @@
 
 .country-selector {
     .country-selector-label {
+        z-index: 2;
         position: absolute;
         top: 3px;
         cursor: pointer;
@@ -100,7 +101,7 @@
         position: absolute;
         top: 21px;
         left: 11px;
-        z-index: 1;
+        z-index: 2;
         cursor: pointer;
 
         img {
@@ -154,6 +155,15 @@
                 color: #fff;
                 font-weight: 600;
             }
+        }
+    }
+
+    &.is-disabled {
+        .country-selector-input {
+            z-index: 1;
+            cursor: not-allowed;
+            color: #cecece;
+            background-color: #f2f2f2;
         }
     }
 
@@ -250,6 +260,19 @@
 
         .input-tel-input {
             padding-top: 14px;
+        }
+    }
+
+    &.is-disabled {
+        .input-tel-input {
+            z-index: 1;
+            cursor: not-allowed;
+            color: #cecece;
+            background-color: #f2f2f2;
+        }
+
+        .input-tel-label {
+            z-index: 1;
         }
     }
 
