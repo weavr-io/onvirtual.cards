@@ -20,7 +20,7 @@
             ref="InputTel"
             v-model="inputValue"
             :disabled="disabled"
-            :placeholder="labelValue"
+            :placeholder="`${label} *`"
             :required="true"
             :style="[{ borderTopRightRadius: '4px', borderBottomRightRadius: '4px' }]"
             :type="type"
@@ -38,7 +38,7 @@
             class="input-tel-label"
             @click="focusInput"
         >
-            {{ hintValue || labelValue }}
+            {{ hintValue || `${label} *` }}
         </label>
     </div>
 </template>
@@ -82,10 +82,6 @@ const isHover = ref(false)
 const inputValue = computed({
     get: () => props.value,
     set: (value) => emit('input', value),
-})
-
-const labelValue = computed(() => {
-    return props.label ? `${props.label} *` : props.label
 })
 
 const hintValue = computed(() => {
