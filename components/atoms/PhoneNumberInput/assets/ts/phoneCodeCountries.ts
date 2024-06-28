@@ -1,3 +1,6 @@
+import { PhoneNumber } from 'libphonenumber-js/types'
+import { CountryCode } from 'libphonenumber-js'
+
 const allCountries = [
     ['Afghanistan (‫افغانستان‬‎)', 'af', '93'],
     ['Albania (Shqipëri)', 'al', '355'],
@@ -297,8 +300,30 @@ export const countriesIso = allCountries.map((country) => country[1].toString().
 
 export const countries = allCountries.map((country) => ({
     name: country[0],
-    iso2: country[1].toString().toUpperCase(),
+    iso2: country[1].toString().toUpperCase() as CountryCode,
     dialCode: country[2],
     priority: country[3] || 0,
     areaCodes: country[4] || null,
 }))
+
+export interface PhoneCodeCountry {
+    name: string | number | string[]
+    iso2: CountryCode
+    dialCode: string | number | string[]
+    priority: string | number | string[]
+    areaCodes: string | number | string[] | null
+}
+
+export interface LocalPhoneNumber extends PhoneNumber {
+    countryCode: CountryCode
+}
+
+export interface Payload {
+    phoneNumber: string
+    countryCode: CountryCode
+}
+
+export interface Results {
+    countryCode: CountryCode
+    isValid: boolean
+}

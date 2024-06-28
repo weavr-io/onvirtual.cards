@@ -16,15 +16,7 @@
                             <b-form @submit.prevent="doUpdate">
                                 <b-form-row v-if="!isConsumer">
                                     <b-col>
-                                        <b-form-group
-                                            :invalid-feedback="
-                                                validation.getInvalidFeedback(
-                                                    'cardholderMobileNumber',
-                                                )
-                                            "
-                                            :state="validation.getState('cardholderMobileNumber')"
-                                            label="CARDHOLDER MOBILE NUMBER"
-                                        >
+                                        <b-form-group label="CARDHOLDER MOBILE NUMBER">
                                             <phone-number-input
                                                 :border-radius="0"
                                                 :default-country-code="mobile.countryCode"
@@ -35,6 +27,12 @@
                                                 valid-color="#6D7490"
                                                 @update="phoneUpdate"
                                             />
+                                            <b-form-invalid-feedback
+                                                v-if="numberIsValid === false"
+                                                force-show
+                                            >
+                                                This field must be a valid mobile number.
+                                            </b-form-invalid-feedback>
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
@@ -77,7 +75,7 @@ import {
     useRoute,
     useRouter,
 } from '@nuxtjs/composition-api'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { CountryCode, parsePhoneNumberFromString } from 'libphonenumber-js'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import { useBase } from '~/composables/useBase'
@@ -103,7 +101,7 @@ const {
 const { cards } = useStores(['cards'])
 
 const numberIsValid: Ref<boolean | null> = ref(null)
-const mobile = ref({
+const mobile = ref<{ countryCode: CountryCode | undefined; cardholderMobileNumber: string }>({
     countryCode: 'GB',
     cardholderMobileNumber: '',
 })
@@ -142,7 +140,7 @@ useFetch(async () => {
             ...(isCorporate.value && { cardholderMobileNumber: '' }),
         })
 
-        mobile.value.countryCode = parsedNumber?.country || ''
+        mobile.value.countryCode = parsedNumber?.country
         mobile.value.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
     }
 })
@@ -186,10 +184,7 @@ const phoneUpdate = (number) => {
         ? number.formatNational
         : number.phoneNumber
     updateManagedCardRequest.cardholderMobileNumber = number.formattedNumber
-    if (number.phoneNumber) {
-        numberIsValid.value = number.isInvalid
-
-        validation.value.validate()
-    }
+    numberIsValid.value = number.isValid
+    validation.value.validate()
 }
 </script>

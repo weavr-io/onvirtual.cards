@@ -60,7 +60,7 @@
                             itemHeight,
                             value === item.iso2 ? { backgroundColor: '#6d1c5d' } : {},
                         ]"
-                        class="flex align-center country-selector-list-item"
+                        class="d-flex align-center country-selector-list-item"
                         tabindex="-1"
                         type="button"
                         @click.stop="updateValue(item.iso2)"
@@ -80,47 +80,49 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
-import { getCountryCallingCode } from 'libphonenumber-js'
+import { CountryCode, getCountryCallingCode } from 'libphonenumber-js'
 import { RecycleScroller } from 'vue-virtual-scroller'
-import { nextTick } from '@nuxtjs/composition-api'
+import { nextTick, Ref } from '@nuxtjs/composition-api'
+import { PhoneCodeCountry } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
 
 const emit = defineEmits(['input', 'open', 'close'])
 
 const props = withDefaults(
     defineProps<{
         id: string
-        value: string
+        value: CountryCode
         label: string
         hint: string
         valid: boolean
-        items: string[]
-        onlyCountries: string[]
-        ignoredCountries: string[]
+        items: PhoneCodeCountry[]
+        onlyCountries: CountryCode[] | string[]
+        ignoredCountries: CountryCode[]
         countriesHeight: number
         disabled?: boolean
     }>(),
     {
         id: 'CountrySelector',
-        value: '',
+        value: 'GB',
         label: 'Choose country',
         hint: '',
         valid: false,
-        items: () => [''],
-        onlyCountries: () => [''],
-        ignoredCountries: () => [''],
+        items: () => [],
+        onlyCountries: () => ['GB'],
+        ignoredCountries: () => ['GB'],
         countriesHeight: 35,
         disabled: false,
     },
 )
 
+const parent = ref(null)
 const isFocus = ref(false)
 const hasListOpen = ref(false)
-const tmpValue = ref<string | null>(props.value)
+const tmpValue = ref<CountryCode | undefined>(props.value)
 const query = ref('')
 const isHover = ref(false)
 const countriesListRef = ref<HTMLElement | null>(null)
 const CountrySelectorRef = ref<HTMLElement | null>(null)
-let queryTimer: number | undefined
+let queryTimer: NodeJS.Timeout
 
 const itemHeight = computed(() => {
     return { height: `${props.countriesHeight}px` }
@@ -138,14 +140,14 @@ const countriesList = props.items.filter(
 const countriesFiltered = computed(() => {
     const countries = props.onlyCountries
     return countries
-        ? countries.map((country: any) =>
-              countriesList.find((item: any) => item.iso2.includes(country)),
+        ? countries.map((country: CountryCode | string) =>
+              countriesList.find((item: PhoneCodeCountry) => item.iso2 === country),
           )
         : []
 })
 
-const countriesSorted = computed(() => {
-    return props.onlyCountries.length > 1 ? countriesFiltered.value : countriesList
+const countriesSorted: Ref<(PhoneCodeCountry | undefined)[]> = computed(() => {
+    return countriesFiltered.value.length ? countriesFiltered.value : countriesList
 })
 
 const selectedValueIndex = computed(() => {
@@ -181,14 +183,16 @@ function closeList() {
 
 const handleBlur = () => {
     isFocus.value = false
-    closeList()
+    if (!isHover.value) {
+        closeList()
+    }
 }
 
 function toggleList() {
     return hasListOpen.value ? closeList() : openList()
 }
 
-const updateValue = async (val: string | null) => {
+const updateValue = async (val: CountryCode | undefined) => {
     tmpValue.value = val
     emit('input', val || null)
     await nextTick()

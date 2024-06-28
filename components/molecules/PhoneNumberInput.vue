@@ -1,5 +1,5 @@
 <template>
-    <div :id="id" class="vue-phone-number-input flex">
+    <div :id="id" class="phone-number-input">
         <div class="select-country-container">
             <CountrySelectorIndex
                 :id="`${uniqueId}_country_selector`"
@@ -45,16 +45,24 @@
 </template>
 
 <script lang="ts" setup>
-import examples from 'libphonenumber-js/examples.mobile.json'
-import { AsYouType, getExampleNumber, parsePhoneNumberFromString } from 'libphonenumber-js'
+import {
+    AsYouType,
+    CountryCode,
+    getExampleNumber,
+    parsePhoneNumberFromString,
+} from 'libphonenumber-js'
 import { computed } from 'vue'
-import { nextTick, onMounted, ref, watch } from '@nuxtjs/composition-api'
+import { ComputedRef, nextTick, onMounted, Ref, ref, watch } from '@nuxtjs/composition-api'
+import examples from 'libphonenumber-js/examples.mobile.json'
 import InputTel from '../atoms/PhoneNumberInput/InputTelephone/InputTelephoneIndex.vue'
 import locales from '../atoms/PhoneNumberInput/assets/locales'
 import CountrySelectorIndex from '../atoms/PhoneNumberInput/CountrySelector/CountrySelectorIndex.vue'
 import {
     countries,
     countriesIso,
+    Payload,
+    PhoneCodeCountry,
+    Results,
 } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
@@ -70,9 +78,9 @@ const props = withDefaults(
         id?: string
         color: string
         errorColor: string
-        defaultCountryCode: string | null
-        onlyCountries?: string[]
-        ignoredCountries?: string[]
+        defaultCountryCode: CountryCode
+        onlyCountries?: CountryCode[] | string[]
+        ignoredCountries?: CountryCode[]
         translations?: {} | null
         noValidatorState?: boolean
         error: boolean
@@ -88,9 +96,9 @@ const props = withDefaults(
         id: 'MazPhoneNumberInput',
         color: 'dodgerblue',
         errorColor: 'orangered',
-        defaultCountryCode: null,
-        onlyCountries: () => [''],
-        ignoredCountries: () => [''],
+        defaultCountryCode: 'GB',
+        onlyCountries: () => [],
+        ignoredCountries: () => [],
         translations: null,
         noValidatorState: false,
         error: false,
@@ -104,7 +112,7 @@ const props = withDefaults(
 )
 
 const emit = defineEmits(['update', 'input', 'phone-number-focused', 'phone-number-blur'])
-const results = ref({ countryCode: undefined, formatInternational: undefined, isValid: undefined })
+const results = ref<Results>()
 const userLocale = ref(props.defaultCountryCode)
 const lastKeyPressed = ref(0)
 const uniqueId = computed(() => `${props.id}-${Math.random().toString(36).substring(2, 9)}`)
@@ -114,11 +122,11 @@ const translatedCountryName = computed(() => ({
     ...props.translations,
 }))
 
-const codesCountries = computed(() => countries)
+const codesCountries: ComputedRef<PhoneCodeCountry[]> = computed(() => countries)
 
-const countryCode = computed({
+const countryCode: Ref<CountryCode> = computed({
     get() {
-        return userLocale.value || results.value.countryCode
+        return userLocale.value || results.value?.countryCode
     },
     set(newCountry) {
         setLocale(newCountry)
@@ -131,7 +139,7 @@ const phoneNumber = computed({
         return props.value
     },
     set(newPhone) {
-        emitValues({ countryCode, phoneNumber: newPhone })
+        emitValues({ countryCode: countryCode.value, phoneNumber: newPhone })
     },
 })
 
@@ -139,7 +147,7 @@ const shouldChooseCountry = computed(() => {
     return !countryCode.value && !!phoneNumber.value
 })
 
-const isValid = computed(() => results.value.isValid)
+const isValid = computed(() => results.value?.isValid)
 
 const phoneNumberExample = computed(() => {
     const exampleNumber = countryCode.value ? getExampleNumber(countryCode.value, examples) : null
@@ -169,7 +177,7 @@ const theme = computed(() => {
     }
 })
 
-function emitValues(payload) {
+function emitValues(payload: Payload) {
     let asYouType = getAsYouTypeFormat(payload)
     const backSpacePressed = lastKeyPressed.value === 8
 
@@ -180,11 +188,10 @@ function emitValues(payload) {
             lastCharacOfPhoneNumber &&
             lastCharacOfPhoneNumber.slice(-1) === ')'
         ) {
-            asYouType = props.value.slice(0, -2)
-            payload.phoneNumber = props.value.slice(0, -2)
+            asYouType = props.value?.slice(0, -2) ?? null
+            payload.phoneNumber = props.value?.slice(0, -2)
         }
-
-        results.value = getParsePhoneNumberFromString(payload)
+        results.value = getParsePhoneNumberFromString(payload.phoneNumber, payload.countryCode)
         emit('update', results.value)
         emit('input', asYouType)
     })
@@ -214,7 +221,7 @@ watch(
             if (newPhoneNumber) {
                 emitValues({
                     phoneNumber: newPhoneNumber,
-                    countryCode: countryCode.value ? countryCode.value : parsedPhoneNumber.country,
+                    countryCode: countryCode.value || parsedPhoneNumber?.country,
                 })
             }
         }
@@ -245,7 +252,7 @@ function setLocale(locale) {
     }
 }
 
-function getParsePhoneNumberFromString({ phoneNumber, countryCode }) {
+function getParsePhoneNumberFromString(phoneNumber: string, countryCode: CountryCode) {
     const parsing =
         phoneNumber && countryCode ? parsePhoneNumberFromString(phoneNumber, countryCode) : null
     return {
@@ -269,7 +276,7 @@ function getParsePhoneNumberFromString({ phoneNumber, countryCode }) {
 }
 </script>
 <style lang="scss" scoped>
-.vue-phone-number-input {
+.phone-number-input {
     display: flex;
 
     .select-country-container {
