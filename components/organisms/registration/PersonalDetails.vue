@@ -17,7 +17,7 @@
             <b-form-input v-model="form.rootUser.surname" placeholder="Last Name" />
         </b-form-group>
         <b-form-group label="MOBILE NUMBER*">
-            <vue-phone-number-input
+            <phone-number-input
                 :border-radius="0"
                 :error="numberIsValid === false"
                 :only-countries="mobileCountries"
@@ -28,7 +28,7 @@
                 valid-color="#6D7490"
                 @update="phoneUpdate"
             />
-            <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
+            <b-form-invalid-feedback v-if="!numberIsValid" force-show>
                 This field must be a valid mobile number.
             </b-form-invalid-feedback>
         </b-form-group>
@@ -149,6 +149,7 @@ import {
 import useZodValidation from '~/composables/useZodValidation'
 import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 const props = defineProps({
     baseForm: {
@@ -197,8 +198,9 @@ const shouldShowOtherSourceOfFunds: ComputedRef<boolean> = computed(
 const phoneUpdate = (number) => {
     form.rootUser.mobile.countryCode = number.countryCallingCode && `+${number.countryCallingCode}`
     form.rootUser.mobile.number = number.phoneNumber && number.phoneNumber.replace(/\s+/g, '')
-
-    numberIsValid.value = number.isValid
+    if (number.phoneNumber) {
+        numberIsValid.value = number.isValid
+    }
 }
 
 const submitForm = async () => {

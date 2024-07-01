@@ -48,7 +48,7 @@
                         <b-form-row>
                             <b-col>
                                 <b-form-group label="MOBILE NUMBER">
-                                    <vue-phone-number-input
+                                    <phone-number-input
                                         :border-radius="0"
                                         :default-country-code="mobile.countryCode"
                                         :disabled="isMobileVerified"
@@ -111,9 +111,11 @@ import {
     UpdateCorporateRequest,
     UpdateCorporateRequestSchema,
 } from '~/plugins/weavr-multi/api/models/identities/corporates'
+import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 export default defineComponent({
     components: {
+        PhoneNumberInput,
         LoaderButton,
         ErrorAlert,
     },
@@ -184,7 +186,9 @@ export default defineComponent({
             mobile.value.number = number.phoneNumber
 
             updateIdentityRootUser.mobile = { ...mobile.value }
-            numberIsValid.value = number.isValid
+            if (number.phoneNumber) {
+                numberIsValid.value = number.isValid
+            }
         }
 
         const doUpdateIdentityRoot = async () => {

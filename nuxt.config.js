@@ -111,10 +111,6 @@ const config = {
             ssr: false,
         },
         {
-            src: '~/plugins/PhoneNumberInput.ts',
-            ssr: false,
-        },
-        {
             src: '~/plugins/flatpickr.ts',
             ssr: false,
         },
@@ -128,7 +124,7 @@ const config = {
         { src: '~/plugins/formattingFilters/index.ts' },
     ],
     /*
-     ** Nuxt.js modules
+     ** Nuxt.ts modules
      */
     modules: [
         // Doc: https://bootstrap-vue.js.org/docs/

@@ -67,7 +67,7 @@
                                     />
                                 </b-form-group>
                                 <b-form-group label="MOBILE NUMBER*">
-                                    <vue-phone-number-input
+                                    <phone-number-input
                                         v-model="rootMobileNumber"
                                         :border-radius="0"
                                         :error="numberIsValid === false"
@@ -138,7 +138,7 @@
                                 <client-only placeholder="Loading...">
                                     <b-form-group
                                         :state="validation.getState('password,value')"
-                                        label="Password"
+                                        label="PASSWORD*"
                                         label-for="password"
                                     >
                                         <weavr-password-input
@@ -220,8 +220,8 @@
 </template>
 <script lang="ts">
 import {
-    ComputedRef,
     computed,
+    ComputedRef,
     defineComponent,
     reactive,
     ref,
@@ -258,9 +258,11 @@ import {
 } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 export default defineComponent({
     components: {
+        PhoneNumberInput,
         ComingSoonCurrencies,
         LogoOvc,
         ErrorAlert,
@@ -290,7 +292,7 @@ export default defineComponent({
                 password: INITIAL_SENSITIVE_PASSWORD_REQUEST(),
             })
 
-        const $recaptcha = ref(undefined)
+        const recaptcha = ref(undefined)
 
         const validation = computed(() => {
             return useZodValidation(CreateConsumerFormSchema, registrationRequest)
@@ -473,7 +475,9 @@ export default defineComponent({
         const phoneUpdate = (number) => {
             registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
             registrationRequest.rootUser!.mobile!.number = number.nationalNumber
-            numberIsValid.value = number.isValid
+            if (number.phoneNumber) {
+                numberIsValid.value = number.isValid
+            }
         }
 
         const updateDOB = (val: ComputedRef) => {
@@ -489,7 +493,7 @@ export default defineComponent({
         }
 
         return {
-            $recaptcha,
+            recaptcha,
             config,
             passwordField,
             submitForm,
