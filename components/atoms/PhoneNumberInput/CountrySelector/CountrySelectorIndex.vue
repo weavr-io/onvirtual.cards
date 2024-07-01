@@ -32,9 +32,14 @@
             @click.stop="toggleList"
         />
         <div class="country-selector-toggle" @click.stop="toggleList">
-            <img src="@/assets/svg/statement/down_arrow.svg" />
+            <img alt="Downward pointing arrow" src="@/assets/svg/statement/down_arrow.svg" />
         </div>
-        <label ref="label" class="country-selector-label" @click.stop="toggleList">
+        <label
+            ref="label"
+            class="country-selector-label"
+            for="country-selector"
+            @click.stop="toggleList"
+        >
             {{ hint || label }}
         </label>
         <Transition name="slide">

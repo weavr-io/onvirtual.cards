@@ -157,11 +157,15 @@ const phoneNumberExample = computed(() => {
 const hasEmptyPhone = computed(() => phoneNumber.value === '' || phoneNumber.value === null)
 
 const hintValue = computed(() => {
-    return props.noExample || !phoneNumberExample.value
-        ? ''
-        : hasEmptyPhone.value || isValid.value
-          ? ''
-          : `${translatedCountryName.value.example} ${phoneNumberExample.value}`
+    if (props.noExample || !phoneNumberExample.value) {
+        return ''
+    }
+
+    if (hasEmptyPhone.value || isValid.value) {
+        return ''
+    }
+
+    return `${translatedCountryName.value.example} ${phoneNumberExample.value}`
 })
 
 const theme = computed(() => {

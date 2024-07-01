@@ -28,7 +28,7 @@
                 valid-color="#6D7490"
                 @update="phoneUpdate"
             />
-            <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
+            <b-form-invalid-feedback v-if="!numberIsValid" force-show>
                 This field must be a valid mobile number.
             </b-form-invalid-feedback>
         </b-form-group>
