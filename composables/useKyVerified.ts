@@ -49,7 +49,7 @@ export const useKyVerified = () => {
         const _consumer = consumers?.consumerState.consumer
         const _consumerKyc = consumers?.consumerState.kyc
 
-        if (showVerifyMobileAlert) {
+        if (showVerifyMobileAlert.value) {
             return false
         } else if (_consumer && _consumerKyc) {
             return _consumerKyc.fullDueDiligence
