@@ -1,16 +1,16 @@
 import { TransactionIdModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/TransactionIdModel'
-import { CurrencyAmountModel } from '~/plugins/weavr-multi/api/models/common/CurrencyAmountModel'
-import { ScaledAmountModel } from '~/plugins/weavr-multi/api/models/common/ScaledAmountModel'
+import { CurrencyAmount } from '~/plugins/weavr-multi/api/models/common'
+import { ScaledAmountModel } from '~/plugins/weavr-multi/api/models/common/models/ScaledAmountModel'
 
 export interface StatementEntryModel {
     transactionId: TransactionIdModel
-    originalAmount?: CurrencyAmountModel
+    originalAmount?: CurrencyAmount
     forexRate?: ScaledAmountModel
-    transactionAmount: CurrencyAmountModel
-    balanceAfter?: CurrencyAmountModel
-    cardholderFee?: CurrencyAmountModel
+    transactionAmount: CurrencyAmount
+    balanceAfter?: CurrencyAmount
+    cardholderFee?: CurrencyAmount
     processedTimestamp: string
-    sourceAmount: CurrencyAmountModel
+    sourceAmount: CurrencyAmount
     additionalFields: {
         [k: string]: string
     }

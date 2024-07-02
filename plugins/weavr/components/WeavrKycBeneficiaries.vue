@@ -1,29 +1,43 @@
 <template>
     <div id="director-kyc" />
 </template>
-<script lang="ts">
-import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
-import { KYCOptions } from './api'
+<script lang="ts" setup>
+import { getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
+import { KYCOptions } from '~/plugins/weavr/components/api'
 
-@Component
-export default class WeavrKycBeneficiaries extends Vue {
-    @Prop({}) reference!: string
-    @Prop({}) options!: KYCOptions
+const { proxy: root } = getCurrentInstance() || {}
 
-    mounted() {
-        this.$weavrComponents.capture
-            .beneficiariesKyc(this.reference)
-            .mount('#director-kyc', { ...this.options, onMessage: this.sumsubMessage })
-    }
+const props = withDefaults(
+    defineProps<{
+        reference: string
+        options: KYCOptions
+    }>(),
+    {
+        reference: undefined,
+        options: undefined,
+    },
+)
 
-    @Emit('message')
-    sumsubMessage(messageType, payload) {
-        return {
-            messageType,
-            payload,
-        }
-    }
+const emit = defineEmits(['message'])
+
+const message = (value) => {
+    emit('message', value)
 }
+
+onMounted(() => {
+    root?.$weavrComponents.capture
+        .beneficiariesKyc(props.reference)
+        .mount('#director-kyc', { ...props.options, onMessage: sumsubMessage })
+})
+
+const sumsubMessage = (messageType, payload) => {
+    message({ messageType, payload })
+    return { messageType, payload }
+}
+
+defineExpose({
+    sumsubMessage,
+})
 </script>
 
 <style lang="scss" scoped></style>

@@ -32,7 +32,8 @@ const config = {
     },
     /*
      ** Headers of the page
-     */ head: {
+     */
+    head: {
         title: 'onvirtual.cards',
         meta: [
             { charset: 'utf-8' },
@@ -91,24 +92,22 @@ const config = {
     },
     /*
      ** Customize the progress-bar color
-     */ loading: false,
+     */
+    loading: false,
     /*
      ** Global CSS
-     */ css: ['~/assets/scss/style.scss'],
+     */
+    css: ['~/assets/scss/style.scss'],
     /*
      ** Plugins to load before mounting the App
-     */ plugins: [
+     */
+    plugins: [
         {
             src: '~/plugins/weavr/security.client.ts',
             ssr: false,
         },
-        { src: '~/plugins/vuelidate' },
         {
             src: '~/plugins/WeavrVueFilters.ts',
-            ssr: false,
-        },
-        {
-            src: '~/plugins/PhoneNumberInput.ts',
             ssr: false,
         },
         {
@@ -125,8 +124,9 @@ const config = {
         { src: '~/plugins/formattingFilters/index.ts' },
     ],
     /*
-     ** Nuxt.js modules
-     */ modules: [
+     ** Nuxt.ts modules
+     */
+    modules: [
         // Doc: https://bootstrap-vue.js.org/docs/
         'bootstrap-vue/nuxt',
         '@nuxtjs/dotenv', // Doc: https://axios.nuxtjs.org/usage
@@ -144,12 +144,13 @@ const config = {
     /*
      ** Axios module configuration
      ** See https://axios.nuxtjs.org/options
-     */ axios: {},
+     */
+    axios: {},
     router: {
         middleware: ['authCookie', 'errorReset', 'identities'],
         linkActiveClass: 'active',
     },
-    buildModules: ['@nuxt/typescript-build'],
+    buildModules: ['@nuxtjs/composition-api/module', '@pinia/nuxt', '@nuxt/typescript-build'],
     build: {
         babel: {
             compact: true,

@@ -9,52 +9,44 @@
             <b-row align-h="center">
                 <b-col lg="6" md="9">
                     <error-alert />
-                    <b-form @submit="doAdd">
+                    <b-form @submit.prevent="doAdd">
                         <b-form-row>
                             <b-col>
-                                <b-form-group label="Name*">
-                                    <b-form-input
-                                        v-model="$v.request.name.$model"
-                                        :state="isInvalid($v.request.name)"
-                                    />
-                                    <b-form-invalid-feedback
-                                        >This field is required.
-                                    </b-form-invalid-feedback>
+                                <b-form-group
+                                    :invalid-feedback="validation.getInvalidFeedback('name')"
+                                    :state="validation.getState('name')"
+                                    label="Name*"
+                                >
+                                    <b-form-input v-model="request.name" />
                                 </b-form-group>
                             </b-col>
                         </b-form-row>
                         <b-form-row>
                             <b-col>
-                                <b-form-group label="Surname*">
-                                    <b-form-input
-                                        v-model="$v.request.surname.$model"
-                                        :state="isInvalid($v.request.surname)"
-                                    />
-                                    <b-form-invalid-feedback
-                                        >This field is required.
-                                    </b-form-invalid-feedback>
+                                <b-form-group
+                                    :invalid-feedback="validation.getInvalidFeedback('surname')"
+                                    :state="validation.getState('surname')"
+                                    label="Surname*"
+                                >
+                                    <b-form-input v-model="request.surname" />
                                 </b-form-group>
                             </b-col>
                         </b-form-row>
                         <b-form-row>
                             <b-col>
-                                <b-form-group label="Email*">
-                                    <b-form-input
-                                        v-model="$v.request.email.$model"
-                                        :state="isInvalid($v.request.email)"
-                                        lazy
-                                        type="email"
-                                    />
-                                    <b-form-invalid-feedback
-                                        >This field is required and must be a valid email.
-                                    </b-form-invalid-feedback>
+                                <b-form-group
+                                    :invalid-feedback="validation.getInvalidFeedback('email')"
+                                    :state="validation.getState('email')"
+                                    label="Email*"
+                                >
+                                    <b-form-input v-model="request.email" type="email" />
                                 </b-form-group>
                             </b-col>
                         </b-form-row>
-                        <loader-button
+                        <LoaderButton
                             :is-loading="isLoading"
-                            button-text="send invite"
                             class="mt-5 text-center"
+                            text="send invite"
                         />
                     </b-form>
                 </b-col>
@@ -63,75 +55,66 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { email, maxLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
-import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
+import { computed, defineComponent, reactive, ref, useRouter } from '@nuxtjs/composition-api'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import { useStores } from '~/composables/useStores'
+import useZodValidation from '~/composables/useZodValidation'
 import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { Nullable } from '~/global'
+import {
+    CreateUserRequestModel,
+    INITIAL_USER_REQUEST,
+    UserRequest,
+    UserSchema,
+} from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 
-@Component({
+export default defineComponent({
     components: {
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton,
+        ErrorAlert,
     },
-    validations: {
-        request: {
-            name: {
-                required,
-                maxLength: maxLength(100),
-            },
-            surname: {
-                required,
-                maxLength: maxLength(100),
-            },
-            email: {
-                required,
-                email,
-            },
-        },
-    },
-    middleware: ['kyVerified'],
-})
-export default class AddCardPage extends mixins(BaseMixin, ValidationMixin) {
-    isLoading = false
+    middleware: 'kyVerified',
+    setup() {
+        const router = useRouter()
 
-    request: Nullable<CreateUserRequestModel> = {
-        name: null,
-        surname: null,
-        email: null,
-        mobile: null,
-        dateOfBirth: null,
-    }
+        const { errors, users } = useStores(['errors', 'users'])
+        const isLoading = ref(false)
+        const request: UserRequest = reactive(INITIAL_USER_REQUEST())
 
-    async doAdd(evt) {
-        evt.preventDefault()
+        const validation = computed(() => {
+            return useZodValidation(UserSchema, request)
+        })
 
-        if (this.$v.request) {
-            this.$v.request.$touch()
-            if (this.$v.request.$anyError) {
+        const doAdd = async () => {
+            await validation.value.validate()
+
+            if (validation.value.isInvalid.value) {
                 return null
             }
+
+            await users
+                ?.add(request as CreateUserRequestModel)
+                .then((res) => {
+                    userAdded(res.data)
+                })
+                .catch((err) => {
+                    errors?.setError(err)
+                    isLoading.value = false
+                })
         }
 
-        this.isLoading = true
+        const userAdded = async (res: UserModel) => {
+            await users?.inviteSend(res.id)
+            await router.push('/users')
+            isLoading.value = false
+        }
 
-        await this.stores.users
-            .add(this.request as CreateUserRequestModel)
-            .then((res) => {
-                this.userAdded(res.data)
-            })
-            .catch((err) => {
-                this.stores.errors.SET_ERROR(err)
-                this.isLoading = false
-            })
-    }
-
-    async userAdded(res: UserModel) {
-        await this.stores.users.inviteSend(res.id)
-        await this.$router.push('/users')
-        this.isLoading = false
-    }
-}
+        return {
+            doAdd,
+            validation,
+            request,
+            isLoading,
+        }
+    },
+})
 </script>

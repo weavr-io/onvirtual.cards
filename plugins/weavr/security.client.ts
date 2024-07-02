@@ -1,9 +1,8 @@
 import Vue from 'vue'
-import { Plugin } from '~/node_modules/@nuxt/types'
+import { defineNuxtPlugin } from '@nuxtjs/composition-api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
-
 import WeavrKyb from '~/plugins/weavr/components/WeavrKyb.vue'
 import WeavrKycBeneficiaries from '~/plugins/weavr/components/WeavrKycBeneficiaries.vue'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
@@ -11,12 +10,11 @@ import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 Vue.component('WeavrPasswordInput', WeavrPasswordInput)
 Vue.component('WeavrCardNumberSpan', WeavrCardNumberSpan)
 Vue.component('WeavrCvvSpan', WeavrCvvSpan)
-
 Vue.component('WeavrKyb', WeavrKyb)
 Vue.component('WeavrKycBeneficiaries', WeavrKycBeneficiaries)
 Vue.component('WeavrKyc', WeavrKyc)
 
-const weavrModules: Plugin = (context, inject) => {
+export default defineNuxtPlugin((context, inject) => {
     // @ts-ignore
     const weavrComponents = window.weavr.init(context.$config.multiApi.uiKey, {
         fonts: [
@@ -45,6 +43,4 @@ const weavrModules: Plugin = (context, inject) => {
     inject('weavrSetUserToken', (token) => {
         return asyncAssociate(token)
     })
-}
-
-export default weavrModules
+})

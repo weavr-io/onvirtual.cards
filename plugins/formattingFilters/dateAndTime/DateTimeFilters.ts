@@ -1,37 +1,29 @@
-import Vue from 'vue'
-import VueMoment from 'vue-moment'
-import moment from 'moment'
-
-Vue.use(VueMoment, { moment })
+import { DateTime } from 'luxon'
 
 export class DateTimeFilters {
     formatMilliToDateTime(value) {
-        if (value === null || value === undefined) {
-            return '-'
-        }
+        if (!value) return '-'
 
-        const _m = moment(parseInt(value))
-        return _m.format('YYYY-MM-DD HH:mm')
+        const date = DateTime.fromMillis(parseInt(value))
+        return date.toFormat('yyyy-LL-dd HH:mm')
     }
 
     formatMilliToDate(value) {
-        if (value === null || value === undefined) {
-            return '-'
-        }
+        if (!value) return '-'
 
-        const _m = moment(parseInt(value))
-        return _m.format('YYYY-MM-DD')
+        const date = DateTime.fromMillis(parseInt(value))
+        return date.isValid ? date.toFormat('dd/LL/yyyy') : '-'
     }
 
     formatToDate(value) {
-        if (value === null || value === undefined) {
-            return '-'
-        }
-        try {
-            const _m = moment()
-            _m.set({ year: value.year, month: value.month - 1, date: value.day })
+        if (!value) return '-'
 
-            return _m.format('YYYY-MM-DD')
-        } catch (e) {}
+        const date = DateTime.fromObject({
+            year: value.year,
+            month: value.month,
+            day: value.day,
+        })
+
+        return date.toFormat('yyyy-MM-dd')
     }
 }

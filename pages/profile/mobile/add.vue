@@ -1,13 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <div class="text-center pb-5">
-            <img
-                alt="onvirtual.cards"
-                class="d-inline-block align-top"
-                src="/img/logo.svg"
-                width="200"
-            />
-        </div>
+        <LogoOvc :link="false" classes="pb-5" />
         <b-card body-class="p-card">
             <h3 class="text-center font-weight-light mb-4">Add your phone number</h3>
             <p class="text-center mb-5">
@@ -16,11 +9,11 @@
             </p>
             <b-form novalidate @submit.prevent="submitForm">
                 <b-form-group label="MOBILE NUMBER*">
-                    <vue-phone-number-input
-                        v-model="rootMobileNumber"
+                    <phone-number-input
                         :border-radius="0"
                         :error="numberIsValid === false"
                         :only-countries="mobileCountries"
+                        :value="updateRequest.mobile.number"
                         color="#6C1C5C"
                         default-country-code="GB"
                         error-color="#F50E4C"
@@ -35,128 +28,143 @@
                         This field must be a valid mobile number.
                     </b-form-invalid-feedback>
                 </b-form-group>
-                <loader-button
-                    :is-loading="isLoading"
-                    button-text="save number"
-                    class="text-center mt-5"
-                />
+                <LoaderButton :is-loading="isLoading" class="text-center mt-5" text="save number" />
             </b-form>
         </b-card>
     </b-col>
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { required } from 'vuelidate/lib/validators'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import BaseMixin from '~/mixins/BaseMixin'
-import { DeepNullable } from '~/global'
+import {
+    computed,
+    defineComponent,
+    reactive,
+    ref,
+    useAsync,
+    useRouter,
+} from '@nuxtjs/composition-api'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
+import useZodValidation from '~/composables/useZodValidation'
+import {
+    SCAFactorStatusEnum,
+    SCAOtpChannelEnum,
+} from '~/plugins/weavr-multi/api/models/authentication'
+import {
+    CredentialTypeEnum,
+    INITIAL_MOBILE_REQUEST,
+    Mobile,
+} from '~/plugins/weavr-multi/api/models/common'
 import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
-import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import { authStore } from '~/utils/store-accessor'
+import {
+    RootUserMobileSchema,
+    UpdateCorporateRequest,
+} from '~/plugins/weavr-multi/api/models/identities/corporates'
 import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
-import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
-import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
-import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
+import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
-@Component({
-    layout: 'auth',
-    validations: {
-        registrationRequest: {
-            rootUser: {
-                mobile: {
-                    countryCode: {
-                        required,
-                    },
-                    number: {
-                        required,
-                    },
-                },
-            },
-        },
-    },
+export default defineComponent({
     components: {
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        PhoneNumberInput,
+        LogoOvc,
+        LoaderButton,
     },
-    middleware: ['kyVerified'],
-})
-export default class LoginPage extends mixins(ValidationMixin, BaseMixin) {
-    isLoading = false
+    layout: 'auth',
+    middleware: 'kyVerified',
+    setup() {
+        const router = useRouter()
+        const { isConsumer, showErrorToast, mobileCountries } = useBase()
+        const { auth, consumers, corporates, users } = useStores([
+            'auth',
+            'consumers',
+            'corporates',
+            'users',
+        ])
 
-    rootMobileNumber = ''
-    numberIsValid: boolean | null = null
+        const isLoading = ref(false)
+        const numberIsValid = ref<boolean | null>(null)
+        const updateRequest: { mobile: Mobile } = reactive({
+            mobile: {
+                ...INITIAL_MOBILE_REQUEST(),
+            },
+        })
 
-    updateRequest: DeepNullable<{ mobile: MobileModel }> = {
-        mobile: {
-            number: null,
-            countryCode: '+356',
-        },
-    }
+        const validation = computed(() => {
+            return useZodValidation(RootUserMobileSchema, updateRequest)
+        })
 
-    async asyncData({ redirect, store }) {
-        const auth = authStore(store)
+        useAsync(async () => {
+            await auth?.indexAuthFactors()
 
-        await auth.indexAuthFactors()
+            const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
+                (factor) => factor.channel === SCAOtpChannelEnum.SMS,
+            )
 
-        const smsAuthFactors = auth.authFactors?.factors?.filter(
-            (factor) => factor.channel === SCAOtpChannelEnum.SMS,
-        )
+            if (
+                smsAuthFactors &&
+                smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION
+            ) {
+                return router.replace('/dashboard')
+            }
+        })
 
-        if (
-            smsAuthFactors &&
-            smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION
-        ) {
-            return redirect('/dashboard')
-        }
-    }
+        const submitForm = async () => {
+            isLoading.value = true
 
-    async submitForm(e) {
-        this.isLoading = true
-
-        try {
-            e.preventDefault()
-
-            if (this.numberIsValid === null) {
-                this.numberIsValid = false
+            if (numberIsValid.value === null) {
+                numberIsValid.value = false
             }
 
-            if (this.$v.$anyError || !this.numberIsValid) {
-                this.isLoading = false
-                return null
-            }
+            try {
+                await validation.value.validate()
 
-            if (this.stores.auth.auth?.credentials.type === CredentialTypeEnum.ROOT) {
-                this.isConsumer
-                    ? await this.stores.consumers.update(
-                          this.updateRequest as UpdateConsumerRequest,
-                      )
-                    : await this.stores.corporates.update(
-                          this.updateRequest as UpdateCorporateRequest,
-                      )
-            } else {
-                await this.stores.users.update({
-                    id: this.stores.auth.auth!.credentials.id,
-                    data: this.updateRequest as UpdateUserRequestModel,
+                if (validation.value.isInvalid.value || !numberIsValid.value) {
+                    isLoading.value = false
+                    return null
+                }
+
+                if (auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT) {
+                    isConsumer.value
+                        ? await consumers?.update(updateRequest as UpdateConsumerRequest)
+                        : await corporates?.update(updateRequest as UpdateCorporateRequest)
+                } else {
+                    await users?.update({
+                        id: auth!.authState.auth!.credentials.id,
+                        data: updateRequest as UpdateUserRequestModel,
+                    })
+                }
+                await router.push({
+                    path: '/login/verify/mobile',
+                    query: {
+                        send: 'true',
+                    },
                 })
+            } catch (error: any) {
+                showErrorToast(error)
+            } finally {
+                isLoading.value = false
             }
-            await this.$router.push({
-                path: '/login/verify/mobile',
-                query: {
-                    send: 'true',
-                },
-            })
-        } catch (error: any) {
-            this.showErrorToast(error)
-        } finally {
-            this.isLoading = false
         }
-    }
 
-    phoneUpdate(number) {
-        this.updateRequest.mobile!.countryCode = `+${number.countryCallingCode}`
-        this.updateRequest.mobile!.number = number.nationalNumber
-        this.numberIsValid = number.isValid
-    }
-}
+        const phoneUpdate = (number) => {
+            updateRequest.mobile.countryCode =
+                number.countryCallingCode && `+${number.countryCallingCode}`
+            updateRequest.mobile.number = number.phoneNumber
+            if (number.phoneNumber) {
+                numberIsValid.value = number.isValid
+            }
+        }
+
+        return {
+            submitForm,
+            numberIsValid,
+            mobileCountries,
+            updateRequest,
+            phoneUpdate,
+            isLoading,
+        }
+    },
+})
 </script>

@@ -16,6 +16,10 @@ export class TextFilters {
         return value.charAt(0)
     }
 
+    capitalizeFirstLetter(value: string) {
+        return `${this.firstLetter(value).toUpperCase()}${value.slice(1)}`
+    }
+
     convertToKebabCase(value: string) {
         return value.split(' ').join('_')
     }

@@ -1,32 +1,34 @@
 <template>
     <div>
-        <app-header />
+        <AppHeader />
         <Nuxt />
-        <div v-if="isLoading" id="loader">
-            <div class="loader-spinner">
-                <b-spinner />
-            </div>
-        </div>
-        <!-- <app-footer /> -->
-        <cookie-policy />
+        <LoadingSpinner id="loader" :is-loading="isLoading" />
+        <Cookie />
     </div>
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { defineComponent, computed } from '@nuxtjs/composition-api'
+import { useStores } from '~/composables/useStores'
+import AppHeader from '~/components/molecules/HeaderComponent.vue'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+import Cookie from '~/components/molecules/CookieComponent.vue'
 
-@Component({
+export default defineComponent({
     components: {
-        AppFooter: () => import('~/components/Footer.vue'),
-        AppHeader: () => import('~/components/Header.vue'),
-        cookiePolicy: () => import('~/components/cookie.vue'),
+        Cookie,
+        LoadingSpinner,
+        AppHeader,
     },
-    middleware: ['authRouteGuard'],
+    middleware: 'authRouteGuard',
+    setup() {
+        const { loader } = useStores(['loader'])
+
+        const isLoading = computed(() => loader?.isLoading)
+
+        return {
+            isLoading,
+        }
+    },
 })
-export default class DefaultLayout extends mixins(BaseMixin) {
-    get isLoading() {
-        return this.stores.loader.isLoading
-    }
-}
 </script>

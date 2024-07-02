@@ -9,7 +9,7 @@
                     <div class="mx-md-3 px-md-5">
                         <b-form id="contact-form" @submit.prevent="submitChangePassword">
                             <client-only placeholder="Loading...">
-                                <div :class="{ 'is-dirty': $v.form.$dirty }">
+                                <div :class="{ 'is-dirty': validation.dirty }">
                                     <label class="d-block text-left">OLD PASSWORD:</label>
                                     <weavr-password-input
                                         ref="oldPassword"
@@ -51,10 +51,10 @@
                             </client-only>
 
                             <div class="text-center">
-                                <loader-button
+                                <LoaderButton
                                     :is-loading="isLoading"
-                                    button-text="Change Password"
                                     class="mt-5"
+                                    text="Change Password"
                                 />
                             </div>
                         </b-form>
@@ -65,155 +65,124 @@
     </section>
 </template>
 
-<script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { required } from 'vuelidate/lib/validators'
-import LoaderButton from '~/components/LoaderButton.vue'
+<script lang="ts" setup>
+import { computed, ComputedRef, reactive, ref, useRouter } from '@nuxtjs/composition-api'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
+import useZodValidation from '~/composables/useZodValidation'
+import {
+    INITIAL_UPDATE_PASSWORD_REQUEST,
+    UpdatePasswordRequestModel,
+    UpdatePasswordRequestSchema,
+} from '~/plugins/weavr-multi/api/models/authentication'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
 
-@Component({
-    components: {
-        LoaderButton,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        WeavrPasswordInput,
-    },
-    validations: {
-        form: {},
-        changePasswordRequest: {
-            oldPassword: {
-                value: {
-                    required,
-                },
-            },
-            newPassword: {
-                value: {
-                    required,
-                },
-            },
-        },
-    },
+const router = useRouter()
+const { showSuccessToast, showErrorToast } = useBase()
+const { auth } = useStores(['auth'])
+
+const oldPassword = ref<typeof WeavrPasswordInput | null>(null)
+const newPassword = ref<typeof WeavrPasswordInput | null>(null)
+const isLoading = ref(false)
+const passwordStrength = ref(0)
+const changePasswordRequest: UpdatePasswordRequestModel = reactive(
+    INITIAL_UPDATE_PASSWORD_REQUEST(),
+)
+
+const validation = computed(() => {
+    return useZodValidation(UpdatePasswordRequestSchema, changePasswordRequest)
 })
-export default class BundlesPage extends mixins(BaseMixin) {
-    @Ref('oldPassword')
-    oldPassword!: WeavrPasswordInput
 
-    @Ref('newPassword')
-    newPassword!: WeavrPasswordInput
+const isPasswordValid = computed(() => {
+    return passwordStrength.value >= 2
+})
 
-    isLoading = false
+const isPasswordValidAndDirty = computed(() => {
+    return !validation.value.dirty.value ? true : isPasswordValid.value
+})
 
-    passwordStrength = 0
-
-    changePasswordRequest: UpdatePasswordRequestModel = {
-        oldPassword: {
-            value: '',
-        },
-        newPassword: {
-            value: '',
-        },
-    }
-
-    get isPasswordValid(): boolean {
-        return this.passwordStrength >= 2
-    }
-
-    get isPasswordValidAndDirty(): boolean {
-        return !this.$v.changePasswordRequest.newPassword?.$dirty ? true : this.isPasswordValid
-    }
-
-    get isAnyPasswordEmpty(): boolean {
-        return (
-            this.changePasswordRequest.oldPassword.value === '' ||
-            this.changePasswordRequest.newPassword.value === ''
-        )
-    }
-
-    get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
-        return {
-            color: '#495057',
-            fontSize: '16px',
-            fontSmoothing: 'antialiased',
-            fontFamily: "'Be Vietnam', sans-serif",
+const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
+    return {
+        color: '#495057',
+        fontSize: '16px',
+        fontSmoothing: 'antialiased',
+        fontFamily: "'Be Vietnam', sans-serif",
+        fontWeight: '400',
+        lineHeight: '24px',
+        margin: '0',
+        padding: '6px 12px',
+        textIndent: '0px',
+        '::placeholder': {
+            color: '#B6B9C7',
             fontWeight: '400',
-            lineHeight: '24px',
-            margin: '0',
-            padding: '6px 12px',
-            textIndent: '0px',
-            '::placeholder': {
-                color: '#B6B9C7',
-                fontWeight: '400',
-            },
-        }
+        },
+    }
+})
+
+const oldPasswordInteraction = (val: { empty: boolean; valid: boolean }) => {
+    !val.empty
+        ? (changePasswordRequest.oldPassword.value = '******')
+        : (changePasswordRequest.oldPassword.value = '')
+}
+
+const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
+    !val.empty
+        ? (changePasswordRequest.newPassword.value = '******')
+        : (changePasswordRequest.newPassword.value = '')
+}
+
+const strengthCheck = (val) => {
+    passwordStrength.value = val.id
+}
+
+const checkOnKeyUp = (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault()
+        submitChangePassword()
+    }
+}
+
+const submitChangePassword = async () => {
+    let tokenizedOld = ''
+    let tokenizedNew = ''
+
+    validation.value.touch() && (await validation.value.validate())
+
+    if (validation.value.isInvalid.value || !isPasswordValid.value) {
+        return null
     }
 
-    oldPasswordInteraction(val: { empty: boolean; valid: boolean }) {
-        !val.empty
-            ? (this.changePasswordRequest.oldPassword.value = '******')
-            : (this.changePasswordRequest.oldPassword.value = '')
-        this.$v.changePasswordRequest.$touch()
-    }
+    isLoading.value = true
 
-    passwordInteraction(val: { empty: boolean; valid: boolean }) {
-        !val.empty
-            ? (this.changePasswordRequest.newPassword.value = '******')
-            : (this.changePasswordRequest.newPassword.value = '')
-        this.$v.changePasswordRequest.$touch()
-    }
+    await oldPassword.value?.createToken().then((res) => {
+        tokenizedOld = res.tokens['old-password']
+    })
+    await newPassword.value?.createToken().then((res) => {
+        tokenizedNew = res.tokens['new-password']
+    })
 
-    strengthCheck(val) {
-        this.passwordStrength = val.id
-    }
+    if (tokenizedOld && tokenizedNew) {
+        changePasswordRequest.oldPassword.value = tokenizedOld
+        changePasswordRequest.newPassword.value = tokenizedNew
+        auth?.validatePassword({ password: changePasswordRequest.newPassword }).then(() => {
+            auth
+                ?.updatePassword(changePasswordRequest)
+                .then(() => {
+                    showSuccessToast('Password changed successfully')
+                    router.push('/profile')
+                })
+                .catch((err) => {
+                    const data = err.response.data
+                    const error = data.message ? data.message : data.errorCode
 
-    checkOnKeyUp(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault()
-            this.submitChangePassword()
-        }
-    }
-
-    async submitChangePassword() {
-        let tokenizedOld = ''
-        let tokenizedNew = ''
-
-        this.$v.$touch()
-
-        if (this.isPasswordValid && !this.isAnyPasswordEmpty) {
-            this.isLoading = true
-
-            await this.oldPassword.createToken().then((res) => {
-                tokenizedOld = res.tokens['old-password']
-            })
-            await this.newPassword.createToken().then((res) => {
-                tokenizedNew = res.tokens['new-password']
-            })
-
-            if (tokenizedOld && tokenizedNew) {
-                this.changePasswordRequest.oldPassword.value = tokenizedOld
-                this.changePasswordRequest.newPassword.value = tokenizedNew
-                this.stores.auth
-                    .validatePassword({ password: this.changePasswordRequest.newPassword })
-                    .then(() => {
-                        this.stores.auth
-                            .updatePassword(this.changePasswordRequest)
-                            .then(() => {
-                                this.showSuccessToast('Password changed successfully')
-                                this.$router.push('/profile')
-                            })
-                            .catch((err) => {
-                                const data = err.response.data
-                                const error = data.message ? data.message : data.errorCode
-
-                                this.showErrorToast(error)
-                            })
-                            .finally(() => {
-                                this.isLoading = false
-                            })
-                    })
-            }
-        }
+                    showErrorToast(error)
+                })
+                .finally(() => {
+                    isLoading.value = false
+                })
+        })
     }
 }
 </script>

@@ -1,10 +1,10 @@
-import { Middleware } from '@nuxt/types'
-import { authStore } from '~/utils/store-accessor'
+import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
 import config from '~/config'
+import { useAuthStore } from '~/store/auth'
 
 const Cookie = process.client ? require('js-cookie') : undefined
 
-function scaCheck(route, redirect) {
+const scaCheck = (route, redirect) => {
     if (
         !route.name?.startsWith('register') &&
         !route.name?.startsWith('profile-address') &&
@@ -16,24 +16,22 @@ function scaCheck(route, redirect) {
     }
 }
 
-const cookieMiddleware: Middleware = async ({ store, route, redirect }) => {
-    const _authStore = authStore(store)
-
+export default defineNuxtMiddleware(async ({ route, redirect }) => {
+    const auth = useAuthStore()
     const authCookie = Cookie.get(config.ONV_COOKIE_NAME)
 
     if (authCookie) {
         try {
-            const auth = JSON.parse(authCookie)
-            await _authStore.SET_AUTH(auth)
+            const authCookieJson = JSON.parse(authCookie)
+            await auth.setAuth(authCookieJson)
+
             scaCheck(route, redirect)
         } catch (err) {
             // No valid cookie found
-            await _authStore.logout()
+            await auth.logout()
         }
     } else {
         localStorage.removeItem('stepUp')
         localStorage.removeItem('scaSmsSent')
     }
-}
-
-export default cookieMiddleware
+})

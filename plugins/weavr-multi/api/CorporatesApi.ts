@@ -6,7 +6,7 @@ import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identit
 import { StartCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/StartCorporateKYBResponse'
 import { ChargeFeeToCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/ChargeFeeToCorporateRequest'
 import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
-import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
+import { VerifyEmail } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmail'
 import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 
 export class CorporatesApi {
@@ -26,7 +26,7 @@ export class CorporatesApi {
         return $axiosMulti.post('/corporates/verification/email/send', data)
     }
 
-    verifyEmail(data: VerifyEmailRequest): Promise<AxiosResponse> {
+    verifyEmail(data: VerifyEmail): Promise<AxiosResponse> {
         return $axiosMulti.post('/corporates/verification/email/verify', data)
     }
 

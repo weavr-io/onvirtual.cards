@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export enum ConsumerSourceOfFundTypeEnum {
     PERSONAL_SAVINGS = 'PERSONAL_SAVINGS',
     FAMILY_SAVINGS = 'FAMILY_SAVINGS',
@@ -14,4 +16,18 @@ export enum ConsumerSourceOfFundTypeEnum {
     INHERITANCE = 'INHERITANCE',
     SALE_OF_COMPANY_SHARES_BUSINESS = 'SALE_OF_COMPANY_SHARES_BUSINESS',
     OTHER = 'OTHER',
+}
+
+const ConsumerSourceOfFundTypeEnumSchema = z.nativeEnum(ConsumerSourceOfFundTypeEnum)
+
+const PREDEFINED_CONSUMER_SOURCE_OF_FUND = Object.values(ConsumerSourceOfFundTypeEnum).filter(
+    (value) => value !== ConsumerSourceOfFundTypeEnum.OTHER,
+)
+
+type ConsumerSourceOfFundTypeEnumType = z.infer<typeof ConsumerSourceOfFundTypeEnumSchema>
+
+export {
+    ConsumerSourceOfFundTypeEnumSchema,
+    ConsumerSourceOfFundTypeEnumType,
+    PREDEFINED_CONSUMER_SOURCE_OF_FUND,
 }

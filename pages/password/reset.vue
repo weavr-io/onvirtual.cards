@@ -1,6 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <logo class="pb-5" />
+        <LogoOvc classes="pb-5" />
         <b-card no-body>
             <b-card-body v-if="!passwordSent" class="px-4 mx-2 py-5 p-md-card">
                 <div class="text-center">
@@ -11,18 +11,18 @@
                     </h5>
                 </div>
                 <error-alert />
-                <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
+                <b-form id="contact-form" class="mt-5" novalidate @submit.prevent="resetPassword">
                     <b-form-group
                         id="ig-email"
-                        :invalid-feedback="invalidFeedback($v.form.email, 'email')"
-                        :state="isInvalid($v.form.email)"
+                        :invalid-feedback="validation.getInvalidFeedback('email')"
+                        :state="validation.getState('email')"
                         label="Email:"
                         label-for="from-email"
                     >
                         <b-form-input
                             id="from-email"
                             v-model="form.email"
-                            :state="isInvalid($v.form.email)"
+                            :state="validation.getState('email')"
                             class="form-control"
                             name="setEmail"
                             placeholder="name@email.com"
@@ -30,10 +30,10 @@
                         />
                     </b-form-group>
                     <div class="form-group mt-5 pt-1">
-                        <loader-button
+                        <LoaderButton
                             :is-loading="isLoading"
-                            button-text="reset password"
                             class="text-center"
+                            text="reset password"
                         />
                     </div>
                 </b-form>
@@ -53,10 +53,10 @@
                         </div>
                         <div>
                             <b-form id="contact-form" class="mt-5" @submit.prevent="resetPassword">
-                                <loader-button
+                                <LoaderButton
                                     :is-loading="isLoading"
-                                    button-text="resend"
                                     class="text-center"
+                                    text="resend"
                                 />
                             </b-form>
                         </div>
@@ -67,55 +67,64 @@
     </b-col>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { email, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
-import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import Logo from '~/components/Logo.vue'
+import { computed, defineComponent, reactive, ref } from '@nuxtjs/composition-api'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import { useStores } from '~/composables/useStores'
+import useZodValidation from '~/composables/useZodValidation'
+import {
+    INITIAL_RESET_REQUEST,
+    InitiateLostPasswordRequestModel,
+    ResetRequest,
+    ResetSchema,
+} from '~/plugins/weavr-multi/api/models/authentication'
 
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
-        Logo,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton,
+        LogoOvc,
+        ErrorAlert,
     },
-    validations: {
-        form: {
-            email: {
-                required,
-                email,
-            },
-        },
+    layout: 'auth',
+    setup() {
+        const { auth, errors } = useStores(['auth', 'errors'])
+
+        const isLoading = ref(false)
+        const passwordSent = ref(false)
+        const form: ResetRequest = reactive(INITIAL_RESET_REQUEST())
+
+        const validation = computed(() => {
+            return useZodValidation(ResetSchema, form)
+        })
+
+        const resetPassword = async () => {
+            await validation.value.validate()
+
+            if (validation.value.isInvalid.value) return
+
+            isLoading.value = true
+            errors?.setError(null)
+            auth
+                ?.lostPasswordInitiate(form as InitiateLostPasswordRequestModel)
+                .then(() => {
+                    passwordSent.value = true
+                })
+                .catch((err) => {
+                    errors?.setError(err)
+                })
+                .finally(() => {
+                    isLoading.value = false
+                })
+        }
+
+        return {
+            passwordSent,
+            resetPassword,
+            validation,
+            form,
+            isLoading,
+        }
     },
 })
-export default class ResetPasswordPage extends mixins(BaseMixin, ValidationMixin) {
-    isLoading = false
-
-    passwordSent = false
-
-    protected form: InitiateLostPasswordRequestModel = {
-        email: '',
-    }
-
-    resetPassword() {
-        this.$v.$touch()
-        if (this.$v.$invalid) return
-
-        this.isLoading = true
-        this.stores.errors.SET_ERROR(null)
-        this.stores.auth
-            .lostPasswordInitiate(this.form)
-            .then(() => {
-                this.passwordSent = true
-            })
-            .catch((err) => {
-                this.stores.errors.SET_ERROR(err)
-            })
-            .finally(() => {
-                this.isLoading = false
-            })
-    }
-}
 </script>

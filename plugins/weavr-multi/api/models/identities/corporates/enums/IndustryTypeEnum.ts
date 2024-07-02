@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export enum IndustryTypeEnum {
     ACCOUNTING = 'ACCOUNTING',
     AUDIT = 'AUDIT',
@@ -22,3 +24,8 @@ export enum IndustryTypeEnum {
     TRAVEL_TOURISM = 'TRAVEL_TOURISM',
     FREELANCER = 'FREELANCER',
 }
+
+const IndustryTypeEnumSchema = z.nativeEnum(IndustryTypeEnum)
+type IndustryTypeEnumType = z.infer<typeof IndustryTypeEnumSchema>
+
+export { IndustryTypeEnumSchema, IndustryTypeEnumType }

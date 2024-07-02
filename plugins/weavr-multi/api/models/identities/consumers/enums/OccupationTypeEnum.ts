@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export enum OccupationTypeEnum {
     ACCOUNTING = 'ACCOUNTING',
     AUDIT = 'AUDIT',
@@ -26,3 +28,8 @@ export enum OccupationTypeEnum {
     RETIRED = 'RETIRED',
     OTHER = 'OTHER',
 }
+
+const OccupationTypeEnumSchema = z.nativeEnum(OccupationTypeEnum)
+type OccupationTypeEnumType = z.infer<typeof OccupationTypeEnumSchema>
+
+export { OccupationTypeEnumSchema, OccupationTypeEnumType }

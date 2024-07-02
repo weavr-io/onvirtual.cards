@@ -1,5 +1,5 @@
-import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/IdentityIdModel'
-import { TypeIdModel } from '~/plugins/weavr-multi/api/models/common/TypeIdModel'
+import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/models/IdentityIdModel'
+import { TypeIdModel } from '~/plugins/weavr-multi/api/models/common/models/TypeIdModel'
 
 export interface LoginWithPasswordResponse {
     token: string

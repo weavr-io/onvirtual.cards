@@ -17,13 +17,7 @@
             "~/*": ["./*"],
             "@/*": ["./*"]
         },
-        "types": [
-            "@types/node",
-            "@nuxt/types",
-            "@nuxtjs/axios",
-            "@types/vuelidate"
-        ],
-        "resolveJsonModule": true
+        "types": ["@types/node", "@nuxt/types", "@nuxtjs/axios", "@pinia/nuxt"]
     },
     "exclude": [".nuxt", "dist", "node_modules"],
     "importHelpers": true,

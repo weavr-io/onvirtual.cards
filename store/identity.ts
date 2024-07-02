@@ -1,57 +1,63 @@
-import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { StoreModule } from '~/store/storeModule'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
-import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import { defineStore } from 'pinia'
+import { reactive } from 'vue'
+import { useCorporatesStore } from '~/store/corporates'
+import { useConsumersStore } from '~/store/consumers'
+import { useAuthStore } from '~/store/auth'
+import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
+import type { Identity as IdentityState } from '~/local/models/store/identity'
 
-const defaultState = {
-    identity: null,
-    emailVerified: false,
-    mobileNumberVerified: false,
+const initState = (): IdentityState => {
+    return {
+        identity: null,
+        emailVerified: false,
+        mobileNumberVerified: false,
+    }
 }
 
-@Module({
-    name: 'identitiesModule',
-    namespaced: true,
-    stateFactory: true,
-})
-export default class Identity extends StoreModule {
-    identity: ConsumerModel | CorporateModel | null = defaultState.identity
+export const useIdentityStore = defineStore('identity', () => {
+    const identityState: IdentityState = reactive(initState())
+    const corporates = useCorporatesStore()
+    const consumers = useConsumersStore()
+    const auth = useAuthStore()
 
-    emailVerified: boolean = defaultState.emailVerified
-
-    mobileNumberVerified: boolean = defaultState.mobileNumberVerified
-
-    @Mutation
-    SET_IDENTITY(identity: ConsumerModel | CorporateModel | null) {
-        this.identity = identity
-        this.emailVerified = identity?.rootUser?.emailVerified ?? false
-        this.mobileNumberVerified = identity?.rootUser?.mobileNumberVerified ?? false
+    const setIdentity = (identity: ConsumerModel | CorporateModel | null) => {
+        identityState.identity = identity
+        identityState.emailVerified = identity?.rootUser?.emailVerified ?? false
+        identityState.mobileNumberVerified = identity?.rootUser?.mobileNumberVerified ?? false
     }
 
-    @Mutation
-    SET_EMAIL_VERIFIED(verified: boolean) {
-        this.emailVerified = verified
+    const setEmailVerified = (verified: boolean) => {
+        identityState.emailVerified = verified
     }
 
-    @Mutation
-    SET_MOBILE_VERIFIED(verified: boolean) {
-        this.mobileNumberVerified = verified
+    const setMobileVerified = (verified: boolean) => {
+        identityState.mobileNumberVerified = verified
     }
 
-    @Mutation
-    RESET_STATE() {
-        Object.keys(defaultState).forEach((key) => {
-            this[key] = defaultState[key]
+    const resetState = () => {
+        const data = initState()
+        Object.keys(data).forEach((key) => {
+            identityState[key] = data[key]
         })
     }
 
-    @Action({ rawError: true })
-    getIdentity() {
-        if (authStore(this.store).isConsumer) {
-            return consumersStore(this.store).get()
-        } else if (authStore(this.store).isCorporate) {
-            return corporatesStore(this.store).get()
+    const getIdentity = () => {
+        if (auth.isConsumer) {
+            return consumers.get()
+        } else if (auth.isCorporate) {
+            return corporates.get()
         }
     }
-}
+
+    return {
+        identityState,
+        setIdentity,
+        setEmailVerified,
+        setMobileVerified,
+        resetState,
+        getIdentity,
+    }
+})
+
+export type useIdentityStore = ReturnType<typeof useIdentityStore>

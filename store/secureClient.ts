@@ -1,39 +1,27 @@
-import { Action, Module, Mutation } from 'vuex-module-decorators'
-import { StoreModule } from '~/store/storeModule'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import type { SecureForm } from '~/plugins/weavr/components/api'
 
-const defaultState = {
-    form: null,
-}
+export const useSecureClientStore = defineStore('secureClient', () => {
+    const form = ref<SecureForm | null>(null)
 
-@Module({
-    name: 'SecureClientModule',
-    namespaced: true,
-    stateFactory: true,
-})
-export default class SecureClient extends StoreModule {
-    form: any = defaultState.form
-
-    @Mutation
-    SET_FORM(form: any) {
-        this.form = form
+    const set = (f: SecureForm) => {
+        form.value = f
     }
 
-    @Mutation
-    RESET_STATE() {
-        Object.keys(defaultState).forEach((key) => {
-            this[key] = defaultState[key]
-        })
+    const resetState = () => {
+        form.value = null
     }
 
-    @Action
-    setForm(form: any) {
-        this.SET_FORM(form)
+    const setForm = (form: SecureForm) => {
+        set(form)
     }
 
-    @Action
-    tokenize() {
+    const tokenize = () => {
         return new Promise((resolve, reject) => {
-            this.form?.tokenize(
+            if (!form.value) reject(new Error('Form error'))
+
+            form.value?.tokenize(
                 (res) => {
                     resolve(res)
                 },
@@ -43,4 +31,13 @@ export default class SecureClient extends StoreModule {
             )
         })
     }
-}
+
+    return {
+        set,
+        resetState,
+        setForm,
+        tokenize,
+    }
+})
+
+export type useSecureClientStore = ReturnType<typeof useSecureClientStore>

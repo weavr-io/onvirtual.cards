@@ -1,17 +1,14 @@
 <template>
     <div></div>
 </template>
-
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { defineComponent, useRouter } from '@nuxtjs/composition-api'
 
-@Component({
+export default defineComponent({
     layout: 'dashboard',
+    setup() {
+        const router = useRouter()
+        router.push('/managed-cards')
+    },
 })
-export default class DashboardPage extends mixins(BaseMixin) {
-    asyncData({ redirect }) {
-        redirect('/managed-cards')
-    }
-}
 </script>

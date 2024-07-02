@@ -8,36 +8,38 @@
     </section>
 </template>
 
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import { authStore, identitiesStore } from '~/utils/store-accessor'
+<script lang="ts" setup>
+import { useAsync, useRouter } from '@nuxtjs/composition-api'
+import { useStores } from '~/composables/useStores'
 
-@Component({})
-export default class IndexPage extends mixins(BaseMixin) {
-    async asyncData({ store, redirect }) {
-        const isLoggedIn = authStore(store).isLoggedIn
+const router = useRouter()
+const { auth, identity } = useStores(['auth', 'identity'])
 
-        if (!isLoggedIn) {
-            redirect('/login')
+useAsync(async () => {
+    const isLoggedIn = auth?.isLoggedIn
+
+    if (!isLoggedIn) {
+        router.replace('/login')
+    } else {
+        if (identity?.identityState.identity === null) {
+            await identity!.getIdentity()
+        }
+
+        if (!identity?.identityState.emailVerified) {
+            const email = window.encodeURIComponent(
+                identity!.identityState.identity!.rootUser?.email,
+            )
+            router.replace(`/login/verify?send=true&email=${email}`)
+        } else if (!identity!.identityState.mobileNumberVerified) {
+            router.replace('/login/verify/mobile')
+        } else if (
+            identity!.identityState.identity &&
+            typeof identity!.identityState.identity.rootUser === 'undefined'
+        ) {
+            router.replace('/profile/address')
         } else {
-            const identities = identitiesStore(store)
-
-            if (identities.identity === null) {
-                await identities.getIdentity()
-            }
-
-            if (!identities.emailVerified) {
-                const email = window.encodeURIComponent(identities.identity!.rootUser?.email)
-                redirect(`/login/verify?send=true&email=${email}`)
-            } else if (!identities.mobileNumberVerified) {
-                redirect('/login/verify/mobile')
-            } else if (identities.identity && typeof identities.identity.rootUser === 'undefined') {
-                redirect('/profile/address')
-            } else {
-                redirect('/dashboard')
-            }
+            router.replace('/dashboard')
         }
     }
-}
+})
 </script>

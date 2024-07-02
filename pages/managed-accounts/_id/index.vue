@@ -10,97 +10,121 @@
     </div>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-
+import {
+    computed,
+    defineComponent,
+    Ref,
+    ref,
+    useAsync,
+    useFetch,
+    useRoute,
+    watch,
+} from '@nuxtjs/composition-api'
 import dot from 'dot-object'
-import moment from 'moment'
-import BaseMixin from '~/mixins/BaseMixin'
-import RouterMixin from '~/mixins/RouterMixin'
-import AccountsMixin from '~/mixins/AccountsMixin'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
-import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
-import KyVerified from '~/mixins/kyVerified'
-import { accountsStore } from '~/utils/store-accessor'
+import { useLuxon } from '~/composables/useLuxon'
+import { useStores } from '~/composables/useStores'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
+import { useBase } from '~/composables/useBase'
+import { useKyVerified } from '~/composables/useKyVerified'
+import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
 
-@Component({
-    watch: {
-        '$route.query': '$fetch',
+export default defineComponent({
+    components: {
+        Statement,
     },
     layout: 'dashboard',
-    components: {
-        Statement: () => import('~/components/accounts/statement/statement.vue'),
-    },
     middleware: 'kyVerified',
+    setup() {
+        const route = useRoute()
+        const { accounts } = useStores(['accounts'])
+        const { pendingDataOrError } = useBase()
+        const { hasAlert } = useKyVerified()
+        const { getStartOfMonth, getEndOfMonth } = useLuxon()
+
+        const filters: Ref<GetManagedAccountStatementRequest | null> = ref(null)
+        const page = ref(0)
+        const usingFetch = ref(true)
+
+        const filteredStatement = computed(() => {
+            return accounts?.filteredStatement
+        })
+
+        const getStatements = async () => {
+            const _accountId = route.value.params.id
+
+            await accounts?.get(_accountId)
+
+            const _routeQueries = dot.object(route.value.query)
+            const _filters = _routeQueries.filters ? _routeQueries.filters : {}
+
+            if (!_filters.fromTimestamp) {
+                _filters.fromTimestamp = getStartOfMonth.value
+            }
+
+            if (!_filters.toTimestamp) {
+                _filters.toTimestamp = getEndOfMonth.value
+            }
+
+            const _statementFilters: GetManagedAccountStatementRequest = {
+                showFundMovementsOnly: false,
+                orderByTimestamp: OrderEnum.DESC,
+                limit: 10,
+                offset: 0,
+                ..._filters,
+            }
+
+            const _req = {
+                id: _accountId,
+                filters: _statementFilters,
+            }
+
+            filters.value = { ..._statementFilters }
+
+            page.value = 0
+            await accounts?.getStatements(_req)
+        }
+
+        useAsync(() => {
+            accounts?.setStatements(null)
+        })
+
+        useFetch(async () => {
+            await getStatements().finally(() => (usingFetch.value = false))
+        })
+
+        watch(
+            route,
+            async () => {
+                if (!usingFetch.value) await getStatements()
+            },
+            { immediate: true },
+        )
+
+        const infiniteScroll = ($state) => {
+            setTimeout(() => {
+                page.value++
+
+                const _request: GetManagedAccountStatementRequest = { ...filters.value }
+
+                _request!.offset = (page.value * +_request!.limit!).toString()
+
+                accounts
+                    ?.getStatements({
+                        id: route.value.params.id,
+                        filters: _request,
+                    })
+                    .then((res) => {
+                        if (res.data.responseCount! < _request.limit!) {
+                            $state.complete()
+                        } else {
+                            $state.loaded()
+                        }
+                    })
+            }, 500)
+        }
+
+        return { filters, infiniteScroll, pendingDataOrError, hasAlert, filteredStatement }
+    },
 })
-export default class AccountPage extends mixins(BaseMixin, RouterMixin, AccountsMixin, KyVerified) {
-    filters: GetManagedAccountStatementRequest | null = null
-
-    page = 0
-
-    get filteredStatement() {
-        return this.stores.accounts.filteredStatement
-    }
-
-    asyncData({ store }) {
-        accountsStore(store).SET_STATEMENTS(null)
-    }
-
-    async fetch() {
-        const _accountId = this.$route.params.id
-
-        await this.stores.accounts.get(_accountId)
-
-        const _routeQueries = dot.object(this.$route.query)
-        const _filters = _routeQueries.filters ? _routeQueries.filters : {}
-
-        if (!_filters.fromTimestamp) {
-            _filters.fromTimestamp = moment().startOf('month').valueOf()
-        }
-
-        if (!_filters.toTimestamp) {
-            _filters.toTimestamp = moment().endOf('month').valueOf()
-        }
-
-        const _statementFilters: GetManagedAccountStatementRequest = {
-            showFundMovementsOnly: false,
-            orderByTimestamp: OrderEnum.DESC,
-            limit: 10,
-            offset: 0,
-            ..._filters,
-        }
-
-        const _req = {
-            id: _accountId,
-            filters: _statementFilters,
-        }
-
-        this.filters = { ..._statementFilters }
-
-        this.page = 0
-        await this.stores.accounts.getStatements(_req)
-    }
-
-    infiniteScroll($state) {
-        setTimeout(() => {
-            this.page++
-
-            const _request: GetManagedAccountStatementRequest = { ...this.filters }
-
-            _request!.offset = (this.page * +_request!.limit!).toString()
-
-            this.stores.accounts
-                .getStatements({
-                    id: this.$route.params.id,
-                    filters: _request,
-                })
-                .then((res) => {
-                    if (res.data.responseCount! < _request.limit!) {
-                        $state.complete()
-                    } else {
-                        $state.loaded()
-                    }
-                })
-        }, 500)
-    }
-}
 </script>

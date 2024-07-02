@@ -1,4 +1,4 @@
-import { Plugin } from '@nuxt/types'
+import { defineNuxtPlugin } from '@nuxtjs/composition-api'
 import { FormattingFiltersModule } from '~/plugins/formattingFilters/FormattingFiltersModule'
 import { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
 
@@ -21,16 +21,6 @@ declare module '@nuxt/types' {
     }
 }
 
-declare module 'vuex/types/index' {
-    // this.$formattingFilters inside Vuex stores
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    interface Store<S> {
-        $formattingFilters: FormattingFiltersInterface
-    }
-}
-
-const formattingFiltersPlugin: Plugin = (_context, _inject) => {
-    _inject('formattingFilters', new FormattingFiltersModule())
-}
-
-export default formattingFiltersPlugin
+export default defineNuxtPlugin((_, inject) => {
+    inject('formattingFilters', new FormattingFiltersModule())
+})

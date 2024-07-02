@@ -19,8 +19,11 @@
                                     </span>
                                     <span class="card-expiry ml-2 ml-sm-5">
                                         <span class="card-expiry-label">EXP</span>
-                                        <span class="card-expiry-value">
-                                            {{ managedCard.expiryMmyy | expiryMmyy }}
+                                        <span
+                                            v-if="managedCard.expiryMmyy"
+                                            class="card-expiry-value"
+                                        >
+                                            {{ expiryDate }}
                                         </span>
                                     </span>
                                 </div>
@@ -39,11 +42,11 @@
                             </b-button>
                             <div class="card-balance">
                                 <div class="card-balance-label text-muted">balance</div>
-                                <div class="card-balance-value">
-                                    {{
-                                        managedCard.balances.availableBalance
-                                            | weavr_currency(managedCard.currency)
-                                    }}
+                                <div
+                                    v-if="managedCard.balances?.availableBalance"
+                                    class="card-balance-value"
+                                >
+                                    {{ currency }}
                                 </div>
                             </div>
                         </div>
@@ -98,7 +101,7 @@
                                                         lineHeight: '1',
                                                         fontSize: '20px',
                                                     }"
-                                                    :token="managedCard.cardNumber.value"
+                                                    :token="managedCard.cardNumber?.value"
                                                     class="card-select-number"
                                                     @onChange="toggleIsLoading"
                                                 />
@@ -116,8 +119,11 @@
                                 <b-col cols="3">
                                     <div class="card-expiry">
                                         <div class="card-expiry-label">EXP</div>
-                                        <div class="card-expiry-value">
-                                            {{ managedCard.expiryMmyy | expiryMmyy }}
+                                        <div
+                                            v-if="managedCard.expiryMmyy"
+                                            class="card-expiry-value"
+                                        >
+                                            {{ expiryDate }}
                                         </div>
                                     </div>
                                 </b-col>
@@ -135,7 +141,7 @@
                                                     fontSize: '14.4px',
                                                     fontWeight: '300',
                                                 }"
-                                                :token="managedCard.cvv.value"
+                                                :token="managedCard.cvv?.value"
                                                 class="card-select-number"
                                             />
                                         </div>
@@ -154,118 +160,121 @@
     </section>
 </template>
 
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import {
+    computed,
+    getCurrentInstance,
+    Ref,
+    ref,
+    useContext,
+    useFetch,
+    useRoute,
+    watch,
+} from '@nuxtjs/composition-api'
 import dot from 'dot-object'
-import moment from 'moment'
-import BaseMixin from '~/mixins/BaseMixin'
-import RouterMixin from '~/mixins/RouterMixin'
-import FiltersMixin from '~/mixins/FiltersMixin'
-import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import { useLuxon } from '~/composables/useLuxon'
+import { useBase } from '~/composables/useBase'
+import { useCards } from '~/composables/useCards'
+import { useStores } from '~/composables/useStores'
+import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
 import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
-import CardsMixin from '~/mixins/CardsMixin'
-import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
-import Statement from '~/components/cards/statement/statement.vue'
+import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import { expiryMmyy, weavrCurrency } from '~/utils/helper'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
+import Statement from '~/components/organisms/cards/statement/CardStatement.vue'
 
-@Component({
-    watch: {
-        '$route.query': 'fetchCardStatements',
-    },
-    components: {
-        WeavrCardNumberSpan,
-        WeavrCvvSpan,
-        Statement,
-        StatementItem: () => import('~/components/statement/item.vue'),
-    },
+const route = useRoute()
+const { proxy: root } = getCurrentInstance() || {}
+const { $weavrSetUserToken } = useContext()
+const { managedCard, cardId, isCardActive } = useCards()
+const { pendingDataOrError } = useBase()
+const { getStartOfMonth, getEndOfMonth } = useLuxon()
+const { auth, cards } = useStores(['auth', 'cards'])
+
+const filters: Ref<StatementFiltersRequest | null> = ref(null)
+const page = ref(0)
+const isLoading: Ref<boolean> = ref(true)
+
+const currency = computed(() => {
+    return weavrCurrency(managedCard.value?.balances?.availableBalance, managedCard.value?.currency)
 })
-export default class ManagedCardsStatements extends mixins(
-    BaseMixin,
-    RouterMixin,
-    FiltersMixin,
-    CardsMixin,
-) {
-    filters: StatementFiltersRequest | null = null
 
-    page = 0
+const expiryDate = computed(() => {
+    return expiryMmyy(managedCard.value?.expiryMmyy)
+})
 
-    isLoading: boolean | null = true
+useFetch(async () => {
+    page.value = 0
 
-    fields = ['processedTimestamp', 'adjustment', 'balanceAfter']
+    $weavrSetUserToken(`Bearer ${auth?.token}`)
 
-    async fetch() {
-        this.page = 0
-        this.$weavrSetUserToken('Bearer ' + this.stores.auth.token)
+    await cards?.getManagedCard(cardId.value)
+    await fetchCardStatements()
+})
 
-        await this.stores.cards.getManagedCard(this.cardId)
-        await this.fetchCardStatements()
+const fetchCardStatements = async () => {
+    const routeQueries = dot.object(route.value.query)
+    const localFilters = routeQueries.filters || {}
+
+    if (!localFilters?.fromTimestamp) {
+        localFilters.fromTimestamp = getStartOfMonth.value
     }
 
-    async fetchCardStatements() {
-        const routeQueries = dot.object(this.$route.query)
-        const filters = routeQueries.filters || {}
-
-        if (!filters?.fromTimestamp) {
-            filters.fromTimestamp = moment().startOf('month').valueOf()
-        }
-
-        if (!filters?.toTimestamp) {
-            filters.toTimestamp = moment().endOf('month').valueOf()
-        }
-
-        const statementFilters: StatementFiltersRequest = {
-            showFundMovementsOnly: false,
-            orderByTimestamp: OrderEnum.DESC,
-            limit: 100,
-            offset: 0,
-            ...filters,
-        }
-
-        const _req: ManagedCardStatementRequest = {
-            id: this.cardId,
-            request: statementFilters,
-        }
-
-        this.filters = statementFilters
-
-        this.stores.cards.clearCardStatements()
-        await this.stores.cards.getCardStatement(_req)
+    if (!localFilters?.toTimestamp) {
+        localFilters.toTimestamp = getEndOfMonth.value
     }
 
-    toggleIsLoading() {
-        this.isLoading = !this.isLoading
+    const statementFilters: StatementFiltersRequest = {
+        showFundMovementsOnly: false,
+        orderByTimestamp: OrderEnum.DESC,
+        limit: 100,
+        offset: 0,
+        ...localFilters,
     }
 
-    toggleModal() {
-        this.$bvModal.show('cardModal')
+    const _req: ManagedCardStatementRequest = {
+        id: cardId.value,
+        request: statementFilters,
     }
 
-    infiniteScroll($state) {
-        setTimeout(() => {
-            this.page++
+    filters.value = { ...statementFilters }
 
-            const request: StatementFiltersRequest = { ...this.filters }
-            request.offset = this.page * +request.limit!
-
-            this.stores.cards
-                .getCardStatement({
-                    id: this.$route.params.id,
-                    request,
-                })
-                .then((response) => {
-                    if (
-                        !response.data.responseCount ||
-                        response.data.responseCount < request.limit!
-                    ) {
-                        $state.complete()
-                    } else {
-                        $state.loaded()
-                    }
-                })
-        }, 500)
-    }
+    cards?.clearCardStatements()
+    await cards?.getCardStatement(_req)
 }
+
+const toggleIsLoading = () => {
+    isLoading.value = !isLoading.value
+}
+
+const infiniteScroll = ($state) => {
+    setTimeout(() => {
+        page.value++
+
+        const request: StatementFiltersRequest = { ...filters.value }
+        request.offset = page.value * +request.limit! || 0
+
+        cards
+            ?.getCardStatement({
+                id: route.value.params.id,
+                request,
+            })
+            .then((response) => {
+                if (!response.data.responseCount || response.data.responseCount < request.limit!) {
+                    $state.complete()
+                } else {
+                    $state.loaded()
+                }
+            })
+    }, 500)
+}
+
+const toggleModal = () => {
+    root!.$bvModal.show('cardModal')
+}
+
+watch(route, fetchCardStatements)
 </script>
 
 <style lang="scss" scoped>

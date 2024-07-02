@@ -1,7 +1,8 @@
-import { Context, Plugin } from '@nuxt/types'
-import { authStore, errorsStore } from '~/utils/store-accessor'
+import { defineNuxtPlugin } from '@nuxtjs/composition-api'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
-const axiosPlugin: Plugin = (ctxt: Context, inject) => {
+export default defineNuxtPlugin((ctxt, inject) => {
+    const { auth, errors } = initialiseStores(['auth', 'errors'])
     const axiosMulti = ctxt.$axios.create({
         headers: {
             common: {
@@ -16,7 +17,7 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
         const code = parseInt(error.response && error.response.status)
         switch (code) {
             case 401:
-                if (error.response.config.url !== '/logout') authStore(ctxt.store).logout()
+                if (error.response.config.url !== '/logout') auth?.logout()
                 ctxt.redirect('/login')
                 break
             case 403:
@@ -27,15 +28,15 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
                 ) {
                     ctxt.redirect('/login/sca')
                 } else if (ctxt.route.name !== 'login') {
-                    authStore(ctxt.store).resetTokenAndStates()
+                    auth?.resetTokenAndStates()
                     ctxt.redirect('/login')
                 }
                 break
             case 409:
-                errorsStore(ctxt.store).SET_CONFLICT(error)
+                errors?.setConflict(error)
                 break
             default:
-                errorsStore(ctxt.store).SET_ERROR(error)
+                errors?.setError(error)
                 break
         }
 
@@ -46,6 +47,4 @@ const axiosPlugin: Plugin = (ctxt: Context, inject) => {
 
     // Inject to context as $axiosMulti
     inject('axiosMulti', axiosMulti)
-}
-
-export default axiosPlugin
+})
