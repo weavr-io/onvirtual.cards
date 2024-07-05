@@ -1,6 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <logo base-class="mb-5" />
+        <LogoOvc classes="mb-5" />
         <div class="mb-3">
             <b-card body-class="px-4 mx-2 py-5 p-md-card">
                 <h3 class="text-center font-weight-light mb-5">Login</h3>
@@ -11,8 +11,8 @@
                     />
                     <b-form-group
                         id="login-email"
-                        :invalid-feedback="invalidFeedback($v.loginRequest.email, 'email')"
-                        :state="isInvalid($v.loginRequest.email)"
+                        :invalid-feedback="validation.getInvalidFeedback('email')"
+                        :state="validation.getState('email')"
                         label="Email"
                         label-for="form-email"
                     >
@@ -24,23 +24,29 @@
                             placeholder="Email"
                         />
                     </b-form-group>
-                    <client-only placeholder="Loading...">
-                        <label class="d-block">PASSWORD</label>
-                        <weavr-password-input
-                            ref="passwordField"
-                            :base-style="passwordBaseStyle"
-                            :class-name="['sign-in-password', { 'is-invalid': isInvalidPassword }]"
-                            :options="{ placeholder: 'Password' }"
-                            aria-invalid="true"
-                            name="password"
-                            @onChange="passwordInteraction"
-                            @onKeyUp="checkOnKeyUp"
-                        />
-                        <b-form-invalid-feedback v-if="isInvalidPassword">
-                            Please enter your password
-                        </b-form-invalid-feedback>
-                    </client-only>
-
+                    <b-form-group
+                        id="login-password"
+                        :invalid-feedback="validation.getInvalidFeedback('password,value')"
+                        :state="validation.getState('password,value')"
+                        label="Password"
+                        label-for="password"
+                    >
+                        <client-only placeholder="Loading...">
+                            <weavr-password-input
+                                ref="passwordField"
+                                :base-style="passwordBaseStyle"
+                                :class-name="[
+                                    'sign-in-password form-control p-0',
+                                    { 'is-invalid': isInvalidPassword },
+                                ]"
+                                :options="{ placeholder: 'Password' }"
+                                aria-invalid="true"
+                                name="password"
+                                @onChange="passwordInteraction"
+                                @onKeyUp="checkOnKeyUp"
+                            />
+                        </client-only>
+                    </b-form-group>
                     <div class="mt-2">
                         <b-link
                             class="small text-decoration-underline text-grey"
@@ -49,20 +55,12 @@
                             Forgot password?
                         </b-link>
                     </div>
-
-                    <b-form-group class="mt-5 text-center">
-                        <b-overlay
-                            :show="isLoading"
-                            class="d-inline-block"
-                            rounded="pill"
-                            spinner-small
-                        >
-                            <b-button type="submit" variant="secondary">
-                                sign in
-                                <span class="pl-5">-></span>
-                            </b-button>
-                        </b-overlay>
-                    </b-form-group>
+                    <LoaderButton
+                        :is-loading="isLoading"
+                        class="text-center mt-4"
+                        show-arrow
+                        text="Sign In"
+                    />
                     <div class="mt-4 text-center">
                         <small class="text-grey">
                             Not yet registered? Register
@@ -79,138 +77,160 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Ref } from 'nuxt-property-decorator'
-import { email, required } from 'vuelidate/lib/validators'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import BaseMixin from '~/mixins/BaseMixin'
+import {
+    computed,
+    ComputedRef,
+    defineComponent,
+    Ref,
+    ref,
+    useAsync,
+    useRouter,
+} from '@nuxtjs/composition-api'
+import { reactive } from 'vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { authStore } from '~/utils/store-accessor'
-import { LoginWithPasswordRequest } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPasswordRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import Logo from '~/components/Logo.vue'
+import {
+    INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
+    LoginWithPassword,
+    LoginWithPasswordSchema,
+} from '~/plugins/weavr-multi/api/models/authentication'
+import useZodValidation from '~/composables/useZodValidation'
+import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import { useStores } from '~/composables/useStores'
+import { useBase } from '~/composables/useBase'
 
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
-        Logo,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LoaderButton,
+        LogoOvc,
+        ErrorAlert,
         WeavrPasswordInput,
     },
-    validations: {
-        loginRequest: {
-            email: {
-                required,
-                email,
-            },
-            password: {
-                value: {
-                    required,
-                },
-            },
-        },
-    },
-})
-export default class LoginPage extends mixins(BaseMixin, ValidationMixin) {
-    isLoading = false
-    @Ref('passwordField')
-    passwordField!: WeavrPasswordInput
+    layout: 'auth',
+    setup() {
+        const router = useRouter()
+        const { showErrorToast } = useBase()
+        const { auth, consumers, errors } = useStores(['auth', 'consumers', 'errors'])
 
-    private loginRequest: LoginWithPasswordRequest = {
-        email: '',
-        password: {
-            value: '',
-        },
-    }
+        const isLoading = ref(false)
+        const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
 
-    get passwordBaseStyle(): SecureElementStyleWithPseudoClasses {
-        return {
-            color: '#495057',
-            fontSize: '16px',
-            fontSmoothing: 'antialiased',
-            fontFamily: "'Be Vietnam', sans-serif",
-            fontWeight: '400',
-            lineHeight: '24px',
-            margin: '0',
-            padding: '6px 12px',
-            textIndent: '0px',
-            '::placeholder': {
-                color: '#B6B9C7',
+        const loginRequest: LoginWithPassword = reactive(INITIAL_LOGIN_WITH_PASSWORD_REQUEST())
+
+        const validation = computed(() => {
+            return useZodValidation(LoginWithPasswordSchema, loginRequest)
+        })
+
+        const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
+            return {
+                color: '#495057',
+                fontSize: '16px',
+                fontSmoothing: 'antialiased',
+                fontFamily: "'Be Vietnam', sans-serif",
                 fontWeight: '400',
-            },
+                lineHeight: '24px',
+                margin: '0',
+                padding: '6px 12px',
+                textIndent: '0px',
+                '::placeholder': {
+                    color: '#B6B9C7',
+                    fontWeight: '400',
+                },
+            }
+        })
+
+        const isInvalidPassword = computed(() => {
+            return validation.value.getState('password,value') === false && validation.value.dirty
+        })
+
+        const passwordInteraction = (val: { empty?: boolean; valid?: boolean }) => {
+            !val?.empty
+                ? (loginRequest.password.value = '******')
+                : (loginRequest.password.value = '')
         }
-    }
 
-    get isInvalidPassword() {
-        return this.$v.loginRequest?.password?.value.$anyError
-    }
+        useAsync(() => {
+            const isLoggedIn = auth?.isLoggedIn
 
-    passwordInteraction(val: { empty: boolean; valid: boolean }) {
-        !val.empty
-            ? (this.loginRequest.password.value = '******')
-            : (this.loginRequest.password.value = '')
-    }
+            if (isLoggedIn) {
+                router.push('/')
+            }
+        })
 
-    login() {
-        this.$v.$touch()
-        if (!this.$v.$invalid) {
+        const login = async () => {
+            isLoading.value = true
+
+            await validation.value.validate()
+
+            if (validation.value.isInvalid.value) {
+                isLoading.value = false
+                return
+            }
+
             try {
-                this.isLoading = true
-                this.stores.errors.SET_ERROR(null)
-                this.passwordField.createToken().then(
+                errors?.setError(null)
+                passwordField.value?.createToken().then(
                     (tokens) => {
-                        this.loginRequest.password.value = tokens.tokens.password
-                        this.stores.auth
-                            .loginWithPassword(this.loginRequest)
+                        loginRequest.password.value = tokens.tokens.password
+                        auth
+                            ?.loginWithPassword(loginRequest)
                             .then(() => {
                                 localStorage.setItem('stepUp', 'FALSE')
                                 localStorage.setItem('scaSmsSent', 'FALSE')
-                                this.goToDashboard()
+                                goToDashboard()
                             })
                             .catch((err) => {
-                                this.isLoading = false
-                                this.stores.errors.SET_ERROR(err)
+                                isLoading.value = false
+                                errors?.setError(err)
                             })
                     },
                     (e) => {
-                        this.showErrorToast(e, 'Tokenization Error')
+                        isLoading.value = false
+                        showErrorToast(e, 'Tokenization Error')
                     },
                 )
             } catch (error: any) {
-                this.showErrorToast(error, 'Login Error')
+                isLoading.value = false
+                showErrorToast(error, 'Login Error')
             }
         }
-    }
 
-    async goToDashboard() {
-        if (this.stores.auth.isConsumer) {
-            await this.stores.consumers.get()
+        const goToDashboard = async () => {
+            if (auth?.isConsumer) {
+                await consumers?.get()
+            }
+
+            await auth?.indexAuthFactors()
+
+            await router.push({
+                path: '/login/sca',
+                query: {
+                    send: 'true',
+                },
+            })
+            isLoading.value = false
         }
 
-        await this.stores.auth.indexAuthFactors()
-
-        await this.$router.push({
-            path: '/login/sca',
-            query: {
-                send: 'true',
-            },
-        })
-        this.isLoading = false
-    }
-
-    asyncData({ store, redirect }) {
-        const isLoggedIn = authStore(store).isLoggedIn
-
-        if (isLoggedIn) {
-            redirect('/')
+        const checkOnKeyUp = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault()
+                login()
+            }
         }
-    }
 
-    checkOnKeyUp(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault()
-            this.login()
+        return {
+            login,
+            validation,
+            loginRequest,
+            passwordBaseStyle,
+            isInvalidPassword,
+            passwordInteraction,
+            checkOnKeyUp,
+            isLoading,
+            passwordField,
         }
-    }
-}
+    },
+})
 </script>

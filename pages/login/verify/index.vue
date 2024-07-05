@@ -1,13 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <div class="text-center pb-5">
-            <img
-                alt="onvirtual.cards"
-                class="d-inline-block align-top"
-                src="/img/logo.svg"
-                width="200"
-            />
-        </div>
+        <LogoOvc :link="false" classes="pb-5" />
         <div class="mb-5">
             <b-card class="px-4 py-5 p-md-card">
                 <h3 class="font-weight-light text-center">Check your inbox!</h3>
@@ -28,11 +21,13 @@
                     <b-row align-h="center">
                         <b-col cols="6">
                             <b-form-group
-                                :state="isInvalid($v.verifyEmailRequest.verificationCode)"
-                                invalid-feedback="This field is required and must be 6 characters"
+                                :invalid-feedback="
+                                    validation.getInvalidFeedback('verificationCode')
+                                "
+                                :state="validation.getState('verificationCode')"
                             >
                                 <b-form-input
-                                    v-model="$v.verifyEmailRequest.verificationCode.$model"
+                                    v-model="verifyEmailRequest.verificationCode"
                                     class="text-center"
                                     lazy
                                     placeholder="000000"
@@ -40,11 +35,7 @@
                             </b-form-group>
                         </b-col>
                     </b-row>
-                    <loader-button
-                        :is-loading="isLoading"
-                        button-text="verify"
-                        class="mt-5 text-center"
-                    />
+                    <LoaderButton :is-loading="isLoading" class="mt-5 text-center" text="verify" />
                 </form>
                 <div class="mt-4 text-center">
                     <small class="text-grey">
@@ -61,164 +52,193 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { maxLength, minLength, required } from 'vuelidate/lib/validators'
-import BaseMixin from '~/mixins/BaseMixin'
-import { authStore, consumersStore, corporatesStore, identitiesStore } from '~/utils/store-accessor'
-import { VerifyEmailRequest } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmailRequest'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/CredentialTypeEnum'
-import Logo from '~/components/Logo.vue'
+import {
+    computed,
+    defineComponent,
+    ref,
+    useAsync,
+    useFetch,
+    useRoute,
+    useRouter,
+} from '@nuxtjs/composition-api'
+import { reactive } from 'vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import {
+    CredentialTypeEnum,
+    INITIAL_VERIFY_EMAIL_REQUEST,
+    VerifyEmail,
+    VerifyEmailSchema,
+} from '~/plugins/weavr-multi/api/models/common'
+import useZodValidation from '~/composables/useZodValidation'
+import { useStores } from '~/composables/useStores'
 
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
-        Logo,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LogoOvc,
+        LoaderButton,
+        ErrorAlert,
     },
-    validations: {
-        verifyEmailRequest: {
-            verificationCode: {
-                required,
-                minLength: minLength(6),
-                maxLength: maxLength(6),
-            },
-        },
-    },
-})
-export default class EmailVerificationPage extends mixins(BaseMixin, ValidationMixin) {
-    showEmailResentSuccess = false
-    isLoading = false
-    private verifyEmailRequest!: VerifyEmailRequest
+    layout: 'auth',
+    setup() {
+        const route = useRoute()
+        const router = useRouter()
+        const { auth, identity, consumers, corporates, errors } = useStores([
+            'auth',
+            'identity',
+            'consumers',
+            'corporates',
+            'errors',
+        ])
 
-    async asyncData({ route, redirect, store }) {
-        const identities = identitiesStore(store)
-        const auth = authStore(store)
+        const showEmailResentSuccess = ref(false)
+        const isLoading = ref(false)
+        let verifyEmailRequest = reactive(INITIAL_VERIFY_EMAIL_REQUEST())
 
-        if (identities.identity === null) {
-            await identities.getIdentity()
-        }
+        const validation = computed(() => {
+            return useZodValidation(
+                VerifyEmailSchema.pick({ verificationCode: true }),
+                verifyEmailRequest,
+            )
+        })
 
-        if (identities.emailVerified || auth.auth?.credentials.type === CredentialTypeEnum.USER) {
-            return redirect('/login/verify/mobile')
-        }
-
-        const request: VerifyEmailRequest = {
-            email: route.query.email ?? identities.identity!.rootUser?.email,
-            verificationCode: route.query.nonce ? `${route.query.nonce}` : '',
-        }
-
-        if (request.verificationCode !== '') {
-            if (route.query.cons) {
-                consumersStore(store)
-                    .verifyEmail(request)
-                    .then(() => {
-                        redirect('/')
-                    })
-            } else {
-                // else treat as Corporate
-                corporatesStore(store)
-                    .verifyEmail(request)
-                    .then(() => {
-                        if (authStore(store).isLoggedIn) {
-                            redirect('/')
-                        } else {
-                            redirect('/login')
-                        }
-                    })
+        useAsync(async () => {
+            if (identity?.identityState.identity === null) {
+                await identity?.getIdentity()
             }
+
+            if (
+                identity?.identityState.emailVerified ||
+                auth?.authState.auth?.credentials.type === CredentialTypeEnum.USER
+            ) {
+                return router.push('/login/verify/mobile')
+            }
+
+            const request: VerifyEmail = {
+                email: route.value.query.email ?? identity?.identityState.identity!.rootUser?.email,
+                verificationCode: route.value.query.nonce
+                    ? `${route.value.query.nonce}`
+                    : undefined,
+            }
+
+            try {
+                if (request.verificationCode !== undefined) {
+                    if (route.value.query.cons) {
+                        await consumers?.verifyEmail(request).then(() => {
+                            router.push('/')
+                        })
+                    } else {
+                        // else treat as Corporate
+                        await corporates?.verifyEmail(request).then(() => {
+                            if (auth?.isLoggedIn) {
+                                router.push('/')
+                            } else {
+                                router.push('/login')
+                            }
+                        })
+                    }
+                }
+            } catch (e) {}
+
+            verifyEmailRequest = request
+        })
+
+        useFetch(async () => {
+            if (route.value.query.send === 'true') {
+                await sendVerifyEmail()
+            }
+        })
+
+        const sendVerifyEmail = async () => {
+            isLoading.value = true
+
+            try {
+                if (route.value.query.cons) {
+                    await sendVerifyEmailConsumers()
+                } else {
+                    // else treat as corporate
+                    await sendVerifyEmailCorporates()
+                }
+            } catch (e) {}
+
+            removeLoader()
+        }
+
+        const sendVerifyEmailConsumers = async () => {
+            await consumers?.sendVerificationCodeEmail({
+                email: verifyEmailRequest.email,
+            })
+        }
+
+        const sendVerifyEmailCorporates = async () => {
+            await corporates?.sendVerificationCodeEmail({
+                email: verifyEmailRequest.email,
+            })
+        }
+
+        const resendEmail = async () => {
+            await sendVerifyEmail()
+                .then(() => {
+                    showEmailResentSuccess.value = true
+                })
+                .catch(() => {
+                    removeLoader()
+                })
+        }
+
+        const removeLoader = () => {
+            isLoading.value = false
+        }
+
+        const doVerify = async () => {
+            isLoading.value = true
+            await validation.value.validate()
+
+            if (validation.value.isInvalid.value) {
+                removeLoader()
+                return
+            }
+
+            route.value.query.cons
+                ? await consumers
+                      ?.verifyEmail(verifyEmailRequest)
+                      .then(onEmailVerified)
+                      .catch((e) => {
+                          removeLoader()
+                          errors?.setConflict(e)
+                      })
+                : await corporates
+                      ?.verifyEmail(verifyEmailRequest)
+                      .then(onEmailVerified)
+                      .catch((e) => {
+                          removeLoader()
+                          errors?.setConflict(e)
+                      })
+        }
+
+        const onEmailVerified = () => {
+            identity?.setEmailVerified(true)
+            return router.push({
+                path: '/login/verify/mobile',
+                query: {
+                    send: 'true',
+                    cons: route.value.query.cons,
+                    corp: route.value.query.corp,
+                    mobileNumber: route.value.query.mobileNumber,
+                    mobileCountryCode: route.value.query.mobileCountryCode,
+                },
+            })
         }
 
         return {
-            verifyEmailRequest: request,
+            doVerify,
+            showEmailResentSuccess,
+            validation,
+            verifyEmailRequest,
+            isLoading,
+            resendEmail,
         }
-    }
-
-    async mounted() {
-        if (this.$route.query.send === 'true') {
-            await this.sendVerifyEmail()
-        }
-    }
-
-    async sendVerifyEmail() {
-        this.isLoading = true
-
-        if (this.$route.query.cons) {
-            await this.sendVerifyEmailConsumers().catch()
-        } else {
-            // else treat as corporate
-            await this.sendVerifyEmailCorporates().catch()
-        }
-
-        this.isLoading = false
-    }
-
-    async sendVerifyEmailConsumers() {
-        await this.stores.consumers.sendVerificationCodeEmail({
-            email: this.verifyEmailRequest.email,
-        })
-    }
-
-    async sendVerifyEmailCorporates() {
-        await this.stores.corporates.sendVerificationCodeEmail({
-            email: this.verifyEmailRequest.email,
-        })
-    }
-
-    resendEmail() {
-        this.sendVerifyEmail()
-            .then(() => {
-                this.showEmailResentSuccess = true
-            })
-            .catch(() => {
-                this.isLoading = false
-            })
-    }
-
-    doVerify() {
-        this.$v.$touch()
-
-        if (this.$v.$invalid) {
-            return
-        }
-
-        this.isLoading = true
-
-        this.$route.query.cons
-            ? this.stores.consumers
-                  .verifyEmail(this.verifyEmailRequest)
-                  .then(this.onMobileVerified)
-                  .catch((e) => {
-                      this.removeLoader()
-                      this.stores.errors.SET_CONFLICT(e)
-                  })
-            : this.stores.corporates
-                  .verifyEmail(this.verifyEmailRequest)
-                  .then(this.onMobileVerified)
-                  .catch((e) => {
-                      this.removeLoader()
-                      this.stores.errors.SET_CONFLICT(e)
-                  })
-    }
-
-    removeLoader() {
-        this.isLoading = false
-    }
-
-    onMobileVerified() {
-        this.stores.identities.SET_EMAIL_VERIFIED(true)
-
-        return this.$router.push({
-            path: '/login/verify/mobile',
-            query: {
-                send: 'true',
-                cons: this.$route.query.cons,
-                corp: this.$route.query.corp,
-                mobileNumber: this.$route.query.mobileNumber,
-                mobileCountryCode: this.$route.query.mobileCountryCode,
-            },
-        })
-    }
-}
+    },
+})
 </script>

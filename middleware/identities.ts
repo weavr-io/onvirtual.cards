@@ -1,20 +1,15 @@
-import { Middleware } from '@nuxt/types'
-import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
-const identitiesMiddleware: Middleware = async ({ store }) => {
+export default defineNuxtMiddleware(async (_) => {
     // this will run in async before every route change in order to populate identities respectively
+    const { auth, consumers, corporates } = initialiseStores(['auth', 'consumers', 'corporates'])
 
-    if (authStore(store).isConsumer && consumersStore(store).consumer === null) {
-        await consumersStore(store)
-            .get()
-            .catch(() => {})
+    if (auth?.isConsumer && !consumers?.consumerState.consumer) {
+        await consumers?.get()
     }
 
-    if (authStore(store).isCorporate && corporatesStore(store).corporate === null) {
-        await corporatesStore(store)
-            .get()
-            .catch(() => {})
+    if (auth?.isCorporate && !corporates?.corporateState.corporate) {
+        await corporates?.get()
     }
-}
-
-export default identitiesMiddleware
+})

@@ -1,21 +1,23 @@
-import { Middleware } from '@nuxt/types'
-import { authStore, consumersStore, corporatesStore } from '~/utils/store-accessor'
+import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
-const kyVerified: Middleware = async ({ store, route, redirect }) => {
-    const authStoreInstance = authStore(store)
-    if (authStoreInstance.isLoggedIn) {
-        if (authStoreInstance.isConsumer) {
+export default defineNuxtMiddleware(async ({ route, redirect }) => {
+    const { auth, consumers, corporates } = initialiseStores(['auth', 'consumers', 'corporates'])
+
+    if (auth?.isLoggedIn) {
+        if (auth?.isConsumer) {
             try {
                 if (route.name === 'managed-accounts-kyb') {
+                    // TODO: use navigateTo() after full nuxt3 migration
                     return redirect('/managed-accounts/kyc')
                 }
 
-                await consumersStore(store).checkKYC()
+                await consumers?.checkKYC()
 
                 if (route.name === 'managed-accounts-kyc') {
                     return redirect('/managed-accounts/add')
                 }
-            } catch (e) {
+            } catch (_) {
                 if (
                     route.name === 'managed-accounts-add' ||
                     route.name === 'managed-cards-add' ||
@@ -30,12 +32,12 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
                     return redirect('/managed-accounts/kyb')
                 }
 
-                await corporatesStore(store).checkKYB()
+                await corporates?.checkKYB()
 
                 if (route.name === 'managed-accounts-kyb') {
                     return redirect('/managed-accounts')
                 }
-            } catch (e) {
+            } catch (_) {
                 if (
                     route.name === 'managed-accounts-add' ||
                     route.name === 'managed-cards-add' ||
@@ -48,5 +50,4 @@ const kyVerified: Middleware = async ({ store, route, redirect }) => {
     } else {
         return redirect('/login')
     }
-}
-export default kyVerified
+})

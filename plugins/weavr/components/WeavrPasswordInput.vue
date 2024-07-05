@@ -1,94 +1,133 @@
 <template>
-    <div :class="className" class="weavr-input" />
+    <div :class="props.className" class="weavr-input" />
 </template>
-<script lang="ts">
-import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import {
+    Ref,
+    computed,
+    getCurrentInstance,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+} from '@nuxtjs/composition-api'
 import {
     SecureElementStyleWithPseudoClasses,
     SecureInputOptions,
 } from '~/plugins/weavr/components/api'
 
-@Component
-export default class WeavrPasswordInput extends Vue {
-    @Prop() readonly name!: string
+const { proxy: root } = getCurrentInstance() || {}
 
-    @Prop() readonly placeholder!: string
+const props = withDefaults(
+    defineProps<{
+        name?: string
+        placeholder?: string
+        value?: string
+        options?: SecureInputOptions
+        className?: string | string[]
+        customStyle?: Object
+        baseStyle?: SecureElementStyleWithPseudoClasses
+        emptyStyle?: SecureElementStyleWithPseudoClasses
+        validStyle?: SecureElementStyleWithPseudoClasses
+        invalidStyle?: SecureElementStyleWithPseudoClasses
+    }>(),
+    {
+        name: undefined,
+        placeholder: undefined,
+        value: undefined,
+        options: undefined,
+        className: undefined,
+        customStyle: undefined,
+        baseStyle: undefined,
+        emptyStyle: undefined,
+        validStyle: undefined,
+        invalidStyle: undefined,
+    },
+)
 
-    @Prop() readonly value!: string
+const emit = defineEmits(['onReady', 'onChange', 'onKeyUp', 'onBlur', 'onFocus', 'onStrength'])
 
-    @Prop() readonly options!: SecureInputOptions
+const passwordInput: Ref<any> = ref(null)
 
-    @Prop() readonly className!: string
+const _input = computed({
+    get() {
+        return passwordInput.value
+    },
+    set(newValue) {
+        passwordInput.value = newValue
+    },
+})
 
-    @Prop() readonly customStyle!: object
+onMounted(() => {
+    _input.value = root?.$weavrComponents.capture.password(props.name, inputOptions.value)
+    _input.value?.mount(root?.$el)
+    _addListeners(_input.value)
+})
 
-    @Prop() readonly baseStyle!: SecureElementStyleWithPseudoClasses
-
-    @Prop() readonly emptyStyle!: SecureElementStyleWithPseudoClasses
-
-    @Prop() readonly validStyle!: SecureElementStyleWithPseudoClasses
-
-    @Prop() readonly invalidStyle!: SecureElementStyleWithPseudoClasses
-
-    @Emit('onReady') onReady() {}
-
-    @Emit('onChange') onChange() {}
-
-    @Emit('onKeyUp') onKeyUp() {}
-
-    @Emit('onBlur') onBlur() {}
-
-    @Emit('onFocus') onFocus() {}
-
-    @Emit('onStrength') onStrength() {}
-
-    protected _input
-
-    mounted() {
-        this._input = this.$weavrComponents.capture.password(this.name, this.inputOptions)
-        this._input.mount(this.$el)
-        this._addListeners(this._input)
-    }
-
-    createToken() {
-        return this._input.createToken()
-    }
-
-    beforeDestroy() {
-        this._removeListeners(this._input)
-        this._input.destroy()
-    }
-
-    _addListeners(input) {
-        this.onReady && input.on('ready', this.onReady)
-        this.onChange && input.on('change', this.onChange)
-        this.onKeyUp && input.on('keyup', this.onKeyUp)
-        this.onBlur && input.on('blur', this.onBlur)
-        this.onFocus && input.on('focus', this.onFocus)
-        this.onStrength && input.on('strength', this.onStrength)
-    }
-
-    _removeListeners(input) {
-        this.onReady && input.off('ready', this.onReady)
-        this.onChange && input.off('change', this.onChange)
-        this.onKeyUp && input.off('keyup', this.onKeyUp)
-        this.onBlur && input.off('blur', this.onBlur)
-        this.onFocus && input.off('focus', this.onFocus)
-        this.onStrength && input.on('strength', this.onStrength)
-    }
-
-    get inputOptions() {
-        return {
-            ...this.options,
-            style: {
-                base: this.baseStyle,
-                empty: this.emptyStyle,
-                valid: this.validStyle,
-                invalid: this.invalidStyle,
-            },
-        }
-    }
+const onReady = () => {
+    emit('onReady')
 }
+
+const onChange = (val) => {
+    emit('onChange', val)
+}
+
+const onKeyUp = (e) => {
+    emit('onKeyUp', e)
+}
+
+const onBlur = () => {
+    emit('onBlur')
+}
+
+const onFocus = () => {
+    emit('onFocus')
+}
+
+const onStrength = (val) => {
+    emit('onStrength', val)
+}
+
+const _addListeners = (input) => {
+    input.on('ready', onReady)
+    input.on('change', onChange)
+    input.on('keyup', onKeyUp)
+    input.on('blur', onBlur)
+    input.on('focus', onFocus)
+    input.on('strength', onStrength)
+}
+
+const _removeListeners = (input) => {
+    input.off('ready', onReady)
+    input.off('change', onChange)
+    input.off('keyup', onKeyUp)
+    input.off('blur', onBlur)
+    input.off('focus', onFocus)
+    input.off('strength', onStrength)
+}
+
+onBeforeUnmount(() => {
+    _removeListeners(_input.value)
+    _input.value.destroy()
+})
+
+const createToken = () => {
+    return _input.value.createToken()
+}
+const inputOptions = computed(() => {
+    return {
+        ...props.options,
+        style: {
+            base: props.baseStyle,
+            empty: props.emptyStyle,
+            valid: props.validStyle,
+            invalid: props.invalidStyle,
+        },
+    }
+})
+
+defineExpose({
+    createToken,
+})
 </script>
 
 <style lang="scss" scoped></style>

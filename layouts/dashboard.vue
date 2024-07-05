@@ -1,62 +1,52 @@
 <template>
     <div>
-        <app-header />
-        <dashboard-header />
+        <AppHeader />
+        <DashboardHeader />
         <Nuxt />
-        <kyb-alert v-if="showKybAlert" />
-        <kyc-alert v-if="showKycAlert" />
-        <b-alert
+        <KYBAlert v-if="showKybAlert" />
+        <KYCAlert v-if="showKycAlert" />
+        <BAlert
             id="verify-mobile"
             :show="showVerifyMobileAlert && !showVerifyEmailAlert"
             class="fixed-bottom bottom-left-alert m-4 p-4"
             variant="bg-colored"
         >
             We need to verify your mobile number. Please click
-            <b-link to="/login/verify/mobile" class="link"> here. </b-link>
-        </b-alert>
-        <b-alert
+            <b-link class="link" to="/login/verify/mobile"> here.</b-link>
+        </BAlert>
+        <BAlert
             id="verify-email"
             :show="showVerifyEmailAlert"
             class="fixed-bottom bottom-left-alert m-4 p-4"
             variant="bg-colored"
         >
             We need to verify your email address. Please click
-            <b-button variant="transparent" class="link mb-1" @click="goToVerify">here.</b-button>
-        </b-alert>
-        <div v-if="isLoading" id="loader">
-            <div class="loader-spinner">
-                <b-spinner />
-            </div>
-        </div>
-        <cookie-policy />
+            <b-button class="link mb-1" variant="transparent" @click="goToVerify">here.</b-button>
+        </BAlert>
+        <LoadingSpinner id="loader" :is-loading="isLoading" />
+        <Cookie />
     </div>
 </template>
 
-<script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import KyVerified from '~/mixins/kyVerified'
-import BaseMixin from '~/mixins/BaseMixin'
+<script lang="ts" setup>
+import { computed } from 'vue'
+import { useStores } from '~/composables/useStores'
+import { useKyVerified } from '~/composables/useKyVerified'
+import { useBase } from '~/composables/useBase'
+import AppHeader from '~/components/molecules/HeaderComponent.vue'
+import Cookie from '~/components/molecules/CookieComponent.vue'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+import KYBAlert from '~/components/molecules/corporates/KYBAlert.vue'
+import KYCAlert from '~/components/molecules/consumers/KYCAlert.vue'
+import DashboardHeader from '~/components/organisms/DashboardHeader.vue'
 
-@Component({
-    components: {
-        AppFooter: () => import('~/components/Footer.vue'),
-        AppHeader: () => import('~/components/Header.vue'),
-        DashboardHeader: () => import('~/components/DashboardHeader.vue'),
-        KybAlert: () => import('~/components/corporates/KYBAlert.vue'),
-        KycAlert: () => import('~/components/consumers/KYCAlert.vue'),
-        cookiePolicy: () => import('~/components/cookie.vue'),
-    },
-})
-export default class DefaultLayout extends mixins(KyVerified, BaseMixin) {
-    get isLoading() {
-        return this.stores.loader.isLoading
-    }
+const { loader } = useStores(['loader'])
+const { showKybAlert, showKycAlert, showVerifyEmailAlert, showVerifyMobileAlert } = useKyVerified()
+const { goToVerify } = useBase()
 
-    get accounts() {
-        return this.stores.accounts.accounts
-    }
-}
+const isLoading = computed(() => loader?.isLoading)
 </script>
+
 <style lang="scss" scoped>
 .bottom-left-alert {
     max-width: 350px;
