@@ -36,7 +36,7 @@
                                 <b-form-row v-if="!isConsumer">
                                     <b-col>
                                         <b-form-group label="CARDHOLDER MOBILE NUMBER">
-                                            <vue-phone-number-input
+                                            <phone-number-input
                                                 :border-radius="0"
                                                 :error="numberIsValid === false"
                                                 :value="mobile.number"
@@ -122,9 +122,11 @@ import {
     CreateManagedCardSchema,
     INITIAL_MANAGED_CARD_REQUEST,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCard'
+import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 export default defineComponent({
     components: {
+        PhoneNumberInput,
         LoadingSpinner,
         LoaderButton,
     },
@@ -236,7 +238,9 @@ export default defineComponent({
             mobile.value.countryCode = number.countryCallingCode
             createManagedCardRequest.cardholderMobileNumber =
                 '+' + number.countryCallingCode + number.phoneNumber
-            numberIsValid.value = number.isValid
+            if (number.phoneNumber) {
+                numberIsValid.value = number.isValid
+            }
         }
 
         return {

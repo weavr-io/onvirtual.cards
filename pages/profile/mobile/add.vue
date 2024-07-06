@@ -9,7 +9,7 @@
             </p>
             <b-form novalidate @submit.prevent="submitForm">
                 <b-form-group label="MOBILE NUMBER*">
-                    <vue-phone-number-input
+                    <phone-number-input
                         :border-radius="0"
                         :error="numberIsValid === false"
                         :only-countries="mobileCountries"
@@ -63,9 +63,11 @@ import {
     UpdateCorporateRequest,
 } from '~/plugins/weavr-multi/api/models/identities/corporates'
 import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
+import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 export default defineComponent({
     components: {
+        PhoneNumberInput,
         LogoOvc,
         LoaderButton,
     },
@@ -150,8 +152,9 @@ export default defineComponent({
             updateRequest.mobile.countryCode =
                 number.countryCallingCode && `+${number.countryCallingCode}`
             updateRequest.mobile.number = number.phoneNumber
-
-            numberIsValid.value = number.isValid
+            if (number.phoneNumber) {
+                numberIsValid.value = number.isValid
+            }
         }
 
         return {
