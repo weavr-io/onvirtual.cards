@@ -32,9 +32,9 @@
                     :options="{ placeholder: '****' }"
                     name="password"
                     required="true"
-                    @onChange="passwordInteraction"
-                    @onKeyUp="checkOnKeyUp"
-                    @onStrength="strengthCheck"
+                    @on-change="passwordInteraction"
+                    @on-key-up="checkOnKeyUp"
+                    @on-strength="strengthCheck"
                 />
                 <small
                     :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
@@ -87,7 +87,7 @@
     </b-form>
 </template>
 <script lang="ts" setup>
-import { computed, ComputedRef, reactive, Ref, ref } from '@nuxtjs/composition-api'
+import { computed, ComputedRef, reactive, Ref, ref } from 'vue'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
 import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'

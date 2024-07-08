@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { defineNuxtPlugin } from '@nuxtjs/composition-api'
+import { defineNuxtPlugin } from 'nuxt/app'
 import InfiniteLoading from 'vue-infinite-loading'
 
 export default defineNuxtPlugin((_) => {

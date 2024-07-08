@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
-import { computed } from '@nuxtjs/composition-api'
+import { reactive, computed } from 'vue'
 import type { Cards as CardState } from '~/local/models/store/cards'
 import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'

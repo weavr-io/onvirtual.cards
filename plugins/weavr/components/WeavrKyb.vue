@@ -2,10 +2,11 @@
     <div id="kyb-container" />
 </template>
 <script lang="ts" setup>
-import { getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
+import { onMounted } from 'vue'
+import { useNuxtApp } from 'nuxt/app'
 import { KYBOptions } from '~/plugins/weavr/components/api'
 
-const { proxy: root } = getCurrentInstance() || {}
+const { $weavrComponents } = useNuxtApp()
 
 const props = withDefaults(
     defineProps<{
@@ -25,7 +26,8 @@ const message = (value) => {
 }
 
 onMounted(() => {
-    root?.$weavrComponents.capture
+    // @ts-ignore
+    $weavrComponents.capture
         .corporateKyb(props.reference)
         .mount('#kyb-container', { ...props.options, onMessage: sumsubMessage })
 })

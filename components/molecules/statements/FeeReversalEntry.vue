@@ -28,8 +28,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { PropType } from '@nuxtjs/composition-api'
+import { computed, PropType } from 'vue'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'

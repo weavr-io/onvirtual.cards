@@ -23,7 +23,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref } from '@nuxtjs/composition-api'
+import { ref } from 'vue'
 import config from '~/config'
 
 const Cookie = process.client ? require('js-cookie') : undefined

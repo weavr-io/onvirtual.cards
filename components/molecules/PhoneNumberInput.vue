@@ -53,8 +53,7 @@ import {
     getExampleNumber,
     parsePhoneNumberFromString,
 } from 'libphonenumber-js'
-import { computed } from 'vue'
-import { ComputedRef, nextTick, onMounted, Ref, ref, watch } from '@nuxtjs/composition-api'
+import { computed, ComputedRef, nextTick, onMounted, Ref, ref, watch } from 'vue'
 import examples from 'libphonenumber-js/examples.mobile.json'
 import InputTel from '../atoms/PhoneNumberInput/InputTelephone/InputTelephoneIndex.vue'
 import locales from '../atoms/PhoneNumberInput/assets/locales'

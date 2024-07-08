@@ -49,8 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType } from '@nuxtjs/composition-api'
-import { computed } from 'vue'
+import { computed, PropType } from 'vue'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import Authorisation from '~/components/molecules/statements/AuthorisationEntry.vue'
 import Deposit from '~/components/molecules/statements/DepositEntry.vue'

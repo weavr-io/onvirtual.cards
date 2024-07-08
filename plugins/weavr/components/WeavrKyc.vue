@@ -2,10 +2,11 @@
     <div id="consumer-kyc" />
 </template>
 <script lang="ts" setup>
-import { getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
+import { onMounted } from 'vue'
+import { useNuxtApp } from 'nuxt/app'
 import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
 
-const { proxy: root } = getCurrentInstance() || {}
+const { $weavrComponents } = useNuxtApp()
 
 const props = withDefaults(
     defineProps<{
@@ -19,9 +20,8 @@ const props = withDefaults(
 )
 
 onMounted(() => {
-    root?.$weavrComponents.capture
-        .consumerKyc(props.reference)
-        .mount('#consumer-kyc', props.options)
+    // @ts-ignore
+    $weavrComponents.capture.consumerKyc(props.reference).mount('#consumer-kyc', props.options)
 })
 </script>
 

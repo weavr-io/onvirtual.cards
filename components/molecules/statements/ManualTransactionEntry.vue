@@ -32,7 +32,7 @@
     </b-row>
 </template>
 <script lang="ts" setup>
-import { PropType } from '@nuxtjs/composition-api'
+import { PropType } from 'vue'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'

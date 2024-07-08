@@ -7,8 +7,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { PropType } from '@nuxtjs/composition-api'
-import { computed } from 'vue'
+import { computed, PropType } from 'vue'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import { weavrCurrency, weavrCurrencyWithOperator } from '~/utils/helper'
 

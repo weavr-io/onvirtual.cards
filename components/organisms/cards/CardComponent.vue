@@ -104,7 +104,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, PropType } from '@nuxtjs/composition-api'
+import { ref, computed, PropType } from 'vue'
 import { BIconThreeDotsVertical } from 'bootstrap-vue'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'

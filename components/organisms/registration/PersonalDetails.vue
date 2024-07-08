@@ -132,7 +132,7 @@
     </b-form>
 </template>
 <script lang="ts" setup>
-import { computed, ComputedRef, PropType, reactive, ref } from '@nuxtjs/composition-api'
+import { computed, ComputedRef, PropType, reactive, ref } from 'vue'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
@@ -210,7 +210,7 @@ const submitForm = async () => {
 
     await validation.value.validate()
 
-    if (validation.value.isInvalid.value || !numberIsValid) {
+    if (validation.value.isInvalid.value || !numberIsValid.value) {
         return null
     }
 

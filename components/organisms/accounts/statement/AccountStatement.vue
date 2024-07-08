@@ -63,7 +63,8 @@
     </b-container>
 </template>
 <script lang="ts">
-import { defineComponent, computed, ComputedRef, PropType, useRoute } from '@nuxtjs/composition-api'
+import { defineComponent, computed, ComputedRef, PropType } from 'vue'
+import { useRoute } from 'nuxt/app'
 import dot from 'dot-object'
 import { useStores } from '~/composables/useStores'
 import { useLuxon } from '~/composables/useLuxon'

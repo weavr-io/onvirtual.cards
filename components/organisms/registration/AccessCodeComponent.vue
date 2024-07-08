@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, reactive } from '@nuxtjs/composition-api'
+import { computed, ref, reactive } from 'vue'
 import { AxiosError } from 'axios'
 import { useStores } from '~/composables/useStores'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'

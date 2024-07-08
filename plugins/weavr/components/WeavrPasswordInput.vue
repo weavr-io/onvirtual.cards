@@ -2,14 +2,7 @@
     <div :class="props.className" class="weavr-input" />
 </template>
 <script lang="ts" setup>
-import {
-    Ref,
-    computed,
-    getCurrentInstance,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-} from '@nuxtjs/composition-api'
+import { Ref, computed, getCurrentInstance, onBeforeUnmount, onMounted, ref } from 'vue'
 import {
     SecureElementStyleWithPseudoClasses,
     SecureInputOptions,

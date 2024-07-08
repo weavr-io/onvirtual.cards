@@ -49,7 +49,7 @@
     </section>
 </template>
 <script lang="ts" setup>
-import { computed, ComputedRef } from '@nuxtjs/composition-api'
+import { computed, ComputedRef } from 'vue'
 import { useStores } from '~/composables/useStores'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 

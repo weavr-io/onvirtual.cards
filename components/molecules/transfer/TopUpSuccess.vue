@@ -21,7 +21,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { useRouter } from '@nuxtjs/composition-api'
+import { useRouter } from 'nuxt/app'
 
 const router = useRouter()
 
