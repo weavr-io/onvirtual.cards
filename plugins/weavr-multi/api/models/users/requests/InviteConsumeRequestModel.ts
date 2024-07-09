@@ -1,6 +1,6 @@
 import {
     INITIAL_SENSITIVE_PASSWORD_REQUEST,
-    SensitivePasswordModel,
+    type SensitivePasswordModel,
 } from '~/plugins/weavr-multi/api/models/authentication/access/models/SensitivePasswordModel'
 
 export interface InviteConsumeRequestModel {

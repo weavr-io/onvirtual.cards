@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
 import type { SecureForm } from '~/plugins/weavr/components/api'
 
 export const useSecureClientStore = defineStore('secureClient', () => {

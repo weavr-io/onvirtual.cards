@@ -13,4 +13,4 @@ const INITIAL_ACCESS_CODE_REQUEST = () => {
     } as unknown as AccessCode
 }
 
-export { AccessCode, AccessCodeSchema, INITIAL_ACCESS_CODE_REQUEST }
+export { type AccessCode, AccessCodeSchema, INITIAL_ACCESS_CODE_REQUEST }

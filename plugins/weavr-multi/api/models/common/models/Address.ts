@@ -23,4 +23,4 @@ const INITIAL_ADDRESS = () => {
     } as unknown as Address
 }
 
-export { AddressSchema, Address, INITIAL_ADDRESS }
+export { AddressSchema, type Address, INITIAL_ADDRESS }

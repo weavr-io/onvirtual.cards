@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { AccessCode } from '~/plugins/weavr-multi/api/models/access-codes'
+import type { AccessCode } from '~/plugins/weavr-multi/api/models/access-codes'
 
 export class AccessCodesApi {
     verifyAccessCode(request: AccessCode) {

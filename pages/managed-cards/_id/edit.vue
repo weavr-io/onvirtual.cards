@@ -115,7 +115,7 @@ const cardId = computed(() => {
 })
 
 useAsyncData(async () => {
-    const card = await cards?.getManagedCard(cardId.value)
+    const card = await cards?.getManagedCard(cardId.value as string)
     if (card) {
         const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
 
@@ -149,7 +149,7 @@ const doUpdate = async () => {
 
     await cards
         ?.update({
-            id: cardId.value,
+            id: cardId.value as string,
             request: updateManagedCardRequest as UpdateManagedCard,
         })
         .then(() => {

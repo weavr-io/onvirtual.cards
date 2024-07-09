@@ -40,6 +40,6 @@ const INITIAL_CONSUMERS_ROOT_USER_REQUEST = () => {
 
 export {
     ConsumersRootUserRequestSchema,
-    ConsumersRootUserRequest,
+    type ConsumersRootUserRequest,
     INITIAL_CONSUMERS_ROOT_USER_REQUEST,
 }

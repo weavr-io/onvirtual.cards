@@ -46,7 +46,7 @@ const { accountJurisdictionProfileId, showErrorToast, identityVerified, pendingD
     useBase()
 const { hasAccount } = useAccounts()
 
-useFetch(() => {
+const getAccounts = () => {
     return accounts
         ?.index({
             profileId: accountJurisdictionProfileId.value,
@@ -66,5 +66,9 @@ useFetch(() => {
 
             showErrorToast(error)
         })
+}
+
+useAsyncData(async () => {
+    await getAccounts()
 })
 </script>

@@ -1,6 +1,6 @@
-import { RootUserModel } from '~/plugins/weavr-multi/api/models/common/models/RootUserModel'
+import type { RootUserModel } from '~/plugins/weavr-multi/api/models/common/models/RootUserModel'
 import { OccupationTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/OccupationTypeEnum'
-import { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
+import type { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
 
 export interface ConsumersRootUserModel extends RootUserModel {
     occupation?: OccupationTypeEnum

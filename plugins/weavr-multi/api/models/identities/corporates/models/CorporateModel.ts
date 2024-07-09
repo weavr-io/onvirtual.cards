@@ -1,9 +1,9 @@
-import { IDModel } from '../../../common/models/IDModel'
-import { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/models/IdentityIdModel'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import type { IdentityIdModel } from '~/plugins/weavr-multi/api/models/common/models/IdentityIdModel'
 import { IndustryTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/IndustryTypeEnum'
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
-import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
-import { CompanyModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CompanyModel'
+import type { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
+import type { CompanyModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CompanyModel'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
 export interface CorporateModel {
