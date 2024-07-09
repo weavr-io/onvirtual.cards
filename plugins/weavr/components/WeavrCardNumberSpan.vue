@@ -1,18 +1,12 @@
 <template>
     <div :class="props.className" :style="props.baseStyle" />
 </template>
-<script lang="ts" setup>
-import {
-    Ref,
-    computed,
-    getCurrentInstance,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-} from '@nuxtjs/composition-api'
-import { SecureElementStyle, SecureSpanOptions } from '~/plugins/weavr/components/api'
 
-const { proxy: root } = getCurrentInstance() || {}
+<script lang="ts" setup>
+import type { SecureElementStyle, SecureSpanOptions } from '~/plugins/weavr/components/api'
+import { APP_ROOT_ID } from '~/utils/helper'
+
+const { $weavrComponents } = useNuxtApp()
 
 const props = withDefaults(
     defineProps<{
@@ -51,8 +45,10 @@ const onChange = (val) => {
 }
 
 onMounted(() => {
-    _span.value = root?.$weavrComponents.display.cardNumber(props.token, spanOptions.value)
-    _span.value.mount(root?.$el)
+    _span.value = $weavrComponents.display.cardNumber(props.token, spanOptions.value)
+    // we can change root id in nuxt3, make changes in const if needed
+    // add const to nuxt config
+    _span.value.mount(document.getElementById(APP_ROOT_ID))
     _addListeners()
 })
 
@@ -78,5 +74,3 @@ const spanOptions = computed(() => {
     }
 })
 </script>
-
-<style lang="scss" scoped></style>

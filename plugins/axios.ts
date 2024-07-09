@@ -12,11 +12,11 @@ export default defineNuxtPlugin(({ vueApp }) => {
                 Accept: 'application/json',
             },
         },
-        baseURL: (config as any).multiApi.baseUrl,
+        baseURL: config.multiApi.baseUrl,
     })
 
     function onError(error) {
-        const code = parseInt(error.response && error.response.status)
+        const code = parseInt(error.response?.status)
         switch (code) {
             case 401:
                 if (error.response.config.url !== '/logout') auth?.logout()
@@ -42,7 +42,7 @@ export default defineNuxtPlugin(({ vueApp }) => {
                 break
         }
 
-        return Promise.reject(error)
+        return Promise.reject(new Error(error))
     }
 
     axiosMulti.interceptors.response.use((res) => res, onError)

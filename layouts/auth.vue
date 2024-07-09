@@ -31,47 +31,28 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, useContext, useRoute } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
 import { computed } from 'vue'
 import { useBase } from '~/composables/useBase'
 
-export default defineComponent({
-    setup() {
-        const { $config } = useContext()
-        const route = useRoute()
-        const { isLoggedIn, doLogout } = useBase()
+const route = useRoute()
+const { isLoggedIn, doLogout } = useBase()
 
-        const showHeader = computed(() => {
-            return $config.app.view_register
-        })
+const showHeader = computed(() => {
+    return useRuntimeConfig().app.view_register
+})
 
-        const showLogin = computed(() => {
-            const _matchedName = route.value.matched[0].name
-            if (_matchedName) {
-                const _registration = ['login']
-                return !_registration.includes(_matchedName)
-            } else {
-                return false
-            }
-        })
+const showLogin = computed(() => {
+    const _matchedName = String(route.matched[0].name)
+    if (_matchedName) {
+        const _registration = ['login']
+        return !_registration.includes(_matchedName)
+    } else {
+        return false
+    }
+})
 
-        const showRegister = computed(() => {
-            return !showLogin.value
-        })
-
-        return {
-            showHeader,
-            showRegister,
-            showLogin,
-            isLoggedIn,
-            doLogout,
-        }
-    },
-    head: {
-        bodyAttrs: {
-            class: 'bg-bg-colored',
-        },
-    },
+const showRegister = computed(() => {
+    return !showLogin.value
 })
 </script>

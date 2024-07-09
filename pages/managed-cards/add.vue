@@ -100,163 +100,134 @@
         </b-container>
     </section>
 </template>
-<script lang="ts">
-import {
-    computed,
-    defineComponent,
-    reactive,
-    ref,
-    useContext,
-    useFetch,
-    useRouter,
-} from '@nuxtjs/composition-api'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+<script lang="ts" setup>
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import useZodValidation from '~/composables/useZodValidation'
-import { Address, CurrencyEnum, CurrencySelectConst } from '~/plugins/weavr-multi/api/models/common'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import {
+    type Address,
+    CurrencyEnum,
+    CurrencySelectConst,
+} from '~/plugins/weavr-multi/api/models/common'
+import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import {
     type CreateManagedCard,
     CreateManagedCardSchema,
     INITIAL_MANAGED_CARD_REQUEST,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCard'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
-export default defineComponent({
-    components: {
-        PhoneNumberInput,
-        LoadingSpinner,
-        LoaderButton,
-    },
+definePageMeta({
     middleware: 'kyVerified',
-    setup() {
-        const router = useRouter()
-        const { $config } = useContext()
-        const { pendingDataOrError, profileBaseCurrency, isConsumer, cardJurisdictionProfileId } =
-            useBase()
-        const { auth, cards, consumers, corporates } = useStores([
-            'auth',
-            'cards',
-            'consumers',
-            'corporates',
-        ])
-
-        const showError = ref(false)
-        const localIsBusy = ref(false)
-        const mobile = ref({
-            countryCode: '',
-            number: '',
-        })
-        const numberIsValid = ref<boolean | null>(null)
-        const createManagedCardRequest: CreateManagedCard = reactive(INITIAL_MANAGED_CARD_REQUEST())
-
-        const validation = computed(() => {
-            return useZodValidation(
-                CreateManagedCardSchema.pick({
-                    friendlyName: true,
-                    currency: true,
-                    nameOnCard: true,
-                }),
-                createManagedCardRequest,
-            )
-        })
-
-        const currencyOptions = computed(() => {
-            return CurrencySelectConst.filter((item) => {
-                return item.value === profileBaseCurrency.value
-            })
-        })
-
-        const showNameOnCardField = computed(() => {
-            return (
-                !auth?.isConsumer ||
-                (!!createManagedCardRequest.nameOnCard &&
-                    createManagedCardRequest.nameOnCard.length > 27)
-            )
-        })
-
-        useFetch(() => {
-            if (auth?.isConsumer) {
-                const _consumer = consumers?.consumerState.consumer as unknown as ConsumerModel
-                createManagedCardRequest.nameOnCard = `${_consumer.rootUser.name} ${_consumer.rootUser.surname}`
-                createManagedCardRequest.cardholderMobileNumber =
-                    _consumer.rootUser.mobile.countryCode + _consumer.rootUser.mobile.number
-                createManagedCardRequest.profileId = $config.profileId.consumers
-            }
-
-            createManagedCardRequest.currency = profileBaseCurrency.value as unknown as CurrencyEnum
-        })
-
-        const doAdd = async () => {
-            if (localIsBusy.value) {
-                return
-            }
-
-            if (isConsumer.value) {
-                numberIsValid.value = true
-            }
-
-            if (numberIsValid.value === null) {
-                numberIsValid.value = false
-            }
-
-            await validation.value.validate()
-            if (validation.value.isInvalid.value || !numberIsValid.value) {
-                return
-            }
-
-            localIsBusy.value = true
-
-            const address = isConsumer.value
-                ? (consumers?.consumerState.consumer?.rootUser.address as Address)
-                : (corporates?.corporateState.corporate?.company.businessAddress as Address)
-
-            Object.assign(createManagedCardRequest, {
-                ...createManagedCardRequest,
-                profileId: cardJurisdictionProfileId.value,
-                billingAddress: address,
-            })
-
-            await cards
-                ?.addCard(createManagedCardRequest as CreateManagedCard)
-                .then(() => {
-                    router.push('/managed-cards')
-                })
-                .catch((err) => {
-                    if (err.response.status) {
-                        showError.value = true
-                    }
-                })
-
-            localIsBusy.value = false
-        }
-
-        const phoneUpdate = (number) => {
-            mobile.value.number = number.phoneNumber
-            mobile.value.countryCode = number.countryCallingCode
-            createManagedCardRequest.cardholderMobileNumber =
-                '+' + number.countryCallingCode + number.phoneNumber
-            if (number.phoneNumber) {
-                numberIsValid.value = number.isValid
-            }
-        }
-
-        return {
-            pendingDataOrError,
-            showError,
-            doAdd,
-            showNameOnCardField,
-            validation,
-            createManagedCardRequest,
-            isConsumer,
-            numberIsValid,
-            mobile,
-            phoneUpdate,
-            currencyOptions,
-            localIsBusy,
-        }
-    },
 })
+
+const router = useRouter()
+const { pendingDataOrError, profileBaseCurrency, isConsumer, cardJurisdictionProfileId } = useBase()
+const { auth, cards, consumers, corporates } = useStores([
+    'auth',
+    'cards',
+    'consumers',
+    'corporates',
+])
+
+const showError = ref(false)
+const localIsBusy = ref(false)
+const mobile = ref({
+    countryCode: '',
+    number: '',
+})
+const numberIsValid = ref<boolean | null>(null)
+const createManagedCardRequest: CreateManagedCard = reactive(INITIAL_MANAGED_CARD_REQUEST())
+
+const validation = computed(() => {
+    return useZodValidation(
+        CreateManagedCardSchema.pick({
+            friendlyName: true,
+            currency: true,
+            nameOnCard: true,
+        }),
+        createManagedCardRequest,
+    )
+})
+
+const currencyOptions = computed(() => {
+    return CurrencySelectConst.filter((item) => {
+        return item.value === profileBaseCurrency.value
+    })
+})
+
+const showNameOnCardField = computed(() => {
+    return (
+        !auth?.isConsumer ||
+        (!!createManagedCardRequest.nameOnCard && createManagedCardRequest.nameOnCard.length > 27)
+    )
+})
+
+useState(() => {
+    if (auth?.isConsumer) {
+        const _consumer = consumers?.consumerState.consumer as unknown as ConsumerModel
+        createManagedCardRequest.nameOnCard = `${_consumer.rootUser.name} ${_consumer.rootUser.surname}`
+        createManagedCardRequest.cardholderMobileNumber =
+            _consumer.rootUser.mobile.countryCode + _consumer.rootUser.mobile.number
+        createManagedCardRequest.profileId = useRuntimeConfig().public.profileId.consumers
+    }
+
+    createManagedCardRequest.currency = profileBaseCurrency.value as unknown as CurrencyEnum
+})
+
+const doAdd = async () => {
+    if (localIsBusy.value) {
+        return
+    }
+
+    if (isConsumer.value) {
+        numberIsValid.value = true
+    }
+
+    if (numberIsValid.value === null) {
+        numberIsValid.value = false
+    }
+
+    await validation.value.validate()
+    if (validation.value.isInvalid.value || !numberIsValid.value) {
+        return
+    }
+
+    localIsBusy.value = true
+
+    const address = isConsumer.value
+        ? (consumers?.consumerState.consumer?.rootUser.address as Address)
+        : (corporates?.corporateState.corporate?.company.businessAddress as Address)
+
+    Object.assign(createManagedCardRequest, {
+        ...createManagedCardRequest,
+        profileId: cardJurisdictionProfileId.value,
+        billingAddress: address,
+    })
+
+    await cards
+        ?.addCard(createManagedCardRequest as CreateManagedCard)
+        .then(() => {
+            router.push('/managed-cards')
+        })
+        .catch((err) => {
+            if (err.response.status) {
+                showError.value = true
+            }
+        })
+
+    localIsBusy.value = false
+}
+
+const phoneUpdate = (number) => {
+    mobile.value.number = number.phoneNumber
+    mobile.value.countryCode = number.countryCallingCode
+    createManagedCardRequest.cardholderMobileNumber =
+        '+' + number.countryCallingCode + number.phoneNumber
+    if (number.phoneNumber) {
+        numberIsValid.value = number.isValid
+    }
+}
 </script>

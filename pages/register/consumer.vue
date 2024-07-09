@@ -270,7 +270,7 @@ const passwordStrength = ref(0)
 
 const registrationRequest: CreateConsumerRequest & { password: SensitivePassword } = reactive({
     ...INITIAL_CREATE_CONSUMER_REQUEST(),
-    profileId: (profileId as any).consumers,
+    profileId: profileId.consumers,
     acceptedTerms: false,
     baseCurrency: CurrencyEnum.EUR,
     password: INITIAL_SENSITIVE_PASSWORD_REQUEST(),

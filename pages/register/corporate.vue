@@ -59,7 +59,7 @@ let registrationRequest: CreateCorporateRequest & {
     password?: string
 } = reactive({
     ...INITIAL_CREATE_CORPORATE_REQUEST(),
-    profileId: (useRuntimeConfig().public as any).profileId.corporates,
+    profileId: useRuntimeConfig().public.profileId.corporates,
     acceptedTerms: false,
     baseCurrency: CurrencyEnum.EUR,
     password: undefined,

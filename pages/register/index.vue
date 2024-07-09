@@ -2,11 +2,12 @@
     <b-container>
         <div class="d-flex flex-column align-items-center">
             <LogoOvc />
-            <access-code-component v-if="$config.production && !isAccessCodeValid" />
+            <access-code-component v-if="config.production && !isAccessCodeValid" />
             <business-or-personal-component v-else />
         </div>
     </b-container>
 </template>
+
 <script lang="ts" setup>
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import AccessCodeComponent from '~/components/organisms/registration/AccessCodeComponent.vue'
@@ -19,6 +20,7 @@ definePageMeta({
 })
 
 const router = useRouter()
+const config = useRuntimeConfig().public
 const { accessCodes, auth } = useStores(['accessCodes', 'auth'])
 
 const isAccessCodeValid = computed(() => {

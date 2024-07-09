@@ -2,20 +2,13 @@
     <div :class="props.className" class="weavr-input" />
 </template>
 <script lang="ts" setup>
-import {
-    Ref,
-    computed,
-    getCurrentInstance,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-} from '@nuxtjs/composition-api'
-import {
+import type {
     SecureElementStyleWithPseudoClasses,
     SecureInputOptions,
 } from '~/plugins/weavr/components/api'
+import { APP_ROOT_ID } from '~/utils/helper'
 
-const { proxy: root } = getCurrentInstance() || {}
+const { $weavrComponents } = useNuxtApp()
 
 const props = withDefaults(
     defineProps<{
@@ -58,8 +51,8 @@ const _input = computed({
 })
 
 onMounted(() => {
-    _input.value = root?.$weavrComponents.capture.password(props.name, inputOptions.value)
-    _input.value?.mount(root?.$el)
+    _input.value = $weavrComponents.capture.password(props.name, inputOptions.value)
+    _input.value?.mount(document.getElementById(APP_ROOT_ID))
     _addListeners(_input.value)
 })
 
@@ -129,5 +122,3 @@ defineExpose({
     createToken,
 })
 </script>
-
-<style lang="scss" scoped></style>

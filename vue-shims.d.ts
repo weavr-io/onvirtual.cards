@@ -1,4 +1,6 @@
 import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
+import type { BvToastOptions } from '~/node_modules/bootstrap-vue'
+import { BvModal, BvToast } from 'bootstrap-vue'
 
 // global, also used in store
 declare module 'nuxt/app' {
@@ -6,13 +8,21 @@ declare module 'nuxt/app' {
         $apiMulti: ApiInterface
         $weavrComponents: any
         $weavrSetUserToken: (token: unknown) => {}
+        $bvModal: BvModal
+        $bvToast: BvToast
+        readonly $weavrToast: WeavrToast
+        readonly $weavrToastError: WeavrToast
     }
 }
 
+export interface WeavrToast {
+    (message: string, options?: BvToastOptions): void
+}
+
 declare module '*.svg?inline' {
-    import { DefineComponent } from 'vue'
-    const content: DefineComponent
-    export default content
+    import type { DefineComponent } from 'vue'
+    const component: DefineComponent
+    export default component
 }
 
 declare namespace __WebpackModuleApi {

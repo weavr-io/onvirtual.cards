@@ -52,7 +52,7 @@ useAsyncData(async () => {
     const firstAccount = accounts?.data.accounts && accounts.data.accounts[0]
 
     createTransferRequest.value = {
-        profileId: (useRuntimeConfig().public as any).profileId.transfers!,
+        profileId: useRuntimeConfig().public.profileId.transfers!,
         source: {
             type: InstrumentEnum.managedAccounts,
             id: firstAccount?.id || '',

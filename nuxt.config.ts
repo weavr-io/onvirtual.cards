@@ -1,8 +1,13 @@
+import svgLoader from 'vite-svg-loader'
+
 export default defineNuxtConfig({
     ssr: false,
     devServer: {
         host: '0.0.0.0',
         port: 5000,
+    },
+    vite: {
+        plugins: [svgLoader()],
     },
     runtimeConfig: {
         public: {
@@ -102,6 +107,7 @@ export default defineNuxtConfig({
     css: ['~/assets/scss/style.scss'],
     plugins: [
         { src: '~/plugins/weavr/security.client.ts' },
+        { src: '~/plugins/bootstrap-vue.ts' },
         { src: '~/plugins/WeavrVueFilters.ts' },
         { src: '~/plugins/flatpickr.ts' },
         { src: '~/plugins/InfiniteLoading.ts' },
@@ -109,9 +115,8 @@ export default defineNuxtConfig({
         { src: '~/plugins/axios-accessor.ts' },
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
-        { src: '~/plugins/bootstrap-vue.ts' },
     ],
-    modules: ['@nuxtjs/axios', '@nuxtjs/svg', '@pinia/nuxt', '@nuxt/typescript-build'],
+    modules: ['@pinia/nuxt'],
     router: {
         options: {
             linkActiveClass: 'active',

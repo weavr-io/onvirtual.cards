@@ -1,3 +1,5 @@
+export const APP_ROOT_ID = '__nuxt'
+
 export const weavrCurrency = (value, currency?, fraction?) => {
     let amount = ''
     if (value && typeof value === 'object' && 'currency' in value && 'amount' in value) {
