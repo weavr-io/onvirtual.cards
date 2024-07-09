@@ -1,6 +1,12 @@
-declare module '*.vue' {
-    import Vue from 'vue'
-    export default Vue
+import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
+
+// global, also used in store
+declare module 'nuxt/app' {
+    interface NuxtApp {
+        $apiMulti: ApiInterface
+        $weavrComponents: any
+        $weavrSetUserToken: (token: unknown) => {}
+    }
 }
 
 declare module '*.svg?inline' {

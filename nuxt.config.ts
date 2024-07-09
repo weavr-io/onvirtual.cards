@@ -1,5 +1,3 @@
-import { defineNuxtConfig } from 'nuxt/config'
-
 export default defineNuxtConfig({
     ssr: false,
     devServer: {
@@ -113,19 +111,14 @@ export default defineNuxtConfig({
         { src: '~/plugins/formattingFilters/index.ts' },
         { src: '~/plugins/bootstrap-vue.ts' },
     ],
-    modules: [
-        '@nuxtjs/dotenv', // Doc: https://axios.nuxtjs.org/usage
-        '@nuxtjs/axios', // '@nuxtjs/eslint-module'
-        '@nuxtjs/svg',
-        '@pinia/nuxt',
-        '@nuxt/typescript-build',
-    ],
+    modules: ['@nuxtjs/axios', '@nuxtjs/svg', '@pinia/nuxt', '@nuxt/typescript-build'],
     router: {
         options: {
             linkActiveClass: 'active',
         },
     },
     typescript: {
+        strict: true,
         typeCheck: true,
     },
 })

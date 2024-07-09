@@ -7,40 +7,29 @@
         </div>
     </b-container>
 </template>
-<script lang="ts">
-import { computed, defineComponent, useAsync, useRouter } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import AccessCodeComponent from '~/components/organisms/registration/AccessCodeComponent.vue'
 import BusinessOrPersonalComponent from '~/components/organisms/ProfileIdentitySelection.vue'
 import { useStores } from '~/composables/useStores'
 
-export default defineComponent({
-    components: {
-        LogoOvc,
-        AccessCodeComponent,
-        BusinessOrPersonalComponent,
-    },
+definePageMeta({
     layout: 'auth',
     middleware: 'accessCodeVerified',
-    setup() {
-        const router = useRouter()
-        const { accessCodes, auth } = useStores(['accessCodes', 'auth'])
+})
 
-        const isAccessCodeValid = computed(() => {
-            return accessCodes?.isValid
-        })
+const router = useRouter()
+const { accessCodes, auth } = useStores(['accessCodes', 'auth'])
 
-        useAsync(() => {
-            const isLoggedIn = auth?.isLoggedIn
+const isAccessCodeValid = computed(() => {
+    return accessCodes?.isValid
+})
 
-            if (isLoggedIn) {
-                router.replace('/dashboard')
-            }
-        })
+useAsyncData(async () => {
+    const isLoggedIn = auth?.isLoggedIn
 
-        return {
-            isAccessCodeValid,
-        }
-    },
+    if (isLoggedIn) {
+        await router.replace('/dashboard')
+    }
 })
 </script>

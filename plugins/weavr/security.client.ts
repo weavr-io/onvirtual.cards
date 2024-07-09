@@ -1,5 +1,3 @@
-import Vue from 'vue'
-import { defineNuxtPlugin } from '@nuxtjs/composition-api'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
@@ -7,16 +5,16 @@ import WeavrKyb from '~/plugins/weavr/components/WeavrKyb.vue'
 import WeavrKycBeneficiaries from '~/plugins/weavr/components/WeavrKycBeneficiaries.vue'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 
-Vue.component('WeavrPasswordInput', WeavrPasswordInput)
-Vue.component('WeavrCardNumberSpan', WeavrCardNumberSpan)
-Vue.component('WeavrCvvSpan', WeavrCvvSpan)
-Vue.component('WeavrKyb', WeavrKyb)
-Vue.component('WeavrKycBeneficiaries', WeavrKycBeneficiaries)
-Vue.component('WeavrKyc', WeavrKyc)
+export default defineNuxtPlugin(({ vueApp }) => {
+    vueApp.component('WeavrPasswordInput', WeavrPasswordInput)
+    vueApp.component('WeavrCardNumberSpan', WeavrCardNumberSpan)
+    vueApp.component('WeavrCvvSpan', WeavrCvvSpan)
+    vueApp.component('WeavrKyb', WeavrKyb)
+    vueApp.component('WeavrKycBeneficiaries', WeavrKycBeneficiaries)
+    vueApp.component('WeavrKyc', WeavrKyc)
 
-export default defineNuxtPlugin((context, inject) => {
     // @ts-ignore
-    const weavrComponents = window.weavr.init(context.$config.multiApi.uiKey, {
+    const weavrComponents = window.weavr.init(useRuntimeConfig().public.multiApi.uiKey, {
         fonts: [
             {
                 cssSrc: 'https://fonts.googleapis.com/css?family=Be+Vietnam:100,100i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i',
@@ -39,8 +37,8 @@ export default defineNuxtPlugin((context, inject) => {
         })
     }
 
-    inject('weavrComponents', weavrComponents)
-    inject('weavrSetUserToken', (token) => {
+    vueApp.provide('weavrComponents', weavrComponents)
+    vueApp.provide('weavrSetUserToken', (token) => {
         return asyncAssociate(token)
     })
 })
