@@ -103,12 +103,12 @@
         </transition>
     </div>
 </template>
+
 <script lang="ts" setup>
-import { ref, computed, PropType } from '@nuxtjs/composition-api'
 import { BIconThreeDotsVertical } from 'bootstrap-vue'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
-import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
+import type { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { expiryMmyy, weavrCurrency } from '~/utils/helper'
 

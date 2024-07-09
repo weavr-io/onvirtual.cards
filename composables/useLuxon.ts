@@ -1,5 +1,4 @@
-import { DateTime, DateTimeFormatOptions } from 'luxon'
-import { computed } from '@nuxtjs/composition-api'
+import { DateTime, type DateTimeFormatOptions } from 'luxon'
 
 export const useLuxon = () => {
     const getStartOfMonth = computed(() => DateTime.now().startOf('month').toMillis())

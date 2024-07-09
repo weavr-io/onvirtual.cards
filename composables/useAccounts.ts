@@ -1,9 +1,8 @@
-import { computed, useRoute, useRouter } from '@nuxtjs/composition-api'
 import { useCsv } from '~/composables/useCsv'
 import { ManagedAccountsApi } from '~/plugins/weavr-multi/api/ManagedAccountsApi'
 import { useAccountsStore } from '~/store/accounts'
-import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common'
+import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common'
 
 export const useAccounts = () => {
     const route = useRoute()
@@ -13,8 +12,10 @@ export const useAccounts = () => {
     const { downloadStatement } = new ManagedAccountsApi()
 
     const isManagedAccounts = computed(() => {
-        if (route.value.matched[0].name) {
-            return ['managed-accounts', 'managed-accounts-id'].includes(route.value.matched[0].name)
+        if (route.matched[0].name) {
+            return ['managed-accounts', 'managed-accounts-id'].includes(
+                String(route.matched[0].name),
+            )
         }
         return false
     })

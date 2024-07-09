@@ -66,65 +66,51 @@
         </b-card>
     </b-col>
 </template>
-<script lang="ts">
-import { computed, defineComponent, reactive, ref } from '@nuxtjs/composition-api'
+
+<script lang="ts" setup>
+import { useStores } from '~/composables/useStores'
+import {
+    INITIAL_RESET_REQUEST,
+    type InitiateLostPasswordRequestModel,
+    type ResetRequest,
+    ResetSchema,
+} from '~/plugins/weavr-multi/api/models/authentication'
 import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import { useStores } from '~/composables/useStores'
 import useZodValidation from '~/composables/useZodValidation'
-import {
-    INITIAL_RESET_REQUEST,
-    InitiateLostPasswordRequestModel,
-    ResetRequest,
-    ResetSchema,
-} from '~/plugins/weavr-multi/api/models/authentication'
 
-export default defineComponent({
-    components: {
-        LoaderButton,
-        LogoOvc,
-        ErrorAlert,
-    },
+definePageMeta({
     layout: 'auth',
-    setup() {
-        const { auth, errors } = useStores(['auth', 'errors'])
-
-        const isLoading = ref(false)
-        const passwordSent = ref(false)
-        const form: ResetRequest = reactive(INITIAL_RESET_REQUEST())
-
-        const validation = computed(() => {
-            return useZodValidation(ResetSchema, form)
-        })
-
-        const resetPassword = async () => {
-            await validation.value.validate()
-
-            if (validation.value.isInvalid.value) return
-
-            isLoading.value = true
-            errors?.setError(null)
-            auth
-                ?.lostPasswordInitiate(form as InitiateLostPasswordRequestModel)
-                .then(() => {
-                    passwordSent.value = true
-                })
-                .catch((err) => {
-                    errors?.setError(err)
-                })
-                .finally(() => {
-                    isLoading.value = false
-                })
-        }
-
-        return {
-            passwordSent,
-            resetPassword,
-            validation,
-            form,
-            isLoading,
-        }
-    },
 })
+
+const { auth, errors } = useStores(['auth', 'errors'])
+
+const isLoading = ref(false)
+const passwordSent = ref(false)
+const form: ResetRequest = reactive(INITIAL_RESET_REQUEST())
+
+const validation = computed(() => {
+    return useZodValidation(ResetSchema, form)
+})
+
+const resetPassword = async () => {
+    await validation.value.validate()
+
+    if (validation.value.isInvalid.value) return
+
+    isLoading.value = true
+    errors?.setError(null)
+    auth
+        ?.lostPasswordInitiate(form as InitiateLostPasswordRequestModel)
+        .then(() => {
+            passwordSent.value = true
+        })
+        .catch((err) => {
+            errors?.setError(err)
+        })
+        .finally(() => {
+            isLoading.value = false
+        })
+}
 </script>

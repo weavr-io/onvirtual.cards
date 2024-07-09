@@ -3,7 +3,7 @@ import { FormattingFiltersModule } from '~/plugins/formattingFilters/FormattingF
 
 const modules: Record<string, any> = {}
 const { text } = new FormattingFiltersModule()
-const moduleFiles = (require as unknown as Require).context('@/store', true, /\.ts$/)
+const moduleFiles = import.meta.glob('@/store/**/*.ts', { eager: true }) as Record<string, unknown>
 
 export function initialiseStores<T extends keyof StoreType>(
     storeNames: T[],

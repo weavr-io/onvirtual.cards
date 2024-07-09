@@ -21,8 +21,8 @@
                                         class-name="sign-in-password"
                                         name="old-password"
                                         required="true"
-                                        @onChange="oldPasswordInteraction"
-                                        @onKeyUp.prevent="checkOnKeyUp"
+                                        @on-change="oldPasswordInteraction"
+                                        @on-key-up.prevent="checkOnKeyUp"
                                     />
                                     <label class="d-block text-left mt-3">NEW PASSWORD:</label>
                                     <weavr-password-input
@@ -35,9 +35,9 @@
                                         class-name="sign-in-password"
                                         name="new-password"
                                         required="true"
-                                        @onChange="passwordInteraction"
-                                        @onStrength="strengthCheck"
-                                        @onKeyUp.prevent="checkOnKeyUp"
+                                        @on-change="passwordInteraction"
+                                        @on-strength="strengthCheck"
+                                        @on-key-up.prevent="checkOnKeyUp"
                                     />
                                     <small
                                         :class="
@@ -66,17 +66,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ComputedRef, reactive, ref, useRouter } from '@nuxtjs/composition-api'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
 import {
     INITIAL_UPDATE_PASSWORD_REQUEST,
-    UpdatePasswordRequestModel,
+    type UpdatePasswordRequestModel,
     UpdatePasswordRequestSchema,
 } from '~/plugins/weavr-multi/api/models/authentication'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import useZodValidation from '~/composables/useZodValidation'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
 const router = useRouter()

@@ -85,10 +85,9 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
-import { CountryCode, getCountryCallingCode } from 'libphonenumber-js'
 import { RecycleScroller } from 'vue-virtual-scroller'
-import { nextTick, Ref } from '@nuxtjs/composition-api'
-import { PhoneCodeCountry } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
+import { type CountryCode, getCountryCallingCode } from 'libphonenumber-js'
+import type { PhoneCodeCountry } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
 
 const emit = defineEmits(['input', 'open', 'close'])
 

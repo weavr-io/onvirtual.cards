@@ -23,10 +23,9 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref } from '@nuxtjs/composition-api'
 import config from '~/config'
 
-const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = import.meta.client ? require('js-cookie') : undefined
 const showCookieAlert = ref<string | boolean>(Cookie.get(config.ONV_COOKIE_NAME))
 
 const dismissCookie = () => {

@@ -95,140 +95,115 @@
         </b-container>
     </section>
 </template>
-<script lang="ts">
-import { computed, defineComponent, reactive, ref, useFetch } from '@nuxtjs/composition-api'
+
+<script lang="ts" setup>
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
 import {
     INITIAL_UPDATE_CONSUMER_REQUEST,
-    UpdateConsumerRequest,
+    type UpdateConsumerRequest,
 } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import {
-    UpdateCorporateRequest,
+    type UpdateCorporateRequest,
     UpdateCorporateRequestSchema,
 } from '~/plugins/weavr-multi/api/models/identities/corporates'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import useZodValidation from '~/composables/useZodValidation'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
-export default defineComponent({
-    components: {
-        PhoneNumberInput,
-        LoaderButton,
-        ErrorAlert,
-    },
+definePageMeta({
     middleware: 'kyVerified',
-    setup() {
-        const { isConsumer, consumer, corporate, rootName, rootSurname } = useBase()
-        const { consumers, corporates } = useStores(['consumers', 'corporates'])
-        const numberIsValid = ref<boolean | null>(null)
-        const updateIdentityRootUser = reactive(INITIAL_UPDATE_CONSUMER_REQUEST())
-        const isLoading = ref(false)
-        const mobile = ref<{ countryCode: string; number: string }>({
-            countryCode: '',
-            number: '',
-        })
-
-        const validation = computed(() => {
-            return useZodValidation(UpdateCorporateRequestSchema, updateIdentityRootUser)
-        })
-
-        const isMobileVerified = computed(() => {
-            return isConsumer.value
-                ? consumer.value?.rootUser.mobileNumberVerified
-                : corporate.value?.rootUser.mobileNumberVerified
-        })
-
-        const isEmailVerified = computed(() => {
-            return isConsumer.value
-                ? consumer.value?.rootUser.emailVerified
-                : corporate.value?.rootUser.emailVerified
-        })
-
-        useFetch(() => {
-            Object.assign(updateIdentityRootUser, {
-                mobile: {
-                    countryCode: isConsumer.value
-                        ? consumer.value?.rootUser?.mobile.countryCode ?? null
-                        : corporate.value?.rootUser?.mobile.countryCode ?? null,
-                    number: isConsumer.value
-                        ? consumer.value?.rootUser?.mobile.number ?? null
-                        : corporate.value?.rootUser?.mobile.number ?? null,
-                },
-                email: isConsumer.value
-                    ? consumer.value?.rootUser?.email ?? null
-                    : corporate.value?.rootUser?.email ?? null,
-            })
-
-            if (
-                !(
-                    updateIdentityRootUser.mobile?.countryCode &&
-                    updateIdentityRootUser.mobile.number
-                )
-            ) {
-                return
-            }
-
-            const _parsedNumber = parsePhoneNumberFromString(
-                updateIdentityRootUser.mobile!.countryCode! + updateIdentityRootUser.mobile!.number,
-            )
-
-            mobile.value = {
-                countryCode: _parsedNumber?.country ?? '',
-                number: updateIdentityRootUser.mobile?.number ?? '',
-            }
-        })
-
-        const phoneUpdate = (number) => {
-            mobile.value.countryCode = mobile.value.countryCode && `+${number.countryCallingCode}`
-            mobile.value.number = number.phoneNumber
-
-            updateIdentityRootUser.mobile = { ...mobile.value }
-            if (number.phoneNumber) {
-                numberIsValid.value = number.isValid
-            }
-        }
-
-        const doUpdateIdentityRoot = async () => {
-            isLoading.value = true
-
-            if (numberIsValid.value === null) {
-                numberIsValid.value = false
-            }
-
-            await validation.value.validate()
-
-            if (validation.value.isInvalid.value || !numberIsValid.value) {
-                isLoading.value = false
-                return
-            }
-
-            const xhr: Promise<any>[] = []
-
-            isConsumer.value
-                ? xhr.push(consumers!.update(updateIdentityRootUser as UpdateConsumerRequest))
-                : xhr.push(corporates!.update(updateIdentityRootUser as UpdateCorporateRequest))
-
-            Promise.all(xhr).finally(() => {
-                isLoading.value = false
-            })
-        }
-
-        return {
-            doUpdateIdentityRoot,
-            rootName,
-            rootSurname,
-            validation,
-            updateIdentityRootUser,
-            isEmailVerified,
-            mobile,
-            isMobileVerified,
-            numberIsValid,
-            phoneUpdate,
-            isLoading,
-        }
-    },
 })
+
+const { isConsumer, consumer, corporate, rootName, rootSurname } = useBase()
+const { consumers, corporates } = useStores(['consumers', 'corporates'])
+const numberIsValid = ref<boolean | null>(null)
+const updateIdentityRootUser = reactive(INITIAL_UPDATE_CONSUMER_REQUEST())
+const isLoading = ref(false)
+const mobile = ref<{ countryCode: string; number: string }>({
+    countryCode: '',
+    number: '',
+})
+
+const validation = computed(() => {
+    return useZodValidation(UpdateCorporateRequestSchema, updateIdentityRootUser)
+})
+
+const isMobileVerified = computed(() => {
+    return isConsumer.value
+        ? consumer.value?.rootUser.mobileNumberVerified
+        : corporate.value?.rootUser.mobileNumberVerified
+})
+
+const isEmailVerified = computed(() => {
+    return isConsumer.value
+        ? consumer.value?.rootUser.emailVerified
+        : corporate.value?.rootUser.emailVerified
+})
+
+useState(() => {
+    Object.assign(updateIdentityRootUser, {
+        mobile: {
+            countryCode: isConsumer.value
+                ? consumer.value?.rootUser?.mobile.countryCode ?? null
+                : corporate.value?.rootUser?.mobile.countryCode ?? null,
+            number: isConsumer.value
+                ? consumer.value?.rootUser?.mobile.number ?? null
+                : corporate.value?.rootUser?.mobile.number ?? null,
+        },
+        email: isConsumer.value
+            ? consumer.value?.rootUser?.email ?? null
+            : corporate.value?.rootUser?.email ?? null,
+    })
+
+    if (!(updateIdentityRootUser.mobile?.countryCode && updateIdentityRootUser.mobile.number)) {
+        return
+    }
+
+    const _parsedNumber = parsePhoneNumberFromString(
+        updateIdentityRootUser.mobile!.countryCode! + updateIdentityRootUser.mobile!.number,
+    )
+
+    mobile.value = {
+        countryCode: _parsedNumber?.country ?? '',
+        number: updateIdentityRootUser.mobile?.number ?? '',
+    }
+})
+
+const phoneUpdate = (number) => {
+    mobile.value.countryCode = mobile.value.countryCode && `+${number.countryCallingCode}`
+    mobile.value.number = number.phoneNumber
+
+    updateIdentityRootUser.mobile = { ...mobile.value }
+    if (number.phoneNumber) {
+        numberIsValid.value = number.isValid
+    }
+}
+
+const doUpdateIdentityRoot = async () => {
+    isLoading.value = true
+
+    if (numberIsValid.value === null) {
+        numberIsValid.value = false
+    }
+
+    await validation.value.validate()
+
+    if (validation.value.isInvalid.value || !numberIsValid.value) {
+        isLoading.value = false
+        return
+    }
+
+    const xhr: Promise<any>[] = []
+
+    isConsumer.value
+        ? xhr.push(consumers!.update(updateIdentityRootUser as UpdateConsumerRequest))
+        : xhr.push(corporates!.update(updateIdentityRootUser as UpdateCorporateRequest))
+
+    Promise.all(xhr).finally(() => {
+        isLoading.value = false
+    })
+}
 </script>

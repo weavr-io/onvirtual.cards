@@ -100,6 +100,7 @@
         </b-container>
     </section>
 </template>
+
 <script lang="ts" setup>
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'

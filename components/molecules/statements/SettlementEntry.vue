@@ -63,12 +63,10 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType } from '@nuxtjs/composition-api'
-import { computed } from 'vue'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import { weavrCurrency, weavrCurrencySymbol } from '~/utils/helper'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
-import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
-import { weavrCurrency, weavrCurrencySymbol } from '~/utils/helper'
 
 const props = defineProps({
     transaction: {

@@ -76,116 +76,95 @@
         </b-container>
     </section>
 </template>
-<script lang="ts">
-import { computed, ComputedRef, defineComponent, useFetch, useRoute } from '@nuxtjs/composition-api'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
-import { BankAccountDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/BankAccountDetailsModel'
+
+<script lang="ts" setup>
+import type { BankAccountDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/BankAccountDetailsModel'
 import { useStores } from '~/composables/useStores'
-import { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
-import { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SwiftBankDetailsModel'
+import type { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
+import type { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SwiftBankDetailsModel'
 import { useBase } from '~/composables/useBase'
 import { useAccounts } from '~/composables/useAccounts'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
-export default defineComponent({
-    components: {
-        LoadingSpinner,
-    },
+definePageMeta({
     middleware: ['kyVerified', 'instruments'],
-    setup() {
-        const route = useRoute()
-        const { pendingDataOrError } = useBase()
-        const { account, accountId } = useAccounts()
-        const { accounts } = useStores(['accounts'])
+})
+const route = useRoute()
+const { pendingDataOrError } = useBase()
+const { account, accountId } = useAccounts()
+const { accounts } = useStores(['accounts'])
 
-        const address = computed(() => {
-            return bankAccountDetails.value?.beneficiaryBankAddress?.split(',').join(',<br>')
-        })
+const address = computed(() => {
+    return bankAccountDetails.value?.beneficiaryBankAddress?.split(',').join(',<br>')
+})
 
-        const sepaBic = computed(() => {
-            if (!ibanDetails.value?.bankAccountDetails) return ''
-            const i = ibanDetails.value?.bankAccountDetails.findIndex((details) => {
-                return (details.details as SepaBankDetailsModel).bankIdentifierCode !== undefined
-            })
+const sepaBic = computed(() => {
+    if (!ibanDetails.value?.bankAccountDetails) return ''
+    const i = ibanDetails.value?.bankAccountDetails.findIndex((details) => {
+        return (details.details as SepaBankDetailsModel).bankIdentifierCode !== undefined
+    })
 
-            if (i >= 0) {
-                return (
-                    (ibanDetails.value?.bankAccountDetails[i!] as BankAccountDetailsModel)
-                        .details as SepaBankDetailsModel
-                ).bankIdentifierCode
-            } else {
-                return ''
-            }
-        })
+    if (i >= 0) {
+        return (
+            (ibanDetails.value?.bankAccountDetails[i!] as BankAccountDetailsModel)
+                .details as SepaBankDetailsModel
+        ).bankIdentifierCode
+    } else {
+        return ''
+    }
+})
 
-        const swiftCode = computed(() => {
-            if (!ibanDetails.value?.bankAccountDetails) return ''
-            const i = ibanDetails.value?.bankAccountDetails.findIndex((details) => {
-                return (details.details as SwiftBankDetailsModel).code !== undefined
-            })
+const swiftCode = computed(() => {
+    if (!ibanDetails.value?.bankAccountDetails) return ''
+    const i = ibanDetails.value?.bankAccountDetails.findIndex((details) => {
+        return (details.details as SwiftBankDetailsModel).code !== undefined
+    })
 
-            if (i! >= 0) {
-                return (
-                    (ibanDetails.value?.bankAccountDetails[i!] as BankAccountDetailsModel)
-                        .details as SwiftBankDetailsModel
-                ).code
-            } else {
-                return false
-            }
-        })
+    if (i! >= 0) {
+        return (
+            (ibanDetails.value?.bankAccountDetails[i!] as BankAccountDetailsModel)
+                .details as SwiftBankDetailsModel
+        ).code
+    } else {
+        return false
+    }
+})
 
-        const bankAccountDetails: ComputedRef<BankAccountDetailsModel | undefined> = computed(
-            () => {
-                try {
-                    return ibanDetails.value?.bankAccountDetails[0]
-                } catch (e) {
-                    return undefined
-                }
-            },
-        )
+const bankAccountDetails: ComputedRef<BankAccountDetailsModel | undefined> = computed(() => {
+    try {
+        return ibanDetails.value?.bankAccountDetails[0]
+    } catch (e) {
+        return undefined
+    }
+})
 
-        const ibanDetails = computed(() => {
-            return accounts?.accountState.ibanDetails
-        })
+const ibanDetails = computed(() => {
+    return accounts?.accountState.ibanDetails
+})
 
-        const beneficiaryNameAndSurname = computed(() => {
-            return bankAccountDetails.value?.beneficiaryNameAndSurname
-        })
+const beneficiaryNameAndSurname = computed(() => {
+    return bankAccountDetails.value?.beneficiaryNameAndSurname
+})
 
-        const beneficiaryBank = computed(() => {
-            return bankAccountDetails.value?.beneficiaryBank
-        })
+const beneficiaryBank = computed(() => {
+    return bankAccountDetails.value?.beneficiaryBank
+})
 
-        const iban = computed(() => {
-            return (
-                (bankAccountDetails.value?.details &&
-                    'iban' in bankAccountDetails.value.details &&
-                    bankAccountDetails.value.details.iban) ||
-                ''
-            )
-        })
+const iban = computed(() => {
+    return (
+        (bankAccountDetails.value?.details &&
+            'iban' in bankAccountDetails.value.details &&
+            bankAccountDetails.value.details.iban) ||
+        ''
+    )
+})
 
-        const paymentReference = computed(() => {
-            return bankAccountDetails.value?.paymentReference
-        })
+const paymentReference = computed(() => {
+    return bankAccountDetails.value?.paymentReference
+})
 
-        useFetch(async () => {
-            await accounts?.getIBANDetails(route.value.params.id)
-        })
-
-        return {
-            account,
-            pendingDataOrError,
-            bankAccountDetails,
-            beneficiaryNameAndSurname,
-            iban,
-            sepaBic,
-            swiftCode,
-            beneficiaryBank,
-            address,
-            paymentReference,
-            accountId,
-        }
-    },
+useAsyncData(async () => {
+    await accounts?.getIBANDetails(String(route.params.id))
 })
 </script>
 <style lang="scss" scoped>

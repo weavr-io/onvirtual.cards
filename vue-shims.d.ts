@@ -1,10 +1,12 @@
 import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 import type { BvToastOptions } from '~/node_modules/bootstrap-vue'
+import type { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
 import { BvModal, BvToast } from 'bootstrap-vue'
 
 // global, also used in store
 declare module 'nuxt/app' {
     interface NuxtApp {
+        $formattingFilters: FormattingFiltersInterface
         $apiMulti: ApiInterface
         $weavrComponents: any
         $weavrSetUserToken: (token: unknown) => {}
@@ -25,22 +27,17 @@ declare module '*.svg?inline' {
     export default component
 }
 
-declare namespace __WebpackModuleApi {
-    interface RequireContext {
-        keys(): string[]
-        (id: string): any
-        <T>(id: string): T
-        resolve(id: string): string
-        /** The module id of the context module. This may be useful for module.hot.accept. */
-        id: string
+declare global {
+    interface ImportMetaGlob {
+        (
+            pattern: string,
+            options?: {
+                eager?: boolean
+            },
+        ): Record<string, () => Promise<unknown>>
     }
-}
 
-interface Require {
-    context(
-        path: string,
-        deep?: boolean,
-        filter?: RegExp,
-        mode?: 'sync' | 'eager' | 'weak' | 'lazy' | 'lazy-once',
-    ): __WebpackModuleApi.RequireContext
+    interface ImportMeta {
+        glob: ImportMetaGlob
+    }
 }

@@ -1,18 +1,17 @@
-import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
 import config from '~/config'
 
-const Cookie = process.client ? require('js-cookie') : undefined
+const Cookie = import.meta.client ? require('js-cookie') : undefined
 
-export default defineNuxtMiddleware(({ route, redirect }) => {
+export default defineNuxtRouteMiddleware((to) => {
     const authCookie = Cookie.get(config.ONV_COOKIE_NAME)
 
     if (!authCookie) {
-        const queryParam = route.query
+        const queryParam = to.query
 
         if (queryParam.cons && queryParam.email) {
-            return redirect(`/login/verify?email=${queryParam.email}&cons=${queryParam.cons}`)
+            return navigateTo(`/login/verify?email=${queryParam.email}&cons=${queryParam.cons}`)
         }
 
-        return redirect('/login')
+        return navigateTo('/login')
     }
 })

@@ -87,145 +87,129 @@
     </b-col>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, reactive, ref, useFetch } from '@nuxtjs/composition-api'
-import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
+<script lang="ts" setup>
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
 import {
-    Address,
+    type Address,
     AddressSchema,
     CorporateSourceOfFundsSelectConst,
     INITIAL_ADDRESS,
     IndustryTypeSelectConst,
 } from '~/plugins/weavr-multi/api/models/common'
-import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
-import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
+import type { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
+import type { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import useZodValidation from '~/composables/useZodValidation'
 
-export default defineComponent({
-    components: {
-        ErrorAlert,
-        LoaderButton,
-    },
+definePageMeta({
     layout: 'auth',
     middleware: 'authRouteGuard',
-    setup() {
-        const {
-            consumer,
-            corporate,
-            isConsumer,
-            isCorporate,
-            goToVerify,
-            goToIndex,
-            countryOptionsWithDefault,
-        } = useBase()
-        const { consumers, corporates } = useStores(['consumers', 'corporates'])
+})
+const {
+    consumer,
+    corporate,
+    isConsumer,
+    isCorporate,
+    goToVerify,
+    goToIndex,
+    countryOptionsWithDefault,
+} = useBase()
+const { consumers, corporates } = useStores(['consumers', 'corporates'])
 
-        const isLoading = ref(false)
-        const address: Address = reactive(INITIAL_ADDRESS())
+const isLoading = ref(false)
+const address: Address = reactive(INITIAL_ADDRESS())
 
-        const validation = computed(() => {
-            return useZodValidation(AddressSchema, address)
-        })
+const validation = computed(() => {
+    return useZodValidation(AddressSchema, address)
+})
 
-        const country = computed({
-            get() {
-                return address.country
-            },
-            set(value) {
-                address.country = value
-            },
-        })
-
-        const sourceOfFundsOptions = computed(() => {
-            return CorporateSourceOfFundsSelectConst
-        })
-
-        const industryOccupationOptions = computed(() => {
-            return IndustryTypeSelectConst
-        })
-
-        useFetch(() => {
-            if (isConsumer.value && consumer.value) {
-                if (Object.keys(consumer.value.rootUser.address as Address).length) {
-                    Object.assign(address, consumer.value.rootUser.address)
-                }
-            } else if (isCorporate.value && corporate.value) {
-                if (Object.keys(corporate.value.company.registeredAddress as Address).length) {
-                    // treat as corporate
-                    Object.assign(address, corporate.value.company.registeredAddress)
-                }
-            }
-        })
-
-        const submitForm = async () => {
-            isLoading.value = true
-            await validation.value.validate()
-
-            if (validation.value.isInvalid.value) {
-                isLoading.value = false
-                return
-            }
-
-            let xhr: Promise<unknown>
-
-            if (isConsumer.value) {
-                xhr = consumers!.update({ address })
-            } else {
-                // treat as corporate
-                xhr = corporates!.update({
-                    companyBusinessAddress: address,
-                })
-            }
-            xhr.then(addressUpdated).finally(() => {
-                isLoading.value = false
-            })
-        }
-
-        const addressUpdated = async () => {
-            let identityRootVerified: CorporatesRootUserModel | ConsumersRootUserModel
-
-            if (isConsumer.value) {
-                await consumers?.get().then((res) => {
-                    identityRootVerified = res.data.rootUser
-
-                    if (
-                        identityRootVerified &&
-                        !(identityRootVerified as ConsumersRootUserModel).emailVerified
-                    ) {
-                        goToVerify()
-                    } else {
-                        goToIndex()
-                    }
-                })
-            } else if (isCorporate.value) {
-                await corporates?.get().then((res) => {
-                    identityRootVerified = res.data.rootUser
-
-                    if (
-                        identityRootVerified &&
-                        !(identityRootVerified as CorporatesRootUserModel).emailVerified
-                    ) {
-                        goToVerify()
-                    } else {
-                        goToIndex()
-                    }
-                })
-            }
-        }
-
-        return {
-            submitForm,
-            validation,
-            address,
-            countryOptionsWithDefault,
-            isLoading,
-            country,
-            sourceOfFundsOptions,
-            industryOccupationOptions,
-        }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const country = computed({
+    get() {
+        return address.country
+    },
+    set(value) {
+        address.country = value
     },
 })
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const sourceOfFundsOptions = computed(() => {
+    return CorporateSourceOfFundsSelectConst
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const industryOccupationOptions = computed(() => {
+    return IndustryTypeSelectConst
+})
+
+useState(() => {
+    if (isConsumer.value && consumer.value) {
+        if (Object.keys(consumer.value.rootUser.address as Address).length) {
+            Object.assign(address, consumer.value.rootUser.address)
+        }
+    } else if (isCorporate.value && corporate.value) {
+        if (Object.keys(corporate.value.company.registeredAddress as Address).length) {
+            // treat as corporate
+            Object.assign(address, corporate.value.company.registeredAddress)
+        }
+    }
+})
+
+const submitForm = async () => {
+    isLoading.value = true
+    await validation.value.validate()
+
+    if (validation.value.isInvalid.value) {
+        isLoading.value = false
+        return
+    }
+
+    let xhr: Promise<unknown>
+
+    if (isConsumer.value) {
+        xhr = consumers!.update({ address })
+    } else {
+        // treat as corporate
+        xhr = corporates!.update({
+            companyBusinessAddress: address,
+        })
+    }
+    xhr.then(addressUpdated).finally(() => {
+        isLoading.value = false
+    })
+}
+
+const addressUpdated = async () => {
+    let identityRootVerified: CorporatesRootUserModel | ConsumersRootUserModel
+
+    if (isConsumer.value) {
+        await consumers?.get().then((res) => {
+            identityRootVerified = res.data.rootUser
+
+            if (
+                identityRootVerified &&
+                !(identityRootVerified as ConsumersRootUserModel).emailVerified
+            ) {
+                goToVerify()
+            } else {
+                goToIndex()
+            }
+        })
+    } else if (isCorporate.value) {
+        await corporates?.get().then((res) => {
+            identityRootVerified = res.data.rootUser
+
+            if (
+                identityRootVerified &&
+                !(identityRootVerified as CorporatesRootUserModel).emailVerified
+            ) {
+                goToVerify()
+            } else {
+                goToIndex()
+            }
+        })
+    }
+}
 </script>

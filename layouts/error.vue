@@ -18,59 +18,47 @@
     </b-container>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, useMeta, useRouter } from '@nuxtjs/composition-api'
-import { computed } from 'vue'
+<script lang="ts" setup>
+const props = defineProps({
+    error: {
+        type: Object,
+        required: true,
+    },
+})
+const router = useRouter()
 
-export default defineComponent({
-    props: {
-        error: {
-            type: Object,
-            required: true,
+const statusCode = computed(() => {
+    return (props.error && props.error.statusCode) || 500
+})
+
+const is404 = computed(() => {
+    return statusCode.value === 404
+})
+
+onMounted(() => {
+    switch (statusCode.value) {
+        case 401:
+            router.replace('/login')
+            break
+        case 403:
+            router.replace('/forbidden')
+            break
+    }
+})
+
+useHead({
+    title: statusCode.value === 404 ? 'Page Not Found' : 'Oh snap!',
+    meta: [
+        {
+            name: 'description',
+            content: 'Error page',
         },
-    },
-    setup(props) {
-        const router = useRouter()
-
-        const statusCode = computed(() => {
-            return (props.error && props.error.statusCode) || 500
-        })
-
-        const is404 = computed(() => {
-            return statusCode.value === 404
-        })
-
-        onMounted(() => {
-            switch (statusCode.value) {
-                case 401:
-                    router.replace('/login')
-                    break
-                case 403:
-                    router.replace('/forbidden')
-                    break
-            }
-        })
-
-        useMeta(() => ({
-            title: statusCode.value === 404 ? 'Page Not Found' : 'Oh snap!',
-            meta: [
-                {
-                    name: 'description',
-                    content: 'Error page',
-                },
-                {
-                    name: 'viewport',
-                    content:
-                        'width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no',
-                },
-            ],
-        }))
-
-        return {
-            is404,
-        }
-    },
-    head: {},
+        {
+            name: 'viewport',
+            content:
+                'width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no',
+        },
+    ],
 })
 </script>
 

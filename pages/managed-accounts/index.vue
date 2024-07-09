@@ -29,54 +29,42 @@
     </section>
 </template>
 
-<script lang="ts">
-import { defineComponent, useFetch, useRouter } from '@nuxtjs/composition-api'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+<script lang="ts" setup>
 import { useAccounts } from '~/composables/useAccounts'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
-export default defineComponent({
-    components: {
-        LoadingSpinner,
-    },
+definePageMeta({
     layout: 'dashboard',
     middleware: 'kyVerified',
-    setup() {
-        const router = useRouter()
-        const { accounts } = useStores(['accounts'])
-        const {
-            accountJurisdictionProfileId,
-            showErrorToast,
-            identityVerified,
-            pendingDataOrError,
-        } = useBase()
-        const { hasAccount } = useAccounts()
+})
+const router = useRouter()
+const { accounts } = useStores(['accounts'])
+const { accountJurisdictionProfileId, showErrorToast, identityVerified, pendingDataOrError } =
+    useBase()
+const { hasAccount } = useAccounts()
 
-        useFetch(() => {
-            return accounts
-                ?.index({
-                    profileId: accountJurisdictionProfileId.value,
-                    state: ManagedInstrumentStateEnum.ACTIVE,
-                    offset: '0',
-                })
-                .then((res) => {
-                    if (parseInt(res.data.count!) >= 1 && res.data.accounts) {
-                        const _accountId = res.data.accounts[0].id
-                        router.push(`/managed-accounts/${_accountId}`)
-                    }
-                })
-                .catch((err) => {
-                    const data = err.response.data
-
-                    const error = data.message ? data.message : data.errorCode
-
-                    showErrorToast(error)
-                })
+useFetch(() => {
+    return accounts
+        ?.index({
+            profileId: accountJurisdictionProfileId.value,
+            state: ManagedInstrumentStateEnum.ACTIVE,
+            offset: '0',
         })
+        .then((res) => {
+            if (parseInt(res.data.count!) >= 1 && res.data.accounts) {
+                const _accountId = res.data.accounts[0].id
+                router.push(`/managed-accounts/${_accountId}`)
+            }
+        })
+        .catch((err) => {
+            const data = err.response.data
 
-        return { hasAccount, identityVerified, pendingDataOrError }
-    },
+            const error = data.message ? data.message : data.errorCode
+
+            showErrorToast(error)
+        })
 })
 </script>

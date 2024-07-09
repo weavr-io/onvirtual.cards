@@ -34,37 +34,29 @@
     </section>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, useFetch } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 
-export default defineComponent({
+definePageMeta({
     middleware: 'kyVerified',
-    setup() {
-        const { pendingDataOrError } = useBase()
-        const { users: usersStores } = useStores(['users'])
+})
 
-        const mainProps = {
-            blank: true,
-            blankColor: '#EAEDF6',
-            width: 45,
-            height: 45,
-        }
+const { pendingDataOrError } = useBase()
+const { users: usersStores } = useStores(['users'])
 
-        const users = computed(() => {
-            return usersStores?.userState.users
-        })
+const mainProps = {
+    blank: true,
+    blankColor: '#EAEDF6',
+    width: 45,
+    height: 45,
+}
 
-        useFetch(() => {
-            usersStores?.index()
-        })
+const users = computed(() => {
+    return usersStores?.userState.users
+})
 
-        return {
-            pendingDataOrError,
-            users,
-            mainProps,
-        }
-    },
+useState(() => {
+    usersStores?.index()
 })
 </script>
