@@ -1,11 +1,9 @@
 import config from '~/config'
 
-const Cookie = import.meta.client ? require('js-cookie') : undefined
-
 export default defineNuxtRouteMiddleware((to) => {
-    const authCookie = Cookie.get(config.ONV_COOKIE_NAME)
+    const authCookie = useCookie(config.ONV_COOKIE_NAME)
 
-    if (!authCookie) {
+    if (!authCookie.value) {
         const queryParam = to.query
 
         if (queryParam.cons && queryParam.email) {

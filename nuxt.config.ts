@@ -7,6 +7,11 @@ export default defineNuxtConfig({
         port: 5000,
     },
     vite: {
+        resolve: {
+            alias: {
+                vue: '@vue/compat',
+            },
+        },
         plugins: [
             svgLoader({
                 svgo: false,
@@ -120,6 +125,9 @@ export default defineNuxtConfig({
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
     ],
+    build: {
+        transpile: ['bootstrap-vue'],
+    },
     modules: ['@pinia/nuxt'],
     router: {
         options: {

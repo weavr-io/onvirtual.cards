@@ -24,7 +24,6 @@
         "bootstrap": "^4.6.2",
         "bootstrap-vue": "^2.23.1",
         "dot-object": "^2.1.4",
-        "js-cookie": "^3.0.5",
         "libphonenumber-js": "^1.11.4",
         "luxon": "^3.4.4",
         "nuxt": "^3.12.2",

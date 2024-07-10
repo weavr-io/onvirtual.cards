@@ -15,8 +15,6 @@ import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authenticati
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
 import config from '~/config'
 
-const Cookie = import.meta.client ? require('js-cookie') : undefined
-
 const initState = (): AuthState => {
     return {
         auth: null,
@@ -29,7 +27,7 @@ export const useAuthStore = defineStore('auth', () => {
     const { $apiMulti, $weavrSetUserToken } = useNuxtApp()
 
     const authState: AuthState = reactive(initState())
-
+    const onvCookie = useCookie(config.ONV_COOKIE_NAME)
     const isLoggedIn = computed(() => authState.auth && authState.auth.token)
     const token = computed(() => authState.auth?.token)
     const hasAuthToken = computed(() => !!authState.auth && !!authState.auth.token)
@@ -41,15 +39,15 @@ export const useAuthStore = defineStore('auth', () => {
     const isCorporate = computed(() => authState.auth?.identity.type === IdentityTypeEnum.CORPORATE)
     const identity = computed(() => authState.auth?.identity)
 
-    const setAuth = async (auth: LoginWithPasswordResponse | null) => {
+    const setAuth = (auth: LoginWithPasswordResponse | null) => {
         authState.auth = auth
-        await Cookie.set(config.ONV_COOKIE_NAME, JSON.stringify(authState.auth))
+        onvCookie.value = JSON.stringify(authState.auth)
         $axiosMulti.defaults.headers.Authorization = 'Bearer ' + authState.auth?.token
     }
 
     const setToken = (res: CreatePasswordResponseModel) => {
         authState.auth!.token = res.token!
-        Cookie.set(config.ONV_COOKIE_NAME, JSON.stringify(authState.auth))
+        onvCookie.value = JSON.stringify(authState.auth)
         $axiosMulti.defaults.headers.Authorization = 'Bearer ' + authState.auth?.token
     }
 
@@ -59,7 +57,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const removeAuth = (auth: null) => {
         authState.auth = auth
-        Cookie.remove(config.ONV_COOKIE_NAME)
+        onvCookie.value = undefined
         delete $axiosMulti.defaults.headers.Authorization
     }
 

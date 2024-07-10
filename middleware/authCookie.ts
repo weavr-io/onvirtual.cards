@@ -1,8 +1,6 @@
 import config from '~/config'
 import { useAuthStore } from '~/store/auth'
 
-const Cookie = import.meta.client ? require('js-cookie') : undefined
-
 const scaCheck = (route) => {
     if (
         !route.name?.startsWith('register') &&
@@ -17,11 +15,11 @@ const scaCheck = (route) => {
 
 export default defineNuxtRouteMiddleware(async (to) => {
     const auth = useAuthStore()
-    const authCookie = Cookie.get(config.ONV_COOKIE_NAME)
+    const authCookie = useCookie(config.ONV_COOKIE_NAME)
 
-    if (authCookie) {
+    if (authCookie.value) {
         try {
-            const authCookieJson = JSON.parse(authCookie)
+            const authCookieJson = JSON.parse(authCookie.value)
             await auth.setAuth(authCookieJson)
 
             scaCheck(to)
