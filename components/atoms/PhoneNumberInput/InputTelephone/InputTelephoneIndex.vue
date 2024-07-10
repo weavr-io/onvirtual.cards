@@ -16,6 +16,7 @@
         @mouseleave="updateHoverState(false)"
     >
         <input
+            v-bind="$attrs"
             :id="id"
             ref="InputTel"
             v-model="inputValue"
@@ -25,7 +26,6 @@
             :style="[{ borderTopRightRadius: '4px', borderBottomRightRadius: '4px' }]"
             :type="type"
             class="input-tel-input"
-            v-bind="$attrs"
             @blur="onBlur"
             @click="$emit('click', $event)"
             @focus="onFocus"

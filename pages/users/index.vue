@@ -15,7 +15,7 @@
             <template v-if="users && !pendingDataOrError">
                 <b-row v-for="(user, key) in users.users" :key="key" align-v="center" class="mt-3">
                     <b-col cols="2" md="1">
-                        <b-img :alt="user.name + ' ' + user.surname" rounded v-bind="mainProps" />
+                        <b-img v-bind="mainProps" :alt="user.name + ' ' + user.surname" rounded />
                     </b-col>
                     <b-col>{{ user.name }} {{ user.surname }}</b-col>
                     <b-col class="text-muted font-weight-light">

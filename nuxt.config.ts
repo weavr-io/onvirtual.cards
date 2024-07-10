@@ -1,8 +1,17 @@
+import svgLoader from 'vite-svg-loader'
+
 export default defineNuxtConfig({
     ssr: false,
     devServer: {
         host: '0.0.0.0',
         port: 5000,
+    },
+    vue: {
+        compilerOptions: {
+            compatConfig: {
+                MODE: 2,
+            },
+        },
     },
     vite: {
         resolve: {
@@ -10,6 +19,11 @@ export default defineNuxtConfig({
                 vue: '@vue/compat',
             },
         },
+        plugins: [
+            svgLoader({
+                defaultImport: 'url',
+            }),
+        ],
     },
     runtimeConfig: {
         public: {

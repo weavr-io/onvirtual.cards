@@ -74,8 +74,8 @@ import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEn
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 import StatementItem from '~/components/organisms/StatementItem.vue'
-import DownloadIcon from '~/assets/svg/download.svg?skipsvgo'
-import DeleteIcon from '~/assets/svg/delete.svg?skipsvgo'
+import DownloadIcon from '~/assets/svg/download.svg?raw'
+import DeleteIcon from '~/assets/svg/delete.svg?raw'
 
 const props = defineProps({
     filters: {

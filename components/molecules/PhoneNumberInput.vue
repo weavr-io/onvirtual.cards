@@ -23,6 +23,7 @@
         </div>
         <div class="flex-1 w-100">
             <InputTel
+                v-bind="$attrs"
                 :id="`${uniqueId}_phone_number`"
                 ref="phoneNumberInputEl"
                 v-model="phoneNumber"
@@ -33,7 +34,6 @@
                 :theme="theme"
                 :valid="isValid && !noValidatorState"
                 class="input-phone-number"
-                v-bind="$attrs"
                 @blur="$emit('phone-number-blur')"
                 @focus="$emit('phone-number-focused')"
                 @keydown="

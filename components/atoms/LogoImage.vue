@@ -1,16 +1,14 @@
 <template>
     <img
+        v-bind="dimensions"
         :loading="props.loading"
         alt="onvirtual.cards"
         class="d-inline-block"
         src="@/assets/imgs/logo.svg"
-        v-bind="dimensions"
     />
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
-
 const props = withDefaults(
     defineProps<{
         size?: 'sm' | 'md' | 'lg'
