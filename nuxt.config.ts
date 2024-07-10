@@ -1,5 +1,3 @@
-import svgLoader from 'vite-svg-loader'
-
 export default defineNuxtConfig({
     ssr: false,
     devServer: {
@@ -12,11 +10,6 @@ export default defineNuxtConfig({
                 vue: '@vue/compat',
             },
         },
-        plugins: [
-            svgLoader({
-                svgo: false,
-            }),
-        ],
     },
     runtimeConfig: {
         public: {
