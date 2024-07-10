@@ -1,4 +1,4 @@
-import { initialiseStores } from '~/utils/pinia-store-accessor'
+import { useStores } from '~/composables/useStores'
 
 const checkInstrument = (name: string) => {
     return (
@@ -9,7 +9,7 @@ const checkInstrument = (name: string) => {
 }
 
 export default defineNuxtRouteMiddleware(async (to) => {
-    const { auth, consumers, corporates } = initialiseStores(['auth', 'consumers', 'corporates'])
+    const { auth, consumers, corporates } = useStores(['auth', 'consumers', 'corporates'])
 
     if (auth?.isLoggedIn) {
         if (auth?.isConsumer) {

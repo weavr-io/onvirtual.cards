@@ -1,10 +1,10 @@
 import axios from 'axios'
-import { initialiseStores } from '~/utils/pinia-store-accessor'
+import { useStores } from '~/composables/useStores'
 
 export default defineNuxtPlugin(({ vueApp }) => {
     const config = useRuntimeConfig().public
     const route = useRoute()
-    const { auth, errors } = initialiseStores(['auth', 'errors'])
+    const { auth, errors } = useStores(['auth', 'errors'])
     const axiosMulti = axios.create({
         headers: {
             common: {

@@ -1,8 +1,8 @@
-import { initialiseStores } from '~/utils/pinia-store-accessor'
+import { useStores } from '~/composables/useStores'
 
 export default defineNuxtRouteMiddleware(async () => {
     // this will run in async before every route change in order to populate identities respectively
-    const { auth, consumers, corporates } = initialiseStores(['auth', 'consumers', 'corporates'])
+    const { auth, consumers, corporates } = useStores(['auth', 'consumers', 'corporates'])
 
     if (auth?.isConsumer && !consumers?.consumerState.consumer) {
         await consumers?.get()

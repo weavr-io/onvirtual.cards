@@ -26,8 +26,9 @@ export interface WeavrToast {
 declare global {
     interface ImportMetaGlob {
         (
-            pattern: string,
+            glob: string,
             options?: {
+                as?: string
                 eager?: boolean
             },
         ): Record<string, () => Promise<unknown>>

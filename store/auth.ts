@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { $axiosMulti } from '~/utils/api'
-import { initialiseStores } from '~/utils/pinia-store-accessor'
+import { useStores } from '~/composables/useStores'
 import type { Auth as AuthState } from '~/local/models/store/auth'
 import type { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
 import type { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPassword'
@@ -86,7 +86,7 @@ export const useAuthStore = defineStore('auth', () => {
         removeAuth(null)
         resetState()
         // TODO: refactor this if list gets too long
-        initialiseStores(
+        useStores(
             ['corporates', 'consumers', 'accounts', 'cards', 'identity', 'transfers', 'users'],
             true,
         )

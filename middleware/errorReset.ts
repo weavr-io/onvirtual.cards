@@ -1,7 +1,7 @@
-import { initialiseStores } from '~/utils/pinia-store-accessor'
+import { useStores } from '~/composables/useStores'
 
 export default defineNuxtRouteMiddleware(() => {
-    const { errors } = initialiseStores(['errors'])
+    const { errors } = useStores(['errors'])
 
     return errors?.resetState()
 })
