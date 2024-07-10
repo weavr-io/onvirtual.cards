@@ -17,9 +17,10 @@ export const useStores = <T extends keyof StoreType>(
     const stores: Partial<{ [K in T]: StoreType[K] }> = {}
 
     Object.entries(moduleFiles).forEach(([path, module]) => {
-        const moduleName = path.replace(/(\.\/|\.ts)/g, '')
+        const moduleName = path.replace(/(\.?\/store\/|\.ts)/g, '')
         const exportName = `use${text.capitalizeFirstLetter(moduleName)}Store`
 
+        console.log('reached', path, module, moduleName, exportName)
         if (typeof module[exportName] === 'function') {
             modules[moduleName] = module[exportName]()
         } else {
