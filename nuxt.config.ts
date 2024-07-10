@@ -7,7 +7,11 @@ export default defineNuxtConfig({
         port: 5000,
     },
     vite: {
-        plugins: [svgLoader()],
+        plugins: [
+            svgLoader({
+                svgo: false,
+            }),
+        ],
     },
     runtimeConfig: {
         public: {

@@ -14,7 +14,7 @@ export const useCards = () => {
     const isManagedCards = computed(() => {
         if (route.matched[0].name) {
             return ['managed-cards', 'managed-cards-id-statements'].includes(
-                String(route.matched[0].name),
+                route.matched[0].name as string,
             )
         }
         return false

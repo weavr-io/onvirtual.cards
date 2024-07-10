@@ -1,8 +1,9 @@
 <template>
-    <div :class="props.className" :style="props.baseStyle" />
+    <div :class="props.className" :style="styleValue" />
 </template>
 
 <script lang="ts" setup>
+import type { StyleValue } from 'vue'
 import type { SecureElementStyle, SecureSpanOptions } from '~/plugins/weavr/components/api'
 import { APP_ROOT_ID } from '~/utils/helper'
 
@@ -26,6 +27,8 @@ const props = withDefaults(
 const emit = defineEmits(['onReady', 'onChange'])
 
 const span: Ref<any> = ref(null)
+
+const styleValue = computed(() => props.baseStyle as StyleValue)
 
 const _span = computed({
     get() {

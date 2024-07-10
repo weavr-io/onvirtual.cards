@@ -1,8 +1,8 @@
+import Countries from '../public/json/countries.json'
 import { useStores } from '~/composables/useStores'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
-import Countries from '~/static/json/countries.json'
 
 export const useBase = () => {
     const router = useRouter()

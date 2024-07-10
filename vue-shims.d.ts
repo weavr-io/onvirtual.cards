@@ -2,12 +2,14 @@ import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 import type { BvToastOptions } from '~/node_modules/bootstrap-vue'
 import type { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
 import { BvModal, BvToast } from 'bootstrap-vue'
+import type { NuxtAxiosInstance } from '@nuxtjs/axios'
 
 // global, also used in store
 declare module 'nuxt/app' {
     interface NuxtApp {
         $formattingFilters: FormattingFiltersInterface
         $apiMulti: ApiInterface
+        $axiosMulti: NuxtAxiosInstance
         $weavrComponents: any
         $weavrSetUserToken: (token: unknown) => {}
         $bvModal: BvModal
@@ -19,12 +21,6 @@ declare module 'nuxt/app' {
 
 export interface WeavrToast {
     (message: string, options?: BvToastOptions): void
-}
-
-declare module '*.svg?inline' {
-    import type { DefineComponent } from 'vue'
-    const component: DefineComponent
-    export default component
 }
 
 declare global {

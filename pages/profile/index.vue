@@ -50,7 +50,7 @@
                                 <b-form-group label="MOBILE NUMBER">
                                     <phone-number-input
                                         :border-radius="0"
-                                        :default-country-code="mobile.countryCode"
+                                        :default-country-code="mobileCountryCode"
                                         :disabled="isMobileVerified"
                                         :error="numberIsValid === false"
                                         :value="mobile.number"
@@ -98,6 +98,7 @@
 
 <script lang="ts" setup>
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { type CountryCode } from 'libphonenumber-js'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import {
@@ -130,6 +131,8 @@ const mobile = ref<{ countryCode: string; number: string }>({
 const validation = computed(() => {
     return useZodValidation(UpdateCorporateRequestSchema, updateIdentityRootUser)
 })
+
+const mobileCountryCode = computed(() => mobile.value.countryCode as CountryCode)
 
 const isMobileVerified = computed(() => {
     return isConsumer.value

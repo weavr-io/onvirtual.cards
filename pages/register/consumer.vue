@@ -93,7 +93,7 @@
                                     label="Country*"
                                 >
                                     <b-form-select
-                                        v-model="registrationRequest.rootUser.address.country"
+                                        v-model="countryModel"
                                         :options="countryOptionsWithDefault"
                                         placeholder="Registration Country"
                                     />
@@ -286,6 +286,17 @@ const isPasswordInvalidAndDirty = computed(() => {
 
 const industryOccupationOptions = computed(() => {
     return IndustryTypeSelectConst
+})
+
+const countryModel = computed({
+    get: () => registrationRequest.rootUser.address?.country ?? '',
+    set: (value: string) => {
+        if (!registrationRequest.rootUser.address) {
+            registrationRequest.rootUser.address = {}
+        }
+
+        registrationRequest.rootUser.address.country = value
+    },
 })
 
 const dobState = computed(() => {

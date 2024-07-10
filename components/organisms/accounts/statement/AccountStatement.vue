@@ -72,7 +72,7 @@ import { useRouterFilter } from '~/composables/useRouterFilter'
 import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import StatementItem from '~/components/organisms/StatementItem.vue'
-import DownloadIcon from '~/assets/svg/download.svg?url'
+import DownloadIcon from '~/assets/svg/download.svg?skipsvgo'
 
 const props = defineProps({
     filters: {
@@ -145,7 +145,7 @@ const downloadStatement = () => {
     }
 
     downloadAsCSV({
-        id: String(route.params.id),
+        id: route.params.id as string,
         filters: _req,
     })
 }

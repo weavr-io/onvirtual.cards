@@ -65,7 +65,7 @@ export const useAccountsStore = defineStore('accounts', () => {
             return true
         })
 
-        const _out = {}
+        const _out = {} as Record<number, StatementEntryModel[]>
 
         _entries.forEach((_entry) => {
             if (_entry.processedTimestamp) {

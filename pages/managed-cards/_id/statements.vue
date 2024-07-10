@@ -185,7 +185,7 @@ const { pendingDataOrError } = useBase()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { auth, cards } = useStores(['auth', 'cards'])
 
-const filters: Ref<StatementFiltersRequest | null> = ref(null)
+const filters: Ref<StatementFiltersRequest | undefined> = ref(undefined)
 const page = ref(0)
 const isLoading: Ref<boolean> = ref(true)
 

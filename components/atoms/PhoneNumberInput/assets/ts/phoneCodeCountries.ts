@@ -1,4 +1,4 @@
-import { PhoneNumber } from 'libphonenumber-js/types'
+import { PhoneNumber } from 'libphonenumber-js'
 import type { CountryCode } from 'libphonenumber-js'
 
 const allCountries = [

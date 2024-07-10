@@ -10,7 +10,7 @@ const { $weavrComponents } = useNuxtApp()
 const props = withDefaults(
     defineProps<{
         reference: string
-        options: ConsumerVerificationFlowOptions
+        options: Partial<ConsumerVerificationFlowOptions>
     }>(),
     {
         reference: undefined,

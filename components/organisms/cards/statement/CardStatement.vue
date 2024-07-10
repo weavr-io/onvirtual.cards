@@ -62,6 +62,7 @@
 import dot from 'dot-object'
 import type { AxiosError } from 'axios'
 import type { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
+import type { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import type { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 import { useStores } from '~/composables/useStores'
 import { useLuxon } from '~/composables/useLuxon'
@@ -73,12 +74,12 @@ import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEn
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 import StatementItem from '~/components/organisms/StatementItem.vue'
-import DownloadIcon from '~/assets/svg/download.svg?url'
-import DeleteIcon from '~/assets/svg/delete.svg?url'
+import DownloadIcon from '~/assets/svg/download.svg?skipsvgo'
+import DeleteIcon from '~/assets/svg/delete.svg?skipsvgo'
 
 const props = defineProps({
     filters: {
-        type: Object as PropType<GetManagedCardStatementRequest>,
+        type: Object as PropType<StatementFiltersRequest>,
         default: null,
     },
 })
@@ -138,7 +139,7 @@ const downloadStatement = () => {
     }
 
     downloadAsCSV({
-        id: cardId.value,
+        id: cardId.value as string,
         filters,
     })
 }
@@ -188,7 +189,7 @@ const doDeleteCard = async () => {
                 await transfers?.execute(_request)
             }
         }
-        await cards?.remove(cardId.value).then(() => {
+        await cards?.remove(cardId.value as string).then(() => {
             showSuccessToast('Card has been deleted', 'Card Action')
         })
         await router.push('/managed-cards')

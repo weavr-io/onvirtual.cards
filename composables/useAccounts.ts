@@ -14,7 +14,7 @@ export const useAccounts = () => {
     const isManagedAccounts = computed(() => {
         if (route.matched[0].name) {
             return ['managed-accounts', 'managed-accounts-id'].includes(
-                String(route.matched[0].name),
+                route.matched[0].name as string,
             )
         }
         return false

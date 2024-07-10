@@ -164,7 +164,7 @@ const paymentReference = computed(() => {
 })
 
 useAsyncData(async () => {
-    await accounts?.getIBANDetails(String(route.params.id))
+    await accounts?.getIBANDetails(route.params.id as string)
 })
 </script>
 <style lang="scss" scoped>

@@ -2,7 +2,7 @@
     <b-col lg="6" md="9">
         <LogoOvc classes="mb-5" />
         <b-card body-class="p-6">
-            <template v-if="showError">
+            <template v-if="showErrorI">
                 <b-alert show variant="danger">
                     Some information is missing. Please make sure you copy the whole URL.
                 </b-alert>
@@ -78,7 +78,7 @@ const router = useRouter()
 const { pendingDataOrError } = useBase()
 const { errors, users } = useStores(['errors', 'users'])
 
-const showError = ref(false)
+const showErrorI = ref<boolean>(false)
 const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
 const passwordStrength = ref(0)
 const form: Ref<{
@@ -129,9 +129,9 @@ useState(() => {
             },
         }
         form.value = _consumeInviteRequest
-        showError.value = false
+        showErrorI.value = false
     } catch (_) {
-        showError.value = true
+        showErrorI.value = true
     }
 })
 
