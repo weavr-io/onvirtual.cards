@@ -23,7 +23,9 @@ const initState = (): CardState => {
 }
 
 export const useCardsStore = defineStore('cards', () => {
-    const { $apiMulti } = useNuxtApp()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
+
     const cardState: CardState = reactive(initState())
 
     const currency = computed(() =>
@@ -126,7 +128,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const getCards = (filters?: GetManagedCardsRequest) => {
-        const req = $apiMulti.managedCards.index(filters)
+        const req = apiMulti.value.managedCards.index(filters)
 
         req.then((res) => {
             setCards(res.data)
@@ -136,7 +138,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const hasDestroyedCards = () => {
-        return $apiMulti.managedCards
+        return apiMulti.value.managedCards
             .index({
                 state: ManagedInstrumentStateEnum.DESTROYED,
                 limit: 1,
@@ -148,7 +150,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const addCard = (request: CreateManagedCard) => {
-        const req = $apiMulti.managedCards.store(request)
+        const req = apiMulti.value.managedCards.store(request)
 
         req.finally(() => {
             setIsLoading(false)
@@ -158,7 +160,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const update = (params: { id: IDModel; request: UpdateManagedCard }) => {
-        const req = $apiMulti.managedCards.update(params)
+        const req = apiMulti.value.managedCards.update(params)
 
         req.finally(() => {
             setIsLoading(false)
@@ -170,7 +172,7 @@ export const useCardsStore = defineStore('cards', () => {
     const getCardStatement = (req: ManagedCardStatementRequest) => {
         setIsLoading(true)
 
-        const xhr = $apiMulti.managedCards.statement(req.id, req.request)
+        const xhr = apiMulti.value.managedCards.statement(req.id, req.request)
 
         xhr.then((res) => {
             setStatement(res.data)
@@ -187,7 +189,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const getManagedCard = (id: string) => {
-        const req = $apiMulti.managedCards.show(id)
+        const req = apiMulti.value.managedCards.show(id)
 
         req.then((res) => {
             setManagedCard(res.data)
@@ -199,7 +201,7 @@ export const useCardsStore = defineStore('cards', () => {
     const block = (id: IDModel) => {
         setIsLoading(true)
 
-        const req = $apiMulti.managedCards.block(id)
+        const req = apiMulti.value.managedCards.block(id)
 
         req.finally(() => {
             setIsLoading(false)
@@ -211,7 +213,7 @@ export const useCardsStore = defineStore('cards', () => {
     const unblock = (id: IDModel) => {
         setIsLoading(true)
 
-        const req = $apiMulti.managedCards.unblock(id)
+        const req = apiMulti.value.managedCards.unblock(id)
 
         req.finally(() => {
             setIsLoading(false)
@@ -223,7 +225,7 @@ export const useCardsStore = defineStore('cards', () => {
     const remove = (id: string) => {
         setIsLoading(true)
 
-        const req = $apiMulti.managedCards.remove(id)
+        const req = apiMulti.value.managedCards.remove(id)
 
         req.then(() => {
             clearManagedCard()

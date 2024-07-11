@@ -20,7 +20,8 @@ const initState = (): CorporateState => {
 }
 
 export const useCorporatesStore = defineStore('corporates', () => {
-    const { $apiMulti } = useNuxtApp()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
 
     const identity = useIdentityStore()
     const corporateState: CorporateState = reactive(initState())
@@ -54,7 +55,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
     const create = (request: CreateCorporateRequest) => {
         setIsLoading(true)
 
-        const req = $apiMulti.corporates.store(request)
+        const req = apiMulti.value.corporates.store(request)
 
         req.then((res) => {
             identity.setIdentity(res.data)
@@ -69,7 +70,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
     }
 
     const update = (request: UpdateCorporateRequest) => {
-        const req = $apiMulti.corporates.update(request)
+        const req = apiMulti.value.corporates.update(request)
         req.then((_res) => {
             setCorporate(_res.data)
             identity.setIdentity(_res.data)
@@ -84,7 +85,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
 
     const get = () => {
         setIsLoading(true)
-        const req = $apiMulti.corporates.show()
+        const req = apiMulti.value.corporates.show()
 
         req.then((res) => {
             setCorporate(res.data)
@@ -98,7 +99,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
     }
 
     const getKyb = () => {
-        const req = $apiMulti.corporates.getCorporateKYB()
+        const req = apiMulti.value.corporates.getCorporateKYB()
         req.then((res) => {
             setKyb(res.data)
         })
@@ -107,11 +108,11 @@ export const useCorporatesStore = defineStore('corporates', () => {
     }
 
     const verifyEmail = (request: VerifyEmail) => {
-        return $apiMulti.corporates.verifyEmail(request)
+        return apiMulti.value.corporates.verifyEmail(request)
     }
 
     const sendVerificationCodeEmail = (request: SendVerificationCodeRequest) => {
-        return $apiMulti.corporates.sendVerificationCode(request)
+        return apiMulti.value.corporates.sendVerificationCode(request)
     }
 
     const checkKYB = async () => {
@@ -131,7 +132,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
     }
 
     const startKYB = () => {
-        return $apiMulti.corporates.startKYB()
+        return apiMulti.value.corporates.startKYB()
     }
 
     return {

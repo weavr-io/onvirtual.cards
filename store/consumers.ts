@@ -21,7 +21,9 @@ const initState = (): ConsumerState => {
 }
 
 export const useConsumersStore = defineStore('consumers', () => {
-    const { $apiMulti } = useNuxtApp()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
+
     const loader = useLoaderStore()
     const identity = useIdentityStore()
     const consumerState: ConsumerState = reactive(initState())
@@ -55,7 +57,7 @@ export const useConsumersStore = defineStore('consumers', () => {
     const create = (request: CreateConsumerRequest) => {
         loader.start()
 
-        const req = $apiMulti.consumers.store(request)
+        const req = apiMulti.value.consumers.store(request)
 
         req.then((_res) => {
             setConsumer(_res.data)
@@ -71,7 +73,7 @@ export const useConsumersStore = defineStore('consumers', () => {
     }
 
     const update = (request: UpdateConsumerRequest) => {
-        const req = $apiMulti.consumers.update(request)
+        const req = apiMulti.value.consumers.update(request)
         req.then((_res) => {
             setConsumer(_res.data)
             identity.setIdentity(_res.data)
@@ -84,11 +86,11 @@ export const useConsumersStore = defineStore('consumers', () => {
         return req
     }
 
-    const get = (multi = $apiMulti) => {
+    const get = () => {
         loader.start()
         setIsLoading(true)
 
-        const req = multi.consumers.show()
+        const req = apiMulti.value.consumers.show()
 
         req.then((_res) => {
             setConsumer(_res.data)
@@ -102,7 +104,7 @@ export const useConsumersStore = defineStore('consumers', () => {
     }
 
     const getKYC = () => {
-        const req = $apiMulti.consumers.showKYC()
+        const req = apiMulti.value.consumers.showKYC()
         req.then((res) => {
             setKyc(res.data)
         })
@@ -127,15 +129,15 @@ export const useConsumersStore = defineStore('consumers', () => {
     }
 
     const verifyEmail = (request: VerifyEmail) => {
-        return $apiMulti.consumers.verifyEmail(request)
+        return apiMulti.value.consumers.verifyEmail(request)
     }
 
     const sendVerificationCodeEmail = (request: SendVerificationCodeRequest) => {
-        return $apiMulti.consumers.sendVerificationCode(request)
+        return apiMulti.value.consumers.sendVerificationCode(request)
     }
 
     const startKYC = () => {
-        return $apiMulti.consumers.startKYC()
+        return apiMulti.value.consumers.startKYC()
     }
 
     return {

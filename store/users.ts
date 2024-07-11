@@ -17,7 +17,8 @@ const initState = (): UserState => {
 }
 
 export const useUsersStore = defineStore('users', () => {
-    const { $apiMulti } = useNuxtApp()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
     const userState: UserState = reactive(initState())
 
     const resetState = () => {
@@ -36,7 +37,7 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     const index = (filter?: UsersFilterRequestModel) => {
-        const _req = $apiMulti.users.index(filter)
+        const _req = apiMulti.value.users.index(filter)
 
         _req.then((res) => {
             setUsers(res.data)
@@ -46,7 +47,7 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     const show = (id: IDModel) => {
-        const _req = $apiMulti.users.show(id)
+        const _req = apiMulti.value.users.show(id)
 
         _req.then((res) => {
             setUser(res.data)
@@ -56,7 +57,7 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     const update = (params: { id: IDModel; data: UpdateUserRequestModel }) => {
-        const _req = $apiMulti.users.update(params)
+        const _req = apiMulti.value.users.update(params)
 
         _req.then((res) => {
             setUser(res.data)
@@ -66,23 +67,23 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     const add = (body: CreateUserRequestModel) => {
-        return $apiMulti.users.store(body)
+        return apiMulti.value.users.store(body)
     }
 
     const deactivate = (id: IDModel) => {
-        return $apiMulti.users.deactivate(id)
+        return apiMulti.value.users.deactivate(id)
     }
 
     const inviteSend = (id: IDModel) => {
-        return $apiMulti.users.inviteSend(id)
+        return apiMulti.value.users.inviteSend(id)
     }
 
     const inviteValidate = (params: { id: IDModel; data: InviteValidateRequestModel }) => {
-        return $apiMulti.users.inviteValidate(params)
+        return apiMulti.value.users.inviteValidate(params)
     }
 
     const inviteConsume = (params: { id: IDModel; data: InviteConsumeRequestModel }) => {
-        return $apiMulti.users.inviteConsume(params)
+        return apiMulti.value.users.inviteConsume(params)
     }
 
     return {

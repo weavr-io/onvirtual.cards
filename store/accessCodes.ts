@@ -3,7 +3,9 @@ import { ref } from 'vue'
 import type { AccessCode } from '~/plugins/weavr-multi/api/models/access-codes'
 
 export const useAccessCodesStore = defineStore('accessCodes', () => {
-    const { $apiMulti } = useNuxtApp()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
+
     const isValid = ref<boolean>(false)
 
     const setAccessCode = (code: string) => {
@@ -16,7 +18,7 @@ export const useAccessCodesStore = defineStore('accessCodes', () => {
     }
 
     const verifyAccessCode = (request: AccessCode) => {
-        const req = $apiMulti.accessCodes.verifyAccessCode(request)
+        const req = apiMulti.value.accessCodes.verifyAccessCode(request)
 
         req.then(() => {
             if (request.code) {

@@ -23,7 +23,9 @@ const initState = (): AccountState => {
 }
 
 export const useAccountsStore = defineStore('accounts', () => {
-    const { $apiMulti } = useNuxtApp()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
+
     const accountState: AccountState = reactive(initState())
 
     const totalAvailableBalance = computed(() => {
@@ -116,7 +118,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const index = (filters: GetManagedAccountsRequest) => {
-        const req = $apiMulti.managedAccounts.index(filters)
+        const req = apiMulti.value.managedAccounts.index(filters)
 
         req.then((res) => {
             setAccounts(res.data)
@@ -129,13 +131,13 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const create = (request: CreateManagedAccountRequest) => {
-        const req = $apiMulti.managedAccounts.store(request)
+        const req = apiMulti.value.managedAccounts.store(request)
 
         return req
     }
 
     const get = (id: string) => {
-        const req = $apiMulti.managedAccounts.show(id)
+        const req = apiMulti.value.managedAccounts.show(id)
 
         req.then((res) => {
             setAccount(res.data)
@@ -145,7 +147,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const getStatements = (request: { id: string; filters: GetManagedAccountStatementRequest }) => {
-        const req = $apiMulti.managedAccounts.statement(request)
+        const req = apiMulti.value.managedAccounts.statement(request)
 
         req.then((res) => {
             setStatements(res.data)
@@ -155,7 +157,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const getIBANDetails = (id: IDModel) => {
-        const req = $apiMulti.managedAccounts.retrieveIban(id)
+        const req = apiMulti.value.managedAccounts.retrieveIban(id)
 
         req.then((res) => {
             setIban(res.data)
@@ -165,7 +167,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const upgradeIban = (id: IDModel) => {
-        const req = $apiMulti.managedAccounts.assignIban(id)
+        const req = apiMulti.value.managedAccounts.assignIban(id)
 
         req.then((res) => {
             setIban(res.data)

@@ -49,8 +49,6 @@ const onChange = (val) => {
 
 onMounted(() => {
     _span.value = $weavrComponents.display.cardNumber(props.token, spanOptions.value)
-    // we can change root id in nuxt3, make changes in const if needed
-    // add const to nuxt config
     _span.value.mount(captureContainer.value)
     _addListeners()
 })
