@@ -25,7 +25,10 @@
                 align-v="center"
                 style="min-height: calc(100vh - var(--navbar-height))"
             >
-                <nuxt class="d-flex flex-column pt-2" style="margin-top: var(--navbar-height)" />
+                <NuxtPage
+                    class="d-flex flex-column pt-2"
+                    style="margin-top: var(--navbar-height)"
+                />
             </b-row>
         </b-container>
     </div>

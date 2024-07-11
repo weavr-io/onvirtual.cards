@@ -1,7 +1,7 @@
 <template>
     <div>
         <AppHeader />
-        <Nuxt />
+        <NuxtPage />
         <LoadingSpinner id="loader" :is-loading="isLoading" />
         <Cookie />
     </div>

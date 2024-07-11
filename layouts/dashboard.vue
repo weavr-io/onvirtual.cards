@@ -2,7 +2,7 @@
     <div>
         <AppHeader />
         <DashboardHeader />
-        <Nuxt />
+        <NuxtPage />
         <KYBAlert v-if="showKybAlert" />
         <KYCAlert v-if="showKycAlert" />
         <BAlert

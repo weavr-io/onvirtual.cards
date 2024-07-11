@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     vue: {
         compilerOptions: {
             compatConfig: {
-                MODE: 2,
+                MODE: 3,
             },
         },
     },
@@ -25,6 +25,7 @@ export default defineNuxtConfig({
             }),
         ],
     },
+    components: [{ path: '~/plugins/weavr/components/WeavrKyc', extensions: ['vue'] }],
     runtimeConfig: {
         public: {
             production: process.env.ENVIRONMENT === 'production',
@@ -60,6 +61,9 @@ export default defineNuxtConfig({
     app: {
         head: {
             title: 'onvirtual.cards',
+            bodyAttrs: {
+                class: 'bg-bg-colored',
+            },
             meta: [
                 { charset: 'utf-8' },
                 {
@@ -123,7 +127,6 @@ export default defineNuxtConfig({
     css: ['~/assets/scss/style.scss'],
     plugins: [
         { src: '~/plugins/weavr/security.client.ts' },
-        { src: '~/plugins/bootstrap-vue.ts' },
         { src: '~/plugins/WeavrVueFilters.ts' },
         { src: '~/plugins/flatpickr.ts' },
         { src: '~/plugins/InfiniteLoading.ts' },
@@ -131,9 +134,10 @@ export default defineNuxtConfig({
         { src: '~/plugins/axios-accessor.ts' },
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
+        { src: '~/plugins/bootstrap-vue.ts' },
     ],
     build: {
-        transpile: ['bootstrap-vue'],
+        transpile: ['bootstrap-vue', '@vue/compat'],
     },
     modules: ['@pinia/nuxt'],
     router: {
