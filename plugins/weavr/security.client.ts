@@ -37,8 +37,14 @@ export default defineNuxtPlugin(({ vueApp }) => {
         })
     }
 
-    vueApp.provide('weavrComponents', weavrComponents)
-    vueApp.provide('weavrSetUserToken', (token) => {
+    const weavrSetUserToken = (token) => {
         return asyncAssociate(token)
-    })
+    }
+
+    return {
+        provide: {
+            weavrComponents,
+            weavrSetUserToken,
+        },
+    }
 })

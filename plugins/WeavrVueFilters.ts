@@ -22,6 +22,10 @@ export default defineNuxtPlugin((nuxtApp) => {
         bvToast.toast(message, _options)
     }
 
-    nuxtApp.vueApp.provide('weavrToast', toast)
-    nuxtApp.vueApp.provide('weavrToastError', toastError)
+    return {
+        provide: {
+            weavrToast: toast,
+            weavrToastError: toastError,
+        },
+    }
 })

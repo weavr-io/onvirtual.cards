@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useStores } from '~/composables/useStores'
 
-export default defineNuxtPlugin(({ vueApp }) => {
+export default defineNuxtPlugin(() => {
     const config = useRuntimeConfig().public
     const route = useRoute()
     const { auth, errors } = useStores(['auth', 'errors'])
@@ -47,5 +47,9 @@ export default defineNuxtPlugin(({ vueApp }) => {
 
     axiosMulti.interceptors.response.use((res) => res, onError)
 
-    vueApp.provide('axiosMulti', axiosMulti)
+    return {
+        provide: {
+            axiosMulti,
+        },
+    }
 })

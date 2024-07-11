@@ -49,6 +49,7 @@ const showLogin = computed(() => {
     const _matchedName = route.matched[0].name as string
     if (_matchedName) {
         const _registration = ['login']
+
         return !_registration.includes(_matchedName)
     } else {
         return false

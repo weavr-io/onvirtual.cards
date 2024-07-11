@@ -1,5 +1,9 @@
 import { FormattingFiltersModule } from '~/plugins/formattingFilters/FormattingFiltersModule'
 
-export default defineNuxtPlugin(({ vueApp }) => {
-    vueApp.provide('formattingFilters', new FormattingFiltersModule())
+export default defineNuxtPlugin(() => {
+    return {
+        provide: {
+            formattingFilters: new FormattingFiltersModule(),
+        },
+    }
 })

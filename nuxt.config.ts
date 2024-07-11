@@ -61,9 +61,6 @@ export default defineNuxtConfig({
     app: {
         head: {
             title: 'onvirtual.cards',
-            bodyAttrs: {
-                class: 'bg-bg-colored',
-            },
             meta: [
                 { charset: 'utf-8' },
                 {
@@ -135,6 +132,7 @@ export default defineNuxtConfig({
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
         { src: '~/plugins/bootstrap-vue.ts' },
+        { src: '~/plugins/auth-body-class.ts' },
     ],
     build: {
         transpile: ['bootstrap-vue', '@vue/compat'],
