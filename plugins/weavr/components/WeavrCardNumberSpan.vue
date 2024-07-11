@@ -1,12 +1,12 @@
 <template>
-    <div :class="props.className" :style="styleValue" />
+    <div ref="captureContainer" :class="props.className" :style="styleValue" />
 </template>
 
 <script lang="ts" setup>
 import type { StyleValue } from 'vue'
 import type { SecureElementStyle, SecureSpanOptions } from '~/plugins/weavr/components/api'
-import { APP_ROOT_ID } from '~/utils/helper'
 
+const captureContainer = ref<HTMLDivElement | null>(null)
 const { $weavrComponents } = useNuxtApp()
 
 const props = withDefaults(
@@ -51,7 +51,7 @@ onMounted(() => {
     _span.value = $weavrComponents.display.cardNumber(props.token, spanOptions.value)
     // we can change root id in nuxt3, make changes in const if needed
     // add const to nuxt config
-    _span.value.mount(document.getElementById(APP_ROOT_ID))
+    _span.value.mount(captureContainer.value)
     _addListeners()
 })
 

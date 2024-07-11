@@ -1,13 +1,13 @@
 <template>
-    <div :class="props.className" class="weavr-input" />
+    <div ref="captureContainer" :class="props.className" class="weavr-input" />
 </template>
 <script lang="ts" setup>
 import type {
     SecureElementStyleWithPseudoClasses,
     SecureInputOptions,
 } from '~/plugins/weavr/components/api'
-import { APP_ROOT_ID } from '~/utils/helper'
 
+const captureContainer = ref<HTMLDivElement | null>(null)
 const { $weavrComponents } = useNuxtApp()
 
 const props = withDefaults(
@@ -52,7 +52,7 @@ const _input = computed({
 
 onMounted(() => {
     _input.value = $weavrComponents.capture.password(props.name, inputOptions.value)
-    _input.value?.mount(document.getElementById(APP_ROOT_ID))
+    _input.value?.mount(captureContainer.value)
     _addListeners(_input.value)
 })
 

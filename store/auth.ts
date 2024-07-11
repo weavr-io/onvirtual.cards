@@ -24,7 +24,9 @@ const initState = (): AuthState => {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-    const { $apiMulti, $weavrSetUserToken } = useNuxtApp()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
+    const weavrSetUserToken = computed(() => nuxtApp.value.$weavrSetUserToken)
 
     const authState: AuthState = reactive(initState())
     const onvCookie = useCookie(config.ONV_COOKIE_NAME)
@@ -69,10 +71,10 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const loginWithPassword = (request: LoginWithPassword) => {
-        const _req = $apiMulti.authentication.loginWithPassword(request)
+        const _req = apiMulti.value.authentication.loginWithPassword(request)
 
         _req.then((res) => {
-            $weavrSetUserToken('Bearer ' + res.data.token)
+            weavrSetUserToken.value('Bearer ' + res.data.token)
             setAuth(res.data)
         })
 
@@ -80,7 +82,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const resetTokenAndStates = () => {
-        $weavrSetUserToken(null)
+        weavrSetUserToken.value(null)
         removeAuth(null)
         resetState()
         // TODO: refactor this if list gets too long
@@ -91,7 +93,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const logout = () => {
-        const _req = $apiMulti.authentication.logout()
+        const _req = apiMulti.value.authentication.logout()
 
         _req.finally(() => {
             resetTokenAndStates()
@@ -101,7 +103,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const updatePassword = (request: UpdatePasswordRequestModel) => {
-        const _req = $apiMulti.passwords.update(request)
+        const _req = apiMulti.value.passwords.update(request)
 
         _req.then((res) => {
             setToken(res.data)
@@ -111,7 +113,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const indexAuthFactors = () => {
-        const _req = $apiMulti.additionalFactors.index()
+        const _req = apiMulti.value.additionalFactors.index()
 
         _req.then((res) => {
             setAuthFactors(res.data)
@@ -121,43 +123,43 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const enrollAuthFactors = (channel: SCAOtpChannelEnum) => {
-        const _req = $apiMulti.additionalFactors.enroll(channel)
+        const _req = apiMulti.value.additionalFactors.enroll(channel)
 
         return _req
     }
 
     const enrollStepUp = (channel: SCAOtpChannelEnum) => {
-        const _req = $apiMulti.stepUp.enroll(channel)
+        const _req = apiMulti.value.stepUp.enroll(channel)
 
         return _req
     }
 
     const verifyAuthFactors = (request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol }) => {
-        const _req = $apiMulti.additionalFactors.verify(request)
+        const _req = apiMulti.value.additionalFactors.verify(request)
 
         return _req
     }
 
     const verifyStepUp = (request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol }) => {
-        const _req = $apiMulti.stepUp.verify(request)
+        const _req = apiMulti.value.stepUp.verify(request)
 
         return _req
     }
 
     const lostPasswordInitiate = (request: InitiateLostPasswordRequestModel) => {
-        const _req = $apiMulti.passwords.initiate(request)
+        const _req = apiMulti.value.passwords.initiate(request)
 
         return _req
     }
 
     const lostPasswordResume = (request: ResumeLostPassword) => {
-        const _req = $apiMulti.passwords.resume(request)
+        const _req = apiMulti.value.passwords.resume(request)
 
         return _req
     }
 
     const validatePassword = (request: ValidatePasswordRequestModel) => {
-        const _req = $apiMulti.passwords.validate(request)
+        const _req = apiMulti.value.passwords.validate(request)
 
         return _req
     }
