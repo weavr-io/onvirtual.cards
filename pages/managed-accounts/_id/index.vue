@@ -25,7 +25,7 @@ import Statement from '~/components/organisms/accounts/statement/AccountStatemen
 
 definePageMeta({
     layout: 'dashboard',
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 const route = useRoute()
 const { accounts } = useStores(['accounts'])

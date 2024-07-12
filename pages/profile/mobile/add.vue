@@ -59,7 +59,7 @@ import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 definePageMeta({
     layout: 'auth',
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 
 const router = useRouter()

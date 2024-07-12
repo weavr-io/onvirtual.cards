@@ -7,7 +7,7 @@ import { defineComponent, useRouter } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
 
 export default defineComponent({
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
     setup() {
         const router = useRouter()
 

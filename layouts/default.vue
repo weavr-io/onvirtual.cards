@@ -14,7 +14,7 @@ import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import Cookie from '~/components/molecules/CookieComponent.vue'
 
 definePageMeta({
-    middleware: 'authRouteGuard',
+    middleware: 'auth-route-guard',
 })
 
 const { loader } = useStores(['loader'])

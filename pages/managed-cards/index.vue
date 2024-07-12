@@ -71,7 +71,7 @@ import WeavrCard from '~/components/organisms/cards/CardComponent.vue'
 
 definePageMeta({
     layout: 'dashboard',
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 
 const route = useRoute()

@@ -16,7 +16,7 @@ import { useStores } from '~/composables/useStores'
 
 definePageMeta({
     layout: 'auth',
-    middleware: 'accessCodeVerified',
+    middleware: 'access-code-verified',
 })
 
 const router = useRouter()

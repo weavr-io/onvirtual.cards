@@ -121,7 +121,7 @@ import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 definePageMeta({
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 
 const router = useRouter()

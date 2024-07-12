@@ -254,7 +254,7 @@ import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 definePageMeta({
     layout: 'auth',
-    middleware: ['accessCodeVerified'],
+    middleware: ['access-code-verified'],
 })
 
 const router = useRouter()

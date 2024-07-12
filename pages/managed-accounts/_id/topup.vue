@@ -87,7 +87,7 @@ import { useAccounts } from '~/composables/useAccounts'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 definePageMeta({
-    middleware: ['kyVerified', 'instruments'],
+    middleware: ['ky-verified', 'instruments'],
 })
 const route = useRoute()
 const { pendingDataOrError } = useBase()

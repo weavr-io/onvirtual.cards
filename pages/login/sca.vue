@@ -18,6 +18,6 @@ import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
 definePageMeta({
     layout: 'auth',
-    middleware: 'authFactors',
+    middleware: 'auth-factors',
 })
 </script>

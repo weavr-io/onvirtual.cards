@@ -104,7 +104,7 @@ import useZodValidation from '~/composables/useZodValidation'
 
 definePageMeta({
     layout: 'auth',
-    middleware: 'authRouteGuard',
+    middleware: 'auth-route-guard',
 })
 const {
     consumer,

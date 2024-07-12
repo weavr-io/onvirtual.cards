@@ -38,7 +38,7 @@ import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 definePageMeta({
     layout: 'dashboard',
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 const router = useRouter()
 const { accounts } = useStores(['accounts'])

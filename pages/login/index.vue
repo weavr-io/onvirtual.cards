@@ -138,6 +138,7 @@ useState(() => {
     const isLoggedIn = auth?.isLoggedIn
 
     if (isLoggedIn) {
+        console.log('jhadhsjsf', isLoggedIn)
         router.push('/')
     }
 })
@@ -186,7 +187,6 @@ const goToDashboard = async () => {
     }
 
     await auth?.indexAuthFactors()
-
     await router.push({
         path: '/login/sca',
         query: {

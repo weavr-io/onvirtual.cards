@@ -90,7 +90,7 @@ import DashboardHeader from '~/components/organisms/DashboardHeader.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 definePageMeta({
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 
 const { $weavrSetUserToken } = useNuxtApp()

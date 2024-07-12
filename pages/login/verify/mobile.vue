@@ -22,7 +22,7 @@ import MobileComponent from '~/components/molecules/MobileComponent.vue'
 
 definePageMeta({
     layout: 'auth',
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 
 const router = useRouter()

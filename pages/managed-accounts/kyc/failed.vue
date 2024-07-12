@@ -21,6 +21,6 @@
 </template>
 <script lang="ts" setup>
 definePageMeta({
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 </script>

@@ -32,7 +32,7 @@ import TopUp from '~/components/organisms/transfer/TopUp.vue'
 import TopUpSuccess from '~/components/molecules/transfer/TopUpSuccess.vue'
 
 definePageMeta({
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 
 const route = useRoute()

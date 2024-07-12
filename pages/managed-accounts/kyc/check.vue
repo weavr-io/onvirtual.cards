@@ -20,7 +20,7 @@ import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/man
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 
 definePageMeta({
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 const { accounts, consumers } = useStores(['accounts', 'consumers'])
 const { accountJurisdictionProfileId, sleep } = useBase()

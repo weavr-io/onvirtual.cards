@@ -115,7 +115,7 @@ import useZodValidation from '~/composables/useZodValidation'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 definePageMeta({
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 
 const { isConsumer, consumer, corporate, rootName, rootSurname } = useBase()

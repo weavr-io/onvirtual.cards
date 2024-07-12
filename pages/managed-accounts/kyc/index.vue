@@ -36,7 +36,7 @@ import KYCAlert from '~/components/molecules/consumers/KYCAlert.vue'
 import DashboardHeader from '~/components/organisms/DashboardHeader.vue'
 
 definePageMeta({
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 const router = useRouter()
 const { $weavrSetUserToken } = useNuxtApp()

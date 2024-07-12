@@ -39,7 +39,7 @@ import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 
 definePageMeta({
-    middleware: 'kyVerified',
+    middleware: 'ky-verified',
 })
 
 const { pendingDataOrError } = useBase()

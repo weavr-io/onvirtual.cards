@@ -133,6 +133,7 @@ export default defineNuxtConfig({
         { src: '~/plugins/formattingFilters/index.ts' },
         { src: '~/plugins/bootstrap-vue.ts' },
         { src: '~/plugins/auth-body-class.ts' },
+        { src: '~/plugins/compat.ts' },
     ],
     build: {
         transpile: ['bootstrap-vue', '@vue/compat'],

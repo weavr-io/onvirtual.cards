@@ -45,7 +45,7 @@ import RegisterForm from '~/components/organisms/registration/RegisterForm.vue'
 
 definePageMeta({
     layout: 'auth',
-    middleware: 'accessCodeVerified',
+    middleware: 'access-code-verified',
 })
 
 const router = useRouter()
