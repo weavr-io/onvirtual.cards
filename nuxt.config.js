@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import SentryWebpackPlugin from '@sentry/webpack-plugin'
 
 const config = {
