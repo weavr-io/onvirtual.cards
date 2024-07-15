@@ -1,3 +1,5 @@
+import SentryWebpackPlugin from '@sentry/webpack-plugin'
+
 const config = {
     ssr: false,
     target: 'static',
@@ -28,6 +30,12 @@ const config = {
         app: {
             view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true,
             sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : true,
+        },
+        sentry: {
+            dsn: process.env.SENTRY_DSN,
+            traceSampleRate: process.env.SENTRY_TRACE_SAMPLE_RATE,
+            profilesSampleRate: process.env.SENTRY_PROFILE_SAMPLE_RATE,
+            // TODO: customize monitoring here
         },
     },
     /*
@@ -122,6 +130,7 @@ const config = {
         { src: '~/plugins/axios-accessor.ts' },
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
+        { src: '~/plugins/sentry.ts' },
     ],
     /*
      ** Nuxt.ts modules
@@ -152,6 +161,21 @@ const config = {
     },
     buildModules: ['@nuxtjs/composition-api/module', '@pinia/nuxt', '@nuxt/typescript-build'],
     build: {
+        extend(config) {
+            config.plugins?.push(
+                new SentryWebpackPlugin({
+                    include: resolve(__dirname, '.nuxt/dist/client'),
+                    ignore: ['node_modules'],
+                    release: `dev-${Math.floor(Date.now() / 1000)}`,
+                    configFile: resolve(__dirname, '.sentryclirc'),
+                    // incase sentryclirc does not kick in
+                    authToken: process.env.SENTRY_AUTH_TOKEN,
+                    org: process.env.SENTRY_ORG,
+                    project: process.env.SENTRY_PROJECT,
+                    url: process.env.SENTRY_URL,
+                }),
+            )
+        },
         babel: {
             compact: true,
         },

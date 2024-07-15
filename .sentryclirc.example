@@ -1,0 +1,7 @@
+[auth]
+token=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
+
+[defaults]
+url=https://sentry.io/
+org=cf9yl5it7p
+project=onvirtual-cards
