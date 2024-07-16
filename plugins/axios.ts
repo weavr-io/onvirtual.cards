@@ -1,4 +1,5 @@
 import { defineNuxtPlugin } from '@nuxtjs/composition-api'
+import * as Sentry from '@sentry/browser'
 import { initialiseStores } from '~/utils/pinia-store-accessor'
 
 export default defineNuxtPlugin((ctxt, inject) => {
@@ -13,11 +14,16 @@ export default defineNuxtPlugin((ctxt, inject) => {
         baseURL: ctxt.$config.multiApi.baseUrl,
     })
 
+    function sentryException(error) {
+        Sentry.captureException(error)
+    }
+
     function onError(error) {
         const code = parseInt(error.response && error.response.status)
         switch (code) {
             case 401:
                 if (error.response.config.url !== '/logout') auth?.logout()
+                sentryException(error)
                 ctxt.redirect('/login')
                 break
             case 403:
@@ -31,12 +37,16 @@ export default defineNuxtPlugin((ctxt, inject) => {
                     auth?.resetTokenAndStates()
                     ctxt.redirect('/login')
                 }
+                sentryException(error)
                 break
             case 409:
                 errors?.setConflict(error)
+                sentryException(error)
                 break
             default:
+                console.log('ahs')
                 errors?.setError(error)
+                sentryException(error)
                 break
         }
 
