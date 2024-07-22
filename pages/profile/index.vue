@@ -32,20 +32,12 @@
                         <b-form-row>
                             <b-col>
                                 <b-form-group
-                                    :invalid-feedback="
-                                        invalidFeedback(
-                                            $v.updateIdentityRootUser.email,
-                                            validateVParams(
-                                                $v.updateIdentityRootUser.email.$params,
-                                                $v.updateIdentityRootUser.email,
-                                            ),
-                                        )
-                                    "
-                                    :state="isInvalid($v.updateIdentityRootUser.email)"
+                                    :invalid-feedback="validation.getInvalidFeedback('email')"
+                                    :state="validation.getState('email')"
                                     label="E-Mail"
                                 >
                                     <b-form-input
-                                        v-model="$v.updateIdentityRootUser.email.$model"
+                                        v-model="updateIdentityRootUser.email"
                                         :disabled="isEmailVerified"
                                         class="form-control"
                                         placeholder="example@email.com"
@@ -56,7 +48,7 @@
                         <b-form-row>
                             <b-col>
                                 <b-form-group label="MOBILE NUMBER">
-                                    <vue-phone-number-input
+                                    <phone-number-input
                                         :border-radius="0"
                                         :default-country-code="mobile.countryCode"
                                         :disabled="isMobileVerified"
@@ -90,10 +82,10 @@
                         </b-form-row>
                         <b-row align-v="center" class="mt-5">
                             <b-col class="text-center">
-                                <loader-button
+                                <LoaderButton
                                     :disabled="isMobileVerified && isEmailVerified"
                                     :is-loading="isLoading"
-                                    button-text="save"
+                                    text="save"
                                 />
                             </b-col>
                         </b-row>
@@ -104,144 +96,139 @@
     </section>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import { email, required } from 'vuelidate/lib/validators'
+import { computed, defineComponent, reactive, ref, useFetch } from '@nuxtjs/composition-api'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import BaseMixin from '~/mixins/BaseMixin'
-import ValidationMixin from '~/mixins/ValidationMixin'
-import { DeepNullable } from '~/global'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
-import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
+import useZodValidation from '~/composables/useZodValidation'
+import {
+    INITIAL_UPDATE_CONSUMER_REQUEST,
+    UpdateConsumerRequest,
+} from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
+import {
+    UpdateCorporateRequest,
+    UpdateCorporateRequestSchema,
+} from '~/plugins/weavr-multi/api/models/identities/corporates'
+import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
-@Component({
+export default defineComponent({
     components: {
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        PhoneNumberInput,
+        LoaderButton,
+        ErrorAlert,
     },
-    validations: {
-        updateIdentityRootUser: {
-            mobile: {
-                number: {
-                    required,
-                },
-                countryCode: { required },
-            },
-            email: {
-                required,
-                email,
-            },
-        },
-    },
-    middleware: ['kyVerified'],
-})
-export default class Profile extends mixins(BaseMixin, ValidationMixin) {
-    numberIsValid: boolean | null = null
-
-    updateIdentityRootUser: DeepNullable<{ mobile: MobileModel; email: string }> = {
-        mobile: {
-            number: null,
-            countryCode: null,
-        },
-        email: null,
-    }
-
-    isLoading = false
-
-    mobile: {
-        countryCode: string
-        number: string
-    } = {
-        countryCode: '',
-        number: '',
-    }
-
-    get isMobileVerified() {
-        return this.isConsumer
-            ? this.consumer?.rootUser.mobileNumberVerified
-            : this.corporate?.rootUser.mobileNumberVerified
-    }
-
-    get isEmailVerified() {
-        return this.isConsumer
-            ? this.consumer?.rootUser.emailVerified
-            : this.corporate?.rootUser.emailVerified
-    }
-
-    fetch() {
-        this.updateIdentityRootUser = {
-            mobile: {
-                countryCode: this.isConsumer
-                    ? this.consumer?.rootUser?.mobile.countryCode ?? null
-                    : this.corporate?.rootUser?.mobile.countryCode ?? null,
-                number: this.isConsumer
-                    ? this.consumer?.rootUser?.mobile.number ?? null
-                    : this.corporate?.rootUser?.mobile.number ?? null,
-            },
-            email: this.isConsumer
-                ? this.consumer?.rootUser?.email ?? null
-                : this.corporate?.rootUser?.email ?? null,
-        }
-
-        if (
-            !(
-                this.updateIdentityRootUser.mobile?.countryCode &&
-                this.updateIdentityRootUser.mobile.number
-            )
-        ) {
-            return
-        }
-
-        const _parsedNumber = parsePhoneNumberFromString(
-            this.updateIdentityRootUser.mobile!.countryCode! +
-                this.updateIdentityRootUser.mobile!.number,
-        )
-
-        this.mobile = {
-            countryCode: _parsedNumber?.country ?? '',
-            number: this.updateIdentityRootUser.mobile?.number ?? '',
-        }
-    }
-
-    phoneUpdate(number) {
-        this.$set(this.mobile, 'number', number.phoneNumber)
-        this.$set(this.mobile, 'countryCode', '+' + number.countryCallingCode)
-        this.updateIdentityRootUser.mobile = { ...this.mobile }
-        this.numberIsValid = number.isValid
-    }
-
-    doUpdateIdentityRoot(e) {
-        e.preventDefault()
-
-        if (this.numberIsValid === null) {
-            this.numberIsValid = false
-        }
-
-        this.$v.$touch()
-
-        if (this.$v.$invalid) {
-            return
-        }
-
-        this.isLoading = true
-
-        const xhr: Promise<any>[] = []
-
-        this.isConsumer
-            ? xhr.push(
-                  this.stores.consumers.update(
-                      this.updateIdentityRootUser as UpdateConsumerRequest,
-                  ),
-              )
-            : xhr.push(
-                  this.stores.corporates.update(
-                      this.updateIdentityRootUser as UpdateCorporateRequest,
-                  ),
-              )
-
-        Promise.all(xhr).finally(() => {
-            this.isLoading = false
+    middleware: 'kyVerified',
+    setup() {
+        const { isConsumer, consumer, corporate, rootName, rootSurname } = useBase()
+        const { consumers, corporates } = useStores(['consumers', 'corporates'])
+        const numberIsValid = ref<boolean | null>(null)
+        const updateIdentityRootUser = reactive(INITIAL_UPDATE_CONSUMER_REQUEST())
+        const isLoading = ref(false)
+        const mobile = ref<{ countryCode: string; number: string }>({
+            countryCode: '',
+            number: '',
         })
-    }
-}
+
+        const validation = computed(() => {
+            return useZodValidation(UpdateCorporateRequestSchema, updateIdentityRootUser)
+        })
+
+        const isMobileVerified = computed(() => {
+            return isConsumer.value
+                ? consumer.value?.rootUser.mobileNumberVerified
+                : corporate.value?.rootUser.mobileNumberVerified
+        })
+
+        const isEmailVerified = computed(() => {
+            return isConsumer.value
+                ? consumer.value?.rootUser.emailVerified
+                : corporate.value?.rootUser.emailVerified
+        })
+
+        useFetch(() => {
+            Object.assign(updateIdentityRootUser, {
+                mobile: {
+                    countryCode: isConsumer.value
+                        ? (consumer.value?.rootUser?.mobile.countryCode ?? null)
+                        : (corporate.value?.rootUser?.mobile.countryCode ?? null),
+                    number: isConsumer.value
+                        ? (consumer.value?.rootUser?.mobile.number ?? null)
+                        : (corporate.value?.rootUser?.mobile.number ?? null),
+                },
+                email: isConsumer.value
+                    ? (consumer.value?.rootUser?.email ?? null)
+                    : (corporate.value?.rootUser?.email ?? null),
+            })
+
+            if (
+                !(
+                    updateIdentityRootUser.mobile?.countryCode &&
+                    updateIdentityRootUser.mobile.number
+                )
+            ) {
+                return
+            }
+
+            const _parsedNumber = parsePhoneNumberFromString(
+                updateIdentityRootUser.mobile!.countryCode! + updateIdentityRootUser.mobile!.number,
+            )
+
+            mobile.value = {
+                countryCode: _parsedNumber?.country ?? '',
+                number: updateIdentityRootUser.mobile?.number ?? '',
+            }
+        })
+
+        const phoneUpdate = (number) => {
+            mobile.value.countryCode = mobile.value.countryCode && `+${number.countryCallingCode}`
+            mobile.value.number = number.phoneNumber
+
+            updateIdentityRootUser.mobile = { ...mobile.value }
+            if (number.phoneNumber) {
+                numberIsValid.value = number.isValid
+            }
+        }
+
+        const doUpdateIdentityRoot = async () => {
+            isLoading.value = true
+
+            if (numberIsValid.value === null) {
+                numberIsValid.value = false
+            }
+
+            await validation.value.validate()
+
+            if (validation.value.isInvalid.value || !numberIsValid.value) {
+                isLoading.value = false
+                return
+            }
+
+            const xhr: Promise<any>[] = []
+
+            isConsumer.value
+                ? xhr.push(consumers!.update(updateIdentityRootUser as UpdateConsumerRequest))
+                : xhr.push(corporates!.update(updateIdentityRootUser as UpdateCorporateRequest))
+
+            Promise.all(xhr).finally(() => {
+                isLoading.value = false
+            })
+        }
+
+        return {
+            doUpdateIdentityRoot,
+            rootName,
+            rootSurname,
+            validation,
+            updateIdentityRootUser,
+            isEmailVerified,
+            mobile,
+            isMobileVerified,
+            numberIsValid,
+            phoneUpdate,
+            isLoading,
+        }
+    },
+})
 </script>

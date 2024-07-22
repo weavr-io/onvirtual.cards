@@ -1,9 +1,7 @@
-import { Plugin } from '@nuxt/types'
+import { defineNuxtPlugin } from '@nuxtjs/composition-api'
 import { initializeAxios } from '~/utils/api'
 
-const accessor: Plugin = ({ store }) => {
+export default defineNuxtPlugin((ctx) => {
     // @ts-ignore
-    initializeAxios(store.$axiosMulti)
-}
-
-export default accessor
+    initializeAxios(ctx.$axiosMulti)
+})

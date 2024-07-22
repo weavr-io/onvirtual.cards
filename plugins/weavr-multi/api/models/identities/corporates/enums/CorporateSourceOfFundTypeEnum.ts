@@ -1,4 +1,6 @@
-export enum CorporateSourceOfFundTypeEnum {
+import { z } from 'zod'
+
+enum CorporateSourceOfFundTypeEnum {
     LABOUR_CONTRACT = 'LABOUR_CONTRACT',
     CIVIL_CONTRACT = 'CIVIL_CONTRACT',
     RENT = 'RENT',
@@ -11,4 +13,19 @@ export enum CorporateSourceOfFundTypeEnum {
     LOAN_FROM_THIRD_PARTIES = 'LOAN_FROM_THIRD_PARTIES',
     SALE_OF_COMPANY_SHARES_BUSINESS = 'SALE_OF_COMPANY_SHARES_BUSINESS',
     OTHER = 'OTHER',
+}
+
+const CorporateSourceOfFundTypeEnumSchema = z.nativeEnum(CorporateSourceOfFundTypeEnum)
+
+const PREDEFINED_CORPORATE_SOURCE_OF_FUND = Object.values(CorporateSourceOfFundTypeEnum).filter(
+    (value) => value !== CorporateSourceOfFundTypeEnum.OTHER,
+)
+
+type CorporateSourceOfFundTypeEnumType = z.infer<typeof CorporateSourceOfFundTypeEnumSchema>
+
+export {
+    CorporateSourceOfFundTypeEnumSchema,
+    CorporateSourceOfFundTypeEnumType,
+    PREDEFINED_CORPORATE_SOURCE_OF_FUND,
+    CorporateSourceOfFundTypeEnum,
 }

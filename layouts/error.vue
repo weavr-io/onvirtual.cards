@@ -1,17 +1,17 @@
 <template>
     <b-container class="container-full-height">
-        <b-row class="min-vh-100" align-h="center" align-v="center">
-            <b-col class="text-center" md="9" lg="6">
+        <b-row align-h="center" align-v="center" class="min-vh-100">
+            <b-col class="text-center" lg="6" md="9">
                 <template v-if="is404">
                     <h1 class="font-weight-light">Page not found.</h1>
-                    <b-img src="/img/ohsnap.svg" fluid class="mt-5 mb-4"></b-img>
-                    <b-button variant="secondary" to="/"> go to dashboard </b-button>
+                    <b-img class="mt-5 mb-4" fluid src="/img/ohsnap.svg"></b-img>
+                    <b-button to="/" variant="secondary"> go to dashboard</b-button>
                 </template>
                 <template v-else>
                     <h1 class="font-weight-light">Oh snap!</h1>
                     <h5 class="text-grey font-weight-normal">Something is not right.</h5>
-                    <b-img src="/img/ohsnap.svg" fluid class="mt-5 mb-4"></b-img>
-                    <b-button variant="secondary" to="/"> go to dashboard </b-button>
+                    <b-img class="mt-5 mb-4" fluid src="/img/ohsnap.svg"></b-img>
+                    <b-button to="/" variant="secondary"> go to dashboard</b-button>
                 </template>
             </b-col>
         </b-row>
@@ -19,46 +19,61 @@
 </template>
 
 <script lang="ts">
-import { Component, mixins, Prop } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
+import { defineComponent, onMounted, useMeta, useRouter } from '@nuxtjs/composition-api'
+import { computed } from 'vue'
 
-@Component
-export default class NuxtError extends mixins(BaseMixin) {
-    @Prop(Object) error!: any
+export default defineComponent({
+    props: {
+        error: {
+            type: Object,
+            required: true,
+        },
+    },
+    setup(props) {
+        const router = useRouter()
 
-    get statusCode() {
-        return (this.error && this.error.statusCode) || 500
-    }
+        const statusCode = computed(() => {
+            return (props.error && props.error.statusCode) || 500
+        })
 
-    get is404() {
-        return this.statusCode === 404
-    }
+        const is404 = computed(() => {
+            return statusCode.value === 404
+        })
 
-    head() {
-        return {
-            title: this.statusCode === 404 ? 'Page Not Found' : 'Oh snap!',
+        onMounted(() => {
+            switch (statusCode.value) {
+                case 401:
+                    router.replace('/login')
+                    break
+                case 403:
+                    router.replace('/forbidden')
+                    break
+            }
+        })
+
+        useMeta(() => ({
+            title: statusCode.value === 404 ? 'Page Not Found' : 'Oh snap!',
             meta: [
+                {
+                    name: 'description',
+                    content: 'Error page',
+                },
                 {
                     name: 'viewport',
                     content:
                         'width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no',
                 },
             ],
-        }
-    }
+        }))
 
-    mounted() {
-        switch (this.error.statusCode) {
-            case 401:
-                this.$router.replace('/login')
-                break
-            case 403:
-                this.$router.replace('/forbidden')
-                break
+        return {
+            is404,
         }
-    }
-}
+    },
+    head: {},
+})
 </script>
+
 <style lang="scss" scoped>
 .container-full-height {
     position: absolute;

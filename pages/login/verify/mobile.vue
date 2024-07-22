@@ -1,13 +1,6 @@
 <template>
     <b-col lg="6" md="9">
-        <div class="text-center pb-5">
-            <img
-                alt="onvirtual.cards"
-                class="d-inline-block align-top"
-                src="/img/logo.svg"
-                width="200"
-            />
-        </div>
+        <LogoOvc :link="false" classes="pb-5" />
         <MobileComponent :verify-phone="true">
             <template #title>Let's also verify your phone number</template>
             <template #alert>The verification code was resent by SMS.</template>
@@ -21,29 +14,28 @@
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
-import Vue from 'vue'
-import { authStore } from '~/utils/store-accessor'
-import MobileComponent from '~/components/MobileComponent.vue'
+import { defineComponent, useAsync, useRouter } from '@nuxtjs/composition-api'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import MobileComponent from '~/components/molecules/MobileComponent.vue'
+import { useStores } from '~/composables/useStores'
 
-@Component({
-    layout: 'auth',
+export default defineComponent({
     components: {
         MobileComponent,
-        ErrorAlert: () => import('~/components/ErrorAlert.vue'),
-        LoaderButton: () => import('~/components/LoaderButton.vue'),
+        LogoOvc,
     },
-    middleware: ['kyVerified'],
-})
-export default class Mobile extends Vue {
-    async asyncData({ store, redirect }) {
-        const auth = authStore(store)
+    layout: 'auth',
+    middleware: 'kyVerified',
+    setup() {
+        const router = useRouter()
 
-        await auth.indexAuthFactors()
+        const { auth } = useStores(['auth'])
 
-        const smsAuthFactors = auth.authFactors?.factors?.filter(
+        useAsync(() => auth?.indexAuthFactors())
+
+        const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
             (factor) => factor.channel === SCAOtpChannelEnum.SMS,
         )
 
@@ -51,8 +43,8 @@ export default class Mobile extends Vue {
             smsAuthFactors &&
             smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION
         ) {
-            return redirect('/')
+            return router.push('/')
         }
-    }
-}
+    },
+})
 </script>

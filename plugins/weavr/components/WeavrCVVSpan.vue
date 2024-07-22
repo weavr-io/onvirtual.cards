@@ -1,53 +1,82 @@
 <template>
-    <div :class="className" :style="baseStyle" />
+    <div :class="props.className" :style="props.baseStyle" />
 </template>
-<script lang="ts">
-import { Component, Emit, Prop, Vue } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import {
+    Ref,
+    computed,
+    getCurrentInstance,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+} from '@nuxtjs/composition-api'
+import { SecureElementStyle, SecureSpan } from '~/plugins/weavr/components/api'
 
-@Component
-export default class WeavrCvvSpan extends Vue {
-    @Prop() readonly token!: string
+const { proxy: root } = getCurrentInstance() || {}
 
-    @Prop() readonly options!: object
+const props = withDefaults(
+    defineProps<{
+        token: string
+        options?: SecureSpan
+        className?: string
+        baseStyle?: SecureElementStyle
+    }>(),
+    {
+        token: undefined,
+        options: undefined,
+        className: undefined,
+        baseStyle: undefined,
+    },
+)
 
-    @Prop() readonly className!: string
+const emit = defineEmits(['onReady', 'onChange'])
 
-    @Prop() readonly baseStyle!: object
+const span: Ref<any> = ref(null)
 
-    @Emit('onReady') onReady() {}
+const _span = computed({
+    get() {
+        return span.value
+    },
+    set(newValue) {
+        span.value = newValue
+    },
+})
 
-    @Emit('onChange') onChange() {}
-
-    protected _span
-
-    mounted() {
-        this._span = this.$weavrComponents.display.cvv(this.token, this.spanOptions)
-        this._span.mount(this.$el)
-        this._addListeners(this._span)
-    }
-
-    beforeDestroy() {
-        this._removeListeners(this._span)
-        this._span.destroy()
-    }
-
-    _addListeners(input) {
-        this.onReady && input.on('ready', this.onReady)
-        this.onChange && input.on('change', this.onChange)
-    }
-
-    _removeListeners(input) {
-        this.onReady && input.off('ready', this.onReady)
-        this.onChange && input.off('change', this.onChange)
-    }
-
-    get spanOptions() {
-        return {
-            ...this.options,
-            style: this.baseStyle,
-        }
-    }
+const onReady = () => {
+    emit('onReady')
 }
+
+const onChange = (val) => {
+    emit('onChange', val)
+}
+
+onMounted(() => {
+    _span.value = root?.$weavrComponents.display.cardNumber(props.token, spanOptions.value)
+    _span.value?.mount(root?.$el)
+    _addListeners(_span.value)
+})
+
+onBeforeUnmount(() => {
+    _removeListeners(_span.value)
+    _span.value?.destroy()
+})
+
+const _addListeners = (input) => {
+    input.on('ready', onReady)
+    input.on('change', onChange)
+}
+
+const _removeListeners = (input) => {
+    input.off('ready', onReady)
+    input.off('change', onChange)
+}
+
+const spanOptions = computed(() => {
+    return {
+        ...props.options,
+        style: props.baseStyle,
+    }
+})
 </script>
 
 <style lang="scss" scoped></style>

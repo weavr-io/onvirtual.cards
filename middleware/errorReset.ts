@@ -1,5 +1,8 @@
-import { errorsStore } from '~/utils/store-accessor'
+import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
+import { initialiseStores } from '~/utils/pinia-store-accessor'
 
-export default function (ctxt) {
-    return errorsStore(ctxt.store).RESET_ERROR()
-}
+export default defineNuxtMiddleware((_) => {
+    const { errors } = initialiseStores(['errors'])
+
+    return errors?.resetState()
+})
