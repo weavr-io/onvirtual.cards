@@ -1,29 +1,43 @@
 <template>
     <div id="kyb-container" />
 </template>
-<script lang="ts">
-import { Vue, Component, Prop, Emit } from 'nuxt-property-decorator'
+<script lang="ts" setup>
+import { getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
 import { KYBOptions } from '~/plugins/weavr/components/api'
 
-@Component
-export default class WeavrKyb extends Vue {
-    @Prop({}) reference!: string
-    @Prop({}) options!: KYBOptions
+const { proxy: root } = getCurrentInstance() || {}
 
-    mounted() {
-        this.$weavrComponents.capture
-            .corporateKyb(this.reference)
-            .mount('#kyb-container', { ...this.options, onMessage: this.sumsubMessage })
-    }
+const props = withDefaults(
+    defineProps<{
+        reference: string
+        options: KYBOptions
+    }>(),
+    {
+        reference: undefined,
+        options: undefined,
+    },
+)
 
-    @Emit('message')
-    sumsubMessage(messageType, payload) {
-        return {
-            messageType,
-            payload,
-        }
-    }
+const emit = defineEmits(['message'])
+
+const message = (value) => {
+    emit('message', value)
 }
+
+onMounted(() => {
+    root?.$weavrComponents.capture
+        .corporateKyb(props.reference)
+        .mount('#kyb-container', { ...props.options, onMessage: sumsubMessage })
+})
+
+const sumsubMessage = (messageType, payload) => {
+    message({ messageType, payload })
+    return { messageType, payload }
+}
+
+defineExpose({
+    sumsubMessage,
+})
 </script>
 
 <style lang="scss" scoped></style>

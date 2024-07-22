@@ -1,42 +1,46 @@
-import { Module, Mutation } from 'vuex-module-decorators'
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 import { AxiosError } from 'axios'
-
-import { StoreModule } from '~/store/storeModule'
+import type { ChangePasswordConflict } from '~/plugins/weavr-multi/api/models/error/models/ChangePasswordConflict'
 import { CONFLICT_MESSAGE_CONST } from '~/plugins/weavr-multi/api/models/error/conflicts/generics/const/ConflictMessageConst'
 
-@Module({
-    name: 'errorsModule',
-    namespaced: true,
-    stateFactory: true,
-})
-export default class Errors extends StoreModule {
-    errors: any = null
-    conflict: any = null
+export const useErrorsStore = defineStore('errors', () => {
+    const errors = ref<any>(null)
+    const conflict = ref<ChangePasswordConflict | null>(null)
 
-    get conflictMessage() {
-        if (this.conflict) {
-            const out = CONFLICT_MESSAGE_CONST[this.conflict.errorCode] ?? this.conflict.errorCode
+    const conflictMessage = computed(() => {
+        if (conflict.value) {
+            const out =
+                CONFLICT_MESSAGE_CONST[conflict.value.errorCode!] ?? conflict.value.errorCode
             return out ?? 'An error occurred. Please try again.'
-        } else {
-            return null
         }
-    }
 
-    @Mutation
-    SET_CONFLICT(_conflict: AxiosError) {
+        return null
+    })
+
+    const setConflict = (_conflict: AxiosError<ChangePasswordConflict>) => {
         if (_conflict.response) {
-            this.conflict = _conflict.response.data
+            conflict.value = _conflict.response.data
         }
     }
 
-    @Mutation
-    SET_ERROR(errors: any) {
-        this.errors = errors
+    const setError = (err: unknown) => {
+        errors.value = err
     }
 
-    @Mutation
-    RESET_ERROR() {
-        this.errors = null
-        this.conflict = null
+    const resetState = () => {
+        errors.value = null
+        conflict.value = null
     }
-}
+
+    return {
+        errors,
+        conflict,
+        conflictMessage,
+        setConflict,
+        setError,
+        resetState,
+    }
+})
+
+export type useErrorsStore = ReturnType<typeof useErrorsStore>

@@ -1,24 +1,22 @@
-import { Middleware } from '~/node_modules/@nuxt/types'
-import { accessCodesStore } from '~/utils/store-accessor'
+import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
+import { useAccessCodesStore } from '~/store/accessCodes'
 
-const accessCodeVerified: Middleware = async ({ store, redirect, route, $config }) => {
-    if (!$config.production) {
-        return
-    }
-
-    const accessCodeStore = accessCodesStore(store)
-
-    const accessCode = () => {
-        return +localStorage.getItem('onv-access-code')! ?? undefined
-    }
-
-    if (accessCode()) {
-        await accessCodeStore.verifyAccessCode({ code: accessCode() }).catch(() => {
-            redirect('/register')
-        })
-    } else if (route.name !== 'register') {
-        redirect('/register')
-    }
+const accessCode = () => {
+    return +localStorage.getItem('onv-access-code')! ?? undefined
 }
 
-export default accessCodeVerified
+export default defineNuxtMiddleware(async ({ route, redirect, $config }) => {
+    if (!$config.production) return
+
+    try {
+        const accessCodeStore = useAccessCodesStore()
+
+        if (accessCode()) {
+            await accessCodeStore.verifyAccessCode({ code: accessCode() })
+        } else if (route.name !== 'register') {
+            redirect('/register')
+        }
+    } catch (_) {
+        redirect('/register')
+    }
+})

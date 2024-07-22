@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios'
-import { IDModel } from './models/common/IDModel'
+import { IDModel } from './models/common/models/IDModel'
 import { $axiosMulti } from '~/utils/api'
 import { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountModel'
 import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'

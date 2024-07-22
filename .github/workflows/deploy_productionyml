@@ -1,0 +1,42 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_prod:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+      - name: Build
+        uses: ./.github/templates/build
+        with:
+          base_url_script: ${{ secrets.PROD_BASE_URL_SCRIPT }}
+          base_url: ${{ secrets.PROD_BASE_URL }}
+          multi_base_url: ${{ secrets.PROD_BASE_URL }}
+          application_id: ${{ secrets.PROD_PROGRAMME_ID }}
+          ui_key: ${{ secrets.PROD_UI_KEY }}
+          environment: ${{ secrets.PROD_ENVIRONMENT }}
+          corporates_profile_id: ${{ secrets.PROD_CORPORATES_PROFILE_ID }}
+          transfers_profile_id: ${{ secrets.PROD_TRANSFERS_PROFILE_ID }}
+          segment_write_key: ${{ secrets.PROD_SEGMENT_WRITE_KEY }}
+          consumers_profile_id: ${{ secrets.PROD_CONSUMERS_PROFILE_ID }}
+          managed_accounts_consumers_profile_id: ${{ secrets.PROD_MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID }}
+          managed_accounts_corporates_profile_id: ${{ secrets.PROD_MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID }}
+          managed_cards_consumers_profile_id: ${{ secrets.PROD_MANAGED_CARDS_CONSUMERS_PROFILE_ID }}
+          managed_cards_corporates_profile_id: ${{ secrets.PROD_MANAGED_CARDS_CORPORATES_PROFILE_ID }}
+          managed_cards_corporates_profile_id_puk: ${{ secrets.PROD_MANAGED_CARDS_CORPORATES_PROFILE_ID_PUK }}
+          managed_cards_consumers_profile_id_puk: ${{ secrets.PROD_MANAGED_CARDS_CONSUMERS_PROFILE_ID_PUK }}
+          managed_accounts_consumers_profile_id_puk: ${{ secrets.PROD_MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_PUK }}
+          managed_accounts_corporates_profile_id_puk: ${{ secrets.PROD_MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_PUK }}
+          recaptcha: ${{ secrets.PROD_RECAPTCHA }}
+      - name: Deploy
+        uses: ./.github/templates/deploy
+        with:
+          cloudfront_id: ${{ secrets.PROD_CLOUDFRONT_ID }}
+          s3_bucket: ${{ secrets.PROD_S3_BUCKET }}

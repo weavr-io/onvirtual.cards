@@ -1,40 +1,46 @@
 <template>
     <b-container>
         <div class="d-flex flex-column align-items-center">
-            <logo />
+            <LogoOvc />
             <access-code-component v-if="$config.production && !isAccessCodeValid" />
             <business-or-personal-component v-else />
         </div>
     </b-container>
 </template>
 <script lang="ts">
-import { Component, mixins } from 'nuxt-property-decorator'
-import BaseMixin from '~/mixins/BaseMixin'
-import { authStore } from '~/utils/store-accessor'
-import BusinessOrPersonalComponent from '~/components/registration/BusinessOrPersonalComponent.vue'
-import AccessCodeComponent from '~/components/registration/AccessCodeComponent.vue'
-import Logo from '~/components/Logo.vue'
+import { computed, defineComponent, useAsync, useRouter } from '@nuxtjs/composition-api'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import AccessCodeComponent from '~/components/organisms/registration/AccessCodeComponent.vue'
+import BusinessOrPersonalComponent from '~/components/organisms/ProfileIdentitySelection.vue'
+import { useStores } from '~/composables/useStores'
 
-@Component({
+export default defineComponent({
     components: {
-        Logo,
+        LogoOvc,
         AccessCodeComponent,
         BusinessOrPersonalComponent,
     },
     layout: 'auth',
     middleware: 'accessCodeVerified',
-})
-export default class RegistrationPage extends mixins(BaseMixin) {
-    get isAccessCodeValid() {
-        return this.stores.accessCodes.isValid
-    }
+    setup() {
+        const router = useRouter()
+        const { accessCodes, auth } = useStores(['accessCodes', 'auth'])
 
-    asyncData({ store, redirect }) {
-        const isLoggedIn = authStore(store).isLoggedIn
+        const isAccessCodeValid = computed(() => {
+            return accessCodes?.isValid
+        })
 
-        if (isLoggedIn) {
-            redirect('/dashboard')
+        useAsync(() => {
+            const isLoggedIn = auth?.isLoggedIn
+
+            if (isLoggedIn) {
+                router.replace('/dashboard')
+            }
+        })
+
+        return {
+            isAccessCodeValid,
         }
-    }
-}
+    },
+})
 </script>
