@@ -1,12 +1,10 @@
-name: Deploy Test
+name: Build Pull Request
 
 on:
-  push:
-    branches:
-      - master
+  pull_request:
 
 jobs:
-  build:
+  build_test:
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -37,8 +35,3 @@ jobs:
           managed_accounts_consumers_profile_id_puk: ${{ secrets.DEVELOP_MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_PUK }}
           managed_accounts_corporates_profile_id_puk: ${{ secrets.DEVELOP_MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_PUK }}
           recaptcha: ${{ secrets.DEVELOP_RECAPTCHA }}
-      - name: Deploy
-        uses: ./.github/templates/deploy
-        with:
-          cloudfront_id: ${{ secrets.DEVELOP_CLOUDFRONT_ID }}
-          s3_bucket: ${{ secrets.DEVELOP_S3_BUCKET }}
