@@ -62,11 +62,11 @@ inputs:
 runs:
     using: "composite"
     steps:
-        -   name: Use Node.js
-            uses: actions/setup-node@v3
+        -   name: Install pnpm
+            uses: pnpm/action-setup@v3
             with:
-                node-version: 20.14.0
-                cache: npm
+                version: 9
+                run_install: true
         -   run: echo BASE_URL_SCRIPT=${{ inputs.base_url_script }} >> .env
             shell: bash
         -   run: echo BASE_URL=${{ inputs.vite_base_url }} >> .env
@@ -104,8 +104,6 @@ runs:
         -   run: echo MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_UK=${{ inputs.managed_accounts_corporates_profile_id_puk }} >> .env
             shell: bash
         -   run: echo RECAPTCHA=${{ inputs.recaptcha }} >> .env
-            shell: bash
-        -   run: npm install
             shell: bash
         -   run: npm run generate
             shell: bash
