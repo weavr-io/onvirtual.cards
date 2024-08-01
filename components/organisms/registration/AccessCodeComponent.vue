@@ -37,15 +37,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, reactive } from '@nuxtjs/composition-api'
-import { AxiosError } from 'axios'
+import type { AxiosError } from 'axios'
 import { useStores } from '~/composables/useStores'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import {
-    AccessCode,
+    type AccessCode,
     AccessCodeSchema,
     INITIAL_ACCESS_CODE_REQUEST,
 } from '~/plugins/weavr-multi/api/models/access-codes'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import useZodValidation from '~/composables/useZodValidation'
 
 interface IInviteCodeError {

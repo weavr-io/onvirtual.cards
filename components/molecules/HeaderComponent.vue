@@ -23,7 +23,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useFetch } from '@nuxtjs/composition-api'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import LogoImage from '~/components/atoms/LogoImage.vue'
@@ -32,7 +31,7 @@ const { consumer, corporate, isConsumer, isCorporate, isLoggedIn, rootFullName, 
     useBase()
 const { consumers, corporates } = useStores(['consumers', 'corporates'])
 
-useFetch(async () => {
+useAsyncData(async () => {
     if (!consumer.value && !corporate.value) {
         if (isConsumer.value) {
             await consumers?.get()

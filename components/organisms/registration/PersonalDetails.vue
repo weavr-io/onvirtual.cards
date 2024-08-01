@@ -131,8 +131,8 @@
         </b-form-row>
     </b-form>
 </template>
+
 <script lang="ts" setup>
-import { computed, ComputedRef, PropType, reactive, ref } from '@nuxtjs/composition-api'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
@@ -140,7 +140,7 @@ import { CorporateSourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/mod
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
 import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
-import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
+import type { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 import {
     CreateCorporateFormSchema,
     type CreateCorporateRequest,

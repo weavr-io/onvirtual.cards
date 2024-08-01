@@ -21,8 +21,6 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { useRouter } from '@nuxtjs/composition-api'
-
 const router = useRouter()
 
 const goToCards = () => {

@@ -50,7 +50,6 @@
     </b-container>
 </template>
 <script lang="ts" setup>
-import { ComputedRef, computed } from '@nuxtjs/composition-api'
 import { useBase } from '~/composables/useBase'
 import { useAccounts } from '~/composables/useAccounts'
 import { useCards } from '~/composables/useCards'

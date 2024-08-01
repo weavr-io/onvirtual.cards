@@ -120,6 +120,7 @@ export default defineNuxtConfig({
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
         { src: '~/plugins/auth-body-class.ts' },
+        { src: '~/plugins/virtual-scroller.ts' },
     ],
     build: {
         transpile: ['bootstrap-vue-next'],

@@ -82,9 +82,8 @@
     </b-form>
 </template>
 <script lang="ts" setup>
-import { computed, PropType, reactive } from '@nuxtjs/composition-api'
 import { AmountSchema } from '~/plugins/weavr-multi/api/models/common'
-import { InstrumentID } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
+import type { InstrumentID } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
 import { useStores } from '~/composables/useStores'
 import useZodValidation from '~/composables/useZodValidation'
 

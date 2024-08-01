@@ -27,14 +27,14 @@
                     :base-style="passwordBaseStyle"
                     :class-name="[
                         'sign-in-password form-control p-0',
-                        { 'is-invalid': !isPasswordValidAndDirty },
+                        !isPasswordValidAndDirty ? 'is-invalid' : '',
                     ]"
                     :options="{ placeholder: '****' }"
                     name="password"
                     required="true"
-                    @onChange="passwordInteraction"
-                    @onKeyUp="checkOnKeyUp"
-                    @onStrength="strengthCheck"
+                    @on-change="passwordInteraction"
+                    @on-key-up="checkOnKeyUp"
+                    @on-strength="strengthCheck"
                 />
                 <small
                     :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
@@ -72,9 +72,11 @@
                 </b-form-group>
             </b-col>
         </b-form-row>
-        <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
-            <recaptcha />
-        </div>
+        <!-- TODO: update recaptcha
+            <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
+                <recaptcha />
+            </div>
+        -->
         <b-form-row class="mt-5">
             <b-col class="text-center">
                 <LoaderButton
@@ -86,14 +88,14 @@
         </b-form-row>
     </b-form>
 </template>
+
 <script lang="ts" setup>
-import { computed, ComputedRef, reactive, Ref, ref } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import {
     INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
-    LoginWithPassword,
+    type LoginWithPassword,
     LoginWithPasswordSchema,
 } from '~/plugins/weavr-multi/api/models/authentication'
 import { CreateCorporateRequestSchema } from '~/plugins/weavr-multi/api/models/identities/corporates'
@@ -146,6 +148,7 @@ const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = comp
     }
 })
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const isRecaptchaEnabled: ComputedRef<boolean> = computed(
     () => typeof process.env.RECAPTCHA !== 'undefined',
 )

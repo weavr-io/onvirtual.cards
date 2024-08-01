@@ -58,170 +58,146 @@
         </b-row>
     </div>
 </template>
-<script lang="ts">
-import {
-    defineComponent,
-    computed,
-    PropType,
-    useRoute,
-    useRouter,
-    getCurrentInstance,
-} from '@nuxtjs/composition-api'
+<script lang="ts" setup>
 import dot from 'dot-object'
-import { AxiosError } from 'axios'
+import type { AxiosError } from 'axios'
+import type { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
+import type { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import type { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 import { useStores } from '~/composables/useStores'
 import { useLuxon } from '~/composables/useLuxon'
 import { useCards } from '~/composables/useCards'
 import { useBase } from '~/composables/useBase'
 import { useFilters } from '~/composables/useFilters'
 import { useRouterFilter } from '~/composables/useRouterFilter'
-import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
+import StatementItem from '~/components/organisms/StatementItem.vue'
+import DownloadIcon from '~/assets/svg/download.svg?raw'
+import DeleteIcon from '~/assets/svg/delete.svg?raw'
 
-export default defineComponent({
-    // TODO: Update this after nuxt bridge
-    components: {
-        DownloadIcon: () => import('~/assets/svg/download.svg?inline'),
-        DeleteIcon: () => import('~/assets/svg/delete.svg?inline'),
-        StatementItem: () => import('~/components/organisms/StatementItem.vue'),
-    },
-    props: {
-        filters: {
-            type: Object as PropType<GetManagedCardStatementRequest>,
-            default: null,
-        },
-    },
-    setup(props) {
-        const route = useRoute()
-        const router = useRouter()
-        const { proxy: root } = getCurrentInstance() || {}
-        const { cards, accounts, transfers } = useStores(['cards', 'accounts', 'transfers'])
-        const { formatDate, getStartOfMonth, getEndOfMonth } = useLuxon()
-        const { managedCard, cardId, isCardActive, downloadAsCSV } = useCards()
-        const { monthsFilter } = useFilters()
-        const { showErrorToast, showSuccessToast, accountJurisdictionProfileId } = useBase()
-        const { setFilters } = useRouterFilter()
-
-        const months = computed(() => {
-            if (!managedCard.value) return []
-
-            return monthsFilter(managedCard.value.creationTimestamp)
-        })
-
-        const filterDate = computed(() => {
-            if (!props.filters) return {}
-
-            return {
-                start: props.filters.fromTimestamp,
-                end: props.filters.toTimestamp,
-            }
-        })
-
-        const filteredStatement = computed(() => cards?.cardState.filteredStatement)
-
-        const filterMonthChange = (val) => {
-            setFilters({
-                fromTimestamp: val.start,
-                toTimestamp: val.end,
-            })
-        }
-
-        const downloadStatement = () => {
-            const _routeQueries = dot.object(route.value.query)
-            const _filters = _routeQueries.filters ? _routeQueries.filters : {}
-
-            if (!_filters.fromTimestamp) {
-                _filters.fromTimestamp = getStartOfMonth.value
-            }
-
-            if (!_filters.toTimestamp) {
-                _filters.fromTimestamp = getEndOfMonth.value
-            }
-
-            const filters: GetManagedCardStatementRequest = {
-                showFundMovementsOnly: false,
-                orderByTimestamp: OrderEnum.DESC,
-                limit: 100,
-                offset: 0,
-                ..._filters,
-            }
-
-            downloadAsCSV({
-                id: cardId.value,
-                filters,
-            })
-        }
-
-        const confirmDeleteCard = () => {
-            root!.$bvModal
-                .msgBoxConfirm(
-                    'Are you sure you want to delete this card? Any remaining balance will be returned to your account.',
-                    {
-                        buttonSize: 'sm',
-                        centered: true,
-                        cancelVariant: 'link',
-                    },
-                )
-                .then((value) => {
-                    if (value) {
-                        doDeleteCard()
-                    }
-                })
-        }
-
-        const doDeleteCard = async () => {
-            try {
-                showSuccessToast('Preparing card for deletion', 'Card Action')
-                if (managedCard?.value?.balances?.availableBalance) {
-                    const _accounts = await accounts?.index({
-                        profileId: accountJurisdictionProfileId.value,
-                        state: ManagedInstrumentStateEnum.ACTIVE,
-                        offset: '0',
-                    })
-                    if (_accounts?.data.count && _accounts?.data.accounts) {
-                        const _request: CreateTransferRequest = {
-                            profileId: root!.$config.profileId.transfers!,
-                            source: {
-                                type: InstrumentEnum.managedCards,
-                                id: cardId.value,
-                            },
-                            destination: {
-                                type: InstrumentEnum.managedAccounts,
-                                id: _accounts?.data.accounts[0].id,
-                            },
-                            destinationAmount: {
-                                currency: managedCard.value?.currency,
-                                amount: managedCard.value?.balances?.availableBalance,
-                            },
-                        }
-                        await transfers?.execute(_request)
-                    }
-                }
-                await cards?.remove(cardId.value).then(() => {
-                    showSuccessToast('Card has been deleted', 'Card Action')
-                })
-                await router.push('/managed-cards')
-            } catch (err) {
-                const data = (err as AxiosError<any>).response?.data
-                const error = data.message ? data.message : data.errorCode
-
-                showErrorToast(error)
-            }
-        }
-
-        return {
-            isCardActive,
-            months,
-            filterDate,
-            filteredStatement,
-            filterMonthChange,
-            formatDate,
-            downloadStatement,
-            confirmDeleteCard,
-        }
+const props = defineProps({
+    filters: {
+        type: Object as PropType<StatementFiltersRequest>,
+        default: null,
     },
 })
+
+const route = useRoute()
+const router = useRouter()
+const { $bvModal } = useNuxtApp()
+const { cards, accounts, transfers } = useStores(['cards', 'accounts', 'transfers'])
+const { formatDate, getStartOfMonth, getEndOfMonth } = useLuxon()
+const { managedCard, cardId, isCardActive, downloadAsCSV } = useCards()
+const { monthsFilter } = useFilters()
+const { showErrorToast, showSuccessToast, accountJurisdictionProfileId } = useBase()
+const { setFilters } = useRouterFilter()
+
+const months = computed(() => {
+    if (!managedCard.value) return []
+
+    return monthsFilter(managedCard.value.creationTimestamp)
+})
+
+const filterDate = computed(() => {
+    if (!props.filters) return {}
+
+    return {
+        start: props.filters.fromTimestamp,
+        end: props.filters.toTimestamp,
+    }
+})
+
+const filteredStatement = computed(() => cards?.cardState.filteredStatement)
+
+const filterMonthChange = (val) => {
+    setFilters({
+        fromTimestamp: val.start,
+        toTimestamp: val.end,
+    })
+}
+
+const downloadStatement = () => {
+    const _routeQueries = dot.object(route.query)
+    const _filters = _routeQueries.filters ? _routeQueries.filters : {}
+
+    if (!_filters.fromTimestamp) {
+        _filters.fromTimestamp = getStartOfMonth.value
+    }
+
+    if (!_filters.toTimestamp) {
+        _filters.fromTimestamp = getEndOfMonth.value
+    }
+
+    const filters: GetManagedCardStatementRequest = {
+        showFundMovementsOnly: false,
+        orderByTimestamp: OrderEnum.DESC,
+        limit: 100,
+        offset: 0,
+        ..._filters,
+    }
+
+    downloadAsCSV({
+        id: cardId.value as string,
+        filters,
+    })
+}
+
+const confirmDeleteCard = () => {
+    $bvModal
+        .msgBoxConfirm(
+            'Are you sure you want to delete this card? Any remaining balance will be returned to your account.',
+            {
+                buttonSize: 'sm',
+                centered: true,
+                cancelVariant: 'link',
+            },
+        )
+        .then((value) => {
+            if (value) {
+                doDeleteCard()
+            }
+        })
+}
+
+const doDeleteCard = async () => {
+    try {
+        showSuccessToast('Preparing card for deletion', 'Card Action')
+        if (managedCard?.value?.balances?.availableBalance) {
+            const _accounts = await accounts?.index({
+                profileId: accountJurisdictionProfileId.value,
+                state: ManagedInstrumentStateEnum.ACTIVE,
+                offset: '0',
+            })
+            if (_accounts?.data.count && _accounts?.data.accounts) {
+                const _request: CreateTransferRequest = {
+                    profileId: useRuntimeConfig().public.profileId.transfers!,
+                    source: {
+                        type: InstrumentEnum.managedCards,
+                        id: cardId.value,
+                    },
+                    destination: {
+                        type: InstrumentEnum.managedAccounts,
+                        id: _accounts?.data.accounts[0].id,
+                    },
+                    destinationAmount: {
+                        currency: managedCard.value?.currency,
+                        amount: managedCard.value?.balances?.availableBalance,
+                    },
+                }
+                await transfers?.execute(_request)
+            }
+        }
+        await cards?.remove(cardId.value as string).then(() => {
+            showSuccessToast('Card has been deleted', 'Card Action')
+        })
+        await router.push('/managed-cards')
+    } catch (err) {
+        const data = (err as AxiosError<any>).response?.data
+        const error = data.message ? data.message : data.errorCode
+
+        showErrorToast(error)
+    }
+}
 </script>

@@ -23,14 +23,13 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref } from '@nuxtjs/composition-api'
 import config from '~/config'
 
-const Cookie = process.client ? require('js-cookie') : undefined
-const showCookieAlert = ref<string | boolean>(Cookie.get(config.ONV_COOKIE_NAME))
+const cookieConsent = useCookie(config.ONV_COOKIE_NAME)
+const showCookieAlert = ref<string | boolean>(cookieConsent.value as string)
 
 const dismissCookie = () => {
-    Cookie.set(config.ONV_COOKIE_NAME, true)
+    cookieConsent.value = 'true'
     showCookieAlert.value = false
 }
 </script>

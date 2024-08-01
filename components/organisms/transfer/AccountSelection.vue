@@ -28,7 +28,6 @@
     </b-form>
 </template>
 <script lang="ts" setup>
-import { computed, ComputedRef, reactive } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
