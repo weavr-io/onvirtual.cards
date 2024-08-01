@@ -66,38 +66,22 @@
     </section>
 </template>
 <script lang="ts" setup>
-import {
-    computed,
-    reactive,
-    Ref,
-    ref,
-    useFetch,
-    useRoute,
-    useRouter,
-} from '@nuxtjs/composition-api'
-import { CountryCode, parsePhoneNumberFromString } from 'libphonenumber-js'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+import { type CountryCode, parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
 import {
     INITIAL_MC_UPDATE_REQUEST,
     ManagedCardUpdateSchema,
     type UpdateManagedCard,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+import useZodValidation from '~/composables/useZodValidation'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 const route = useRoute()
 const router = useRouter()
-const {
-    pendingDataOrError,
-    pendingData,
-    isCorporate,
-    isConsumer,
-    showSuccessToast,
-    showErrorToast,
-} = useBase()
+const { pendingDataOrError, isCorporate, isConsumer, showSuccessToast, showErrorToast } = useBase()
 const { cards } = useStores(['cards'])
 
 const numberIsValid: Ref<boolean | null> = ref(null)
@@ -122,15 +106,16 @@ const validation = computed(() => {
 })
 
 const isLoading = computed(() => {
-    return cards?.cardState.isLoading || isUpdating.value || pendingData.value
+    // TODO: add || pendingData.value
+    return cards?.cardState.isLoading || isUpdating.value
 })
 
 const cardId = computed(() => {
-    return route.value.params.id
+    return route.params.id
 })
 
-useFetch(async () => {
-    const card = await cards?.getManagedCard(cardId.value)
+useAsyncData(async () => {
+    const card = await cards?.getManagedCard(cardId.value as string)
     if (card) {
         const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
 
@@ -164,7 +149,7 @@ const doUpdate = async () => {
 
     await cards
         ?.update({
-            id: cardId.value,
+            id: cardId.value as string,
             request: updateManagedCardRequest as UpdateManagedCard,
         })
         .then(() => {

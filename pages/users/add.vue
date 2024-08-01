@@ -54,67 +54,54 @@
         </b-container>
     </section>
 </template>
-<script lang="ts">
-import { computed, defineComponent, reactive, ref, useRouter } from '@nuxtjs/composition-api'
-import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
+<script lang="ts" setup>
 import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
-import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
+import type { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
 import {
-    CreateUserRequestModel,
+    type CreateUserRequestModel,
     INITIAL_USER_REQUEST,
-    UserRequest,
+    type UserRequest,
     UserSchema,
 } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import useZodValidation from '~/composables/useZodValidation'
 
-export default defineComponent({
-    components: {
-        LoaderButton,
-        ErrorAlert,
-    },
-    middleware: 'kyVerified',
-    setup() {
-        const router = useRouter()
-
-        const { errors, users } = useStores(['errors', 'users'])
-        const isLoading = ref(false)
-        const request: UserRequest = reactive(INITIAL_USER_REQUEST())
-
-        const validation = computed(() => {
-            return useZodValidation(UserSchema, request)
-        })
-
-        const doAdd = async () => {
-            await validation.value.validate()
-
-            if (validation.value.isInvalid.value) {
-                return null
-            }
-
-            await users
-                ?.add(request as CreateUserRequestModel)
-                .then((res) => {
-                    userAdded(res.data)
-                })
-                .catch((err) => {
-                    errors?.setError(err)
-                    isLoading.value = false
-                })
-        }
-
-        const userAdded = async (res: UserModel) => {
-            await users?.inviteSend(res.id)
-            await router.push('/users')
-            isLoading.value = false
-        }
-
-        return {
-            doAdd,
-            validation,
-            request,
-            isLoading,
-        }
-    },
+definePageMeta({
+    middleware: 'ky-verified',
 })
+
+const router = useRouter()
+
+const { errors, users } = useStores(['errors', 'users'])
+const isLoading = ref(false)
+const request: UserRequest = reactive(INITIAL_USER_REQUEST())
+
+const validation = computed(() => {
+    return useZodValidation(UserSchema, request)
+})
+
+const doAdd = async () => {
+    await validation.value.validate()
+
+    if (validation.value.isInvalid.value) {
+        return null
+    }
+
+    await users
+        ?.add(request as CreateUserRequestModel)
+        .then((res) => {
+            userAdded(res.data)
+        })
+        .catch((err) => {
+            errors?.setError(err)
+            isLoading.value = false
+        })
+}
+
+const userAdded = async (res: UserModel) => {
+    await users?.inviteSend(res.id)
+    await router.push('/users')
+    isLoading.value = false
+}
 </script>

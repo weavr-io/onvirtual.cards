@@ -2,7 +2,7 @@
     <b-col lg="6" md="9">
         <LogoOvc classes="mb-5" />
         <b-card body-class="p-6">
-            <template v-if="showError">
+            <template v-if="showErrorI">
                 <b-alert show variant="danger">
                     Some information is missing. Please make sure you copy the whole URL.
                 </b-alert>
@@ -20,9 +20,9 @@
                             class-name="sign-in-password"
                             name="password"
                             required="true"
-                            @onChange="passwordInteraction"
-                            @onKeyUp="checkOnKeyUp"
-                            @onStrength="strengthCheck"
+                            @on-change="passwordInteraction"
+                            @on-key-up="checkOnKeyUp"
+                            @on-strength="strengthCheck"
                         />
                         <small
                             :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
@@ -33,8 +33,9 @@
                     </client-only>
                     <b-form-row class="mt-6">
                         <b-col class="text-center">
+                            <!-- TODO: should be $fetchState.pending -->
                             <b-button
-                                :disabled="$fetchState.pending"
+                                :disabled="pendingDataOrError"
                                 type="submit"
                                 variant="secondary"
                             >
@@ -49,167 +50,141 @@
     </b-col>
 </template>
 
-<script lang="ts">
-import {
-    computed,
-    ComputedRef,
-    defineComponent,
-    Ref,
-    ref,
-    useAsync,
-    useFetch,
-    useRoute,
-    useRouter,
-} from '@nuxtjs/composition-api'
-import { reactive } from 'vue'
-import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
-import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
+<script lang="ts" setup>
 import {
     INITIAL_PASSWORD_REQUEST,
     PasswordSchema,
 } from '~/plugins/weavr-multi/api/models/authentication'
-import useZodValidation from '~/composables/useZodValidation'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import { IDModel, INITIAL_ID_REQUEST } from '~/plugins/weavr-multi/api/models/common'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import { type IDModel, INITIAL_ID_REQUEST } from '~/plugins/weavr-multi/api/models/common'
 import {
     INITIAL_INVITE_CONSUME_REQUEST,
-    InviteConsumeRequestModel,
+    type InviteConsumeRequestModel,
 } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
 import { useStores } from '~/composables/useStores'
-import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
+import { useBase } from '~/composables/useBase'
+import type { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
+import useZodValidation from '~/composables/useZodValidation'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
-export default defineComponent({
-    components: {
-        LogoOvc,
-        ErrorAlert,
-        WeavrPasswordInput,
-    },
+definePageMeta({
     layout: 'auth',
-    setup() {
-        const route = useRoute()
-        const router = useRouter()
-        const { errors, users } = useStores(['errors', 'users'])
-
-        const showError = ref(false)
-        const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
-        const passwordStrength = ref(0)
-        const form: Ref<{
-            id: IDModel
-            data: InviteConsumeRequestModel
-        }> = ref({ id: INITIAL_ID_REQUEST, data: INITIAL_INVITE_CONSUME_REQUEST() })
-        const inviteForm = reactive(INITIAL_PASSWORD_REQUEST())
-
-        const validation = computed(() => {
-            return useZodValidation(PasswordSchema, inviteForm)
-        })
-
-        const isPasswordValidAndDirty = computed(() => {
-            return !inviteForm.password?.value ? true : isPasswordValid
-        })
-
-        const isPasswordValid = computed(() => {
-            return passwordStrength.value >= 2
-        })
-
-        const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
-            return {
-                color: '#495057',
-                fontSize: '16px',
-                fontSmoothing: 'antialiased',
-                fontFamily: "'Be Vietnam', sans-serif",
-                fontWeight: '400',
-                lineHeight: '24px',
-                margin: '0',
-                padding: '6px 12px',
-                textIndent: '0px',
-                '::placeholder': {
-                    color: '#B6B9C7',
-                    fontWeight: '400',
-                },
-            }
-        })
-
-        useAsync(() => {
-            try {
-                const _consumeInviteRequest: { id: IDModel; data: InviteConsumeRequestModel } = {
-                    id: route.value.query.user_id.toString(),
-                    data: {
-                        inviteCode: route.value.query.nonce.toString(),
-                        password: {
-                            value: '',
-                        },
-                    },
-                }
-                form.value = _consumeInviteRequest
-                showError.value = false
-            } catch (_) {
-                showError.value = true
-            }
-        })
-
-        useFetch(() => {
-            try {
-                const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
-                    id: route.value.query.user_id.toString(),
-                    data: {
-                        inviteCode: route.value.query.nonce.toString(),
-                    },
-                }
-
-                users?.inviteValidate(_validateRequest).catch(handleError)
-            } catch (_) {}
-        })
-
-        const strengthCheck = (val) => {
-            passwordStrength.value = val.id
-        }
-
-        const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
-            !val.empty ? (inviteForm.password.value = '******') : (inviteForm.password.value = '')
-            validation.value.validate()
-        }
-
-        const handleError = (e) => {
-            errors?.setError(e.response)
-        }
-
-        const tryToSubmitForm = () => {
-            if (isPasswordValid.value && validation.value.isValid) {
-                passwordField.value?.createToken().then(
-                    (tokens) => {
-                        if (tokens.tokens.password !== '') {
-                            form.value.data.password!.value = tokens.tokens.password
-                            users?.inviteConsume(form.value).then(() => {
-                                router.push('/login')
-                            })
-                        } else {
-                            return null
-                        }
-                    },
-                    () => {
-                        return null
-                    },
-                )
-            }
-        }
-
-        const checkOnKeyUp = (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault()
-                tryToSubmitForm()
-            }
-        }
-
-        return {
-            passwordBaseStyle,
-            passwordInteraction,
-            showError,
-            tryToSubmitForm,
-            checkOnKeyUp,
-            strengthCheck,
-            isPasswordValidAndDirty,
-        }
-    },
 })
+
+const route = useRoute()
+const router = useRouter()
+const { pendingDataOrError } = useBase()
+const { errors, users } = useStores(['errors', 'users'])
+
+const showErrorI = ref<boolean>(false)
+const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
+const passwordStrength = ref(0)
+const form: Ref<{
+    id: IDModel
+    data: InviteConsumeRequestModel
+}> = ref({ id: INITIAL_ID_REQUEST, data: INITIAL_INVITE_CONSUME_REQUEST() })
+const inviteForm = reactive(INITIAL_PASSWORD_REQUEST())
+
+const validation = computed(() => {
+    return useZodValidation(PasswordSchema, inviteForm)
+})
+
+const isPasswordValidAndDirty = computed(() => {
+    return !inviteForm.password?.value ? true : isPasswordValid
+})
+
+const isPasswordValid = computed(() => {
+    return passwordStrength.value >= 2
+})
+
+const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
+    return {
+        color: '#495057',
+        fontSize: '16px',
+        fontSmoothing: 'antialiased',
+        fontFamily: "'Be Vietnam', sans-serif",
+        fontWeight: '400',
+        lineHeight: '24px',
+        margin: '0',
+        padding: '6px 12px',
+        textIndent: '0px',
+        '::placeholder': {
+            color: '#B6B9C7',
+            fontWeight: '400',
+        },
+    }
+})
+
+useState(() => {
+    try {
+        const _consumeInviteRequest: { id: IDModel; data: InviteConsumeRequestModel } = {
+            id: route.query.user_id!.toString(),
+            data: {
+                inviteCode: route.query.nonce!.toString(),
+                password: {
+                    value: '',
+                },
+            },
+        }
+        form.value = _consumeInviteRequest
+        showErrorI.value = false
+    } catch (_) {
+        showErrorI.value = true
+    }
+})
+
+useState(() => {
+    try {
+        const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
+            id: route.query.user_id!.toString(),
+            data: {
+                inviteCode: route.query.nonce!.toString(),
+            },
+        }
+
+        users?.inviteValidate(_validateRequest).catch(handleError)
+    } catch (_) {}
+})
+
+const strengthCheck = (val) => {
+    passwordStrength.value = val.id
+}
+
+const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
+    !val.empty ? (inviteForm.password.value = '******') : (inviteForm.password.value = '')
+    validation.value.validate()
+}
+
+const handleError = (e) => {
+    errors?.setError(e.response)
+}
+
+const tryToSubmitForm = () => {
+    if (isPasswordValid.value && validation.value.isValid) {
+        passwordField.value?.createToken().then(
+            (tokens) => {
+                if (tokens.tokens.password !== '') {
+                    form.value.data.password!.value = tokens.tokens.password
+                    users?.inviteConsume(form.value).then(() => {
+                        router.push('/login')
+                    })
+                } else {
+                    return null
+                }
+            },
+            () => {
+                return null
+            },
+        )
+    }
+}
+
+const checkOnKeyUp = (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault()
+        tryToSubmitForm()
+    }
+}
 </script>

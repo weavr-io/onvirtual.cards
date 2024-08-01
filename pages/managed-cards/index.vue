@@ -40,8 +40,8 @@
                         <weavr-card
                             :card="card"
                             class="mb-5"
-                            @blocked="$fetch"
-                            @unblocked="$fetch"
+                            @blocked="getAndShowCards"
+                            @unblocked="getAndShowCards"
                         />
                     </b-col>
                 </b-row>
@@ -60,94 +60,71 @@
     </div>
 </template>
 
-<script lang="ts">
-import {
-    computed,
-    defineComponent,
-    ref,
-    useFetch,
-    useRoute,
-    useRouter,
-} from '@nuxtjs/composition-api'
-import WeavrCard from '~/components/organisms/cards/CardComponent.vue'
+<script lang="ts" setup>
 import { useBase } from '~/composables/useBase'
 import { useCards } from '~/composables/useCards'
 import { useKyVerified } from '~/composables/useKyVerified'
 import { useStores } from '~/composables/useStores'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+import WeavrCard from '~/components/organisms/cards/CardComponent.vue'
 
-export default defineComponent({
-    components: {
-        WeavrCard,
-        LoadingSpinner,
-    },
+definePageMeta({
     layout: 'dashboard',
-    middleware: 'kyVerified',
-    setup() {
-        const route = useRoute()
-        const router = useRouter()
-        const { identityVerified, pendingDataOrError } = useBase()
-        const { hasAlert } = useKyVerified()
-        const { cards, hasCards } = useCards()
-        const { cards: cardsStore } = useStores(['cards'])
-
-        const showDestroyedSwitch = ref(false)
-
-        const showDestroyed = computed(() => {
-            return route.value.query.showDestroyed === 'true'
-        })
-
-        const identityVerificationMessage = computed(() => {
-            if (!identityVerified) return 'Pending identity verification'
-
-            return undefined
-        })
-
-        const cardStateFilters = computed(() => {
-            return showDestroyed.value
-                ? []
-                : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
-        })
-
-        useFetch(() => {
-            return getCards(cardStateFilters.value).then(() => {
-                return cardsStore?.hasDestroyedCards().then((res) => {
-                    showDestroyedSwitch.value = res
-                })
-            })
-        })
-
-        const getCards = async (_state: ManagedInstrumentStateEnum[]) => {
-            await cardsStore?.getCards({
-                state: _state.join(','),
-            })
-        }
-
-        const showDestroyedChanged = async (val) => {
-            await router.push({
-                path: route.value.path,
-                query: { showDestroyed: val },
-            })
-
-            const state = val
-                ? []
-                : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
-
-            await getCards(state).catch(() => {})
-        }
-
-        return {
-            showDestroyedSwitch,
-            showDestroyed,
-            showDestroyedChanged,
-            identityVerificationMessage,
-            identityVerified,
-            hasAlert,
-            pendingDataOrError,
-            cards,
-            hasCards,
-        }
-    },
+    middleware: 'ky-verified',
 })
+
+const route = useRoute()
+const router = useRouter()
+const { identityVerified, pendingDataOrError } = useBase()
+const { hasAlert } = useKyVerified()
+const { cards, hasCards } = useCards()
+const { cards: cardsStore } = useStores(['cards'])
+
+const showDestroyedSwitch = ref(false)
+
+const showDestroyed = computed(() => {
+    return route.query.showDestroyed === 'true'
+})
+
+const identityVerificationMessage = computed(() => {
+    if (!identityVerified) return 'Pending identity verification'
+
+    return undefined
+})
+
+const cardStateFilters = computed(() => {
+    return showDestroyed.value
+        ? []
+        : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
+})
+
+const getAndShowCards = () => {
+    return getCards(cardStateFilters.value).then(() => {
+        return cardsStore?.hasDestroyedCards().then((res) => {
+            showDestroyedSwitch.value = res
+        })
+    })
+}
+
+useAsyncData(async () => {
+    await getAndShowCards()
+})
+
+const getCards = async (_state: ManagedInstrumentStateEnum[]) => {
+    await cardsStore?.getCards({
+        state: _state.join(','),
+    })
+}
+
+const showDestroyedChanged = async (val) => {
+    await router.push({
+        path: route.path,
+        query: { showDestroyed: val },
+    })
+
+    const state = val ? [] : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
+
+    await getCards(state).catch(() => {})
+}
 </script>

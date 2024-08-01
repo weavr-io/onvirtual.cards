@@ -15,7 +15,7 @@
             <template v-if="users && !pendingDataOrError">
                 <b-row v-for="(user, key) in users.users" :key="key" align-v="center" class="mt-3">
                     <b-col cols="2" md="1">
-                        <b-img :alt="user.name + ' ' + user.surname" rounded v-bind="mainProps" />
+                        <b-img v-bind="mainProps" :alt="user.name + ' ' + user.surname" rounded />
                     </b-col>
                     <b-col>{{ user.name }} {{ user.surname }}</b-col>
                     <b-col class="text-muted font-weight-light">
@@ -34,37 +34,29 @@
     </section>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, useFetch } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 
-export default defineComponent({
-    middleware: 'kyVerified',
-    setup() {
-        const { pendingDataOrError } = useBase()
-        const { users: usersStores } = useStores(['users'])
+definePageMeta({
+    middleware: 'ky-verified',
+})
 
-        const mainProps = {
-            blank: true,
-            blankColor: '#EAEDF6',
-            width: 45,
-            height: 45,
-        }
+const { pendingDataOrError } = useBase()
+const { users: usersStores } = useStores(['users'])
 
-        const users = computed(() => {
-            return usersStores?.userState.users
-        })
+const mainProps = {
+    blank: true,
+    blankColor: '#EAEDF6',
+    width: 45,
+    height: 45,
+}
 
-        useFetch(() => {
-            usersStores?.index()
-        })
+const users = computed(() => {
+    return usersStores?.userState.users
+})
 
-        return {
-            pendingDataOrError,
-            users,
-            mainProps,
-        }
-    },
+useState(() => {
+    usersStores?.index()
 })
 </script>

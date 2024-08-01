@@ -44,14 +44,14 @@
                                 :base-style="passwordBaseStyle"
                                 :class-name="[
                                     'sign-in-password form-control p-0',
-                                    { 'is-invalid': isPasswordInvalidAndDirty },
+                                    isPasswordInvalidAndDirty ? 'is-invalid' : '',
                                 ]"
                                 :options="{ placeholder: '****' }"
                                 name="password"
                                 required="true"
-                                @onChange="passwordInteraction"
-                                @onKeyUp="checkOnKeyUp"
-                                @onStrength="strengthCheck"
+                                @on-change="passwordInteraction"
+                                @on-key-up="checkOnKeyUp"
+                                @on-strength="strengthCheck"
                             />
                             <small
                                 :class="isPasswordInvalidAndDirty ? 'text-danger' : 'text-muted'"
@@ -70,160 +70,129 @@
     </b-col>
 </template>
 
-<script lang="ts">
-import {
-    ComputedRef,
-    computed,
-    defineComponent,
-    reactive,
-    ref,
-    useFetch,
-    useRoute,
-    useRouter,
-} from '@nuxtjs/composition-api'
-import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import LogoOvc from '~/components/molecules/LogoOvc.vue'
+<script lang="ts" setup>
 import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
 import {
     INITIAL_RESUME_LOST_PASSWORD_REQUEST,
     ResumeLostPasswordSchema,
-    ValidatePasswordRequestModel,
+    type ValidatePasswordRequestModel,
 } from '~/plugins/weavr-multi/api/models/authentication'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import useZodValidation from '~/composables/useZodValidation'
 
-export default defineComponent({
-    components: {
-        LogoOvc,
-        ErrorAlert,
-        LoaderButton,
-        WeavrPasswordInput,
-    },
+definePageMeta({
     layout: 'auth',
-    setup() {
-        const route = useRoute()
-        const router = useRouter()
-        const { auth, errors } = useStores(['auth', 'errors'])
-
-        const passwordField = ref<typeof WeavrPasswordInput | null>(null)
-        const isLoading = ref(false)
-        const form = reactive(INITIAL_RESUME_LOST_PASSWORD_REQUEST())
-        const passwordStrength = ref(0)
-
-        const validation = computed(() => {
-            return useZodValidation(ResumeLostPasswordSchema, form)
-        })
-
-        const noErrors = computed(() => {
-            return !errors?.errors
-        })
-
-        const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
-            return {
-                color: '#495057',
-                fontSize: '16px',
-                fontSmoothing: 'antialiased',
-                fontFamily: "'Be Vietnam', sans-serif",
-                fontWeight: '400',
-                lineHeight: '24px',
-                margin: '0',
-                padding: '6px 12px',
-                textIndent: '0px',
-                '::placeholder': {
-                    color: '#B6B9C7',
-                    fontWeight: '400',
-                },
-            }
-        })
-
-        const isPasswordInvalidAndDirty = computed(() => {
-            return !isPasswordValid.value && validation.value.dirty.value
-        })
-
-        const isPasswordValid = computed(() => {
-            return passwordStrength.value >= 2
-        })
-
-        useFetch(() => {
-            try {
-                form.nonce = route.value.params.nonce.toString()
-                form.email = route.value.params.email.toString()
-            } catch (e) {
-                errors?.setError(e)
-            }
-        })
-
-        const setPassword = async () => {
-            validation.value.touch() && (await validation.value.validate())
-
-            if (validation.value.isInvalid.value) return
-
-            await passwordField.value?.createToken().then(
-                (tokens) => {
-                    if (tokens.tokens.password !== '') {
-                        validatePassword(tokens.tokens.password)
-                    } else {
-                        return null
-                    }
-                },
-                () => {
-                    return null
-                },
-            )
-        }
-
-        const validatePassword = (password: string) => {
-            form.newPassword.value = password
-            const _request: ValidatePasswordRequestModel = {
-                password: {
-                    value: password,
-                },
-            }
-
-            auth?.validatePassword(_request).then(submitForm)
-        }
-
-        const submitForm = () => {
-            auth
-                ?.lostPasswordResume(form)
-                .then(() => {
-                    router.push('/login')
-                })
-                .catch((err) => {
-                    errors?.setError(err)
-                })
-        }
-
-        const checkOnKeyUp = (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault()
-                setPassword()
-            }
-        }
-
-        const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
-            !val.empty ? (form.newPassword.value = '******') : (form.newPassword.value = '')
-        }
-
-        const strengthCheck = (val) => {
-            passwordStrength.value = val.id
-        }
-
-        return {
-            noErrors,
-            setPassword,
-            validation,
-            form,
-            passwordField,
-            passwordBaseStyle,
-            isPasswordInvalidAndDirty,
-            passwordInteraction,
-            checkOnKeyUp,
-            strengthCheck,
-            isLoading,
-        }
-    },
 })
+
+const route = useRoute()
+const router = useRouter()
+const { auth, errors } = useStores(['auth', 'errors'])
+
+const passwordField = ref<typeof WeavrPasswordInput | null>(null)
+const isLoading = ref(false)
+const form = reactive(INITIAL_RESUME_LOST_PASSWORD_REQUEST())
+const passwordStrength = ref(0)
+
+const validation = computed(() => {
+    return useZodValidation(ResumeLostPasswordSchema, form)
+})
+
+const noErrors = computed(() => {
+    return !errors?.errors
+})
+
+const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
+    return {
+        color: '#495057',
+        fontSize: '16px',
+        fontSmoothing: 'antialiased',
+        fontFamily: "'Be Vietnam', sans-serif",
+        fontWeight: '400',
+        lineHeight: '24px',
+        margin: '0',
+        padding: '6px 12px',
+        textIndent: '0px',
+        '::placeholder': {
+            color: '#B6B9C7',
+            fontWeight: '400',
+        },
+    }
+})
+
+const isPasswordInvalidAndDirty = computed(() => {
+    return !isPasswordValid.value && validation.value.dirty.value
+})
+
+const isPasswordValid = computed(() => {
+    return passwordStrength.value >= 2
+})
+
+useState(() => {
+    try {
+        form.nonce = route.params.nonce.toString()
+        form.email = route.params.email.toString()
+    } catch (e) {
+        errors?.setError(e)
+    }
+})
+
+const setPassword = async () => {
+    validation.value.touch() && (await validation.value.validate())
+
+    if (validation.value.isInvalid.value) return
+
+    await passwordField.value?.createToken().then(
+        (tokens) => {
+            if (tokens.tokens.password !== '') {
+                validatePassword(tokens.tokens.password)
+            } else {
+                return null
+            }
+        },
+        () => {
+            return null
+        },
+    )
+}
+
+const validatePassword = (password: string) => {
+    form.newPassword.value = password
+    const _request: ValidatePasswordRequestModel = {
+        password: {
+            value: password,
+        },
+    }
+
+    auth?.validatePassword(_request).then(submitForm)
+}
+
+const submitForm = () => {
+    auth
+        ?.lostPasswordResume(form)
+        .then(() => {
+            router.push('/login')
+        })
+        .catch((err) => {
+            errors?.setError(err)
+        })
+}
+
+const checkOnKeyUp = (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault()
+        setPassword()
+    }
+}
+
+const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
+    !val.empty ? (form.newPassword.value = '******') : (form.newPassword.value = '')
+}
+
+const strengthCheck = (val) => {
+    passwordStrength.value = val.id
+}
 </script>

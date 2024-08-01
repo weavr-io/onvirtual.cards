@@ -37,13 +37,13 @@
                                 :base-style="passwordBaseStyle"
                                 :class-name="[
                                     'sign-in-password form-control p-0',
-                                    { 'is-invalid': isInvalidPassword },
+                                    isInvalidPassword ? 'is-invalid' : '',
                                 ]"
                                 :options="{ placeholder: 'Password' }"
                                 aria-invalid="true"
                                 name="password"
-                                @onChange="passwordInteraction"
-                                @onKeyUp="checkOnKeyUp"
+                                @on-change="passwordInteraction"
+                                @on-key-up="checkOnKeyUp"
                             />
                         </client-only>
                     </b-form-group>
@@ -76,161 +76,130 @@
     </b-col>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import {
-    computed,
-    ComputedRef,
-    defineComponent,
-    Ref,
-    ref,
-    useAsync,
-    useRouter,
-} from '@nuxtjs/composition-api'
-import { reactive } from 'vue'
+    INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
+    type LoginWithPassword,
+    LoginWithPasswordSchema,
+} from '~/plugins/weavr-multi/api/models/authentication'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import { useStores } from '~/composables/useStores'
+import { useBase } from '~/composables/useBase'
+import useZodValidation from '~/composables/useZodValidation'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import {
-    INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
-    LoginWithPassword,
-    LoginWithPasswordSchema,
-} from '~/plugins/weavr-multi/api/models/authentication'
-import useZodValidation from '~/composables/useZodValidation'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
-import { useStores } from '~/composables/useStores'
-import { useBase } from '~/composables/useBase'
 
-export default defineComponent({
-    components: {
-        LoaderButton,
-        LogoOvc,
-        ErrorAlert,
-        WeavrPasswordInput,
-    },
+definePageMeta({
     layout: 'auth',
-    setup() {
-        const router = useRouter()
-        const { showErrorToast } = useBase()
-        const { auth, consumers, errors } = useStores(['auth', 'consumers', 'errors'])
-
-        const isLoading = ref(false)
-        const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
-
-        const loginRequest: LoginWithPassword = reactive(INITIAL_LOGIN_WITH_PASSWORD_REQUEST())
-
-        const validation = computed(() => {
-            return useZodValidation(LoginWithPasswordSchema, loginRequest)
-        })
-
-        const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
-            return {
-                color: '#495057',
-                fontSize: '16px',
-                fontSmoothing: 'antialiased',
-                fontFamily: "'Be Vietnam', sans-serif",
-                fontWeight: '400',
-                lineHeight: '24px',
-                margin: '0',
-                padding: '6px 12px',
-                textIndent: '0px',
-                '::placeholder': {
-                    color: '#B6B9C7',
-                    fontWeight: '400',
-                },
-            }
-        })
-
-        const isInvalidPassword = computed(() => {
-            return validation.value.getState('password,value') === false && validation.value.dirty
-        })
-
-        const passwordInteraction = (val: { empty?: boolean; valid?: boolean }) => {
-            !val?.empty
-                ? (loginRequest.password.value = '******')
-                : (loginRequest.password.value = '')
-        }
-
-        useAsync(() => {
-            const isLoggedIn = auth?.isLoggedIn
-
-            if (isLoggedIn) {
-                router.push('/')
-            }
-        })
-
-        const login = async () => {
-            isLoading.value = true
-
-            await validation.value.validate()
-
-            if (validation.value.isInvalid.value) {
-                isLoading.value = false
-                return
-            }
-
-            try {
-                errors?.setError(null)
-                passwordField.value?.createToken().then(
-                    (tokens) => {
-                        loginRequest.password.value = tokens.tokens.password
-                        auth
-                            ?.loginWithPassword(loginRequest)
-                            .then(() => {
-                                localStorage.setItem('stepUp', 'FALSE')
-                                localStorage.setItem('scaSmsSent', 'FALSE')
-                                goToDashboard()
-                            })
-                            .catch((err) => {
-                                isLoading.value = false
-                                errors?.setError(err)
-                            })
-                    },
-                    (e) => {
-                        isLoading.value = false
-                        showErrorToast(e, 'Tokenization Error')
-                    },
-                )
-            } catch (error: any) {
-                isLoading.value = false
-                showErrorToast(error, 'Login Error')
-            }
-        }
-
-        const goToDashboard = async () => {
-            if (auth?.isConsumer) {
-                await consumers?.get()
-            }
-
-            await auth?.indexAuthFactors()
-
-            await router.push({
-                path: '/login/sca',
-                query: {
-                    send: 'true',
-                },
-            })
-            isLoading.value = false
-        }
-
-        const checkOnKeyUp = (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault()
-                login()
-            }
-        }
-
-        return {
-            login,
-            validation,
-            loginRequest,
-            passwordBaseStyle,
-            isInvalidPassword,
-            passwordInteraction,
-            checkOnKeyUp,
-            isLoading,
-            passwordField,
-        }
-    },
 })
+
+const router = useRouter()
+const { showErrorToast } = useBase()
+const { auth, consumers, errors } = useStores(['auth', 'consumers', 'errors'])
+
+const isLoading = ref(false)
+const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
+
+const loginRequest: LoginWithPassword = reactive(INITIAL_LOGIN_WITH_PASSWORD_REQUEST())
+
+const validation = computed(() => {
+    return useZodValidation(LoginWithPasswordSchema, loginRequest)
+})
+
+const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
+    return {
+        color: '#495057',
+        fontSize: '16px',
+        fontSmoothing: 'antialiased',
+        fontFamily: "'Be Vietnam', sans-serif",
+        fontWeight: '400',
+        lineHeight: '24px',
+        margin: '0',
+        padding: '6px 12px',
+        textIndent: '0px',
+        '::placeholder': {
+            color: '#B6B9C7',
+            fontWeight: '400',
+        },
+    }
+})
+
+const isInvalidPassword = computed(() => {
+    return validation.value.getState('password,value') === false && validation.value.dirty
+})
+
+const passwordInteraction = (val: { empty?: boolean; valid?: boolean }) => {
+    !val?.empty ? (loginRequest.password.value = '******') : (loginRequest.password.value = '')
+}
+
+useState(() => {
+    const isLoggedIn = auth?.isLoggedIn
+
+    if (isLoggedIn) {
+        console.log('jhadhsjsf', isLoggedIn)
+        router.push('/')
+    }
+})
+
+const login = async () => {
+    isLoading.value = true
+
+    await validation.value.validate()
+
+    if (validation.value.isInvalid.value) {
+        isLoading.value = false
+        return
+    }
+
+    try {
+        errors?.setError(null)
+        passwordField.value?.createToken().then(
+            (tokens) => {
+                loginRequest.password.value = tokens.tokens.password
+                auth
+                    ?.loginWithPassword(loginRequest)
+                    .then(() => {
+                        localStorage.setItem('stepUp', 'FALSE')
+                        localStorage.setItem('scaSmsSent', 'FALSE')
+                        goToDashboard()
+                    })
+                    .catch((err) => {
+                        isLoading.value = false
+                        errors?.setError(err)
+                    })
+            },
+            (e) => {
+                isLoading.value = false
+                showErrorToast(e, 'Tokenization Error')
+            },
+        )
+    } catch (error: any) {
+        isLoading.value = false
+        showErrorToast(error, 'Login Error')
+    }
+}
+
+const goToDashboard = async () => {
+    if (auth?.isConsumer) {
+        await consumers?.get()
+    }
+
+    await auth?.indexAuthFactors()
+    await router.push({
+        path: '/login/sca',
+        query: {
+            send: 'true',
+        },
+    })
+    isLoading.value = false
+}
+
+const checkOnKeyUp = (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault()
+        login()
+    }
+}
 </script>

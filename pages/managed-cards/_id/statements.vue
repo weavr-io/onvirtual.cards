@@ -103,7 +103,7 @@
                                                     }"
                                                     :token="managedCard.cardNumber?.value"
                                                     class="card-select-number"
-                                                    @onChange="toggleIsLoading"
+                                                    @on-change="toggleIsLoading"
                                                 />
                                             </div>
                                         </b-col>
@@ -154,45 +154,38 @@
             </b-card>
         </b-modal>
         <infinite-loading spinner="spiral" @infinite="infiniteScroll">
-            <span slot="no-more" />
-            <div slot="no-results" />
+            <template #no-more>
+                <span />
+            </template>
+            <template #no-results>
+                <div />
+            </template>
         </infinite-loading>
     </section>
 </template>
 
 <script lang="ts" setup>
-import {
-    computed,
-    getCurrentInstance,
-    Ref,
-    ref,
-    useContext,
-    useFetch,
-    useRoute,
-    watch,
-} from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { useLuxon } from '~/composables/useLuxon'
 import { useBase } from '~/composables/useBase'
 import { useCards } from '~/composables/useCards'
 import { useStores } from '~/composables/useStores'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
-import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
-import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import type { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import type { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { expiryMmyy, weavrCurrency } from '~/utils/helper'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
 import Statement from '~/components/organisms/cards/statement/CardStatement.vue'
 
 const route = useRoute()
-const { proxy: root } = getCurrentInstance() || {}
-const { $weavrSetUserToken } = useContext()
+const { $bvModal, $weavrSetUserToken } = useNuxtApp()
 const { managedCard, cardId, isCardActive } = useCards()
 const { pendingDataOrError } = useBase()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { auth, cards } = useStores(['auth', 'cards'])
 
-const filters: Ref<StatementFiltersRequest | null> = ref(null)
+const filters: Ref<StatementFiltersRequest | undefined> = ref(undefined)
 const page = ref(0)
 const isLoading: Ref<boolean> = ref(true)
 
@@ -204,17 +197,17 @@ const expiryDate = computed(() => {
     return expiryMmyy(managedCard.value?.expiryMmyy)
 })
 
-useFetch(async () => {
+useAsyncData(async () => {
     page.value = 0
 
     $weavrSetUserToken(`Bearer ${auth?.token}`)
 
-    await cards?.getManagedCard(cardId.value)
+    await cards?.getManagedCard(cardId.value as string)
     await fetchCardStatements()
 })
 
 const fetchCardStatements = async () => {
-    const routeQueries = dot.object(route.value.query)
+    const routeQueries = dot.object(route.query)
     const localFilters = routeQueries.filters || {}
 
     if (!localFilters?.fromTimestamp) {
@@ -234,7 +227,7 @@ const fetchCardStatements = async () => {
     }
 
     const _req: ManagedCardStatementRequest = {
-        id: cardId.value,
+        id: cardId.value as string,
         request: statementFilters,
     }
 
@@ -257,7 +250,7 @@ const infiniteScroll = ($state) => {
 
         cards
             ?.getCardStatement({
-                id: route.value.params.id,
+                id: route.params.id as string,
                 request,
             })
             .then((response) => {
@@ -271,7 +264,7 @@ const infiniteScroll = ($state) => {
 }
 
 const toggleModal = () => {
-    root!.$bvModal.show('cardModal')
+    $bvModal.show('cardModal')
 }
 
 watch(route, fetchCardStatements)
