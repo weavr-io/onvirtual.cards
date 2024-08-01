@@ -1,13 +1,9 @@
 import type { StoreDefinition } from 'pinia'
-import type { StoreType } from '~/local/models/store'
+import type { StoreType, StoreModule } from '~/local/models/store'
 import { FormattingFiltersModule } from '~/plugins/formattingFilters/FormattingFiltersModule'
 
 interface CustomStore extends StoreDefinition {
     resetState?: () => void
-}
-
-type StoreModule = {
-    [exportName: string]: () => StoreDefinition
 }
 
 const modules: Record<string, CustomStore> = {}
