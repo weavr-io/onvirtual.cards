@@ -1,18 +1,13 @@
 <template>
-    <div :class="props.className" :style="props.baseStyle" />
+    <div ref="captureContainer" :class="props.className" :style="styleValue" />
 </template>
-<script lang="ts" setup>
-import {
-    Ref,
-    computed,
-    getCurrentInstance,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-} from '@nuxtjs/composition-api'
-import { SecureElementStyle, SecureSpan } from '~/plugins/weavr/components/api'
 
-const { proxy: root } = getCurrentInstance() || {}
+<script lang="ts" setup>
+import type { StyleValue } from 'vue'
+import type { SecureElementStyle, SecureSpan } from '~/plugins/weavr/components/api'
+
+const captureContainer = ref<HTMLDivElement | null>(null)
+const { $weavrComponents } = useNuxtApp()
 
 const props = withDefaults(
     defineProps<{
@@ -33,6 +28,8 @@ const emit = defineEmits(['onReady', 'onChange'])
 
 const span: Ref<any> = ref(null)
 
+const styleValue = computed(() => props.baseStyle as StyleValue)
+
 const _span = computed({
     get() {
         return span.value
@@ -51,8 +48,8 @@ const onChange = (val) => {
 }
 
 onMounted(() => {
-    _span.value = root?.$weavrComponents.display.cardNumber(props.token, spanOptions.value)
-    _span.value?.mount(root?.$el)
+    _span.value = $weavrComponents.display.cardNumber(props.token, spanOptions.value)
+    _span.value?.mount(captureContainer.value)
     _addListeners(_span.value)
 })
 
@@ -78,5 +75,3 @@ const spanOptions = computed(() => {
     }
 })
 </script>
-
-<style lang="scss" scoped></style>

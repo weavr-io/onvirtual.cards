@@ -2,10 +2,9 @@
     <div id="director-kyc" />
 </template>
 <script lang="ts" setup>
-import { getCurrentInstance, onMounted } from '@nuxtjs/composition-api'
-import { KYCOptions } from '~/plugins/weavr/components/api'
+import type { KYCOptions } from '~/plugins/weavr/components/api'
 
-const { proxy: root } = getCurrentInstance() || {}
+const { $weavrComponents } = useNuxtApp()
 
 const props = withDefaults(
     defineProps<{
@@ -25,7 +24,7 @@ const message = (value) => {
 }
 
 onMounted(() => {
-    root?.$weavrComponents.capture
+    $weavrComponents.capture
         .beneficiariesKyc(props.reference)
         .mount('#director-kyc', { ...props.options, onMessage: sumsubMessage })
 })
@@ -39,5 +38,3 @@ defineExpose({
     sumsubMessage,
 })
 </script>
-
-<style lang="scss" scoped></style>
