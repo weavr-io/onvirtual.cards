@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
 
 const DEFAULT_FRIENDLY_NAME = 'Main Account'
@@ -27,4 +27,4 @@ const INITIAL_MA_REQUEST = () => {
     } as unknown as ManagedAccount
 }
 
-export { INITIAL_MA_REQUEST, ManagedAccount, ManagedAccountSchema }
+export { INITIAL_MA_REQUEST, type ManagedAccount, ManagedAccountSchema }

@@ -1,14 +1,17 @@
 import { z } from 'zod'
 import {
     INITIAL_MOBILE_REQUEST,
-    MobileModel,
+    type MobileModel,
     MobileSchema,
 } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
 import {
     CompanyPositionEnum,
     CompanyPositionEnumSchema,
 } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
-import { DateModel, DateSchema } from '~/plugins/weavr-multi/api/models/common/models/DateModel'
+import {
+    type DateModel,
+    DateSchema,
+} from '~/plugins/weavr-multi/api/models/common/models/DateModel'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
 export interface CorporatesRootUserRequest {
@@ -46,7 +49,7 @@ const INITIAL_CORPORATES_ROOT_USER_REQUEST = () => {
 
 export {
     CorporatesRootUserRequestSchema,
-    CorporatesRootUserRequestType,
+    type CorporatesRootUserRequestType,
     RootUserMobileSchema,
     INITIAL_CORPORATES_ROOT_USER_REQUEST,
 }

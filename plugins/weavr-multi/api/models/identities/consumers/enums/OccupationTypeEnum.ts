@@ -32,4 +32,4 @@ export enum OccupationTypeEnum {
 const OccupationTypeEnumSchema = z.nativeEnum(OccupationTypeEnum)
 type OccupationTypeEnumType = z.infer<typeof OccupationTypeEnumSchema>
 
-export { OccupationTypeEnumSchema, OccupationTypeEnumType }
+export { OccupationTypeEnumSchema, type OccupationTypeEnumType }

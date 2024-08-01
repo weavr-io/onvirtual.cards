@@ -1,30 +1,38 @@
-declare module '*.vue' {
-    import Vue from 'vue'
-    export default Vue
-}
+import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
+import type { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
+import type { NuxtAxiosInstance } from '@nuxtjs/axios'
 
-declare module '*.svg?inline' {
-    import Vue, { VueConstructor } from 'vue'
-    const content: VueConstructor<Vue>
-    export default content
-}
-
-declare namespace __WebpackModuleApi {
-    interface RequireContext {
-        keys(): string[]
-        (id: string): any
-        <T>(id: string): T
-        resolve(id: string): string
-        /** The module id of the context module. This may be useful for module.hot.accept. */
-        id: string
+// global, also used in store
+declare module 'nuxt/app' {
+    interface NuxtApp {
+        $formattingFilters: FormattingFiltersInterface
+        $apiMulti: ApiInterface
+        $axiosMulti: NuxtAxiosInstance
+        $weavrComponents: any
+        $weavrSetUserToken: (token: unknown) => {}
+        $bvModal: any // TODO: refactor, make component specific
+        $bvToast: any // TODO: refactor, make component specific
+        readonly $weavrToast: WeavrToast
+        readonly $weavrToastError: WeavrToast
     }
 }
 
-interface Require {
-    context(
-        path: string,
-        deep?: boolean,
-        filter?: RegExp,
-        mode?: 'sync' | 'eager' | 'weak' | 'lazy' | 'lazy-once',
-    ): __WebpackModuleApi.RequireContext
+export interface WeavrToast {
+    (message: string, options?: any): void // TODO: try BModalOrchestrator
+}
+
+declare global {
+    interface ImportMetaGlob {
+        (
+            glob: string,
+            options?: {
+                as?: string
+                eager?: boolean
+            },
+        ): Record<string, () => Promise<unknown>>
+    }
+
+    interface ImportMeta {
+        glob: ImportMetaGlob
+    }
 }

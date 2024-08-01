@@ -1,10 +1,10 @@
-import { AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
 import { $axiosMulti } from '~/utils/api'
-import { PaginatedOutgoingWireTransferResponse } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/responses/PaginatedOutgoingWireTransferResponse'
-import { OutgoingWireTransfersFilterRequest } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/requests/OutgoingWireTransfersFilterRequest'
-import { CreateOutGoingWireTransferRequest } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/requests/CreateOutGoingWireTransferRequest'
-import { OutgoingWiretransferModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/OutgoingWiretransferModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import type { PaginatedOutgoingWireTransferResponse } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/responses/PaginatedOutgoingWireTransferResponse'
+import type { OutgoingWireTransfersFilterRequest } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/requests/OutgoingWireTransfersFilterRequest'
+import type { CreateOutGoingWireTransferRequest } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/requests/CreateOutGoingWireTransferRequest'
+import type { OutgoingWiretransferModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/OutgoingWiretransferModel'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 
 export class OutgoingWireTransferApi {
     index(

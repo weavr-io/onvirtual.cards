@@ -11,4 +11,4 @@ export enum CompanyTypeEnum {
 const CompanyTypeEnumSchema = z.nativeEnum(CompanyTypeEnum)
 type CompanyTypeEnumType = z.infer<typeof CompanyTypeEnumSchema>
 
-export { CompanyTypeEnumSchema, CompanyTypeEnumType }
+export { CompanyTypeEnumSchema, type CompanyTypeEnumType }
