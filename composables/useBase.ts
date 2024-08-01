@@ -103,7 +103,7 @@ export const useBase = () => {
     const profileBaseCurrency = computed(() => {
         return isConsumer.value
             ? consumer.value?.baseCurrency
-            : corporate.value?.baseCurrency ?? null
+            : (corporate.value?.baseCurrency ?? null)
     })
 
     const identityVerified = computed(() => {

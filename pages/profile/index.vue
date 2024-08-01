@@ -151,15 +151,15 @@ export default defineComponent({
             Object.assign(updateIdentityRootUser, {
                 mobile: {
                     countryCode: isConsumer.value
-                        ? consumer.value?.rootUser?.mobile.countryCode ?? null
-                        : corporate.value?.rootUser?.mobile.countryCode ?? null,
+                        ? (consumer.value?.rootUser?.mobile.countryCode ?? null)
+                        : (corporate.value?.rootUser?.mobile.countryCode ?? null),
                     number: isConsumer.value
-                        ? consumer.value?.rootUser?.mobile.number ?? null
-                        : corporate.value?.rootUser?.mobile.number ?? null,
+                        ? (consumer.value?.rootUser?.mobile.number ?? null)
+                        : (corporate.value?.rootUser?.mobile.number ?? null),
                 },
                 email: isConsumer.value
-                    ? consumer.value?.rootUser?.email ?? null
-                    : corporate.value?.rootUser?.email ?? null,
+                    ? (consumer.value?.rootUser?.email ?? null)
+                    : (corporate.value?.rootUser?.email ?? null),
             })
 
             if (
