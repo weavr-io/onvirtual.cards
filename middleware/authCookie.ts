@@ -1,10 +1,7 @@
-import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
 import config from '~/config'
 import { useAuthStore } from '~/store/auth'
 
-const Cookie = process.client ? require('js-cookie') : undefined
-
-const scaCheck = (route, redirect) => {
+const scaCheck = (route) => {
     if (
         !route.name?.startsWith('register') &&
         !route.name?.startsWith('profile-address') &&
@@ -12,20 +9,20 @@ const scaCheck = (route, redirect) => {
         !route.name?.startsWith('profile-mobile-add') &&
         localStorage.getItem('stepUp') === 'FALSE'
     ) {
-        return redirect('/login/sca')
+        return navigateTo('/login/sca')
     }
 }
 
-export default defineNuxtMiddleware(async ({ route, redirect }) => {
+export default defineNuxtRouteMiddleware(async (to) => {
     const auth = useAuthStore()
-    const authCookie = Cookie.get(config.ONV_COOKIE_NAME)
+    const authCookie = useCookie(config.ONV_COOKIE_NAME)
 
-    if (authCookie) {
+    if (authCookie.value) {
         try {
-            const authCookieJson = JSON.parse(authCookie)
+            const authCookieJson = JSON.parse(authCookie.value)
             await auth.setAuth(authCookieJson)
 
-            scaCheck(route, redirect)
+            scaCheck(to)
         } catch (err) {
             // No valid cookie found
             await auth.logout()

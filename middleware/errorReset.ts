@@ -1,8 +1,7 @@
-import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
-import { initialiseStores } from '~/utils/pinia-store-accessor'
+import { useStores } from '~/composables/useStores'
 
-export default defineNuxtMiddleware((_) => {
-    const { errors } = initialiseStores(['errors'])
+export default defineNuxtRouteMiddleware(() => {
+    const { errors } = useStores(['errors'])
 
     return errors?.resetState()
 })

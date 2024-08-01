@@ -1,11 +1,10 @@
-import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { CredentialTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/CredentialTypeEnum'
-import { initialiseStores } from '~/utils/pinia-store-accessor'
+import { useStores } from '~/composables/useStores'
 
-export default defineNuxtMiddleware(({ redirect }) => {
-    const { auth, identity } = initialiseStores(['auth', 'identity'])
+export default defineNuxtRouteMiddleware(() => {
+    const { auth, identity } = useStores(['auth', 'identity'])
 
     const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
         (factor) => factor.channel === SCAOtpChannelEnum.SMS,
@@ -15,13 +14,13 @@ export default defineNuxtMiddleware(({ redirect }) => {
         auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT &&
         !identity?.identityState.emailVerified
     ) {
-        return redirect('/login/verify')
+        return navigateTo('/login/verify')
     } else if (
         !smsAuthFactors ||
         smsAuthFactors[0].status === SCAFactorStatusEnum.PENDING_VERIFICATION
     ) {
-        return redirect('/profile/mobile/add')
+        return navigateTo('/profile/mobile/add')
     } else if (localStorage.getItem('stepUp') === 'TRUE') {
-        return redirect('/')
+        return navigateTo('/')
     }
 })
