@@ -2,7 +2,7 @@
     <div>
         <AppHeader />
         <DashboardHeader />
-        <Nuxt />
+        <NuxtPage />
         <KYBAlert v-if="showKybAlert" />
         <KYCAlert v-if="showKycAlert" />
         <BAlert
@@ -29,7 +29,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { useStores } from '~/composables/useStores'
 import { useKyVerified } from '~/composables/useKyVerified'
 import { useBase } from '~/composables/useBase'
