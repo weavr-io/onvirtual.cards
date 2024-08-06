@@ -127,8 +127,11 @@ export default function <T extends ZodTypeAny>(
         }
     }
 
-    const getInvalidFeedback = (path: string) =>
-        get(errors.value, `${path.replaceAll('.', ',')}.0.message`)
+    const getInvalidFeedback = (path: string) => {
+        const errorArray = get(errors.value, `${path.replaceAll('.', ',')}`)
+
+        return errorArray ? errorArray[0]?.message : undefined
+    }
 
     /**
      * @return Returns null | false. If there is an error associated with the key it will return false [Invalid].

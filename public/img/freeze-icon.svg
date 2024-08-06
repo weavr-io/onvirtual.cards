@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="freeze_icon" data-name="freeze icon" transform="translate(0)">
+    <line id="Line_66" data-name="Line 66" y1="12" transform="translate(12)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <line id="Line_67" data-name="Line 67" x1="8.485" y1="8.485" transform="translate(3.515 3.515)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <line id="Line_68" data-name="Line 68" x1="12" transform="translate(0 12)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <line id="Line_69" data-name="Line 69" x1="8.485" y2="8.485" transform="translate(3.515 12)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <line id="Line_70" data-name="Line 70" y2="12" transform="translate(12 12)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <line id="Line_71" data-name="Line 71" x2="8.485" y2="8.485" transform="translate(12 12)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <line id="Line_72" data-name="Line 72" x2="12" transform="translate(12 12)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <line id="Line_73" data-name="Line 73" y1="8.485" x2="8.485" transform="translate(12 3.515)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_126" data-name="Path 126" d="M708.4,837.55v-5.975l.171-.071,4.225,4.225" transform="translate(-700.799 -829.946)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_127" data-name="Path 127" d="M706.582,841.946l-4.225-4.225.071-.171H708.4" transform="translate(-700.799 -829.946)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_128" data-name="Path 128" d="M708.4,846.342h-5.975l-.071-.171,4.225-4.225" transform="translate(-700.799 -829.946)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_129" data-name="Path 129" d="M712.8,848.163l-4.225,4.225-.171-.071v-5.975" transform="translate(-700.799 -829.946)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_130" data-name="Path 130" d="M717.194,846.342v5.975l-.171.071-4.225-4.225" transform="translate(-700.799 -829.946)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_131" data-name="Path 131" d="M719.015,841.946l4.225,4.225-.071.171h-5.975" transform="translate(-700.799 -829.946)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_132" data-name="Path 132" d="M717.194,837.55h5.975l.071.171-4.225,4.225" transform="translate(-700.799 -829.946)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+    <path id="Path_133" data-name="Path 133" d="M717.194,837.55v-5.975l-.171-.071L712.8,835.73" transform="translate(-700.799 -829.946)" fill="none" stroke="#6d7490" stroke-miterlimit="10" stroke-width="1"/>
+  </g>
+</svg>
