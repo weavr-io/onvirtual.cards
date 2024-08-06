@@ -13,7 +13,6 @@ export default defineNuxtConfig({
             }),
         ],
     },
-    components: [{ path: '~/plugins/weavr/components/WeavrKyc', extensions: ['vue'] }],
     runtimeConfig: {
         public: {
             production: process.env.ENVIRONMENT === 'production',

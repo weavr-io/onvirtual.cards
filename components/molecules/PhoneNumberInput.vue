@@ -52,7 +52,7 @@ import {
     type CountryCode,
     getExampleNumber,
     parsePhoneNumberFromString,
-    Examples,
+    type Examples,
 } from 'libphonenumber-js'
 import { computed } from 'vue'
 import examples from 'libphonenumber-js/examples.mobile.json'

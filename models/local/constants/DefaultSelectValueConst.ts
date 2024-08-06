@@ -1,4 +1,4 @@
-import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
+import { type SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 
 export const DefaultSelectValueConst: SelectOptionsModel = {
     text: 'Select Option',
