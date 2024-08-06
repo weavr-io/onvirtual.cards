@@ -15,6 +15,7 @@
                         :state="validation.getState('email')"
                         label="Email"
                         label-for="form-email"
+                        class="mb-3"
                     >
                         <b-form-input
                             id="from-email"

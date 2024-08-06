@@ -6,6 +6,7 @@
             :invalid-feedback="validation.getInvalidFeedback('rootUser,name')"
             :state="validation.getState('rootUser,name')"
             label="First Name*"
+            class="mb-3"
         >
             <b-form-input v-model="form.rootUser.name" placeholder="Name" />
         </b-form-group>
@@ -13,6 +14,7 @@
             :invalid-feedback="validation.getInvalidFeedback('rootUser,surname')"
             :state="validation.getState('rootUser,surname')"
             label="Last Name*"
+            class="mb-3"
         >
             <b-form-input v-model="form.rootUser.surname" placeholder="Last Name" />
         </b-form-group>

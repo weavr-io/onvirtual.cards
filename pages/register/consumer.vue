@@ -341,7 +341,7 @@ const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = comp
 })
 
 const isRecaptchaEnabled = computed(() => {
-    return typeof process.env.RECAPTCHA !== 'undefined'
+    return typeof useRuntimeConfig().public.recaptcha.siteKey !== 'undefined'
 })
 
 const isLoadingRegistration = computed(() => {

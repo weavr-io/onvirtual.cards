@@ -66,6 +66,7 @@
         "stylelint-config-standard-scss": "^11.1.0",
         "typescript": "^5.5.3",
         "vite-svg-loader": "^5.1.0",
+        "vue-recaptcha-v3": "^2.0.1",
         "vue-tsc": "^2.0.26"
     },
     "lint-staged": {
@@ -75,10 +76,10 @@
     },
     "overrides": {
         "@rollup/plugin-json": {
-            "rollup": "4.19.2"
+            "rollup": "2.0.0"
         },
         "@rollup/pluginutils": {
-            "rollup": "4.19.2"
+            "rollup": "2.0.0"
         }
     }
 }

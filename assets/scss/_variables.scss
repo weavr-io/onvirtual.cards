@@ -1,6 +1,7 @@
 @use 'sass:map';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/mixins';
 
 $primary: #6c1c5c;
 $secondary: #3cf7ca;
@@ -25,6 +26,7 @@ $theme-colors: map.merge(
         'card-disabled': $card-disabled,
         'bg-colored': $body-bg-colored,
         'secondary': $secondary,
+        'muted': $text-muted,
     )
 );
 $btn-padding-y-sm: 0.5rem;

@@ -72,11 +72,9 @@
                 </b-form-group>
             </b-col>
         </b-form-row>
-        <!-- TODO: update recaptcha
-            <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
-                <recaptcha />
-            </div>
-        -->
+        <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
+            <recaptcha-form />
+        </div>
         <b-form-row class="mt-5">
             <b-col class="text-center">
                 <LoaderButton
@@ -103,11 +101,12 @@ import useZodValidation from '~/composables/useZodValidation'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import RecaptchaForm from '~/plugins/recaptcha/RecaptchaForm.vue'
 
 const emit = defineEmits(['submit-form'])
 const { corporates, errors } = useStores(['corporates', 'errors'])
 const { showErrorToast } = useBase()
-
+const recaptchaField: Ref<typeof RecaptchaForm | null> = ref(null)
 const form = reactive<
     LoginWithPassword & {
         acceptedTerms?: boolean
@@ -148,16 +147,16 @@ const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = comp
     }
 })
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const isRecaptchaEnabled: ComputedRef<boolean> = computed(
-    () => typeof process.env.RECAPTCHA !== 'undefined',
+    () => typeof useRuntimeConfig().public.recaptcha.siteKey !== 'undefined',
 )
 
 const isLoadingRegistration = computed(() => corporates?.corporateState.isLoadingRegistration)
 
 const tryToSubmitForm = async () => {
-    errors?.resetState()
     try {
+        await recaptchaField.value?.execute('submit')
+        errors?.resetState()
         validation.value.touch() && (await validation.value.validate())
         if (validation.value.isInvalid.value || !isPasswordValid.value) {
             return
