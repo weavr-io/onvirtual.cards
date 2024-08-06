@@ -5,7 +5,7 @@
                 <b-col v-if="account && !pendingDataOrError" lg="6" md="9">
                     <b-row>
                         <b-col>
-                            <h2 class="text-center font-weight-lighter">
+                            <h2 class="text-center fw-lighter">
                                 Transfer funds from your bank account to
                             </h2>
                         </b-col>

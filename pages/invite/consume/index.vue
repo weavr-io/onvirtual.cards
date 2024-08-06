@@ -8,7 +8,7 @@
                 </b-alert>
             </template>
             <template v-else>
-                <h3 class="text-center font-weight-light mb-6">Accept Invite</h3>
+                <h3 class="text-center fw-light mb-6">Accept Invite</h3>
                 <error-alert />
                 <b-form @submit.prevent="tryToSubmitForm">
                     <client-only placeholder="Loading...">
@@ -40,7 +40,7 @@
                                 variant="secondary"
                             >
                                 submit
-                                <span class="pl-5">-></span>
+                                <span class="ps-5">-></span>
                             </b-button>
                         </b-col>
                     </b-form-row>

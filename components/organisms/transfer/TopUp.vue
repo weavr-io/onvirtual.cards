@@ -2,7 +2,7 @@
     <b-form @submit.prevent="submitForm">
         <b-row>
             <b-col>
-                <h2 class="text-center font-weight-lighter">
+                <h2 class="text-center fw-lighter">
                     <template v-if="!accountDetails"> No account found</template>
                     <template v-else-if="accountBalance < 0.01"> Not enough funds</template>
                     <template v-else> Top up amount</template>
@@ -13,17 +13,15 @@
             <b-col>
                 <b-row>
                     <b-col>
-                        <h4 class="font-weight-light">
-                            You do not have an account to transfer funds from.
-                        </h4>
-                        <h5 class="font-weight-lighter">Start by creating an account.</h5>
+                        <h4 class="fw-light">You do not have an account to transfer funds from.</h4>
+                        <h5 class="fw-lighter">Start by creating an account.</h5>
                     </b-col>
                 </b-row>
                 <b-row class="mt-5">
                     <b-col class="text-center">
                         <b-button to="/managed-accounts" variant="secondary">
                             go to accounts
-                            <span class="pl-5">-></span>
+                            <span class="ps-5">-></span>
                         </b-button>
                     </b-col>
                 </b-row>
@@ -33,17 +31,15 @@
             <b-col>
                 <b-row>
                     <b-col>
-                        <h4 class="font-weight-light">
-                            You do not have enough funds in your account.
-                        </h4>
-                        <h5 class="font-weight-lighter">Start by topping up.</h5>
+                        <h4 class="fw-light">You do not have enough funds in your account.</h4>
+                        <h5 class="fw-lighter">Start by topping up.</h5>
                     </b-col>
                 </b-row>
                 <b-row class="mt-5">
                     <b-col class="text-center">
                         <b-button to="/managed-cards" variant="secondary">
                             go to cards
-                            <span class="pl-5">-></span>
+                            <span class="ps-5">-></span>
                         </b-button>
                     </b-col>
                 </b-row>
@@ -73,7 +69,7 @@
                     <b-col class="text-center">
                         <b-button type="submit" variant="secondary">
                             next
-                            <span class="pl-5">-></span>
+                            <span class="ps-5">-></span>
                         </b-button>
                     </b-col>
                 </b-row>

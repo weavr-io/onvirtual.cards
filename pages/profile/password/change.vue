@@ -4,7 +4,7 @@
             <b-row align-h="center">
                 <b-col class="my-2 my-lg-5 text-center" lg="6" md="9">
                     <div class="text-md d-inline-block text-center mb-5 mb-lg-6">
-                        <h1 class="font-weight-light">Change Password</h1>
+                        <h1 class="fw-light">Change Password</h1>
                     </div>
                     <div class="mx-md-3 px-md-5">
                         <b-form id="contact-form" @submit.prevent="submitChangePassword">

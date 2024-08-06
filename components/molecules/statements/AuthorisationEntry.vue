@@ -19,13 +19,13 @@
             </div>
             <b-row class="text-muted">
                 <b-col>
-                    <b-badge v-if="isPending" class="text-muted mr-2" variant="grey-light"
+                    <b-badge v-if="isPending" class="text-muted me-2" variant="grey-light"
                         >Pending
                     </b-badge>
-                    <span class="mr-2">Purchase</span>
+                    <span class="me-2">Purchase</span>
                     <span
                         v-if="props.transaction.additionalFields.merchantTerminalCountry"
-                        class="mr-2"
+                        class="me-2"
                         >{{ props.transaction.additionalFields.merchantTerminalCountry }}</span
                     >
                     <span v-if="props.transaction.sourceAmount"

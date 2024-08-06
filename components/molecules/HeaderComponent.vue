@@ -6,7 +6,7 @@
                     <LogoImage class="align-center" size="md" />
                 </b-navbar-brand>
                 <b-collapse v-if="isLoggedIn" id="nav_collapse" is-nav>
-                    <b-navbar-nav class="ml-auto">
+                    <b-navbar-nav class="ms-auto">
                         <b-nav-item-dropdown right toggle-class="border-bottom">
                             <template #button-content>
                                 {{ rootFullName }}

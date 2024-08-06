@@ -3,8 +3,8 @@
         <dashboard-header />
         <b-container>
             <b-row v-if="!sumsSubEnabled" align-h="center">
-                <b-col class="py-5 font-weight-lighter" lg="6" md="9">
-                    <h3 class="text-center font-weight-lighter mb-4">We need some documents</h3>
+                <b-col class="py-5 fw-lighter" lg="6" md="9">
+                    <h3 class="text-center fw-lighter mb-4">We need some documents</h3>
                     <p>
                         We are required by financial services regulations to perform due diligence
                         on your company before allowing you to transact with your account.

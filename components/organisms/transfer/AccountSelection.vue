@@ -2,7 +2,7 @@
     <b-form @submit.prevent="submitForm">
         <b-row>
             <b-col>
-                <h2 class="text-center font-weight-lighter">Choose account to top up from</h2>
+                <h2 class="text-center fw-lighter">Choose account to top up from</h2>
             </b-col>
         </b-row>
         <b-row class="py-5 my-5">
@@ -21,7 +21,7 @@
             <b-col class="text-center">
                 <b-button type="submit" variant="secondary">
                     next
-                    <span class="pl-5">-></span>
+                    <span class="ps-5">-></span>
                 </b-button>
             </b-col>
         </b-row>

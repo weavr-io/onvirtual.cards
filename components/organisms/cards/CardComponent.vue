@@ -75,7 +75,7 @@
                         <b-link class="py-2 d-block text-decoration-none" @click="toggleBlock">
                             <div class="d-flex align-items-center">
                                 <b-img fluid src="/img/freeze-icon.svg" />
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <h6 class="m-0 small">
                                         <template v-if="!isBlocked"> Freeze card</template>
                                         <template v-else> Unfreeze card</template>
@@ -89,7 +89,7 @@
                         <b-link :to="editLink" class="py-2 mt-md-0 d-block text-decoration-none">
                             <div class="d-flex align-items-center">
                                 <b-img fluid src="/img/edit-icon.svg" />
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <h6 class="m-0 small">Edit card</h6>
                                     <p class="text-muted m-0 small">
                                         Change name and other details

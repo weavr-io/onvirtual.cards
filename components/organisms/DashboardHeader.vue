@@ -13,7 +13,7 @@
             </b-col>
             <b-col v-if="isManagedAccounts" class="pb-2">
                 <b-row v-if="account" align-h="end" align-v="end">
-                    <b-col v-if="canAddFunds" class="text-right mr-3 mr-sm-2" cols="2" lg="1">
+                    <b-col v-if="canAddFunds" class="text-right me-3 me-sm-2" cols="2" lg="1">
                         <b-button
                             :to="'/managed-accounts/' + account.id + '/topup'"
                             class="add-funds"

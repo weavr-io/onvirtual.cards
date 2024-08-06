@@ -7,9 +7,7 @@
                         <error-alert />
                         <div class="form-screen">
                             <b-form novalidate @submit.prevent="submitForm">
-                                <h3 class="text-center font-weight-light mb-5">
-                                    Your address details
-                                </h3>
+                                <h3 class="text-center fw-light mb-5">Your address details</h3>
                                 <b-form-group
                                     :invalid-feedback="
                                         validation.getInvalidFeedback('addressLine1')

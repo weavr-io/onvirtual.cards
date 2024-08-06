@@ -4,7 +4,7 @@
         <b-card class="overflow-hidden" no-body>
             <b-card-body class="px-4 mx-3 py-5 p-md-card">
                 <div class="text-center">
-                    <h2 class="font-weight-lighter">Set password</h2>
+                    <h2 class="fw-lighter">Set password</h2>
                 </div>
                 <error-alert
                     message="The reset password link is invalid or has expired.  Please restart the password reset process."

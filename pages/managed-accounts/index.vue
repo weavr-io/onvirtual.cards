@@ -13,8 +13,8 @@
             <b-container class="mt-5">
                 <b-row>
                     <b-col class="py-5 text-center">
-                        <h4 class="font-weight-light">You do not have an account.</h4>
-                        <h5 class="font-weight-lighter">
+                        <h4 class="fw-light">You do not have an account.</h4>
+                        <h5 class="fw-lighter">
                             Click
                             <b-link to="/managed-accounts/add"> add new account</b-link>
                             to create your first account.

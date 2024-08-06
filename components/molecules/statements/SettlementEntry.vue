@@ -35,13 +35,13 @@
                                 props.transaction.additionalFields.merchantTransactionType ==
                                 'CASH_WITHDRAWAL'
                             "
-                            class="mr-2"
+                            class="me-2"
                             >ATM Withdrawal,
                         </span>
-                        <span v-else class="mr-2">Purchase, </span>
+                        <span v-else class="me-2">Purchase, </span>
                         <span
                             v-if="props.transaction.additionalFields.merchantTerminalCountry"
-                            class="mr-2"
+                            class="me-2"
                             >{{ props.transaction.additionalFields.merchantTerminalCountry }}</span
                         >
                         <span v-if="props.transaction.sourceAmount">

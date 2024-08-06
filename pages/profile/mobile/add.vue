@@ -2,7 +2,7 @@
     <b-col lg="6" md="9">
         <LogoOvc :link="false" classes="pb-5" />
         <b-card body-class="p-card">
-            <h3 class="text-center font-weight-light mb-4">Add your phone number</h3>
+            <h3 class="text-center fw-light mb-4">Add your phone number</h3>
             <p class="text-center mb-5">
                 We need your phone number to send you one-time passwords when logging in. we will
                 not share this with anyone.

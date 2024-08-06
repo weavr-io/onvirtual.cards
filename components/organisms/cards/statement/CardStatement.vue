@@ -3,14 +3,14 @@
         <b-row align-h="between" align-v="center" class="mb-3">
             <b-col cols="9" sm="auto">
                 <div class="d-flex justify-content-start justify-content-lg-start align-items-end">
-                    <label class="mr-2 mr-lg-4 font-weight-lighter" for="transaction-timeframe"
+                    <label class="me-2 me-lg-4 fw-lighter" for="transaction-timeframe"
                         >All Transactions</label
                     >
                     <b-form-select
                         id="transaction-timeframe"
                         :options="months"
                         :value="filterDate"
-                        class="w-auto d-inline-block pl-2"
+                        class="w-auto d-inline-block ps-2"
                         @change="filterMonthChange"
                     />
                 </div>
@@ -18,21 +18,21 @@
             <b-col class="d-flex justify-content-center justify-content-lg-end" cols="3" sm="auto">
                 <div>
                     <b-button
-                        class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none no-focus"
+                        class="px-0 d-flex align-items-center fw-lighter text-decoration-none no-focus"
                         variant="link"
                         @click="downloadStatement"
                     >
-                        <download-icon class="mr-2" />
+                        <download-icon class="me-2" />
                         <p class="d-none d-sm-inline m-0">download</p>
                     </b-button>
                 </div>
-                <div v-if="isCardActive" class="ml-2 ml-sm-5">
+                <div v-if="isCardActive" class="ms-2 ms-sm-5">
                     <b-button
-                        class="px-0 d-flex align-items-center font-weight-lighter text-decoration-none no-focus"
+                        class="px-0 d-flex align-items-center fw-lighter text-decoration-none no-focus"
                         variant="link"
                         @click="confirmDeleteCard"
                     >
-                        <delete-icon class="mr-2" />
+                        <delete-icon class="me-2" />
                         <p class="d-none d-sm-inline m-0">delete card</p>
                     </b-button>
                 </div>

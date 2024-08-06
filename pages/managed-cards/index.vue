@@ -3,7 +3,7 @@
         <section>
             <b-container class="mb-5">
                 <b-row align-v="end">
-                    <b-col class="pr-0" cols="auto">
+                    <b-col class="pe-0" cols="auto">
                         <div v-if="showDestroyedSwitch" class="d-flex align-items-center">
                             <b-form-checkbox
                                 :checked="showDestroyed"
@@ -16,7 +16,7 @@
                             destroyed cards
                         </div>
                     </b-col>
-                    <b-col class="text-right d-flex justify-content-end pl-0">
+                    <b-col class="text-right d-flex justify-content-end ps-0">
                         <div v-b-tooltip.hover :title="identityVerificationMessage">
                             <b-button
                                 :disabled="!identityVerified"
@@ -47,8 +47,8 @@
                 </b-row>
                 <b-row v-else>
                     <b-col class="py-5 text-center">
-                        <h4 class="font-weight-light">You have no cards.</h4>
-                        <h5 class="font-weight-lighter">
+                        <h4 class="fw-light">You have no cards.</h4>
+                        <h5 class="fw-lighter">
                             Click
                             <b-link to="/managed-cards/add"> add new card</b-link>
                             to create your first card.

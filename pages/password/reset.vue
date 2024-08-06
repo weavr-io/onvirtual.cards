@@ -4,8 +4,8 @@
         <b-card no-body>
             <b-card-body v-if="!passwordSent" class="px-4 mx-2 py-5 p-md-card">
                 <div class="text-center">
-                    <h2 class="font-weight-lighter">Reset Password</h2>
-                    <h5 class="font-weight-lighter mt-4">
+                    <h2 class="fw-lighter">Reset Password</h2>
+                    <h5 class="fw-lighter mt-4">
                         Insert the email you created the account with and we’ll send instructions to
                         reset your password.
                     </h5>
@@ -41,8 +41,8 @@
             <b-card v-else class="overflow-hidden" no-body>
                 <b-card-body class="px-4 mx-2 py-5 p-md-card">
                     <div class="text-center">
-                        <h2 class="font-weight-lighter">Email sent</h2>
-                        <h5 class="font-weight-lighter mt-4">
+                        <h2 class="fw-lighter">Email sent</h2>
+                        <h5 class="fw-lighter mt-4">
                             Check your email for a reset link. If you don’t receive this within 5
                             minutes, click the link below to resend.
                         </h5>

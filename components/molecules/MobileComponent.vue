@@ -1,7 +1,7 @@
 <template>
     <div class="mb-5">
         <b-card class="px-4 py-5 p-md-card">
-            <h3 class="font-weight-light text-center">
+            <h3 class="fw-light text-center">
                 <slot name="title"></slot>
             </h3>
             <b-row align-h="center">

@@ -3,7 +3,7 @@
         <b-container>
             <b-row>
                 <b-col>
-                    <h2 class="text-center font-weight-lighter mb-5">Invite User</h2>
+                    <h2 class="text-center fw-lighter mb-5">Invite User</h2>
                 </b-col>
             </b-row>
             <b-row align-h="center">

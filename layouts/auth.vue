@@ -4,7 +4,7 @@
             <b-navbar class="fixed-top auth-nav-bar" variant="card">
                 <b-container>
                     <b-collapse id="nav_collapse" is-nav>
-                        <b-navbar-nav class="ml-auto">
+                        <b-navbar-nav class="ms-auto">
                             <b-nav-item v-if="showRegister && !isLoggedIn" to="/register"
                                 >Register
                             </b-nav-item>

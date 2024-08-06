@@ -3,7 +3,7 @@
         <b-container>
             <b-row class="border-bottom mb-3">
                 <b-col>
-                    <h3 class="font-weight-light">Users</h3>
+                    <h3 class="fw-light">Users</h3>
                 </b-col>
             </b-row>
             <b-row class="mb-5">
@@ -18,7 +18,7 @@
                         <b-img v-bind="mainProps" :alt="user.name + ' ' + user.surname" rounded />
                     </b-col>
                     <b-col>{{ user.name }} {{ user.surname }}</b-col>
-                    <b-col class="text-muted font-weight-light">
+                    <b-col class="text-muted fw-light">
                         {{ user.email }}
                     </b-col>
                 </b-row>

@@ -3,7 +3,7 @@
         <LogoOvc :link="false" classes="pb-5" />
         <div class="mb-5">
             <b-card class="px-4 py-5 p-md-card">
-                <h3 class="font-weight-light text-center">Check your inbox!</h3>
+                <h3 class="fw-light text-center">Check your inbox!</h3>
                 <b-row align-h="center">
                     <b-col class="text-center" md="6">
                         <b-img class="mt-5 mb-2" fluid src="/img/email.svg" />

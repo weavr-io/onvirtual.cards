@@ -14,7 +14,7 @@
                     </b-link>
                 </div>
                 <div>
-                    <b-link class="ml-3" @click="dismissCookie">
+                    <b-link class="ms-3" @click="dismissCookie">
                         <img src="/img/close.svg" width="12px" alt="close" />
                     </b-link>
                 </div>

@@ -4,7 +4,7 @@
             <b-row align-h="center">
                 <b-col lg="4" md="9">
                     <b-card v-if="isCorporate" class="border-0">
-                        <b-card-title class="mb-5 text-center font-weight-lighter">
+                        <b-card-title class="mb-5 text-center fw-lighter">
                             Select Account Currency
                         </b-card-title>
                         <b-form @submit.prevent="doAdd">

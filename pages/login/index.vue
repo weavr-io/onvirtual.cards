@@ -3,7 +3,7 @@
         <LogoOvc classes="mb-5" />
         <div class="mb-3">
             <b-card body-class="px-4 mx-2 py-5 p-md-card">
-                <h3 class="text-center font-weight-light mb-5">Login</h3>
+                <h3 class="text-center fw-light mb-5">Login</h3>
 
                 <form id="contact-form" class="mt-5" @submit.prevent="login">
                     <error-alert
@@ -30,6 +30,7 @@
                         :state="validation.getState('password,value')"
                         label="Password"
                         label-for="password"
+                        class="mb-3"
                     >
                         <client-only placeholder="Loading...">
                             <weavr-password-input
@@ -138,7 +139,6 @@ useState(() => {
     const isLoggedIn = auth?.isLoggedIn
 
     if (isLoggedIn) {
-        console.log('jhadhsjsf', isLoggedIn)
         router.push('/')
     }
 })

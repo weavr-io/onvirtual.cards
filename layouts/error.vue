@@ -3,12 +3,12 @@
         <b-row align-h="center" align-v="center" class="min-vh-100">
             <b-col class="text-center" lg="6" md="9">
                 <template v-if="is404">
-                    <h1 class="font-weight-light">Page not found.</h1>
+                    <h1 class="fw-light">Page not found.</h1>
                     <b-img class="mt-5 mb-4" fluid src="/img/ohsnap.svg"></b-img>
                     <b-button to="/" variant="secondary"> go to dashboard</b-button>
                 </template>
                 <template v-else>
-                    <h1 class="font-weight-light">Oh snap!</h1>
+                    <h1 class="fw-light">Oh snap!</h1>
                     <h5 class="text-grey font-weight-normal">Something is not right.</h5>
                     <b-img class="mt-5 mb-4" fluid src="/img/ohsnap.svg"></b-img>
                     <b-button to="/" variant="secondary"> go to dashboard</b-button>

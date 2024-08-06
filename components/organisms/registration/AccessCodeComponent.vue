@@ -3,7 +3,7 @@
         <b-row class="my-5">
             <b-card body-class="p-6">
                 <b-form @submit.prevent="tryToSubmitAccessCode">
-                    <h3 class="text-center font-weight-light mb-6">
+                    <h3 class="text-center fw-light mb-6">
                         Enter the access code for registration
                     </h3>
                     <template v-if="inviteCodeError.showMsg">

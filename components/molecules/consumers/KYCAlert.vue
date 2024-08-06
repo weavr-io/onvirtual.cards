@@ -2,10 +2,8 @@
     <section>
         <b-container>
             <b-row v-if="isPendingReview" align-h="center">
-                <b-col class="py-3 font-weight-lighter text-center" lg="6" md="9">
-                    <h3 class="font-weight-lighter mb-4">
-                        Your documentation is currently under review.
-                    </h3>
+                <b-col class="py-3 fw-lighter text-center" lg="6" md="9">
+                    <h3 class="fw-lighter mb-4">Your documentation is currently under review.</h3>
                     <p>
                         This process normally takes a few minutes. During busy times, review of
                         documentation may take a bit longer up to 24 hours.
@@ -13,9 +11,9 @@
                 </b-col>
             </b-row>
             <b-row v-else align-h="center">
-                <b-col class="py-3 font-weight-lighter" lg="6" md="9">
+                <b-col class="py-3 fw-lighter" lg="6" md="9">
                     <div>
-                        <h3 class="text-center font-weight-lighter mb-4">We need some documents</h3>
+                        <h3 class="text-center fw-lighter mb-4">We need some documents</h3>
                         <p>
                             We are required by financial services regulations to perform due
                             diligence before allowing you to transact with your account.

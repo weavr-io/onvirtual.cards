@@ -9,7 +9,7 @@
                                 view <br />
                                 details
                             </b-link>
-                            <div class="d-flex flex-column ml-3">
+                            <div class="d-flex flex-column ms-3">
                                 <p class="card-name m-0">
                                     {{ managedCard.nameOnCard }}
                                 </p>
@@ -17,7 +17,7 @@
                                     <span class="card-number">
                                         •••• {{ managedCard.cardNumberLastFour }}
                                     </span>
-                                    <span class="card-expiry ml-2 ml-sm-5">
+                                    <span class="card-expiry ms-2 ms-sm-5">
                                         <span class="card-expiry-label">EXP</span>
                                         <span
                                             v-if="managedCard.expiryMmyy"
@@ -35,7 +35,7 @@
                             <b-button
                                 v-if="isCardActive"
                                 :to="'/transfer?destination=' + managedCard.id"
-                                class="add-funds mr-3"
+                                class="add-funds me-3"
                                 variant="secondary"
                             >
                                 +

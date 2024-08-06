@@ -9,7 +9,7 @@
             <b-row v-else align-h="center">
                 <b-col lg="6" md="9">
                     <b-card class="border-0">
-                        <b-card-title class="mb-5 text-center font-weight-lighter">
+                        <b-card-title class="mb-5 text-center fw-lighter">
                             Create Card
                         </b-card-title>
                         <b-card-body>

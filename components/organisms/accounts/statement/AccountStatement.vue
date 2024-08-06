@@ -4,10 +4,10 @@
             <b-col>
                 <b-row>
                     <b-col cols="10" sm="8">
-                        <h6 class="font-weight-lighter">
+                        <h6 class="fw-lighter">
                             <b-row align-v="center">
-                                <b-col class="pr-0" cols="auto"> All Transactions</b-col>
-                                <b-col class="pl-2" cols="auto">
+                                <b-col class="pe-0" cols="auto"> All Transactions</b-col>
+                                <b-col class="ps-2" cols="auto">
                                     <b-form-select
                                         :options="months"
                                         :value="filterDate"
@@ -22,11 +22,11 @@
                     <b-col class="d-flex justify-content-end" cols="2" sm="4">
                         <div class="d-flex align-items-center">
                             <b-button
-                                class="p-0 d-flex align-items-center font-weight-lighter text-decoration-none no-focus"
+                                class="p-0 d-flex align-items-center fw-lighter text-decoration-none no-focus"
                                 variant="link"
                                 @click="downloadStatement"
                             >
-                                <download-icon class="mr-2" />
+                                <download-icon class="me-2" />
                                 <p class="d-none d-sm-inline mb-0">download</p>
                             </b-button>
                         </div>
@@ -52,7 +52,7 @@
                 </b-row>
                 <b-row v-else-if="availableBalance === 0" class="py-5">
                     <b-col class="text-center">
-                        <h5 class="font-weight-light">Your transactions will appear here.</h5>
+                        <h5 class="fw-light">Your transactions will appear here.</h5>
                         <b-button :to="`/managed-accounts/${account?.id}/topup`" variant="link">
                             Start by topping up your account.
                         </b-button>
