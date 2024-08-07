@@ -51,7 +51,7 @@
             >
                 <RecycleScroller
                     v-slot="{ item }"
-                    :item-size="1"
+                    :item-size="countriesSorted.length"
                     :items="countriesSorted"
                     key-field="iso2"
                 >

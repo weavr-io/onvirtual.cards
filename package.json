@@ -74,12 +74,7 @@
         "*.{css,scss}": "stylelint --fix",
         "*.{js,ts,jsx,vue,scss,css,json,html}": "prettier --write"
     },
-    "overrides": {
-        "@rollup/plugin-json": {
-            "rollup": "2.0.0"
-        },
-        "@rollup/pluginutils": {
-            "rollup": "2.0.0"
-        }
+    "resolutions": {
+        "rollup": "^2.0.0"
     }
 }

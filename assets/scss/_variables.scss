@@ -73,6 +73,9 @@ $spacers: map.merge(
         8: (
             $spacer * 18,
         ),
+        '075': (
+            $spacer * 0.75,
+        ),
         'card': 4rem,
     )
 );

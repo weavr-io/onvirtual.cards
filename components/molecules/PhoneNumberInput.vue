@@ -56,9 +56,9 @@ import {
 } from 'libphonenumber-js'
 import { computed } from 'vue'
 import examples from 'libphonenumber-js/examples.mobile.json'
-import InputTel from '../atoms/PhoneNumberInput/InputTelephone/InputTelephoneIndex.vue'
-import locales from '../atoms/PhoneNumberInput/assets/locales'
-import CountrySelectorIndex from '../atoms/PhoneNumberInput/CountrySelector/CountrySelectorIndex.vue'
+import InputTel from '@/components/atoms/PhoneNumberInput/InputTelephone/InputTelephoneIndex.vue'
+import locales from '@/components/atoms/PhoneNumberInput/assets/locales'
+import CountrySelectorIndex from '@/components/atoms/PhoneNumberInput/CountrySelector/CountrySelectorIndex.vue'
 import {
     countries,
     countriesIso,

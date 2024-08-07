@@ -3,6 +3,7 @@ import { type SelectOptionsModel } from '~/models/local/generic/SelectOptionsMod
 export const DefaultSelectValueConst: SelectOptionsModel = {
     text: 'Select Option',
     value: null,
+    disabled: true,
 }
 
 export const DefaultCurrencySelectValueConst: SelectOptionsModel = {

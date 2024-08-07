@@ -2,6 +2,12 @@ import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 import type { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
 import type { NuxtAxiosInstance } from '@nuxtjs/axios'
 
+declare module 'vue' {
+    interface ComponentCustomProperties {
+        $apiMulti: ApiInterface
+    }
+}
+
 // global, also used in store
 declare module 'nuxt/app' {
     interface NuxtApp {
@@ -34,15 +40,5 @@ declare global {
 
     interface ImportMeta {
         glob: ImportMetaGlob
-    }
-}
-
-import { ReCaptchaInstance } from 'recaptcha-v3'
-
-declare module '@vue/runtime-core' {
-    interface ComponentCustomProperties {
-        $recaptcha: (action: string) => Promise<string>
-        $recaptchaLoaded: () => Promise<boolean>
-        $recaptchaInstance: ReCaptchaInstance
     }
 }

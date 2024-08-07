@@ -16,6 +16,7 @@
                                     "
                                     :state="validation.getState('rootUser,name')"
                                     label="First Name*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.name"
@@ -28,6 +29,7 @@
                                     "
                                     :state="validation.getState('rootUser,surname')"
                                     label="Last Name*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.surname"
@@ -42,6 +44,7 @@
                                             : !!dobInvalidFeedback
                                     "
                                     label="Date of Birth*"
+                                    class="mb-3"
                                 >
                                     <dob-picker
                                         :placeholders="['Day', 'Month', 'Year']"
@@ -60,13 +63,14 @@
                                     "
                                     :state="validation.getState('rootUser,email')"
                                     label="Email*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.email"
                                         placeholder="name@email.com"
                                     />
                                 </b-form-group>
-                                <b-form-group label="MOBILE NUMBER*">
+                                <b-form-group label="MOBILE NUMBER*" class="mb-3">
                                     <phone-number-input
                                         v-model="rootMobileNumber"
                                         :border-radius="0"
@@ -91,11 +95,12 @@
                                     "
                                     :state="validation.getState('rootUser,address,country')"
                                     label="Country*"
+                                    class="mb-3"
                                 >
                                     <b-form-select
                                         v-model="countryModel"
                                         :options="countryOptionsWithDefault"
-                                        placeholder="Registration Country"
+                                        class="custom-select"
                                     />
                                 </b-form-group>
                                 <b-form-group
@@ -104,10 +109,12 @@
                                     "
                                     :state="validation.getState('rootUser,occupation')"
                                     label="Industry*"
+                                    class="mb-3"
                                 >
                                     <b-form-select
                                         v-model="registrationRequest.rootUser.occupation"
                                         :options="industryOccupationOptions"
+                                        class="custom-select"
                                     />
                                 </b-form-group>
                                 <b-form-group
@@ -116,10 +123,12 @@
                                     "
                                     :state="validation.getState('sourceOfFunds')"
                                     label="Source of Funds*"
+                                    class="mb-3"
                                 >
                                     <b-form-select
                                         v-model="registrationRequest.sourceOfFunds"
                                         :options="sourceOfFundsOptions"
+                                        class="custom-select"
                                     />
                                 </b-form-group>
                                 <b-form-group
@@ -129,6 +138,7 @@
                                     "
                                     :state="validation.getState('sourceOfFundsOther')"
                                     label="Other"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.sourceOfFundsOther"
@@ -251,6 +261,7 @@ import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
+import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 
 definePageMeta({
     layout: 'auth',
@@ -289,7 +300,7 @@ const industryOccupationOptions = computed(() => {
 })
 
 const countryModel = computed({
-    get: () => registrationRequest.rootUser.address?.country ?? '',
+    get: () => registrationRequest.rootUser.address?.country ?? null,
     set: (value: string) => {
         if (!registrationRequest.rootUser.address) {
             registrationRequest.rootUser.address = {}
@@ -353,7 +364,7 @@ const isPasswordValid = computed(() => {
 })
 
 useAsyncData(async () => {
-    await $apiMulti.ipify.get().then((ip) => {
+    await ($apiMulti as ApiInterface).ipify.get().then((ip) => {
         registrationRequest.ipAddress = ip.data.ip
     })
 })
@@ -422,7 +433,7 @@ const createPassword = async (rootUserId: IDModel) => {
             value: registrationRequest.password.value as string,
         },
     }
-    await $apiMulti.passwords
+    await ($apiMulti as ApiInterface).passwords
         .store({
             userId: rootUserId,
             data: passwordRequest,

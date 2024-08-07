@@ -42,6 +42,7 @@ import {
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import PersonalDetailsForm from '~/components/organisms/registration/PersonalDetails.vue'
 import RegisterForm from '~/components/organisms/registration/RegisterForm.vue'
+import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 
 definePageMeta({
     layout: 'auth',
@@ -50,11 +51,13 @@ definePageMeta({
 
 const router = useRouter()
 const { $apiMulti } = useNuxtApp()
+
 const { setSCAStorage, showErrorToast } = useBase()
 const { accessCodes, auth, corporates } = useStores(['accessCodes', 'auth', 'corporates'])
 
 const screen = ref(0)
 const passwordStrength = ref(0)
+
 let registrationRequest: CreateCorporateRequest & {
     password?: string
 } = reactive({
@@ -81,7 +84,7 @@ useAsyncData(async () => {
 })
 
 useAsyncData(async () => {
-    await $apiMulti.ipify.get().then((ip) => {
+    await ($apiMulti as ApiInterface).ipify.get().then((ip) => {
         registrationRequest.ipAddress = ip.data.ip
     })
 })
@@ -118,7 +121,8 @@ const createPassword = (rootUserId: IDModel) => {
             value: registrationRequest.password as string,
         },
     }
-    $apiMulti.passwords
+
+    ;($apiMulti as ApiInterface).passwords
         .store({
             userId: rootUserId,
             data: passwordRequest,

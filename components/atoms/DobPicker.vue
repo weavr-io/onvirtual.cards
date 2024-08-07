@@ -1,8 +1,9 @@
 <template>
     <div class="vue-dob-picker">
-        <label :class="labelClass" :style="{ flex: proportions[0] }">
+        <label for="day" :class="labelClass" :style="{ flex: proportions[0] }">
             <div v-if="showLabels !== 'false'">{{ labels[0] }}</div>
-            <select
+            <b-form-select
+                id="day"
                 v-model="day"
                 :class="[dayClass, { 'is-invalid': state?.day === false }]"
                 @blur="onBlur"
@@ -17,11 +18,12 @@
                 <option v-if="daysInMonth >= 29 || isLeapYear" value="29">29</option>
                 <option v-if="daysInMonth >= 30" value="30">30</option>
                 <option v-if="daysInMonth >= 31" value="31">31</option>
-            </select>
+            </b-form-select>
         </label>
-        <label :class="labelClass" :style="{ flex: proportions[1] }">
+        <label for="month" :class="labelClass" :style="{ flex: proportions[1] }">
             <div v-if="showLabels !== 'false'">{{ labels[1] }}</div>
-            <select
+            <b-form-select
+                id="month"
                 v-model="month"
                 :class="[monthClass, { 'is-invalid': state?.month === false }]"
                 @blur="onBlur"
@@ -33,11 +35,12 @@
                 <option v-for="(item, index) in new Array(12)" :key="index" :value="index">
                     {{ getDisplayedMonth(index) }}
                 </option>
-            </select>
+            </b-form-select>
         </label>
-        <label :class="labelClass" :style="{ flex: proportions[2] }">
+        <label for="year" :class="labelClass" :style="{ flex: proportions[2] }">
             <div v-if="showLabels !== 'false'">{{ labels[2] }}</div>
-            <select
+            <b-form-select
+                id="year"
                 v-model="year"
                 :class="[yearClass, { 'is-invalid': state?.year === false }]"
                 @blur="onBlur"
@@ -53,13 +56,12 @@
                 >
                     {{ currentYear - index }}
                 </option>
-            </select>
+            </b-form-select>
         </label>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
 import type { DateTimeFormatOptions } from '~/composables/useLuxon'
 
 const datesInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
