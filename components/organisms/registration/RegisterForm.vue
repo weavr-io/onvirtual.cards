@@ -73,7 +73,7 @@
             </b-col>
         </b-form-row>
         <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
-            <recaptcha-form />
+            <!-- TODO: Update recaptcha <recaptcha-form /> -->
         </div>
         <b-form-row class="mt-5">
             <b-col class="text-center">
@@ -107,6 +107,7 @@ const emit = defineEmits(['submit-form'])
 const { corporates, errors } = useStores(['corporates', 'errors'])
 const { showErrorToast } = useBase()
 const recaptchaField: Ref<typeof RecaptchaForm | null> = ref(null)
+
 const form = reactive<
     LoginWithPassword & {
         acceptedTerms?: boolean

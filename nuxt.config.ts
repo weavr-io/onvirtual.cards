@@ -37,7 +37,6 @@ export default defineNuxtConfig({
             },
             recaptcha: {
                 siteKey: process.env.RECAPTCHA,
-                version: 2,
             },
         },
         app: {
@@ -57,7 +56,7 @@ export default defineNuxtConfig({
                 {
                     hid: 'description',
                     name: 'description',
-                    content: process.env.npm_package_description || '',
+                    content: process.env.npm_package_description ?? '',
                 },
             ],
             script: [
