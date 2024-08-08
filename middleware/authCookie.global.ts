@@ -1,7 +1,9 @@
-import config from '~/config'
+import type { RouteLocationNormalized } from 'vue-router'
+import type { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication'
 import { useAuthStore } from '~/store/auth'
+import config from '~/config'
 
-const scaCheck = (route) => {
+const scaCheck = async (route) => {
     if (
         !route.name?.startsWith('register') &&
         !route.name?.startsWith('profile-address') &&
@@ -9,20 +11,20 @@ const scaCheck = (route) => {
         !route.name?.startsWith('profile-mobile-add') &&
         localStorage.getItem('stepUp') === 'FALSE'
     ) {
-        return navigateTo('/login/sca')
+        return await navigateTo('/login/sca')
     }
 }
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized) => {
     const auth = useAuthStore()
     const authCookie = useCookie(config.ONV_COOKIE_NAME)
 
     if (authCookie.value) {
         try {
-            const authCookieJson = JSON.parse(authCookie.value)
-            await auth.setAuth(authCookieJson)
+            const authCookieJson = authCookie.value as unknown as LoginWithPasswordResponse
+            auth.setAuth(authCookieJson)
 
-            scaCheck(to)
+            await scaCheck(to)
         } catch (err) {
             // No valid cookie found
             await auth.logout()

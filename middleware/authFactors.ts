@@ -10,8 +10,6 @@ export default defineNuxtRouteMiddleware(() => {
         (factor) => factor.channel === SCAOtpChannelEnum.SMS,
     )
 
-    console.log('trace', identity?.identityState.emailVerified)
-
     if (
         auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT &&
         !identity?.identityState.emailVerified

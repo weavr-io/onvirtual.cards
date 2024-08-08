@@ -125,7 +125,8 @@ export default defineNuxtConfig({
     },
     modules: ['@pinia/nuxt', '@bootstrap-vue-next/nuxt'],
     routeRules: {
-        '/': { prerender: true },
+        '/login': { prerender: true },
+        /* look at more pages to pre render */
     },
     router: {
         options: {
