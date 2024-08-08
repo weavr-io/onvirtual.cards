@@ -59,6 +59,7 @@ $theme-colors: map.merge(
         'bg-colored': $body-bg-colored,
         'secondary': $secondary,
         'muted': $text-muted,
+        'white': $body-bg,
     )
 );
 $spacers: map.merge(

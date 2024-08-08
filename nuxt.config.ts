@@ -124,6 +124,9 @@ export default defineNuxtConfig({
         transpile: ['bootstrap-vue-next', 'vue3-virtual-scroller'],
     },
     modules: ['@pinia/nuxt', '@bootstrap-vue-next/nuxt'],
+    routeRules: {
+        '/': { prerender: true },
+    },
     router: {
         options: {
             linkActiveClass: 'active',

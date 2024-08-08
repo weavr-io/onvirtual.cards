@@ -23,6 +23,7 @@
                         <b-form-group
                             :invalid-feedback="validation.getInvalidFeedback('verificationCode')"
                             :state="validation.getState('verificationCode')"
+                            class="mb-3"
                         >
                             <b-form-input
                                 v-model="request.verificationCode"
@@ -117,6 +118,25 @@ const dismissSecs = ref<number>(60)
 const dismissCountDown = ref<number | boolean>(0)
 const validation = computed(() => useZodValidation(AuthVerifyEnrolSchema, request))
 
+const showAlert = () => {
+    dismissCountDown.value = dismissSecs.value
+}
+
+const sendSms = async () => {
+    showAlert()
+    isLoading.value = true
+    if (props.verifyPhone) {
+        await auth
+            ?.enrollAuthFactors(SCAOtpChannelEnum.SMS)
+            .finally(() => (isLoading.value = false))
+    } else {
+        await auth
+            ?.enrollStepUp(SCAOtpChannelEnum.SMS)
+            .then(() => localStorage.setItem('scaSmsSent', 'TRUE'))
+            .finally(() => (isLoading.value = false))
+    }
+}
+
 useAsyncData(async () => {
     if (
         route.query.send === 'true' &&
@@ -138,25 +158,6 @@ const getConsumersOrCorporates = () => {
 
 const countDownChanged = (countDown: number) => {
     dismissCountDown.value = countDown
-}
-
-const showAlert = () => {
-    dismissCountDown.value = dismissSecs.value
-}
-
-const sendSms = async () => {
-    showAlert()
-    isLoading.value = true
-    if (props.verifyPhone) {
-        await auth
-            ?.enrollAuthFactors(SCAOtpChannelEnum.SMS)
-            .finally(() => (isLoading.value = false))
-    } else {
-        await auth
-            ?.enrollStepUp(SCAOtpChannelEnum.SMS)
-            .then(() => localStorage.setItem('scaSmsSent', 'TRUE'))
-            .finally(() => (isLoading.value = false))
-    }
 }
 
 const doVerify = async () => {

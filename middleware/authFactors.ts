@@ -10,11 +10,13 @@ export default defineNuxtRouteMiddleware(() => {
         (factor) => factor.channel === SCAOtpChannelEnum.SMS,
     )
 
+    console.log('trace', identity?.identityState.emailVerified)
+
     if (
         auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT &&
         !identity?.identityState.emailVerified
     ) {
-        // return navigateTo('/login/verify')
+        return navigateTo('/login/verify')
     } else if (
         !smsAuthFactors ||
         smsAuthFactors[0].status === SCAFactorStatusEnum.PENDING_VERIFICATION

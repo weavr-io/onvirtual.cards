@@ -1,6 +1,7 @@
 import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 import type { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
 import type { NuxtAxiosInstance } from '@nuxtjs/axios'
+import 'bootstrap-vue-next'
 
 declare module 'vue' {
     interface ComponentCustomProperties {
@@ -40,5 +41,11 @@ declare global {
 
     interface ImportMeta {
         glob: ImportMetaGlob
+    }
+}
+
+declare module 'bootstrap-vue-next' {
+    export interface BaseColorVariant {
+        white: 'white'
     }
 }
