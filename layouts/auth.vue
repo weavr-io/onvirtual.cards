@@ -58,4 +58,10 @@ const showLogin = computed(() => {
 const showRegister = computed(() => {
     return !showLogin.value
 })
+
+useHead({
+    bodyAttrs: {
+        class: 'bg-bg-colored',
+    },
+})
 </script>

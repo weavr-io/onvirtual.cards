@@ -136,7 +136,7 @@ const passwordInteraction = (val: { empty?: boolean; valid?: boolean }) => {
     !val?.empty ? (loginRequest.password.value = '******') : (loginRequest.password.value = '')
 }
 
-useState(() => {
+onMounted(() => {
     const isLoggedIn = auth?.isLoggedIn
 
     if (isLoggedIn) {

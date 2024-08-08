@@ -117,7 +117,6 @@ export default defineNuxtConfig({
         { src: '~/plugins/axios-accessor.ts' },
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
-        { src: '~/plugins/auth-body-class.ts' },
         { src: '~/plugins/virtual-scroller.ts' },
         { src: '~/plugins/recaptcha/main.ts' },
     ],

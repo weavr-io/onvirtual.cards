@@ -9,7 +9,6 @@ export default defineNuxtRouteMiddleware(() => {
     const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
         (factor) => factor.channel === SCAOtpChannelEnum.SMS,
     )
-    console.log('fast', !identity?.identityState.emailVerified)
 
     if (
         auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT &&
@@ -24,5 +23,4 @@ export default defineNuxtRouteMiddleware(() => {
     } else if (localStorage.getItem('stepUp') === 'TRUE') {
         return navigateTo('/')
     }
-    console.log('slow', identity?.identityState.emailVerified)
 })
