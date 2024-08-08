@@ -35,10 +35,7 @@ const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
 
 onMounted(() => {
     auth?.indexAuthFactors()
-    console.log(
-        'and',
-        smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION,
-    )
+
     if (smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION) {
         return router.push('/')
     }

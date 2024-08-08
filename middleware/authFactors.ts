@@ -9,21 +9,20 @@ export default defineNuxtRouteMiddleware(() => {
     const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
         (factor) => factor.channel === SCAOtpChannelEnum.SMS,
     )
+    console.log('fast', !identity?.identityState.emailVerified)
 
     if (
         auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT &&
         !identity?.identityState.emailVerified
     ) {
-        console.log('oops1')
-        return navigateTo('/login/verify')
+        // return navigateTo('/login/verify')
     } else if (
         !smsAuthFactors ||
         smsAuthFactors[0].status === SCAFactorStatusEnum.PENDING_VERIFICATION
     ) {
-        console.log('oops2')
         return navigateTo('/profile/mobile/add')
     } else if (localStorage.getItem('stepUp') === 'TRUE') {
-        console.log('oops3')
         return navigateTo('/')
     }
+    console.log('slow', identity?.identityState.emailVerified)
 })

@@ -21,7 +21,6 @@ useAsyncData(async () => {
         router.replace('/login')
     } else {
         if (identity?.identityState.identity === null) {
-            console.log('stro1')
             await identity!.getIdentity()
         }
 
@@ -29,19 +28,15 @@ useAsyncData(async () => {
             const email = window.encodeURIComponent(
                 identity!.identityState.identity!.rootUser?.email,
             )
-            console.log('stro2')
             router.replace(`/login/verify?send=true&email=${email}`)
         } else if (!identity!.identityState.mobileNumberVerified) {
-            console.log('stro3')
             router.replace('/login/verify/mobile')
         } else if (
             identity!.identityState.identity &&
             typeof identity!.identityState.identity.rootUser === 'undefined'
         ) {
-            console.log('stro4')
             router.replace('/profile/address')
         } else {
-            console.log('stro5')
             router.replace('/dashboard')
         }
     }
