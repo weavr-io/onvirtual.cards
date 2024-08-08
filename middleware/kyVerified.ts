@@ -40,6 +40,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
                     return navigateTo('/managed-accounts')
                 }
             } catch (_) {
+                console.log('error type shit')
                 if (checkInstrument(String(to.name))) {
                     return navigateTo('/managed-accounts/kyb')
                 }

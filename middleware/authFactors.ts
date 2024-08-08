@@ -14,13 +14,16 @@ export default defineNuxtRouteMiddleware(() => {
         auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT &&
         !identity?.identityState.emailVerified
     ) {
+        console.log('oops1')
         return navigateTo('/login/verify')
     } else if (
         !smsAuthFactors ||
         smsAuthFactors[0].status === SCAFactorStatusEnum.PENDING_VERIFICATION
     ) {
+        console.log('oops2')
         return navigateTo('/profile/mobile/add')
     } else if (localStorage.getItem('stepUp') === 'TRUE') {
+        console.log('oops3')
         return navigateTo('/')
     }
 })

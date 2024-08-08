@@ -29,13 +29,16 @@ const router = useRouter()
 
 const { auth } = useStores(['auth'])
 
-useState(() => auth?.indexAuthFactors())
-
 const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
     (factor) => factor.channel === SCAOtpChannelEnum.SMS,
 )
 
 onMounted(() => {
+    auth?.indexAuthFactors()
+    console.log(
+        'and',
+        smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION,
+    )
     if (smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION) {
         return router.push('/')
     }

@@ -122,7 +122,7 @@ export default defineNuxtConfig({
         { src: '~/plugins/recaptcha/main.ts' },
     ],
     build: {
-        transpile: ['bootstrap-vue-next'],
+        transpile: ['bootstrap-vue-next', 'vue3-virtual-scroller'],
     },
     modules: ['@pinia/nuxt', '@bootstrap-vue-next/nuxt'],
     router: {

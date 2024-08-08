@@ -15,7 +15,7 @@
             "~/*": ["./*"],
             "@/*": ["./*"]
         },
-        "types": ["@types/node", "nuxt", "@pinia/nuxt"]
+        "types": ["@types/node", "nuxt", "@nuxtjs/axios", "@pinia/nuxt"]
     },
     "exclude": ["dist", "node_modules"],
     "importHelpers": true,
