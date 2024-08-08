@@ -3,7 +3,7 @@ import type { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models
 import { useAuthStore } from '~/store/auth'
 import config from '~/config'
 
-const scaCheck = async (route) => {
+const scaCheck = (route) => {
     if (
         !route.name?.startsWith('register') &&
         !route.name?.startsWith('profile-address') &&
@@ -11,8 +11,10 @@ const scaCheck = async (route) => {
         !route.name?.startsWith('profile-mobile-add') &&
         localStorage.getItem('stepUp') === 'FALSE'
     ) {
-        return await navigateTo('/login/sca')
+        return '/login/sca'
     }
+
+    return null
 }
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized) => {
@@ -24,7 +26,11 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized) => 
             const authCookieJson = authCookie.value as unknown as LoginWithPasswordResponse
             auth.setAuth(authCookieJson)
 
-            await scaCheck(to)
+            const redirectPath = scaCheck(to)
+
+            if (redirectPath) {
+                return navigateTo(redirectPath)
+            }
         } catch (err) {
             // No valid cookie found
             await auth.logout()

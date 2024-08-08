@@ -188,7 +188,7 @@ const goToDashboard = async () => {
     }
 
     await auth?.indexAuthFactors()
-    console.log('hung')
+
     await router.push({
         path: '/login/sca',
         query: {
