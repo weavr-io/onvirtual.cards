@@ -48,7 +48,7 @@ const onChange = (val) => {
 }
 
 onMounted(() => {
-    _span.value = $weavrComponents.display.cardNumber(props.token, spanOptions.value)
+    _span.value = ($weavrComponents as any).display.cardNumber(props.token, spanOptions.value)
     _span.value.mount(captureContainer.value)
     _addListeners()
 })

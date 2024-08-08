@@ -19,6 +19,8 @@ const props = withDefaults(
 )
 
 onMounted(() => {
-    $weavrComponents.capture.consumerKyc(props.reference).mount('#consumer-kyc', props.options)
+    ;($weavrComponents as any).capture
+        .consumerKyc(props.reference)
+        .mount('#consumer-kyc', props.options)
 })
 </script>

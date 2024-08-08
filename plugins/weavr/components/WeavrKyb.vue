@@ -24,7 +24,7 @@ const message = (value) => {
 }
 
 onMounted(() => {
-    $weavrComponents.capture
+    ;($weavrComponents as any).capture
         .corporateKyb(props.reference)
         .mount('#kyb-container', { ...props.options, onMessage: sumsubMessage })
 })

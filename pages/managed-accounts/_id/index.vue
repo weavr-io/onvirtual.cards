@@ -32,7 +32,7 @@ const { accounts } = useStores(['accounts'])
 const { pendingDataOrError } = useBase()
 const { hasAlert } = useKyVerified()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
-
+accounts?.setStatements(null)
 const filters: Ref<GetManagedAccountStatementRequest | undefined> = ref(undefined)
 const page = ref(0)
 const usingFetch = ref(true)
@@ -76,10 +76,6 @@ const getStatements = async () => {
     page.value = 0
     await accounts?.getStatements(_req)
 }
-
-useState(() => {
-    accounts?.setStatements(null)
-})
 
 useAsyncData(async () => {
     await getStatements().finally(() => (usingFetch.value = false))

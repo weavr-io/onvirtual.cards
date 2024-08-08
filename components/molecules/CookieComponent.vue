@@ -26,10 +26,10 @@
 import config from '~/config'
 
 const cookieConsent = useCookie(config.ONV_COOKIE_NAME)
-const showCookieAlert = ref<string | boolean>(cookieConsent.value as string)
+const showCookieAlert = ref<boolean>(!!cookieConsent.value)
 
 const dismissCookie = () => {
-    cookieConsent.value = 'true'
+    cookieConsent.value = undefined
     showCookieAlert.value = false
 }
 </script>

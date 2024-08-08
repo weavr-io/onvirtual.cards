@@ -7,7 +7,7 @@
             no-body
         >
             <b-card-body class="card-body onvirtual-card overflow-hidden shadow-hover-sm">
-                <b-aspect :aspect="'1.6:1'" class="overflow-hidden">
+                <div class="ratio-card overflow-hidden">
                     <b-overlay :show="localIsBusy" class="overflow-hidden h-100" spinner-small>
                         <b-link :to="statementsLink">
                             <b-container class="p-0" fluid>
@@ -65,7 +65,7 @@
                     >
                         <i class="bi bi-three-dots-vertical"></i>
                     </b-button>
-                </b-aspect>
+                </div>
             </b-card-body>
         </b-card>
         <transition mode="out-in" name="fade">
@@ -195,3 +195,9 @@ const unblocked = () => {
     emit('unblocked')
 }
 </script>
+
+<style lang="scss" scoped>
+.ratio-card {
+    --bs-aspect-ratio: 62.5%;
+}
+</style>

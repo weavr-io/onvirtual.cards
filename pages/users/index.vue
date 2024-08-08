@@ -44,6 +44,7 @@ definePageMeta({
 
 const { pendingDataOrError } = useBase()
 const { users: usersStores } = useStores(['users'])
+usersStores?.index()
 
 const mainProps = {
     blank: true,
@@ -54,9 +55,5 @@ const mainProps = {
 
 const users = computed(() => {
     return usersStores?.userState.users
-})
-
-useState(() => {
-    usersStores?.index()
 })
 </script>

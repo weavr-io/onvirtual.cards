@@ -24,7 +24,7 @@ const message = (value) => {
 }
 
 onMounted(() => {
-    $weavrComponents.capture
+    ;($weavrComponents as any).capture
         .beneficiariesKyc(props.reference)
         .mount('#director-kyc', { ...props.options, onMessage: sumsubMessage })
 })

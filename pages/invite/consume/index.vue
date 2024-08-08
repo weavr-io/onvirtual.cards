@@ -117,7 +117,7 @@ const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = comp
     }
 })
 
-useState(() => {
+const updateInviteForm = () => {
     try {
         const _consumeInviteRequest: { id: IDModel; data: InviteConsumeRequestModel } = {
             id: route.query.user_id!.toString(),
@@ -133,9 +133,9 @@ useState(() => {
     } catch (_) {
         showErrorI.value = true
     }
-})
+}
 
-useState(() => {
+const validateInviteForm = () => {
     try {
         const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
             id: route.query.user_id!.toString(),
@@ -146,6 +146,11 @@ useState(() => {
 
         users?.inviteValidate(_validateRequest).catch(handleError)
     } catch (_) {}
+}
+
+onBeforeMount(() => {
+    updateInviteForm()
+    validateInviteForm()
 })
 
 const strengthCheck = (val) => {

@@ -70,6 +70,26 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
+
+const sendVerifyEmail = async () => {
+    isLoading.value = true
+
+    try {
+        if (route.query.cons) {
+            await sendVerifyEmailConsumers()
+        } else {
+            // else treat as corporate
+            await sendVerifyEmailCorporates()
+        }
+    } catch (e) {}
+
+    removeLoader()
+}
+
+if (route.query.send === 'true') {
+    await sendVerifyEmail()
+}
+
 const { auth, identity, consumers, corporates, errors } = useStores([
     'auth',
     'identity',
@@ -124,27 +144,6 @@ useAsyncData(async () => {
 
     verifyEmailRequest = request
 })
-
-useState(async () => {
-    if (route.query.send === 'true') {
-        await sendVerifyEmail()
-    }
-})
-
-const sendVerifyEmail = async () => {
-    isLoading.value = true
-
-    try {
-        if (route.query.cons) {
-            await sendVerifyEmailConsumers()
-        } else {
-            // else treat as corporate
-            await sendVerifyEmailCorporates()
-        }
-    } catch (e) {}
-
-    removeLoader()
-}
 
 const sendVerifyEmailConsumers = async () => {
     await consumers?.sendVerificationCodeEmail({

@@ -131,7 +131,7 @@ const isPasswordValid = computed(() => {
     return passwordStrength.value >= 2
 })
 
-useState(() => {
+onBeforeMount(() => {
     try {
         form.nonce = route.params.nonce.toString()
         form.email = route.params.email.toString()

@@ -28,16 +28,13 @@ definePageMeta({
 const router = useRouter()
 
 const { auth } = useStores(['auth'])
+auth?.indexAuthFactors()
 
 const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
     (factor) => factor.channel === SCAOtpChannelEnum.SMS,
 )
 
-onMounted(() => {
-    auth?.indexAuthFactors()
-
-    if (smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION) {
-        return router.push('/')
-    }
-})
+if (smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION) {
+    router.push('/')
+}
 </script>

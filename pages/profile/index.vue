@@ -146,7 +146,7 @@ const isEmailVerified = computed(() => {
         : corporate.value?.rootUser.emailVerified
 })
 
-useState(() => {
+onBeforeMount(() => {
     Object.assign(updateIdentityRootUser, {
         mobile: {
             countryCode: isConsumer.value

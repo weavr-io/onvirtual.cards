@@ -166,7 +166,7 @@ const showNameOnCardField = computed(() => {
     )
 })
 
-useState(() => {
+onBeforeMount(() => {
     if (auth?.isConsumer) {
         const _consumer = consumers?.consumerState.consumer as unknown as ConsumerModel
         createManagedCardRequest.nameOnCard = `${_consumer.rootUser.name} ${_consumer.rootUser.surname}`

@@ -185,7 +185,7 @@ const onFocus = () => {
     window.clearTimeout(blurTimeout.value)
 }
 
-onBeforeMount(() => {
+onMounted(() => {
     date.value = props.value
 })
 </script>

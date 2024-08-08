@@ -63,7 +63,7 @@ const redirectToAccountPage = async () => {
     }
 }
 
-onMounted(() => {
+onBeforeMount(() => {
     KycApproved()
 })
 </script>

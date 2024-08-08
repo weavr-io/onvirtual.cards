@@ -51,7 +51,7 @@ const _input = computed({
 })
 
 onMounted(() => {
-    _input.value = $weavrComponents.capture.password(props.name, inputOptions.value)
+    _input.value = ($weavrComponents as any).capture.password(props.name, inputOptions.value)
     _input.value?.mount(captureContainer.value)
     _addListeners(_input.value)
 })

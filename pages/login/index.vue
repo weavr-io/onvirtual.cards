@@ -100,6 +100,7 @@ definePageMeta({
 const router = useRouter()
 const { showErrorToast } = useBase()
 const { auth, consumers, errors } = useStores(['auth', 'consumers', 'errors'])
+const isLoggedIn = auth?.isLoggedIn
 
 const isLoading = ref(false)
 const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
@@ -136,13 +137,9 @@ const passwordInteraction = (val: { empty?: boolean; valid?: boolean }) => {
     !val?.empty ? (loginRequest.password.value = '******') : (loginRequest.password.value = '')
 }
 
-onMounted(() => {
-    const isLoggedIn = auth?.isLoggedIn
-
-    if (isLoggedIn) {
-        router.push('/')
-    }
-})
+if (isLoggedIn) {
+    router.push('/')
+}
 
 const login = async () => {
     isLoading.value = true

@@ -142,7 +142,7 @@ const industryOccupationOptions = computed(() => {
     return IndustryTypeSelectConst
 })
 
-useState(() => {
+onBeforeMount(() => {
     if (isConsumer.value && consumer.value) {
         if (Object.keys(consumer.value.rootUser.address as Address).length) {
             Object.assign(address, consumer.value.rootUser.address)
