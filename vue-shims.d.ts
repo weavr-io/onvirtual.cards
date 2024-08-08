@@ -47,5 +47,6 @@ declare global {
 declare module 'bootstrap-vue-next' {
     export interface BaseColorVariant {
         white: 'white'
+        'border-primary': 'border-primary'
     }
 }

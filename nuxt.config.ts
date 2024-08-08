@@ -107,7 +107,7 @@ export default defineNuxtConfig({
         },
     },
     spaLoadingTemplate: true,
-    css: ['~/assets/scss/style.scss'],
+    css: ['~/assets/scss/style.scss', 'bootstrap-icons/font/bootstrap-icons.css'],
     plugins: [
         { src: '~/plugins/weavr/security.client.ts' },
         { src: '~/plugins/WeavrVueFilters.ts' },

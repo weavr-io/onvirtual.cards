@@ -63,7 +63,7 @@
                         class="card-options-button"
                         @click="toggleShowOptions"
                     >
-                        <b-icon-three-dots-vertical />
+                        <i class="bi bi-three-dots-vertical"></i>
                     </b-button>
                 </b-aspect>
             </b-card-body>
