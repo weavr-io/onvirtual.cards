@@ -38,11 +38,12 @@ import {
 } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
 import useZodValidation from '~/composables/useZodValidation'
 
+/*
 interface IFormattedAccounts {
     value: string
     text: string
     html: string
-}
+} */
 
 const emit = defineEmits(['submit-form'])
 const { accounts } = useStores(['accounts'])
@@ -51,7 +52,7 @@ const source = reactive<InstrumentID>(INITIAL_INSTRUMENT_ID())
 const validation = computed(() => useZodValidation(InstrumentIDSchema, source))
 const accountData = computed(() => accounts?.accountState.accounts)
 
-const formattedAccounts: ComputedRef<IFormattedAccounts[]> = computed(() => {
+const formattedAccounts = computed(() => {
     if (!accountData.value?.accounts) return []
 
     const _accounts = accountData.value?.accounts.filter((account) => {

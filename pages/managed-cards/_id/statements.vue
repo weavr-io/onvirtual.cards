@@ -199,8 +199,7 @@ const expiryDate = computed(() => {
 
 useAsyncData(async () => {
     page.value = 0
-
-    $weavrSetUserToken(`Bearer ${auth?.token}`)
+    ;($weavrSetUserToken as (token: string) => void)(`Bearer ${auth?.token}`)
 
     await cards?.getManagedCard(cardId.value as string)
     await fetchCardStatements()
@@ -264,7 +263,7 @@ const infiniteScroll = ($state) => {
 }
 
 const toggleModal = () => {
-    $bvModal.show('cardModal')
+    ;($bvModal as any).show('cardModal')
 }
 
 watch(route, fetchCardStatements)

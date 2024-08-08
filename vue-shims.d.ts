@@ -24,6 +24,12 @@ declare module 'nuxt/app' {
     }
 }
 
+declare module '@vue/runtime-core' {
+    interface ComponentCustomProperties {
+        $weavrSetUserToken: (token: string) => {}
+    }
+}
+
 export interface WeavrToast {
     (message: string, options?: any): void // TODO: try BModalOrchestrator
 }
@@ -48,5 +54,10 @@ declare module 'bootstrap-vue-next' {
     export interface BaseColorVariant {
         white: 'white'
         'border-primary': 'border-primary'
+        'grey-light': 'grey-light'
+        card: 'card'
+        'bg-colored': 'bg-colored'
+        transparent: 'transparent'
+        'card-purple': 'card-purple'
     }
 }
