@@ -38,8 +38,10 @@
                 <b-col class="pb-2">
                     <b-row align-h="end" align-v="end">
                         <div v-if="hasCards" class="account-balance">
-                            <p class="mb-0 text-muted account-balance-label">total balance</p>
-                            <p v-if="cardCurrency" class="mb-0 account-balance-value">
+                            <p class="mb-0 text-muted account-balance-label text-end">
+                                total balance
+                            </p>
+                            <p v-if="cardCurrency" class="mb-0 account-balance-value text-end">
                                 {{ currency }}
                             </p>
                         </div>

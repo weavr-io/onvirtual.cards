@@ -99,23 +99,26 @@ const cardStateFilters = computed(() => {
         : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
 })
 
-const getAndShowCards = () => {
-    return getCards(cardStateFilters.value).then(() => {
-        return cardsStore?.hasDestroyedCards().then((res) => {
-            showDestroyedSwitch.value = res
-        })
-    })
-}
-
-useAsyncData(async () => {
-    await getAndShowCards()
-})
-
 const getCards = async (_state: ManagedInstrumentStateEnum[]) => {
     await cardsStore?.getCards({
         state: _state.join(','),
     })
 }
+
+const getAndShowCards = async () => {
+    try {
+        await getCards(cardStateFilters.value)
+
+        const hasDestroyed = await cardsStore?.hasDestroyedCards()
+        showDestroyedSwitch.value = !!hasDestroyed
+    } catch (e) {
+        throw new Error('Error finding cards')
+    }
+}
+
+useAsyncData(async () => {
+    await getAndShowCards()
+})
 
 const showDestroyedChanged = async (val) => {
     await router.push({

@@ -1,3 +1,4 @@
+import type { RouteLocationNormalized } from 'vue-router'
 import { useStores } from '~/composables/useStores'
 
 const checkInstrument = (name: string) => {
@@ -8,7 +9,7 @@ const checkInstrument = (name: string) => {
     )
 }
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized) => {
     const { auth, consumers, corporates } = useStores(['auth', 'consumers', 'corporates'])
 
     if (auth?.isLoggedIn) {

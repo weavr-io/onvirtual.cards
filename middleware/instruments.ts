@@ -1,7 +1,8 @@
+import type { RouteLocationNormalized } from 'vue-router'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { useStores } from '~/composables/useStores'
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized) => {
     // this will run in async before every route change in order to populate identities respectively
     const { auth, accounts } = useStores(['auth', 'accounts'])
     const { profileId } = useRuntimeConfig().public

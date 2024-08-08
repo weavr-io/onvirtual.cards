@@ -1,3 +1,4 @@
+import type { RouteLocationNormalized } from 'vue-router'
 import { useAccessCodesStore } from '~/store/accessCodes'
 
 const accessCode = () => {
@@ -5,7 +6,7 @@ const accessCode = () => {
     return accessCode !== null ? +accessCode : undefined
 }
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized) => {
     if (!useRuntimeConfig().public.production) return
 
     try {

@@ -1,6 +1,7 @@
+import type { RouteLocationNormalized } from 'vue-router'
 import config from '~/config'
 
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware((to: RouteLocationNormalized) => {
     const authCookie = useCookie(config.ONV_COOKIE_NAME)
 
     if (!authCookie.value) {
