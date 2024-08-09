@@ -10,7 +10,7 @@
                         id="transaction-timeframe"
                         :options="months"
                         :value="filterDate"
-                        class="w-auto d-inline-block ps-2"
+                        class="w-auto d-inline-block ps-2 custom-select"
                         @change="filterMonthChange"
                     />
                 </div>
@@ -58,6 +58,7 @@
         </b-row>
     </div>
 </template>
+
 <script lang="ts" setup>
 import dot from 'dot-object'
 import type { AxiosError } from 'axios'
@@ -74,8 +75,8 @@ import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEn
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/InstrumentEnum'
 import StatementItem from '~/components/organisms/StatementItem.vue'
-import DownloadIcon from '~/assets/svg/download.svg?raw'
-import DeleteIcon from '~/assets/svg/delete.svg?raw'
+import DownloadIcon from '~/assets/svg/download.svg'
+import DeleteIcon from '~/assets/svg/delete.svg'
 
 const props = defineProps({
     filters: {

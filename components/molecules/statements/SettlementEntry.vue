@@ -10,14 +10,9 @@
                         "
                         alt="Cash Withdrawal"
                         loading="lazy"
-                        src="@/assets/svg/statement/atm_withdrawal.svg"
+                        :src="atmWithdrawalIcon"
                     />
-                    <img
-                        v-else
-                        alt="Settlement"
-                        loading="lazy"
-                        src="@/assets/svg/statement/settlement.svg"
-                    />
+                    <img v-else alt="Settlement" loading="lazy" :src="settlementIcon" />
                 </div>
             </div>
         </b-col>
@@ -67,6 +62,8 @@ import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/manag
 import { weavrCurrency, weavrCurrencySymbol } from '~/utils/helper'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
+import settlementIcon from '@/assets/svg/statement/settlement.svg?url'
+import atmWithdrawalIcon from '@/assets/svg/statement/atm_withdrawal.svg?url'
 
 const props = defineProps({
     transaction: {

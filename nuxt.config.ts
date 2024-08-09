@@ -9,7 +9,10 @@ export default defineNuxtConfig({
     vite: {
         plugins: [
             svgLoader({
-                defaultImport: 'url',
+                defaultImport: 'component',
+                svgoConfig: {
+                    multipass: true,
+                },
             }),
         ],
     },
@@ -124,10 +127,6 @@ export default defineNuxtConfig({
         transpile: ['bootstrap-vue-next', 'vue3-virtual-scroller'],
     },
     modules: ['@pinia/nuxt', '@bootstrap-vue-next/nuxt'],
-    routeRules: {
-        '/login': { prerender: true },
-        /* look at more pages to pre render */
-    },
     router: {
         options: {
             linkActiveClass: 'active',

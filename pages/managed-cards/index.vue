@@ -121,12 +121,15 @@ useAsyncData(async () => {
 })
 
 const showDestroyedChanged = async (val) => {
+    const status = val.target.checked
     await router.push({
         path: route.path,
-        query: { showDestroyed: val },
+        query: { showDestroyed: status },
     })
 
-    const state = val ? [] : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
+    const state = status
+        ? []
+        : [ManagedInstrumentStateEnum.ACTIVE, ManagedInstrumentStateEnum.BLOCKED]
 
     await getCards(state).catch(() => {})
 }

@@ -133,7 +133,7 @@ useAsyncData(async () => {
                 ?.startKYB()
                 .then((res) => {
                     reference.value = res.data.reference
-                    $weavrSetUserToken('Bearer ' + auth?.token)
+                    ;($weavrSetUserToken as (token: string) => void)('Bearer ' + auth?.token)
                 })
                 .catch((res) => {
                     if (res.response.data.errorCode) {

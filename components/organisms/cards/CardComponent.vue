@@ -9,7 +9,7 @@
             <b-card-body class="card-body onvirtual-card overflow-hidden shadow-hover-sm">
                 <div class="ratio-card overflow-hidden">
                     <b-overlay :show="localIsBusy" class="overflow-hidden h-100" spinner-small>
-                        <b-link :to="statementsLink">
+                        <nuxt-link :to="statementsLink">
                             <b-container class="p-0" fluid>
                                 <b-row>
                                     <b-col
@@ -56,7 +56,7 @@
                                     </b-col>
                                 </b-row>
                             </b-container>
-                        </b-link>
+                        </nuxt-link>
                     </b-overlay>
                     <b-button
                         v-if="!isDestroyed"
@@ -105,7 +105,6 @@
 </template>
 
 <script lang="ts" setup>
-// import { BIconThreeDotsVertical } from 'bootstrap-vue-next' // depracated
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
 import type { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'

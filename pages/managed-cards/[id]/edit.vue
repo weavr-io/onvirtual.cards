@@ -14,7 +14,7 @@
                         </b-card-title>
                         <b-card-body>
                             <b-form @submit.prevent="doUpdate">
-                                <b-form-row v-if="!isConsumer">
+                                <b-form-row v-if="!isConsumer" class="mb-3">
                                     <b-col>
                                         <b-form-group label="CARDHOLDER MOBILE NUMBER">
                                             <phone-number-input
@@ -36,7 +36,7 @@
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
-                                <b-form-row>
+                                <b-form-row class="mb-3">
                                     <b-col>
                                         <b-form-group
                                             :invalid-feedback="

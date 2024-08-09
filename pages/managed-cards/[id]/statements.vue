@@ -21,7 +21,7 @@
                                         <span class="card-expiry-label">EXP</span>
                                         <span
                                             v-if="managedCard.expiryMmyy"
-                                            class="card-expiry-value"
+                                            class="card-expiry-value ps-1"
                                         >
                                             {{ expiryDate }}
                                         </span>
@@ -35,7 +35,7 @@
                             <b-button
                                 v-if="isCardActive"
                                 :to="'/transfer?destination=' + managedCard.id"
-                                class="add-funds me-3"
+                                class="me-3 add-funds"
                                 variant="secondary"
                             >
                                 +
@@ -52,6 +52,7 @@
                         </div>
                     </b-col>
                 </b-row>
+
                 <statement :filters="filters" />
             </template>
         </b-container>
@@ -69,7 +70,7 @@
         >
             <b-card v-if="managedCard" bg-variant="card-purple" class="border-0 cards-card" no-body>
                 <b-card-body class="card-body-modal card-body onvirtual-card">
-                    <b-link :to="`/managed-cards/${managedCard.id}/statements`" class="p-5">
+                    <nuxt-link :to="`/managed-cards/${managedCard.id}/statements`" class="p-5">
                         <b-container class="p-0" fluid>
                             <b-row align-h="end">
                                 <b-col class="text-right" cols="2">
@@ -88,11 +89,10 @@
                                     <b-row class="mt-2">
                                         <b-col>
                                             <div class="card-number">
-                                                <b-skeleton
+                                                <div
                                                     v-if="isLoading"
-                                                    class="mb-1"
-                                                    width="30ch"
-                                                />
+                                                    class="skeleton-loader mb-1"
+                                                ></div>
                                                 <weavr-card-number-span
                                                     v-show="!isLoading"
                                                     :base-style="{
@@ -131,7 +131,10 @@
                                     <div class="card-cvv mb-1">
                                         <div class="card-cvv-label mb-2">CVV</div>
                                         <div class="card-cvv-value">
-                                            <b-skeleton v-if="isLoading" class="m-0" width="5ch" />
+                                            <div
+                                                v-if="isLoading"
+                                                class="skeleton-loader mb-1"
+                                            ></div>
                                             <weavr-cvv-span
                                                 v-show="!isLoading"
                                                 :base-style="{
@@ -149,17 +152,12 @@
                                 </b-col>
                             </b-row>
                         </b-container>
-                    </b-link>
+                    </nuxt-link>
                 </b-card-body>
             </b-card>
         </b-modal>
-        <infinite-loading spinner="spiral" @infinite="infiniteScroll">
-            <template #no-more>
-                <span />
-            </template>
-            <template #no-results>
-                <div />
-            </template>
+        <infinite-loading class="statement-loader" spinner="spiral" @infinite="infiniteScroll">
+            <template #complete><div /></template>
         </infinite-loading>
     </section>
 </template>
@@ -270,6 +268,18 @@ watch(route, fetchCardStatements)
 </script>
 
 <style lang="scss" scoped>
+.card-number {
+    .skeleton-loader {
+        width: 30ch;
+    }
+}
+
+.card-cvv-value {
+    .skeleton-loader {
+        width: 5ch;
+    }
+}
+
 .card-balance {
     .card-balance-label {
         font-size: 0.8rem;
@@ -280,7 +290,7 @@ watch(route, fetchCardStatements)
     }
 }
 
-.add-funds {
+:deep(.add-funds) {
     border-radius: 100%;
     padding: 13px 10px 18px;
     line-height: 0;
@@ -307,5 +317,6 @@ watch(route, fetchCardStatements)
     text-align: center;
     display: block;
     font-size: 0.6rem;
+    text-decoration: none;
 }
 </style>

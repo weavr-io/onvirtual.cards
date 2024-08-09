@@ -17,7 +17,7 @@
                                 Error creating new card. <br />Contact support if problem persists.
                             </b-alert>
                             <b-form v-if="!showError" @submit.prevent="doAdd">
-                                <b-form-row v-if="showNameOnCardField">
+                                <b-form-row v-if="showNameOnCardField" class="mb-3">
                                     <b-col>
                                         <b-form-group
                                             :invalid-feedback="
@@ -33,7 +33,7 @@
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
-                                <b-form-row v-if="!isConsumer">
+                                <b-form-row v-if="!isConsumer" class="mb-3">
                                     <b-col>
                                         <b-form-group label="CARDHOLDER MOBILE NUMBER">
                                             <phone-number-input
@@ -55,7 +55,7 @@
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
-                                <b-form-row>
+                                <b-form-row class="mb-3">
                                     <b-col>
                                         <b-form-group
                                             :invalid-feedback="
@@ -67,11 +67,12 @@
                                             <b-form-select
                                                 v-model="createManagedCardRequest.currency"
                                                 :options="currencyOptions"
+                                                class="custom-select"
                                             />
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
-                                <b-form-row>
+                                <b-form-row class="mb-3">
                                     <b-col>
                                         <b-form-group
                                             :invalid-feedback="

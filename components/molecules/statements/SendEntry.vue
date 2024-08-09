@@ -4,14 +4,10 @@
             <div class="transaction-type-icon">
                 <div class="transaction increase">
                     <template v-if="isOut">
-                        <img alt="Send" loading="lazy" src="@/assets/svg/statement/send.svg" />
+                        <img alt="Send" loading="lazy" :src="sendIcon" />
                     </template>
                     <template v-if="isIn">
-                        <img
-                            alt="Receive"
-                            loading="lazy"
-                            src="@/assets/svg/statement/receive.svg"
-                        />
+                        <img alt="Receive" loading="lazy" :src="receiveIcon" />
                     </template>
                 </div>
             </div>
@@ -41,6 +37,8 @@
 import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
+import sendIcon from '@/assets/svg/statement/send.svg?url'
+import receiveIcon from '@/assets/svg/statement/receive.svg?url'
 
 const props = defineProps({
     transaction: {
