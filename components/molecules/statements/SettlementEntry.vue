@@ -10,14 +10,9 @@
                         "
                         alt="Cash Withdrawal"
                         loading="lazy"
-                        src="@/assets/svg/statement/atm_withdrawal.svg"
+                        :src="atmWithdrawalIcon"
                     />
-                    <img
-                        v-else
-                        alt="Settlement"
-                        loading="lazy"
-                        src="@/assets/svg/statement/settlement.svg"
-                    />
+                    <img v-else alt="Settlement" loading="lazy" :src="settlementIcon" />
                 </div>
             </div>
         </b-col>
@@ -35,13 +30,13 @@
                                 props.transaction.additionalFields.merchantTransactionType ==
                                 'CASH_WITHDRAWAL'
                             "
-                            class="mr-2"
+                            class="me-2"
                             >ATM Withdrawal,
                         </span>
-                        <span v-else class="mr-2">Purchase, </span>
+                        <span v-else class="me-2">Purchase, </span>
                         <span
                             v-if="props.transaction.additionalFields.merchantTerminalCountry"
-                            class="mr-2"
+                            class="me-2"
                             >{{ props.transaction.additionalFields.merchantTerminalCountry }}</span
                         >
                         <span v-if="props.transaction.sourceAmount">
@@ -63,12 +58,12 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType } from '@nuxtjs/composition-api'
-import { computed } from 'vue'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import { weavrCurrency, weavrCurrencySymbol } from '~/utils/helper'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
-import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
-import { weavrCurrency, weavrCurrencySymbol } from '~/utils/helper'
+import settlementIcon from '@/assets/svg/statement/settlement.svg?url'
+import atmWithdrawalIcon from '@/assets/svg/statement/atm_withdrawal.svg?url'
 
 const props = defineProps({
     transaction: {

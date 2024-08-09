@@ -27,4 +27,4 @@ const INITIAL_MANAGED_CARD_REQUEST = () => {
     } as unknown as CreateManagedCard
 }
 
-export { CreateManagedCard, CreateManagedCardSchema, INITIAL_MANAGED_CARD_REQUEST }
+export { type CreateManagedCard, CreateManagedCardSchema, INITIAL_MANAGED_CARD_REQUEST }

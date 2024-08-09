@@ -1,4 +1,4 @@
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 
 export interface UserIdentityModel {
     type: 'corporate' | 'consumer'

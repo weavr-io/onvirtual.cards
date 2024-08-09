@@ -3,9 +3,7 @@
         <b-card-body class="p-5 px-sm-4 px-lg-5 py-sm-5">
             <div class="d-flex flex-column h-100 justify-content-between">
                 <div>
-                    <b-card-title class="font-weight-light" title-tag="h3"
-                        >{{ props.title }}
-                    </b-card-title>
+                    <b-card-title class="fw-light" title-tag="h3">{{ props.title }} </b-card-title>
                     <b-card-text class="mt-4 mb-5">
                         {{ props.description }}
                     </b-card-text>

@@ -1,13 +1,13 @@
-import { computed, getCurrentInstance, useRouter } from '@nuxtjs/composition-api'
+import Countries from '../public/json/countries.json'
 import { useStores } from '~/composables/useStores'
-import Countries from '~/static/json/countries.json'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { DefaultSelectValueConst } from '~/models/local/constants/DefaultSelectValueConst'
 
 export const useBase = () => {
-    const { proxy: root } = getCurrentInstance() || {}
     const router = useRouter()
+    const { profileId } = useRuntimeConfig().public
+    const { $weavrToast } = useNuxtApp()
     const { auth, consumers, corporates } = useStores(['auth', 'consumers', 'corporates'])
 
     const sleep = (ms) => {
@@ -75,29 +75,29 @@ export const useBase = () => {
     const cardJurisdictionProfileId = computed(() => {
         if (isConsumer.value) {
             if (consumer.value && identityRegCountryIsUK.value) {
-                return root?.$config.profileId.managed_cards_consumers_uk
+                return profileId.managed_cards_consumers_uk
             }
-            return root?.$config.profileId.managed_cards_consumers
+            return profileId.managed_cards_consumers
         }
 
         if (identityRegCountryIsUK.value) {
-            return root?.$config.profileId.managed_cards_corporates_uk
+            return profileId.managed_cards_corporates_uk
         }
-        return root?.$config.profileId.managed_cards_corporates
+        return profileId.managed_cards_corporates
     })
 
     const accountJurisdictionProfileId = computed(() => {
         if (isConsumer.value) {
             if (consumer.value && identityRegCountryIsUK.value) {
-                return root?.$config.profileId.managed_accounts_consumers_uk
+                return profileId.managed_accounts_consumers_uk
             }
-            return root?.$config.profileId.managed_accounts_consumers
+            return profileId.managed_accounts_consumers
         }
 
         if (identityRegCountryIsUK.value) {
-            return root?.$config.profileId.managed_accounts_corporates_uk
+            return profileId.managed_accounts_corporates_uk
         }
-        return root?.$config.profileId.managed_accounts_corporates
+        return profileId.managed_accounts_corporates
     })
 
     const profileBaseCurrency = computed(() => {
@@ -131,9 +131,9 @@ export const useBase = () => {
         return _default
     })
 
-    const pendingData = computed(() => !root!.$fetchState || root!.$fetchState.pending)
-    const fetchHasError = computed(() => root!.$fetchState?.error !== null)
-    const pendingDataOrError = computed(() => pendingData.value || fetchHasError.value)
+    // TODO: Add useFetchState to composable then make states global there
+    // for now just return false
+    const pendingDataOrError = computed(() => false)
 
     const goToIndex = () => {
         return router.push('/')
@@ -158,14 +158,14 @@ export const useBase = () => {
     }
 
     const showSuccessToast = (msg?: string, title?: string) => {
-        return root?.$weavrToast(msg ?? 'All changes have been saved', {
+        return $weavrToast(msg ?? 'All changes have been saved', {
             title: title ?? 'Changes saved',
             variant: 'success',
         })
     }
 
     const showErrorToast = (msg?: string, title?: string) => {
-        return root?.$weavrToast(msg ?? 'An error has occurred while saving', {
+        return $weavrToast(msg ?? 'An error has occurred while saving', {
             title: title ?? 'Error',
             variant: 'danger',
         })
@@ -196,9 +196,8 @@ export const useBase = () => {
         identityVerified,
         countriesOptions,
         mobileCountries,
-        pendingData,
-        pendingDataOrError,
         countryOptionsWithDefault,
+        pendingDataOrError,
         goToIndex,
         goToVerify,
         redirectToLogin,

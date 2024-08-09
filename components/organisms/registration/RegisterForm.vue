@@ -1,6 +1,6 @@
 <template>
     <b-form @submit.prevent="tryToSubmitForm">
-        <h3 class="text-center font-weight-light mb-5">Register</h3>
+        <h3 class="text-center fw-light mb-5">Register</h3>
         <ErrorAlert />
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('email')"
@@ -27,14 +27,14 @@
                     :base-style="passwordBaseStyle"
                     :class-name="[
                         'sign-in-password form-control p-0',
-                        { 'is-invalid': !isPasswordValidAndDirty },
+                        !isPasswordValidAndDirty ? 'is-invalid' : '',
                     ]"
                     :options="{ placeholder: '****' }"
                     name="password"
                     required="true"
-                    @onChange="passwordInteraction"
-                    @onKeyUp="checkOnKeyUp"
-                    @onStrength="strengthCheck"
+                    @on-change="passwordInteraction"
+                    @on-key-up="checkOnKeyUp"
+                    @on-strength="strengthCheck"
                 />
                 <small
                     :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
@@ -73,7 +73,7 @@
             </b-col>
         </b-form-row>
         <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
-            <recaptcha />
+            <!-- TODO: Update recaptcha <recaptcha-form /> -->
         </div>
         <b-form-row class="mt-5">
             <b-col class="text-center">
@@ -86,14 +86,14 @@
         </b-form-row>
     </b-form>
 </template>
+
 <script lang="ts" setup>
-import { computed, ComputedRef, reactive, Ref, ref } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import {
     INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
-    LoginWithPassword,
+    type LoginWithPassword,
     LoginWithPasswordSchema,
 } from '~/plugins/weavr-multi/api/models/authentication'
 import { CreateCorporateRequestSchema } from '~/plugins/weavr-multi/api/models/identities/corporates'
@@ -101,10 +101,12 @@ import useZodValidation from '~/composables/useZodValidation'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import RecaptchaForm from '~/plugins/recaptcha/RecaptchaForm.vue'
 
 const emit = defineEmits(['submit-form'])
 const { corporates, errors } = useStores(['corporates', 'errors'])
 const { showErrorToast } = useBase()
+const recaptchaField: Ref<typeof RecaptchaForm | null> = ref(null)
 
 const form = reactive<
     LoginWithPassword & {
@@ -147,14 +149,15 @@ const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = comp
 })
 
 const isRecaptchaEnabled: ComputedRef<boolean> = computed(
-    () => typeof process.env.RECAPTCHA !== 'undefined',
+    () => typeof useRuntimeConfig().public.recaptcha.siteKey !== 'undefined',
 )
 
 const isLoadingRegistration = computed(() => corporates?.corporateState.isLoadingRegistration)
 
 const tryToSubmitForm = async () => {
-    errors?.resetState()
     try {
+        await recaptchaField.value?.execute('submit')
+        errors?.resetState()
         validation.value.touch() && (await validation.value.validate())
         if (validation.value.isInvalid.value || !isPasswordValid.value) {
             return

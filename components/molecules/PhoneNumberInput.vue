@@ -16,11 +16,14 @@
                 :valid="isValid && !noValidatorState"
                 class="input-country-selector"
             >
-                <slot slot="arrow" name="arrow" />
+                <template #arrow>
+                    <slot name="arrow" />
+                </template>
             </CountrySelectorIndex>
         </div>
         <div class="flex-1 w-100">
             <InputTel
+                v-bind="$attrs"
                 :id="`${uniqueId}_phone_number`"
                 ref="phoneNumberInputEl"
                 v-model="phoneNumber"
@@ -31,7 +34,6 @@
                 :theme="theme"
                 :valid="isValid && !noValidatorState"
                 class="input-phone-number"
-                v-bind="$attrs"
                 @blur="$emit('phone-number-blur')"
                 @focus="$emit('phone-number-focused')"
                 @keydown="
@@ -47,22 +49,22 @@
 <script lang="ts" setup>
 import {
     AsYouType,
-    CountryCode,
+    type CountryCode,
     getExampleNumber,
     parsePhoneNumberFromString,
+    type Examples,
 } from 'libphonenumber-js'
 import { computed } from 'vue'
-import { ComputedRef, nextTick, onMounted, Ref, ref, watch } from '@nuxtjs/composition-api'
 import examples from 'libphonenumber-js/examples.mobile.json'
-import InputTel from '../atoms/PhoneNumberInput/InputTelephone/InputTelephoneIndex.vue'
-import locales from '../atoms/PhoneNumberInput/assets/locales'
-import CountrySelectorIndex from '../atoms/PhoneNumberInput/CountrySelector/CountrySelectorIndex.vue'
+import InputTel from '@/components/atoms/PhoneNumberInput/InputTelephone/InputTelephoneIndex.vue'
+import locales from '@/components/atoms/PhoneNumberInput/assets/locales'
+import CountrySelectorIndex from '@/components/atoms/PhoneNumberInput/CountrySelector/CountrySelectorIndex.vue'
 import {
     countries,
     countriesIso,
-    Payload,
-    PhoneCodeCountry,
-    Results,
+    type Payload,
+    type PhoneCodeCountry,
+    type Results,
 } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
@@ -150,7 +152,9 @@ const shouldChooseCountry = computed(() => {
 const isValid = computed(() => results.value?.isValid)
 
 const phoneNumberExample = computed(() => {
-    const exampleNumber = countryCode.value ? getExampleNumber(countryCode.value, examples) : null
+    const exampleNumber = countryCode.value
+        ? getExampleNumber(countryCode.value, examples as unknown as Examples)
+        : null
     return exampleNumber?.formatNational() ?? null
 })
 

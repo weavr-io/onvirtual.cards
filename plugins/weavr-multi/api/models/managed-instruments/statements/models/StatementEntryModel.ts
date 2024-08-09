@@ -1,6 +1,6 @@
-import { TransactionIdModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/TransactionIdModel'
-import { CurrencyAmount } from '~/plugins/weavr-multi/api/models/common'
-import { ScaledAmountModel } from '~/plugins/weavr-multi/api/models/common/models/ScaledAmountModel'
+import type { TransactionIdModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/TransactionIdModel'
+import type { CurrencyAmount } from '~/plugins/weavr-multi/api/models/common'
+import type { ScaledAmountModel } from '~/plugins/weavr-multi/api/models/common/models/ScaledAmountModel'
 
 export interface StatementEntryModel {
     transactionId: TransactionIdModel

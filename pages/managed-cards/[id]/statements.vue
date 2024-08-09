@@ -9,7 +9,7 @@
                                 view <br />
                                 details
                             </b-link>
-                            <div class="d-flex flex-column ml-3">
+                            <div class="d-flex flex-column ms-3">
                                 <p class="card-name m-0">
                                     {{ managedCard.nameOnCard }}
                                 </p>
@@ -17,11 +17,11 @@
                                     <span class="card-number">
                                         •••• {{ managedCard.cardNumberLastFour }}
                                     </span>
-                                    <span class="card-expiry ml-2 ml-sm-5">
+                                    <span class="card-expiry ms-2 ms-sm-5">
                                         <span class="card-expiry-label">EXP</span>
                                         <span
                                             v-if="managedCard.expiryMmyy"
-                                            class="card-expiry-value"
+                                            class="card-expiry-value ps-1"
                                         >
                                             {{ expiryDate }}
                                         </span>
@@ -35,7 +35,7 @@
                             <b-button
                                 v-if="isCardActive"
                                 :to="'/transfer?destination=' + managedCard.id"
-                                class="add-funds mr-3"
+                                class="me-3 add-funds"
                                 variant="secondary"
                             >
                                 +
@@ -52,6 +52,7 @@
                         </div>
                     </b-col>
                 </b-row>
+
                 <statement :filters="filters" />
             </template>
         </b-container>
@@ -69,7 +70,7 @@
         >
             <b-card v-if="managedCard" bg-variant="card-purple" class="border-0 cards-card" no-body>
                 <b-card-body class="card-body-modal card-body onvirtual-card">
-                    <b-link :to="`/managed-cards/${managedCard.id}/statements`" class="p-5">
+                    <nuxt-link :to="`/managed-cards/${managedCard.id}/statements`" class="p-5">
                         <b-container class="p-0" fluid>
                             <b-row align-h="end">
                                 <b-col class="text-right" cols="2">
@@ -88,11 +89,10 @@
                                     <b-row class="mt-2">
                                         <b-col>
                                             <div class="card-number">
-                                                <b-skeleton
+                                                <div
                                                     v-if="isLoading"
-                                                    class="mb-1"
-                                                    width="30ch"
-                                                />
+                                                    class="skeleton-loader mb-1"
+                                                ></div>
                                                 <weavr-card-number-span
                                                     v-show="!isLoading"
                                                     :base-style="{
@@ -103,7 +103,7 @@
                                                     }"
                                                     :token="managedCard.cardNumber?.value"
                                                     class="card-select-number"
-                                                    @onChange="toggleIsLoading"
+                                                    @on-change="toggleIsLoading"
                                                 />
                                             </div>
                                         </b-col>
@@ -131,7 +131,10 @@
                                     <div class="card-cvv mb-1">
                                         <div class="card-cvv-label mb-2">CVV</div>
                                         <div class="card-cvv-value">
-                                            <b-skeleton v-if="isLoading" class="m-0" width="5ch" />
+                                            <div
+                                                v-if="isLoading"
+                                                class="skeleton-loader mb-1"
+                                            ></div>
                                             <weavr-cvv-span
                                                 v-show="!isLoading"
                                                 :base-style="{
@@ -149,50 +152,38 @@
                                 </b-col>
                             </b-row>
                         </b-container>
-                    </b-link>
+                    </nuxt-link>
                 </b-card-body>
             </b-card>
         </b-modal>
-        <infinite-loading spinner="spiral" @infinite="infiniteScroll">
-            <span slot="no-more" />
-            <div slot="no-results" />
+        <infinite-loading class="statement-loader" spinner="spiral" @infinite="infiniteScroll">
+            <template #complete><div /></template>
         </infinite-loading>
     </section>
 </template>
 
 <script lang="ts" setup>
-import {
-    computed,
-    getCurrentInstance,
-    Ref,
-    ref,
-    useContext,
-    useFetch,
-    useRoute,
-    watch,
-} from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { useLuxon } from '~/composables/useLuxon'
 import { useBase } from '~/composables/useBase'
 import { useCards } from '~/composables/useCards'
 import { useStores } from '~/composables/useStores'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
-import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
-import { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
+import type { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import type { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { expiryMmyy, weavrCurrency } from '~/utils/helper'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
 import Statement from '~/components/organisms/cards/statement/CardStatement.vue'
 
 const route = useRoute()
-const { proxy: root } = getCurrentInstance() || {}
-const { $weavrSetUserToken } = useContext()
+const { $bvModal, $weavrSetUserToken } = useNuxtApp()
 const { managedCard, cardId, isCardActive } = useCards()
 const { pendingDataOrError } = useBase()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { auth, cards } = useStores(['auth', 'cards'])
 
-const filters: Ref<StatementFiltersRequest | null> = ref(null)
+const filters: Ref<StatementFiltersRequest | undefined> = ref(undefined)
 const page = ref(0)
 const isLoading: Ref<boolean> = ref(true)
 
@@ -204,17 +195,16 @@ const expiryDate = computed(() => {
     return expiryMmyy(managedCard.value?.expiryMmyy)
 })
 
-useFetch(async () => {
+useAsyncData(async () => {
     page.value = 0
+    ;($weavrSetUserToken as (token: string) => void)(`Bearer ${auth?.token}`)
 
-    $weavrSetUserToken(`Bearer ${auth?.token}`)
-
-    await cards?.getManagedCard(cardId.value)
+    await cards?.getManagedCard(cardId.value as string)
     await fetchCardStatements()
 })
 
 const fetchCardStatements = async () => {
-    const routeQueries = dot.object(route.value.query)
+    const routeQueries = dot.object(route.query)
     const localFilters = routeQueries.filters || {}
 
     if (!localFilters?.fromTimestamp) {
@@ -234,7 +224,7 @@ const fetchCardStatements = async () => {
     }
 
     const _req: ManagedCardStatementRequest = {
-        id: cardId.value,
+        id: cardId.value as string,
         request: statementFilters,
     }
 
@@ -257,7 +247,7 @@ const infiniteScroll = ($state) => {
 
         cards
             ?.getCardStatement({
-                id: route.value.params.id,
+                id: route.params.id as string,
                 request,
             })
             .then((response) => {
@@ -271,13 +261,25 @@ const infiniteScroll = ($state) => {
 }
 
 const toggleModal = () => {
-    root!.$bvModal.show('cardModal')
+    ;($bvModal as any).show('cardModal')
 }
 
 watch(route, fetchCardStatements)
 </script>
 
 <style lang="scss" scoped>
+.card-number {
+    .skeleton-loader {
+        width: 30ch;
+    }
+}
+
+.card-cvv-value {
+    .skeleton-loader {
+        width: 5ch;
+    }
+}
+
 .card-balance {
     .card-balance-label {
         font-size: 0.8rem;
@@ -288,7 +290,7 @@ watch(route, fetchCardStatements)
     }
 }
 
-.add-funds {
+:deep(.add-funds) {
     border-radius: 100%;
     padding: 13px 10px 18px;
     line-height: 0;
@@ -315,5 +317,6 @@ watch(route, fetchCardStatements)
     text-align: center;
     display: block;
     font-size: 0.6rem;
+    text-decoration: none;
 }
 </style>

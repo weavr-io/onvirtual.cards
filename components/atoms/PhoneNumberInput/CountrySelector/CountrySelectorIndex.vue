@@ -32,7 +32,7 @@
             @click.stop="toggleList"
         />
         <div class="country-selector-toggle" @click.stop="toggleList">
-            <img alt="Downward pointing arrow" src="@/assets/svg/statement/down_arrow.svg" />
+            <img alt="Downward pointing arrow" :src="downArrowIcon" />
         </div>
         <label
             ref="label"
@@ -51,7 +51,7 @@
             >
                 <RecycleScroller
                     v-slot="{ item }"
-                    :item-size="1"
+                    item-size="30"
                     :items="countriesSorted"
                     key-field="iso2"
                 >
@@ -85,10 +85,9 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
-import { CountryCode, getCountryCallingCode } from 'libphonenumber-js'
-import { RecycleScroller } from 'vue-virtual-scroller'
-import { nextTick, Ref } from '@nuxtjs/composition-api'
-import { PhoneCodeCountry } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
+import { type CountryCode, getCountryCallingCode } from 'libphonenumber-js'
+import type { PhoneCodeCountry } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
+import downArrowIcon from '@/assets/svg/statement/down_arrow.svg?url'
 
 const emit = defineEmits(['input', 'open', 'close'])
 

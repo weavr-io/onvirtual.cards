@@ -30,4 +30,4 @@ const INITIAL_MC_UPDATE_REQUEST = () => {
     } as unknown as UpdateManagedCard
 }
 
-export { UpdateManagedCard, ManagedCardUpdateSchema, INITIAL_MC_UPDATE_REQUEST }
+export { type UpdateManagedCard, ManagedCardUpdateSchema, INITIAL_MC_UPDATE_REQUEST }

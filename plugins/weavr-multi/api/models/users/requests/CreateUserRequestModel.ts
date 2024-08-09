@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
-import { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
-import { DateModel } from '~/plugins/weavr-multi/api/models/common/models/DateModel'
+import type { MobileModel } from '~/plugins/weavr-multi/api/models/common/models/MobileModel'
+import type { DateModel } from '~/plugins/weavr-multi/api/models/common/models/DateModel'
 import { INVALID_FEEDBACK_CONST } from '~/local/const/InvalidFeedbackConst'
 
 export interface CreateUserRequestModel {
@@ -36,4 +36,4 @@ const INITIAL_USER_REQUEST = () => {
     } as unknown as UserRequest
 }
 
-export { UserRequest, UserSchema, INITIAL_USER_REQUEST }
+export { type UserRequest, UserSchema, INITIAL_USER_REQUEST }
