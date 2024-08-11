@@ -1,5 +1,6 @@
 <template>
     <div>
+        <BModalOrchestrator />
         <AppHeader />
         <DashboardHeader />
         <NuxtPage />

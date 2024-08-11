@@ -2,13 +2,8 @@
     <div>
         <section v-if="!hasAlert && !pendingDataOrError">
             <statement :filters="filters" />
-            <infinite-loading spinner="spiral" @infinite="infiniteScroll">
-                <template #no-more>
-                    <span />
-                </template>
-                <template #no-results>
-                    <div />
-                </template>
+            <infinite-loading class="statement-loader" spinner="spiral" @infinite="infiniteScroll">
+                <template #complete><div /></template>
             </infinite-loading>
         </section>
     </div>

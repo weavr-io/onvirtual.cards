@@ -12,7 +12,7 @@
                     </b-row>
                     <b-row v-if="bankAccountDetails" class="pt-4">
                         <b-col>
-                            <b-alert show variant="warning">
+                            <b-alert :model-value="true" variant="warning">
                                 Please remember to include payment reference.
                             </b-alert>
                         </b-col>

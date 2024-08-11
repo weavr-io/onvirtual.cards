@@ -93,7 +93,7 @@ const currency = computed(() => weavrCurrency(cardsBalance.value, cardCurrency.v
     }
 }
 
-.add-funds {
+:deep(.add-funds) {
     border-radius: 100%;
     padding: 13px 10px 18px;
     line-height: 0;

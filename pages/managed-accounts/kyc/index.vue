@@ -68,7 +68,7 @@ useAsyncData(async () => {
     await consumers
         ?.startKYC()
         .then((res) => {
-            $weavrSetUserToken(`Bearer ${auth?.token}`)
+            ;($weavrSetUserToken as (token: string) => void)(`Bearer ${auth?.token}`)
             reference.value = res.data.reference
         })
         .catch((res) => {

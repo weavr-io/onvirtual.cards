@@ -33,8 +33,8 @@ export const useAccounts = () => {
     })
 
     const hasAccount = computed(() => {
-        return accountsStore.accountState.accounts?.accounts !== undefined
-            ? accountsStore.accountState.accounts.accounts.length > 0
+        return accountsStore.accountState.accounts?.accounts
+            ? accountsStore.accountState.accounts.accounts.length
             : false
     })
 

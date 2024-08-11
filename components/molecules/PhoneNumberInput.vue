@@ -3,8 +3,9 @@
         <div class="select-country-container">
             <CountrySelectorIndex
                 :id="`${uniqueId}_country_selector`"
+                :key="reloadKey"
                 ref="CountrySelector"
-                v-model="countryCode"
+                v-model:value="countryCode"
                 :countries-height="countriesHeight"
                 :disabled="disabled"
                 :hint="shouldChooseCountry ? translatedCountryName.countrySelectorError : ''"
@@ -26,7 +27,7 @@
                 v-bind="$attrs"
                 :id="`${uniqueId}_phone_number`"
                 ref="phoneNumberInputEl"
-                v-model="phoneNumber"
+                v-model:value="phoneNumber"
                 :disabled="disabled"
                 :error="error"
                 :hint="hintValue"
@@ -118,6 +119,7 @@ const results = ref<Results>()
 const userLocale = ref(props.defaultCountryCode)
 const lastKeyPressed = ref(0)
 const uniqueId = computed(() => `${props.id}-${Math.random().toString(36).substring(2, 9)}`)
+const reloadKey = ref(0)
 
 const translatedCountryName = computed(() => ({
     ...locales,
@@ -255,6 +257,7 @@ function getAsYouTypeFormat(payload) {
 function setLocale(locale) {
     const countryAvailable = isCountryAvailable(locale)
     if (countryAvailable && locale) {
+        reloadKey.value++
         userLocale.value = countryAvailable ? locale : null
         emitValues({ countryCode: locale, phoneNumber: props.value })
     }

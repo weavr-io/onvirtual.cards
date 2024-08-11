@@ -1,5 +1,6 @@
 <template>
     <div>
+        <BModalOrchestrator />
         <AppHeader />
         <NuxtPage />
         <LoadingSpinner id="loader" :is-loading="isLoading" />

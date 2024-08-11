@@ -5,7 +5,7 @@
                 <b-col md="6">
                     <b-form @submit.prevent="doUpdateIdentityRoot">
                         <error-alert />
-                        <b-form-row>
+                        <b-form-row class="mb-3">
                             <b-col>
                                 <b-form-group label="FIRST NAME">
                                     <b-form-input
@@ -29,7 +29,7 @@
                                 </b-form-group>
                             </b-col>
                         </b-form-row>
-                        <b-form-row>
+                        <b-form-row class="mb-3">
                             <b-col>
                                 <b-form-group
                                     :invalid-feedback="validation.getInvalidFeedback('email')"
@@ -45,7 +45,7 @@
                                 </b-form-group>
                             </b-col>
                         </b-form-row>
-                        <b-form-row>
+                        <b-form-row class="mb-3">
                             <b-col>
                                 <b-form-group label="MOBILE NUMBER">
                                     <phone-number-input

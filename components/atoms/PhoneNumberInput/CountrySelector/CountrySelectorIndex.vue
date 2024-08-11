@@ -51,7 +51,7 @@
             >
                 <RecycleScroller
                     v-slot="{ item }"
-                    item-size="30"
+                    :item-size="scrollerSize"
                     :items="countriesSorted"
                     key-field="iso2"
                 >
@@ -93,13 +93,13 @@ const emit = defineEmits(['input', 'open', 'close'])
 
 const props = withDefaults(
     defineProps<{
-        id: string
-        value: CountryCode
+        id?: string
+        value?: CountryCode
         label: string
         hint: string
         valid: boolean
         items: PhoneCodeCountry[]
-        onlyCountries: CountryCode[] | string[]
+        onlyCountries?: CountryCode[] | string[]
         ignoredCountries: CountryCode[]
         countriesHeight: number
         disabled?: boolean
@@ -121,6 +121,7 @@ const props = withDefaults(
 const parent = ref(null)
 const isFocus = ref(false)
 const hasListOpen = ref(false)
+const scrollerSize = ref<number>(30)
 const tmpValue = ref<CountryCode | undefined>(props.value)
 const query = ref('')
 const isHover = ref(false)

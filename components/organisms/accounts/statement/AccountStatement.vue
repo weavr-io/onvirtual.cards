@@ -1,17 +1,17 @@
 <template>
-    <b-container>
+    <b-container v-if="filters">
         <b-row align-v="center" class="mb-2">
             <b-col>
                 <b-row>
                     <b-col cols="10" sm="8">
                         <h6 class="fw-lighter">
                             <b-row align-v="center">
-                                <b-col class="pe-0" cols="auto"> All Transactions</b-col>
+                                <b-col class="pe-0" cols="auto">All Transactions</b-col>
                                 <b-col class="ps-2" cols="auto">
                                     <b-form-select
                                         :options="months"
                                         :value="filterDate"
-                                        class="w-auto d-inline-block"
+                                        class="w-auto d-inline-block rounded-0 custom-select"
                                         size="sm"
                                         @change="filterMonthChange"
                                     />
@@ -53,7 +53,11 @@
                 <b-row v-else-if="availableBalance === 0" class="py-5">
                     <b-col class="text-center">
                         <h5 class="fw-light">Your transactions will appear here.</h5>
-                        <b-button :to="`/managed-accounts/${account?.id}/topup`" variant="link">
+                        <b-button
+                            :to="`/managed-accounts/${account?.id}/topup`"
+                            class="topup"
+                            variant="link"
+                        >
                             Start by topping up your account.
                         </b-button>
                     </b-col>
@@ -72,7 +76,7 @@ import { useRouterFilter } from '~/composables/useRouterFilter'
 import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
 import StatementItem from '~/components/organisms/StatementItem.vue'
-import DownloadIcon from '~/assets/svg/download.svg?raw'
+import DownloadIcon from '~/assets/svg/download.svg'
 
 const props = defineProps({
     filters: {
@@ -150,3 +154,9 @@ const downloadStatement = () => {
     })
 }
 </script>
+
+<style lang="scss" scoped>
+:deep(.topup) {
+    text-decoration: none;
+}
+</style>

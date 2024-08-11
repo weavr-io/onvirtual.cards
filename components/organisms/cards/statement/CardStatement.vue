@@ -62,6 +62,7 @@
 <script lang="ts" setup>
 import dot from 'dot-object'
 import type { AxiosError } from 'axios'
+import { useModalController } from 'bootstrap-vue-next'
 import type { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
 import type { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import type { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
@@ -77,7 +78,6 @@ import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/In
 import StatementItem from '~/components/organisms/StatementItem.vue'
 import DownloadIcon from '~/assets/svg/download.svg'
 import DeleteIcon from '~/assets/svg/delete.svg'
-
 const props = defineProps({
     filters: {
         type: Object as PropType<StatementFiltersRequest>,
@@ -87,13 +87,13 @@ const props = defineProps({
 
 const route = useRoute()
 const router = useRouter()
-const { $bvModal } = useNuxtApp()
 const { cards, accounts, transfers } = useStores(['cards', 'accounts', 'transfers'])
 const { formatDate, getStartOfMonth, getEndOfMonth } = useLuxon()
 const { managedCard, cardId, isCardActive, downloadAsCSV } = useCards()
 const { monthsFilter } = useFilters()
 const { showErrorToast, showSuccessToast, accountJurisdictionProfileId } = useBase()
 const { setFilters } = useRouterFilter()
+const { confirm } = useModalController()
 
 const months = computed(() => {
     if (!managedCard.value) return []
@@ -146,20 +146,20 @@ const downloadStatement = () => {
 }
 
 const confirmDeleteCard = () => {
-    $bvModal
-        .msgBoxConfirm(
-            'Are you sure you want to delete this card? Any remaining balance will be returned to your account.',
-            {
-                buttonSize: 'sm',
-                centered: true,
-                cancelVariant: 'link',
-            },
-        )
-        .then((value) => {
-            if (value) {
-                doDeleteCard()
-            }
-        })
+    confirm?.({
+        props: {
+            body: 'Are you sure you want to delete this card? Any remaining balance will be returned to your account.',
+            title: 'Confirm',
+            okTitle: 'Yes',
+            cancelTitle: 'No',
+            centered: true,
+            hideHeader: true,
+        },
+    }).then((value) => {
+        if (value) {
+            doDeleteCard()
+        }
+    })
 }
 
 const doDeleteCard = async () => {
