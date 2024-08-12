@@ -5,6 +5,7 @@ import { useStores } from '~/composables/useStores'
 export default defineNuxtPlugin(() => {
     const config = useRuntimeConfig().public
     const route = useRoute()
+    const router = useRouter()
     const { auth, errors } = useStores(['auth', 'errors'])
     const axiosMulti = axios.create({
         headers: {
@@ -21,7 +22,8 @@ export default defineNuxtPlugin(() => {
         switch (code) {
             case 401:
                 if (error.response.config.url !== '/logout') auth?.logout()
-                navigateTo('/login')
+                router.push('/login')
+
                 break
             case 403:
                 if (
@@ -29,10 +31,10 @@ export default defineNuxtPlugin(() => {
                     error.response.data.message === 'STEP_UP_REQUIRED' &&
                     localStorage.getItem('stepUp') !== 'TRUE'
                 ) {
-                    navigateTo('/login/sca')
+                    router.push('/login/sca')
                 } else if (route.name !== 'login') {
                     auth?.resetTokenAndStates()
-                    navigateTo('/login')
+                    router.push('/login')
                 }
                 break
             case 409:
