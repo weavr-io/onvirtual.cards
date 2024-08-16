@@ -2,10 +2,12 @@ import svgLoader from 'vite-svg-loader'
 
 export default defineNuxtConfig({
     ssr: false,
+
     devServer: {
         host: '0.0.0.0',
         port: 5000,
     },
+
     vite: {
         plugins: [
             svgLoader({
@@ -16,6 +18,7 @@ export default defineNuxtConfig({
             }),
         ],
     },
+
     runtimeConfig: {
         public: {
             production: process.env.ENVIRONMENT === 'production',
@@ -47,6 +50,7 @@ export default defineNuxtConfig({
             sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : true,
         },
     },
+
     app: {
         head: {
             title: 'onvirtual.cards',
@@ -109,8 +113,10 @@ export default defineNuxtConfig({
             mode: 'out-in',
         },
     },
+
     spaLoadingTemplate: true,
     css: ['~/assets/scss/style.scss', 'bootstrap-icons/font/bootstrap-icons.css'],
+
     plugins: [
         { src: '~/plugins/weavr/security.client.ts' },
         { src: '~/plugins/WeavrVueFilters.ts' },
@@ -123,17 +129,23 @@ export default defineNuxtConfig({
         { src: '~/plugins/virtual-scroller.ts' },
         { src: '~/plugins/recaptcha/main.ts' },
     ],
+
     build: {
         transpile: ['bootstrap-vue-next', 'vue3-virtual-scroller'],
     },
+
     modules: ['@pinia/nuxt', '@bootstrap-vue-next/nuxt'],
+
     router: {
         options: {
             linkActiveClass: 'active',
         },
     },
+
     typescript: {
         strict: true,
         typeCheck: true,
     },
+
+    compatibilityDate: '2024-08-12',
 })

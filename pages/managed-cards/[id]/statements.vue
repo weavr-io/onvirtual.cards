@@ -319,4 +319,8 @@ watch(route, fetchCardStatements)
     font-size: 0.6rem;
     text-decoration: none;
 }
+
+.card-view-details:hover {
+    text-decoration: underline;
+}
 </style>

@@ -2,21 +2,19 @@
     <div id="main-header">
         <div v-if="showHeader" class="container-fluid">
             <b-navbar class="fixed-top auth-nav-bar" variant="card">
-                <b-container>
-                    <b-collapse id="nav_collapse" is-nav>
-                        <b-navbar-nav class="ms-auto">
-                            <b-nav-item v-if="showRegister && !isLoggedIn" to="/register"
-                                >Register
-                            </b-nav-item>
-                            <b-nav-item v-if="showLogin && !isLoggedIn" to="/login"
-                                >Sign In
-                            </b-nav-item>
-                            <b-nav-item v-if="isLoggedIn">
-                                <b-button class="nav-item" @click="doLogout">Sign out</b-button>
-                            </b-nav-item>
-                        </b-navbar-nav>
-                    </b-collapse>
-                </b-container>
+                <b-collapse id="nav_collapse" is-nav>
+                    <b-navbar-nav class="ms-auto">
+                        <b-nav-item v-if="showRegister && !isLoggedIn" to="/register"
+                            >Register
+                        </b-nav-item>
+                        <b-nav-item v-if="showLogin && !isLoggedIn" to="/login"
+                            >Sign In
+                        </b-nav-item>
+                        <b-nav-item v-if="isLoggedIn">
+                            <b-button class="nav-item" @click="doLogout">Sign out</b-button>
+                        </b-nav-item>
+                    </b-navbar-nav>
+                </b-collapse>
             </b-navbar>
         </div>
         <b-container>

@@ -34,7 +34,7 @@
                         </b-form-group>
                     </b-col>
                 </b-row>
-                <div class="text-center mt-3 text-grey font-italic">
+                <div class="text-center mt-3 text-grey fst-italic">
                     <small v-if="props.verifyPhone">
                         Once this step is complete, we will send you another SMS that should be used
                         for login on the next screen.
@@ -50,6 +50,7 @@
                         if you have difficulties signing in.
                     </small>
                 </div>
+
                 <LoaderButton :is-loading="isLoading" class="mt-4 text-center mb-0" text="verify" />
             </form>
             <div v-if="props.verifyPhone">
