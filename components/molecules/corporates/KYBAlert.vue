@@ -15,27 +15,23 @@
                         on your company before allowing you to transact with your account.
                     </p>
                     <p>Kindly prepare to submit and upload the following documents:</p>
-                    <ul class="my-3">
-                        <li class="fw-normal">Copy of the Certificate of Incorporation</li>
-                        <li class="fw-normal">
-                            Copy of the Articles of Association (last amendment)
-                        </li>
-                        <li class="fw-normal">Proof of Business Address (e.g. lease agreement)</li>
-                        <li class="fw-normal">
+                    <ul class="my-3 fw-normal">
+                        <li>Copy of the Certificate of Incorporation</li>
+                        <li>Copy of the Articles of Association (last amendment)</li>
+                        <li>Proof of Business Address (e.g. lease agreement)</li>
+                        <li>
                             UBO Declaration Form downloadable from
                             <a href="https://storage.cloud.google.com/weavr-cdn/UBO-a.pdf">here.</a>
                         </li>
-                        <li class="fw-normal">
-                            Commercial registry extract showing shareholders and directors
-                        </li>
+                        <li>Commercial registry extract showing shareholders and directors</li>
                     </ul>
                     <p>You will also need to provide the following information:</p>
-                    <ul class="my-3">
-                        <li class="fw-normal">
+                    <ul class="my-3 fw-normal">
+                        <li>
                             Directors: name, date of birth, nationality, email address, contact
                             number
                         </li>
-                        <li class="fw-normal">
+                        <li>
                             Ultimate Beneficial Owners (UBOs) holding a stake of 25% or more: name,
                             date of birth, nationality
                         </li>

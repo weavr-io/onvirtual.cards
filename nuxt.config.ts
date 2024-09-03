@@ -146,6 +146,4 @@ export default defineNuxtConfig({
         strict: true,
         typeCheck: true,
     },
-
-    compatibilityDate: '2024-08-12',
 })
