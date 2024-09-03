@@ -24,6 +24,5 @@ export default defineComponent({
     },
     layout: 'auth',
     middleware: 'authFactors',
-    setup() {},
 })
 </script>
