@@ -18,7 +18,7 @@
         >
             <b-form-input v-model="form.rootUser.surname" placeholder="Last Name" />
         </b-form-group>
-        <b-form-group label="MOBILE NUMBER*">
+        <b-form-group label="MOBILE NUMBER*" class="mb-3">
             <phone-number-input
                 :border-radius="0"
                 :error="numberIsValid === false"
@@ -38,6 +38,7 @@
             :invalid-feedback="validation.getInvalidFeedback('company,name')"
             :state="validation.getState('company,name')"
             label="Company Name*"
+            class="mb-3"
         >
             <b-form-input v-model="form.company.name" placeholder="Company Name" />
         </b-form-group>
@@ -45,6 +46,7 @@
             :invalid-feedback="validation.getInvalidFeedback('company,registrationNumber')"
             :state="validation.getState('company,registrationNumber')"
             label="Company Registration Number*"
+            class="mb-3"
         >
             <b-form-input v-model="form.company.registrationNumber" placeholder="C00000" />
         </b-form-group>
@@ -52,11 +54,13 @@
             :invalid-feedback="validation.getInvalidFeedback('company,type')"
             :state="validation.getState('company,type')"
             label="Company Type*"
+            class="mb-3"
         >
             <b-form-select
                 v-model="form.company.type"
                 :options="companyTypeOptionsWithDefault"
                 placeholder="Company Type"
+                class="form-control"
             />
             <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
@@ -64,32 +68,45 @@
             :invalid-feedback="validation.getInvalidFeedback('company,registrationCountry')"
             :state="validation.getState('company,registrationCountry')"
             label="Registration Country*"
+            class="mb-3"
         >
             <b-form-select
                 v-model="form.company.registrationCountry"
                 :options="countryOptionsWithDefault"
                 placeholder="Registration Country"
+                class="form-control"
             />
         </b-form-group>
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('industry')"
             :state="validation.getState('industry')"
             label="Industry*"
+            class="mb-3"
         >
-            <b-form-select v-model="form.industry" :options="industryOccupationOptions" />
+            <b-form-select
+                v-model="form.industry"
+                :options="industryOccupationOptions"
+                class="form-control"
+            />
         </b-form-group>
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('sourceOfFunds')"
             :state="validation.getState('sourceOfFunds')"
             label="Source of Funds*"
+            class="mb-3"
         >
-            <b-form-select v-model="form.sourceOfFunds" :options="sourceOfFundsOptions" />
+            <b-form-select
+                v-model="form.sourceOfFunds"
+                :options="sourceOfFundsOptions"
+                class="form-control"
+            />
         </b-form-group>
         <b-form-group
             v-if="shouldShowOtherSourceOfFunds"
             :invalid-feedback="validation.getInvalidFeedback('sourceOfFundsOther')"
             :state="validation.getState('sourceOfFundsOther')"
             label="Other"
+            class="mb-3"
         >
             <b-form-input
                 v-model="form.sourceOfFundsOther"
@@ -100,6 +117,7 @@
             :invalid-feedback="validation.getInvalidFeedback('rootUser,companyPosition')"
             :state="validation.getState('rootUser,companyPosition')"
             label="My position within the company is*"
+            class="mb-3 is-invalid"
         >
             <b-form-radio
                 v-model="firstCompanyPosition"

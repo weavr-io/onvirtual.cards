@@ -10,7 +10,7 @@
                         <b-form id="contact-form" @submit.prevent="submitChangePassword">
                             <client-only placeholder="Loading...">
                                 <div :class="{ 'is-dirty': validation.dirty }">
-                                    <label class="d-block text-left">OLD PASSWORD:</label>
+                                    <label class="d-block text-start mb-2">OLD PASSWORD:</label>
                                     <weavr-password-input
                                         ref="oldPassword"
                                         :base-style="passwordBaseStyle"
@@ -24,7 +24,9 @@
                                         @on-change="oldPasswordInteraction"
                                         @on-key-up.prevent="checkOnKeyUp"
                                     />
-                                    <label class="d-block text-left mt-3">NEW PASSWORD:</label>
+                                    <label class="d-block text-start mt-3 mb-2"
+                                        >NEW PASSWORD:</label
+                                    >
                                     <weavr-password-input
                                         ref="newPassword"
                                         :base-style="passwordBaseStyle"
@@ -39,14 +41,20 @@
                                         @on-strength="strengthCheck"
                                         @on-key-up.prevent="checkOnKeyUp"
                                     />
-                                    <small
-                                        :class="
-                                            !isPasswordValidAndDirty ? 'text-danger' : 'text-muted'
-                                        "
-                                        class="form-text mb-3 text-left"
-                                        >- min 8 characters <br />- uppercase letter <br />- digit
-                                        and a special character</small
-                                    >
+                                    <div class="text-start">
+                                        <small
+                                            :class="
+                                                !isPasswordValidAndDirty
+                                                    ? 'text-danger'
+                                                    : 'text-muted'
+                                            "
+                                            class="form-text mb-3"
+                                        >
+                                            - min 8 characters <br />
+                                            - uppercase letter <br />
+                                            - digit and a special character
+                                        </small>
+                                    </div>
                                 </div>
                             </client-only>
 
