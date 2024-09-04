@@ -15,7 +15,7 @@
                         on your company before allowing you to transact with your account.
                     </p>
                     <p>Kindly prepare to submit and upload the following documents:</p>
-                    <ul class="my-3 font-weight-normal">
+                    <ul class="my-3 fw-normal">
                         <li>Copy of the Certificate of Incorporation</li>
                         <li>Copy of the Articles of Association (last amendment)</li>
                         <li>Proof of Business Address (e.g. lease agreement)</li>
@@ -26,7 +26,7 @@
                         <li>Commercial registry extract showing shareholders and directors</li>
                     </ul>
                     <p>You will also need to provide the following information:</p>
-                    <ul class="my-3 font-weight-normal">
+                    <ul class="my-3 fw-normal">
                         <li>
                             Directors: name, date of birth, nationality, email address, contact
                             number

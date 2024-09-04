@@ -3,7 +3,7 @@
         <div class="mb-5">
             <LogoOvc classes="mb-5" />
             <b-card class="overflow-hidden" no-body>
-                <b-card-body class="px-4 mx-3 py-5 p-sm-card">
+                <b-card-body class="mx-3 py-5 p-sm-card">
                     <div class="form-screens">
                         <transition mode="out-in" name="fade">
                             <div v-if="screen === 0" key="1" class="form-screen">
