@@ -1,11 +1,13 @@
 import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 import type { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
 import type { NuxtAxiosInstance } from '@nuxtjs/axios'
+import { useRecaptcha } from 'vue3-recaptcha-v2'
 import 'bootstrap-vue-next'
 
 declare module 'vue' {
     interface ComponentCustomProperties {
         $apiMulti: ApiInterface
+        $recaptcha: ReturnType<typeof useRecaptcha>
     }
 }
 
@@ -21,12 +23,14 @@ declare module 'nuxt/app' {
         $bvToast: any // TODO: refactor, make component specific
         readonly $weavrToast: WeavrToast
         readonly $weavrToastError: WeavrToast
+        $recaptcha: ReturnType<typeof useRecaptcha>
     }
 }
 
 declare module '@vue/runtime-core' {
     interface ComponentCustomProperties {
         $weavrSetUserToken: (token: string) => {}
+        $recaptcha: ReturnType<typeof useRecaptcha>
     }
 }
 

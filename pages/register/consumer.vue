@@ -210,9 +210,12 @@
                                     v-if="isRecaptchaEnabled"
                                     class="mt-2 d-flex justify-content-center"
                                 >
-                                    <!-- TODO: update recaptcha
-                                    <recaptcha class="mx-auto" />
-                                --></div>
+                                    <recaptcha-form
+                                        @error-callback="handleErrorCallback"
+                                        @expired-callback="handleExpiredCallback"
+                                        @load-callback="handleLoadCallback"
+                                    />
+                                </div>
                                 <b-row align-v="center" class="mt-4">
                                     <b-col class="text-center">
                                         <LoaderButton
@@ -278,6 +281,7 @@ const passwordField = ref<typeof WeavrPasswordInput | null>(null)
 const rootMobileNumber = ref('')
 const numberIsValid = ref<boolean | null>(null)
 const passwordStrength = ref(0)
+const isCaptchaVerified = ref(false)
 
 const registrationRequest: CreateConsumerRequest & { password: SensitivePassword } = reactive({
     ...INITIAL_CREATE_CONSUMER_REQUEST(),
@@ -363,6 +367,20 @@ const isPasswordValid = computed(() => {
     return passwordStrength.value >= 2
 })
 
+const handleErrorCallback = () => {
+    isCaptchaVerified.value = false
+}
+
+const handleExpiredCallback = () => {
+    isCaptchaVerified.value = false
+}
+
+const handleLoadCallback = (res: unknown) => {
+    if (res) {
+        isCaptchaVerified.value = true
+    }
+}
+
 useAsyncData(async () => {
     await ($apiMulti as ApiInterface).ipify.get().then((ip) => {
         registrationRequest.ipAddress = ip.data.ip
@@ -370,6 +388,8 @@ useAsyncData(async () => {
 })
 
 const submitForm = async (e) => {
+    if (!isCaptchaVerified.value) return
+
     errors?.resetState()
     try {
         e.preventDefault()
