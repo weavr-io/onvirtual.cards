@@ -73,7 +73,11 @@
             </b-col>
         </b-form-row>
         <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
-            <!-- TODO: Update recaptcha <recaptcha-form /> -->
+            <recaptcha-form
+                @error-callback="handleErrorCallback"
+                @expired-callback="handleExpiredCallback"
+                @load-callback="handleLoadCallback"
+            />
         </div>
         <b-form-row class="mt-5">
             <b-col class="text-center">
@@ -101,12 +105,10 @@ import useZodValidation from '~/composables/useZodValidation'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
-import RecaptchaForm from '~/plugins/recaptcha/RecaptchaForm.vue'
 
 const emit = defineEmits(['submit-form'])
 const { corporates, errors } = useStores(['corporates', 'errors'])
 const { showErrorToast } = useBase()
-const recaptchaField: Ref<typeof RecaptchaForm | null> = ref(null)
 
 const form = reactive<
     LoginWithPassword & {
@@ -116,6 +118,7 @@ const form = reactive<
 
 const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
 const passwordStrength = ref<number>(0)
+const isCaptchaVerified = ref(false)
 
 const validation = computed(() => {
     return useZodValidation(
@@ -154,9 +157,24 @@ const isRecaptchaEnabled: ComputedRef<boolean> = computed(
 
 const isLoadingRegistration = computed(() => corporates?.corporateState.isLoadingRegistration)
 
+const handleErrorCallback = () => {
+    isCaptchaVerified.value = false
+}
+
+const handleExpiredCallback = () => {
+    isCaptchaVerified.value = false
+}
+
+const handleLoadCallback = (res: unknown) => {
+    if (res) {
+        isCaptchaVerified.value = true
+    }
+}
+
 const tryToSubmitForm = async () => {
     try {
-        await recaptchaField.value?.execute('submit')
+        if (!isCaptchaVerified.value) return
+
         errors?.resetState()
         validation.value.touch() && (await validation.value.validate())
         if (validation.value.isInvalid.value || !isPasswordValid.value) {

@@ -121,7 +121,7 @@ export default defineNuxtConfig({
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
         { src: '~/plugins/virtual-scroller.ts' },
-        { src: '~/plugins/recaptcha/main.ts' },
+        { src: '~/plugins/recaptcha.client.ts' },
     ],
 
     build: {
