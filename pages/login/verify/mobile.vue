@@ -17,9 +17,9 @@
 import { defineComponent, useAsync, useRouter } from '@nuxtjs/composition-api'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
+import { useStores } from '~/composables/useStores'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import MobileComponent from '~/components/molecules/MobileComponent.vue'
-import { useStores } from '~/composables/useStores'
 
 export default defineComponent({
     components: {
@@ -31,7 +31,7 @@ export default defineComponent({
     setup() {
         const router = useRouter()
 
-        const { auth } = useStores(['auth'])
+        const { auth, identity } = useStores(['auth', 'identity'])
 
         useAsync(() => auth?.indexAuthFactors())
 
@@ -40,6 +40,7 @@ export default defineComponent({
         )
 
         if (
+            identity?.identityState.mobileNumberVerified &&
             smsAuthFactors &&
             smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION
         ) {
