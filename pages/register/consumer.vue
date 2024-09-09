@@ -183,6 +183,7 @@
                                                 validation.getInvalidFeedback('acceptedTerms')
                                             "
                                             :state="validation.getState('acceptedTerms')"
+                                            class="mb-3"
                                         >
                                             <b-form-checkbox
                                                 v-model="registrationRequest.acceptedTerms"

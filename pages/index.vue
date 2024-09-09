@@ -2,7 +2,7 @@
     <section>
         <b-container>
             <b-row>
-                <b-col class="text-center"> Loading...</b-col>
+                <b-col class="text-center">Loading...</b-col>
             </b-row>
         </b-container>
     </section>
