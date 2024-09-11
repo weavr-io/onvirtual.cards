@@ -117,7 +117,7 @@ const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = comp
     }
 })
 
-const updateInviteForm = () => {
+const updateInviteFormRequest = () => {
     try {
         const _consumeInviteRequest: { id: IDModel; data: InviteConsumeRequestModel } = {
             id: route.query.user_id!.toString(),
@@ -135,7 +135,7 @@ const updateInviteForm = () => {
     }
 }
 
-const validateInviteForm = () => {
+const validateInviteFormRequest = () => {
     try {
         const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
             id: route.query.user_id!.toString(),
@@ -149,8 +149,8 @@ const validateInviteForm = () => {
 }
 
 onBeforeMount(() => {
-    updateInviteForm()
-    validateInviteForm()
+    updateInviteFormRequest()
+    validateInviteFormRequest()
 })
 
 const strengthCheck = (val) => {

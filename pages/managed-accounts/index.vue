@@ -33,6 +33,7 @@
 import { useAccounts } from '~/composables/useAccounts'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
@@ -42,8 +43,7 @@ definePageMeta({
 })
 const router = useRouter()
 const { accounts } = useStores(['accounts'])
-const { accountJurisdictionProfileId, showErrorToast, identityVerified, pendingDataOrError } =
-    useBase()
+const { accountJurisdictionProfileId, showErrorToast, identityVerified } = useBase()
 const { hasAccount } = useAccounts()
 
 const getAccounts = () => {
@@ -68,7 +68,7 @@ const getAccounts = () => {
         })
 }
 
-useAsyncData(async () => {
+const { pendingDataOrError } = await useGlobalAsyncData('getAccounts', async () => {
     await getAccounts()
 })
 </script>

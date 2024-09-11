@@ -117,7 +117,9 @@ const getAndShowCards = async () => {
     }
 }
 
-const { pendingDataOrError } = await useGlobalAsyncData('getAndShowCards', getAndShowCards)
+const { pendingDataOrError } = await useGlobalAsyncData('getAndShowCards', async () => {
+    await getAndShowCards()
+})
 
 const showDestroyedChanged = async (val) => {
     const status = val.target.checked
