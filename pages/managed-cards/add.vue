@@ -1,12 +1,7 @@
 <template>
     <section>
         <b-container>
-            <b-row v-if="pendingDataOrError">
-                <b-col>
-                    <LoadingSpinner center show />
-                </b-col>
-            </b-row>
-            <b-row v-else align-h="center">
+            <b-row align-h="center">
                 <b-col lg="6" md="9">
                     <b-card class="border-0">
                         <b-card-title class="mb-5 text-center fw-lighter">
@@ -119,14 +114,13 @@ import {
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCard'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 definePageMeta({
     middleware: 'ky-verified',
 })
 
 const router = useRouter()
-const { pendingDataOrError, profileBaseCurrency, isConsumer, cardJurisdictionProfileId } = useBase()
+const { profileBaseCurrency, isConsumer, cardJurisdictionProfileId } = useBase()
 const { auth, cards, consumers, corporates } = useStores([
     'auth',
     'cards',

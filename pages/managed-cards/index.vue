@@ -64,6 +64,7 @@
 import { useBase } from '~/composables/useBase'
 import { useCards } from '~/composables/useCards'
 import { useKyVerified } from '~/composables/useKyVerified'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
 import { useStores } from '~/composables/useStores'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
@@ -76,7 +77,7 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const { identityVerified, pendingDataOrError } = useBase()
+const { identityVerified } = useBase()
 const { hasAlert } = useKyVerified()
 const { cards, hasCards } = useCards()
 const { cards: cardsStore } = useStores(['cards'])
@@ -116,12 +117,11 @@ const getAndShowCards = async () => {
     }
 }
 
-useAsyncData(async () => {
-    await getAndShowCards()
-})
+const { pendingDataOrError } = await useGlobalAsyncData('getAndShowCards', getAndShowCards)
 
 const showDestroyedChanged = async (val) => {
     const status = val.target.checked
+
     await router.push({
         path: route.path,
         query: { showDestroyed: status },
