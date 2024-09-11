@@ -74,14 +74,14 @@ const props = withDefaults(
 )
 
 const inputTel = ref<HTMLElement | null>(null)
-const emit = defineEmits(['click', 'input', 'focus', 'blur', 'keydown'])
+const emit = defineEmits(['click', 'update:value', 'focus', 'blur', 'keydown'])
 
 const isFocus = ref(false)
 const isHover = ref(false)
 
 const inputValue = computed({
     get: () => props.value,
-    set: (value) => emit('input', value),
+    set: (value) => emit('update:value', value),
 })
 
 const hintValue = computed(() => {

@@ -49,6 +49,7 @@
                 <b-form-group
                     :invalid-feedback="validation.getInvalidFeedback('acceptedTerms')"
                     :state="validation.getState('acceptedTerms')"
+                    class="pb-2"
                 >
                     <b-form-checkbox
                         v-model="form.acceptedTerms"

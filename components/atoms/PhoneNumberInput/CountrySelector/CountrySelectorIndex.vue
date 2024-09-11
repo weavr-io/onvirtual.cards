@@ -89,7 +89,7 @@ import { type CountryCode, getCountryCallingCode } from 'libphonenumber-js'
 import type { PhoneCodeCountry } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
 import downArrowIcon from '@/assets/svg/statement/down_arrow.svg?url'
 
-const emit = defineEmits(['input', 'open', 'close'])
+const emit = defineEmits(['update:value', 'open', 'close'])
 
 const props = withDefaults(
     defineProps<{
@@ -199,7 +199,7 @@ function toggleList() {
 
 const updateValue = async (val: CountryCode | undefined) => {
     tmpValue.value = val
-    emit('input', val || null)
+    emit('update:value', val || null)
     await nextTick()
     closeList()
 }

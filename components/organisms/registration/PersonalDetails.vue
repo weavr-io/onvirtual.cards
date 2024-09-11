@@ -30,7 +30,7 @@
                 valid-color="#6D7490"
                 @update="phoneUpdate"
             />
-            <b-form-invalid-feedback v-if="!numberIsValid" force-show>
+            <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                 This field must be a valid mobile number.
             </b-form-invalid-feedback>
         </b-form-group>
@@ -122,14 +122,16 @@
             <b-form-radio
                 v-model="firstCompanyPosition"
                 :state="validation.getState('rootUser,companyPosition')"
-                name="company-position"
+                :value="CompanyPositionEnum.AUTHORISED_REPRESENTATIVE"
+                name="first-company-position"
             >
                 I am a representative (with the relevant power of attorney)
             </b-form-radio>
             <b-form-radio
                 v-model="lastCompanyPosition"
                 :state="validation.getState('rootUser,companyPosition')"
-                name="company-position"
+                :value="CompanyPositionEnum.DIRECTOR"
+                name="last-company-position"
             >
                 I am a director
             </b-form-radio>
