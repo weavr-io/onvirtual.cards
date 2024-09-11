@@ -8,12 +8,9 @@
         >
             <b-card-body class="card-body onvirtual-card overflow-hidden shadow-hover-sm">
                 <div class="b-aspect d-flex overflow-hidden">
+                    <div class="b-aspect-sizer flex-grow-1"></div>
                     <div
-                        class="b-aspect-sizer flex-grow-1"
-                        style="padding-bottom: 62.5%; height: 0px"
-                    ></div>
-                    <div
-                        class="b-aspect-content flex-grow-1 w-100 mw-100"
+                        class="b-aspect-content flex-grow-1 w-100 mw-100 pb-4 h-0"
                         style="margin-left: -100%"
                     >
                         <b-overlay :show="localIsBusy" class="overflow-hidden h-100" spinner-small>
