@@ -8,9 +8,9 @@
                             Create Card
                         </b-card-title>
                         <b-card-body>
-                            <b-alert :show="showError" class="text-center" variant="danger">
+                            <BAlert :model-value="showError" class="text-center" variant="danger">
                                 Error creating new card. <br />Contact support if problem persists.
-                            </b-alert>
+                            </BAlert>
                             <b-form v-if="!showError" @submit.prevent="doAdd">
                                 <b-form-row v-if="showNameOnCardField" class="mb-3">
                                     <b-col>
@@ -208,13 +208,12 @@ const doAdd = async () => {
         .then(() => {
             router.push('/managed-cards')
         })
-        .catch((err) => {
-            if (err.response.status) {
-                showError.value = true
-            }
+        .catch((_) => {
+            showError.value = true
         })
-
-    localIsBusy.value = false
+        .finally(() => {
+            localIsBusy.value = false
+        })
 }
 
 const phoneUpdate = (number) => {
