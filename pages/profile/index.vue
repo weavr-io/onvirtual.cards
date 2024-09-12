@@ -12,7 +12,6 @@
                                         :value="rootName"
                                         class="form-control"
                                         disabled
-                                        placeholder="John"
                                         readonly
                                     />
                                 </b-form-group>
@@ -23,7 +22,6 @@
                                         :value="rootSurname"
                                         class="form-control"
                                         disabled
-                                        placeholder="Doe"
                                         readonly
                                     />
                                 </b-form-group>
@@ -75,7 +73,10 @@
                         </div>
                         <b-form-row class="my-4">
                             <b-col class="text-center">
-                                <b-link class="link" to="/profile/password/change">
+                                <b-link
+                                    class="link text-decoration-none"
+                                    to="/profile/password/change"
+                                >
                                     Change password
                                 </b-link>
                             </b-col>
