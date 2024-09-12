@@ -1,5 +1,5 @@
 <template>
-    <b-col lg="6" md="9">
+    <b-col v-if="!pendingDataOrError" lg="6" md="9">
         <LogoOvc :link="false" classes="pb-5" />
         <b-card body-class="p-card">
             <h3 class="text-center fw-light mb-4">Add your phone number</h3>
@@ -51,6 +51,7 @@ import {
     RootUserMobileSchema,
     type UpdateCorporateRequest,
 } from '~/plugins/weavr-multi/api/models/identities/corporates'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
 import type { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
@@ -83,7 +84,7 @@ const validation = computed(() => {
     return useZodValidation(RootUserMobileSchema, updateRequest)
 })
 
-useAsyncData(async () => {
+const indexAuthFactors = async () => {
     await auth?.indexAuthFactors()
 
     const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
@@ -93,6 +94,10 @@ useAsyncData(async () => {
     if (smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION) {
         return router.replace('/dashboard')
     }
+}
+
+const { pendingDataOrError } = await useGlobalAsyncData('indexAuthFactors', async () => {
+    await indexAuthFactors()
 })
 
 const submitForm = async () => {
@@ -136,6 +141,7 @@ const submitForm = async () => {
 const phoneUpdate = (number) => {
     updateRequest.mobile.countryCode = number.countryCallingCode && `+${number.countryCallingCode}`
     updateRequest.mobile.number = number.phoneNumber
+
     if (number.phoneNumber) {
         numberIsValid.value = number.isValid
     }

@@ -90,10 +90,6 @@ import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import useZodValidation from '~/composables/useZodValidation'
 
-definePageMeta({
-    layout: 'auth',
-})
-
 const props = defineProps({
     verifyPhone: {
         type: Boolean,
