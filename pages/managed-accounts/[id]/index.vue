@@ -8,14 +8,15 @@
         </section>
     </div>
 </template>
+
 <script lang="ts" setup>
 import dot from 'dot-object'
 import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { useLuxon } from '~/composables/useLuxon'
 import { useStores } from '~/composables/useStores'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
-import { useBase } from '~/composables/useBase'
 import { useKyVerified } from '~/composables/useKyVerified'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
 import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
 
 definePageMeta({
@@ -24,7 +25,6 @@ definePageMeta({
 })
 const route = useRoute()
 const { accounts } = useStores(['accounts'])
-const { pendingDataOrError } = useBase()
 const { hasAlert } = useKyVerified()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 accounts?.setStatements(null)
@@ -72,16 +72,16 @@ const getStatements = async () => {
     await accounts?.getStatements(_req)
 }
 
-useAsyncData(async () => {
+const { pendingDataOrError } = await useGlobalAsyncData('getStatements', async () => {
     await getStatements().finally(() => (usingFetch.value = false))
 })
 
 watch(
-    route,
+    () => route.query,
     async () => {
         if (!usingFetch.value) await getStatements()
     },
-    { immediate: true },
+    { deep: true },
 )
 
 const infiniteScroll = ($state) => {

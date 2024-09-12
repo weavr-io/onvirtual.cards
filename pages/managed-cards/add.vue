@@ -1,21 +1,16 @@
 <template>
     <section>
         <b-container>
-            <b-row v-if="pendingDataOrError">
-                <b-col>
-                    <LoadingSpinner center show />
-                </b-col>
-            </b-row>
-            <b-row v-else align-h="center">
+            <b-row align-h="center">
                 <b-col lg="6" md="9">
                     <b-card class="border-0">
                         <b-card-title class="mb-5 text-center fw-lighter">
                             Create Card
                         </b-card-title>
                         <b-card-body>
-                            <b-alert :show="showError" class="text-center" variant="danger">
+                            <BAlert :model-value="showError" class="text-center" variant="danger">
                                 Error creating new card. <br />Contact support if problem persists.
-                            </b-alert>
+                            </BAlert>
                             <b-form v-if="!showError" @submit.prevent="doAdd">
                                 <b-form-row v-if="showNameOnCardField" class="mb-3">
                                     <b-col>
@@ -119,14 +114,13 @@ import {
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCard'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
 definePageMeta({
     middleware: 'ky-verified',
 })
 
 const router = useRouter()
-const { pendingDataOrError, profileBaseCurrency, isConsumer, cardJurisdictionProfileId } = useBase()
+const { profileBaseCurrency, isConsumer, cardJurisdictionProfileId } = useBase()
 const { auth, cards, consumers, corporates } = useStores([
     'auth',
     'cards',
@@ -214,13 +208,12 @@ const doAdd = async () => {
         .then(() => {
             router.push('/managed-cards')
         })
-        .catch((err) => {
-            if (err.response.status) {
-                showError.value = true
-            }
+        .catch((_) => {
+            showError.value = true
         })
-
-    localIsBusy.value = false
+        .finally(() => {
+            localIsBusy.value = false
+        })
 }
 
 const phoneUpdate = (number) => {

@@ -33,12 +33,7 @@
                     </client-only>
                     <b-form-row class="mt-6">
                         <b-col class="text-center">
-                            <!-- TODO: should be $fetchState.pending -->
-                            <b-button
-                                :disabled="pendingDataOrError"
-                                type="submit"
-                                variant="secondary"
-                            >
+                            <b-button type="submit" variant="secondary">
                                 submit
                                 <span class="ps-5">-></span>
                             </b-button>
@@ -62,7 +57,6 @@ import {
     type InviteConsumeRequestModel,
 } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
 import { useStores } from '~/composables/useStores'
-import { useBase } from '~/composables/useBase'
 import type { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import useZodValidation from '~/composables/useZodValidation'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
@@ -75,7 +69,6 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const { pendingDataOrError } = useBase()
 const { errors, users } = useStores(['errors', 'users'])
 
 const showErrorI = ref<boolean>(false)
@@ -117,7 +110,7 @@ const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = comp
     }
 })
 
-const updateInviteForm = () => {
+const updateInviteFormRequest = () => {
     try {
         const _consumeInviteRequest: { id: IDModel; data: InviteConsumeRequestModel } = {
             id: route.query.user_id!.toString(),
@@ -135,7 +128,7 @@ const updateInviteForm = () => {
     }
 }
 
-const validateInviteForm = () => {
+const validateInviteFormRequest = () => {
     try {
         const _validateRequest: { id: IDModel; data: InviteValidateRequestModel } = {
             id: route.query.user_id!.toString(),
@@ -149,8 +142,8 @@ const validateInviteForm = () => {
 }
 
 onBeforeMount(() => {
-    updateInviteForm()
-    validateInviteForm()
+    updateInviteFormRequest()
+    validateInviteFormRequest()
 })
 
 const strengthCheck = (val) => {

@@ -86,6 +86,7 @@
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import { KYBErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBErrorCodeEnum'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
 import DashboardHeader from '~/components/organisms/DashboardHeader.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
@@ -94,7 +95,7 @@ definePageMeta({
 })
 
 const { $weavrSetUserToken } = useNuxtApp()
-const { showErrorToast, pendingDataOrError } = useBase()
+const { showErrorToast } = useBase()
 const { auth, corporates } = useStores(['auth', 'corporates'])
 
 const reference = ref('')
@@ -126,7 +127,7 @@ const isKybRejected = computed(() => {
     return kybErrorCode.value === KYBErrorCodeEnum.KYB_PERMANENTLY_REJECTED
 })
 
-useAsyncData(async () => {
+const startKYB = async () => {
     if (sumsSubEnabled.value) {
         try {
             await corporates
@@ -144,6 +145,10 @@ useAsyncData(async () => {
             showErrorToast(e)
         }
     }
+}
+
+const { pendingDataOrError } = await useGlobalAsyncData('startKYB', async () => {
+    await startKYB()
 })
 </script>
 <style lang="scss" scoped>

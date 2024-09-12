@@ -82,7 +82,7 @@ import type { BankAccountDetailsModel } from '~/plugins/weavr-multi/api/models/m
 import { useStores } from '~/composables/useStores'
 import type { SepaBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SepaBankDetailsModel'
 import type { SwiftBankDetailsModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/SwiftBankDetailsModel'
-import { useBase } from '~/composables/useBase'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
 import { useAccounts } from '~/composables/useAccounts'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 
@@ -90,7 +90,6 @@ definePageMeta({
     middleware: ['ky-verified', 'instruments'],
 })
 const route = useRoute()
-const { pendingDataOrError } = useBase()
 const { account, accountId } = useAccounts()
 const { accounts } = useStores(['accounts'])
 
@@ -163,7 +162,7 @@ const paymentReference = computed(() => {
     return bankAccountDetails.value?.paymentReference
 })
 
-useAsyncData(async () => {
+const { pendingDataOrError } = await useGlobalAsyncData('getIBANDetails', async () => {
     await accounts?.getIBANDetails(route.params.id as string)
 })
 </script>

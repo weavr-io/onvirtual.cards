@@ -19,7 +19,6 @@ declare module 'nuxt/app' {
         $axiosMulti: NuxtAxiosInstance
         $weavrComponents: any
         $weavrSetUserToken: (token: unknown) => {}
-        $bvModal: any // TODO: refactor, make component specific
         $bvToast: any // TODO: refactor, make component specific
         readonly $weavrToast: WeavrToast
         readonly $weavrToastError: WeavrToast

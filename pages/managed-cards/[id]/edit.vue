@@ -74,6 +74,7 @@ import {
     ManagedCardUpdateSchema,
     type UpdateManagedCard,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import useZodValidation from '~/composables/useZodValidation'
@@ -81,7 +82,7 @@ import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 const route = useRoute()
 const router = useRouter()
-const { pendingDataOrError, isCorporate, isConsumer, showSuccessToast, showErrorToast } = useBase()
+const { isCorporate, isConsumer, showSuccessToast, showErrorToast } = useBase()
 const { cards } = useStores(['cards'])
 
 const numberIsValid: Ref<boolean | null> = ref(null)
@@ -114,7 +115,7 @@ const cardId = computed(() => {
     return route.params.id
 })
 
-useAsyncData(async () => {
+const getManagedCards = async () => {
     const card = await cards?.getManagedCard(cardId.value as string)
     if (card) {
         const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
@@ -128,6 +129,10 @@ useAsyncData(async () => {
         mobile.value.countryCode = parsedNumber?.country
         mobile.value.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
     }
+}
+
+const { pendingDataOrError } = await useGlobalAsyncData('getManagedCards', async () => {
+    await getManagedCards()
 })
 
 const doUpdate = async () => {

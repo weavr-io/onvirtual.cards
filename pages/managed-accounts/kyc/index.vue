@@ -26,10 +26,10 @@
     </section>
 </template>
 <script lang="ts" setup>
-import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import { KYCErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCErrorCodeEnum'
 import type { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
 import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import KYCAlert from '~/components/molecules/consumers/KYCAlert.vue'
@@ -40,7 +40,6 @@ definePageMeta({
 })
 const router = useRouter()
 const { $weavrSetUserToken } = useNuxtApp()
-const { pendingDataOrError } = useBase()
 const { auth, consumers } = useStores(['auth', 'consumers'])
 
 const reference = ref('')
@@ -64,7 +63,7 @@ const options: Ref<Pick<ConsumerVerificationFlowOptions, 'onMessage'>> = ref({
     onMessage,
 })
 
-useAsyncData(async () => {
+const startKYC = async () => {
     await consumers
         ?.startKYC()
         .then((res) => {
@@ -74,5 +73,9 @@ useAsyncData(async () => {
         .catch((res) => {
             kycErrorCode.value = res.response.data.errorCode
         })
+}
+
+const { pendingDataOrError } = await useGlobalAsyncData('startKYC', async () => {
+    await startKYC()
 })
 </script>

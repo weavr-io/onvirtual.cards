@@ -9,11 +9,10 @@
                                 <b-col class="pe-0" cols="auto">All Transactions</b-col>
                                 <b-col class="ps-2" cols="auto">
                                     <b-form-select
+                                        v-model="filterDate"
                                         :options="months"
-                                        :value="filterDate"
                                         class="w-auto d-inline-block rounded-0 custom-select"
                                         size="sm"
-                                        @change="filterMonthChange"
                                     />
                                 </b-col>
                             </b-row>
@@ -108,11 +107,20 @@ const filteredStatementLength: ComputedRef<number> = computed(() => {
     return 0
 })
 
-const filterDate = computed(() => {
-    return {
-        start: props.filters.fromTimestamp,
-        end: props.filters.toTimestamp,
-    }
+const filterDate = computed({
+    get() {
+        return {
+            start: props.filters.fromTimestamp as unknown as number,
+            end: props.filters.toTimestamp as unknown as number,
+        }
+    },
+    set(newValue) {
+        console.log('details', newValue.start)
+        setFilters({
+            fromTimestamp: newValue.start,
+            toTimestamp: newValue.end,
+        })
+    },
 })
 
 const months = computed(() => {
@@ -120,13 +128,6 @@ const months = computed(() => {
 
     return monthsFilter(account.value.creationTimestamp)
 })
-
-const filterMonthChange = (val) => {
-    setFilters({
-        fromTimestamp: val.start,
-        toTimestamp: val.end,
-    })
-}
 
 const downloadStatement = () => {
     const _routeQueries = dot.object(route.query)

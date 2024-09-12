@@ -7,8 +7,12 @@
         >
             <b-col cols="7">
                 <b-nav class="dashboard-header">
-                    <b-nav-item active-class="active" to="/managed-cards">Cards</b-nav-item>
-                    <b-nav-item active-class="active" to="/managed-accounts"> Account</b-nav-item>
+                    <BNavItem :active="isRouteActive('/managed-cards')" href="/managed-cards"
+                        >Cards</BNavItem
+                    >
+                    <BNavItem :active="isRouteActive('/managed-accounts')" href="/managed-accounts"
+                        >Account</BNavItem
+                    >
                 </b-nav>
             </b-col>
             <b-col v-if="isManagedAccounts" class="pb-2">
@@ -51,6 +55,7 @@
         </b-row>
     </b-container>
 </template>
+
 <script lang="ts" setup>
 import { useBase } from '~/composables/useBase'
 import { useAccounts } from '~/composables/useAccounts'
@@ -59,6 +64,12 @@ import { useStores } from '~/composables/useStores'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { weavrCurrency } from '~/utils/helper'
+
+const route = useRoute()
+
+const isRouteActive = (basePath: string) => {
+    return route.path.startsWith(basePath)
+}
 
 const { isConsumer, isCorporate } = useBase()
 const { account, isManagedAccounts } = useAccounts()

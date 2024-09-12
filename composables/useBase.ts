@@ -131,10 +131,6 @@ export const useBase = () => {
         return _default
     })
 
-    // TODO: Add useFetchState to composable then make states global there
-    // for now just return false
-    const pendingDataOrError = computed(() => false)
-
     const goToIndex = () => {
         return router.push('/')
     }
@@ -197,7 +193,6 @@ export const useBase = () => {
         countriesOptions,
         mobileCountries,
         countryOptionsWithDefault,
-        pendingDataOrError,
         goToIndex,
         goToVerify,
         redirectToLogin,

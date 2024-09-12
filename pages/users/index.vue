@@ -8,11 +8,11 @@
             </b-row>
             <b-row class="mb-5">
                 <b-col class="text-right">
-                    <b-button to="/users/add" variant="border-primary"> + invite user</b-button>
+                    <b-button to="/users/add" variant="border-primary">+ invite user</b-button>
                 </b-col>
             </b-row>
 
-            <template v-if="users && !pendingDataOrError">
+            <template v-if="users">
                 <b-row v-for="(user, key) in users.users" :key="key" align-v="center" class="mt-3">
                     <b-col cols="2" md="1">
                         <b-img v-bind="mainProps" :alt="user.name + ' ' + user.surname" rounded />
@@ -23,6 +23,7 @@
                     </b-col>
                 </b-row>
             </template>
+
             <template v-else>
                 <div class="d-flex justify-content-center">
                     <div class="loader-spinner">
@@ -35,14 +36,12 @@
 </template>
 
 <script lang="ts" setup>
-import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 
 definePageMeta({
     middleware: 'ky-verified',
 })
 
-const { pendingDataOrError } = useBase()
 const { users: usersStores } = useStores(['users'])
 usersStores?.index()
 
