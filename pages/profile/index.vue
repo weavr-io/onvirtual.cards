@@ -9,9 +9,10 @@
                             <b-col>
                                 <b-form-group label="FIRST NAME">
                                     <b-form-input
-                                        :value="rootName"
+                                        v-model="rootName"
                                         class="form-control"
                                         disabled
+                                        placeholder="John"
                                         readonly
                                     />
                                 </b-form-group>
@@ -19,9 +20,10 @@
                             <b-col>
                                 <b-form-group label="LAST NAME">
                                     <b-form-input
-                                        :value="rootSurname"
+                                        v-model="rootSurname"
                                         class="form-control"
                                         disabled
+                                        placeholder="Doe"
                                         readonly
                                     />
                                 </b-form-group>
@@ -177,6 +179,8 @@ onBeforeMount(() => {
 })
 
 const phoneUpdate = (number) => {
+    if (!number.countryCallingCode) return
+
     mobile.value.countryCode = mobile.value.countryCode && `+${number.countryCallingCode}`
     mobile.value.number = number.phoneNumber
 
@@ -187,6 +191,7 @@ const phoneUpdate = (number) => {
 }
 
 const doUpdateIdentityRoot = async () => {
+    console.log('bearing')
     isLoading.value = true
 
     if (numberIsValid.value === null) {

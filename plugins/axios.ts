@@ -1,4 +1,3 @@
-// TODO: Cannot merge to develop must dump axios and use useFetch
 import axios from 'axios'
 import { useStores } from '~/composables/useStores'
 

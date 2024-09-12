@@ -85,7 +85,6 @@ export const useAuthStore = defineStore('auth', () => {
         weavrSetUserToken.value(null)
         removeAuth(null)
         resetState()
-        // TODO: refactor this if list gets too long
         useStores(
             ['corporates', 'consumers', 'accounts', 'cards', 'identity', 'transfers', 'users'],
             true,
