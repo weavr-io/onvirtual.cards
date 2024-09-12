@@ -8,6 +8,7 @@
         </section>
     </div>
 </template>
+
 <script lang="ts" setup>
 import dot from 'dot-object'
 import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
@@ -76,11 +77,11 @@ const { pendingDataOrError } = await useGlobalAsyncData('getStatements', async (
 })
 
 watch(
-    route,
+    () => route.query,
     async () => {
         if (!usingFetch.value) await getStatements()
     },
-    { immediate: true },
+    { deep: true },
 )
 
 const infiniteScroll = ($state) => {
