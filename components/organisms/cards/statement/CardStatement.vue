@@ -8,10 +8,9 @@
                     >
                     <b-form-select
                         id="transaction-timeframe"
+                        v-model="filterDate"
                         :options="months"
-                        :value="filterDate"
                         class="w-auto d-inline-block ps-2 custom-select"
-                        @change="filterMonthChange"
                     />
                 </div>
             </b-col>
@@ -78,6 +77,7 @@ import { InstrumentEnum } from '~/plugins/weavr-multi/api/models/common/enums/In
 import StatementItem from '~/components/organisms/StatementItem.vue'
 import DownloadIcon from '~/assets/svg/download.svg'
 import DeleteIcon from '~/assets/svg/delete.svg'
+
 const props = defineProps({
     filters: {
         type: Object as PropType<StatementFiltersRequest>,
@@ -101,23 +101,22 @@ const months = computed(() => {
     return monthsFilter(managedCard.value.creationTimestamp)
 })
 
-const filterDate = computed(() => {
-    if (!props.filters) return {}
-
-    return {
-        start: props.filters.fromTimestamp,
-        end: props.filters.toTimestamp,
-    }
+const filterDate = computed({
+    get() {
+        return {
+            start: props.filters.fromTimestamp as unknown as number,
+            end: props.filters.toTimestamp as unknown as number,
+        }
+    },
+    set(newValue) {
+        setFilters({
+            fromTimestamp: newValue.start,
+            toTimestamp: newValue.end,
+        })
+    },
 })
 
 const filteredStatement = computed(() => cards?.cardState.filteredStatement)
-
-const filterMonthChange = (val) => {
-    setFilters({
-        fromTimestamp: val.start,
-        toTimestamp: val.end,
-    })
-}
 
 const downloadStatement = () => {
     const _routeQueries = dot.object(route.query)

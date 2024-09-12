@@ -14,8 +14,8 @@ import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/ap
 import { useLuxon } from '~/composables/useLuxon'
 import { useStores } from '~/composables/useStores'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
-import { useBase } from '~/composables/useBase'
 import { useKyVerified } from '~/composables/useKyVerified'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
 import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
 
 definePageMeta({
@@ -24,7 +24,6 @@ definePageMeta({
 })
 const route = useRoute()
 const { accounts } = useStores(['accounts'])
-const { pendingDataOrError } = useBase()
 const { hasAlert } = useKyVerified()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 accounts?.setStatements(null)
@@ -72,7 +71,7 @@ const getStatements = async () => {
     await accounts?.getStatements(_req)
 }
 
-useAsyncData(async () => {
+const { pendingDataOrError } = await useGlobalAsyncData('getStatements', async () => {
     await getStatements().finally(() => (usingFetch.value = false))
 })
 

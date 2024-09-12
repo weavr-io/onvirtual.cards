@@ -5,7 +5,7 @@
                 <b-row align-h="between" align-v="end" class="mb-3 border-bottom pb-3">
                     <b-col cols="7" sm="auto">
                         <div class="d-flex align-items-center">
-                            <b-link class="card-view-details" @click="toggleModal">
+                            <b-link class="card-view-details" @click="isCardModalVisible = true">
                                 view <br />
                                 details
                             </b-link>
@@ -59,6 +59,7 @@
 
         <b-modal
             id="cardModal"
+            v-model="isCardModalVisible"
             body-class="p-0 transparent"
             centered
             content-class="transparent-modal"
@@ -165,23 +166,23 @@
 <script lang="ts" setup>
 import dot from 'dot-object'
 import { useLuxon } from '~/composables/useLuxon'
-import { useBase } from '~/composables/useBase'
 import { useCards } from '~/composables/useCards'
 import { useStores } from '~/composables/useStores'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
 import type { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
 import type { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import { expiryMmyy, weavrCurrency } from '~/utils/helper'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
 import WeavrCvvSpan from '~/plugins/weavr/components/WeavrCVVSpan.vue'
 import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.vue'
 import Statement from '~/components/organisms/cards/statement/CardStatement.vue'
 
 const route = useRoute()
-const { $bvModal, $weavrSetUserToken } = useNuxtApp()
+const { $weavrSetUserToken } = useNuxtApp()
 const { managedCard, cardId, isCardActive } = useCards()
-const { pendingDataOrError } = useBase()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { auth, cards } = useStores(['auth', 'cards'])
+const isCardModalVisible = ref(false)
 
 const filters: Ref<StatementFiltersRequest | undefined> = ref(undefined)
 const page = ref(0)
@@ -193,14 +194,6 @@ const currency = computed(() => {
 
 const expiryDate = computed(() => {
     return expiryMmyy(managedCard.value?.expiryMmyy)
-})
-
-useAsyncData(async () => {
-    page.value = 0
-    ;($weavrSetUserToken as (token: string) => void)(`Bearer ${auth?.token}`)
-
-    await cards?.getManagedCard(cardId.value as string)
-    await fetchCardStatements()
 })
 
 const fetchCardStatements = async () => {
@@ -234,6 +227,18 @@ const fetchCardStatements = async () => {
     await cards?.getCardStatement(_req)
 }
 
+const loadCardAndStatements = async () => {
+    page.value = 0
+    ;($weavrSetUserToken as (token: string) => void)(`Bearer ${auth?.token}`)
+
+    await cards?.getManagedCard(cardId.value as string)
+    await fetchCardStatements()
+}
+
+const { pendingDataOrError } = await useGlobalAsyncData('loadCardAndStatements', async () => {
+    await loadCardAndStatements()
+})
+
 const toggleIsLoading = () => {
     isLoading.value = !isLoading.value
 }
@@ -260,11 +265,7 @@ const infiniteScroll = ($state) => {
     }, 500)
 }
 
-const toggleModal = () => {
-    ;($bvModal as any).show('cardModal')
-}
-
-watch(route, fetchCardStatements)
+watch(() => route.query, fetchCardStatements, { deep: true })
 </script>
 
 <style lang="scss" scoped>
