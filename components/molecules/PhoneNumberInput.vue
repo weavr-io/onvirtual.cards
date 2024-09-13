@@ -24,7 +24,6 @@
         </div>
         <div class="flex-1 w-100">
             <InputTel
-                v-bind="$attrs"
                 :id="`${uniqueId}_phone_number`"
                 ref="phoneNumberInputEl"
                 v-model:value="phoneNumber"
@@ -35,6 +34,7 @@
                 :theme="theme"
                 :valid="isValid && !noValidatorState"
                 class="input-phone-number"
+                v-bind="$attrs"
                 @blur="$emit('phone-number-blur')"
                 @focus="$emit('phone-number-focused')"
                 @keydown="
@@ -51,9 +51,9 @@
 import {
     AsYouType,
     type CountryCode,
+    type Examples,
     getExampleNumber,
     parsePhoneNumberFromString,
-    type Examples,
 } from 'libphonenumber-js'
 import { computed } from 'vue'
 import examples from 'libphonenumber-js/examples.mobile.json'
@@ -151,7 +151,7 @@ const shouldChooseCountry = computed(() => {
     return !countryCode.value && !!phoneNumber.value
 })
 
-const isValid = computed(() => results.value?.isValid)
+const isValid = computed(() => !!results.value?.isValid)
 
 const phoneNumberExample = computed(() => {
     const exampleNumber = countryCode.value
@@ -228,12 +228,10 @@ watch(
                 defaultCountry: newCountryCode,
             })
 
-            if (newPhoneNumber) {
-                emitValues({
-                    phoneNumber: newPhoneNumber,
-                    countryCode: countryCode.value || parsedPhoneNumber?.country,
-                })
-            }
+            emitValues({
+                phoneNumber: newPhoneNumber,
+                countryCode: countryCode.value || parsedPhoneNumber?.country,
+            })
         }
     },
     { immediate: true },
@@ -292,9 +290,9 @@ function getParsePhoneNumberFromString(phoneNumber: string, countryCode: Country
 
     .select-country-container {
         flex: 0 0 120px;
-        width: 120px;
-        min-width: 120px;
         max-width: 120px;
+        min-width: 120px;
+        width: 120px;
     }
 }
 </style>

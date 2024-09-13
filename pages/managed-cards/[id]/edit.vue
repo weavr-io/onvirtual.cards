@@ -86,7 +86,7 @@ const { isCorporate, isConsumer, showSuccessToast, showErrorToast } = useBase()
 const { cards } = useStores(['cards'])
 
 const numberIsValid: Ref<boolean | null> = ref(null)
-const mobile = ref<{ countryCode: CountryCode | undefined; cardholderMobileNumber: string }>({
+const mobile = ref<{ countryCode: CountryCode; cardholderMobileNumber: string }>({
     countryCode: 'GB',
     cardholderMobileNumber: '',
 })
@@ -126,7 +126,7 @@ const getManagedCards = async () => {
             ...(isCorporate.value && { cardholderMobileNumber: '' }),
         })
 
-        mobile.value.countryCode = parsedNumber?.country
+        mobile.value.countryCode = parsedNumber?.country || 'GB'
         mobile.value.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
     }
 }

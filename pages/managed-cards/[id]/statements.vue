@@ -102,7 +102,7 @@
                                                         lineHeight: '1',
                                                         fontSize: '20px',
                                                     }"
-                                                    :token="managedCard.cardNumber?.value"
+                                                    :token="managedCardNumber"
                                                     class="card-select-number"
                                                     @on-change="toggleIsLoading"
                                                 />
@@ -145,7 +145,7 @@
                                                     fontSize: '14.4px',
                                                     fontWeight: '300',
                                                 }"
-                                                :token="managedCard.cvv?.value"
+                                                :token="managedCardCvv"
                                                 class="card-select-number"
                                             />
                                         </div>
@@ -158,7 +158,9 @@
             </b-card>
         </b-modal>
         <infinite-loading class="statement-loader" spinner="spiral" @infinite="infiniteScroll">
-            <template #complete><div /></template>
+            <template #complete>
+                <div />
+            </template>
         </infinite-loading>
     </section>
 </template>
@@ -183,6 +185,14 @@ const { managedCard, cardId, isCardActive } = useCards()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { auth, cards } = useStores(['auth', 'cards'])
 const isCardModalVisible = ref(false)
+
+const managedCardNumber = computed(() => {
+    return managedCard.value?.cardNumber?.value || ''
+})
+
+const managedCardCvv = computed(() => {
+    return managedCard.value?.cvv?.value || ''
+})
 
 const filters: Ref<StatementFiltersRequest | undefined> = ref(undefined)
 const page = ref(0)
@@ -293,9 +303,9 @@ watch(() => route.query, fetchCardStatements, { deep: true })
 
 :deep(.add-funds) {
     border-radius: 100%;
-    padding: 13px 10px 18px;
-    line-height: 0;
     font-size: 20px;
+    line-height: 0;
+    padding: 13px 10px 18px;
 }
 
 .card {
@@ -314,10 +324,10 @@ watch(() => route.query, fetchCardStatements, { deep: true })
 .card-view-details {
     background: #f0edde;
     border-radius: 10px;
-    padding: 10px;
-    text-align: center;
     display: block;
     font-size: 0.6rem;
+    padding: 10px;
+    text-align: center;
     text-decoration: none;
 }
 
