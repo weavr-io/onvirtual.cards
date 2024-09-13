@@ -7,11 +7,15 @@
         >
             <b-col cols="7">
                 <b-nav class="dashboard-header">
-                    <BNavItem :active="isRouteActive('/managed-cards')" href="/managed-cards"
-                        >Cards</BNavItem
+                    <BNavItem :active="isRouteActive('/managed-cards')"
+                        ><nuxt-link class="text-decoration-none" to="/managed-cards"
+                            >Cards</nuxt-link
+                        ></BNavItem
                     >
-                    <BNavItem :active="isRouteActive('/managed-accounts')" href="/managed-accounts"
-                        >Account</BNavItem
+                    <BNavItem :active="isRouteActive('/managed-accounts')"
+                        ><nuxt-link class="text-decoration-none" to="/managed-accounts"
+                            >Account</nuxt-link
+                        ></BNavItem
                     >
                 </b-nav>
             </b-col>

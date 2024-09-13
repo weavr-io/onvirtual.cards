@@ -11,8 +11,16 @@
                             <template #button-content>
                                 {{ rootFullName }}
                             </template>
-                            <b-dropdown-item to="/profile">Profile</b-dropdown-item>
-                            <b-dropdown-item v-if="isCorporate" to="/users">Users</b-dropdown-item>
+                            <b-dropdown-item>
+                                <nuxt-link class="text-decoration-none" to="/profile"
+                                    >Profile</nuxt-link
+                                >
+                            </b-dropdown-item>
+                            <b-dropdown-item v-if="isCorporate">
+                                <nuxt-link class="text-decoration-none" to="/users"
+                                    >Users</nuxt-link
+                                >
+                            </b-dropdown-item>
                             <b-dropdown-item @click="doLogout">Sign out</b-dropdown-item>
                         </b-nav-item-dropdown>
                     </b-navbar-nav>
