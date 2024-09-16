@@ -61,7 +61,7 @@ const showRegister = computed(() => {
 
 useHead({
     bodyAttrs: {
-        class: 'bg-bg-colored',
+        class: 'bg-colored',
     },
 })
 </script>
