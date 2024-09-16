@@ -212,7 +212,6 @@
                                     class="mt-2 d-flex justify-content-center"
                                 >
                                     <recaptcha-form
-                                        :key="captchaKey"
                                         @error-callback="handleErrorCallback"
                                         @expired-callback="handleExpiredCallback"
                                         @load-callback="handleLoadCallback"
@@ -278,7 +277,6 @@ const { profileId } = useRuntimeConfig().public
 const { $apiMulti } = useNuxtApp()
 const { consumer, showErrorToast, mobileCountries, countryOptionsWithDefault } = useBase()
 const { accessCodes, consumers, errors } = useStores(['accessCodes', 'consumers', 'errors'])
-const captchaKey = ref<number>(0)
 
 const passwordField = ref<typeof WeavrPasswordInput | null>(null)
 const rootMobileNumber = ref('')
@@ -388,10 +386,6 @@ useAsyncData(async () => {
     await ($apiMulti as ApiInterface).ipify.get().then((ip) => {
         registrationRequest.ipAddress = ip.data.ip
     })
-})
-
-onMounted(() => {
-    captchaKey.value++
 })
 
 const submitForm = async (e) => {
