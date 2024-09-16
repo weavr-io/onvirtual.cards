@@ -12,6 +12,9 @@ export default defineNuxtConfig({
             }),
         ],
     },
+    imports: {
+        autoImport: true,
+    },
 
     runtimeConfig: {
         public: {
@@ -113,7 +116,7 @@ export default defineNuxtConfig({
 
     plugins: [
         { src: '~/plugins/weavr/security.client.ts' },
-        { src: '~/plugins/WeavrVueFilters.ts' },
+        { src: '~/plugins/WeavrToast.ts' },
         { src: '~/plugins/flatpickr.ts' },
         { src: '~/plugins/InfiniteLoading.ts' },
         { src: '~/plugins/axios.ts' },

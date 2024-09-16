@@ -18,7 +18,6 @@
         "types": ["@types/node", "nuxt", "@nuxtjs/axios", "@pinia/nuxt"]
     },
     "exclude": ["dist", "node_modules"],
-    "include": ["vue-shims.d.ts"],
     "importHelpers": true,
     "emitHelpers": true
 }

@@ -8,7 +8,7 @@
             </b-row>
             <b-row class="mb-5">
                 <b-col class="text-right">
-                    <b-button to="/users/add" variant="border-primary">+ invite user</b-button>
+                    <b-button to="/users/add" variant="outline-primary">+ invite user</b-button>
                 </b-col>
             </b-row>
 

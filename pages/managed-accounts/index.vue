@@ -4,7 +4,7 @@
             <b-container class="mb-5">
                 <b-row align-v="center">
                     <b-col class="text-right">
-                        <b-button to="/managed-accounts/add" variant="border-primary">
+                        <b-button to="/managed-accounts/add" variant="outline-primary">
                             + add new account
                         </b-button>
                     </b-col>

@@ -13,9 +13,7 @@
             </div>
             <b-row class="text-muted">
                 <b-col>
-                    <b-badge v-if="isPending" class="text-muted" variant="grey-light"
-                        >Pending
-                    </b-badge>
+                    <b-badge v-if="isPending" class="text-muted bg-grey-light">Pending</b-badge>
                 </b-col>
                 <b-col class="text-right">
                     <TransactionCardFee :transaction="transaction" />

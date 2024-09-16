@@ -15,7 +15,7 @@
             </div>
             <b-row class="text-muted">
                 <b-col>
-                    <b-badge v-if="isPending" class="text-muted me-2" variant="grey-light"
+                    <b-badge v-if="isPending" class="text-muted me-2 bg-grey-light"
                         >Pending
                     </b-badge>
                     <span class="me-2">Purchase</span>
