@@ -75,6 +75,7 @@
         </b-form-row>
         <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
             <recaptcha-form
+                :key="captchaKey"
                 @error-callback="handleErrorCallback"
                 @expired-callback="handleExpiredCallback"
                 @load-callback="handleLoadCallback"
@@ -120,6 +121,7 @@ const form = reactive<
 const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
 const passwordStrength = ref<number>(0)
 const isCaptchaVerified = ref(false)
+const captchaKey = ref<number>(0)
 
 const validation = computed(() => {
     return useZodValidation(
@@ -224,4 +226,8 @@ const submitForm = () => {
 const strengthCheck = (val) => {
     passwordStrength.value = val.id
 }
+
+onMounted(() => {
+    captchaKey.value++
+})
 </script>
