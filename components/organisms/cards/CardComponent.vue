@@ -3,68 +3,77 @@
         <b-card
             id="managed-card"
             :class="[{ 'card-frozen': isBlocked }, { 'card-destroyed': isDestroyed }]"
-            class="border-0 cards-card"
+            class="border-0 cards-card mb-5"
             no-body
         >
             <b-card-body class="card-body onvirtual-card overflow-hidden shadow-hover-sm">
-                <div class="ratio-card overflow-hidden">
-                    <b-overlay :show="localIsBusy" class="overflow-hidden h-100" spinner-small>
-                        <nuxt-link :to="statementsLink">
-                            <b-container class="p-0" fluid>
-                                <b-row>
-                                    <b-col
-                                        v-if="card.balances?.availableBalance"
-                                        class="card-balance text-right"
-                                    >
-                                        {{ currency }}
-                                    </b-col>
-                                </b-row>
-                                <b-row class="mt-3 mb-3">
-                                    <b-col>
-                                        <b-row>
-                                            <b-col>
-                                                <div class="card-name text-truncate">
-                                                    {{ card.friendlyName }}
-                                                </div>
-                                            </b-col>
-                                        </b-row>
-                                        <b-row class="mt-2">
-                                            <b-col>
-                                                <div class="card-number">
-                                                    •••• {{ card.cardNumberLastFour }}
-                                                </div>
-                                            </b-col>
-                                        </b-row>
-                                    </b-col>
-                                </b-row>
-                                <b-row align-v="end">
-                                    <b-col cols="6">
-                                        <div class="card-name-on-card text-truncate">
-                                            {{ card.nameOnCard }}
-                                        </div>
-                                    </b-col>
-                                    <b-col cols="3">
-                                        <div class="card-expiry">
-                                            <div class="card-expiry-label">EXP</div>
-                                            <div v-if="card.expiryMmyy" class="card-expiry-value">
-                                                {{ expiryDate }}
-                                            </div>
-                                        </div>
-                                    </b-col>
-                                    <b-col class="text-right" cols="2">
-                                        <b-img src="/img/mc_symbol.svg" width="50px" />
-                                    </b-col>
-                                </b-row>
-                            </b-container>
-                        </nuxt-link>
-                    </b-overlay>
-                    <b-button
-                        v-if="!isDestroyed"
-                        class="card-options-button"
-                        @click="toggleShowOptions"
+                <div class="b-aspect d-flex overflow-hidden">
+                    <div class="b-aspect-sizer flex-grow-1"></div>
+                    <div
+                        class="b-aspect-content flex-grow-1 w-100 mw-100 pb-4 h-0"
+                        style="margin-left: -100%"
                     >
-                        <i class="bi bi-three-dots-vertical"></i>
-                    </b-button>
+                        <b-overlay :show="localIsBusy" class="overflow-hidden h-100" spinner-small>
+                            <nuxt-link :to="statementsLink">
+                                <b-container class="p-0" fluid>
+                                    <b-row>
+                                        <b-col
+                                            v-if="card.balances?.availableBalance"
+                                            class="card-balance text-right"
+                                        >
+                                            {{ currency }}
+                                        </b-col>
+                                    </b-row>
+                                    <b-row class="mt-3 mb-3">
+                                        <b-col>
+                                            <b-row>
+                                                <b-col>
+                                                    <div class="card-name text-truncate">
+                                                        {{ card.friendlyName }}
+                                                    </div>
+                                                </b-col>
+                                            </b-row>
+                                            <b-row class="mt-2">
+                                                <b-col>
+                                                    <div class="card-number">
+                                                        •••• {{ card.cardNumberLastFour }}
+                                                    </div>
+                                                </b-col>
+                                            </b-row>
+                                        </b-col>
+                                    </b-row>
+                                    <b-row align-v="end">
+                                        <b-col cols="6">
+                                            <div class="card-name-on-card text-truncate">
+                                                {{ card.nameOnCard }}
+                                            </div>
+                                        </b-col>
+                                        <b-col cols="3">
+                                            <div class="card-expiry">
+                                                <div class="card-expiry-label">EXP</div>
+                                                <div
+                                                    v-if="card.expiryMmyy"
+                                                    class="card-expiry-value"
+                                                >
+                                                    {{ expiryDate }}
+                                                </div>
+                                            </div>
+                                        </b-col>
+                                        <b-col class="text-right" cols="2">
+                                            <b-img src="/img/mc_symbol.svg" width="50px" />
+                                        </b-col>
+                                    </b-row>
+                                </b-container>
+                            </nuxt-link>
+                        </b-overlay>
+                        <b-button
+                            v-if="!isDestroyed"
+                            class="card-options-button"
+                            @click="toggleShowOptions"
+                        >
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </b-button>
+                    </div>
                 </div>
             </b-card-body>
         </b-card>

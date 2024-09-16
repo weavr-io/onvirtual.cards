@@ -1,7 +1,10 @@
 <template>
     <div id="main-header">
         <div v-if="showHeader" class="container-fluid">
-            <b-navbar class="fixed-top auth-nav-bar ps-3 pe-3" variant="card">
+            <b-navbar
+                class="navbar fixed-top auth-nav-bar navbar-light bg-card navbar-expand"
+                variant="card"
+            >
                 <div class="container">
                     <b-collapse id="nav_collapse" is-nav>
                         <b-navbar-nav class="ms-auto">

@@ -1,4 +1,8 @@
 .card {
+    .card-body {
+        padding: 20px;
+    }
+
     &.card-sm-border-radius {
         border-radius: 1rem;
 

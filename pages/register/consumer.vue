@@ -176,7 +176,7 @@
                                         >
                                     </b-form-group>
                                 </client-only>
-                                <b-form-row class="small mt-3 text-muted">
+                                <b-form-row class="small my-3 text-muted">
                                     <b-col>
                                         <b-form-group
                                             :invalid-feedback="
