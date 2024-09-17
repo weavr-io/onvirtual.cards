@@ -9,8 +9,7 @@
         <BAlert
             id="verify-mobile"
             :show="showVerifyMobileAlert && !showVerifyEmailAlert"
-            class="fixed-bottom bottom-left-alert m-4 p-4"
-            variant="bg-colored"
+            class="fixed-bottom bottom-left-alert m-4 p-4 bg-colored"
         >
             We need to verify your mobile number. Please click
             <b-link class="link" to="/login/verify/mobile"> here.</b-link>
@@ -18,11 +17,10 @@
         <BAlert
             id="verify-email"
             :show="showVerifyEmailAlert"
-            class="fixed-bottom bottom-left-alert m-4 p-4"
-            variant="bg-colored"
+            class="fixed-bottom bottom-left-alert m-4 p-4 bg-colored"
         >
             We need to verify your email address. Please click
-            <b-button class="link mb-1" variant="transparent" @click="goToVerify">here.</b-button>
+            <b-button class="link mb-1 bg-transparent" @click="goToVerify">here.</b-button>
         </BAlert>
         <LoadingSpinner id="loader" :is-loading="isLoading" />
         <Cookie />

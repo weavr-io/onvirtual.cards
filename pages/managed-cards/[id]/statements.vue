@@ -69,7 +69,7 @@
             size="md"
             @hidden="toggleIsLoading"
         >
-            <b-card v-if="managedCard" bg-variant="card-purple" class="border-0 cards-card" no-body>
+            <b-card v-if="managedCard" class="border-0 cards-card bg-card-purple" no-body>
                 <b-card-body class="card-body-modal card-body onvirtual-card">
                     <nuxt-link :to="`/managed-cards/${managedCard.id}/statements`" class="p-5">
                         <b-container class="p-0" fluid>
