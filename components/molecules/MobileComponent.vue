@@ -57,7 +57,7 @@
                 <b-alert
                     :show="dismissCountDown"
                     class="text-center mt-4 mb-0 text-muted small"
-                    variant="white"
+                    variant="light"
                     @dismiss-count-down="countDownChanged"
                 >
                     {{ dismissCountDown }}
