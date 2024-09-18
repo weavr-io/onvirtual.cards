@@ -5,16 +5,12 @@
     display: inline-flex;
     position: fixed;
     bottom: 16px;
-    right: 16px;
+    right: 0;
     font-size: small;
     border: none;
-    margin: 0;
+    margin: 16px;
 
     a {
         color: $body-bg-colored;
-    }
-
-    @media only screen and (width <= 700px) {
-        right: 0;
     }
 }

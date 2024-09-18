@@ -3,7 +3,7 @@
         <b-card-body class="p-5 px-sm-4 px-lg-5 py-sm-5">
             <div class="d-flex flex-column h-100 justify-content-between">
                 <div>
-                    <b-card-title class="fw-light fs-text" tag="h3"
+                    <b-card-title class="fw-light fs-1-75rem" tag="h3"
                         >{{ props.title }}
                     </b-card-title>
                     <b-card-text class="mt-4 mb-5">
@@ -26,8 +26,3 @@ const props = defineProps<{
     link: string
 }>()
 </script>
-<style>
-.fs-text {
-    font-size: 1.75rem;
-}
-</style>
