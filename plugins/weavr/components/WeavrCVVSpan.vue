@@ -39,6 +39,13 @@ const _span = computed({
     },
 })
 
+const spanOptions = computed(() => {
+    return {
+        ...props.options,
+        style: props.baseStyle,
+    }
+})
+
 const onReady = () => {
     emit('onReady')
 }
@@ -48,9 +55,11 @@ const onChange = (val) => {
 }
 
 onMounted(() => {
-    _span.value = ($weavrComponents as any).display.cardNumber(props.token, spanOptions.value)
-    _span.value?.mount(captureContainer.value)
-    _addListeners(_span.value)
+    if (captureContainer.value) {
+        _span.value = ($weavrComponents as any).display.cardNumber(props.token, spanOptions.value)
+        _span.value?.mount(captureContainer.value)
+        _addListeners(_span.value)
+    }
 })
 
 onBeforeUnmount(() => {
@@ -67,11 +76,4 @@ const _removeListeners = (input) => {
     input.off('ready', onReady)
     input.off('change', onChange)
 }
-
-const spanOptions = computed(() => {
-    return {
-        ...props.options,
-        style: props.baseStyle,
-    }
-})
 </script>

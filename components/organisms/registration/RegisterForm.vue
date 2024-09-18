@@ -176,13 +176,13 @@ const handleLoadCallback = (res: unknown) => {
 
 const tryToSubmitForm = async () => {
     try {
-        if (!isCaptchaVerified.value) return
-
         errors?.resetState()
         validation.value.touch() && (await validation.value.validate())
         if (validation.value.isInvalid.value || !isPasswordValid.value) {
             return
         }
+
+        if (!isCaptchaVerified.value) return
 
         startRegistrationLoading()
         passwordField.value?.createToken().then(
