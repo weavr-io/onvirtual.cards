@@ -48,6 +48,7 @@
                                         v-model="address.country"
                                         :options="countryOptionsWithDefault"
                                         placeholder="Registration Country"
+                                        class=""
                                     />
                                 </b-form-group>
                                 <b-form-group

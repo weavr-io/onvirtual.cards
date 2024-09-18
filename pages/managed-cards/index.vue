@@ -21,7 +21,7 @@
                             <b-button
                                 :disabled="!identityVerified"
                                 to="/managed-cards/add"
-                                variant="outline-primary"
+                                class="btn-border-primary bg-transparent"
                             >
                                 + add new card
                             </b-button>

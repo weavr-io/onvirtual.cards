@@ -9,8 +9,12 @@
     font-size: small;
     border: none;
     margin: 0;
-    
+
     a {
         color: $body-bg-colored;
+    }
+
+    @media only screen and (width <= 700px) {
+        right: 0;
     }
 }

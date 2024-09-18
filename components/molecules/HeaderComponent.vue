@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid px-0 mb-5 pb-5">
-        <b-navbar class="navbar-padding-adjust" fixed="top" type="light" variant="light">
-            <b-container class="d-flex justify-content-between">
+        <b-navbar class="navbar-padding-adjust" fixed="top" type="light">
+            <b-container class="px-0 d-flex justify-content-between">
                 <b-navbar-brand to="/">
                     <LogoImage class="align-center" size="md" />
                 </b-navbar-brand>
