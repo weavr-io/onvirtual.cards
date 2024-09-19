@@ -12,9 +12,6 @@ export default defineNuxtConfig({
             }),
         ],
     },
-    imports: {
-        autoImport: true,
-    },
 
     runtimeConfig: {
         public: {

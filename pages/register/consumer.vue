@@ -72,7 +72,7 @@
                                 </b-form-group>
                                 <b-form-group label="MOBILE NUMBER*" class="mb-3">
                                     <phone-number-input
-                                        v-model="rootMobileNumber"
+                                        :value="registrationRequest.rootUser.mobile.number"
                                         :border-radius="0"
                                         :error="numberIsValid === false"
                                         :only-countries="mobileCountries"
@@ -281,7 +281,6 @@ const { accessCodes, consumers, errors } = useStores(['accessCodes', 'consumers'
 const captchaKey = ref<number>(0)
 
 const passwordField = ref<typeof WeavrPasswordInput | null>(null)
-const rootMobileNumber = ref('')
 const numberIsValid = ref<boolean | null>(null)
 const passwordStrength = ref(0)
 const isCaptchaVerified = ref(false)
@@ -492,8 +491,10 @@ const registrationFailed = (err) => {
 }
 
 const phoneUpdate = (number) => {
-    registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
-    registrationRequest.rootUser!.mobile!.number = number.nationalNumber
+    registrationRequest.rootUser!.mobile!.countryCode =
+        number.countryCallingCode && `+${number.countryCallingCode}`
+    registrationRequest.rootUser!.mobile!.number =
+        number.phoneNumber && number.phoneNumber.replace(/\s+/g, '')
     if (number.phoneNumber) {
         numberIsValid.value = number.isValid
     }

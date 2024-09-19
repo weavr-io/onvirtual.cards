@@ -79,7 +79,6 @@ const onChange = (val) => {
 }
 
 const onKeyUp = (e) => {
-    e.stopPropagation()
     emit('onKeyUp', e)
 }
 
