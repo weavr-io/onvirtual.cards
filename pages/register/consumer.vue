@@ -395,9 +395,8 @@ onMounted(() => {
 })
 
 const submitForm = async (e) => {
-    if (!isCaptchaVerified.value) return
-
     errors?.resetState()
+
     try {
         e.preventDefault()
 
@@ -410,6 +409,8 @@ const submitForm = async (e) => {
         if (validation.value.isInvalid.value || !numberIsValid.value) {
             return
         }
+
+        if (!isCaptchaVerified.value) return
 
         if (isPasswordValid.value) {
             consumers?.setIsLoadingRegistration(true)
