@@ -211,12 +211,14 @@
                                     v-if="isRecaptchaEnabled"
                                     class="mt-2 d-flex justify-content-center"
                                 >
-                                    <recaptcha-form
-                                        :key="captchaKey"
-                                        @error-callback="handleErrorCallback"
-                                        @expired-callback="handleExpiredCallback"
-                                        @load-callback="handleLoadCallback"
-                                    />
+                                    <client-only>
+                                        <recaptcha-form
+                                            :key="captchaKey"
+                                            @error-callback="handleErrorCallback"
+                                            @expired-callback="handleExpiredCallback"
+                                            @load-callback="handleLoadCallback"
+                                        />
+                                    </client-only>
                                 </div>
                                 <b-row align-v="center" class="mt-4">
                                     <b-col class="text-center">
@@ -378,8 +380,12 @@ const handleExpiredCallback = () => {
 }
 
 const handleLoadCallback = (res: unknown) => {
-    if (res) {
-        isCaptchaVerified.value = true
+    try {
+        if (res) {
+            isCaptchaVerified.value = true
+        }
+    } catch (e) {
+        console.error(e)
     }
 }
 
