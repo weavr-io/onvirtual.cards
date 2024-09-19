@@ -24,7 +24,6 @@ export default defineNuxtPlugin(({ vueApp }) => {
 
     function asyncAssociate(token) {
         return new Promise((resolve, reject) => {
-            // debugger
             weavrComponents.setUserToken(
                 token,
                 (res) => {

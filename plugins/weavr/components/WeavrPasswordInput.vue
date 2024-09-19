@@ -50,10 +50,24 @@ const _input = computed({
     },
 })
 
+const inputOptions = computed(() => {
+    return {
+        ...props.options,
+        style: {
+            base: props.baseStyle,
+            empty: props.emptyStyle,
+            valid: props.validStyle,
+            invalid: props.invalidStyle,
+        },
+    }
+})
+
 onMounted(() => {
-    _input.value = ($weavrComponents as any).capture.password(props.name, inputOptions.value)
-    _input.value?.mount(captureContainer.value)
-    _addListeners(_input.value)
+    if (captureContainer.value) {
+        _input.value = ($weavrComponents as any).capture.password(props.name, inputOptions.value)
+        _input.value?.mount(captureContainer.value)
+        _addListeners(_input.value)
+    }
 })
 
 const onReady = () => {
@@ -65,6 +79,7 @@ const onChange = (val) => {
 }
 
 const onKeyUp = (e) => {
+    e.stopPropagation()
     emit('onKeyUp', e)
 }
 
@@ -106,17 +121,6 @@ onBeforeUnmount(() => {
 const createToken = () => {
     return _input.value.createToken()
 }
-const inputOptions = computed(() => {
-    return {
-        ...props.options,
-        style: {
-            base: props.baseStyle,
-            empty: props.emptyStyle,
-            valid: props.validStyle,
-            invalid: props.invalidStyle,
-        },
-    }
-})
 
 defineExpose({
     createToken,
