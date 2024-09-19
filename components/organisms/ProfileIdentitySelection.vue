@@ -29,9 +29,3 @@
 <script lang="ts" setup>
 import RegistrationCard from '~/components/molecules/registration/RegistrationCard.vue'
 </script>
-
-<style lang="scss" scoped>
-.fs-2rem {
-    font-size: 2rem;
-}
-</style>
