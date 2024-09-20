@@ -143,3 +143,10 @@ a {
     transition: all 0.2s;
     opacity: 0;
 }
+
+.dropdown-item {
+    &.active,
+    &:active a {
+        color: white;
+    }
+}

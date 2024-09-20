@@ -12,7 +12,7 @@
                                 {{ rootFullName }}
                             </template>
                             <b-dropdown-item>
-                                <nuxt-link class="text-decoration-none" to="/profile"
+                                <nuxt-link class="text-decoration-none texts" to="/profile"
                                     >Profile</nuxt-link
                                 >
                             </b-dropdown-item>

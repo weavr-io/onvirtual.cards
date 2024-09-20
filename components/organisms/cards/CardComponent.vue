@@ -7,7 +7,7 @@
             no-body
         >
             <b-card-body
-                class="card-body onvirtual-card overflow-hidden shadow-hover-sm ratio ratio-card"
+                class="card-body onvirtual-card pb-xl-0 pb-lg-4 shadow-hover-sm ratio ratio-card"
             >
                 <div>
                     <b-overlay :show="localIsBusy" class="overflow-hidden h-100 pb-4" spinner-small>
