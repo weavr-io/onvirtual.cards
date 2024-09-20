@@ -74,12 +74,14 @@
             </b-col>
         </b-form-row>
         <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
-            <recaptcha-form
-                :key="captchaKey"
-                @error-callback="handleErrorCallback"
-                @expired-callback="handleExpiredCallback"
-                @load-callback="handleLoadCallback"
-            />
+            <client-only>
+                <recaptcha-form
+                    :key="captchaKey"
+                    @error-callback="handleErrorCallback"
+                    @expired-callback="handleExpiredCallback"
+                    @load-callback="handleLoadCallback"
+                />
+            </client-only>
         </div>
         <b-form-row class="mt-5">
             <b-col class="text-center">
