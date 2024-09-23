@@ -23,13 +23,9 @@
     </div>
 </template>
 <script lang="ts" setup>
-import config from '~/config'
-
-const cookieConsent = useCookie(config.ONV_COOKIE_NAME)
-const showCookieAlert = ref<boolean>(!!cookieConsent.value)
+const showCookieAlert = ref<boolean>(true)
 
 const dismissCookie = () => {
-    cookieConsent.value = undefined
     showCookieAlert.value = false
 }
 </script>
