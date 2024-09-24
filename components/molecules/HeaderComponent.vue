@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid px-0 mb-5 pb-5">
-        <b-navbar class="navbar-padding-adjust" fixed="top" type="light" variant="light">
-            <b-container class="d-flex justify-content-between">
+        <b-navbar class="navbar-padding-adjust" fixed="top">
+            <b-container class="px-0 d-flex justify-content-between">
                 <b-navbar-brand to="/">
                     <LogoImage class="align-center" size="md" />
                 </b-navbar-brand>
@@ -12,7 +12,7 @@
                                 {{ rootFullName }}
                             </template>
                             <b-dropdown-item>
-                                <nuxt-link class="text-decoration-none" to="/profile"
+                                <nuxt-link class="text-decoration-none texts" to="/profile"
                                     >Profile</nuxt-link
                                 >
                             </b-dropdown-item>

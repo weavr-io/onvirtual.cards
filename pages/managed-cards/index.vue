@@ -21,7 +21,7 @@
                             <b-button
                                 :disabled="!identityVerified"
                                 to="/managed-cards/add"
-                                variant="outline-primary"
+                                class="btn-border-primary bg-transparent"
                             >
                                 + add new card
                             </b-button>
@@ -50,7 +50,9 @@
                         <h4 class="fw-light">You have no cards.</h4>
                         <h5 class="fw-lighter">
                             Click
-                            <b-link to="/managed-cards/add"> add new card</b-link>
+                            <b-link to="/managed-cards/add" class="hover-underline">
+                                add new card</b-link
+                            >
                             to create your first card.
                         </h5>
                     </b-col>
@@ -136,3 +138,11 @@ const showDestroyedChanged = async (val) => {
     await getCards(state).catch(() => {})
 }
 </script>
+<style>
+.hover-underline {
+    text-decoration: none;
+}
+.hover-underline:hover {
+    text-decoration: underline;
+}
+</style>

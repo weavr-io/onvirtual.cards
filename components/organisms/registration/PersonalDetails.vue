@@ -1,6 +1,6 @@
 <template>
     <b-form novalidate @submit.prevent="submitForm">
-        <h3 class="text-center fw-light mb-5">A few more steps</h3>
+        <h3 class="text-center fw-light mb-5 fs-1">A few more steps</h3>
         <ErrorAlert />
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('rootUser,name')"

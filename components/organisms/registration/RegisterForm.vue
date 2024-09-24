@@ -11,7 +11,7 @@
             <b-form-input
                 id="from-email"
                 v-model="form.email"
-                class="form-control"
+                class="form-control mb-3"
                 lazy
                 placeholder="name@email.com"
             />
@@ -44,7 +44,7 @@
                 >
             </client-only>
         </b-form-group>
-        <b-form-row class="small mt-3 text-muted">
+        <b-form-row class="small my-3 text-muted">
             <b-col>
                 <b-form-group
                     :invalid-feedback="validation.getInvalidFeedback('acceptedTerms')"

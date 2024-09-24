@@ -18,10 +18,10 @@
                                         •••• {{ managedCard.cardNumberLastFour }}
                                     </span>
                                     <span class="card-expiry ms-2 ms-sm-5">
-                                        <span class="card-expiry-label">EXP</span>
+                                        <span class="card-expiry-label">EXP ‎</span>
                                         <span
                                             v-if="managedCard.expiryMmyy"
-                                            class="card-expiry-value ps-1"
+                                            class="card-expiry-value"
                                         >
                                             {{ expiryDate }}
                                         </span>

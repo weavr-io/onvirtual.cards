@@ -3,7 +3,7 @@
         <b-row align-h="between" align-v="center" class="mb-3">
             <b-col cols="9" sm="auto">
                 <div class="d-flex justify-content-start justify-content-lg-start align-items-end">
-                    <label class="me-2 me-lg-4 fw-lighter" for="transaction-timeframe"
+                    <label class="me-2 me-lg-4 fw-lighter mb-2" for="transaction-timeframe"
                         >All Transactions</label
                     >
                     <b-form-select

@@ -1,12 +1,16 @@
 <template>
     <div id="main-header">
         <div v-if="showHeader" class="container-fluid">
-            <b-navbar class="fixed-top auth-nav-bar ps-3 pe-3 bg-card">
+            <b-navbar class="fixed-top auth-nav-bar ps-3 bg-card navbar-light">
                 <div class="container">
                     <b-collapse id="nav_collapse" is-nav>
                         <b-navbar-nav class="ms-auto">
-                            <b-nav-item v-if="showRegister && !isLoggedIn" to="/register"
-                                >Register
+                            <b-nav-item
+                                v-if="showRegister && !isLoggedIn"
+                                to="/register"
+                                class="text-primary"
+                            >
+                                Register
                             </b-nav-item>
                             <b-nav-item v-if="showLogin && !isLoggedIn" to="/login"
                                 >Sign In

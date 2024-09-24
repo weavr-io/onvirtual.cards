@@ -7,8 +7,10 @@
                 </b-col>
             </b-row>
             <b-row class="mb-5">
-                <b-col class="text-right">
-                    <b-button to="/users/add" variant="outline-primary">+ invite user</b-button>
+                <b-col class="text-end">
+                    <b-button to="/users/add" class="btn-border-primary bg-transparent"
+                        >+ invite user</b-button
+                    >
                 </b-col>
             </b-row>
 

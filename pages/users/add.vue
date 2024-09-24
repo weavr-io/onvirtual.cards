@@ -16,6 +16,7 @@
                                     :invalid-feedback="validation.getInvalidFeedback('name')"
                                     :state="validation.getState('name')"
                                     label="Name*"
+                                    class="mb-3"
                                 >
                                     <b-form-input v-model="request.name" />
                                 </b-form-group>
@@ -27,6 +28,7 @@
                                     :invalid-feedback="validation.getInvalidFeedback('surname')"
                                     :state="validation.getState('surname')"
                                     label="Surname*"
+                                    class="mb-3"
                                 >
                                     <b-form-input v-model="request.surname" />
                                 </b-form-group>
@@ -38,6 +40,7 @@
                                     :invalid-feedback="validation.getInvalidFeedback('email')"
                                     :state="validation.getState('email')"
                                     label="Email*"
+                                    class="mb-3"
                                 >
                                     <b-form-input v-model="request.email" type="email" />
                                 </b-form-group>
