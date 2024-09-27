@@ -191,7 +191,6 @@ const phoneUpdate = (number) => {
 }
 
 const doUpdateIdentityRoot = async () => {
-    console.log('bearing')
     isLoading.value = true
 
     if (numberIsValid.value === null) {

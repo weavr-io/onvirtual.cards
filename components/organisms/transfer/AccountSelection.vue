@@ -38,13 +38,6 @@ import {
 } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
 import useZodValidation from '~/composables/useZodValidation'
 
-/*
-interface IFormattedAccounts {
-    value: string
-    text: string
-    html: string
-} */
-
 const emit = defineEmits(['submit-form'])
 const { accounts } = useStores(['accounts'])
 const { showErrorToast } = useBase()

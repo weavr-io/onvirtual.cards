@@ -54,9 +54,9 @@ const showLogin = computed(() => {
         const _registration = ['login']
 
         return !_registration.includes(_matchedName)
-    } else {
-        return false
     }
+
+    return false
 })
 
 const showRegister = computed(() => {

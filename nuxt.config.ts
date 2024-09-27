@@ -16,33 +16,36 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         public: {
-            production: process.env.ENVIRONMENT === 'production',
+            production: import.meta.env.ENVIRONMENT === 'production',
             multiApi: {
-                baseUrl: process.env.MULTI_BASE_URL,
-                uiKey: process.env.UI_KEY,
+                baseUrl: import.meta.env.MULTI_BASE_URL,
+                uiKey: import.meta.env.UI_KEY,
             },
             profileId: {
-                consumers: process.env.CONSUMERS_PROFILE_ID,
-                corporates: process.env.CORPORATES_PROFILE_ID,
-                managed_cards_consumers: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID,
-                managed_cards_consumers_uk: process.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID_UK,
-                managed_cards_corporates: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID,
-                managed_cards_corporates_uk: process.env.MANAGED_CARDS_CORPORATES_PROFILE_ID_UK,
-                managed_accounts_consumers: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID,
-                managed_accounts_consumers_uk: process.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_UK,
-                managed_accounts_corporates: process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID,
-                managed_accounts_corporates_uk:
-                    process.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_UK,
-                transfers: process.env.TRANSFERS_PROFILE_ID,
-                send: process.env.SEND_PROFILE_ID,
+                consumers: import.meta.env.CONSUMERS_PROFILE_ID,
+                corporates: import.meta.env.CORPORATES_PROFILE_ID,
+                managed_cards_consumers: import.meta.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID,
+                managed_cards_consumers_uk: import.meta.env.MANAGED_CARDS_CONSUMERS_PROFILE_ID_UK,
+                managed_cards_corporates: import.meta.env.MANAGED_CARDS_CORPORATES_PROFILE_ID,
+                managed_cards_corporates_uk: import.meta.env.MANAGED_CARDS_CORPORATES_PROFILE_ID_UK,
+                managed_accounts_consumers: import.meta.env.MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID,
+                managed_accounts_consumers_uk: import.meta.env
+                    .MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_UK,
+                managed_accounts_corporates: import.meta.env.MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID,
+                managed_accounts_corporates_uk: import.meta.env
+                    .MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_UK,
+                transfers: import.meta.env.TRANSFERS_PROFILE_ID,
+                send: import.meta.env.SEND_PROFILE_ID,
             },
             recaptcha: {
-                siteKey: process.env.RECAPTCHA,
+                siteKey: import.meta.env.RECAPTCHA,
             },
         },
         app: {
-            view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true,
-            sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : true,
+            view_register: import.meta.env.VIEW_REGISTER
+                ? JSON.parse(import.meta.env.VIEW_REGISTER)
+                : true,
+            sumsub_enabled: import.meta.env.SUM_SUB ? JSON.parse(import.meta.env.SUM_SUB) : true,
         },
     },
 
@@ -58,12 +61,12 @@ export default defineNuxtConfig({
                 {
                     hid: 'description',
                     name: 'description',
-                    content: process.env.npm_package_description ?? '',
+                    content: import.meta.env.npm_package_description ?? '',
                 },
             ],
             script: [
                 {
-                    src: process.env.BASE_URL_SCRIPT,
+                    src: import.meta.env.BASE_URL_SCRIPT,
                     type: 'application/javascript',
                 },
             ],
