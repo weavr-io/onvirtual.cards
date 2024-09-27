@@ -157,11 +157,16 @@ const login = async () => {
         .then(
             (tokens) => {
                 loginRequest.password.value = tokens.tokens.password
-                auth?.loginWithPassword(loginRequest).then(async () => {
-                    localStorage.setItem('stepUp', 'FALSE')
-                    localStorage.setItem('scaSmsSent', 'FALSE')
-                    await goToDashboard()
-                })
+                auth
+                    ?.loginWithPassword(loginRequest)
+                    .then(async () => {
+                        localStorage.setItem('stepUp', 'FALSE')
+                        localStorage.setItem('scaSmsSent', 'FALSE')
+                        await goToDashboard()
+                    })
+                    .catch((err) => {
+                        errors?.setError(err)
+                    })
             },
             (e) => {
                 showErrorToast(e, 'Tokenization Error')
