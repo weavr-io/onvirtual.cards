@@ -3,7 +3,7 @@
         <b-row
             align-h="between"
             align-v="end"
-            class="px-0 mb-4 border-bottom dashboard-header-height"
+            class="px-2 mb-4 border-bottom dashboard-header-height"
         >
             <b-col cols="7">
                 <b-nav class="dashboard-header">
@@ -45,11 +45,11 @@
             <b-col v-if="isManagedCards">
                 <b-col class="pb-2">
                     <b-row align-h="end" align-v="end">
-                        <div v-if="hasCards" class="account-balance">
+                        <div v-if="hasCards" class="account-balance w-auto px-0">
                             <p class="mb-0 text-muted account-balance-label text-end">
                                 total balance
                             </p>
-                            <p v-if="cardCurrency" class="mb-0 account-balance-value text-end">
+                            <p v-if="cardCurrency" class="mb-0 account-balance-value text-start">
                                 {{ currency }}
                             </p>
                         </div>

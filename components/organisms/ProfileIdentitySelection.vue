@@ -2,9 +2,9 @@
     <div class="mb-5">
         <b-row class="justify-content-center my-5">
             <b-col md="8">
-                <h2 class="fw-light text-center line-height-lg">
+                <h1 class="fw-light text-center line-height-lg fs-2rem">
                     Will you be using OnVirtual Cards for personal or business use?
-                </h2>
+                </h1>
             </b-col>
         </b-row>
         <b-row class="justify-content-center">

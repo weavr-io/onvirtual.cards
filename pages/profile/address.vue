@@ -14,6 +14,7 @@
                                     "
                                     :state="validation.getState('addressLine1')"
                                     label="Address Line 1*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="address.addressLine1"
@@ -25,7 +26,8 @@
                                         validation.getInvalidFeedback('addressLine2')
                                     "
                                     :state="validation.getState('addressLine2')"
-                                    label="Address Line 2"
+                                    label="Address Line 2*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="address.addressLine2"
@@ -36,6 +38,7 @@
                                     :invalid-feedback="validation.getInvalidFeedback('city')"
                                     :state="validation.getState('city')"
                                     label="City*"
+                                    class="mb-3"
                                 >
                                     <b-form-input v-model="address.city" placeholder="City" />
                                 </b-form-group>
@@ -43,17 +46,20 @@
                                     :invalid-feedback="validation.getInvalidFeedback('country')"
                                     :state="validation.getState('country')"
                                     label="Country*"
+                                    class="mb-3"
                                 >
                                     <b-form-select
                                         v-model="address.country"
                                         :options="countryOptionsWithDefault"
                                         placeholder="Registration Country"
+                                        class="custom-select"
                                     />
                                 </b-form-group>
                                 <b-form-group
                                     :invalid-feedback="validation.getInvalidFeedback('postCode')"
                                     :state="validation.getState('postCode')"
                                     label="Post Code*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="address.postCode"
@@ -64,6 +70,7 @@
                                     :invalid-feedback="validation.getInvalidFeedback('state')"
                                     :state="validation.getState('state')"
                                     label="State"
+                                    class="mb-3"
                                 >
                                     <b-form-input v-model="address.state" placeholder="State" />
                                 </b-form-group>

@@ -6,9 +6,11 @@
             class="border-0 cards-card"
             no-body
         >
-            <b-card-body class="card-body onvirtual-card overflow-hidden shadow-hover-sm">
-                <div class="ratio-card overflow-hidden">
-                    <b-overlay :show="localIsBusy" class="overflow-hidden h-100" spinner-small>
+            <b-card-body
+                class="card-body onvirtual-card pb-xl-0 pb-lg-4 shadow-hover-sm ratio ratio-card"
+            >
+                <div>
+                    <b-overlay :show="localIsBusy" class="overflow-hidden h-100 pb-4" spinner-small>
                         <nuxt-link :to="statementsLink">
                             <b-container class="p-0" fluid>
                                 <b-row>
