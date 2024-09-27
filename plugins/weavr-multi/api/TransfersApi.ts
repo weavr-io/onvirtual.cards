@@ -1,10 +1,10 @@
-import { AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
 import { $axiosMulti } from '~/utils/api'
-import { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
-import { TransferModel } from '~/plugins/weavr-multi/api/models/transfers/models/TransferModel'
-import { GetTransferTransactionsResponse } from '~/plugins/weavr-multi/api/models/transfers/responses/GetTransferTransactionsResponse'
-import { GetTransferTransactionsRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/GetTransferTransactionsRequest'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import type { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
+import type { TransferModel } from '~/plugins/weavr-multi/api/models/transfers/models/TransferModel'
+import type { GetTransferTransactionsResponse } from '~/plugins/weavr-multi/api/models/transfers/responses/GetTransferTransactionsResponse'
+import type { GetTransferTransactionsRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/GetTransferTransactionsRequest'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 
 export class TransfersApi {
     index(

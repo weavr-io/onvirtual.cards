@@ -28,4 +28,4 @@ export enum IndustryTypeEnum {
 const IndustryTypeEnumSchema = z.nativeEnum(IndustryTypeEnum)
 type IndustryTypeEnumType = z.infer<typeof IndustryTypeEnumSchema>
 
-export { IndustryTypeEnumSchema, IndustryTypeEnumType }
+export { IndustryTypeEnumSchema, type IndustryTypeEnumType }

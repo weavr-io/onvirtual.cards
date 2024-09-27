@@ -16,4 +16,4 @@ const INITIAL_INSTRUMENT_ID = () => {
         id: undefined,
     } as unknown as InstrumentID
 }
-export { InstrumentID, InstrumentIDSchema, INITIAL_INSTRUMENT_ID }
+export { type InstrumentID, InstrumentIDSchema, INITIAL_INSTRUMENT_ID }

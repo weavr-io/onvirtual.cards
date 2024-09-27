@@ -3,7 +3,7 @@
         <b-overlay :show="props.isLoading" class="d-inline-block" rounded="pill" spinner-small>
             <b-button type="submit" variant="secondary">
                 {{ props.text }}
-                <span v-if="props.showArrow" class="pl-5">-></span>
+                <span v-if="props.showArrow" class="ps-5">-></span>
             </b-button>
         </b-overlay>
     </b-form-group>

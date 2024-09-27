@@ -2,7 +2,7 @@
     <b-form @submit.prevent="submitForm">
         <b-row>
             <b-col>
-                <h2 class="text-center font-weight-lighter">Choose account to top up from</h2>
+                <h2 class="text-center fw-lighter">Choose account to top up from</h2>
             </b-col>
         </b-row>
         <b-row class="py-5 my-5">
@@ -21,14 +21,13 @@
             <b-col class="text-center">
                 <b-button type="submit" variant="secondary">
                     next
-                    <span class="pl-5">-></span>
+                    <span class="ps-5">-></span>
                 </b-button>
             </b-col>
         </b-row>
     </b-form>
 </template>
 <script lang="ts" setup>
-import { computed, ComputedRef, reactive } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
@@ -39,12 +38,6 @@ import {
 } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
 import useZodValidation from '~/composables/useZodValidation'
 
-interface IFormattedAccounts {
-    value: string
-    text: string
-    html: string
-}
-
 const emit = defineEmits(['submit-form'])
 const { accounts } = useStores(['accounts'])
 const { showErrorToast } = useBase()
@@ -52,7 +45,7 @@ const source = reactive<InstrumentID>(INITIAL_INSTRUMENT_ID())
 const validation = computed(() => useZodValidation(InstrumentIDSchema, source))
 const accountData = computed(() => accounts?.accountState.accounts)
 
-const formattedAccounts: ComputedRef<IFormattedAccounts[]> = computed(() => {
+const formattedAccounts = computed(() => {
     if (!accountData.value?.accounts) return []
 
     const _accounts = accountData.value?.accounts.filter((account) => {

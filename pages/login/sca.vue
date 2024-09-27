@@ -12,17 +12,12 @@
     </b-col>
 </template>
 
-<script lang="ts">
-import { defineComponent } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
 import MobileComponent from '~/components/molecules/MobileComponent.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 
-export default defineComponent({
-    components: {
-        MobileComponent,
-        LogoOvc,
-    },
+definePageMeta({
     layout: 'auth',
-    middleware: 'authFactors',
+    middleware: 'auth-factors',
 })
 </script>

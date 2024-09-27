@@ -2,8 +2,7 @@
 @import 'variables';
 
 // Then include the following
-@import '../../node_modules/bootstrap/scss/bootstrap';
-@import '../../node_modules/bootstrap-vue/src/index';
+@import 'bootstrap/scss/bootstrap';
 @import 'defaultBrowserBehaviour';
 @import 'forms';
 @import 'nav';
@@ -143,4 +142,11 @@ a {
 .fade-leave-active {
     transition: all 0.2s;
     opacity: 0;
+}
+
+.dropdown-item {
+    &.active,
+    &:active a {
+        color: white;
+    }
 }
