@@ -151,32 +151,28 @@ const login = async () => {
         return
     }
 
-    try {
-        errors?.setError(null)
-        passwordField.value?.createToken().then(
+    errors?.setError(null)
+    passwordField.value
+        ?.createToken()
+        .then(
             (tokens) => {
                 loginRequest.password.value = tokens.tokens.password
-                auth
-                    ?.loginWithPassword(loginRequest)
-                    .then(() => {
-                        localStorage.setItem('stepUp', 'FALSE')
-                        localStorage.setItem('scaSmsSent', 'FALSE')
-                        goToDashboard()
-                    })
-                    .catch((err) => {
-                        isLoading.value = false
-                        errors?.setError(err)
-                    })
+                auth?.loginWithPassword(loginRequest).then(async () => {
+                    localStorage.setItem('stepUp', 'FALSE')
+                    localStorage.setItem('scaSmsSent', 'FALSE')
+                    await goToDashboard()
+                })
             },
             (e) => {
-                isLoading.value = false
                 showErrorToast(e, 'Tokenization Error')
             },
         )
-    } catch (error: any) {
-        isLoading.value = false
-        showErrorToast(error, 'Login Error')
-    }
+        .catch((error: any) => {
+            showErrorToast(error, 'Login Error')
+        })
+        .finally(() => {
+            isLoading.value = false
+        })
 }
 
 const goToDashboard = async () => {
@@ -186,13 +182,12 @@ const goToDashboard = async () => {
 
     await auth?.indexAuthFactors()
 
-    await router.push({
+    router.push({
         path: '/login/sca',
         query: {
             send: 'true',
         },
     })
-    isLoading.value = false
 }
 
 const checkOnKeyUp = (e) => {
