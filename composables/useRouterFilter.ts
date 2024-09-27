@@ -21,8 +21,6 @@ export const useRouterFilter = () => {
             _query = { ..._query, ...dotFilters(_filters) }
         }
 
-        console.log('sasuke', route.path, _query)
-
         router.push({
             path: route.path,
             query: _query,

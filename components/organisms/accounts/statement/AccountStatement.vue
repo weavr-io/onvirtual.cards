@@ -115,7 +115,6 @@ const filterDate = computed({
         }
     },
     set(newValue) {
-        console.log('details', newValue.start)
         setFilters({
             fromTimestamp: newValue.start,
             toTimestamp: newValue.end,
