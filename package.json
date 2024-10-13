@@ -21,7 +21,7 @@
         "@nuxtjs/composition-api": "^0.34.0",
         "@nuxtjs/dotenv": "^1.4.2",
         "@pinia/nuxt": "^0.2.1",
-        "bootstrap": "^4.6.2",
+        "bootstrap": "^5.0.0",
         "bootstrap-vue": "^2.23.1",
         "dot-object": "^2.1.5",
         "js-cookie": "^3.0.5",
