@@ -7,8 +7,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
-
 const props = defineProps<{
     isLoading?: boolean
     center?: boolean

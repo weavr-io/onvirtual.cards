@@ -9,4 +9,4 @@ export enum CurrencyEnum {
 const CurrencyEnumSchema = z.nativeEnum(CurrencyEnum)
 type CurrencyEnumType = z.infer<typeof CurrencyEnumSchema>
 
-export { CurrencyEnumSchema, CurrencyEnumType }
+export { CurrencyEnumSchema, type CurrencyEnumType }
