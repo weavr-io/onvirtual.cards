@@ -67,7 +67,7 @@
             hide-footer
             hide-header-close
             size="md"
-            @hidden="toggleIsLoading"
+            @hidden="isLoading = false"
         >
             <b-card v-if="managedCard" class="border-0 cards-card bg-card-purple" no-body>
                 <b-card-body class="card-body-modal card-body onvirtual-card">
@@ -207,6 +207,7 @@ const expiryDate = computed(() => {
 })
 
 const fetchCardStatements = async () => {
+    isLoading.value = true
     const routeQueries = dot.object(route.query)
     const localFilters = routeQueries.filters || {}
 
@@ -235,6 +236,7 @@ const fetchCardStatements = async () => {
 
     cards?.clearCardStatements()
     await cards?.getCardStatement(_req)
+    isLoading.value = false
 }
 
 const loadCardAndStatements = async () => {
