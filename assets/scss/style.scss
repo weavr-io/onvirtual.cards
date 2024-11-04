@@ -32,55 +32,54 @@
 }
 
 #loader {
-    position: fixed;
-    inset: 0;
     background-color: rgb(255 255 255 / 90%);
+    inset: 0;
+    position: fixed;
     z-index: 999;
 
     .loader-spinner {
-        text-align: center;
-        top: 50%;
-        position: fixed;
         left: 50%;
         margin-left: -15px;
         margin-top: -15px;
+        position: fixed;
+        text-align: center;
+        top: 50%;
     }
 }
 
 .error-alert {
-    width: 100%;
-    min-height: 50px;
     background-color: $red;
     border-radius: 0.6em;
+    min-height: 50px;
     position: relative;
+    width: 100%;
 
     p {
-        vertical-align: middle;
-        padding: 14px 54px 14px 20px;
-        margin: 0;
         color: $body-bg;
+        margin: 0;
+        padding: 14px 54px 14px 20px;
+        vertical-align: middle;
     }
 
     button {
-        position: absolute;
-        top: 50%;
-        margin-top: -25px;
-        right: 0;
-        width: 50px;
-        height: 50px;
-        z-index: 1030;
-        cursor: pointer;
-
-        img {
-            position: absolute;
-            top: 17px;
-            left: 17px;
-        }
-
         background-color: transparent;
         border: 0;
+        cursor: pointer;
+        height: 50px;
+        margin-top: -25px;
         outline: 0;
+        position: absolute;
+        right: 0;
+        top: 50%;
         vertical-align: middle;
+        width: 50px;
+        z-index: 1030;
+
+        img {
+            left: 17px;
+            position: absolute;
+            top: 17px;
+        }
 
         &:focus {
             outline: 0;
@@ -90,13 +89,14 @@
 
 a {
     &.link {
-        color: $primary;
         border-bottom: 3px solid $secondary;
+        color: $primary;
+        text-decoration: none;
         transition: 0.3s border;
 
         &:hover {
-            text-decoration: none;
             border-color: $primary;
+            text-decoration: none;
         }
     }
 }
@@ -119,13 +119,13 @@ a {
 
 .transaction-type-icon {
     background: $grey-light;
-    text-align: center;
     border-radius: 10px;
-    font-size: 30px;
     color: $grey;
+    font-size: 30px;
     font-weight: 100;
-    padding: 16px 0;
     line-height: 0;
+    padding: 16px 0;
+    text-align: center;
 }
 
 .smaller {
@@ -140,8 +140,8 @@ a {
 
 .fade-enter,
 .fade-leave-active {
-    transition: all 0.2s;
     opacity: 0;
+    transition: all 0.2s;
 }
 
 .dropdown-item {
