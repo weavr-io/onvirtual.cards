@@ -68,8 +68,16 @@ definePageMeta({
     layout: 'auth',
 })
 
+const showEmailResentSuccess = ref(false)
+const isLoading = ref(false)
+let verifyEmailRequest = reactive(INITIAL_VERIFY_EMAIL_REQUEST())
+
 const route = useRoute()
 const router = useRouter()
+
+const removeLoader = () => {
+    isLoading.value = false
+}
 
 const sendVerifyEmail = async () => {
     isLoading.value = true
@@ -97,10 +105,6 @@ const { auth, identity, consumers, corporates, errors } = useStores([
     'corporates',
     'errors',
 ])
-
-const showEmailResentSuccess = ref(false)
-const isLoading = ref(false)
-let verifyEmailRequest = reactive(INITIAL_VERIFY_EMAIL_REQUEST())
 
 const validation = computed(() => {
     return useZodValidation(VerifyEmailSchema.pick({ verificationCode: true }), verifyEmailRequest)
@@ -165,10 +169,6 @@ const resendEmail = async () => {
         .catch(() => {
             removeLoader()
         })
-}
-
-const removeLoader = () => {
-    isLoading.value = false
 }
 
 const doVerify = async () => {

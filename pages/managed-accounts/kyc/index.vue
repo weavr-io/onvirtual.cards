@@ -18,7 +18,9 @@
                         <small class="text-muted">{{ kycErrorCode }}</small>
                     </template>
                     <template v-else>
-                        <weavr-kyc :options="options" :reference="reference" />
+                        <div class="p-5">
+                            <weavr-kyc :options="options" :reference="reference" />
+                        </div>
                     </template>
                 </b-col>
             </b-row>

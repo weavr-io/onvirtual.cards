@@ -1,19 +1,9 @@
-import svgLoader from 'vite-svg-loader'
-
 export default defineNuxtConfig({
     ssr: false,
-
-    vite: {
-        plugins: [
-            svgLoader({
-                defaultImport: 'component',
-                svgoConfig: {
-                    multipass: true,
-                },
-            }),
-        ],
+    svgo: {
+        autoImportPath: false,
+        global: false,
     },
-
     runtimeConfig: {
         public: {
             production: import.meta.env.ENVIRONMENT === 'production',
@@ -102,14 +92,6 @@ export default defineNuxtConfig({
                 },
             ],
         },
-        pageTransition: {
-            name: 'fade',
-            mode: 'out-in',
-        },
-        layoutTransition: {
-            name: 'fade',
-            mode: 'out-in',
-        },
     },
 
     spaLoadingTemplate: true,
@@ -132,7 +114,7 @@ export default defineNuxtConfig({
         transpile: ['bootstrap-vue-next', 'vue3-virtual-scroller'],
     },
 
-    modules: ['@pinia/nuxt', '@bootstrap-vue-next/nuxt'],
+    modules: ['@pinia/nuxt', '@bootstrap-vue-next/nuxt', 'nuxt-svgo'],
 
     router: {
         options: {
