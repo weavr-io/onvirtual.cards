@@ -3,8 +3,9 @@
         <div class="select-country-container">
             <CountrySelectorIndex
                 :id="`${uniqueId}_country_selector`"
+                :key="reloadKey"
                 ref="CountrySelector"
-                v-model="countryCode"
+                v-model:value="countryCode"
                 :countries-height="countriesHeight"
                 :disabled="disabled"
                 :hint="shouldChooseCountry ? translatedCountryName.countrySelectorError : ''"
@@ -16,14 +17,16 @@
                 :valid="isValid && !noValidatorState"
                 class="input-country-selector"
             >
-                <slot slot="arrow" name="arrow" />
+                <template #arrow>
+                    <slot name="arrow" />
+                </template>
             </CountrySelectorIndex>
         </div>
         <div class="flex-1 w-100">
             <InputTel
                 :id="`${uniqueId}_phone_number`"
                 ref="phoneNumberInputEl"
-                v-model="phoneNumber"
+                v-model:value="phoneNumber"
                 :disabled="disabled"
                 :error="error"
                 :hint="hintValue"
@@ -47,22 +50,22 @@
 <script lang="ts" setup>
 import {
     AsYouType,
-    CountryCode,
+    type CountryCode,
+    type Examples,
     getExampleNumber,
     parsePhoneNumberFromString,
 } from 'libphonenumber-js'
 import { computed } from 'vue'
-import { ComputedRef, nextTick, onMounted, Ref, ref, watch } from '@nuxtjs/composition-api'
 import examples from 'libphonenumber-js/examples.mobile.json'
-import InputTel from '../atoms/PhoneNumberInput/InputTelephone/InputTelephoneIndex.vue'
-import locales from '../atoms/PhoneNumberInput/assets/locales'
-import CountrySelectorIndex from '../atoms/PhoneNumberInput/CountrySelector/CountrySelectorIndex.vue'
+import InputTel from '@/components/atoms/PhoneNumberInput/InputTelephone/InputTelephoneIndex.vue'
+import locales from '@/components/atoms/PhoneNumberInput/assets/locales'
+import CountrySelectorIndex from '@/components/atoms/PhoneNumberInput/CountrySelector/CountrySelectorIndex.vue'
 import {
     countries,
     countriesIso,
-    Payload,
-    PhoneCodeCountry,
-    Results,
+    type Payload,
+    type PhoneCodeCountry,
+    type Results,
 } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
@@ -116,6 +119,7 @@ const results = ref<Results>()
 const userLocale = ref(props.defaultCountryCode)
 const lastKeyPressed = ref(0)
 const uniqueId = computed(() => `${props.id}-${Math.random().toString(36).substring(2, 9)}`)
+const reloadKey = ref(0)
 
 const translatedCountryName = computed(() => ({
     ...locales,
@@ -147,10 +151,12 @@ const shouldChooseCountry = computed(() => {
     return !countryCode.value && !!phoneNumber.value
 })
 
-const isValid = computed(() => results.value?.isValid)
+const isValid = computed(() => !!results.value?.isValid)
 
 const phoneNumberExample = computed(() => {
-    const exampleNumber = countryCode.value ? getExampleNumber(countryCode.value, examples) : null
+    const exampleNumber = countryCode.value
+        ? getExampleNumber(countryCode.value, examples as unknown as Examples)
+        : null
     return exampleNumber?.formatNational() ?? null
 })
 
@@ -222,12 +228,10 @@ watch(
                 defaultCountry: newCountryCode,
             })
 
-            if (newPhoneNumber) {
-                emitValues({
-                    phoneNumber: newPhoneNumber,
-                    countryCode: countryCode.value || parsedPhoneNumber?.country,
-                })
-            }
+            emitValues({
+                phoneNumber: newPhoneNumber,
+                countryCode: countryCode.value || parsedPhoneNumber?.country,
+            })
         }
     },
     { immediate: true },
@@ -251,6 +255,7 @@ function getAsYouTypeFormat(payload) {
 function setLocale(locale) {
     const countryAvailable = isCountryAvailable(locale)
     if (countryAvailable && locale) {
+        reloadKey.value++
         userLocale.value = countryAvailable ? locale : null
         emitValues({ countryCode: locale, phoneNumber: props.value })
     }
@@ -285,9 +290,9 @@ function getParsePhoneNumberFromString(phoneNumber: string, countryCode: Country
 
     .select-country-container {
         flex: 0 0 120px;
-        width: 120px;
-        min-width: 120px;
         max-width: 120px;
+        min-width: 120px;
+        width: 120px;
     }
 }
 </style>

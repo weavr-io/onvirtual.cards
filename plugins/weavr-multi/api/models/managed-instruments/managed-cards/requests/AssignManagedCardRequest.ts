@@ -1,4 +1,4 @@
-import { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
+import type { Address } from '~/plugins/weavr-multi/api/models/common/models/Address'
 
 export interface AssignManagedCardRequest {
     externalReference: string

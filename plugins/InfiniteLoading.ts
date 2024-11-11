@@ -1,8 +1,6 @@
-import Vue from 'vue'
-import { defineNuxtPlugin } from '@nuxtjs/composition-api'
-import InfiniteLoading from 'vue-infinite-loading'
+import InfiniteLoading from 'v3-infinite-loading'
+import 'v3-infinite-loading/lib/style.css'
 
-export default defineNuxtPlugin((_) => {
-    // TODO: Update to use nuxtApp context after full migration
-    Vue.component('InfiniteLoading', InfiniteLoading)
+export default defineNuxtPlugin(({ vueApp }) => {
+    vueApp.component('InfiniteLoading', InfiniteLoading)
 })

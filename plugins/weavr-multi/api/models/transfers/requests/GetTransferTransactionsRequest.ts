@@ -1,4 +1,4 @@
-import { InstrumentID } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
+import type { InstrumentID } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
 import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
 
 export interface GetTransferTransactionsRequest {

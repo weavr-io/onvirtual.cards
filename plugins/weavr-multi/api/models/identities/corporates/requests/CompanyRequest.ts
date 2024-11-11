@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { CompanyTypeEnumSchema } from '../enums'
-import { Address, AddressSchema } from '~/plugins/weavr-multi/api/models/common'
+import { type Address, AddressSchema } from '~/plugins/weavr-multi/api/models/common'
 import { CompanyTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyTypeEnum'
 import { preprocessEmptyAsUndefined } from '~/utils/zodHelpers'
 
@@ -32,4 +32,4 @@ const INITIAL_COMPANY_REQUEST = () => {
     } as unknown as CompanyRequestType
 }
 
-export { CompanyRequestSchema, CompanyRequestType, INITIAL_COMPANY_REQUEST }
+export { CompanyRequestSchema, type CompanyRequestType, INITIAL_COMPANY_REQUEST }

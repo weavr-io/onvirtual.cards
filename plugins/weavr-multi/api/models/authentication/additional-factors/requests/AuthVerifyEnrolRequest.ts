@@ -12,4 +12,4 @@ const INITIAL_AUTH_VERIFY_REQUEST = () => {
         verificationCode: undefined,
     } as unknown as AuthVerifyEnrol
 }
-export { AuthVerifyEnrolSchema, AuthVerifyEnrol, INITIAL_AUTH_VERIFY_REQUEST }
+export { AuthVerifyEnrolSchema, type AuthVerifyEnrol, INITIAL_AUTH_VERIFY_REQUEST }

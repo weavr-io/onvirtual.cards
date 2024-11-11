@@ -1,13 +1,13 @@
-import { AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
 import { $axiosMulti } from '~/utils/api'
-import { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
-import { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
-import { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
-import { StartCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/StartCorporateKYBResponse'
-import { ChargeFeeToCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/ChargeFeeToCorporateRequest'
-import { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
-import { VerifyEmail } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmail'
-import { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
+import type { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
+import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
+import type { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
+import type { StartCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/StartCorporateKYBResponse'
+import type { ChargeFeeToCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/ChargeFeeToCorporateRequest'
+import type { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
+import type { VerifyEmail } from '~/plugins/weavr-multi/api/models/common/models/VerifyEmail'
+import type { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 
 export class CorporatesApi {
     store(data: CreateCorporateRequest): Promise<AxiosResponse<CorporateModel>> {

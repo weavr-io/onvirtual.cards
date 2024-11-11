@@ -1,21 +1,14 @@
 <template>
-    <div :class="props.className" class="weavr-input" />
+    <div ref="captureContainer" :class="props.className" class="weavr-input" />
 </template>
 <script lang="ts" setup>
-import {
-    Ref,
-    computed,
-    getCurrentInstance,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-} from '@nuxtjs/composition-api'
-import {
+import type {
     SecureElementStyleWithPseudoClasses,
     SecureInputOptions,
 } from '~/plugins/weavr/components/api'
 
-const { proxy: root } = getCurrentInstance() || {}
+const captureContainer = ref<HTMLDivElement | null>(null)
+const { $weavrComponents } = useNuxtApp()
 
 const props = withDefaults(
     defineProps<{
@@ -57,10 +50,24 @@ const _input = computed({
     },
 })
 
+const inputOptions = computed(() => {
+    return {
+        ...props.options,
+        style: {
+            base: props.baseStyle,
+            empty: props.emptyStyle,
+            valid: props.validStyle,
+            invalid: props.invalidStyle,
+        },
+    }
+})
+
 onMounted(() => {
-    _input.value = root?.$weavrComponents.capture.password(props.name, inputOptions.value)
-    _input.value?.mount(root?.$el)
-    _addListeners(_input.value)
+    if (captureContainer.value) {
+        _input.value = ($weavrComponents as any).capture.password(props.name, inputOptions.value)
+        _input.value?.mount(captureContainer.value)
+        _addListeners(_input.value)
+    }
 })
 
 const onReady = () => {
@@ -113,21 +120,8 @@ onBeforeUnmount(() => {
 const createToken = () => {
     return _input.value.createToken()
 }
-const inputOptions = computed(() => {
-    return {
-        ...props.options,
-        style: {
-            base: props.baseStyle,
-            empty: props.emptyStyle,
-            valid: props.validStyle,
-            invalid: props.invalidStyle,
-        },
-    }
-})
 
 defineExpose({
     createToken,
 })
 </script>
-
-<style lang="scss" scoped></style>

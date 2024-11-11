@@ -1,10 +1,9 @@
-import { computed, useRoute } from '@nuxtjs/composition-api'
 import { useCsv } from '~/composables/useCsv'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { useCardsStore } from '~/store/cards'
 import { ManagedCardsApi } from '~/plugins/weavr-multi/api/ManagedCardsApi'
-import { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common'
+import type { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common'
 
 export const useCards = () => {
     const route = useRoute()
@@ -13,9 +12,9 @@ export const useCards = () => {
     const { downloadStatement } = new ManagedCardsApi()
 
     const isManagedCards = computed(() => {
-        if (route.value.matched[0].name) {
+        if (route.matched[0].name) {
             return ['managed-cards', 'managed-cards-id-statements'].includes(
-                route.value.matched[0].name,
+                route.matched[0].name as string,
             )
         }
         return false
@@ -26,7 +25,7 @@ export const useCards = () => {
     })
 
     const cardId = computed(() => {
-        return route.value.params.id
+        return route.params.id
     })
 
     const cards = computed(() => {

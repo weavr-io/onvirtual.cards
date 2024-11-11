@@ -8,4 +8,4 @@ export enum CompanyPositionEnum {
 const CompanyPositionEnumSchema = z.nativeEnum(CompanyPositionEnum)
 type CompanyPositionEnumType = z.infer<typeof CompanyPositionEnumSchema>
 
-export { CompanyPositionEnumSchema, CompanyPositionEnumType }
+export { CompanyPositionEnumSchema, type CompanyPositionEnumType }

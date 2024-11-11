@@ -23,4 +23,4 @@ const INITIAL_RESUME_LOST_PASSWORD_REQUEST = () => {
     } as unknown as ResumeLostPassword
 }
 
-export { ResumeLostPassword, ResumeLostPasswordSchema, INITIAL_RESUME_LOST_PASSWORD_REQUEST }
+export { type ResumeLostPassword, ResumeLostPasswordSchema, INITIAL_RESUME_LOST_PASSWORD_REQUEST }
