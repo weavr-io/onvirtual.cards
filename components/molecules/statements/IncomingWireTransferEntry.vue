@@ -20,8 +20,11 @@
                 </div>
             </div>
         </b-col>
-        <b-col class="text-muted d-flex justify-content-end align-self-stretch pb-1">
-            <TransactionCardFee class="d-flex align-items-end" :transaction="props.transaction" />
+        <b-col align-self="end">
+            <TransactionCardFee
+                class="text-muted small d-flex justify-content-end"
+                :transaction="props.transaction"
+            />
         </b-col>
         <b-col class="text-right" cols="3" xl="2">
             <TransactionAmount :transaction="props.transaction" />
