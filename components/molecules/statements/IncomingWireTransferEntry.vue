@@ -9,7 +9,7 @@
         </b-col>
         <b-col>
             <div class="transaction-type">
-                <div class="transaction">Deposit</div>
+                <div class="transaction">Incoming Wire Transfer</div>
             </div>
             <div class="text-muted">
                 <b-row>

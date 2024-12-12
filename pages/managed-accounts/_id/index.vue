@@ -1,8 +1,8 @@
 <template>
     <div>
-        <section v-if="!hasAlert && !pendingDataOrError">
-            <statement :filters="filters" />
-            <infinite-loading spinner="spiral" @infinite="infiniteScroll">
+        <section>
+            <statement v-if="!hasAlert && !pendingDataOrError" :filters="filters" />
+            <infinite-loading v-else spinner="spiral" @infinite="infiniteScroll">
                 <span slot="no-more" />
                 <div slot="no-results" />
             </infinite-loading>
@@ -67,7 +67,7 @@ export default defineComponent({
             }
 
             const _statementFilters: GetManagedAccountStatementRequest = {
-                showFundMovementsOnly: false,
+                showFundMovementsOnly: true,
                 orderByTimestamp: OrderEnum.DESC,
                 limit: 10,
                 offset: 0,
