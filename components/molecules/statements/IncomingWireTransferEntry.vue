@@ -10,14 +10,18 @@
         <b-col>
             <div class="transaction-type">
                 <div class="transaction">Incoming Wire Transfer</div>
+                <div class="text-muted small">
+                    {{
+                        $formattingFilters.dateTime.formatMilliToDateTime(
+                            props.transaction.processedTimestamp,
+                        )
+                    }}
+                    - {{ props.transaction.additionalFields.sender }}
+                </div>
             </div>
-            <div class="text-muted">
-                <b-row>
-                    <b-col class="text-right">
-                        <TransactionCardFee :transaction="props.transaction" />
-                    </b-col>
-                </b-row>
-            </div>
+        </b-col>
+        <b-col class="text-muted d-flex justify-content-end align-self-stretch pb-1">
+            <TransactionCardFee class="d-flex align-items-end" :transaction="props.transaction" />
         </b-col>
         <b-col class="text-right" cols="3" xl="2">
             <TransactionAmount :transaction="props.transaction" />
