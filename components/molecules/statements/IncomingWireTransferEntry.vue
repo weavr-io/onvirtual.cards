@@ -16,7 +16,7 @@
                             props.transaction.processedTimestamp,
                         )
                     }}
-                    - {{ props.transaction.additionalFields.sender }}
+                    • {{ props.transaction.additionalFields.sender }}
                 </div>
             </div>
         </b-col>
