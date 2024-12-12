@@ -22,7 +22,7 @@
         </b-col>
         <b-col align-self="end">
             <TransactionCardFee
-                class="text-muted small d-flex justify-content-end"
+                class="text-muted small d-flex justify-content-end pb-1"
                 :transaction="props.transaction"
             />
         </b-col>
