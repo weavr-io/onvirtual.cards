@@ -11,12 +11,7 @@
             <div class="transaction-type">
                 <div class="transaction">Incoming Wire Transfer</div>
                 <div class="text-muted small">
-                    {{
-                        $formattingFilters.dateTime.formatMilliToDateTime(
-                            props.transaction.processedTimestamp,
-                        )
-                    }}
-                    • {{ props.transaction.additionalFields.sender }}
+                    {{ senderInfo }}
                 </div>
             </div>
         </b-col>
@@ -32,15 +27,22 @@
     </b-row>
 </template>
 <script lang="ts" setup>
-import { PropType } from '@nuxtjs/composition-api'
+import { computed, PropType } from '@nuxtjs/composition-api'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import { FormattingFiltersModule } from '~/plugins/formattingFilters/FormattingFiltersModule'
+
+const { dateTime } = new FormattingFiltersModule()
 
 const props = defineProps({
     transaction: {
         type: Object as PropType<StatementEntryModel>,
         required: true,
     },
+})
+
+const senderInfo = computed(() => {
+    return `${dateTime.formatMilliToDateTime(props.transaction.processedTimestamp)} • ${props.transaction.additionalFields.sender}`
 })
 </script>
