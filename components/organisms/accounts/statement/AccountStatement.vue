@@ -2,7 +2,7 @@
     <b-container>
         <b-row align-v="center" class="mb-2">
             <b-col>
-                <b-row>
+                <b-row class="mb-4">
                     <b-col cols="10" sm="8">
                         <h6 class="font-weight-lighter">
                             <b-row align-v="center">

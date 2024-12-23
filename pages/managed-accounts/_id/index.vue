@@ -13,7 +13,6 @@
 import {
     computed,
     defineComponent,
-    Ref,
     ref,
     useAsync,
     useFetch,
@@ -42,7 +41,7 @@ export default defineComponent({
         const { hasAlert } = useKyVerified()
         const { getStartOfMonth, getEndOfMonth } = useLuxon()
 
-        const filters: Ref<GetManagedAccountStatementRequest | null> = ref(null)
+        const filters = ref<GetManagedAccountStatementRequest>({})
         const page = ref(0)
         const usingFetch = ref(true)
 
