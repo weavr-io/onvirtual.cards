@@ -1,8 +1,8 @@
 <template>
     <div>
-        <section v-if="!hasAlert && !pendingDataOrError">
-            <statement :filters="filters" />
-            <infinite-loading spinner="spiral" @infinite="infiniteScroll">
+        <section>
+            <statement v-if="!hasAlert && !pendingDataOrError" :filters="filters" />
+            <infinite-loading v-else spinner="spiral" @infinite="infiniteScroll">
                 <span slot="no-more" />
                 <div slot="no-results" />
             </infinite-loading>
@@ -13,7 +13,6 @@
 import {
     computed,
     defineComponent,
-    Ref,
     ref,
     useAsync,
     useFetch,
@@ -42,7 +41,7 @@ export default defineComponent({
         const { hasAlert } = useKyVerified()
         const { getStartOfMonth, getEndOfMonth } = useLuxon()
 
-        const filters: Ref<GetManagedAccountStatementRequest | null> = ref(null)
+        const filters = ref<GetManagedAccountStatementRequest>({})
         const page = ref(0)
         const usingFetch = ref(true)
 
@@ -67,7 +66,7 @@ export default defineComponent({
             }
 
             const _statementFilters: GetManagedAccountStatementRequest = {
-                showFundMovementsOnly: false,
+                showFundMovementsOnly: true,
                 orderByTimestamp: OrderEnum.DESC,
                 limit: 10,
                 offset: 0,

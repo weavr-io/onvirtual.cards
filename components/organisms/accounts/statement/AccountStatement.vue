@@ -2,7 +2,7 @@
     <b-container>
         <b-row align-v="center" class="mb-2">
             <b-col>
-                <b-row>
+                <b-row class="mb-4">
                     <b-col cols="10" sm="8">
                         <h6 class="font-weight-lighter">
                             <b-row align-v="center">
@@ -36,11 +36,6 @@
                     <b-col>
                         <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
                             <b-col>
-                                <b-row class="mt-4">
-                                    <b-col class="text-muted">
-                                        {{ formatDate(date) }}
-                                    </b-col>
-                                </b-row>
                                 <b-row v-for="(statement, key) in statementEntries" :key="key">
                                     <b-col>
                                         <statement-item :transaction="statement" />
@@ -63,7 +58,7 @@
     </b-container>
 </template>
 <script lang="ts">
-import { defineComponent, computed, ComputedRef, PropType, useRoute } from '@nuxtjs/composition-api'
+import { computed, ComputedRef, defineComponent, PropType, useRoute } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { useStores } from '~/composables/useStores'
 import { useLuxon } from '~/composables/useLuxon'
