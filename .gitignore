@@ -93,3 +93,5 @@ sw.*
 certs
 
 switcher_backup.env
+
+.output
