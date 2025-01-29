@@ -7,7 +7,7 @@
             <ChargeFee :transaction="transaction" class="my-3" />
         </template>
         <template v-else-if="transactionType.raw === 'DEPOSIT'">
-            <Deposit :transaction="transaction" class="my-3" />
+            <IncomingWireTransfer :transaction="transaction" class="my-3" />
         </template>
         <template v-else-if="transactionType.raw === 'MANUAL_TRANSACTION'">
             <ManualTransaction :transaction="transaction" class="my-3" />
@@ -51,7 +51,7 @@
 <script lang="ts" setup>
 import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import Authorisation from '~/components/molecules/statements/AuthorisationEntry.vue'
-import Deposit from '~/components/molecules/statements/DepositEntry.vue'
+import IncomingWireTransfer from '~/components/molecules/statements/IncomingWireTransferEntry.vue'
 import ManualTransaction from '~/components/molecules/statements/ManualTransactionEntry.vue'
 import ChargeFee from '~/components/molecules/statements/ChargeFeeEntry.vue'
 import MerchantRefund from '~/components/molecules/statements/MerchantRefundEntry.vue'
