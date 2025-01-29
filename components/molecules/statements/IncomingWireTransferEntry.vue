@@ -3,7 +3,7 @@
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction">
-                    <img alt="Deposit" loading="lazy" :src="depositIcon" />
+                    <img :src="depositIcon" alt="Deposit" loading="lazy" />
                 </div>
             </div>
         </b-col>
@@ -17,8 +17,8 @@
         </b-col>
         <b-col align-self="end">
             <TransactionCardFee
-                class="text-muted small d-flex justify-content-end pb-1"
                 :transaction="props.transaction"
+                class="text-muted small d-flex justify-content-end pb-1"
             />
         </b-col>
         <b-col class="text-right" cols="3" xl="2">
@@ -27,14 +27,13 @@
     </b-row>
 </template>
 <script lang="ts" setup>
-import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
-import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import { FormattingFiltersModule } from '~/plugins/formattingFilters/FormattingFiltersModule'
+import depositIcon from '@/assets/svg/statement/deposit.svg?url'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 const { dateTime } = new FormattingFiltersModule()
-import depositIcon from '@/assets/svg/statement/deposit.svg?url'
 
 const props = defineProps({
     transaction: {

@@ -9,7 +9,7 @@
                 </template>
                 <template v-else>
                     <h1 class="fw-light">Oh snap!</h1>
-                    <h5 class="text-grey font-weight-normal">Something is not right.</h5>
+                    <h5 class="text-grey fw-normal">Something is not right.</h5>
                     <b-img class="mt-5 mb-4" fluid src="/img/ohsnap.svg"></b-img>
                     <b-button to="/" variant="secondary"> go to dashboard</b-button>
                 </template>
@@ -64,10 +64,10 @@ useHead({
 
 <style lang="scss" scoped>
 .container-full-height {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 </style>

@@ -64,8 +64,8 @@
             centered
             content-class="transparent-modal"
             header-class="border-0"
-            hide-footer
-            hide-header-close
+            no-footer
+            no-header-close
             size="md"
             @hidden="isLoading = false"
         >

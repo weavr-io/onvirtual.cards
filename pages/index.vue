@@ -28,16 +28,16 @@ useAsyncData(async () => {
             const email = window.encodeURIComponent(
                 identity!.identityState.identity!.rootUser?.email,
             )
-            router.replace(`/login/verify?send=true&email=${email}`)
+            await router.replace(`/login/verify?send=true&email=${email}`)
         } else if (!identity!.identityState.mobileNumberVerified) {
-            router.replace('/login/verify/mobile')
+            await router.replace('/login/verify/mobile')
         } else if (
             identity!.identityState.identity &&
             typeof identity!.identityState.identity.rootUser === 'undefined'
         ) {
-            router.replace('/profile/address')
+            await router.replace('/profile/address')
         } else {
-            router.replace('/dashboard')
+            await router.replace('/dashboard')
         }
     }
 })

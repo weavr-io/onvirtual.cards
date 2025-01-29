@@ -19,7 +19,7 @@
                             diligence before allowing you to transact with your account.
                         </p>
                         <p>Kindly prepare to submit and upload the following information:</p>
-                        <ul class="my-3 font-weight-normal">
+                        <ul class="my-3 fw-normal">
                             <li>An ID document (Passport or National ID Card)</li>
                             <li>Take a selfie</li>
                             <li>

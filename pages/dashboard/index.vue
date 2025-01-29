@@ -7,5 +7,5 @@ definePageMeta({
 })
 
 const router = useRouter()
-router.push('/managed-cards')
+router.replace('/managed-cards')
 </script>
