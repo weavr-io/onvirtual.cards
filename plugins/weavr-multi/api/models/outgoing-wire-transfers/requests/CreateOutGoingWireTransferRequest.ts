@@ -1,7 +1,7 @@
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
-import { SourceInstrumentModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/SourceInstrumentModel'
-import { CurrencyAmount } from '~/plugins/weavr-multi/api/models/common'
-import { OutgoingWireTransferBeneficiaryModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/OutgoingWireTransferBeneficiaryModel'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import type { SourceInstrumentModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/SourceInstrumentModel'
+import type { CurrencyAmount } from '~/plugins/weavr-multi/api/models/common'
+import type { OutgoingWireTransferBeneficiaryModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/OutgoingWireTransferBeneficiaryModel'
 
 export interface CreateOutGoingWireTransferRequest {
     profileId: IDModel

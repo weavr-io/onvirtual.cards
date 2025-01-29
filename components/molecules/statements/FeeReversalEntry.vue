@@ -3,7 +3,7 @@
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction">
-                    <img alt="Reversal" loading="lazy" src="@/assets/svg/statement/refund.svg" />
+                    <img alt="Reversal" loading="lazy" :src="refundIcon" />
                 </div>
             </div>
         </b-col>
@@ -28,12 +28,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { PropType } from '@nuxtjs/composition-api'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import { weavrUnderscore } from '~/utils/helper'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
-import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
-import { weavrUnderscore } from '~/utils/helper'
+import refundIcon from '@/assets/svg/statement/refund.svg?url'
 
 const props = defineProps({
     transaction: {

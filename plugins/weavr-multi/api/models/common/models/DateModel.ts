@@ -23,4 +23,4 @@ const INITIAL_DATE_REQUEST = () => {
     } as unknown as Date
 }
 
-export { DateSchema, Date, INITIAL_DATE_REQUEST }
+export { DateSchema, type Date, INITIAL_DATE_REQUEST }

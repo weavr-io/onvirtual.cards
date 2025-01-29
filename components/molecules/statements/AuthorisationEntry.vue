@@ -3,11 +3,7 @@
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction">
-                    <img
-                        alt="Authorisation"
-                        loading="lazy"
-                        src="@/assets/svg/statement/authorisation.svg"
-                    />
+                    <img alt="Authorisation" loading="lazy" :src="authorisationIcon" />
                 </div>
             </div>
         </b-col>
@@ -19,13 +15,13 @@
             </div>
             <b-row class="text-muted">
                 <b-col>
-                    <b-badge v-if="isPending" class="text-muted mr-2" variant="grey-light"
+                    <b-badge v-if="isPending" class="text-muted me-2 bg-grey-light"
                         >Pending
                     </b-badge>
-                    <span class="mr-2">Purchase</span>
+                    <span class="me-2">Purchase</span>
                     <span
                         v-if="props.transaction.additionalFields.merchantTerminalCountry"
-                        class="mr-2"
+                        class="me-2"
                         >{{ props.transaction.additionalFields.merchantTerminalCountry }}</span
                     >
                     <span v-if="props.transaction.sourceAmount"
@@ -44,12 +40,11 @@
     </b-row>
 </template>
 <script lang="ts" setup>
-import { PropType } from '@nuxtjs/composition-api'
-import { computed } from 'vue'
-import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
-import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import { weavrCurrency, weavrCurrencySymbol } from '~/utils/helper'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
+import authorisationIcon from '@/assets/svg/statement/authorisation.svg?url'
 
 const props = defineProps({
     transaction: {

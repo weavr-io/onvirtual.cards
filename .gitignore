@@ -70,6 +70,7 @@ proxy/default.conf
 
 # nuxt.js build output
 .nuxt
+.output
 
 # Nuxt generate
 dist
@@ -93,3 +94,5 @@ sw.*
 certs
 
 switcher_backup.env
+
+.output

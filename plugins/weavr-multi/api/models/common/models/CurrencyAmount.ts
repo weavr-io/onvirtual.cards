@@ -17,4 +17,4 @@ const CurrencyAmountSchema = (maxValue: number) =>
 type CurrencyAmount = z.infer<ReturnType<typeof CurrencyAmountSchema>>
 type Amount = z.infer<ReturnType<typeof AmountSchema>>
 
-export { CurrencyAmount, Amount, CurrencyAmountSchema, AmountSchema }
+export { type CurrencyAmount, type Amount, CurrencyAmountSchema, AmountSchema }

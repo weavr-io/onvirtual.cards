@@ -1,13 +1,13 @@
-import { AxiosResponse } from 'axios'
-import { IDModel } from './models/common/models/IDModel'
+import type { AxiosResponse } from 'axios'
+import type { IDModel } from './models/common/models/IDModel'
 import { $axiosMulti } from '~/utils/api'
-import { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
-import { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'
-import { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
-import { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
-import { ResumeLostPasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/ResumeLostPasswordResponseModel'
-import { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
-import { ResumeLostPassword } from '~/plugins/weavr-multi/api/models/authentication/passwords'
+import type { CreatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/CreatePasswordRequestModel'
+import type { CreatePasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/CreatePasswordResponseModel'
+import type { UpdatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/UpdatePasswordRequestModel'
+import type { InitiateLostPasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/InitiateLostPasswordRequestModel'
+import type { ResumeLostPasswordResponseModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/responses/ResumeLostPasswordResponseModel'
+import type { ValidatePasswordRequestModel } from '~/plugins/weavr-multi/api/models/authentication/passwords/requests/ValidatePasswordRequestModel'
+import type { ResumeLostPassword } from '~/plugins/weavr-multi/api/models/authentication/passwords'
 
 export class PasswordsApi {
     store(params: {
