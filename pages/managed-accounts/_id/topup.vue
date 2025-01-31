@@ -44,7 +44,7 @@
                                     <b-tr>
                                         <b-th>Address</b-th>
                                         <b-td>
-                                            <div>{{ address }}</div>
+                                            <div class="pre-line">{{ address }}</div>
                                         </b-td>
                                     </b-tr>
                                     <b-tr v-if="paymentReference">
@@ -98,7 +98,7 @@ export default defineComponent({
         const { accounts } = useStores(['accounts'])
 
         const address = computed(() => {
-            return bankAccountDetails.value?.beneficiaryBankAddress?.split(',').join(',<br>')
+            return bankAccountDetails.value?.beneficiaryBankAddress?.split(',').join(', \n')
         })
 
         const sepaBic = computed(() => {
@@ -190,14 +190,14 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 ol {
+    list-style-position: inside;
     margin: 0;
     padding: 0;
-    list-style-position: inside;
 
     li {
+        border-top: 1px solid #eaedf6;
         margin: 0;
         padding: 16px 0;
-        border-top: 1px solid #eaedf6;
 
         &:last-child {
             border-bottom: 1px solid #eaedf6;
