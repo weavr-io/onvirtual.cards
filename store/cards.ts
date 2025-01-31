@@ -101,7 +101,7 @@ export const useCardsStore = defineStore('cards', () => {
     const setStatement = (statements: StatementResponseModel | null) => {
         if (statements?.entry) {
             if (cardState.statements?.entry) {
-                cardState.statements?.entry?.push(...statements.entry)
+                cardState.statements.entry = statements.entry
             } else {
                 cardState.statements = statements
             }
