@@ -10,15 +10,7 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    computed,
-    defineComponent,
-    ref,
-    useAsync,
-    useFetch,
-    useRoute,
-    watch,
-} from '@nuxtjs/composition-api'
+import { computed, defineComponent, ref, useFetch, useRoute, watch } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { useLuxon } from '~/composables/useLuxon'
@@ -84,11 +76,8 @@ export default defineComponent({
             await accounts?.getStatements(_req)
         }
 
-        useAsync(() => {
-            accounts?.setStatements(null)
-        })
-
         useFetch(async () => {
+            accounts?.setStatements(null)
             await getStatements().finally(() => (usingFetch.value = false))
         })
 
