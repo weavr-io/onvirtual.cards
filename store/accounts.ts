@@ -100,10 +100,12 @@ export const useAccountsStore = defineStore('accounts', () => {
 
     const setStatements = (statements: StatementResponseModel | null) => {
         if (statements?.entry) {
-            accountState.statements?.entry?.push(...statements.entry)
+            if (accountState.statements?.entry) {
+                accountState.statements?.entry?.push(...statements.entry)
+            } else {
+                accountState.statements = statements
+            }
         }
-
-        accountState.statements = statements
     }
 
     const resetState = () => {
