@@ -60,7 +60,7 @@
                         >
                             <b-input-group :prepend="accountDetails.currency">
                                 <b-form-input
-                                    v-model="request.amount"
+                                    v-model.number="request.amount"
                                     min="0.01"
                                     step="0.01"
                                     type="number"
@@ -83,7 +83,8 @@
 </template>
 <script lang="ts" setup>
 import { computed, PropType, reactive } from '@nuxtjs/composition-api'
-import { AmountSchema } from '~/plugins/weavr-multi/api/models/common'
+import { z } from 'zod'
+import { AmountWithMaxSchema } from '~/plugins/weavr-multi/api/models/common'
 import { InstrumentID } from '~/plugins/weavr-multi/api/models/common/models/InstrumentIdModel'
 import { useStores } from '~/composables/useStores'
 import useZodValidation from '~/composables/useZodValidation'
@@ -99,10 +100,9 @@ const emit = defineEmits(['submit-form'])
 const { accounts } = useStores(['accounts'])
 
 const request = reactive({
-    amount: undefined,
+    amount: 0,
 })
 
-const validation = computed(() => useZodValidation(AmountSchema(accountBalance.value), request))
 const _accounts = computed(() => accounts?.accountState.accounts)
 
 const accountDetails = computed(() => {
@@ -124,9 +124,13 @@ const accountBalance = computed(() => {
     return 0
 })
 
+const amountSchema = z.object({
+    amount: AmountWithMaxSchema(accountBalance.value),
+})
+const validation = computed(() => useZodValidation(amountSchema, request))
+
 const submitForm = async () => {
     await validation.value.validate()
-
     if (validation.value.isInvalid.value) return null
 
     emit('submit-form', request)

@@ -99,10 +99,6 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const setStatements = (statements: StatementResponseModel | null) => {
-        if (statements?.entry) {
-            accountState.statements?.entry?.push(...statements.entry)
-        }
-
         accountState.statements = statements
     }
 

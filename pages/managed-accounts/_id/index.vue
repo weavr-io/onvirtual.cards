@@ -10,15 +10,7 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    computed,
-    defineComponent,
-    ref,
-    useAsync,
-    useFetch,
-    useRoute,
-    watch,
-} from '@nuxtjs/composition-api'
+import { computed, defineComponent, ref, useFetch, useRoute, watch } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { useLuxon } from '~/composables/useLuxon'
@@ -27,6 +19,7 @@ import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
 import { useBase } from '~/composables/useBase'
 import { useKyVerified } from '~/composables/useKyVerified'
 import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
+import { useAccountsStore } from '~/store/accounts'
 
 export default defineComponent({
     components: {
@@ -84,11 +77,8 @@ export default defineComponent({
             await accounts?.getStatements(_req)
         }
 
-        useAsync(() => {
-            accounts?.setStatements(null)
-        })
-
         useFetch(async () => {
+            accounts?.setStatements(null)
             await getStatements().finally(() => (usingFetch.value = false))
         })
 
@@ -102,7 +92,8 @@ export default defineComponent({
 
         const infiniteScroll = ($state) => {
             setTimeout(() => {
-                page.value++
+                const accountStore = useAccountsStore()
+                if (accountStore.accountState.statements?.count === '10') page.value++
 
                 const _request: GetManagedAccountStatementRequest = { ...filters.value }
 
