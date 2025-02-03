@@ -99,13 +99,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const setStatements = (statements: StatementResponseModel | null) => {
-        if (statements?.entry) {
-            if (accountState.statements?.entry) {
-                accountState.statements.entry = statements.entry
-            } else {
-                accountState.statements = statements
-            }
-        }
+        accountState.statements = statements
     }
 
     const resetState = () => {

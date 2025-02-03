@@ -19,6 +19,7 @@ import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
 import { useBase } from '~/composables/useBase'
 import { useKyVerified } from '~/composables/useKyVerified'
 import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
+import { useAccountsStore } from '~/store/accounts'
 
 export default defineComponent({
     components: {
@@ -91,7 +92,8 @@ export default defineComponent({
 
         const infiniteScroll = ($state) => {
             setTimeout(() => {
-                page.value++
+                const accountStore = useAccountsStore()
+                if (accountStore.accountState.statements?.count === '10') page.value++
 
                 const _request: GetManagedAccountStatementRequest = { ...filters.value }
 
