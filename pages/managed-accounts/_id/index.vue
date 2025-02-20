@@ -97,7 +97,11 @@ export default defineComponent({
 
                 const _request: GetManagedAccountStatementRequest = { ...filters.value }
 
-                _request!.offset = (page.value * +_request!.limit!).toString()
+                _request!.offset = Number.isNaN(page.value * +_request!.limit!)
+                    ? undefined
+                    : (page.value * +_request!.limit!).toString()
+
+                if (!_request!.offset) return
 
                 accounts
                     ?.getStatements({
