@@ -6,7 +6,7 @@
                     <b-col cols="10" sm="8">
                         <h6 class="font-weight-lighter">
                             <b-row align-v="center">
-                                <b-col class="pr-0" cols="auto"> All Transactions</b-col>
+                                <b-col class="pr-0" cols="auto">All Transactions</b-col>
                                 <b-col class="pl-2" cols="auto">
                                     <b-form-select
                                         :options="months"
@@ -58,7 +58,15 @@
     </b-container>
 </template>
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType, useRoute } from '@nuxtjs/composition-api'
+import {
+    ref,
+    computed,
+    ComputedRef,
+    defineComponent,
+    PropType,
+    useRoute,
+    watch,
+} from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { useStores } from '~/composables/useStores'
 import { useLuxon } from '~/composables/useLuxon'
@@ -87,6 +95,7 @@ export default defineComponent({
         const { account, downloadAsCSV } = useAccounts()
         const { monthsFilter } = useFilters()
         const { setFilters } = useRouterFilter()
+        const isInitialLoad = ref(true)
 
         const filteredStatement = computed(() => accounts?.filteredStatement)
 
@@ -124,6 +133,20 @@ export default defineComponent({
                 toTimestamp: val.end,
             })
         }
+
+        watch(
+            route,
+            (data) => {
+                if (isInitialLoad.value && !data.query.filters) {
+                    isInitialLoad.value = false
+                    filterMonthChange({
+                        start: months.value[0].value.start,
+                        end: months.value[0].value.end,
+                    })
+                }
+            },
+            { immediate: true },
+        )
 
         const downloadStatement = () => {
             const _routeQueries = dot.object(route.value.query)
