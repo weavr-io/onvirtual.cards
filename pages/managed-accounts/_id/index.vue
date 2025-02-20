@@ -18,8 +18,8 @@ import { useStores } from '~/composables/useStores'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
 import { useBase } from '~/composables/useBase'
 import { useKyVerified } from '~/composables/useKyVerified'
-import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
 import { useAccountsStore } from '~/store/accounts'
+import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
 
 export default defineComponent({
     components: {
@@ -97,7 +97,11 @@ export default defineComponent({
 
                 const _request: GetManagedAccountStatementRequest = { ...filters.value }
 
-                _request!.offset = (page.value * +_request!.limit!).toString()
+                _request!.offset = Number.isNaN(page.value * +_request!.limit!)
+                    ? undefined
+                    : (page.value * +_request!.limit!).toString()
+
+                if (!_request!.offset) return
 
                 accounts
                     ?.getStatements({

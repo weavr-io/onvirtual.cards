@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import { defineStore } from 'pinia'
 import { computed, reactive } from 'vue'
-import type { Accounts as AccountState } from '~/local/models/store/accounts'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
 import { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountModel'
@@ -14,6 +13,7 @@ import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-in
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
 import { useAuthStore } from '~/store/auth'
+import type { Accounts as AccountState } from '~/local/models/store/accounts'
 
 const initState = (): AccountState => {
     return {
@@ -46,7 +46,7 @@ export const useAccountsStore = defineStore('accounts', () => {
 
         let _entries: StatementEntryModel[] = accountState.statements.entry
 
-        _entries = _entries!.filter((transaction) => {
+        _entries = _entries.filter((transaction) => {
             const DO_NOT_DISPLAY = [
                 TransactionTypeEnum.AUTHORISATION_REVERSAL,
                 TransactionTypeEnum.AUTHORISATION_EXPIRY,
