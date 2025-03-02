@@ -34,7 +34,7 @@
                         <div class="d-flex align-items-center justify-content-end">
                             <b-button
                                 v-if="isCardActive"
-                                :to="'/transfer?destination=' + managedCard.id"
+                                :to="`/transfer?destination='${managedCard.id}`"
                                 class="add-funds mr-3"
                                 variant="secondary"
                             >

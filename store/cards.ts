@@ -64,16 +64,17 @@ export const useCardsStore = defineStore('cards', () => {
 
             if (!_shouldDisplay) return false
 
-            if (transaction.transactionId.type === TransactionTypeEnum.AUTHORISATION) {
-                if (
-                    transaction.additionalFields?.authorisationState ===
+            if (
+                transaction.transactionId.type === TransactionTypeEnum.AUTHORISATION &&
+                transaction.additionalFields?.authorisationState ===
                     TransactionStateTypeEnum.COMPLETED
-                ) {
-                    return false
-                }
+            ) {
+                return false
             }
+
             return true
         })
+
         const _out = {}
         _entries?.forEach((_entry) => {
             if (_entry.processedTimestamp) {
