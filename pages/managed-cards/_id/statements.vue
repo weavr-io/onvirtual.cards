@@ -271,8 +271,7 @@ const infiniteScroll = ($state) => {
                 }
                 isLoading.value = false
             })
-            .catch((error) => {
-                console.error('Error fetching card statement:', error)
+            .catch((_) => {
                 $state.error()
                 isLoading.value = false
             })
