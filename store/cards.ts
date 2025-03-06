@@ -70,7 +70,7 @@ export const useCardsStore = defineStore('cards', () => {
             if (!_shouldDisplay) return false
 
             if (
-                transaction.txId.type === TransactionTypeEnum.AUTHORISATION &&
+                transactionType === TransactionTypeEnum.AUTHORISATION &&
                 transaction.additionalFields?.authorisationState ===
                     TransactionStateTypeEnum.COMPLETED
             ) {

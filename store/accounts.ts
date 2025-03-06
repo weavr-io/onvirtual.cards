@@ -53,9 +53,12 @@ export const useAccountsStore = defineStore('accounts', () => {
                 TransactionTypeEnum.AUTHORISATION_DECLINE,
             ]
 
-            if (DO_NOT_DISPLAY.includes(transaction.transactionId.type)) return false
+            const transactionType = (transaction.txId?.type ||
+                transaction.transactionId?.type) as TransactionTypeEnum
 
-            if (transaction.transactionId.type === TransactionTypeEnum.AUTHORISATION) {
+            if (DO_NOT_DISPLAY.includes(transactionType)) return false
+
+            if (transactionType === TransactionTypeEnum.AUTHORISATION) {
                 if (
                     transaction.additionalFields?.authorisationState ===
                     TransactionStateTypeEnum.COMPLETED
