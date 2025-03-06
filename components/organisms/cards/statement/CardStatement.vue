@@ -66,6 +66,8 @@ import {
     useRoute,
     useRouter,
     getCurrentInstance,
+    ref,
+    watch,
 } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { AxiosError } from 'axios'
@@ -104,6 +106,7 @@ export default defineComponent({
         const { monthsFilter } = useFilters()
         const { showErrorToast, showSuccessToast, accountJurisdictionProfileId } = useBase()
         const { setFilters } = useRouterFilter()
+        const isInitialLoad = ref(true)
 
         const months = computed(() => {
             if (!managedCard.value) return []
@@ -122,7 +125,17 @@ export default defineComponent({
 
         const filteredStatement = computed(() => cards?.cardState.filteredStatement)
 
+        const filteredStatementLength = computed(() => {
+            if (filteredStatement.value) {
+                return Object.keys(filteredStatement.value).length
+            }
+
+            return 0
+        })
+
         const filterMonthChange = (val) => {
+            if (!val || !val.start || !val.end) return
+
             setFilters({
                 fromTimestamp: val.start,
                 toTimestamp: val.end,
@@ -138,7 +151,7 @@ export default defineComponent({
             }
 
             if (!_filters.toTimestamp) {
-                _filters.fromTimestamp = getEndOfMonth.value
+                _filters.toTimestamp = getEndOfMonth.value
             }
 
             const filters: GetManagedCardStatementRequest = {
@@ -212,11 +225,26 @@ export default defineComponent({
             }
         }
 
+        watch(
+            route,
+            (data) => {
+                if (isInitialLoad.value && !data.query.filters && months.value.length > 0) {
+                    isInitialLoad.value = false
+                    filterMonthChange({
+                        start: months.value[0].value.start,
+                        end: months.value[0].value.end,
+                    })
+                }
+            },
+            { immediate: true },
+        )
+
         return {
             isCardActive,
             months,
             filterDate,
             filteredStatement,
+            filteredStatementLength,
             filterMonthChange,
             formatDate,
             downloadStatement,

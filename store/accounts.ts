@@ -73,7 +73,7 @@ export const useAccountsStore = defineStore('accounts', () => {
             if (_entry.processedTimestamp) {
                 const _processedTimestamp = parseInt(_entry.processedTimestamp)
                 // @ts-ignore
-                const _date = DateTime.fromJSDate(_processedTimestamp).startOf('day').toMillis()
+                const _date = DateTime.fromMillis(_processedTimestamp).startOf('day').toMillis()
 
                 if (!_out[_date]) {
                     _out[_date] = []

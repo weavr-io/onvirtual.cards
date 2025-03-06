@@ -128,6 +128,8 @@ export default defineComponent({
         })
 
         const filterMonthChange = (val) => {
+            if (!val || !val.start || !val.end) return
+
             setFilters({
                 fromTimestamp: val.start,
                 toTimestamp: val.end,

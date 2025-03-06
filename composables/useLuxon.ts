@@ -6,7 +6,9 @@ export const useLuxon = () => {
     const getEndOfMonth = computed(() => DateTime.now().endOf('month').toMillis())
 
     const formatDate = (val) => {
-        const dateTime = DateTime.fromJSDate(val)
+        const timestamp = typeof val === 'string' ? parseInt(val, 10) : val
+
+        const dateTime = DateTime.fromMillis(timestamp)
 
         if (dateTime.hasSame(DateTime.now(), 'year')) {
             return dateTime.toFormat('d MMMM')

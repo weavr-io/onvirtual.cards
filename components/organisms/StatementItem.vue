@@ -6,7 +6,7 @@
         <template v-else-if="transactionType.raw === 'CHARGE_FEE'">
             <ChargeFee :transaction="transaction" class="my-3" />
         </template>
-        <template v-else-if="transactionType.raw === 'DEPOSIT'">
+        <template v-else-if="['DEPOSIT', 'INCOMING_WIRE_TRANSFER'].includes(transactionType.raw)">
             <IncomingWireTransfer :transaction="transaction" class="my-3" />
         </template>
         <template v-else-if="transactionType.raw === 'MANUAL_TRANSACTION'">
@@ -73,8 +73,8 @@ const props = defineProps({
 
 const transactionType = computed(() => {
     return {
-        formatted: props.transaction.transactionId.type.replace('_', ' '),
-        raw: props.transaction.transactionId.type,
+        formatted: props.transaction.txId.type.replace('_', ' '),
+        raw: props.transaction.txId.type,
     }
 })
 </script>

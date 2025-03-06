@@ -195,6 +195,7 @@ const { auth, cards } = useStores(['auth', 'cards'])
 const filters: Ref<StatementFiltersRequest | null> = ref(null)
 const page = ref(0)
 const isLoading: Ref<boolean> = ref(true)
+const isComplete = ref(false)
 
 const currency = computed(() => {
     return weavrCurrency(managedCard.value?.balances?.availableBalance, managedCard.value?.currency)
@@ -263,9 +264,17 @@ const infiniteScroll = ($state) => {
             .then((response) => {
                 if (!response.data.responseCount || response.data.responseCount < request.limit!) {
                     $state.complete()
+                    isComplete.value = true
                 } else {
+                    page.value++
                     $state.loaded()
                 }
+                isLoading.value = false
+            })
+            .catch((error) => {
+                console.error('Error fetching card statement:', error)
+                $state.error()
+                isLoading.value = false
             })
     }, 500)
 }
