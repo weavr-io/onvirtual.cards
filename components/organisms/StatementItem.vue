@@ -73,8 +73,12 @@ const props = defineProps({
 
 const transactionType = computed(() => {
     return {
-        formatted: props.transaction.txId.type.replace('_', ' '),
-        raw: props.transaction.txId.type,
+        formatted: (
+            props.transaction.txId?.type ||
+            props.transaction.transactionId?.type ||
+            ''
+        ).replace('_', ' '),
+        raw: props.transaction.txId?.type || props.transaction.transactionId?.type || '',
     }
 })
 </script>
