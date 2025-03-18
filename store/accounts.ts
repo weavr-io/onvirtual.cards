@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import { defineStore } from 'pinia'
 import { computed, reactive } from 'vue'
-import type { Accounts as AccountState } from '~/local/models/store/accounts'
 import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
 import { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountModel'
@@ -14,6 +13,7 @@ import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-in
 import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
 import { useAuthStore } from '~/store/auth'
+import type { Accounts as AccountState } from '~/local/models/store/accounts'
 
 const initState = (): AccountState => {
     return {
@@ -46,16 +46,19 @@ export const useAccountsStore = defineStore('accounts', () => {
 
         let _entries: StatementEntryModel[] = accountState.statements.entry
 
-        _entries = _entries!.filter((transaction) => {
+        _entries = _entries.filter((transaction) => {
             const DO_NOT_DISPLAY = [
                 TransactionTypeEnum.AUTHORISATION_REVERSAL,
                 TransactionTypeEnum.AUTHORISATION_EXPIRY,
                 TransactionTypeEnum.AUTHORISATION_DECLINE,
             ]
 
-            if (DO_NOT_DISPLAY.includes(transaction.transactionId.type)) return false
+            const transactionType = (transaction.txId?.type ||
+                transaction.transactionId?.type) as TransactionTypeEnum
 
-            if (transaction.transactionId.type === TransactionTypeEnum.AUTHORISATION) {
+            if (DO_NOT_DISPLAY.includes(transactionType)) return false
+
+            if (transactionType === TransactionTypeEnum.AUTHORISATION) {
                 if (
                     transaction.additionalFields?.authorisationState ===
                     TransactionStateTypeEnum.COMPLETED
@@ -73,7 +76,7 @@ export const useAccountsStore = defineStore('accounts', () => {
             if (_entry.processedTimestamp) {
                 const _processedTimestamp = parseInt(_entry.processedTimestamp)
                 // @ts-ignore
-                const _date = DateTime.fromJSDate(_processedTimestamp).startOf('day').toMillis()
+                const _date = DateTime.fromMillis(_processedTimestamp).startOf('day').toMillis()
 
                 if (!_out[_date]) {
                     _out[_date] = []

@@ -28,10 +28,10 @@
 </template>
 <script lang="ts" setup>
 import { computed, PropType } from '@nuxtjs/composition-api'
-import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
-import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
 import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import { FormattingFiltersModule } from '~/plugins/formattingFilters/FormattingFiltersModule'
+import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
+import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
 
 const { dateTime } = new FormattingFiltersModule()
 
