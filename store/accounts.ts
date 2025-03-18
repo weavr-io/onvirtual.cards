@@ -86,8 +86,6 @@ export const useAccountsStore = defineStore('accounts', () => {
             }
         })
 
-        console.log('oopsy', _out)
-
         return _out
     })
 
