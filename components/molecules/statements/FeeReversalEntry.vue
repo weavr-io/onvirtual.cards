@@ -42,5 +42,9 @@ const props = defineProps({
     },
 })
 
-const formattedUnderscore = computed(() => weavrUnderscore(props.transaction.transactionId.type))
+const formattedUnderscore = computed(() => {
+    const idType = props.transaction.transactionId?.type || props.transaction.txId?.type
+
+    return weavrUnderscore(idType)
+})
 </script>

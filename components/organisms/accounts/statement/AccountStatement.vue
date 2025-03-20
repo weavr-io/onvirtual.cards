@@ -2,11 +2,11 @@
     <b-container>
         <b-row align-v="center" class="mb-2">
             <b-col>
-                <b-row>
+                <b-row class="mb-4">
                     <b-col cols="10" sm="8">
                         <h6 class="font-weight-lighter">
                             <b-row align-v="center">
-                                <b-col class="pr-0" cols="auto"> All Transactions</b-col>
+                                <b-col class="pr-0" cols="auto">All Transactions</b-col>
                                 <b-col class="pl-2" cols="auto">
                                     <b-form-select
                                         :options="months"
@@ -36,11 +36,6 @@
                     <b-col>
                         <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
                             <b-col>
-                                <b-row class="mt-4">
-                                    <b-col class="text-muted">
-                                        {{ formatDate(date) }}
-                                    </b-col>
-                                </b-row>
                                 <b-row v-for="(statement, key) in statementEntries" :key="key">
                                     <b-col>
                                         <statement-item :transaction="statement" />
@@ -63,7 +58,15 @@
     </b-container>
 </template>
 <script lang="ts">
-import { defineComponent, computed, ComputedRef, PropType, useRoute } from '@nuxtjs/composition-api'
+import {
+    ref,
+    computed,
+    ComputedRef,
+    defineComponent,
+    PropType,
+    useRoute,
+    watch,
+} from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { useStores } from '~/composables/useStores'
 import { useLuxon } from '~/composables/useLuxon'
@@ -92,6 +95,7 @@ export default defineComponent({
         const { account, downloadAsCSV } = useAccounts()
         const { monthsFilter } = useFilters()
         const { setFilters } = useRouterFilter()
+        const isInitialLoad = ref(true)
 
         const filteredStatement = computed(() => accounts?.filteredStatement)
 
@@ -124,11 +128,27 @@ export default defineComponent({
         })
 
         const filterMonthChange = (val) => {
+            if (!val || !val.start || !val.end) return
+
             setFilters({
                 fromTimestamp: val.start,
                 toTimestamp: val.end,
             })
         }
+
+        watch(
+            route,
+            (data) => {
+                if (isInitialLoad.value && !data.query.filters) {
+                    isInitialLoad.value = false
+                    filterMonthChange({
+                        start: months.value[0].value.start,
+                        end: months.value[0].value.end,
+                    })
+                }
+            },
+            { immediate: true },
+        )
 
         const downloadStatement = () => {
             const _routeQueries = dot.object(route.value.query)

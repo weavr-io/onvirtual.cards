@@ -1,8 +1,8 @@
 <template>
     <div>
-        <section v-if="!hasAlert && !pendingDataOrError">
-            <statement :filters="filters" />
-            <infinite-loading spinner="spiral" @infinite="infiniteScroll">
+        <section>
+            <statement v-if="!hasAlert && !pendingDataOrError" :filters="filters" />
+            <infinite-loading v-else spinner="spiral" @infinite="infiniteScroll">
                 <span slot="no-more" />
                 <div slot="no-results" />
             </infinite-loading>
@@ -10,16 +10,7 @@
     </div>
 </template>
 <script lang="ts">
-import {
-    computed,
-    defineComponent,
-    Ref,
-    ref,
-    useAsync,
-    useFetch,
-    useRoute,
-    watch,
-} from '@nuxtjs/composition-api'
+import { computed, defineComponent, ref, useFetch, useRoute, watch } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { useLuxon } from '~/composables/useLuxon'
@@ -27,6 +18,7 @@ import { useStores } from '~/composables/useStores'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common'
 import { useBase } from '~/composables/useBase'
 import { useKyVerified } from '~/composables/useKyVerified'
+import { useAccountsStore } from '~/store/accounts'
 import Statement from '~/components/organisms/accounts/statement/AccountStatement.vue'
 
 export default defineComponent({
@@ -42,7 +34,7 @@ export default defineComponent({
         const { hasAlert } = useKyVerified()
         const { getStartOfMonth, getEndOfMonth } = useLuxon()
 
-        const filters: Ref<GetManagedAccountStatementRequest | null> = ref(null)
+        const filters = ref<GetManagedAccountStatementRequest>({})
         const page = ref(0)
         const usingFetch = ref(true)
 
@@ -67,7 +59,7 @@ export default defineComponent({
             }
 
             const _statementFilters: GetManagedAccountStatementRequest = {
-                showFundMovementsOnly: false,
+                showFundMovementsOnly: true,
                 orderByTimestamp: OrderEnum.DESC,
                 limit: 10,
                 offset: 0,
@@ -85,11 +77,8 @@ export default defineComponent({
             await accounts?.getStatements(_req)
         }
 
-        useAsync(() => {
-            accounts?.setStatements(null)
-        })
-
         useFetch(async () => {
+            accounts?.setStatements(null)
             await getStatements().finally(() => (usingFetch.value = false))
         })
 
@@ -103,11 +92,16 @@ export default defineComponent({
 
         const infiniteScroll = ($state) => {
             setTimeout(() => {
-                page.value++
+                const accountStore = useAccountsStore()
+                if (accountStore.accountState.statements?.count === '10') page.value++
 
                 const _request: GetManagedAccountStatementRequest = { ...filters.value }
 
-                _request!.offset = (page.value * +_request!.limit!).toString()
+                _request!.offset = Number.isNaN(page.value * +_request!.limit!)
+                    ? undefined
+                    : (page.value * +_request!.limit!).toString()
+
+                if (!_request!.offset) return
 
                 accounts
                     ?.getStatements({
