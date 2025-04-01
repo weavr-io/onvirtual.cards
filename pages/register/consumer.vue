@@ -146,7 +146,7 @@
                                             :base-style="passwordBaseStyle"
                                             :class-name="[
                                                 'sign-in-password',
-                                                { 'is-invalid': isPasswordInvalidAndDirty },
+                                                isPasswordInvalidAndDirty ? 'is-invalid' : '',
                                             ]"
                                             :options="{ placeholder: '****' }"
                                             name="password"
@@ -227,6 +227,7 @@ import {
     ref,
     useContext,
     useFetch,
+    watch,
     useRouter,
 } from '@nuxtjs/composition-api'
 import { AxiosResponse } from 'axios'
@@ -282,6 +283,7 @@ export default defineComponent({
         const rootMobileNumber = ref('')
         const numberIsValid = ref<boolean | null>(null)
         const passwordStrength = ref(0)
+        const isPasswordInvalidAndDirty = ref<boolean>(false)
 
         const registrationRequest: CreateConsumerRequest & { password: SensitivePassword } =
             reactive({
@@ -296,10 +298,6 @@ export default defineComponent({
 
         const validation = computed(() => {
             return useZodValidation(CreateConsumerFormSchema, registrationRequest)
-        })
-
-        const isPasswordInvalidAndDirty = computed(() => {
-            return !isPasswordValid && validation.value.dirty.value
         })
 
         const industryOccupationOptions = computed(() => {
@@ -384,6 +382,10 @@ export default defineComponent({
                 e.preventDefault()
 
                 validation.value.touch() && (await validation.value.validate())
+
+                if (!isPasswordValid.value) {
+                    isPasswordInvalidAndDirty.value = true
+                }
 
                 if (numberIsValid.value === null) {
                     numberIsValid.value = false
@@ -491,6 +493,13 @@ export default defineComponent({
         const stopRegistrationLoading = () => {
             consumers?.setIsLoadingRegistration(false)
         }
+
+        watch(passwordStrength, (data) => {
+            if (validation.value.dirty.value && data) {
+                isPasswordInvalidAndDirty.value = false
+                validation.value.validate()
+            }
+        })
 
         return {
             recaptcha,

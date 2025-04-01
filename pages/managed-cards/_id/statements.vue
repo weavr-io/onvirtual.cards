@@ -5,7 +5,7 @@
                 <b-row align-h="between" align-v="end" class="mb-3 border-bottom pb-3">
                     <b-col cols="7" sm="auto">
                         <div class="d-flex align-items-center">
-                            <b-link class="card-view-details" @click="toggleModal">
+                            <b-link class="card-view-details" @click="isCardModalVisible = true">
                                 view <br />
                                 details
                             </b-link>
@@ -58,6 +58,7 @@
 
         <b-modal
             id="cardModal"
+            v-model="isCardModalVisible"
             body-class="p-0 transparent"
             centered
             content-class="transparent-modal"
@@ -65,7 +66,7 @@
             hide-footer
             hide-header-close
             size="md"
-            @hidden="toggleIsLoading"
+            @hidden="isLoading = false"
         >
             <b-card v-if="managedCard" bg-variant="card-purple" class="border-0 cards-card" no-body>
                 <b-card-body class="card-body-modal card-body onvirtual-card">
@@ -101,9 +102,9 @@
                                                         lineHeight: '1',
                                                         fontSize: '20px',
                                                     }"
-                                                    :token="managedCard.cardNumber?.value"
+                                                    :token="managedCardNumber"
                                                     class="card-select-number"
-                                                    @onChange="toggleIsLoading"
+                                                    @on-change="toggleIsLoading"
                                                 />
                                             </div>
                                         </b-col>
@@ -141,7 +142,7 @@
                                                     fontSize: '14.4px',
                                                     fontWeight: '300',
                                                 }"
-                                                :token="managedCard.cvv?.value"
+                                                :token="managedCardCvv"
                                                 class="card-select-number"
                                             />
                                         </div>
@@ -161,16 +162,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-    computed,
-    getCurrentInstance,
-    Ref,
-    ref,
-    useContext,
-    useFetch,
-    useRoute,
-    watch,
-} from '@nuxtjs/composition-api'
+import { computed, Ref, ref, useContext, useFetch, useRoute, watch } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { useLuxon } from '~/composables/useLuxon'
 import { useBase } from '~/composables/useBase'
@@ -185,13 +177,12 @@ import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.
 import Statement from '~/components/organisms/cards/statement/CardStatement.vue'
 
 const route = useRoute()
-const { proxy: root } = getCurrentInstance() || {}
 const { $weavrSetUserToken } = useContext()
 const { managedCard, cardId, isCardActive } = useCards()
 const { pendingDataOrError } = useBase()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { auth, cards } = useStores(['auth', 'cards'])
-
+const isCardModalVisible = ref(false)
 const filters: Ref<StatementFiltersRequest | null> = ref(null)
 const page = ref(0)
 const isLoading: Ref<boolean> = ref(true)
@@ -203,6 +194,14 @@ const currency = computed(() => {
 
 const expiryDate = computed(() => {
     return expiryMmyy(managedCard.value?.expiryMmyy)
+})
+
+const managedCardNumber = computed(() => {
+    return managedCard.value?.cardNumber?.value || ''
+})
+
+const managedCardCvv = computed(() => {
+    return managedCard.value?.cvv?.value || ''
 })
 
 useFetch(async () => {
@@ -276,10 +275,6 @@ const infiniteScroll = ($state) => {
                 isLoading.value = false
             })
     }, 500)
-}
-
-const toggleModal = () => {
-    root!.$bvModal.show('cardModal')
 }
 
 watch(route, fetchCardStatements)
