@@ -95,12 +95,18 @@ import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vu
 
 definePageMeta({
     layout: 'auth',
+    middleware: (_) => {
+        const { auth } = useStores(['auth'])
+
+        if (auth?.isLoggedIn) {
+            return navigateTo('/')
+        }
+    },
 })
 
 const router = useRouter()
 const { showErrorToast } = useBase()
 const { auth, consumers, errors } = useStores(['auth', 'consumers', 'errors'])
-const isLoggedIn = auth?.isLoggedIn
 
 const isLoading = ref(false)
 const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
@@ -135,10 +141,6 @@ const isInvalidPassword = computed(() => {
 
 const passwordInteraction = (val: { empty?: boolean; valid?: boolean }) => {
     !val?.empty ? (loginRequest.password.value = '******') : (loginRequest.password.value = '')
-}
-
-if (isLoggedIn) {
-    router.push('/')
 }
 
 const login = async () => {

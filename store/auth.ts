@@ -30,9 +30,9 @@ export const useAuthStore = defineStore('auth', () => {
 
     const authState: AuthState = reactive(initState())
     const onvCookie = useCookie(config.ONV_COOKIE_NAME)
-    const isLoggedIn = computed(() => authState.auth && authState.auth.token)
+    const isLoggedIn = computed(() => authState.auth?.token)
     const token = computed(() => authState.auth?.token)
-    const hasAuthToken = computed(() => !!authState.auth && !!authState.auth.token)
+    const hasAuthToken = computed(() => !!authState.auth?.token)
     const identityId = computed(() =>
         authState.auth?.identity ? authState.auth.identity.id : null,
     )
@@ -44,13 +44,13 @@ export const useAuthStore = defineStore('auth', () => {
     const setAuth = (auth: LoginWithPasswordResponse | null) => {
         authState.auth = auth
         onvCookie.value = JSON.stringify(authState.auth)
-        $axiosMulti.defaults.headers.Authorization = 'Bearer ' + authState.auth?.token
+        $axiosMulti.defaults.headers.Authorization = `Bearer ${authState.auth?.token}`
     }
 
     const setToken = (res: CreatePasswordResponseModel) => {
         authState.auth!.token = res.token!
         onvCookie.value = JSON.stringify(authState.auth)
-        $axiosMulti.defaults.headers.Authorization = 'Bearer ' + authState.auth?.token
+        $axiosMulti.defaults.headers.Authorization = `Bearer ${authState.auth?.token}`
     }
 
     const setAuthFactors = (res: GetAuthenticationFactorsResponse) => {
@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('auth', () => {
         const _req = apiMulti.value.authentication.loginWithPassword(request)
 
         _req.then((res) => {
-            weavrSetUserToken.value('Bearer ' + res.data.token)
+            weavrSetUserToken.value(`Bearer ${res.data.token}`)
             setAuth(res.data)
         })
 

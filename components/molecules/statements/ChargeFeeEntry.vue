@@ -14,14 +14,14 @@
                 </div>
             </div>
             <div class="text-muted">
-                <b-row>
-                    <b-col>
+                <b-row class="d-flex align-items-center">
+                    <b-col cols="6" class="text-left">
                         <span v-if="props.transaction.sourceAmount">
                             {{ currency }} = {{ currencySymbol
                             }}{{ props.transaction.additionalFields.exchangeRate }}
                         </span>
                     </b-col>
-                    <b-col class="text-right">
+                    <b-col cols="6" class="text-right">
                         <TransactionCardFee :transaction="props.transaction" />
                     </b-col>
                 </b-row>
@@ -33,8 +33,9 @@
     </b-row>
 </template>
 <script lang="ts" setup>
-import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import { computed, type PropType } from 'vue'
 import { weavrCurrency, weavrCurrencySymbol } from '~/utils/helper'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
 import withdrawalIcon from '@/assets/svg/statement/withdrawal.svg?url'

@@ -59,7 +59,7 @@ export default defineNuxtConfig({
                     content: 'width=device-width, initial-scale=1',
                 },
                 {
-                    hid: 'description',
+                    key: 'description',
                     name: 'description',
                     content: import.meta.env.npm_package_description ?? '',
                 },
@@ -102,17 +102,9 @@ export default defineNuxtConfig({
                 },
             ],
         },
-        pageTransition: {
-            name: 'fade',
-            mode: 'out-in',
-        },
-        layoutTransition: {
-            name: 'fade',
-            mode: 'out-in',
-        },
     },
 
-    spaLoadingTemplate: true,
+    spaLoadingTemplate: false,
     css: ['~/assets/scss/style.scss', 'bootstrap-icons/font/bootstrap-icons.css'],
 
     plugins: [

@@ -4,8 +4,8 @@
 <script lang="ts" setup>
 definePageMeta({
     layout: 'dashboard',
+    middleware: (_) => {
+        return { path: '/managed-cards' }
+    },
 })
-
-const router = useRouter()
-router.push('/managed-cards')
 </script>

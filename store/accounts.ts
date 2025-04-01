@@ -46,16 +46,19 @@ export const useAccountsStore = defineStore('accounts', () => {
 
         let _entries: StatementEntryModel[] = accountState.statements.entry
 
-        _entries = _entries!.filter((transaction) => {
+        _entries = _entries.filter((transaction) => {
             const DO_NOT_DISPLAY = [
                 TransactionTypeEnum.AUTHORISATION_REVERSAL,
                 TransactionTypeEnum.AUTHORISATION_EXPIRY,
                 TransactionTypeEnum.AUTHORISATION_DECLINE,
             ]
 
-            if (DO_NOT_DISPLAY.includes(transaction.transactionId.type)) return false
+            const transactionType = (transaction.txId?.type ||
+                transaction.transactionId?.type) as TransactionTypeEnum
 
-            if (transaction.transactionId.type === TransactionTypeEnum.AUTHORISATION) {
+            if (DO_NOT_DISPLAY.includes(transactionType)) return false
+
+            if (transactionType === TransactionTypeEnum.AUTHORISATION) {
                 if (
                     transaction.additionalFields?.authorisationState ===
                     TransactionStateTypeEnum.COMPLETED
@@ -73,7 +76,7 @@ export const useAccountsStore = defineStore('accounts', () => {
             if (_entry.processedTimestamp) {
                 const _processedTimestamp = parseInt(_entry.processedTimestamp)
                 // @ts-ignore
-                const _date = DateTime.fromJSDate(_processedTimestamp).startOf('day').toMillis()
+                const _date = DateTime.fromMillis(_processedTimestamp).startOf('day').toMillis()
 
                 if (!_out[_date]) {
                     _out[_date] = []
@@ -98,12 +101,18 @@ export const useAccountsStore = defineStore('accounts', () => {
         accountState.statements = null
     }
 
-    const setStatements = (statements: StatementResponseModel | null) => {
-        if (statements?.entry) {
-            accountState.statements?.entry?.push(...statements.entry)
-        }
+    const setStatements = (statements: StatementResponseModel | null, append = false) => {
+        if (append && accountState.statements && statements) {
+            const existingEntries = accountState.statements.entry || []
+            const newEntries = statements.entry || []
 
-        accountState.statements = statements
+            accountState.statements = {
+                ...statements,
+                entry: [...existingEntries, ...newEntries],
+            }
+        } else {
+            accountState.statements = statements
+        }
     }
 
     const resetState = () => {
@@ -146,11 +155,14 @@ export const useAccountsStore = defineStore('accounts', () => {
         return req
     }
 
-    const getStatements = (request: { id: string; filters: GetManagedAccountStatementRequest }) => {
+    const getStatements = (
+        request: { id: string; filters: GetManagedAccountStatementRequest },
+        append = false,
+    ) => {
         const req = apiMulti.value.managedAccounts.statement(request)
 
         req.then((res) => {
-            setStatements(res.data)
+            setStatements(res.data, append)
         })
 
         return req

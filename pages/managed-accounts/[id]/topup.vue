@@ -60,7 +60,7 @@
                     <b-row>
                         <b-col class="text-center my-5">
                             <b-button
-                                :to="'/managed-accounts/' + accountId"
+                                :to="`/managed-accounts/${accountId}`"
                                 class="px-5"
                                 variant="secondary"
                             >
@@ -94,7 +94,7 @@ const { account, accountId } = useAccounts()
 const { accounts } = useStores(['accounts'])
 
 const address = computed(() => {
-    return bankAccountDetails.value?.beneficiaryBankAddress?.split(',').join(',<br>')
+    return bankAccountDetails.value?.beneficiaryBankAddress?.split(',').join(', \n')
 })
 
 const sepaBic = computed(() => {

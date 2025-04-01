@@ -14,6 +14,17 @@
 @import 'border';
 @import 'helpers';
 
+@media (width >= 1200px) {
+    .container-xxl,
+    .container-xl,
+    .container-lg,
+    .container-md,
+    .container-sm,
+    .container {
+        max-width: 1140px !important;
+    }
+}
+
 .transparent-modal {
     background: transparent !important;
     border: none !important;

@@ -22,7 +22,7 @@
             We need to verify your email address. Please click
             <b-button class="link mb-1 bg-transparent" @click="goToVerify">here.</b-button>
         </BAlert>
-        <LoadingSpinner id="loader" :is-loading="isLoading" />
+        <LoadingSpinner id="loader" :is-loading="isLoading || !auth?.isLoggedIn" />
         <Cookie />
     </div>
 </template>
@@ -38,7 +38,7 @@ import KYBAlert from '~/components/molecules/corporates/KYBAlert.vue'
 import KYCAlert from '~/components/molecules/consumers/KYCAlert.vue'
 import DashboardHeader from '~/components/organisms/DashboardHeader.vue'
 
-const { loader } = useStores(['loader'])
+const { loader, auth } = useStores(['auth', 'loader'])
 const { showKybAlert, showKycAlert, showVerifyEmailAlert, showVerifyMobileAlert } = useKyVerified()
 const { goToVerify } = useBase()
 

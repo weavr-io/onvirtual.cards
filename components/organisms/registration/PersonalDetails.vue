@@ -122,16 +122,22 @@
             <b-form-radio
                 v-model="firstCompanyPosition"
                 :state="validation.getState('rootUser,companyPosition')"
-                :value="CompanyPositionEnum.AUTHORISED_REPRESENTATIVE"
                 name="first-company-position"
+                :value="CompanyPositionEnum.AUTHORISED_REPRESENTATIVE"
+                :class="{
+                    'custom-control-input is-invalid': isCompanyPositionInvalid,
+                }"
             >
                 I am a representative (with the relevant power of attorney)
             </b-form-radio>
             <b-form-radio
                 v-model="lastCompanyPosition"
                 :state="validation.getState('rootUser,companyPosition')"
-                :value="CompanyPositionEnum.DIRECTOR"
                 name="last-company-position"
+                :value="CompanyPositionEnum.DIRECTOR"
+                :class="{
+                    'custom-control-input is-invalid': isCompanyPositionInvalid,
+                }"
             >
                 I am a director
             </b-form-radio>
@@ -194,6 +200,10 @@ const form = reactive<CreateCorporateRequest>({
 })
 
 const validation = computed(() => useZodValidation(CreateCorporateFormSchema, form))
+
+const isCompanyPositionInvalid = computed(
+    () => validation.value.getState('rootUser,companyPosition') === false && validation.value.dirty,
+)
 
 const firstCompanyPosition = computed({
     get: () => form.rootUser.companyPosition,

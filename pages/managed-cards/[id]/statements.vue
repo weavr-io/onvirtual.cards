@@ -34,7 +34,7 @@
                         <div class="d-flex align-items-center justify-content-end">
                             <b-button
                                 v-if="isCardActive"
-                                :to="'/transfer?destination=' + managedCard.id"
+                                :to="`/transfer?destination=${managedCard.id}`"
                                 class="me-3 add-funds"
                                 variant="secondary"
                             >
@@ -184,6 +184,7 @@ const { $weavrSetUserToken } = useNuxtApp()
 const { managedCard, cardId, isCardActive } = useCards()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { auth, cards } = useStores(['auth', 'cards'])
+cards?.setStatement(null)
 const isCardModalVisible = ref(false)
 
 const managedCardNumber = computed(() => {
@@ -197,6 +198,7 @@ const managedCardCvv = computed(() => {
 const filters: Ref<StatementFiltersRequest | undefined> = ref(undefined)
 const page = ref(0)
 const isLoading: Ref<boolean> = ref(true)
+const isComplete = ref(false)
 
 const currency = computed(() => {
     return weavrCurrency(managedCard.value?.balances?.availableBalance, managedCard.value?.currency)
@@ -257,22 +259,45 @@ const toggleIsLoading = () => {
 
 const infiniteScroll = ($state) => {
     setTimeout(() => {
-        page.value++
+        const currentStatements = cards?.cardState.statements?.entry || []
+        const nextOffset = currentStatements.length
 
-        const request: StatementFiltersRequest = { ...filters.value }
-        request.offset = page.value * +request.limit! || 0
+        const limit = Number(filters.value?.limit || 100)
+        const lastResponseCount = Number(cards?.cardState.statements?.responseCount || 0)
+
+        if (nextOffset === 0 || (lastResponseCount > 0 && lastResponseCount < limit)) {
+            $state.complete()
+            isComplete.value = true
+            return
+        }
+
+        const request: StatementFiltersRequest = {
+            ...filters.value,
+            offset: nextOffset,
+        }
 
         cards
-            ?.getCardStatement({
-                id: route.params.id as string,
-                request,
-            })
+            ?.getCardStatement(
+                {
+                    id: route.params.id as string,
+                    request,
+                },
+                true,
+            )
             .then((response) => {
-                if (!response.data.responseCount || response.data.responseCount < request.limit!) {
+                const responseCount = Number(response.data.responseCount || 0)
+
+                if (responseCount === 0 || responseCount < limit) {
                     $state.complete()
+                    isComplete.value = true
                 } else {
                     $state.loaded()
                 }
+                isLoading.value = false
+            })
+            .catch((_) => {
+                $state.error()
+                isLoading.value = false
             })
     }, 500)
 }

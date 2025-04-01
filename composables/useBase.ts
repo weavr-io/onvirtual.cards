@@ -136,7 +136,7 @@ export const useBase = () => {
     }
 
     const redirectToLogin = () => {
-        return router.push('/login')
+        return router.replace('/login')
     }
 
     const goToVerify = () => {
@@ -150,7 +150,9 @@ export const useBase = () => {
     }
 
     const doLogout = () => {
-        return auth?.logout().then(redirectToLogin)
+        return auth?.logout().then(() => {
+            setTimeout(() => redirectToLogin(), 1000)
+        })
     }
 
     const showSuccessToast = (msg?: string, title?: string) => {

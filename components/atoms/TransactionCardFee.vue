@@ -1,5 +1,5 @@
 <template>
-    <span>{{ `Fee + ${currency}` }}</span>
+    <span class="small">{{ `Fee + ${currency}` }}</span>
 </template>
 <script lang="ts" setup>
 import { weavrCurrency } from '~/utils/helper'

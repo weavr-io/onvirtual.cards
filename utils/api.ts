@@ -1,4 +1,4 @@
-import type { NuxtAxiosInstance } from '~/node_modules/@nuxtjs/axios'
+import type { NuxtAxiosInstance } from '@nuxtjs/axios'
 
 // eslint-disable-next-line import/no-mutable-exports
 let $axiosMulti: NuxtAxiosInstance

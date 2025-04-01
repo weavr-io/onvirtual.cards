@@ -32,11 +32,6 @@ const filters: Ref<GetManagedAccountStatementRequest | undefined> = ref(undefine
 const page = ref(0)
 const usingFetch = ref(true)
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const filteredStatement = computed(() => {
-    return accounts?.filteredStatement
-})
-
 const getStatements = async () => {
     const _accountId = route.params.id as string
 
@@ -86,23 +81,43 @@ watch(
 
 const infiniteScroll = ($state) => {
     setTimeout(() => {
-        page.value++
+        const currentStatements = accounts?.accountState.statements?.entry || []
+        const nextOffset = currentStatements.length
 
-        const _request: GetManagedAccountStatementRequest = { ...filters.value }
+        const limit = Number(filters.value?.limit)
 
-        _request!.offset = (page.value * +_request!.limit!).toString()
+        const lastResponseCount = Number(accounts?.accountState.statements?.responseCount || 0)
+        if (nextOffset === 0 || (lastResponseCount > 0 && lastResponseCount < limit)) {
+            $state.complete()
+            return
+        }
+
+        const _request: GetManagedAccountStatementRequest = {
+            ...filters.value,
+            offset: nextOffset,
+        }
 
         accounts
-            ?.getStatements({
-                id: route.params.id as string,
-                filters: _request,
-            })
+            ?.getStatements(
+                {
+                    id: route.params.id as string,
+                    filters: _request,
+                },
+                true,
+            )
             .then((res) => {
-                if (res.data.responseCount! < _request.limit!) {
+                const responseCount = Number(res.data.responseCount || 0)
+
+                if (responseCount === 0 || responseCount < limit) {
                     $state.complete()
                 } else {
                     $state.loaded()
                 }
+            })
+            .catch((error) => {
+                // eslint-disable-next-line no-console
+                console.error('Error loading more statements:', error)
+                $state.error()
             })
     }, 500)
 }

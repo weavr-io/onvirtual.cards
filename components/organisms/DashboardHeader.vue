@@ -7,23 +7,19 @@
         >
             <b-col cols="7">
                 <b-nav class="dashboard-header">
-                    <BNavItem :active="isRouteActive('/managed-cards')"
-                        ><nuxt-link class="text-decoration-none" to="/managed-cards"
-                            >Cards</nuxt-link
-                        ></BNavItem
-                    >
-                    <BNavItem :active="isRouteActive('/managed-accounts')"
-                        ><nuxt-link class="text-decoration-none" to="/managed-accounts"
-                            >Account</nuxt-link
-                        ></BNavItem
-                    >
+                    <b-nav-item to="/managed-cards" :active="isRouteActive('/managed-cards')">
+                        Cards
+                    </b-nav-item>
+                    <b-nav-item to="/managed-accounts" :active="isRouteActive('/managed-accounts')">
+                        Account
+                    </b-nav-item>
                 </b-nav>
             </b-col>
             <b-col v-if="isManagedAccounts" class="pb-2">
                 <b-row v-if="account" align-h="end" align-v="end">
                     <b-col v-if="canAddFunds" class="text-right me-3 me-sm-2" cols="2" lg="1">
                         <b-button
-                            :to="'/managed-accounts/' + account.id + '/topup'"
+                            :to="`/managed-accounts/${account.id}/topup`"
                             class="add-funds"
                             variant="secondary"
                         >

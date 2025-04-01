@@ -59,9 +59,10 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, type PropType, ref, watch } from 'vue'
 import dot from 'dot-object'
-import type { AxiosError } from 'axios'
 import { useModalController } from 'bootstrap-vue-next'
+import type { AxiosError } from 'axios'
 import type { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
 import type { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import type { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
@@ -94,6 +95,7 @@ const { monthsFilter } = useFilters()
 const { showErrorToast, showSuccessToast, accountJurisdictionProfileId } = useBase()
 const { setFilters } = useRouterFilter()
 const { confirm } = useModalController()
+const isInitialLoad = ref(true)
 
 const months = computed(() => {
     if (!managedCard.value) return []
@@ -102,47 +104,18 @@ const months = computed(() => {
 })
 
 const filterDate = computed({
-    get() {
+    get: () => {
+        if (!props.filters) return {}
+
         return {
-            start: props.filters.fromTimestamp as unknown as number,
-            end: props.filters.toTimestamp as unknown as number,
+            start: props.filters.fromTimestamp,
+            end: props.filters.toTimestamp,
         }
     },
-    set(newValue) {
-        setFilters({
-            fromTimestamp: newValue.start,
-            toTimestamp: newValue.end,
-        })
+    set: (val) => {
+        filterMonthChange(val)
     },
 })
-
-const filteredStatement = computed(() => cards?.cardState.filteredStatement)
-
-const downloadStatement = () => {
-    const _routeQueries = dot.object(route.query)
-    const _filters = _routeQueries.filters ? _routeQueries.filters : {}
-
-    if (!_filters.fromTimestamp) {
-        _filters.fromTimestamp = getStartOfMonth.value
-    }
-
-    if (!_filters.toTimestamp) {
-        _filters.fromTimestamp = getEndOfMonth.value
-    }
-
-    const filters: GetManagedCardStatementRequest = {
-        showFundMovementsOnly: false,
-        orderByTimestamp: OrderEnum.DESC,
-        limit: 100,
-        offset: 0,
-        ..._filters,
-    }
-
-    downloadAsCSV({
-        id: cardId.value as string,
-        filters,
-    })
-}
 
 const confirmDeleteCard = () => {
     confirm?.({
@@ -160,6 +133,58 @@ const confirmDeleteCard = () => {
         }
     })
 }
+
+const filteredStatement = computed(() => cards?.cardState.filteredStatement)
+
+const filterMonthChange = (val) => {
+    if (!val || !val.start || !val.end) return
+
+    setFilters({
+        fromTimestamp: val.start,
+        toTimestamp: val.end,
+    })
+}
+
+const downloadStatement = () => {
+    const _routeQueries = dot.object(route.query)
+    const _filters = _routeQueries.filters ? _routeQueries.filters : {}
+
+    if (!_filters.fromTimestamp) {
+        _filters.fromTimestamp = getStartOfMonth.value
+    }
+
+    if (!_filters.toTimestamp) {
+        _filters.toTimestamp = getEndOfMonth.value
+    }
+
+    const filters: GetManagedCardStatementRequest = {
+        showFundMovementsOnly: false,
+        orderByTimestamp: OrderEnum.DESC,
+        limit: 100,
+        offset: 0,
+        ..._filters,
+    }
+
+    downloadAsCSV({
+        id: cardId.value as string,
+        filters,
+    })
+}
+
+watch(
+    route,
+    (data) => {
+        if (isInitialLoad.value && !data.query.filters && months.value.length > 0) {
+            isInitialLoad.value = false
+
+            filterMonthChange({
+                start: months.value[0].value.start,
+                end: months.value[0].value.end,
+            })
+        }
+    },
+    { immediate: true },
+)
 
 const doDeleteCard = async () => {
     try {

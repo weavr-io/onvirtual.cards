@@ -234,6 +234,7 @@
                 </b-card-body>
             </b-card>
         </div>
+        <pre>{{ isPasswordInvalidAndDirty }} {{ isPasswordValid }}</pre>
     </b-col>
 </template>
 
@@ -281,7 +282,7 @@ const { $apiMulti } = useNuxtApp()
 const { consumer, showErrorToast, mobileCountries, countryOptionsWithDefault } = useBase()
 const { accessCodes, consumers, errors } = useStores(['accessCodes', 'consumers', 'errors'])
 const captchaKey = ref<number>(0)
-
+const isPasswordInvalidAndDirty = ref<boolean>(false)
 const passwordField = ref<typeof WeavrPasswordInput | null>(null)
 const numberIsValid = ref<boolean | null>(null)
 const passwordStrength = ref(0)
@@ -297,10 +298,6 @@ const registrationRequest: CreateConsumerRequest & { password: SensitivePassword
 
 const validation = computed(() => {
     return useZodValidation(CreateConsumerFormSchema, registrationRequest)
-})
-
-const isPasswordInvalidAndDirty = computed(() => {
-    return !isPasswordValid && validation.value.dirty.value
 })
 
 const industryOccupationOptions = computed(() => {
@@ -385,6 +382,7 @@ const handleLoadCallback = (res: unknown) => {
             isCaptchaVerified.value = true
         }
     } catch (e) {
+        // eslint-disable-next-line no-console
         console.error(e)
     }
 }
@@ -406,6 +404,10 @@ const submitForm = async (e) => {
         e.preventDefault()
 
         validation.value.touch() && (await validation.value.validate())
+
+        if (!isPasswordValid.value) {
+            isPasswordInvalidAndDirty.value = true
+        }
 
         if (numberIsValid.value === null) {
             numberIsValid.value = false
@@ -517,4 +519,11 @@ const updateDOB = (val: ComputedRef) => {
 const stopRegistrationLoading = () => {
     consumers?.setIsLoadingRegistration(false)
 }
+
+watch(passwordStrength, (data) => {
+    if (validation.value.dirty.value && data) {
+        isPasswordInvalidAndDirty.value = false
+        validation.value.validate()
+    }
+})
 </script>

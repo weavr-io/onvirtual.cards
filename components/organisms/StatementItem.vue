@@ -6,8 +6,8 @@
         <template v-else-if="transactionType.raw === 'CHARGE_FEE'">
             <ChargeFee :transaction="transaction" class="my-3" />
         </template>
-        <template v-else-if="transactionType.raw === 'DEPOSIT'">
-            <Deposit :transaction="transaction" class="my-3" />
+        <template v-else-if="['DEPOSIT', 'INCOMING_WIRE_TRANSFER'].includes(transactionType.raw)">
+            <IncomingWireTransfer :transaction="transaction" class="my-3" />
         </template>
         <template v-else-if="transactionType.raw === 'MANUAL_TRANSACTION'">
             <ManualTransaction :transaction="transaction" class="my-3" />
@@ -21,7 +21,7 @@
         <template v-else-if="transactionType.raw === 'SETTLEMENT'">
             <Settlement :transaction="transaction" class="my-3" />
         </template>
-        <template v-else-if="transactionType.raw === 'TRANSFER'">
+        <template v-else-if="['TRANSFER', 'OUTGOING_WIRE_TRANSFER'].includes(transactionType.raw)">
             <Transfer :transaction="transaction" class="my-3" />
         </template>
         <template v-else-if="transactionType.raw === 'WITHDRAWAL'">
@@ -51,7 +51,7 @@
 <script lang="ts" setup>
 import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import Authorisation from '~/components/molecules/statements/AuthorisationEntry.vue'
-import Deposit from '~/components/molecules/statements/DepositEntry.vue'
+import IncomingWireTransfer from '~/components/molecules/statements/IncomingWireTransferEntry.vue'
 import ManualTransaction from '~/components/molecules/statements/ManualTransactionEntry.vue'
 import ChargeFee from '~/components/molecules/statements/ChargeFeeEntry.vue'
 import MerchantRefund from '~/components/molecules/statements/MerchantRefundEntry.vue'
@@ -71,8 +71,12 @@ const props = defineProps({
 
 const transactionType = computed(() => {
     return {
-        formatted: props.transaction.transactionId.type.replace('_', ' '),
-        raw: props.transaction.transactionId.type,
+        formatted: (
+            props.transaction.txId?.type ||
+            props.transaction.transactionId?.type ||
+            ''
+        ).replace('_', ' '),
+        raw: props.transaction.txId?.type || props.transaction.transactionId?.type || '',
     }
 })
 </script>

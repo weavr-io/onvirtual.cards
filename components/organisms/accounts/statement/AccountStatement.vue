@@ -2,7 +2,7 @@
     <b-container v-if="filters">
         <b-row align-v="center" class="mb-2">
             <b-col>
-                <b-row>
+                <b-row class="mb-4">
                     <b-col cols="10" sm="8">
                         <h6 class="fw-lighter">
                             <b-row align-v="center">
@@ -35,11 +35,6 @@
                     <b-col>
                         <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
                             <b-col>
-                                <b-row class="mt-4">
-                                    <b-col class="text-muted">
-                                        {{ formatDate(date) }}
-                                    </b-col>
-                                </b-row>
                                 <b-row v-for="(statement, key) in statementEntries" :key="key">
                                     <b-col>
                                         <statement-item :transaction="statement" />
@@ -65,15 +60,17 @@
         </b-row>
     </b-container>
 </template>
+
 <script lang="ts" setup>
+import { ref, computed, type ComputedRef, type PropType, watch } from 'vue'
 import dot from 'dot-object'
 import { useStores } from '~/composables/useStores'
 import { useLuxon } from '~/composables/useLuxon'
 import { useAccounts } from '~/composables/useAccounts'
 import { useFilters } from '~/composables/useFilters'
 import { useRouterFilter } from '~/composables/useRouterFilter'
-import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import { OrderEnum } from '~/plugins/weavr-multi/api/models/common/enums/OrderEnum'
+import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
 import StatementItem from '~/components/organisms/StatementItem.vue'
 import DownloadIcon from '~/assets/svg/download.svg'
 
@@ -83,14 +80,24 @@ const props = defineProps({
         default: null,
     },
 })
+
 const route = useRoute()
 const { accounts } = useStores(['accounts'])
-const { formatDate, getStartOfMonth, getEndOfMonth } = useLuxon()
+const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { account, downloadAsCSV } = useAccounts()
 const { monthsFilter } = useFilters()
 const { setFilters } = useRouterFilter()
+const isInitialLoad = ref(true)
 
 const filteredStatement = computed(() => accounts?.filteredStatement)
+
+const filteredStatementLength: ComputedRef<number> = computed(() => {
+    if (filteredStatement.value) {
+        return Object.keys(filteredStatement.value).length
+    }
+
+    return 0
+})
 
 const availableBalance = computed(() => {
     if (account) {
@@ -100,25 +107,15 @@ const availableBalance = computed(() => {
     return 0
 })
 
-const filteredStatementLength: ComputedRef<number> = computed(() => {
-    if (filteredStatement.value) {
-        return Object.keys(filteredStatement.value).length
-    }
-    return 0
-})
-
 const filterDate = computed({
-    get() {
+    get: () => {
         return {
-            start: props.filters.fromTimestamp as unknown as number,
-            end: props.filters.toTimestamp as unknown as number,
+            start: props.filters.fromTimestamp,
+            end: props.filters.toTimestamp,
         }
     },
-    set(newValue) {
-        setFilters({
-            fromTimestamp: newValue.start,
-            toTimestamp: newValue.end,
-        })
+    set: (val) => {
+        filterMonthChange(val)
     },
 })
 
@@ -127,6 +124,29 @@ const months = computed(() => {
 
     return monthsFilter(account.value.creationTimestamp)
 })
+
+const filterMonthChange = (val) => {
+    if (!val || !val.start || !val.end) return
+
+    setFilters({
+        fromTimestamp: val.start,
+        toTimestamp: val.end,
+    })
+}
+
+watch(
+    route,
+    (data) => {
+        if (isInitialLoad.value && !data.query.filters) {
+            isInitialLoad.value = false
+            filterMonthChange({
+                start: months.value[0].value.start,
+                end: months.value[0].value.end,
+            })
+        }
+    },
+    { immediate: true },
+)
 
 const downloadStatement = () => {
     const _routeQueries = dot.object(route.query)

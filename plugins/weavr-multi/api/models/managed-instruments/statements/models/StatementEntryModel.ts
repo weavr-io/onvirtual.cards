@@ -1,6 +1,9 @@
 import type { TransactionIdModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/TransactionIdModel'
 import type { CurrencyAmount } from '~/plugins/weavr-multi/api/models/common'
 import type { ScaledAmountModel } from '~/plugins/weavr-multi/api/models/common/models/ScaledAmountModel'
+import type { StatementEntryStateEnum } from '~/plugins/weavr-multi/api/models/instruments/common/enums/StatementEntryStateEnum'
+import type { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
+import type { TypeIdModel } from '~/plugins/weavr-multi/api/models/common/models/TypeIdModel'
 
 export interface StatementEntryModel {
     transactionId: TransactionIdModel
@@ -11,6 +14,14 @@ export interface StatementEntryModel {
     cardholderFee?: CurrencyAmount
     processedTimestamp: string
     sourceAmount: CurrencyAmount
+    actualBalanceAdjustment?: CurrencyAmount
+    actualBalanceAfter?: CurrencyAmount
+    availableBalanceAdjustment?: CurrencyAmount
+    availableBalanceAfter?: CurrencyAmount
+    entryState?: StatementEntryStateEnum
+    statementEntryState?: StatementEntryStateEnum | string
+    transactionState?: TransactionStateTypeEnum | string
+    txId: TypeIdModel
     additionalFields: {
         [k: string]: string
     }

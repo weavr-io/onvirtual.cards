@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import { reactive, computed } from 'vue'
+import { DateTime } from 'luxon'
 import type { Cards as CardState } from '~/local/models/store/cards'
 import type { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import type { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
@@ -8,6 +10,7 @@ import type { CreateManagedCard } from '~/plugins/weavr-multi/api/models/managed
 import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
 import type { UpdateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
 import type { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
 import { TransactionTypeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/enums/TransactionTypeEnum'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
@@ -54,31 +57,36 @@ export const useCardsStore = defineStore('cards', () => {
     const setFilteredStatement = () => {
         if (!cardState.statements) return []
 
-        const _entries = cardState.statements.entry?.filter((transaction) => {
+        const _entries = cardState.statements.entry?.filter((transaction: StatementEntryModel) => {
+            const transactionType = (transaction.txId?.type ||
+                transaction.transactionId?.type) as TransactionTypeEnum
+
             const _shouldDisplay = ![
                 TransactionTypeEnum.AUTHORISATION_REVERSAL,
                 TransactionTypeEnum.AUTHORISATION_EXPIRY,
                 TransactionTypeEnum.AUTHORISATION_DECLINE,
-            ].includes(transaction.transactionId.type)
+            ].includes(transactionType)
 
             if (!_shouldDisplay) return false
 
-            if (transaction.transactionId.type === TransactionTypeEnum.AUTHORISATION) {
-                if (
-                    transaction.additionalFields?.authorisationState ===
+            if (
+                transactionType === TransactionTypeEnum.AUTHORISATION &&
+                transaction.additionalFields?.authorisationState ===
                     TransactionStateTypeEnum.COMPLETED
-                ) {
-                    return false
-                }
+            ) {
+                return false
             }
+
             return true
         })
+
         const _out = {}
         _entries?.forEach((_entry) => {
             if (_entry.processedTimestamp) {
                 const _processedTimestamp = parseInt(_entry.processedTimestamp)
                 // @ts-ignore
-                const _date = DateTime.fromJSDate(_processedTimestamp).startOf('day').toMillis()
+                const _date = DateTime.fromMillis(_processedTimestamp).startOf('day').toMillis()
+
                 if (!_out[_date]) {
                     _out[_date] = []
                 }
@@ -97,12 +105,22 @@ export const useCardsStore = defineStore('cards', () => {
         cardState.isLoading = _isLoading
     }
 
-    const setStatement = (statements: StatementResponseModel | null) => {
-        if (statements?.entry) {
-            return cardState.statements?.entry?.push(...statements.entry)
+    const setStatement = (statements: StatementResponseModel | null, append = false) => {
+        if (!statements) {
+            cardState.statements = null
+            return
         }
 
-        return (cardState.statements = statements)
+        if (append && cardState.statements && statements.entry) {
+            cardState.statements = {
+                ...statements,
+                entry: [...(cardState.statements.entry || []), ...(statements.entry || [])],
+            }
+        } else {
+            cardState.statements = statements
+        }
+
+        setFilteredStatement()
     }
 
     const resetStatement = () => {
@@ -169,14 +187,13 @@ export const useCardsStore = defineStore('cards', () => {
         return req
     }
 
-    const getCardStatement = (req: ManagedCardStatementRequest) => {
+    const getCardStatement = (req: ManagedCardStatementRequest, append = false) => {
         setIsLoading(true)
 
         const xhr = apiMulti.value.managedCards.statement(req.id, req.request)
 
         xhr.then((res) => {
-            setStatement(res.data)
-            setFilteredStatement()
+            setStatement(res.data, append)
         }).finally(() => {
             setIsLoading(false)
         })
@@ -251,6 +268,7 @@ export const useCardsStore = defineStore('cards', () => {
         update,
         getCardStatement,
         clearCardStatements,
+        setStatement,
         getManagedCard,
         block,
         unblock,

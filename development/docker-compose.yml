@@ -1,8 +1,0 @@
-services:
-    proxy:
-        container_name: proxy-multi-ov
-        build:
-            context: ../
-            dockerfile: ./development/Dockerfile
-        ports:
-            - '81:80'
