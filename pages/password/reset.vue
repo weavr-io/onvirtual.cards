@@ -4,8 +4,8 @@
         <b-card no-body>
             <b-card-body v-if="!passwordSent" class="px-4 mx-2 py-5 p-md-card">
                 <div class="text-center">
-                    <h2 class="font-weight-lighter">Reset Password</h2>
-                    <h5 class="font-weight-lighter mt-4">
+                    <h2 class="fw-lighter">Reset Password</h2>
+                    <h5 class="fw-lighter mt-4">
                         Insert the email you created the account with and we’ll send instructions to
                         reset your password.
                     </h5>
@@ -41,8 +41,8 @@
             <b-card v-else class="overflow-hidden" no-body>
                 <b-card-body class="px-4 mx-2 py-5 p-md-card">
                     <div class="text-center">
-                        <h2 class="font-weight-lighter">Email sent</h2>
-                        <h5 class="font-weight-lighter mt-4">
+                        <h2 class="fw-lighter">Email sent</h2>
+                        <h5 class="fw-lighter mt-4">
                             Check your email for a reset link. If you don’t receive this within 5
                             minutes, click the link below to resend.
                         </h5>
@@ -66,65 +66,51 @@
         </b-card>
     </b-col>
 </template>
-<script lang="ts">
-import { computed, defineComponent, reactive, ref } from '@nuxtjs/composition-api'
+
+<script lang="ts" setup>
+import { useStores } from '~/composables/useStores'
+import {
+    INITIAL_RESET_REQUEST,
+    type InitiateLostPasswordRequestModel,
+    type ResetRequest,
+    ResetSchema,
+} from '~/plugins/weavr-multi/api/models/authentication'
 import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import { useStores } from '~/composables/useStores'
 import useZodValidation from '~/composables/useZodValidation'
-import {
-    INITIAL_RESET_REQUEST,
-    InitiateLostPasswordRequestModel,
-    ResetRequest,
-    ResetSchema,
-} from '~/plugins/weavr-multi/api/models/authentication'
 
-export default defineComponent({
-    components: {
-        LoaderButton,
-        LogoOvc,
-        ErrorAlert,
-    },
+definePageMeta({
     layout: 'auth',
-    setup() {
-        const { auth, errors } = useStores(['auth', 'errors'])
-
-        const isLoading = ref(false)
-        const passwordSent = ref(false)
-        const form: ResetRequest = reactive(INITIAL_RESET_REQUEST())
-
-        const validation = computed(() => {
-            return useZodValidation(ResetSchema, form)
-        })
-
-        const resetPassword = async () => {
-            await validation.value.validate()
-
-            if (validation.value.isInvalid.value) return
-
-            isLoading.value = true
-            errors?.setError(null)
-            auth
-                ?.lostPasswordInitiate(form as InitiateLostPasswordRequestModel)
-                .then(() => {
-                    passwordSent.value = true
-                })
-                .catch((err) => {
-                    errors?.setError(err)
-                })
-                .finally(() => {
-                    isLoading.value = false
-                })
-        }
-
-        return {
-            passwordSent,
-            resetPassword,
-            validation,
-            form,
-            isLoading,
-        }
-    },
 })
+
+const { auth, errors } = useStores(['auth', 'errors'])
+
+const isLoading = ref(false)
+const passwordSent = ref(false)
+const form: ResetRequest = reactive(INITIAL_RESET_REQUEST())
+
+const validation = computed(() => {
+    return useZodValidation(ResetSchema, form)
+})
+
+const resetPassword = async () => {
+    await validation.value.validate()
+
+    if (validation.value.isInvalid.value) return
+
+    isLoading.value = true
+    errors?.setError(null)
+    auth
+        ?.lostPasswordInitiate(form as InitiateLostPasswordRequestModel)
+        .then(() => {
+            passwordSent.value = true
+        })
+        .catch((err) => {
+            errors?.setError(err)
+        })
+        .finally(() => {
+            isLoading.value = false
+        })
+}
 </script>

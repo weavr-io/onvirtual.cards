@@ -1,15 +1,15 @@
 <template>
     <div>
+        <BModalOrchestrator />
         <AppHeader />
         <DashboardHeader />
-        <Nuxt />
+        <NuxtPage />
         <KYBAlert v-if="showKybAlert" />
         <KYCAlert v-if="showKycAlert" />
         <BAlert
             id="verify-mobile"
             :show="showVerifyMobileAlert && !showVerifyEmailAlert"
-            class="fixed-bottom bottom-left-alert m-4 p-4"
-            variant="bg-colored"
+            class="fixed-bottom bottom-left-alert m-4 p-4 bg-colored"
         >
             We need to verify your mobile number. Please click
             <b-link class="link" to="/login/verify/mobile"> here.</b-link>
@@ -17,19 +17,17 @@
         <BAlert
             id="verify-email"
             :show="showVerifyEmailAlert"
-            class="fixed-bottom bottom-left-alert m-4 p-4"
-            variant="bg-colored"
+            class="fixed-bottom bottom-left-alert m-4 p-4 bg-colored"
         >
             We need to verify your email address. Please click
-            <b-button class="link mb-1" variant="transparent" @click="goToVerify">here.</b-button>
+            <b-button class="link mb-1 bg-transparent" @click="goToVerify">here.</b-button>
         </BAlert>
-        <LoadingSpinner id="loader" :is-loading="isLoading" />
+        <LoadingSpinner id="loader" :is-loading="isLoading || !auth?.isLoggedIn" />
         <Cookie />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { useStores } from '~/composables/useStores'
 import { useKyVerified } from '~/composables/useKyVerified'
 import { useBase } from '~/composables/useBase'
@@ -40,7 +38,7 @@ import KYBAlert from '~/components/molecules/corporates/KYBAlert.vue'
 import KYCAlert from '~/components/molecules/consumers/KYCAlert.vue'
 import DashboardHeader from '~/components/organisms/DashboardHeader.vue'
 
-const { loader } = useStores(['loader'])
+const { loader, auth } = useStores(['auth', 'loader'])
 const { showKybAlert, showKycAlert, showVerifyEmailAlert, showVerifyMobileAlert } = useKyVerified()
 const { goToVerify } = useBase()
 

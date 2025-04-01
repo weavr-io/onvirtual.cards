@@ -3,26 +3,29 @@
         <b-container>
             <b-row class="border-bottom mb-3">
                 <b-col>
-                    <h3 class="font-weight-light">Users</h3>
+                    <h3 class="fw-light">Users</h3>
                 </b-col>
             </b-row>
             <b-row class="mb-5">
-                <b-col class="text-right">
-                    <b-button to="/users/add" variant="border-primary"> + invite user</b-button>
+                <b-col class="text-end">
+                    <b-button class="btn-border-primary bg-transparent" to="/users/add"
+                        >+ invite user
+                    </b-button>
                 </b-col>
             </b-row>
 
-            <template v-if="users && !pendingDataOrError">
+            <template v-if="users">
                 <b-row v-for="(user, key) in users.users" :key="key" align-v="center" class="mt-3">
                     <b-col cols="2" md="1">
                         <b-img :alt="user.name + ' ' + user.surname" rounded v-bind="mainProps" />
                     </b-col>
                     <b-col>{{ user.name }} {{ user.surname }}</b-col>
-                    <b-col class="text-muted font-weight-light">
+                    <b-col class="text-muted fw-light">
                         {{ user.email }}
                     </b-col>
                 </b-row>
             </template>
+
             <template v-else>
                 <div class="d-flex justify-content-center">
                     <div class="loader-spinner">
@@ -34,37 +37,24 @@
     </section>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, useFetch } from '@nuxtjs/composition-api'
-import { useBase } from '~/composables/useBase'
+<script lang="ts" setup>
 import { useStores } from '~/composables/useStores'
 
-export default defineComponent({
-    middleware: 'kyVerified',
-    setup() {
-        const { pendingDataOrError } = useBase()
-        const { users: usersStores } = useStores(['users'])
+definePageMeta({
+    middleware: 'ky-verified',
+})
 
-        const mainProps = {
-            blank: true,
-            blankColor: '#EAEDF6',
-            width: 45,
-            height: 45,
-        }
+const { users: usersStores } = useStores(['users'])
+usersStores?.index()
 
-        const users = computed(() => {
-            return usersStores?.userState.users
-        })
+const mainProps = {
+    blank: true,
+    blankColor: '#EAEDF6',
+    width: 45,
+    height: 45,
+}
 
-        useFetch(() => {
-            usersStores?.index()
-        })
-
-        return {
-            pendingDataOrError,
-            users,
-            mainProps,
-        }
-    },
+const users = computed(() => {
+    return usersStores?.userState.users
 })
 </script>

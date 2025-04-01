@@ -1,30 +1,74 @@
-declare module '*.vue' {
-    import Vue from 'vue'
-    export default Vue
-}
+import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
+import type { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
+import type { NuxtAxiosInstance } from '@nuxtjs/axios'
+import { useRecaptcha } from 'vue3-recaptcha-v2'
 
-declare module '*.svg?inline' {
-    import Vue, { VueConstructor } from 'vue'
-    const content: VueConstructor<Vue>
-    export default content
-}
-
-declare namespace __WebpackModuleApi {
-    interface RequireContext {
-        keys(): string[]
-        (id: string): any
-        <T>(id: string): T
-        resolve(id: string): string
-        /** The module id of the context module. This may be useful for module.hot.accept. */
-        id: string
+declare module 'vue' {
+    interface ComponentCustomProperties {
+        $apiMulti: ApiInterface
+        $recaptcha: ReturnType<typeof useRecaptcha>
     }
 }
 
-interface Require {
-    context(
-        path: string,
-        deep?: boolean,
-        filter?: RegExp,
-        mode?: 'sync' | 'eager' | 'weak' | 'lazy' | 'lazy-once',
-    ): __WebpackModuleApi.RequireContext
+// global, also used in store
+declare module 'nuxt/app' {
+    interface NuxtApp {
+        $formattingFilters: FormattingFiltersInterface
+        $apiMulti: ApiInterface
+        $axiosMulti: NuxtAxiosInstance
+        $weavrComponents: any
+        $weavrSetUserToken: (token: unknown) => {}
+        $bvToast: any // TODO: refactor, make component specific
+        readonly $weavrToast: WeavrToast
+        readonly $weavrToastError: WeavrToast
+        $recaptcha: ReturnType<typeof useRecaptcha>
+    }
+}
+
+declare module '@vue/runtime-core' {
+    interface ComponentCustomProperties {
+        $weavrSetUserToken: (token: string) => {}
+        $recaptcha: ReturnType<typeof useRecaptcha>
+    }
+}
+
+export interface WeavrToast {
+    (message: string, options?: any): void // TODO: try BModalOrchestrator
+}
+
+declare global {
+    interface ImportMetaGlob {
+        (
+            glob: string,
+            options?: {
+                as?: string
+                eager?: boolean
+            },
+        ): Record<string, () => Promise<unknown>>
+    }
+
+    interface ImportMeta {
+        glob: ImportMetaGlob
+    }
+}
+
+declare module '*.svg' {
+    import type { DefineComponent } from 'vue'
+    const component: DefineComponent<{}, {}, any>
+    export default component
+}
+
+declare module '*.svg?url' {
+    const content: string
+    export default content
+}
+
+declare module '*.svg?raw' {
+    const content: string
+    export default content
+}
+
+declare module '*.svg?sprite' {
+    const content: string
+    export default content
 }

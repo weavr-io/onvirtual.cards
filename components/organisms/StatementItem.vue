@@ -21,7 +21,7 @@
         <template v-else-if="transactionType.raw === 'SETTLEMENT'">
             <Settlement :transaction="transaction" class="my-3" />
         </template>
-        <template v-else-if="transactionType.raw === 'TRANSFER'">
+        <template v-else-if="['TRANSFER', 'OUTGOING_WIRE_TRANSFER'].includes(transactionType.raw)">
             <Transfer :transaction="transaction" class="my-3" />
         </template>
         <template v-else-if="transactionType.raw === 'WITHDRAWAL'">
@@ -49,9 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType } from '@nuxtjs/composition-api'
-import { computed } from 'vue'
-import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import Authorisation from '~/components/molecules/statements/AuthorisationEntry.vue'
 import IncomingWireTransfer from '~/components/molecules/statements/IncomingWireTransferEntry.vue'
 import ManualTransaction from '~/components/molecules/statements/ManualTransactionEntry.vue'

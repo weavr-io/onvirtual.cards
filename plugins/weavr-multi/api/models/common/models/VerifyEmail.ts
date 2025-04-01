@@ -15,4 +15,4 @@ const INITIAL_VERIFY_EMAIL_REQUEST = () => {
     } as unknown as VerifyEmail
 }
 
-export { VerifyEmailSchema, VerifyEmail, INITIAL_VERIFY_EMAIL_REQUEST }
+export { VerifyEmailSchema, type VerifyEmail, INITIAL_VERIFY_EMAIL_REQUEST }
