@@ -8,16 +8,16 @@
             </b-row>
             <b-row class="mb-5">
                 <b-col class="text-end">
-                    <b-button to="/users/add" class="btn-border-primary bg-transparent"
-                        >+ invite user</b-button
-                    >
+                    <b-button class="btn-border-primary bg-transparent" to="/users/add"
+                        >+ invite user
+                    </b-button>
                 </b-col>
             </b-row>
 
             <template v-if="users">
                 <b-row v-for="(user, key) in users.users" :key="key" align-v="center" class="mt-3">
                     <b-col cols="2" md="1">
-                        <b-img v-bind="mainProps" :alt="user.name + ' ' + user.surname" rounded />
+                        <b-img :alt="user.name + ' ' + user.surname" rounded v-bind="mainProps" />
                     </b-col>
                     <b-col>{{ user.name }} {{ user.surname }}</b-col>
                     <b-col class="text-muted fw-light">

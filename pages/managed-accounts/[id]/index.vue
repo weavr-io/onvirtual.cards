@@ -1,12 +1,14 @@
 <template>
-    <div>
+    <b-container>
         <section v-if="!hasAlert && !pendingDataOrError">
             <statement :filters="filters" />
             <infinite-loading class="statement-loader" spinner="spiral" @infinite="infiniteScroll">
-                <template #complete><div /></template>
+                <template #complete>
+                    <div />
+                </template>
             </infinite-loading>
         </section>
-    </div>
+    </b-container>
 </template>
 
 <script lang="ts" setup>
@@ -27,8 +29,10 @@ const route = useRoute()
 const { accounts } = useStores(['accounts'])
 const { hasAlert } = useKyVerified()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
+
 accounts?.setStatements(null)
-const filters: Ref<GetManagedAccountStatementRequest | undefined> = ref(undefined)
+
+const filters: Ref<GetManagedAccountStatementRequest> = ref({})
 const page = ref(0)
 const usingFetch = ref(true)
 

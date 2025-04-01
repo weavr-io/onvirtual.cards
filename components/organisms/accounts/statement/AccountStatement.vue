@@ -1,64 +1,58 @@
 <template>
-    <b-container v-if="filters">
-        <b-row align-v="center" class="mb-2">
-            <b-col>
-                <b-row class="mb-4">
-                    <b-col cols="10" sm="8">
-                        <h6 class="fw-lighter">
-                            <b-row align-v="center">
-                                <b-col class="pe-0" cols="auto">All Transactions</b-col>
-                                <b-col class="ps-2" cols="auto">
-                                    <b-form-select
-                                        v-model="filterDate"
-                                        :options="months"
-                                        class="w-auto d-inline-block rounded-0 custom-select"
-                                        size="sm"
-                                    />
-                                </b-col>
-                            </b-row>
-                        </h6>
-                    </b-col>
-                    <b-col class="d-flex justify-content-end" cols="2" sm="4">
-                        <div class="d-flex align-items-center">
-                            <b-button
-                                class="p-0 d-flex align-items-center fw-lighter text-decoration-none no-focus"
-                                variant="link"
-                                @click="downloadStatement"
-                            >
-                                <download-icon class="me-2" />
-                                <p class="d-none d-sm-inline mb-0">download</p>
-                            </b-button>
-                        </div>
-                    </b-col>
-                </b-row>
-                <b-row v-if="filteredStatement && filteredStatementLength > 0">
-                    <b-col>
-                        <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
-                            <b-col>
-                                <b-row v-for="(statement, key) in statementEntries" :key="key">
-                                    <b-col>
-                                        <statement-item :transaction="statement" />
-                                    </b-col>
-                                </b-row>
-                            </b-col>
-                        </b-row>
-                    </b-col>
-                </b-row>
-                <b-row v-else-if="availableBalance === 0" class="py-5">
-                    <b-col class="text-center">
-                        <h5 class="fw-light">Your transactions will appear here.</h5>
-                        <b-button
-                            :to="`/managed-accounts/${account?.id}/topup`"
-                            class="topup"
-                            variant="link"
-                        >
-                            Start by topping up your account.
-                        </b-button>
-                    </b-col>
-                </b-row>
+    <div>
+        <b-row align-h="between" align-v="center" class="mb-3">
+            <b-col cols="9" sm="auto">
+                <div class="d-flex justify-content-start justify-content-lg-start align-items-end">
+                    <label class="me-2 me-lg-4 fw-lighter mb-2" for="transaction-timeframe"
+                        >All Transactions</label
+                    >
+                    <b-form-select
+                        id="transaction-timeframe"
+                        v-model="filterDate"
+                        :options="months"
+                        class="w-auto d-inline-block ps-2 custom-select"
+                    />
+                </div>
+            </b-col>
+            <b-col class="d-flex justify-content-center justify-content-lg-end" cols="3" sm="auto">
+                <div>
+                    <b-button
+                        class="px-0 d-flex align-items-center fw-lighter text-decoration-none no-focus"
+                        variant="link"
+                        @click="downloadStatement"
+                    >
+                        <download-icon class="me-2" />
+                        <p class="d-none d-sm-inline m-0">download</p>
+                    </b-button>
+                </div>
             </b-col>
         </b-row>
-    </b-container>
+        <b-row align-h="between" align-v="center" class="mb-3">
+            <b-col>
+                <template v-if="filteredStatement && filteredStatementLength > 0">
+                    <b-row v-for="(statementEntries, date) in filteredStatement" :key="date">
+                        <b-col>
+                            <b-row v-for="(statement, key) in statementEntries" :key="key">
+                                <b-col>
+                                    <statement-item :transaction="statement" />
+                                </b-col>
+                            </b-row>
+                        </b-col>
+                    </b-row>
+                </template>
+                <template v-else-if="availableBalance === 0">
+                    <b-row class="py-5">
+                        <b-col class="text-center">
+                            <h5 class="fw-light">Your transactions will appear here.</h5>
+                            <b-button :to="`/managed-accounts/${account?.id}/topup`" variant="link">
+                                Start by topping up your account.
+                            </b-button>
+                        </b-col>
+                    </b-row>
+                </template>
+            </b-col>
+        </b-row>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -74,10 +68,11 @@ import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/ap
 import StatementItem from '~/components/organisms/StatementItem.vue'
 import DownloadIcon from '~/assets/svg/download.svg'
 
+// Define props
 const props = defineProps({
     filters: {
         type: Object as PropType<GetManagedAccountStatementRequest>,
-        default: null,
+        required: true,
     },
 })
 
@@ -100,11 +95,7 @@ const filteredStatementLength: ComputedRef<number> = computed(() => {
 })
 
 const availableBalance = computed(() => {
-    if (account) {
-        return account.value?.balances.availableBalance
-    }
-
-    return 0
+    return account.value?.balances.availableBalance || 0
 })
 
 const filterDate = computed({
@@ -118,11 +109,8 @@ const filterDate = computed({
         filterMonthChange(val)
     },
 })
-
 const months = computed(() => {
-    if (!account.value) return []
-
-    return monthsFilter(account.value.creationTimestamp)
+    return account.value ? monthsFilter(account.value.creationTimestamp) : []
 })
 
 const filterMonthChange = (val) => {
@@ -157,10 +145,10 @@ const downloadStatement = () => {
     }
 
     if (!_filters.toTimestamp) {
-        _filters.toTimestamp = getEndOfMonth.value
+        _filters.fromTimestamp = getEndOfMonth.value
     }
 
-    const _req: GetManagedAccountStatementRequest = {
+    const filters: GetManagedAccountStatementRequest = {
         limit: 100,
         offset: 0,
         showFundMovementsOnly: false,
@@ -169,14 +157,8 @@ const downloadStatement = () => {
     }
 
     downloadAsCSV({
-        id: route.params.id as string,
-        filters: _req,
+        id: account.value?.id as string,
+        filters,
     })
 }
 </script>
-
-<style lang="scss" scoped>
-:deep(.topup) {
-    text-decoration: none;
-}
-</style>

@@ -1,4 +1,4 @@
-import { useToast, type ColorVariant } from 'bootstrap-vue-next'
+import { type ColorVariant, useToastController } from 'bootstrap-vue-next'
 
 interface AppToastOptions {
     title?: string
@@ -8,7 +8,7 @@ interface AppToastOptions {
 }
 
 export default defineNuxtPlugin(() => {
-    const { show } = useToast()
+    const { show } = useToastController()
 
     const showToast = (message: string, options?: Partial<AppToastOptions>) => {
         show?.({

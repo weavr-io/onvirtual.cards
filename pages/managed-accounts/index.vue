@@ -24,7 +24,7 @@
             </b-container>
         </template>
         <template v-else>
-            <LoadingSpinner center show />
+            <LoadingSpinner center class="mt-5" show />
         </template>
     </section>
 </template>
