@@ -15,7 +15,7 @@
                 <b-row v-if="account" align-h="end" align-v="end">
                     <b-col v-if="canAddFunds" class="text-right mr-3 mr-sm-2" cols="2" lg="1">
                         <b-button
-                            :to="'/managed-accounts/' + account.id + '/topup'"
+                            :to="`/managed-accounts/${account.id}/topup`"
                             class="add-funds"
                             variant="secondary"
                         >
