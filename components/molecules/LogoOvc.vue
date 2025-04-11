@@ -1,6 +1,6 @@
 <template>
     <div :class="classes" class="text-center">
-        <component :is="link ? 'b-link' : 'span'" v-bind="dynamicProps">
+        <component :is="link ? 'router-link' : 'span'" v-bind="dynamicProps">
             <LogoImage :size="props.imgSize" class="align-top" />
         </component>
     </div>
