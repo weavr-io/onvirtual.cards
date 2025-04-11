@@ -5,7 +5,7 @@
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('rootUser,name')"
             :state="validation.getState('rootUser,name')"
-            label="First Name*"
+            label="FIRST NAME*"
             class="mb-3"
         >
             <b-form-input v-model="form.rootUser.name" placeholder="Name" />
@@ -13,7 +13,7 @@
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('rootUser,surname')"
             :state="validation.getState('rootUser,surname')"
-            label="Last Name*"
+            label="LAST NAME*"
             class="mb-3"
         >
             <b-form-input v-model="form.rootUser.surname" placeholder="Last Name" />
@@ -37,7 +37,7 @@
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('company,name')"
             :state="validation.getState('company,name')"
-            label="Company Name*"
+            label="COMPANY NAME*"
             class="mb-3"
         >
             <b-form-input v-model="form.company.name" placeholder="Company Name" />
@@ -45,7 +45,7 @@
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('company,registrationNumber')"
             :state="validation.getState('company,registrationNumber')"
-            label="Company Registration Number*"
+            label="COMPANY REGISTRATION NUMBER*"
             class="mb-3"
         >
             <b-form-input v-model="form.company.registrationNumber" placeholder="C00000" />
@@ -53,7 +53,7 @@
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('company,type')"
             :state="validation.getState('company,type')"
-            label="Company Type*"
+            label="COMPANY TYPE*"
             class="mb-3"
         >
             <b-form-select

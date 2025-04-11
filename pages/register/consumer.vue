@@ -15,7 +15,7 @@
                                         validation.getInvalidFeedback('rootUser,name')
                                     "
                                     :state="validation.getState('rootUser,name')"
-                                    label="First Name*"
+                                    label="FIRST NAME*"
                                     class="mb-3"
                                 >
                                     <b-form-input
@@ -28,7 +28,7 @@
                                         validation.getInvalidFeedback('rootUser,surname')
                                     "
                                     :state="validation.getState('rootUser,surname')"
-                                    label="Last Name*"
+                                    label="LAST NAME*"
                                     class="mb-3"
                                 >
                                     <b-form-input
@@ -43,7 +43,7 @@
                                             ? null
                                             : !!dobInvalidFeedback
                                     "
-                                    label="Date of Birth*"
+                                    label="DATE OF BIRTH*"
                                     class="mb-3"
                                 >
                                     <dob-picker
@@ -62,7 +62,7 @@
                                         validation.getInvalidFeedback('rootUser,email')
                                     "
                                     :state="validation.getState('rootUser,email')"
-                                    label="Email*"
+                                    label="EMAIL*"
                                     class="mb-3"
                                 >
                                     <b-form-input
@@ -234,7 +234,6 @@
                 </b-card-body>
             </b-card>
         </div>
-        <pre>{{ isPasswordInvalidAndDirty }} {{ isPasswordValid }}</pre>
     </b-col>
 </template>
 
