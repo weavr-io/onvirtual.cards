@@ -20,4 +20,4 @@ const INITIAL_MOBILE_REQUEST = () => {
     } as unknown as Mobile
 }
 
-export { MobileSchema, Mobile, INITIAL_MOBILE_REQUEST }
+export { MobileSchema, type Mobile, INITIAL_MOBILE_REQUEST }

@@ -1,22 +1,24 @@
 <template>
     <b-form novalidate @submit.prevent="submitForm">
-        <h3 class="text-center font-weight-light mb-5">A few more steps</h3>
+        <h3 class="text-center fw-light mb-5 fs-1">A few more steps</h3>
         <ErrorAlert />
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('rootUser,name')"
             :state="validation.getState('rootUser,name')"
-            label="First Name*"
+            label="FIRST NAME*"
+            class="mb-3"
         >
             <b-form-input v-model="form.rootUser.name" placeholder="Name" />
         </b-form-group>
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('rootUser,surname')"
             :state="validation.getState('rootUser,surname')"
-            label="Last Name*"
+            label="LAST NAME*"
+            class="mb-3"
         >
             <b-form-input v-model="form.rootUser.surname" placeholder="Last Name" />
         </b-form-group>
-        <b-form-group label="MOBILE NUMBER*">
+        <b-form-group label="MOBILE NUMBER*" class="mb-3">
             <phone-number-input
                 :border-radius="0"
                 :error="numberIsValid === false"
@@ -28,33 +30,37 @@
                 valid-color="#6D7490"
                 @update="phoneUpdate"
             />
-            <b-form-invalid-feedback v-if="!numberIsValid" force-show>
+            <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                 This field must be a valid mobile number.
             </b-form-invalid-feedback>
         </b-form-group>
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('company,name')"
             :state="validation.getState('company,name')"
-            label="Company Name*"
+            label="COMPANY NAME*"
+            class="mb-3"
         >
             <b-form-input v-model="form.company.name" placeholder="Company Name" />
         </b-form-group>
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('company,registrationNumber')"
             :state="validation.getState('company,registrationNumber')"
-            label="Company Registration Number*"
+            label="COMPANY REGISTRATION NUMBER*"
+            class="mb-3"
         >
             <b-form-input v-model="form.company.registrationNumber" placeholder="C00000" />
         </b-form-group>
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('company,type')"
             :state="validation.getState('company,type')"
-            label="Company Type*"
+            label="COMPANY TYPE*"
+            class="mb-3"
         >
             <b-form-select
                 v-model="form.company.type"
                 :options="companyTypeOptionsWithDefault"
                 placeholder="Company Type"
+                class="form-control"
             />
             <b-form-invalid-feedback>This field is required.</b-form-invalid-feedback>
         </b-form-group>
@@ -62,32 +68,45 @@
             :invalid-feedback="validation.getInvalidFeedback('company,registrationCountry')"
             :state="validation.getState('company,registrationCountry')"
             label="Registration Country*"
+            class="mb-3"
         >
             <b-form-select
                 v-model="form.company.registrationCountry"
                 :options="countryOptionsWithDefault"
                 placeholder="Registration Country"
+                class="form-control"
             />
         </b-form-group>
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('industry')"
             :state="validation.getState('industry')"
             label="Industry*"
+            class="mb-3"
         >
-            <b-form-select v-model="form.industry" :options="industryOccupationOptions" />
+            <b-form-select
+                v-model="form.industry"
+                :options="industryOccupationOptions"
+                class="form-control"
+            />
         </b-form-group>
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('sourceOfFunds')"
             :state="validation.getState('sourceOfFunds')"
             label="Source of Funds*"
+            class="mb-3"
         >
-            <b-form-select v-model="form.sourceOfFunds" :options="sourceOfFundsOptions" />
+            <b-form-select
+                v-model="form.sourceOfFunds"
+                :options="sourceOfFundsOptions"
+                class="form-control"
+            />
         </b-form-group>
         <b-form-group
             v-if="shouldShowOtherSourceOfFunds"
             :invalid-feedback="validation.getInvalidFeedback('sourceOfFundsOther')"
             :state="validation.getState('sourceOfFundsOther')"
             label="Other"
+            class="mb-3"
         >
             <b-form-input
                 v-model="form.sourceOfFundsOther"
@@ -98,18 +117,27 @@
             :invalid-feedback="validation.getInvalidFeedback('rootUser,companyPosition')"
             :state="validation.getState('rootUser,companyPosition')"
             label="My position within the company is*"
+            class="mb-3 is-invalid"
         >
             <b-form-radio
                 v-model="firstCompanyPosition"
                 :state="validation.getState('rootUser,companyPosition')"
-                name="company-position"
+                name="first-company-position"
+                :value="CompanyPositionEnum.AUTHORISED_REPRESENTATIVE"
+                :class="{
+                    'custom-control-input is-invalid': isCompanyPositionInvalid,
+                }"
             >
                 I am a representative (with the relevant power of attorney)
             </b-form-radio>
             <b-form-radio
                 v-model="lastCompanyPosition"
                 :state="validation.getState('rootUser,companyPosition')"
-                name="company-position"
+                name="last-company-position"
+                :value="CompanyPositionEnum.DIRECTOR"
+                :class="{
+                    'custom-control-input is-invalid': isCompanyPositionInvalid,
+                }"
             >
                 I am a director
             </b-form-radio>
@@ -131,8 +159,8 @@
         </b-form-row>
     </b-form>
 </template>
+
 <script lang="ts" setup>
-import { computed, ComputedRef, PropType, reactive, ref } from '@nuxtjs/composition-api'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import { IndustryTypeSelectConst } from '~/plugins/weavr-multi/api/models/common/consts/IndustryTypeSelectConst'
@@ -140,7 +168,7 @@ import { CorporateSourceOfFundsSelectConst } from '~/plugins/weavr-multi/api/mod
 import { CorporateSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CorporateSourceOfFundTypeEnum'
 import { CompanyTypeSelectConst } from '~/plugins/weavr-multi/api/models/identities/corporates/consts/CompanyTypeSelectConst'
 import { CompanyPositionEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/CompanyPositionEnum'
-import { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
+import type { SelectOptionsModel } from '~/models/local/generic/SelectOptionsModel'
 import {
     CreateCorporateFormSchema,
     type CreateCorporateRequest,
@@ -172,6 +200,10 @@ const form = reactive<CreateCorporateRequest>({
 })
 
 const validation = computed(() => useZodValidation(CreateCorporateFormSchema, form))
+
+const isCompanyPositionInvalid = computed(
+    () => validation.value.getState('rootUser,companyPosition') === false && validation.value.dirty,
+)
 
 const firstCompanyPosition = computed({
     get: () => form.rootUser.companyPosition,

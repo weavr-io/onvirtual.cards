@@ -30,9 +30,9 @@ const INITIAL_LOGIN_WITH_PASSWORD_REQUEST = () => {
 
 export {
     LoginWithPasswordSchema,
-    Password,
+    type Password,
     PasswordSchema,
-    LoginWithPassword,
+    type LoginWithPassword,
     INITIAL_PASSWORD_REQUEST,
     INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
 }

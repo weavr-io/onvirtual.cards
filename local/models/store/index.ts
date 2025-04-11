@@ -1,3 +1,4 @@
+import type { StoreDefinition } from 'pinia'
 import type { useCardsStore } from '~/store/cards'
 import type { useAccountsStore } from '~/store/accounts'
 import type { useAccessCodesStore } from '~/store/accessCodes'
@@ -24,4 +25,8 @@ export interface StoreType {
     secureClient: useSecureClientStore
     transfers: useTransfersStore
     users: useUsersStore
+}
+
+export type StoreModule = {
+    [exportName: string]: () => StoreDefinition
 }

@@ -1,6 +1,6 @@
 <template>
     <b-form @submit.prevent="tryToSubmitForm">
-        <h3 class="text-center font-weight-light mb-5">Register</h3>
+        <h3 class="text-center fw-light mb-5">Register</h3>
         <ErrorAlert />
         <b-form-group
             :invalid-feedback="validation.getInvalidFeedback('email')"
@@ -11,7 +11,7 @@
             <b-form-input
                 id="from-email"
                 v-model="form.email"
-                class="form-control"
+                class="form-control mb-3"
                 lazy
                 placeholder="name@email.com"
             />
@@ -27,14 +27,14 @@
                     :base-style="passwordBaseStyle"
                     :class-name="[
                         'sign-in-password form-control p-0',
-                        { 'is-invalid': !isPasswordValidAndDirty },
+                        !isPasswordValidAndDirty ? 'is-invalid' : '',
                     ]"
                     :options="{ placeholder: '****' }"
                     name="password"
                     required="true"
-                    @onChange="passwordInteraction"
-                    @onKeyUp="checkOnKeyUp"
-                    @onStrength="strengthCheck"
+                    @on-change="passwordInteraction"
+                    @on-key-up="checkOnKeyUp"
+                    @on-strength="strengthCheck"
                 />
                 <small
                     :class="!isPasswordValidAndDirty ? 'text-danger' : 'text-muted'"
@@ -44,11 +44,12 @@
                 >
             </client-only>
         </b-form-group>
-        <b-form-row class="small mt-3 text-muted">
+        <b-form-row class="small my-3 text-muted">
             <b-col>
                 <b-form-group
                     :invalid-feedback="validation.getInvalidFeedback('acceptedTerms')"
                     :state="validation.getState('acceptedTerms')"
+                    class="pb-2"
                 >
                     <b-form-checkbox
                         v-model="form.acceptedTerms"
@@ -73,7 +74,14 @@
             </b-col>
         </b-form-row>
         <div v-if="isRecaptchaEnabled" class="mt-2 d-flex justify-content-center">
-            <recaptcha />
+            <client-only>
+                <recaptcha-form
+                    :key="captchaKey"
+                    @error-callback="handleErrorCallback"
+                    @expired-callback="handleExpiredCallback"
+                    @load-callback="handleLoadCallback"
+                />
+            </client-only>
         </div>
         <b-form-row class="mt-5">
             <b-col class="text-center">
@@ -86,14 +94,14 @@
         </b-form-row>
     </b-form>
 </template>
+
 <script lang="ts" setup>
-import { computed, ComputedRef, reactive, Ref, ref } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import {
     INITIAL_LOGIN_WITH_PASSWORD_REQUEST,
-    LoginWithPassword,
+    type LoginWithPassword,
     LoginWithPasswordSchema,
 } from '~/plugins/weavr-multi/api/models/authentication'
 import { CreateCorporateRequestSchema } from '~/plugins/weavr-multi/api/models/identities/corporates'
@@ -114,6 +122,8 @@ const form = reactive<
 
 const passwordField: Ref<typeof WeavrPasswordInput | null> = ref(null)
 const passwordStrength = ref<number>(0)
+const isCaptchaVerified = ref(false)
+const captchaKey = ref<number>(0)
 
 const validation = computed(() => {
     return useZodValidation(
@@ -147,18 +157,34 @@ const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = comp
 })
 
 const isRecaptchaEnabled: ComputedRef<boolean> = computed(
-    () => typeof process.env.RECAPTCHA !== 'undefined',
+    () => typeof useRuntimeConfig().public.recaptcha.siteKey !== 'undefined',
 )
 
 const isLoadingRegistration = computed(() => corporates?.corporateState.isLoadingRegistration)
 
+const handleErrorCallback = () => {
+    isCaptchaVerified.value = false
+}
+
+const handleExpiredCallback = () => {
+    isCaptchaVerified.value = false
+}
+
+const handleLoadCallback = (res: unknown) => {
+    if (res) {
+        isCaptchaVerified.value = true
+    }
+}
+
 const tryToSubmitForm = async () => {
-    errors?.resetState()
     try {
+        errors?.resetState()
         validation.value.touch() && (await validation.value.validate())
         if (validation.value.isInvalid.value || !isPasswordValid.value) {
             return
         }
+
+        if (!isCaptchaVerified.value) return
 
         startRegistrationLoading()
         passwordField.value?.createToken().then(
@@ -202,4 +228,8 @@ const submitForm = () => {
 const strengthCheck = (val) => {
     passwordStrength.value = val.id
 }
+
+onMounted(() => {
+    captchaKey.value++
+})
 </script>

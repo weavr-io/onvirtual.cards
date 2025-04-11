@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import { AxiosError } from 'axios'
+import type { AxiosError } from 'axios'
 import type { ChangePasswordConflict } from '~/plugins/weavr-multi/api/models/error/models/ChangePasswordConflict'
 import { CONFLICT_MESSAGE_CONST } from '~/plugins/weavr-multi/api/models/error/conflicts/generics/const/ConflictMessageConst'
 

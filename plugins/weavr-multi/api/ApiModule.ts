@@ -1,4 +1,4 @@
-import { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
+import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 import { AuthenticationApi } from '~/plugins/weavr-multi/api/AuthenticationApi'
 import { ManagedAccountsApi } from '~/plugins/weavr-multi/api/ManagedAccountsApi'
 import { ManagedCardsApi } from '~/plugins/weavr-multi/api/ManagedCardsApi'

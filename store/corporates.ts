@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { computed, reactive } from 'vue'
 import type { Corporates as CorporateState } from '~/local/models/store/corporates'
 import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
 import type { GetCorporateKYBResponse } from '~/plugins/weavr-multi/api/models/identities/corporates/responses/GetCorporateKYBResponse'
@@ -10,7 +9,6 @@ import type { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/mode
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { PUK_COUNTRY_CODES } from '~/utils/jurisdiction'
 import { useIdentityStore } from '~/store/identity'
-import { useAuthStore } from '~/store/auth'
 
 const initState = (): CorporateState => {
     return {
@@ -22,7 +20,8 @@ const initState = (): CorporateState => {
 }
 
 export const useCorporatesStore = defineStore('corporates', () => {
-    const store = useAuthStore()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
 
     const identity = useIdentityStore()
     const corporateState: CorporateState = reactive(initState())
@@ -56,7 +55,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
     const create = (request: CreateCorporateRequest) => {
         setIsLoading(true)
 
-        const req = store.$nuxt.$apiMulti.corporates.store(request)
+        const req = apiMulti.value.corporates.store(request)
 
         req.then((res) => {
             identity.setIdentity(res.data)
@@ -71,7 +70,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
     }
 
     const update = (request: UpdateCorporateRequest) => {
-        const req = store.$nuxt.$apiMulti.corporates.update(request)
+        const req = apiMulti.value.corporates.update(request)
         req.then((_res) => {
             setCorporate(_res.data)
             identity.setIdentity(_res.data)
@@ -86,7 +85,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
 
     const get = () => {
         setIsLoading(true)
-        const req = store.$nuxt.$apiMulti.corporates.show()
+        const req = apiMulti.value.corporates.show()
 
         req.then((res) => {
             setCorporate(res.data)
@@ -100,7 +99,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
     }
 
     const getKyb = () => {
-        const req = store.$nuxt.$apiMulti.corporates.getCorporateKYB()
+        const req = apiMulti.value.corporates.getCorporateKYB()
         req.then((res) => {
             setKyb(res.data)
         })
@@ -109,11 +108,11 @@ export const useCorporatesStore = defineStore('corporates', () => {
     }
 
     const verifyEmail = (request: VerifyEmail) => {
-        return store.$nuxt.$apiMulti.corporates.verifyEmail(request)
+        return apiMulti.value.corporates.verifyEmail(request)
     }
 
     const sendVerificationCodeEmail = (request: SendVerificationCodeRequest) => {
-        return store.$nuxt.$apiMulti.corporates.sendVerificationCode(request)
+        return apiMulti.value.corporates.sendVerificationCode(request)
     }
 
     const checkKYB = async () => {
@@ -133,7 +132,7 @@ export const useCorporatesStore = defineStore('corporates', () => {
     }
 
     const startKYB = () => {
-        return store.$nuxt.$apiMulti.corporates.startKYB()
+        return apiMulti.value.corporates.startKYB()
     }
 
     return {

@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 
 export class IpifyApi {
     get(): Promise<AxiosResponse<{ ip: string }>> {
