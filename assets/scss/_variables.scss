@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 $primary: #6c1c5c;
 $secondary: #3cf7ca;
 $text-muted: #b6b9c7;
@@ -12,13 +14,6 @@ $shadow: #5768ff4d;
 $body-bg: #fff;
 $body-bg-colored: #f0edde;
 $grey-light: #eaedf6;
-$theme-colors: (
-    'card': $card,
-    'grey': $grey,
-    'grey-light': $grey-light,
-    'card-disabled': $card-disabled,
-    'bg-colored': $body-bg-colored,
-);
 $btn-padding-y-sm: 0.5rem;
 $btn-padding-x-sm: 1rem;
 $btn-padding-y: 0.7rem;
@@ -46,18 +41,49 @@ $box-shadow-sm: 0 0.125rem 0.25rem $shadow;
 $box-shadow: 0 0.5rem 1rem $shadow;
 $box-shadow-lg: 0 1rem 3rem $shadow;
 $spacer: 1rem;
-$spacers: (
-    6: (
-        $spacer * 6,
-    ),
-    7: (
-        $spacer * 12,
-    ),
-    8: (
-        $spacer * 18,
-    ),
-    'card': 4rem,
-);
 $card-border-width: 0;
 $card-border-radius: 2rem;
 $dashboard-header-height: 68px;
+$fs-2rem: 2rem;
+$fs-1-75rem: 2rem;
+$fs-2-5rem: 2.5rem;
+
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/mixins';
+
+$theme-colors: map.merge(
+    $theme-colors,
+    (
+        'card': $card,
+        'grey': $grey,
+        'grey-light': $grey-light,
+        'card-disabled': $card-disabled,
+        'colored': $body-bg-colored,
+        'secondary': $secondary,
+        'muted': $text-muted,
+        'white': $body-bg,
+        'transparent': $input-disabled-bg,
+        'card-purple': $primary,
+    )
+);
+$spacers: map.merge(
+    $spacers,
+    (
+        6: (
+            $spacer * 6,
+        ),
+        7: (
+            $spacer * 12,
+        ),
+        8: (
+            $spacer * 18,
+        ),
+        '075': (
+            $spacer * 0.75,
+        ),
+        'card': 4rem,
+    )
+);
+$theme-colors: $theme-colors !default;
+$spacers: $spacers !default;

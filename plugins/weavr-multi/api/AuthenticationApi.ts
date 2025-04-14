@@ -1,6 +1,6 @@
-import { AxiosResponse } from 'axios'
-import { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPassword'
-import { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
+import type { AxiosResponse } from 'axios'
+import type { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPassword'
+import type { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
 import { $axiosMulti } from '~/utils/api'
 
 export class AuthenticationApi {

@@ -1,8 +1,8 @@
 <template>
-    <b-col lg="6" md="9">
+    <b-col v-if="!pendingDataOrError" lg="6" md="9">
         <LogoOvc :link="false" classes="pb-5" />
         <b-card body-class="p-card">
-            <h3 class="text-center font-weight-light mb-4">Add your phone number</h3>
+            <h3 class="text-center fw-light mb-4">Add your phone number</h3>
             <p class="text-center mb-5">
                 We need your phone number to send you one-time passwords when logging in. we will
                 not share this with anyone.
@@ -34,20 +34,9 @@
     </b-col>
 </template>
 
-<script lang="ts">
-import {
-    computed,
-    defineComponent,
-    reactive,
-    ref,
-    useAsync,
-    useRouter,
-} from '@nuxtjs/composition-api'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import LogoOvc from '~/components/molecules/LogoOvc.vue'
+<script lang="ts" setup>
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
 import {
     SCAFactorStatusEnum,
     SCAOtpChannelEnum,
@@ -55,116 +44,106 @@ import {
 import {
     CredentialTypeEnum,
     INITIAL_MOBILE_REQUEST,
-    Mobile,
+    type Mobile,
 } from '~/plugins/weavr-multi/api/models/common'
-import { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
+import type { UpdateConsumerRequest } from '~/plugins/weavr-multi/api/models/identities/consumers/requests/UpdateConsumerRequest'
 import {
     RootUserMobileSchema,
-    UpdateCorporateRequest,
+    type UpdateCorporateRequest,
 } from '~/plugins/weavr-multi/api/models/identities/corporates'
-import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
+import type { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import useZodValidation from '~/composables/useZodValidation'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
-export default defineComponent({
-    components: {
-        PhoneNumberInput,
-        LogoOvc,
-        LoaderButton,
-    },
+definePageMeta({
     layout: 'auth',
-    middleware: 'kyVerified',
-    setup() {
-        const router = useRouter()
-        const { isConsumer, showErrorToast, mobileCountries } = useBase()
-        const { auth, consumers, corporates, users } = useStores([
-            'auth',
-            'consumers',
-            'corporates',
-            'users',
-        ])
+    middleware: 'ky-verified',
+})
 
-        const isLoading = ref(false)
-        const numberIsValid = ref<boolean | null>(null)
-        const updateRequest: { mobile: Mobile } = reactive({
-            mobile: {
-                ...INITIAL_MOBILE_REQUEST(),
-            },
-        })
+const router = useRouter()
+const { isConsumer, showErrorToast, mobileCountries } = useBase()
+const { auth, consumers, corporates, users } = useStores([
+    'auth',
+    'consumers',
+    'corporates',
+    'users',
+])
 
-        const validation = computed(() => {
-            return useZodValidation(RootUserMobileSchema, updateRequest)
-        })
-
-        useAsync(async () => {
-            await auth?.indexAuthFactors()
-
-            const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
-                (factor) => factor.channel === SCAOtpChannelEnum.SMS,
-            )
-
-            if (
-                smsAuthFactors &&
-                smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION
-            ) {
-                return router.replace('/dashboard')
-            }
-        })
-
-        const submitForm = async () => {
-            isLoading.value = true
-
-            if (numberIsValid.value === null) {
-                numberIsValid.value = false
-            }
-
-            try {
-                await validation.value.validate()
-
-                if (validation.value.isInvalid.value || !numberIsValid.value) {
-                    isLoading.value = false
-                    return null
-                }
-
-                if (auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT) {
-                    isConsumer.value
-                        ? await consumers?.update(updateRequest as UpdateConsumerRequest)
-                        : await corporates?.update(updateRequest as UpdateCorporateRequest)
-                } else {
-                    await users?.update({
-                        id: auth!.authState.auth!.credentials.id,
-                        data: updateRequest as UpdateUserRequestModel,
-                    })
-                }
-                await router.push({
-                    path: '/login/verify/mobile',
-                    query: {
-                        send: 'true',
-                    },
-                })
-            } catch (error: any) {
-                showErrorToast(error)
-            } finally {
-                isLoading.value = false
-            }
-        }
-
-        const phoneUpdate = (number) => {
-            updateRequest.mobile.countryCode =
-                number.countryCallingCode && `+${number.countryCallingCode}`
-            updateRequest.mobile.number = number.phoneNumber
-            if (number.phoneNumber) {
-                numberIsValid.value = number.isValid
-            }
-        }
-
-        return {
-            submitForm,
-            numberIsValid,
-            mobileCountries,
-            updateRequest,
-            phoneUpdate,
-            isLoading,
-        }
+const isLoading = ref(false)
+const numberIsValid = ref<boolean | null>(null)
+const updateRequest: { mobile: Mobile } = reactive({
+    mobile: {
+        ...INITIAL_MOBILE_REQUEST(),
     },
 })
+
+const validation = computed(() => {
+    return useZodValidation(RootUserMobileSchema, updateRequest)
+})
+
+const indexAuthFactors = async () => {
+    await auth?.indexAuthFactors()
+
+    const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
+        (factor) => factor.channel === SCAOtpChannelEnum.SMS,
+    )
+
+    if (smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION) {
+        return router.replace('/dashboard')
+    }
+}
+
+const { pendingDataOrError } = await useGlobalAsyncData('indexAuthFactors', async () => {
+    await indexAuthFactors()
+})
+
+const submitForm = async () => {
+    isLoading.value = true
+
+    if (numberIsValid.value === null) {
+        numberIsValid.value = false
+    }
+
+    try {
+        await validation.value.validate()
+
+        if (validation.value.isInvalid.value || !numberIsValid.value) {
+            isLoading.value = false
+            return null
+        }
+
+        if (auth?.authState.auth?.credentials.type === CredentialTypeEnum.ROOT) {
+            isConsumer.value
+                ? await consumers?.update(updateRequest as UpdateConsumerRequest)
+                : await corporates?.update(updateRequest as UpdateCorporateRequest)
+        } else {
+            await users?.update({
+                id: auth!.authState.auth!.credentials.id,
+                data: updateRequest as UpdateUserRequestModel,
+            })
+        }
+        await router.push({
+            path: '/login/verify/mobile',
+            query: {
+                send: 'true',
+            },
+        })
+    } catch (error: any) {
+        showErrorToast(error)
+    } finally {
+        isLoading.value = false
+    }
+}
+
+const phoneUpdate = (number) => {
+    updateRequest.mobile.countryCode = number.countryCallingCode && `+${number.countryCallingCode}`
+    updateRequest.mobile.number = number.phoneNumber
+
+    if (number.phoneNumber) {
+        numberIsValid.value = number.isValid
+    }
+}
 </script>

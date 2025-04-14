@@ -4,13 +4,13 @@
             <b-row align-h="center">
                 <b-col class="my-2 my-lg-5 text-center" lg="6" md="9">
                     <div class="text-md d-inline-block text-center mb-5 mb-lg-6">
-                        <h1 class="font-weight-light">Change Password</h1>
+                        <h1 class="fw-light fs-2-5rem">Change Password</h1>
                     </div>
                     <div class="mx-md-3 px-md-5">
                         <b-form id="contact-form" @submit.prevent="submitChangePassword">
                             <client-only placeholder="Loading...">
                                 <div :class="{ 'is-dirty': validation.dirty }">
-                                    <label class="d-block text-left">OLD PASSWORD:</label>
+                                    <label class="d-block text-start mb-2">OLD PASSWORD:</label>
                                     <weavr-password-input
                                         ref="oldPassword"
                                         :base-style="passwordBaseStyle"
@@ -21,10 +21,12 @@
                                         class-name="sign-in-password"
                                         name="old-password"
                                         required="true"
-                                        @onChange="oldPasswordInteraction"
-                                        @onKeyUp.prevent="checkOnKeyUp"
+                                        @on-change="oldPasswordInteraction"
+                                        @on-key-up.prevent="checkOnKeyUp"
                                     />
-                                    <label class="d-block text-left mt-3">NEW PASSWORD:</label>
+                                    <label class="d-block text-start mt-3 mb-2"
+                                        >NEW PASSWORD:</label
+                                    >
                                     <weavr-password-input
                                         ref="newPassword"
                                         :base-style="passwordBaseStyle"
@@ -35,18 +37,24 @@
                                         class-name="sign-in-password"
                                         name="new-password"
                                         required="true"
-                                        @onChange="passwordInteraction"
-                                        @onStrength="strengthCheck"
-                                        @onKeyUp.prevent="checkOnKeyUp"
+                                        @on-change="passwordInteraction"
+                                        @on-strength="strengthCheck"
+                                        @on-key-up.prevent="checkOnKeyUp"
                                     />
-                                    <small
-                                        :class="
-                                            !isPasswordValidAndDirty ? 'text-danger' : 'text-muted'
-                                        "
-                                        class="form-text mb-3 text-left"
-                                        >- min 8 characters <br />- uppercase letter <br />- digit
-                                        and a special character</small
-                                    >
+                                    <div class="text-start">
+                                        <small
+                                            :class="
+                                                !isPasswordValidAndDirty
+                                                    ? 'text-danger'
+                                                    : 'text-muted'
+                                            "
+                                            class="form-text mb-3"
+                                        >
+                                            - min 8 characters <br />
+                                            - uppercase letter <br />
+                                            - digit and a special character
+                                        </small>
+                                    </div>
                                 </div>
                             </client-only>
 
@@ -66,17 +74,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ComputedRef, reactive, ref, useRouter } from '@nuxtjs/composition-api'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
 import {
     INITIAL_UPDATE_PASSWORD_REQUEST,
-    UpdatePasswordRequestModel,
+    type UpdatePasswordRequestModel,
     UpdatePasswordRequestSchema,
 } from '~/plugins/weavr-multi/api/models/authentication'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import useZodValidation from '~/composables/useZodValidation'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
 
 const router = useRouter()

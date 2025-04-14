@@ -1,13 +1,13 @@
-import { AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
 import { $axiosMulti } from '~/utils/api'
-import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
-import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
-import { UsersFilterRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UsersFilterRequestModel'
-import { PaginatedUsersResponseModel } from '~/plugins/weavr-multi/api/models/users/response/PaginatedUsersResponseModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
-import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
-import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
-import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
+import type { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
+import type { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
+import type { UsersFilterRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UsersFilterRequestModel'
+import type { PaginatedUsersResponseModel } from '~/plugins/weavr-multi/api/models/users/response/PaginatedUsersResponseModel'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import type { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
+import type { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
+import type { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
 
 export class UsersApi {
     store(body: CreateUserRequestModel): Promise<AxiosResponse<UserModel>> {

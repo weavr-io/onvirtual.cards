@@ -1,5 +1,5 @@
-import { PagingModel } from '~/plugins/weavr-multi/api/models/common/models/PagingModel'
-import { SourceInstrumentModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/SourceInstrumentModel'
+import type { PagingModel } from '~/plugins/weavr-multi/api/models/common/models/PagingModel'
+import type { SourceInstrumentModel } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/models/SourceInstrumentModel'
 import { OutgoingWireTransferStateTypeEnum } from '~/plugins/weavr-multi/api/models/outgoing-wire-transfers/enums/OutgoingWireTransferStateTypeEnum'
 
 export interface OutgoingWireTransfersFilterRequest {

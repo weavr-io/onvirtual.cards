@@ -5,6 +5,8 @@ import { useLoaderStore } from '~/store/loader'
 
 export const useTransfersStore = defineStore('transfers', () => {
     const isLoading = ref<boolean>(false)
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
     const loader = useLoaderStore()
 
     const resetState = () => {
@@ -17,8 +19,8 @@ export const useTransfersStore = defineStore('transfers', () => {
 
     const execute = (request: CreateTransferRequest) => {
         loader.start()
-        const store = useTransfersStore()
-        const req = store.$nuxt.$apiMulti.transfers.store(request)
+        const req = apiMulti.value.transfers.store(request)
+
         req.finally(() => {
             loader.stop()
         })

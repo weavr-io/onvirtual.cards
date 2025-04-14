@@ -3,13 +3,13 @@
         :loading="props.loading"
         alt="onvirtual.cards"
         class="d-inline-block"
-        src="@/assets/imgs/logo.svg"
+        :src="logoUrl"
         v-bind="dimensions"
     />
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import logoUrl from '@/assets/imgs/logo.svg?url'
 
 const props = withDefaults(
     defineProps<{

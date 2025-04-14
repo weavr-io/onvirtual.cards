@@ -2,7 +2,7 @@
     <div>
         <b-row>
             <b-col>
-                <h2 class="text-center font-weight-lighter">Card topped up</h2>
+                <h2 class="text-center fw-lighter">Card topped up</h2>
             </b-col>
         </b-row>
         <b-row align-h="center" class="py-5 my-5">
@@ -14,15 +14,13 @@
             <b-col class="text-center">
                 <b-button type="submit" variant="secondary" @click.prevent="goToCards">
                     continue
-                    <span class="pl-5">-></span>
+                    <span class="ps-5">-></span>
                 </b-button>
             </b-col>
         </b-row>
     </div>
 </template>
 <script lang="ts" setup>
-import { useRouter } from '@nuxtjs/composition-api'
-
 const router = useRouter()
 
 const goToCards = () => {

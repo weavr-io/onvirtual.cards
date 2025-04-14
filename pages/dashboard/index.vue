@@ -1,14 +1,11 @@
 <template>
     <div></div>
 </template>
-<script lang="ts">
-import { defineComponent, useRouter } from '@nuxtjs/composition-api'
-
-export default defineComponent({
+<script lang="ts" setup>
+definePageMeta({
     layout: 'dashboard',
-    setup() {
-        const router = useRouter()
-        router.push('/managed-cards')
+    middleware: (_) => {
+        return { path: '/managed-cards' }
     },
 })
 </script>

@@ -18,4 +18,8 @@ const INITIAL_UPDATE_PASSWORD_REQUEST = () => {
     } as unknown as UpdatePasswordRequestModel
 }
 
-export { UpdatePasswordRequestModel, UpdatePasswordRequestSchema, INITIAL_UPDATE_PASSWORD_REQUEST }
+export {
+    type UpdatePasswordRequestModel,
+    UpdatePasswordRequestSchema,
+    INITIAL_UPDATE_PASSWORD_REQUEST,
+}

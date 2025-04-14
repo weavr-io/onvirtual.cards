@@ -1,8 +1,8 @@
-import { AxiosResponse } from '~/node_modules/axios'
+import type { AxiosResponse } from '~/node_modules/axios'
 import { $axiosMulti } from '~/utils/api'
-import { GetAuthenticationFactorsResponse } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/responses/GetAuthenticationFactorsResponse'
+import type { GetAuthenticationFactorsResponse } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/responses/GetAuthenticationFactorsResponse'
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
-import { AuthVerifyEnrol } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
+import type { AuthVerifyEnrol } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/requests/AuthVerifyEnrolRequest'
 
 export class AdditionalFactorsApi {
     index(): Promise<AxiosResponse<GetAuthenticationFactorsResponse>> {
