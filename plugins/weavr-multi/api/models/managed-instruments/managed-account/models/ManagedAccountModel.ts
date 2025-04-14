@@ -1,8 +1,8 @@
-import { IDModel } from '../../../common/models/IDModel'
-import { ManagedInstrumentBalanceModel } from '~/plugins/weavr-multi/api/models/managed-instruments/models/ManagedInstrumentBalanceModel'
-import { ManagedInstrumentStateModel } from '~/plugins/weavr-multi/api/models/managed-instruments/models/ManagedInstrumentStateModel'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import type { ManagedInstrumentBalanceModel } from '~/plugins/weavr-multi/api/models/managed-instruments/models/ManagedInstrumentBalanceModel'
+import type { ManagedInstrumentStateModel } from '~/plugins/weavr-multi/api/models/managed-instruments/models/ManagedInstrumentStateModel'
 import { CurrencyEnum } from '~/plugins/weavr-multi/api/models/common/enums/CurrencyEnum'
-import { CreationTimestamp } from '~/plugins/weavr-multi/api/models/common/models/Timestamp'
+import type { CreationTimestamp } from '~/plugins/weavr-multi/api/models/common/models/Timestamp'
 
 export interface ManagedAccountModel extends CreationTimestamp {
     id: IDModel

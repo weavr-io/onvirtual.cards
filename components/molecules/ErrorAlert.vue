@@ -24,9 +24,8 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { computed, ComputedRef, PropType } from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
-import { ErrorLink } from '~/local/models/ErrorLink'
+import type { ErrorLink } from '~/local/models/ErrorLink'
 import {
     CreateIdentityConflictsEnum,
     AuthenticationConflictsEnum,

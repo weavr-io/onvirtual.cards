@@ -9,13 +9,14 @@
                         <error-alert />
                         <div class="form-screen">
                             <b-form novalidate @submit.prevent="submitForm">
-                                <h3 class="text-center font-weight-light mb-5">Register</h3>
+                                <h3 class="text-center fw-light mb-5">Register</h3>
                                 <b-form-group
                                     :invalid-feedback="
                                         validation.getInvalidFeedback('rootUser,name')
                                     "
                                     :state="validation.getState('rootUser,name')"
-                                    label="First Name*"
+                                    label="FIRST NAME*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.name"
@@ -27,7 +28,8 @@
                                         validation.getInvalidFeedback('rootUser,surname')
                                     "
                                     :state="validation.getState('rootUser,surname')"
-                                    label="Last Name*"
+                                    label="LAST NAME*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.surname"
@@ -41,7 +43,8 @@
                                             ? null
                                             : !!dobInvalidFeedback
                                     "
-                                    label="Date of Birth*"
+                                    label="DATE OF BIRTH*"
+                                    class="mb-3"
                                 >
                                     <dob-picker
                                         :placeholders="['Day', 'Month', 'Year']"
@@ -59,16 +62,17 @@
                                         validation.getInvalidFeedback('rootUser,email')
                                     "
                                     :state="validation.getState('rootUser,email')"
-                                    label="Email*"
+                                    label="EMAIL*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.rootUser.email"
                                         placeholder="name@email.com"
                                     />
                                 </b-form-group>
-                                <b-form-group label="MOBILE NUMBER*">
+                                <b-form-group label="MOBILE NUMBER*" class="mb-3">
                                     <phone-number-input
-                                        v-model="rootMobileNumber"
+                                        :value="registrationRequest.rootUser.mobile.number"
                                         :border-radius="0"
                                         :error="numberIsValid === false"
                                         :only-countries="mobileCountries"
@@ -91,11 +95,12 @@
                                     "
                                     :state="validation.getState('rootUser,address,country')"
                                     label="Country*"
+                                    class="mb-3"
                                 >
                                     <b-form-select
-                                        v-model="registrationRequest.rootUser.address.country"
+                                        v-model="countryModel"
                                         :options="countryOptionsWithDefault"
-                                        placeholder="Registration Country"
+                                        class="custom-select"
                                     />
                                 </b-form-group>
                                 <b-form-group
@@ -104,10 +109,12 @@
                                     "
                                     :state="validation.getState('rootUser,occupation')"
                                     label="Industry*"
+                                    class="mb-3"
                                 >
                                     <b-form-select
                                         v-model="registrationRequest.rootUser.occupation"
                                         :options="industryOccupationOptions"
+                                        class="custom-select"
                                     />
                                 </b-form-group>
                                 <b-form-group
@@ -116,10 +123,12 @@
                                     "
                                     :state="validation.getState('sourceOfFunds')"
                                     label="Source of Funds*"
+                                    class="mb-3"
                                 >
                                     <b-form-select
                                         v-model="registrationRequest.sourceOfFunds"
                                         :options="sourceOfFundsOptions"
+                                        class="custom-select"
                                     />
                                 </b-form-group>
                                 <b-form-group
@@ -129,6 +138,7 @@
                                     "
                                     :state="validation.getState('sourceOfFundsOther')"
                                     label="Other"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="registrationRequest.sourceOfFundsOther"
@@ -151,8 +161,8 @@
                                             :options="{ placeholder: '****' }"
                                             name="password"
                                             required="true"
-                                            @onChange="passwordInteraction"
-                                            @onStrength="strengthCheck"
+                                            @on-change="passwordInteraction"
+                                            @on-strength="strengthCheck"
                                         />
                                         <small
                                             :class="
@@ -166,13 +176,14 @@
                                         >
                                     </b-form-group>
                                 </client-only>
-                                <b-form-row class="small mt-3 text-muted">
+                                <b-form-row class="small my-3 text-muted">
                                     <b-col>
                                         <b-form-group
                                             :invalid-feedback="
                                                 validation.getInvalidFeedback('acceptedTerms')
                                             "
                                             :state="validation.getState('acceptedTerms')"
+                                            class="mb-3"
                                         >
                                             <b-form-checkbox
                                                 v-model="registrationRequest.acceptedTerms"
@@ -200,7 +211,14 @@
                                     v-if="isRecaptchaEnabled"
                                     class="mt-2 d-flex justify-content-center"
                                 >
-                                    <recaptcha class="mx-auto" />
+                                    <client-only>
+                                        <recaptcha-form
+                                            :key="captchaKey"
+                                            @error-callback="handleErrorCallback"
+                                            @expired-callback="handleExpiredCallback"
+                                            @load-callback="handleLoadCallback"
+                                        />
+                                    </client-only>
                                 </div>
                                 <b-row align-v="center" class="mt-4">
                                     <b-col class="text-center">
@@ -218,314 +236,293 @@
         </div>
     </b-col>
 </template>
-<script lang="ts">
+
+<script lang="ts" setup>
+import type { AxiosResponse } from 'axios'
+import { useBase } from '~/composables/useBase'
+import { useStores } from '~/composables/useStores'
 import {
-    computed,
-    ComputedRef,
-    defineComponent,
-    reactive,
-    ref,
-    useContext,
-    useFetch,
-    watch,
-    useRouter,
-} from '@nuxtjs/composition-api'
-import { AxiosResponse } from 'axios'
+    type CreatePasswordRequestModel,
+    INITIAL_SENSITIVE_PASSWORD_REQUEST,
+    type SensitivePassword,
+} from '~/plugins/weavr-multi/api/models/authentication'
+import {
+    ConsumerSourceOfFundsSelectConst,
+    CurrencyEnum,
+    type IDModel,
+    IndustryTypeSelectConst,
+} from '~/plugins/weavr-multi/api/models/common'
+import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
+import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import {
+    CreateConsumerFormSchema,
+    type CreateConsumerRequest,
+    INITIAL_CREATE_CONSUMER_REQUEST,
+} from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
+import type { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
+import useZodValidation from '~/composables/useZodValidation'
 import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import ComingSoonCurrencies from '~/components/atoms/ComingSoonCurrencies.vue'
 import DobPicker from '~/components/atoms/DobPicker.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import { useBase } from '~/composables/useBase'
-import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
-import {
-    CreatePasswordRequestModel,
-    INITIAL_SENSITIVE_PASSWORD_REQUEST,
-    SensitivePassword,
-} from '~/plugins/weavr-multi/api/models/authentication'
-import {
-    ConsumerSourceOfFundsSelectConst,
-    CurrencyEnum,
-    IDModel,
-    IndustryTypeSelectConst,
-} from '~/plugins/weavr-multi/api/models/common'
-import { ConsumerSourceOfFundTypeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/ConsumerSourceOfFundTypeEnum'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
-import {
-    CreateConsumerFormSchema,
-    CreateConsumerRequest,
-    INITIAL_CREATE_CONSUMER_REQUEST,
-} from '~/plugins/weavr-multi/api/models/identities/consumers/requests/CreateConsumerRequest'
 import WeavrPasswordInput from '~/plugins/weavr/components/WeavrPasswordInput.vue'
-import { SecureElementStyleWithPseudoClasses } from '~/plugins/weavr/components/api'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
+import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 
-export default defineComponent({
-    components: {
-        PhoneNumberInput,
-        ComingSoonCurrencies,
-        LogoOvc,
-        ErrorAlert,
-        LoaderButton,
-        DobPicker,
-        WeavrPasswordInput,
-    },
+definePageMeta({
     layout: 'auth',
-    middleware: 'accessCodeVerified',
-    setup() {
-        const router = useRouter()
-        const { $apiMulti, $config } = useContext()
-        const { consumer, showErrorToast, mobileCountries, countryOptionsWithDefault } = useBase()
-        const { accessCodes, consumers, errors } = useStores(['accessCodes', 'consumers', 'errors'])
+    middleware: ['access-code-verified'],
+})
 
-        const passwordField = ref<typeof WeavrPasswordInput | null>(null)
-        const rootMobileNumber = ref('')
-        const numberIsValid = ref<boolean | null>(null)
-        const passwordStrength = ref(0)
-        const isPasswordInvalidAndDirty = ref<boolean>(false)
+const router = useRouter()
+const { profileId } = useRuntimeConfig().public
+const { $apiMulti } = useNuxtApp()
+const { consumer, showErrorToast, mobileCountries, countryOptionsWithDefault } = useBase()
+const { accessCodes, consumers, errors } = useStores(['accessCodes', 'consumers', 'errors'])
+const captchaKey = ref<number>(0)
+const isPasswordInvalidAndDirty = ref<boolean>(false)
+const passwordField = ref<typeof WeavrPasswordInput | null>(null)
+const numberIsValid = ref<boolean | null>(null)
+const passwordStrength = ref(0)
+const isCaptchaVerified = ref(false)
 
-        const registrationRequest: CreateConsumerRequest & { password: SensitivePassword } =
-            reactive({
-                ...INITIAL_CREATE_CONSUMER_REQUEST(),
-                profileId: $config.profileId.consumers,
-                acceptedTerms: false,
-                baseCurrency: CurrencyEnum.EUR,
-                password: INITIAL_SENSITIVE_PASSWORD_REQUEST(),
-            })
+const registrationRequest: CreateConsumerRequest & { password: SensitivePassword } = reactive({
+    ...INITIAL_CREATE_CONSUMER_REQUEST(),
+    profileId: profileId.consumers,
+    acceptedTerms: false,
+    baseCurrency: CurrencyEnum.EUR,
+    password: INITIAL_SENSITIVE_PASSWORD_REQUEST(),
+})
 
-        const recaptcha = ref(undefined)
+const validation = computed(() => {
+    return useZodValidation(CreateConsumerFormSchema, registrationRequest)
+})
 
-        const validation = computed(() => {
-            return useZodValidation(CreateConsumerFormSchema, registrationRequest)
-        })
+const industryOccupationOptions = computed(() => {
+    return IndustryTypeSelectConst
+})
 
-        const industryOccupationOptions = computed(() => {
-            return IndustryTypeSelectConst
-        })
-
-        const dobState = computed(() => {
-            return {
-                day: validation.value.getState('rootUser,dateOfBirth,day') ?? undefined,
-                month: validation.value.getState('rootUser,dateOfBirth,month') ?? undefined,
-                year: validation.value.getState('rootUser,dateOfBirth,year') ?? undefined,
-            }
-        })
-
-        const dobInvalidFeedback = computed(() => {
-            return (
-                validation.value.getInvalidFeedback('rootUser,dateOfBirth,day') ||
-                validation.value.getInvalidFeedback('rootUser,dateOfBirth,month') ||
-                validation.value.getInvalidFeedback('rootUser,dateOfBirth,year')
-            )
-        })
-
-        const sourceOfFundsOptions = computed(() => {
-            return ConsumerSourceOfFundsSelectConst
-        })
-        const shouldShowOtherSourceOfFunds = computed(() => {
-            return registrationRequest.sourceOfFunds === ConsumerSourceOfFundTypeEnum.OTHER
-        })
-
-        const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
-            return {
-                color: '#495057',
-                fontSize: '16px',
-                fontSmoothing: 'antialiased',
-                fontFamily: "'Be Vietnam', sans-serif",
-                fontWeight: '400',
-                lineHeight: '24px',
-                margin: '0',
-                padding: '6px 12px',
-                textIndent: '0px',
-                '::placeholder': {
-                    color: '#B6B9C7',
-                    fontWeight: '400',
-                },
-            }
-        })
-
-        const config = computed(() => {
-            return {
-                wrap: false,
-                enableTime: false,
-                altInput: true,
-                altFormat: 'd/m/Y',
-                maxDate: new Date(),
-                locale: {
-                    firstDayOfWeek: 1,
-                },
-            }
-        })
-
-        const isRecaptchaEnabled = computed(() => {
-            return typeof process.env.RECAPTCHA !== 'undefined'
-        })
-
-        const isLoadingRegistration = computed(() => {
-            return consumers?.consumerState.isLoadingRegistration
-        })
-
-        const isPasswordValid = computed(() => {
-            return passwordStrength.value >= 2
-        })
-
-        useFetch(() => {
-            $apiMulti.ipify.get().then((ip) => {
-                registrationRequest.ipAddress = ip.data.ip
-            })
-        })
-
-        const submitForm = async (e) => {
-            errors?.resetState()
-            try {
-                e.preventDefault()
-
-                validation.value.touch() && (await validation.value.validate())
-
-                if (!isPasswordValid.value) {
-                    isPasswordInvalidAndDirty.value = true
-                }
-
-                if (numberIsValid.value === null) {
-                    numberIsValid.value = false
-                }
-
-                if (validation.value.isInvalid.value || !numberIsValid.value) {
-                    return
-                }
-
-                if (isPasswordValid.value) {
-                    consumers?.setIsLoadingRegistration(true)
-                    passwordField.value?.createToken().then(
-                        (tokens) => {
-                            if (tokens.tokens.password !== '') {
-                                registrationRequest.password.value = tokens.tokens.password
-                                doRegister()
-                            } else {
-                                return null
-                            }
-                        },
-                        () => {
-                            return null
-                        },
-                    )
-                }
-            } catch (error: any) {
-                stopRegistrationLoading()
-                showErrorToast(error)
-            }
+const countryModel = computed({
+    get: () => registrationRequest.rootUser.address?.country ?? null,
+    set: (value: string) => {
+        if (!registrationRequest.rootUser.address) {
+            registrationRequest.rootUser.address = {}
         }
 
-        const strengthCheck = (val) => {
-            passwordStrength.value = val.id
-        }
-
-        const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
-            !val.empty
-                ? (registrationRequest.password.value = '******')
-                : (registrationRequest.password.value = '')
-        }
-
-        const doRegister = () => {
-            consumers
-                ?.create(registrationRequest as CreateConsumerRequest)
-                .then(onConsumerCreated)
-                .catch(registrationFailed)
-        }
-
-        const onConsumerCreated = (res: AxiosResponse<ConsumerModel>) => {
-            createPassword(res.data.rootUser.id.id!)
-        }
-
-        const createPassword = async (rootUserId: IDModel) => {
-            const passwordRequest: CreatePasswordRequestModel = {
-                password: {
-                    value: registrationRequest.password.value as string,
-                },
-            }
-            await $apiMulti.passwords
-                .store({
-                    userId: rootUserId,
-                    data: passwordRequest,
-                })
-                .then(onRegisteredSuccessfully.bind(this))
-        }
-
-        const onRegisteredSuccessfully = () => {
-            accessCodes?.deleteAccessCode()
-
-            if (!registrationRequest.rootUser) {
-                return
-            }
-            return router.push({
-                path: '/login/verify',
-                query: {
-                    send: 'true',
-                    cons: consumer.value?.id.id,
-                    email: registrationRequest.rootUser.email,
-                },
-            })
-        }
-
-        const registrationFailed = (err) => {
-            stopRegistrationLoading()
-            const _errCode = err.response.data.errorCode
-            showErrorToast(_errCode)
-        }
-
-        const phoneUpdate = (number) => {
-            registrationRequest.rootUser!.mobile!.countryCode = '+' + number.countryCallingCode
-            registrationRequest.rootUser!.mobile!.number = number.nationalNumber
-            if (number.phoneNumber) {
-                numberIsValid.value = number.isValid
-            }
-        }
-
-        const updateDOB = (val: ComputedRef) => {
-            Object.assign(registrationRequest.rootUser.dateOfBirth, {
-                year: val.value.year,
-                month: val.value.month === null ? null : val.value.month + 1,
-                day: val.value.day,
-            })
-        }
-
-        const stopRegistrationLoading = () => {
-            consumers?.setIsLoadingRegistration(false)
-        }
-
-        watch(passwordStrength, (data) => {
-            if (validation.value.dirty.value && data) {
-                isPasswordInvalidAndDirty.value = false
-                validation.value.validate()
-            }
-        })
-
-        return {
-            recaptcha,
-            config,
-            passwordField,
-            submitForm,
-            validation,
-            registrationRequest,
-            dobInvalidFeedback,
-            rootMobileNumber,
-            dobState,
-            updateDOB,
-            numberIsValid,
-            mobileCountries,
-            phoneUpdate,
-            countryOptionsWithDefault,
-            industryOccupationOptions,
-            sourceOfFundsOptions,
-            shouldShowOtherSourceOfFunds,
-            passwordBaseStyle,
-            isPasswordInvalidAndDirty,
-            passwordInteraction,
-            strengthCheck,
-            isRecaptchaEnabled,
-            isLoadingRegistration,
-        }
+        registrationRequest.rootUser.address.country = value
     },
+})
+
+const dobState = computed(() => {
+    return {
+        day: validation.value.getState('rootUser,dateOfBirth,day') ?? undefined,
+        month: validation.value.getState('rootUser,dateOfBirth,month') ?? undefined,
+        year: validation.value.getState('rootUser,dateOfBirth,year') ?? undefined,
+    }
+})
+
+const dobInvalidFeedback = computed(() => {
+    return (
+        validation.value.getInvalidFeedback('rootUser,dateOfBirth,day') ||
+        validation.value.getInvalidFeedback('rootUser,dateOfBirth,month') ||
+        validation.value.getInvalidFeedback('rootUser,dateOfBirth,year')
+    )
+})
+
+const sourceOfFundsOptions = computed(() => {
+    return ConsumerSourceOfFundsSelectConst
+})
+const shouldShowOtherSourceOfFunds = computed(() => {
+    return registrationRequest.sourceOfFunds === ConsumerSourceOfFundTypeEnum.OTHER
+})
+
+const passwordBaseStyle: ComputedRef<SecureElementStyleWithPseudoClasses> = computed(() => {
+    return {
+        color: '#495057',
+        fontSize: '16px',
+        fontSmoothing: 'antialiased',
+        fontFamily: "'Be Vietnam', sans-serif",
+        fontWeight: '400',
+        lineHeight: '24px',
+        margin: '0',
+        padding: '6px 12px',
+        textIndent: '0px',
+        '::placeholder': {
+            color: '#B6B9C7',
+            fontWeight: '400',
+        },
+    }
+})
+
+const isRecaptchaEnabled = computed(() => {
+    return typeof useRuntimeConfig().public.recaptcha.siteKey !== 'undefined'
+})
+
+const isLoadingRegistration = computed(() => {
+    return consumers?.consumerState.isLoadingRegistration
+})
+
+const isPasswordValid = computed(() => {
+    return passwordStrength.value >= 2
+})
+
+const handleErrorCallback = () => {
+    isCaptchaVerified.value = false
+}
+
+const handleExpiredCallback = () => {
+    isCaptchaVerified.value = false
+}
+
+const handleLoadCallback = (res: unknown) => {
+    try {
+        if (res) {
+            isCaptchaVerified.value = true
+        }
+    } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(e)
+    }
+}
+
+useAsyncData(async () => {
+    await ($apiMulti as ApiInterface).ipify.get().then((ip) => {
+        registrationRequest.ipAddress = ip.data.ip
+    })
+})
+
+onMounted(() => {
+    captchaKey.value++
+})
+
+const submitForm = async (e) => {
+    errors?.resetState()
+
+    try {
+        e.preventDefault()
+
+        validation.value.touch() && (await validation.value.validate())
+
+        if (!isPasswordValid.value) {
+            isPasswordInvalidAndDirty.value = true
+        }
+
+        if (numberIsValid.value === null) {
+            numberIsValid.value = false
+        }
+
+        if (validation.value.isInvalid.value || !numberIsValid.value) {
+            return
+        }
+
+        if (!isCaptchaVerified.value) return
+
+        if (isPasswordValid.value) {
+            consumers?.setIsLoadingRegistration(true)
+            passwordField.value?.createToken().then(
+                (tokens) => {
+                    if (tokens.tokens.password !== '') {
+                        registrationRequest.password.value = tokens.tokens.password
+                        doRegister()
+                    } else {
+                        return null
+                    }
+                },
+                () => {
+                    return null
+                },
+            )
+        }
+    } catch (error: any) {
+        stopRegistrationLoading()
+        showErrorToast(error)
+    }
+}
+
+const strengthCheck = (val) => {
+    passwordStrength.value = val.id
+}
+
+const passwordInteraction = (val: { empty: boolean; valid: boolean }) => {
+    !val.empty
+        ? (registrationRequest.password.value = '******')
+        : (registrationRequest.password.value = '')
+}
+
+const doRegister = () => {
+    consumers
+        ?.create(registrationRequest as CreateConsumerRequest)
+        .then(onConsumerCreated)
+        .catch(registrationFailed)
+}
+
+const onConsumerCreated = (res: AxiosResponse<ConsumerModel>) => {
+    createPassword(res.data.rootUser.id.id!)
+}
+
+const createPassword = async (rootUserId: IDModel) => {
+    const passwordRequest: CreatePasswordRequestModel = {
+        password: {
+            value: registrationRequest.password.value as string,
+        },
+    }
+    await ($apiMulti as ApiInterface).passwords
+        .store({
+            userId: rootUserId,
+            data: passwordRequest,
+        })
+        .then(onRegisteredSuccessfully.bind(this))
+}
+
+const onRegisteredSuccessfully = () => {
+    accessCodes?.deleteAccessCode()
+
+    if (!registrationRequest.rootUser) {
+        return
+    }
+    return router.push({
+        path: '/login/verify',
+        query: {
+            send: 'true',
+            cons: consumer.value?.id.id,
+            email: registrationRequest.rootUser.email,
+        },
+    })
+}
+
+const registrationFailed = (err) => {
+    stopRegistrationLoading()
+    const _errCode = err.response.data.errorCode
+    showErrorToast(_errCode)
+}
+
+const phoneUpdate = (number) => {
+    registrationRequest.rootUser!.mobile!.countryCode =
+        number.countryCallingCode && `+${number.countryCallingCode}`
+    registrationRequest.rootUser!.mobile!.number =
+        number.phoneNumber && number.phoneNumber.replace(/\s+/g, '')
+    if (number.phoneNumber) {
+        numberIsValid.value = number.isValid
+    }
+}
+
+const updateDOB = (val: ComputedRef) => {
+    Object.assign(registrationRequest.rootUser.dateOfBirth, {
+        year: val.value.year,
+        month: val.value.month === null ? null : val.value.month + 1,
+        day: val.value.day,
+    })
+}
+
+const stopRegistrationLoading = () => {
+    consumers?.setIsLoadingRegistration(false)
+}
+
+watch(passwordStrength, (data) => {
+    if (validation.value.dirty.value && data) {
+        isPasswordInvalidAndDirty.value = false
+        validation.value.validate()
+    }
 })
 </script>

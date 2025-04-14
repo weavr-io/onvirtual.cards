@@ -1,7 +1,6 @@
-import { defineNuxtPlugin } from '@nuxtjs/composition-api'
 import { initializeAxios } from '~/utils/api'
 
-export default defineNuxtPlugin((ctx) => {
+export default defineNuxtPlugin((nuxtApp) => {
     // @ts-ignore
-    initializeAxios(ctx.$axiosMulti)
+    initializeAxios(nuxtApp.$axiosMulti)
 })

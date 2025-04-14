@@ -71,6 +71,6 @@ const INITIAL_CREATE_CORPORATE_REQUEST = () => {
 export {
     CreateCorporateFormSchema,
     CreateCorporateRequestSchema,
-    CreateCorporateRequest,
+    type CreateCorporateRequest,
     INITIAL_CREATE_CORPORATE_REQUEST,
 }

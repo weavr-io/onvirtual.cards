@@ -46,4 +46,4 @@ const INITIAL_UPDATE_CONSUMER_REQUEST = () => {
     } as unknown as UpdateConsumerRequest
 }
 
-export { INITIAL_UPDATE_CONSUMER_REQUEST, UpdateConsumerRequest, UpdateConsumerRequestSchema }
+export { INITIAL_UPDATE_CONSUMER_REQUEST, type UpdateConsumerRequest, UpdateConsumerRequestSchema }

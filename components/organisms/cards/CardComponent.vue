@@ -6,10 +6,12 @@
             class="border-0 cards-card"
             no-body
         >
-            <b-card-body class="card-body onvirtual-card overflow-hidden shadow-hover-sm">
-                <b-aspect :aspect="'1.6:1'" class="overflow-hidden">
-                    <b-overlay :show="localIsBusy" class="overflow-hidden h-100" spinner-small>
-                        <b-link :to="statementsLink">
+            <b-card-body
+                class="card-body onvirtual-card pb-xl-0 pb-lg-4 shadow-hover-sm ratio ratio-card"
+            >
+                <div>
+                    <b-overlay :show="localIsBusy" class="overflow-hidden h-100 pb-4" spinner-small>
+                        <nuxt-link :to="statementsLink">
                             <b-container class="p-0" fluid>
                                 <b-row>
                                     <b-col
@@ -56,16 +58,16 @@
                                     </b-col>
                                 </b-row>
                             </b-container>
-                        </b-link>
+                        </nuxt-link>
                     </b-overlay>
                     <b-button
                         v-if="!isDestroyed"
                         class="card-options-button"
                         @click="toggleShowOptions"
                     >
-                        <b-icon-three-dots-vertical />
+                        <i class="bi bi-three-dots-vertical"></i>
                     </b-button>
-                </b-aspect>
+                </div>
             </b-card-body>
         </b-card>
         <transition mode="out-in" name="fade">
@@ -75,7 +77,7 @@
                         <b-link class="py-2 d-block text-decoration-none" @click="toggleBlock">
                             <div class="d-flex align-items-center">
                                 <b-img fluid src="/img/freeze-icon.svg" />
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <h6 class="m-0 small">
                                         <template v-if="!isBlocked"> Freeze card</template>
                                         <template v-else> Unfreeze card</template>
@@ -89,7 +91,7 @@
                         <b-link :to="editLink" class="py-2 mt-md-0 d-block text-decoration-none">
                             <div class="d-flex align-items-center">
                                 <b-img fluid src="/img/edit-icon.svg" />
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <h6 class="m-0 small">Edit card</h6>
                                     <p class="text-muted m-0 small">
                                         Change name and other details
@@ -103,12 +105,11 @@
         </transition>
     </div>
 </template>
+
 <script lang="ts" setup>
-import { ref, computed, PropType } from '@nuxtjs/composition-api'
-import { BIconThreeDotsVertical } from 'bootstrap-vue'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
-import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
+import type { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
 import { expiryMmyy, weavrCurrency } from '~/utils/helper'
 
@@ -195,3 +196,9 @@ const unblocked = () => {
     emit('unblocked')
 }
 </script>
+
+<style lang="scss" scoped>
+.ratio-card {
+    --bs-aspect-ratio: 62.5%;
+}
+</style>

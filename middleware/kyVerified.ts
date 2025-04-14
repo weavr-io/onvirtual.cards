@@ -1,53 +1,52 @@
-import { defineNuxtMiddleware } from '@nuxtjs/composition-api'
-import { initialiseStores } from '~/utils/pinia-store-accessor'
+import type { RouteLocationNormalized } from 'vue-router'
+import { useStores } from '~/composables/useStores'
 
-export default defineNuxtMiddleware(async ({ route, redirect }) => {
-    const { auth, consumers, corporates } = initialiseStores(['auth', 'consumers', 'corporates'])
+const checkInstrument = (name: string) => {
+    return (
+        name === 'managed-accounts-add' ||
+        name === 'managed-cards-add' ||
+        name === 'managed-accounts'
+    )
+}
+
+export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized) => {
+    const { auth, consumers, corporates } = useStores(['auth', 'consumers', 'corporates'])
 
     if (auth?.isLoggedIn) {
         if (auth?.isConsumer) {
             try {
-                if (route.name === 'managed-accounts-kyb') {
-                    // TODO: use navigateTo() after full nuxt3 migration
-                    return redirect('/managed-accounts/kyc')
+                if (to.name === 'managed-accounts-kyb') {
+                    return navigateTo('/managed-accounts/kyc')
                 }
 
                 await consumers?.checkKYC()
 
-                if (route.name === 'managed-accounts-kyc') {
-                    return redirect('/managed-accounts/add')
+                if (to.name === 'managed-accounts-kyc') {
+                    return navigateTo('/managed-accounts/add')
                 }
             } catch (_) {
-                if (
-                    route.name === 'managed-accounts-add' ||
-                    route.name === 'managed-cards-add' ||
-                    route.name === 'managed-accounts'
-                ) {
-                    return redirect('/managed-accounts/kyc')
+                if (checkInstrument(String(to.name))) {
+                    return navigateTo('/managed-accounts/kyc')
                 }
             }
         } else {
             try {
-                if (route.name?.includes('managed-accounts-kyc')) {
-                    return redirect('/managed-accounts/kyb')
+                if (String(to.name)?.includes('managed-accounts-kyc')) {
+                    return navigateTo('/managed-accounts/kyb')
                 }
 
                 await corporates?.checkKYB()
 
-                if (route.name === 'managed-accounts-kyb') {
-                    return redirect('/managed-accounts')
+                if (to.name === 'managed-accounts-kyb') {
+                    return navigateTo('/managed-accounts')
                 }
             } catch (_) {
-                if (
-                    route.name === 'managed-accounts-add' ||
-                    route.name === 'managed-cards-add' ||
-                    route.name === 'managed-accounts'
-                ) {
-                    return redirect('/managed-accounts/kyb')
+                if (checkInstrument(String(to.name))) {
+                    return navigateTo('/managed-accounts/kyb')
                 }
             }
         }
     } else {
-        return redirect('/login')
+        return navigateTo('/login')
     }
 })

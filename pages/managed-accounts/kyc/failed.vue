@@ -5,8 +5,8 @@
                 <b-col lg="6" md="9">
                     <b-row>
                         <b-col>
-                            <h2 class="font-weight-light">KYC process cannot start</h2>
-                            <h5 class="font-weight-lighter">
+                            <h2 class="fw-light">KYC process cannot start</h2>
+                            <h5 class="fw-lighter">
                                 We're sorry but you cannot start a new verification process at this
                                 time. This is possibly due to documents which have already been
                                 submitted and are currently under review. If the issue persists,
@@ -19,10 +19,8 @@
         </b-container>
     </section>
 </template>
-<script lang="ts">
-import { defineComponent } from '@nuxtjs/composition-api'
-
-export default defineComponent({
-    middleware: 'kyVerified',
+<script lang="ts" setup>
+definePageMeta({
+    middleware: 'ky-verified',
 })
 </script>

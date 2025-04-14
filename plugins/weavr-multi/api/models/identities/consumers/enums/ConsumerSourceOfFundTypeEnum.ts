@@ -28,6 +28,6 @@ type ConsumerSourceOfFundTypeEnumType = z.infer<typeof ConsumerSourceOfFundTypeE
 
 export {
     ConsumerSourceOfFundTypeEnumSchema,
-    ConsumerSourceOfFundTypeEnumType,
+    type ConsumerSourceOfFundTypeEnumType,
     PREDEFINED_CONSUMER_SOURCE_OF_FUND,
 }

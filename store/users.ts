@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
 import type { Users as UserState } from '~/local/models/store/users'
 import type { PaginatedUsersResponseModel } from '~/plugins/weavr-multi/api/models/users/response/PaginatedUsersResponseModel'
 import type { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
@@ -9,7 +8,6 @@ import type { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/us
 import type { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
 import type { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
 import type { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
-import { useAuthStore } from '~/store/auth'
 
 const initState = (): UserState => {
     return {
@@ -19,7 +17,8 @@ const initState = (): UserState => {
 }
 
 export const useUsersStore = defineStore('users', () => {
-    const store = useAuthStore()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
     const userState: UserState = reactive(initState())
 
     const resetState = () => {
@@ -38,7 +37,7 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     const index = (filter?: UsersFilterRequestModel) => {
-        const _req = store.$nuxt.$apiMulti.users.index(filter)
+        const _req = apiMulti.value.users.index(filter)
 
         _req.then((res) => {
             setUsers(res.data)
@@ -48,7 +47,7 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     const show = (id: IDModel) => {
-        const _req = store.$nuxt.$apiMulti.users.show(id)
+        const _req = apiMulti.value.users.show(id)
 
         _req.then((res) => {
             setUser(res.data)
@@ -58,7 +57,7 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     const update = (params: { id: IDModel; data: UpdateUserRequestModel }) => {
-        const _req = store.$nuxt.$apiMulti.users.update(params)
+        const _req = apiMulti.value.users.update(params)
 
         _req.then((res) => {
             setUser(res.data)
@@ -68,23 +67,23 @@ export const useUsersStore = defineStore('users', () => {
     }
 
     const add = (body: CreateUserRequestModel) => {
-        return store.$nuxt.$apiMulti.users.store(body)
+        return apiMulti.value.users.store(body)
     }
 
     const deactivate = (id: IDModel) => {
-        return store.$nuxt.$apiMulti.users.deactivate(id)
+        return apiMulti.value.users.deactivate(id)
     }
 
     const inviteSend = (id: IDModel) => {
-        return store.$nuxt.$apiMulti.users.inviteSend(id)
+        return apiMulti.value.users.inviteSend(id)
     }
 
     const inviteValidate = (params: { id: IDModel; data: InviteValidateRequestModel }) => {
-        return store.$nuxt.$apiMulti.users.inviteValidate(params)
+        return apiMulti.value.users.inviteValidate(params)
     }
 
     const inviteConsume = (params: { id: IDModel; data: InviteConsumeRequestModel }) => {
-        return store.$nuxt.$apiMulti.users.inviteConsume(params)
+        return apiMulti.value.users.inviteConsume(params)
     }
 
     return {

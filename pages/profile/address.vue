@@ -7,15 +7,14 @@
                         <error-alert />
                         <div class="form-screen">
                             <b-form novalidate @submit.prevent="submitForm">
-                                <h3 class="text-center font-weight-light mb-5">
-                                    Your address details
-                                </h3>
+                                <h3 class="text-center fw-light mb-5">Your address details</h3>
                                 <b-form-group
                                     :invalid-feedback="
                                         validation.getInvalidFeedback('addressLine1')
                                     "
                                     :state="validation.getState('addressLine1')"
                                     label="Address Line 1*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="address.addressLine1"
@@ -27,7 +26,8 @@
                                         validation.getInvalidFeedback('addressLine2')
                                     "
                                     :state="validation.getState('addressLine2')"
-                                    label="Address Line 2"
+                                    label="Address Line 2*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="address.addressLine2"
@@ -38,6 +38,7 @@
                                     :invalid-feedback="validation.getInvalidFeedback('city')"
                                     :state="validation.getState('city')"
                                     label="City*"
+                                    class="mb-3"
                                 >
                                     <b-form-input v-model="address.city" placeholder="City" />
                                 </b-form-group>
@@ -45,17 +46,20 @@
                                     :invalid-feedback="validation.getInvalidFeedback('country')"
                                     :state="validation.getState('country')"
                                     label="Country*"
+                                    class="mb-3"
                                 >
                                     <b-form-select
                                         v-model="address.country"
                                         :options="countryOptionsWithDefault"
                                         placeholder="Registration Country"
+                                        class="custom-select"
                                     />
                                 </b-form-group>
                                 <b-form-group
                                     :invalid-feedback="validation.getInvalidFeedback('postCode')"
                                     :state="validation.getState('postCode')"
                                     label="Post Code*"
+                                    class="mb-3"
                                 >
                                     <b-form-input
                                         v-model="address.postCode"
@@ -66,6 +70,7 @@
                                     :invalid-feedback="validation.getInvalidFeedback('state')"
                                     :state="validation.getState('state')"
                                     label="State"
+                                    class="mb-3"
                                 >
                                     <b-form-input v-model="address.state" placeholder="State" />
                                 </b-form-group>
@@ -87,145 +92,129 @@
     </b-col>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, reactive, ref, useFetch } from '@nuxtjs/composition-api'
-import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
+<script lang="ts" setup>
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
 import {
-    Address,
+    type Address,
     AddressSchema,
     CorporateSourceOfFundsSelectConst,
     INITIAL_ADDRESS,
     IndustryTypeSelectConst,
 } from '~/plugins/weavr-multi/api/models/common'
-import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
-import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
+import type { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
+import type { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import useZodValidation from '~/composables/useZodValidation'
 
-export default defineComponent({
-    components: {
-        ErrorAlert,
-        LoaderButton,
-    },
+definePageMeta({
     layout: 'auth',
-    middleware: 'authRouteGuard',
-    setup() {
-        const {
-            consumer,
-            corporate,
-            isConsumer,
-            isCorporate,
-            goToVerify,
-            goToIndex,
-            countryOptionsWithDefault,
-        } = useBase()
-        const { consumers, corporates } = useStores(['consumers', 'corporates'])
+    middleware: 'auth-route-guard',
+})
+const {
+    consumer,
+    corporate,
+    isConsumer,
+    isCorporate,
+    goToVerify,
+    goToIndex,
+    countryOptionsWithDefault,
+} = useBase()
+const { consumers, corporates } = useStores(['consumers', 'corporates'])
 
-        const isLoading = ref(false)
-        const address: Address = reactive(INITIAL_ADDRESS())
+const isLoading = ref(false)
+const address: Address = reactive(INITIAL_ADDRESS())
 
-        const validation = computed(() => {
-            return useZodValidation(AddressSchema, address)
-        })
+const validation = computed(() => {
+    return useZodValidation(AddressSchema, address)
+})
 
-        const country = computed({
-            get() {
-                return address.country
-            },
-            set(value) {
-                address.country = value
-            },
-        })
-
-        const sourceOfFundsOptions = computed(() => {
-            return CorporateSourceOfFundsSelectConst
-        })
-
-        const industryOccupationOptions = computed(() => {
-            return IndustryTypeSelectConst
-        })
-
-        useFetch(() => {
-            if (isConsumer.value && consumer.value) {
-                if (Object.keys(consumer.value.rootUser.address as Address).length) {
-                    Object.assign(address, consumer.value.rootUser.address)
-                }
-            } else if (isCorporate.value && corporate.value) {
-                if (Object.keys(corporate.value.company.registeredAddress as Address).length) {
-                    // treat as corporate
-                    Object.assign(address, corporate.value.company.registeredAddress)
-                }
-            }
-        })
-
-        const submitForm = async () => {
-            isLoading.value = true
-            await validation.value.validate()
-
-            if (validation.value.isInvalid.value) {
-                isLoading.value = false
-                return
-            }
-
-            let xhr: Promise<unknown>
-
-            if (isConsumer.value) {
-                xhr = consumers!.update({ address })
-            } else {
-                // treat as corporate
-                xhr = corporates!.update({
-                    companyBusinessAddress: address,
-                })
-            }
-            xhr.then(addressUpdated).finally(() => {
-                isLoading.value = false
-            })
-        }
-
-        const addressUpdated = async () => {
-            let identityRootVerified: CorporatesRootUserModel | ConsumersRootUserModel
-
-            if (isConsumer.value) {
-                await consumers?.get().then((res) => {
-                    identityRootVerified = res.data.rootUser
-
-                    if (
-                        identityRootVerified &&
-                        !(identityRootVerified as ConsumersRootUserModel).emailVerified
-                    ) {
-                        goToVerify()
-                    } else {
-                        goToIndex()
-                    }
-                })
-            } else if (isCorporate.value) {
-                await corporates?.get().then((res) => {
-                    identityRootVerified = res.data.rootUser
-
-                    if (
-                        identityRootVerified &&
-                        !(identityRootVerified as CorporatesRootUserModel).emailVerified
-                    ) {
-                        goToVerify()
-                    } else {
-                        goToIndex()
-                    }
-                })
-            }
-        }
-
-        return {
-            submitForm,
-            validation,
-            address,
-            countryOptionsWithDefault,
-            isLoading,
-            country,
-            sourceOfFundsOptions,
-            industryOccupationOptions,
-        }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const country = computed({
+    get() {
+        return address.country
+    },
+    set(value) {
+        address.country = value
     },
 })
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const sourceOfFundsOptions = computed(() => {
+    return CorporateSourceOfFundsSelectConst
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const industryOccupationOptions = computed(() => {
+    return IndustryTypeSelectConst
+})
+
+onBeforeMount(() => {
+    if (isConsumer.value && consumer.value) {
+        if (Object.keys(consumer.value.rootUser.address as Address).length) {
+            Object.assign(address, consumer.value.rootUser.address)
+        }
+    } else if (isCorporate.value && corporate.value) {
+        if (Object.keys(corporate.value.company.registeredAddress as Address).length) {
+            // treat as corporate
+            Object.assign(address, corporate.value.company.registeredAddress)
+        }
+    }
+})
+
+const submitForm = async () => {
+    isLoading.value = true
+    await validation.value.validate()
+
+    if (validation.value.isInvalid.value) {
+        isLoading.value = false
+        return
+    }
+
+    let xhr: Promise<unknown>
+
+    if (isConsumer.value) {
+        xhr = consumers!.update({ address })
+    } else {
+        // treat as corporate
+        xhr = corporates!.update({
+            companyBusinessAddress: address,
+        })
+    }
+    xhr.then(addressUpdated).finally(() => {
+        isLoading.value = false
+    })
+}
+
+const addressUpdated = async () => {
+    let identityRootVerified: CorporatesRootUserModel | ConsumersRootUserModel
+
+    if (isConsumer.value) {
+        await consumers?.get().then((res) => {
+            identityRootVerified = res.data.rootUser
+
+            if (
+                identityRootVerified &&
+                !(identityRootVerified as ConsumersRootUserModel).emailVerified
+            ) {
+                goToVerify()
+            } else {
+                goToIndex()
+            }
+        })
+    } else if (isCorporate.value) {
+        await corporates?.get().then((res) => {
+            identityRootVerified = res.data.rootUser
+
+            if (
+                identityRootVerified &&
+                !(identityRootVerified as CorporatesRootUserModel).emailVerified
+            ) {
+                goToVerify()
+            } else {
+                goToIndex()
+            }
+        })
+    }
+}
 </script>

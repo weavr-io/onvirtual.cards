@@ -49,7 +49,7 @@ export interface SecureElementStyles {
     invalid?: SecureElementStyleWithPseudoClasses
 }
 
-export interface SecureElementStyle {
+export interface SecureElementStyle extends Partial<CSSStyleDeclaration> {
     color?: string
     fontFamily?: string
     fontSize?: string

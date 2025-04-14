@@ -1,34 +1,37 @@
 <template>
     <div>
+        <BModalOrchestrator />
         <AppHeader />
-        <Nuxt />
+        <NuxtPage />
         <LoadingSpinner id="loader" :is-loading="isLoading" />
         <Cookie />
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
 import { useStores } from '~/composables/useStores'
 import AppHeader from '~/components/molecules/HeaderComponent.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import Cookie from '~/components/molecules/CookieComponent.vue'
+import config from '~/config'
 
-export default defineComponent({
-    components: {
-        Cookie,
-        LoadingSpinner,
-        AppHeader,
-    },
-    middleware: 'authRouteGuard',
-    setup() {
-        const { loader } = useStores(['loader'])
+const route = useRoute()
 
-        const isLoading = computed(() => loader?.isLoading)
+onBeforeMount(() => {
+    const authCookie = useCookie(config.ONV_COOKIE_NAME)
 
-        return {
-            isLoading,
+    if (!authCookie.value) {
+        const queryParam = route.query
+
+        if (queryParam.cons && queryParam.email) {
+            navigateTo(`/login/verify?email=${queryParam.email}&cons=${queryParam.cons}`)
+        } else {
+            navigateTo('/login')
         }
-    },
+    }
 })
+
+const { loader } = useStores(['loader'])
+
+const isLoading = computed(() => loader?.isLoading)
 </script>

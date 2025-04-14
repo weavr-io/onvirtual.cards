@@ -29,4 +29,4 @@ const INITIAL_DELIVERY_ADDRESS = () => {
     } as unknown as DeliveryAddress
 }
 
-export { INITIAL_DELIVERY_ADDRESS, DeliveryAddress, DeliveryAddressSchema }
+export { INITIAL_DELIVERY_ADDRESS, type DeliveryAddress, DeliveryAddressSchema }

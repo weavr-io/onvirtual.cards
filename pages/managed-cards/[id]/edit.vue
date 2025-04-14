@@ -9,12 +9,12 @@
             <b-row v-else align-h="center">
                 <b-col lg="6" md="9">
                     <b-card class="border-0">
-                        <b-card-title class="mb-5 text-center font-weight-lighter">
+                        <b-card-title class="mb-5 text-center fw-lighter">
                             Update Card
                         </b-card-title>
                         <b-card-body>
                             <b-form @submit.prevent="doUpdate">
-                                <b-form-row v-if="!isConsumer">
+                                <b-form-row v-if="!isConsumer" class="mb-3">
                                     <b-col>
                                         <b-form-group label="CARDHOLDER MOBILE NUMBER">
                                             <phone-number-input
@@ -36,7 +36,7 @@
                                         </b-form-group>
                                     </b-col>
                                 </b-form-row>
-                                <b-form-row>
+                                <b-form-row class="mb-3">
                                     <b-col>
                                         <b-form-group
                                             :invalid-feedback="
@@ -66,42 +66,27 @@
     </section>
 </template>
 <script lang="ts" setup>
-import {
-    computed,
-    reactive,
-    Ref,
-    ref,
-    useFetch,
-    useRoute,
-    useRouter,
-} from '@nuxtjs/composition-api'
-import { CountryCode, parsePhoneNumberFromString } from 'libphonenumber-js'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
-import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+import { type CountryCode, parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
-import useZodValidation from '~/composables/useZodValidation'
 import {
     INITIAL_MC_UPDATE_REQUEST,
     ManagedCardUpdateSchema,
     type UpdateManagedCard,
 } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
+import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
+import useZodValidation from '~/composables/useZodValidation'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
 
 const route = useRoute()
 const router = useRouter()
-const {
-    pendingDataOrError,
-    pendingData,
-    isCorporate,
-    isConsumer,
-    showSuccessToast,
-    showErrorToast,
-} = useBase()
+const { isCorporate, isConsumer, showSuccessToast, showErrorToast } = useBase()
 const { cards } = useStores(['cards'])
 
 const numberIsValid: Ref<boolean | null> = ref(null)
-const mobile = ref<{ countryCode: CountryCode | undefined; cardholderMobileNumber: string }>({
+const mobile = ref<{ countryCode: CountryCode; cardholderMobileNumber: string }>({
     countryCode: 'GB',
     cardholderMobileNumber: '',
 })
@@ -122,15 +107,16 @@ const validation = computed(() => {
 })
 
 const isLoading = computed(() => {
-    return cards?.cardState.isLoading || isUpdating.value || pendingData.value
+    // TODO: add || pendingData.value
+    return cards?.cardState.isLoading || isUpdating.value
 })
 
 const cardId = computed(() => {
-    return route.value.params.id
+    return route.params.id
 })
 
-useFetch(async () => {
-    const card = await cards?.getManagedCard(cardId.value)
+const getManagedCards = async () => {
+    const card = await cards?.getManagedCard(cardId.value as string)
     if (card) {
         const parsedNumber = parsePhoneNumberFromString(card.data.cardholderMobileNumber)
 
@@ -140,9 +126,13 @@ useFetch(async () => {
             ...(isCorporate.value && { cardholderMobileNumber: '' }),
         })
 
-        mobile.value.countryCode = parsedNumber?.country
+        mobile.value.countryCode = parsedNumber?.country || 'GB'
         mobile.value.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
     }
+}
+
+const { pendingDataOrError } = await useGlobalAsyncData('getManagedCards', async () => {
+    await getManagedCards()
 })
 
 const doUpdate = async () => {
@@ -164,7 +154,7 @@ const doUpdate = async () => {
 
     await cards
         ?.update({
-            id: cardId.value,
+            id: cardId.value as string,
             request: updateManagedCardRequest as UpdateManagedCard,
         })
         .then(() => {

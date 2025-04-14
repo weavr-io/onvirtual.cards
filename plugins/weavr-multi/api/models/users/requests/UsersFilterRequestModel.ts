@@ -1,4 +1,4 @@
-import { PagingModel } from '~/plugins/weavr-multi/api/models/common/models/PagingModel'
+import type { PagingModel } from '~/plugins/weavr-multi/api/models/common/models/PagingModel'
 
 export interface UsersFilterRequestModel {
     paging?: PagingModel

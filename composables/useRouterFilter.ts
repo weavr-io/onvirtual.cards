@@ -1,4 +1,3 @@
-import { useRoute, useRouter } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 
 export const useRouterFilter = () => {
@@ -14,7 +13,7 @@ export const useRouterFilter = () => {
     }
 
     const setFilters = (_filters) => {
-        let _query = dot.object(route.value.query)
+        let _query = dot.object(route.query)
         delete _query.filters
         delete _query.offset
 
@@ -23,7 +22,7 @@ export const useRouterFilter = () => {
         }
 
         router.push({
-            path: route.value.path,
+            path: route.path,
             query: _query,
         })
     }
@@ -35,7 +34,7 @@ export const useRouterFilter = () => {
     const generatePageLink = (_page: number, _limit: number) => {
         const _offset = _page === 1 ? 0 : getOffset(_page, _limit)
 
-        return generateLink({ ..._dot(route.value.query), offset: _offset })
+        return generateLink({ ..._dot(route.query), offset: _offset })
     }
 
     const generateLink = (_queries) => {
@@ -79,9 +78,9 @@ export const useRouterFilter = () => {
             _currentPage = _valNumber
         }
 
-        const _queries = { ...route.value.query, offset: getOffset(_currentPage, _limit) + '' }
+        const _queries = { ...route.query, offset: getOffset(_currentPage, _limit) + '' }
 
-        router.push({ path: route.value.path, query: _queries })
+        router.push({ path: route.path, query: _queries })
     }
 
     return { setFilters, getPage, getNumberOfPages, getPreviousLink, getNextLink, changePage }

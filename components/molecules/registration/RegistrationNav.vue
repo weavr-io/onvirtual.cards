@@ -1,7 +1,7 @@
 <template>
     <b-nav align="center" class="py-5" pills>
-        <b-nav-item to="/register/consumer"> Consumer</b-nav-item>
-        <b-nav-item to="/register/corporate"> Corporate</b-nav-item>
+        <b-nav-item to="/register/consumer">Consumer</b-nav-item>
+        <b-nav-item to="/register/corporate">Corporate</b-nav-item>
     </b-nav>
 </template>
 

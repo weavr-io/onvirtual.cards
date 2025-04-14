@@ -3,11 +3,7 @@
         <b-col cols="1">
             <div class="transaction-type-icon">
                 <div class="transaction">
-                    <img
-                        alt="Withdrawal"
-                        loading="lazy"
-                        src="@/assets/svg/statement/withdrawal.svg"
-                    />
+                    <img alt="Withdrawal" loading="lazy" :src="withdrawalIcon" />
                 </div>
             </div>
         </b-col>
@@ -17,9 +13,7 @@
             </div>
             <b-row class="text-muted">
                 <b-col>
-                    <b-badge v-if="isPending" class="text-muted" variant="grey-light"
-                        >Pending
-                    </b-badge>
+                    <b-badge v-if="isPending" class="text-muted bg-grey-light">Pending</b-badge>
                 </b-col>
                 <b-col class="text-right">
                     <TransactionCardFee :transaction="transaction" />
@@ -32,11 +26,10 @@
     </b-row>
 </template>
 <script lang="ts" setup>
-import { PropType } from '@nuxtjs/composition-api'
-import { computed } from 'vue'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import TransactionAmount from '~/components/atoms/TransactionAmount.vue'
 import TransactionCardFee from '~/components/atoms/TransactionCardFee.vue'
-import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import withdrawalIcon from '@/assets/svg/statement/withdrawal.svg?url'
 
 const props = defineProps({
     transaction: {
