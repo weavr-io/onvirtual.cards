@@ -5,7 +5,7 @@
                 <b-row align-h="between" align-v="end" class="mb-3 border-bottom pb-3">
                     <b-col cols="7" sm="auto">
                         <div class="d-flex align-items-center">
-                            <b-link class="card-view-details" @click="isCardModalVisible = true">
+                            <b-link class="card-view-details" @click="toggleModal">
                                 view <br />
                                 details
                             </b-link>
@@ -58,7 +58,6 @@
 
         <b-modal
             id="cardModal"
-            v-model="isCardModalVisible"
             body-class="p-0 transparent"
             centered
             content-class="transparent-modal"
@@ -66,7 +65,7 @@
             hide-footer
             hide-header-close
             size="md"
-            @hidden="isLoading = false"
+            @hidden="toggleIsLoading"
         >
             <b-card v-if="managedCard" bg-variant="card-purple" class="border-0 cards-card" no-body>
                 <b-card-body class="card-body-modal card-body onvirtual-card">
@@ -104,7 +103,7 @@
                                                     }"
                                                     :token="managedCardNumber"
                                                     class="card-select-number"
-                                                    @on-change="toggleIsLoading"
+                                                    @onChange="toggleIsLoading"
                                                 />
                                             </div>
                                         </b-col>
@@ -162,7 +161,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, Ref, ref, useContext, useFetch, useRoute, watch } from '@nuxtjs/composition-api'
+import {
+    computed,
+    Ref,
+    ref,
+    useContext,
+    useFetch,
+    useRoute,
+    watch,
+    getCurrentInstance,
+} from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { useLuxon } from '~/composables/useLuxon'
 import { useBase } from '~/composables/useBase'
@@ -177,12 +185,12 @@ import WeavrCardNumberSpan from '~/plugins/weavr/components/WeavrCardNumberSpan.
 import Statement from '~/components/organisms/cards/statement/CardStatement.vue'
 
 const route = useRoute()
+const { proxy: root } = getCurrentInstance() || {}
 const { $weavrSetUserToken } = useContext()
 const { managedCard, cardId, isCardActive } = useCards()
 const { pendingDataOrError } = useBase()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { auth, cards } = useStores(['auth', 'cards'])
-const isCardModalVisible = ref(false)
 const filters: Ref<StatementFiltersRequest | null> = ref(null)
 const page = ref(0)
 const isLoading: Ref<boolean> = ref(true)
@@ -275,6 +283,10 @@ const infiniteScroll = ($state) => {
                 isLoading.value = false
             })
     }, 500)
+}
+
+const toggleModal = () => {
+    root!.$bvModal.show('cardModal')
 }
 
 watch(route, fetchCardStatements)
