@@ -27,7 +27,7 @@
         "js-cookie": "^3.0.5",
         "libphonenumber-js": "^1.11.4",
         "luxon": "^3.4.4",
-        "nuxt": "^2.18.1",
+        "nuxt": "^3.12.4",
         "pinia": "^2.1.7",
         "ts-node": "^10.9.2",
         "vue-flatpickr-component": "^8.1.8",
