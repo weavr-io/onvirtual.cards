@@ -101,7 +101,7 @@
                                                         lineHeight: '1',
                                                         fontSize: '20px',
                                                     }"
-                                                    :token="managedCard.cardNumber?.value"
+                                                    :token="managedCardNumber"
                                                     class="card-select-number"
                                                     @onChange="toggleIsLoading"
                                                 />
@@ -141,7 +141,7 @@
                                                     fontSize: '14.4px',
                                                     fontWeight: '300',
                                                 }"
-                                                :token="managedCard.cvv?.value"
+                                                :token="managedCardCvv"
                                                 class="card-select-number"
                                             />
                                         </div>
@@ -163,13 +163,13 @@
 <script lang="ts" setup>
 import {
     computed,
-    getCurrentInstance,
     Ref,
     ref,
     useContext,
     useFetch,
     useRoute,
     watch,
+    getCurrentInstance,
 } from '@nuxtjs/composition-api'
 import dot from 'dot-object'
 import { useLuxon } from '~/composables/useLuxon'
@@ -191,7 +191,6 @@ const { managedCard, cardId, isCardActive } = useCards()
 const { pendingDataOrError } = useBase()
 const { getStartOfMonth, getEndOfMonth } = useLuxon()
 const { auth, cards } = useStores(['auth', 'cards'])
-
 const filters: Ref<StatementFiltersRequest | null> = ref(null)
 const page = ref(0)
 const isLoading: Ref<boolean> = ref(true)
@@ -203,6 +202,14 @@ const currency = computed(() => {
 
 const expiryDate = computed(() => {
     return expiryMmyy(managedCard.value?.expiryMmyy)
+})
+
+const managedCardNumber = computed(() => {
+    return managedCard.value?.cardNumber?.value || ''
+})
+
+const managedCardCvv = computed(() => {
+    return managedCard.value?.cvv?.value || ''
 })
 
 useFetch(async () => {

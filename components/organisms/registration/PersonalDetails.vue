@@ -16,7 +16,7 @@
         >
             <b-form-input v-model="form.rootUser.surname" placeholder="Last Name" />
         </b-form-group>
-        <b-form-group label="MOBILE NUMBER*">
+        <b-form-group label="MOBILE NUMBER*" class="mb-3">
             <phone-number-input
                 :border-radius="0"
                 :error="numberIsValid === false"
@@ -28,7 +28,7 @@
                 valid-color="#6D7490"
                 @update="phoneUpdate"
             />
-            <b-form-invalid-feedback v-if="!numberIsValid" force-show>
+            <b-form-invalid-feedback v-if="numberIsValid === false" force-show>
                 This field must be a valid mobile number.
             </b-form-invalid-feedback>
         </b-form-group>

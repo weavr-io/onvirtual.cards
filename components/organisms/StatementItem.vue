@@ -21,7 +21,7 @@
         <template v-else-if="transactionType.raw === 'SETTLEMENT'">
             <Settlement :transaction="transaction" class="my-3" />
         </template>
-        <template v-else-if="transactionType.raw === 'TRANSFER'">
+        <template v-else-if="['TRANSFER', 'OUTGOING_WIRE_TRANSFER'].includes(transactionType.raw)">
             <Transfer :transaction="transaction" class="my-3" />
         </template>
         <template v-else-if="transactionType.raw === 'WITHDRAWAL'">
