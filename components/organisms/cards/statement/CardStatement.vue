@@ -100,7 +100,12 @@ export default defineComponent({
         const route = useRoute()
         const router = useRouter()
         const { proxy: root } = getCurrentInstance() || {}
-        const { cards, accounts, transfers } = useStores(['cards', 'accounts', 'transfers'])
+        const { auth, cards, accounts, transfers } = useStores([
+            'auth',
+            'cards',
+            'accounts',
+            'transfers',
+        ])
         const { formatDate, getStartOfMonth, getEndOfMonth } = useLuxon()
         const { managedCard, cardId, isCardActive, downloadAsCSV } = useCards()
         const { monthsFilter } = useFilters()
@@ -195,6 +200,17 @@ export default defineComponent({
                         offset: '0',
                     })
                     if (_accounts?.data.count && _accounts?.data.accounts) {
+                        let destinationAccountId = _accounts.data.accounts[0].id
+                        const pglIdentityId = root!.$config.pglIdentityId
+                        const pglManagedAccountId = root!.$config.pglManagedAccountId
+                        if (
+                            pglIdentityId &&
+                            pglManagedAccountId &&
+                            auth?.identityId === pglIdentityId
+                        ) {
+                            destinationAccountId = pglManagedAccountId
+                        }
+
                         const _request: CreateTransferRequest = {
                             profileId: root!.$config.profileId.transfers!,
                             source: {
@@ -203,7 +219,7 @@ export default defineComponent({
                             },
                             destination: {
                                 type: InstrumentEnum.managedAccounts,
-                                id: _accounts?.data.accounts[0].id,
+                                id: destinationAccountId,
                             },
                             destinationAmount: {
                                 currency: managedCard.value?.currency,

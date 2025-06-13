@@ -55,6 +55,12 @@ inputs:
     managed_accounts_corporates_profile_id_puk:
         required: true
         type: string
+    pml_identity_id:
+        required: true
+        type: string
+    pml_managed_account_id:
+        required: true
+        type: string
     recaptcha:
         required: true
         type: string
@@ -102,6 +108,10 @@ runs:
         -   run: echo MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_UK=${{ inputs.managed_accounts_consumers_profile_id_puk }} >> .env
             shell: bash
         -   run: echo MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_UK=${{ inputs.managed_accounts_corporates_profile_id_puk }} >> .env
+            shell: bash
+        -   run: echo PML_IDENTITY_ID=${{ inputs.pml_identity_id }} >> .env
+            shell: bash
+        -   run: echo PML_MANAGED_ACCOUNT_ID=${{ inputs.pml_managed_account_id }} >> .env
             shell: bash
         -   run: echo RECAPTCHA=${{ inputs.recaptcha }} >> .env
             shell: bash

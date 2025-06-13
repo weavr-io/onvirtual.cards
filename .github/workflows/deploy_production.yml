@@ -11,7 +11,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ vars.AWS_REGION }}
     steps:
-      - name: Checkout 
+      - name: Checkout
         uses: actions/checkout@v4
       - name: Build
         uses: ./.github/templates/build
@@ -34,6 +34,8 @@ jobs:
           managed_cards_consumers_profile_id_puk: ${{ secrets.PROD_MANAGED_CARDS_CONSUMERS_PROFILE_ID_PUK }}
           managed_accounts_consumers_profile_id_puk: ${{ secrets.PROD_MANAGED_ACCOUNTS_CONSUMERS_PROFILE_ID_PUK }}
           managed_accounts_corporates_profile_id_puk: ${{ secrets.PROD_MANAGED_ACCOUNTS_CORPORATES_PROFILE_ID_PUK }}
+          pml_identity_id: ${{ secrets.DEVELOP_PML_IDENTITY_ID }}
+          pml_managed_account_id: ${{ secrets.DEVELOP_PML_MANAGED_ACCOUNT_ID }}
           recaptcha: ${{ secrets.PROD_RECAPTCHA }}
       - name: Deploy
         uses: ./.github/templates/deploy

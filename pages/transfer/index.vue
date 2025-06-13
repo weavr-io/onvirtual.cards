@@ -44,10 +44,11 @@ export default defineComponent({
         const { $config } = useContext()
         const { accountJurisdictionProfileId, showErrorToast } = useBase()
         const {
+            auth,
             cards,
             accounts: accountsStore,
             transfers,
-        } = useStores(['accounts', 'cards', 'transfers'])
+        } = useStores(['auth', 'accounts', 'cards', 'transfers'])
 
         const createTransferRequest = ref<CreateTransferRequest | null>(null)
         const screen = ref(1)
@@ -59,7 +60,15 @@ export default defineComponent({
                 state: ManagedInstrumentStateEnum.ACTIVE,
                 offset: '0',
             })
-            const firstAccount = accounts?.data.accounts && accounts.data.accounts[0]
+            let firstAccount = accounts?.data.accounts && accounts.data.accounts[0]
+            const pglIdentityId = $config.pglIdentityId
+            const pglManagedAccountId = $config.pglManagedAccountId
+            if (pglIdentityId && pglManagedAccountId && auth?.identityId === pglIdentityId) {
+                const match = accounts?.data.accounts?.find((acc) => acc.id === pglManagedAccountId)
+                if (match) {
+                    firstAccount = match
+                }
+            }
 
             createTransferRequest.value = {
                 profileId: $config.profileId.transfers!,
