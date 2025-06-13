@@ -13,7 +13,13 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, useRouter, onMounted, getCurrentInstance } from '@nuxtjs/composition-api'
+import {
+    defineComponent,
+    ref,
+    useRouter,
+    onMounted,
+    getCurrentInstance,
+} from '@nuxtjs/composition-api'
 import { useStores } from '~/composables/useStores'
 import { useBase } from '~/composables/useBase'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
@@ -22,11 +28,7 @@ import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consu
 export default defineComponent({
     middleware: 'kyVerified',
     setup() {
-        const { auth, accounts, consumers } = useStores([
-            'auth',
-            'accounts',
-            'consumers',
-        ])
+        const { auth, accounts, consumers } = useStores(['auth', 'accounts', 'consumers'])
         const { accountJurisdictionProfileId, sleep } = useBase()
         const { proxy: root } = getCurrentInstance() || {}
         const router = useRouter()
@@ -64,11 +66,7 @@ export default defineComponent({
                 let _accountId = _accounts.data.accounts[0].id
                 const pglIdentityId = root!.$config.pglIdentityId
                 const pglManagedAccountId = root!.$config.pglManagedAccountId
-                if (
-                    pglIdentityId &&
-                    pglManagedAccountId &&
-                    auth.identityId === pglIdentityId
-                ) {
+                if (pglIdentityId && pglManagedAccountId && auth?.identityId === pglIdentityId) {
                     _accountId = pglManagedAccountId
                 }
                 router.push('/managed-accounts/' + _accountId)

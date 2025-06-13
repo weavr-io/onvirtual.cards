@@ -63,14 +63,8 @@ export default defineComponent({
             let firstAccount = accounts?.data.accounts && accounts.data.accounts[0]
             const pglIdentityId = $config.pglIdentityId
             const pglManagedAccountId = $config.pglManagedAccountId
-            if (
-                pglIdentityId &&
-                pglManagedAccountId &&
-                auth.identityId === pglIdentityId
-            ) {
-                const match = accounts?.data.accounts?.find(
-                    (acc) => acc.id === pglManagedAccountId,
-                )
+            if (pglIdentityId && pglManagedAccountId && auth?.identityId === pglIdentityId) {
+                const match = accounts?.data.accounts?.find((acc) => acc.id === pglManagedAccountId)
                 if (match) {
                     firstAccount = match
                 }

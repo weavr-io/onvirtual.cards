@@ -69,7 +69,7 @@ export default defineComponent({
                         if (
                             pglIdentityId &&
                             pglManagedAccountId &&
-                            auth.identityId === pglIdentityId
+                            auth?.identityId === pglIdentityId
                         ) {
                             _accountId = pglManagedAccountId
                         }
