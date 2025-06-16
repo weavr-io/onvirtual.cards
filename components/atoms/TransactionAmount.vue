@@ -1,7 +1,7 @@
 <template>
     <div>
         {{ currency }}
-        <div v-if="transaction.sourceAmount" class="text-muted">{{ currencyWithOp }} -</div>
+        <div v-if="transaction.sourceAmount" class="text-muted">{{ currencyWithOp }}</div>
     </div>
 </template>
 <script lang="ts" setup>
