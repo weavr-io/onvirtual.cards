@@ -7,5 +7,5 @@ export interface Cards {
     cards: PaginatedManagedCardsResponse | null
     managedCard: ManagedCardModel | null
     statements: StatementResponseModel | null
-    filteredStatement: Record<string, unknown>
+    filteredStatement: Record<string, unknown> | null
 }
