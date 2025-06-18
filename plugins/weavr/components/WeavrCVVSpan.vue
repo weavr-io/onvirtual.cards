@@ -51,7 +51,7 @@ const onChange = (val) => {
 }
 
 onMounted(() => {
-    _span.value = root?.$weavrComponents.display.cardNumber(props.token, spanOptions.value)
+    _span.value = root?.$weavrComponents.display.cvv(props.token, spanOptions.value)
     _span.value?.mount(root?.$el)
     _addListeners(_span.value)
 })
