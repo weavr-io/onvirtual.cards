@@ -98,9 +98,7 @@ import { useStores } from '~/composables/useStores'
 import {
     type Address,
     AddressSchema,
-    CorporateSourceOfFundsSelectConst,
     INITIAL_ADDRESS,
-    IndustryTypeSelectConst,
 } from '~/plugins/weavr-multi/api/models/common'
 import type { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
 import type { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
@@ -137,16 +135,6 @@ const country = computed({
     set(value) {
         address.country = value
     },
-})
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const sourceOfFundsOptions = computed(() => {
-    return CorporateSourceOfFundsSelectConst
-})
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const industryOccupationOptions = computed(() => {
-    return IndustryTypeSelectConst
 })
 
 onBeforeMount(() => {

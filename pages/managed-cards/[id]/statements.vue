@@ -59,7 +59,6 @@
 
         <b-modal
             id="cardModal"
-            v-model="isCardModalVisible"
             body-class="p-0 transparent"
             centered
             content-class="transparent-modal"
@@ -67,7 +66,7 @@
             no-footer
             no-header-close
             size="md"
-            @hidden="isLoading = false"
+            @hidden="toggleIsLoading"
         >
             <b-card v-if="managedCard" class="border-0 cards-card bg-card-purple" no-body>
                 <b-card-body class="card-body-modal card-body onvirtual-card">

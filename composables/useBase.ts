@@ -69,7 +69,7 @@ export const useBase = () => {
     })
 
     const rootUserEmail = computed(() => {
-        return isConsumer ? consumer.value?.rootUser.email : corporate.value?.rootUser.email
+        return isConsumer.value ? consumer.value?.rootUser.email : corporate.value?.rootUser.email
     })
 
     const cardJurisdictionProfileId = computed(() => {
