@@ -106,6 +106,8 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const setStatement = (statements: StatementResponseModel | null) => {
+        resetStatement()
+        resetFilteredStatement()
         if (statements?.entry) {
             if (cardState.statements?.entry) {
                 cardState.statements.entry = statements.entry
@@ -117,6 +119,10 @@ export const useCardsStore = defineStore('cards', () => {
 
     const resetStatement = () => {
         cardState.statements = null
+    }
+
+    const resetFilteredStatement = () => {
+        cardState.filteredStatement = null
     }
 
     const appendStatement = (_statement: StatementResponseModel) => {

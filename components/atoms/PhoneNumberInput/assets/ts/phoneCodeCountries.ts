@@ -1,5 +1,4 @@
-import { PhoneNumber } from 'libphonenumber-js/types'
-import { CountryCode } from 'libphonenumber-js'
+import { CountryCode, PhoneNumber } from 'libphonenumber-js'
 
 const allCountries = [
     ['Afghanistan (‫افغانستان‬‎)', 'af', '93'],
