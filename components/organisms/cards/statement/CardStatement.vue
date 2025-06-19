@@ -62,7 +62,7 @@
 import { computed, type PropType, ref, watch } from 'vue'
 import dot from 'dot-object'
 import { useModalController } from 'bootstrap-vue-next'
-import type { AxiosError } from 'axios'
+import type { FetchError } from 'ofetch'
 import type { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardStatementRequest'
 import type { StatementFiltersRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/StatementFiltersRequest'
 import type { CreateTransferRequest } from '~/plugins/weavr-multi/api/models/transfers/requests/CreateTransferRequest'
@@ -219,7 +219,7 @@ const doDeleteCard = async () => {
         })
         await router.push('/managed-cards')
     } catch (err) {
-        const data = (err as AxiosError<any>).response?.data
+        const data = (err as FetchError<any>).response?._data
         const error = data.message ? data.message : data.errorCode
 
         showErrorToast(error)

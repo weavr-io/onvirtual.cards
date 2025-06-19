@@ -102,8 +102,6 @@ export default defineNuxtConfig({
         { src: '~/plugins/WeavrToast.ts' },
         { src: '~/plugins/flatpickr.ts' },
         { src: '~/plugins/InfiniteLoading.ts' },
-        { src: '~/plugins/axios.ts' },
-        { src: '~/plugins/axios-accessor.ts' },
         { src: '~/plugins/weavr-multi/index.ts' },
         { src: '~/plugins/formattingFilters/index.ts' },
         { src: '~/plugins/virtual-scroller.ts' },

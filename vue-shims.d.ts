@@ -1,7 +1,7 @@
+import { useRecaptcha } from 'vue3-recaptcha-v2'
 import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 import type { FormattingFiltersInterface } from '~/plugins/formattingFilters/FormattingFiltersInterface'
-import type { NuxtAxiosInstance } from '@nuxtjs/axios'
-import { useRecaptcha } from 'vue3-recaptcha-v2'
+import type { ApiFetchFunction } from '~/utils/api'
 
 declare module 'vue' {
     interface ComponentCustomProperties {
@@ -15,7 +15,7 @@ declare module 'nuxt/app' {
     interface NuxtApp {
         $formattingFilters: FormattingFiltersInterface
         $apiMulti: ApiInterface
-        $axiosMulti: NuxtAxiosInstance
+        $apiFetch: ApiFetchFunction
         $weavrComponents: any
         $weavrSetUserToken: (token: unknown) => {}
         $bvToast: any // TODO: refactor, make component specific
