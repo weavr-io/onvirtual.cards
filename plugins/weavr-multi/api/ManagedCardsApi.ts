@@ -18,7 +18,7 @@ import type { GetManagedCardStatementRequest } from '~/plugins/weavr-multi/api/m
 
 export class ManagedCardsApi {
     index(filters?: GetManagedCardsRequest): Promise<ApiResponse<PaginatedManagedCardsResponse>> {
-        return apiFetch.get<PaginatedManagedCardsResponse>('/managed_cards', { params: filters })
+        return apiFetch.get<PaginatedManagedCardsResponse>('/managed_cards', { query: filters })
     }
 
     store(request: CreateManagedCard): Promise<ApiResponse<ManagedCardModel>> {
@@ -53,7 +53,7 @@ export class ManagedCardsApi {
         filters?: StatementFiltersRequest,
     ): Promise<ApiResponse<StatementResponseModel>> {
         return apiFetch.get<StatementResponseModel>(`/managed_cards/${id}/statement`, {
-            params: filters,
+            query: filters,
         })
     }
 

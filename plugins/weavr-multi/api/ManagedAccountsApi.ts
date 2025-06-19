@@ -14,7 +14,7 @@ export class ManagedAccountsApi {
         filters?: GetManagedAccountsRequest,
     ): Promise<ApiResponse<PaginatedManagedAccountsResponse>> {
         return apiFetch.get<PaginatedManagedAccountsResponse>('/managed_accounts', {
-            params: filters,
+            query: filters,
         })
     }
 
@@ -58,13 +58,13 @@ export class ManagedAccountsApi {
         filters: GetManagedAccountStatementRequest
     }): Promise<ApiResponse<StatementResponseModel>> {
         return apiFetch.get<StatementResponseModel>(`/managed_accounts/${params.id}/statement`, {
-            params: params.filters,
+            query: params.filters,
         })
     }
 
     downloadStatement(params: { id: IDModel; filters: GetManagedAccountStatementRequest }) {
         return apiFetch.get<Blob>(`/managed_accounts/${params.id}/statement`, {
-            params: params.filters,
+            query: params.filters,
             responseType: 'blob',
             headers: {
                 Accept: 'text/csv',
