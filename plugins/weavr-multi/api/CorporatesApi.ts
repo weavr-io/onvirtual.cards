@@ -1,5 +1,4 @@
-import type { AxiosResponse } from 'axios'
-import { $axiosMulti } from '~/utils/api'
+import { apiFetch, type ApiResponse } from '~/utils/api'
 import type { CreateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/CreateCorporateRequest'
 import type { CorporateModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporateModel'
 import type { UpdateCorporateRequest } from '~/plugins/weavr-multi/api/models/identities/corporates/requests/UpdateCorporateRequest'
@@ -10,35 +9,35 @@ import type { VerifyEmail } from '~/plugins/weavr-multi/api/models/common/models
 import type { SendVerificationCodeRequest } from '~/plugins/weavr-multi/api/models/common/models/SendVerificationCodeRequest'
 
 export class CorporatesApi {
-    store(data: CreateCorporateRequest): Promise<AxiosResponse<CorporateModel>> {
-        return $axiosMulti.post<CorporateModel>('/corporates', data)
+    store(data: CreateCorporateRequest): Promise<ApiResponse<CorporateModel>> {
+        return apiFetch.post<CorporateModel>('/corporates', data)
     }
 
-    show(): Promise<AxiosResponse<CorporateModel>> {
-        return $axiosMulti.get<CorporateModel>('/corporates')
+    show(): Promise<ApiResponse<CorporateModel>> {
+        return apiFetch.get<CorporateModel>('/corporates')
     }
 
-    update(data: UpdateCorporateRequest): Promise<AxiosResponse<CorporateModel>> {
-        return $axiosMulti.patch<CorporateModel>('/corporates', data)
+    update(data: UpdateCorporateRequest): Promise<ApiResponse<CorporateModel>> {
+        return apiFetch.patch<CorporateModel>('/corporates', data)
     }
 
-    sendVerificationCode(data: SendVerificationCodeRequest): Promise<AxiosResponse> {
-        return $axiosMulti.post('/corporates/verification/email/send', data)
+    sendVerificationCode(data: SendVerificationCodeRequest): Promise<ApiResponse<unknown>> {
+        return apiFetch.post('/corporates/verification/email/send', data)
     }
 
-    verifyEmail(data: VerifyEmail): Promise<AxiosResponse> {
-        return $axiosMulti.post('/corporates/verification/email/verify', data)
+    verifyEmail(data: VerifyEmail): Promise<ApiResponse<unknown>> {
+        return apiFetch.post('/corporates/verification/email/verify', data)
     }
 
-    startKYB(): Promise<AxiosResponse<StartCorporateKYBResponse>> {
-        return $axiosMulti.post<StartCorporateKYBResponse>('/corporates/kyb')
+    startKYB(): Promise<ApiResponse<StartCorporateKYBResponse>> {
+        return apiFetch.post<StartCorporateKYBResponse>('/corporates/kyb')
     }
 
-    getCorporateKYB(): Promise<AxiosResponse<GetCorporateKYBResponse>> {
-        return $axiosMulti.get<GetCorporateKYBResponse>('/corporates/kyb')
+    getCorporateKYB(): Promise<ApiResponse<GetCorporateKYBResponse>> {
+        return apiFetch.get<GetCorporateKYBResponse>('/corporates/kyb')
     }
 
-    chargeFee(data: ChargeFeeToCorporateRequest): Promise<AxiosResponse> {
-        return $axiosMulti.post('/corporates/fees/charge', data)
+    chargeFee(data: ChargeFeeToCorporateRequest): Promise<ApiResponse<unknown>> {
+        return apiFetch.post('/corporates/fees/charge', data)
     }
 }

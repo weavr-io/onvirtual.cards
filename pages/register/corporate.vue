@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { AxiosResponse } from 'axios'
+import type { ApiResponse } from '~/utils/api'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import type {
@@ -111,7 +111,7 @@ const stopRegistrationLoading = () => {
     corporates?.setIsLoadingRegistration(false)
 }
 
-const onCorporateCreated = (res: AxiosResponse<ConsumerModel>) => {
+const onCorporateCreated = (res: ApiResponse<ConsumerModel>) => {
     createPassword(res.data.rootUser.id.id!)
 }
 

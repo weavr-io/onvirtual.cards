@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { AxiosError } from 'axios'
+import type { FetchError } from 'ofetch'
 import { useStores } from '~/composables/useStores'
 import {
     type AccessCode,
@@ -77,7 +77,7 @@ const tryToSubmitAccessCode = async () => {
 
         return accessCodes
             ?.verifyAccessCode(form)
-            .catch((err: AxiosError) => {
+            .catch((err: FetchError) => {
                 const is403: boolean = err.response?.status === 403
 
                 inviteCodeError.value = {

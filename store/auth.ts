@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { $axiosMulti } from '~/utils/api'
 import { useStores } from '~/composables/useStores'
 import type { Auth as AuthState } from '~/local/models/store/auth'
 import type { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
@@ -44,13 +43,11 @@ export const useAuthStore = defineStore('auth', () => {
     const setAuth = (auth: LoginWithPasswordResponse | null) => {
         authState.auth = auth
         onvCookie.value = JSON.stringify(authState.auth)
-        $axiosMulti.defaults.headers.Authorization = `Bearer ${authState.auth?.token}`
     }
 
     const setToken = (res: CreatePasswordResponseModel) => {
         authState.auth!.token = res.token!
         onvCookie.value = JSON.stringify(authState.auth)
-        $axiosMulti.defaults.headers.Authorization = `Bearer ${authState.auth?.token}`
     }
 
     const setAuthFactors = (res: GetAuthenticationFactorsResponse) => {
@@ -60,7 +57,6 @@ export const useAuthStore = defineStore('auth', () => {
     const removeAuth = (auth: null) => {
         authState.auth = auth
         onvCookie.value = undefined
-        delete $axiosMulti.defaults.headers.Authorization
     }
 
     const resetState = () => {
