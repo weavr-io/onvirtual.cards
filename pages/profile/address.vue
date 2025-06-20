@@ -94,13 +94,7 @@ import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import useZodValidation from '~/composables/useZodValidation'
-import {
-    Address,
-    AddressSchema,
-    CorporateSourceOfFundsSelectConst,
-    INITIAL_ADDRESS,
-    IndustryTypeSelectConst,
-} from '~/plugins/weavr-multi/api/models/common'
+import { Address, AddressSchema, INITIAL_ADDRESS } from '~/plugins/weavr-multi/api/models/common'
 import { ConsumersRootUserModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumersRootUserModel'
 import { CorporatesRootUserModel } from '~/plugins/weavr-multi/api/models/identities/corporates/models/CorporatesRootUserModel'
 
@@ -137,14 +131,6 @@ export default defineComponent({
             set(value) {
                 address.country = value
             },
-        })
-
-        const sourceOfFundsOptions = computed(() => {
-            return CorporateSourceOfFundsSelectConst
-        })
-
-        const industryOccupationOptions = computed(() => {
-            return IndustryTypeSelectConst
         })
 
         useFetch(() => {
@@ -223,8 +209,6 @@ export default defineComponent({
             countryOptionsWithDefault,
             isLoading,
             country,
-            sourceOfFundsOptions,
-            industryOccupationOptions,
         }
     },
 })
