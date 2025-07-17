@@ -79,6 +79,8 @@ import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import useZodValidation from '~/composables/useZodValidation'
 import PhoneNumberInput from '~/components/molecules/PhoneNumberInput.vue'
+import { useConsumersStore } from '~/store/consumers'
+import { useCorporatesStore } from '~/store/corporates'
 
 const route = useRoute()
 const router = useRouter()
@@ -115,6 +117,12 @@ const cardId = computed(() => {
     return route.params.id
 })
 
+const countryCode = computed(() => {
+    return isConsumer
+        ? useConsumersStore().consumerState.consumer?.rootUser.mobile.countryCode
+        : useCorporatesStore().corporateState.corporate?.rootUser.mobile.countryCode
+})
+
 const getManagedCards = async () => {
     const card = await cards?.getManagedCard(cardId.value as string)
     if (card) {
@@ -127,7 +135,8 @@ const getManagedCards = async () => {
         })
 
         mobile.value.countryCode = parsedNumber?.country || 'GB'
-        mobile.value.cardholderMobileNumber = parsedNumber?.nationalNumber.toString() || ''
+        mobile.value.cardholderMobileNumber =
+            `${countryCode.value}${parsedNumber?.nationalNumber.toString()}` || ''
     }
 }
 

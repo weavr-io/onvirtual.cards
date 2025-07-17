@@ -84,14 +84,9 @@ useAsyncData(async () => {
 })
 
 useAsyncData(async () => {
-    await ($apiMulti as ApiInterface).ipify
-        .get()
-        .then((ip) => {
-            registrationRequest.ipAddress = ip.data.ip
-        })
-        .catch((error) => {
-            console.error('Failed to fetch IP address:', error)
-        })
+    await ($apiMulti as ApiInterface).ipify.get().then((ip) => {
+        registrationRequest.ipAddress = ip.data.ip
+    })
 })
 
 const form1Submit = (_data: { email: string; password: string; acceptedTerms: boolean }) => {
