@@ -1,7 +1,12 @@
-import { apiFetch, type ApiResponse } from '~/utils/api'
-
 export class IpifyApi {
-    get(): Promise<ApiResponse<{ ip: string }>> {
-        return apiFetch.get('https://api.ipify.org/?format=json')
+    async get(): Promise<{ data: any; status: number }> {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json')
+            const data = await response.json()
+            return { data, status: response.status }
+        } catch (error) {
+            console.error('Failed to fetch IP address:', error)
+            throw error
+        }
     }
 }
