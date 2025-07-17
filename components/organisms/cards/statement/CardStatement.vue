@@ -21,7 +21,7 @@
                         variant="link"
                         @click="downloadStatement"
                     >
-                        <download-icon class="me-2" />
+                        <download-icon class="me-2 mt-1" />
                         <p class="d-none d-sm-inline m-0">download</p>
                     </b-button>
                 </div>
