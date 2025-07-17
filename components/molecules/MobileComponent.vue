@@ -86,9 +86,10 @@ import {
     AuthVerifyEnrolSchema,
     INITIAL_AUTH_VERIFY_REQUEST,
 } from '~/plugins/weavr-multi/api/models/authentication/additional-factors'
-import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
 import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import useZodValidation from '~/composables/useZodValidation'
+import ErrorAlert from '~/components/molecules/ErrorAlert.vue'
+import { useErrorsStore } from '~/store/errors'
 
 const props = defineProps({
     verifyPhone: {
@@ -201,7 +202,8 @@ const doVerify = async () => {
                     isLoading.value = false
                 })
         }
-    } catch (_) {
+    } catch (err) {
+        useErrorsStore()?.setError(err)
         isLoading.value = false
     }
 }
