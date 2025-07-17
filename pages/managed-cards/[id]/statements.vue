@@ -59,6 +59,7 @@
 
         <b-modal
             id="cardModal"
+            v-model="isCardModalVisible"
             body-class="p-0 transparent"
             centered
             content-class="transparent-modal"
