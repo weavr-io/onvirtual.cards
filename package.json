@@ -14,7 +14,8 @@
         "precommit": "npm run lint",
         "pretty": "prettier --write \"**/*.{js,ts,jsx,vue,scss,css,json,html}\"",
         "generate": "nuxt generate",
-        "prepare": "husky"
+        "prepare": "husky",
+        "postinstall": "pnpm exec vue-demi-fix"
     },
     "dependencies": {
         "@nuxtjs/axios": "^5.13.6",
@@ -28,12 +29,12 @@
         "libphonenumber-js": "^1.11.4",
         "luxon": "^3.4.4",
         "nuxt": "^2.18.1",
-        "pinia": "^2.1.7",
+        "pinia": "2.1.7",
         "ts-node": "^10.9.2",
         "vue-flatpickr-component": "^8.1.8",
         "vue-infinite-loading": "^2.4.5",
         "vue-virtual-scroller": "^1.1.2",
-        "zod": "^3.23.8"
+        "zod": "3.23.8"
     },
     "devDependencies": {
         "@nuxt/types": "^2.18.1",
