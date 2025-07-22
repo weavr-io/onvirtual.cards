@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
-import type { AxiosError } from 'axios'
+import type { FetchError } from 'ofetch'
 import type { ChangePasswordConflict } from '~/plugins/weavr-multi/api/models/error/models/ChangePasswordConflict'
 import { CONFLICT_MESSAGE_CONST } from '~/plugins/weavr-multi/api/models/error/conflicts/generics/const/ConflictMessageConst'
 
 export const useErrorsStore = defineStore('errors', () => {
     const errors = ref<any>(null)
-    const conflict = ref<ChangePasswordConflict | null>(null)
+    const conflict = ref<ChangePasswordConflict | undefined>(undefined)
 
     const conflictMessage = computed(() => {
         if (conflict.value) {
@@ -17,9 +17,9 @@ export const useErrorsStore = defineStore('errors', () => {
         return null
     })
 
-    const setConflict = (_conflict: AxiosError<ChangePasswordConflict>) => {
+    const setConflict = (_conflict: FetchError<ChangePasswordConflict>) => {
         if (_conflict.response) {
-            conflict.value = _conflict.response.data
+            conflict.value = _conflict.response._data
         }
     }
 
@@ -29,7 +29,7 @@ export const useErrorsStore = defineStore('errors', () => {
 
     const resetState = () => {
         errors.value = null
-        conflict.value = null
+        conflict.value = undefined
     }
 
     return {

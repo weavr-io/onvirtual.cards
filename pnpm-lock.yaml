@@ -13,9 +13,6 @@ importers:
 
   .:
     dependencies:
-      '@nuxtjs/axios':
-        specifier: ^5.13.6
-        version: 5.13.6
       '@nuxtjs/dotenv':
         specifier: ^1.4.2
         version: 1.4.2
@@ -284,10 +281,6 @@ packages:
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
-
-  '@babel/runtime@7.27.6':
-    resolution: {integrity: sha512-vbavdySgbTTrmFE+EsiqUTzlOr5bzlnJtUv9PynGCAKvfQqjIXbvFdumPM/GxMDfyuGMJaJAU6TO4zc1Jf1i8Q==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/template@7.27.2':
     resolution: {integrity: sha512-LPDZ85aEJyYSd18/DkjNh4/y1ntkE5KwUHWTiqgRxruuZL2F1yuHligVHLvcHY2vMHXttKFpJn6LwfI7cw7ODw==}
@@ -849,9 +842,6 @@ packages:
     peerDependencies:
       vue: ^3.3.4
 
-  '@nuxtjs/axios@5.13.6':
-    resolution: {integrity: sha512-XS+pOE0xsDODs1zAIbo95A0LKlilvJi8YW0NoXYuq3/jjxGgWDxizZ6Yx0AIIjZOoGsXJOPc0/BcnSEUQ2mFBA==}
-
   '@nuxtjs/dotenv@1.4.2':
     resolution: {integrity: sha512-/3+Cw5qLNIQD8ZvXLJG1suxvfC4ltlUuYegOwirHrLrzptHh/+rCkBXrNbrz2qAiwc+/yK91XjZGGzNM1dFmCw==}
 
@@ -869,9 +859,6 @@ packages:
     resolution: {integrity: sha512-9bK8AOJBflWmbQeL77SHIsgyGzhiW2b1BdwOtZ53Yyfa7Km3XMMVd8CtLA7z4+03eS+4TVQMxw62yRpJH5icZA==}
     peerDependencies:
       eslint: '>=7'
-
-  '@nuxtjs/proxy@2.1.0':
-    resolution: {integrity: sha512-/qtoeqXgZ4Mg6LRg/gDUZQrFpOlOdHrol/vQYMnKu3aN3bP90UfOUB3QSDghUUK7OISAJ0xp8Ld78aHyCTcKCQ==}
 
   '@nuxtjs/svg@0.4.1':
     resolution: {integrity: sha512-NBIzGd9zywnTBtJC2Lt4WZhBkY5vwtwfwHw/gFVMoOnyvRfsB+YSQiAT4sWRhXIxbY2KDMXg/Bg/RzGdOfbTdw==}
@@ -1354,9 +1341,6 @@ packages:
 
   '@types/http-errors@2.0.5':
     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
-
-  '@types/http-proxy@1.17.16':
-    resolution: {integrity: sha512-sdWoUajOB1cd0A8cRRQ1cfyWNbmFKLAqBB89Y8x5iYyG/mkJHc0YUH8pdWBy2omi9qtCpiIgGjuwO0dQST2l5w==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -2080,12 +2064,6 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios-retry@3.9.1:
-    resolution: {integrity: sha512-8PJDLJv7qTTMMwdnbMvrLYuvB47M81wRtxQmEdV5w4rgbTXTt+vtPkXwajOfOdSyv/wZICJOC+/UhXH4aQ/R+w==}
-
-  axios@0.21.4:
-    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
-
   b4a@1.6.7:
     resolution: {integrity: sha512-OnAYlL5b7LEkALw87fUVafQw5rVR9RjwGd4KUwNQ6DrrNmaVaUCgLipfVlzrPQ4tWOR9P0IXGNOx50jYCCdSJg==}
 
@@ -2687,9 +2665,6 @@ packages:
     resolution: {integrity: sha512-jwK2UV4cnPpbcG7+VRARKTZPUWowwXA8bzH5NP6ud0oeAxyYPuGZUAC7hMugpCdz4BeSZl2Dl9k66CHJ/46ZYQ==}
     engines: {node: '>=0.10.0'}
 
-  defu@5.0.1:
-    resolution: {integrity: sha512-EPS1carKg+dkEVy3qNTqIdp2qV7mUP08nIsupfwQpz++slCVRw7qbQyWvSTig+kFPwz2XXp5/kIIkH+CwrJKkQ==}
-
   defu@6.1.4:
     resolution: {integrity: sha512-mEQCMmwJu317oSz8CwdIOdwf3xMif1ttiM8LTufzc3g6kR+9Pe236twL8j3IYT1F7GfRgGcW6MWxzZjLIkuHIg==}
 
@@ -2836,8 +2811,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  electron-to-chromium@1.5.189:
-    resolution: {integrity: sha512-y9D1ntS1ruO/pZ/V2FtLE+JXLQe28XoRpZ7QCCo0T8LdQladzdcOVQZH/IWLVJvCw12OGMb6hYOeOAjntCmJRQ==}
+  electron-to-chromium@1.5.190:
+    resolution: {integrity: sha512-k4McmnB2091YIsdCgkS0fMVMPOJgxl93ltFzaryXqwip1AaxeDqKCGLxkXODDA5Ab/D+tV5EL5+aTx76RvLRxw==}
 
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
@@ -3183,9 +3158,6 @@ packages:
     resolution: {integrity: sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==}
     engines: {node: '>=6'}
 
-  eventemitter3@4.0.7:
-    resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
-
   eventemitter3@5.0.1:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
 
@@ -3331,15 +3303,6 @@ packages:
 
   fn.name@1.1.0:
     resolution: {integrity: sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==}
-
-  follow-redirects@1.15.9:
-    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   for-each@0.3.5:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
@@ -3627,14 +3590,6 @@ packages:
     resolution: {integrity: sha512-FtwrG/euBzaEjYeRqOgly7G0qviiXoJWnvEH2Z1plBdXgbyjv34pHTSb9zoeHMyDy33+DWy5Wt9Wo+TURtOYSQ==}
     engines: {node: '>= 0.8'}
 
-  http-proxy-middleware@1.3.1:
-    resolution: {integrity: sha512-13eVVDYS4z79w7f1+NPllJtOQFx/FdUW4btIvVRMaRlUY9VGstAbo5MOhLEuUgZFRHn3x50ufn25zkj/boZnEg==}
-    engines: {node: '>=8.0.0'}
-
-  http-proxy@1.18.1:
-    resolution: {integrity: sha512-7mz/721AbnJwIVbnaSv1Cz3Am0ZLT/UBwkC92VlxhXv/k/BBQfM2fXElQNC27BVGr0uwUpplYPQM9LnaBMR5NQ==}
-    engines: {node: '>=8.0.0'}
-
   http-shutdown@1.2.2:
     resolution: {integrity: sha512-S9wWkJ/VSY9/k4qcjG318bqJNruzE4HySUhFYknwmu6LBP97KLLfwNf+n4V1BHurvFNkSKLFnK/RsuUnRTf9Vw==}
     engines: {iojs: '>= 1.0.0', node: '>= 0.12.0'}
@@ -3891,10 +3846,6 @@ packages:
     resolution: {integrity: sha512-YWnfyRwxL/+SsrWYfOpUtz5b3YD+nyfkHvjbcanzk8zgyO4ASD67uVMRt8k5bM4lLMDnXfriRhOpemw+NfT1eA==}
     engines: {node: '>=8'}
 
-  is-plain-obj@3.0.0:
-    resolution: {integrity: sha512-gwsOE28k+23GP1B6vFl1oVh/WOzmawBrKwo5Ev6wMKzPkaXaCDIQKzLnvsA42DRlbVTWorkgTKIviAKCWkfUwA==}
-    engines: {node: '>=10'}
-
   is-plain-object@2.0.4:
     resolution: {integrity: sha512-h5PpgXkWitc38BBMYawTYMWJHFZJVnBquFE57xFpjB8pJFiF6gZ+bU+WyI/yqXiFR5mdLsgYNaPe8uao6Uv9Og==}
     engines: {node: '>=0.10.0'}
@@ -3909,10 +3860,6 @@ packages:
   is-regex@1.2.1:
     resolution: {integrity: sha512-MjYsKHO5O7mCsmRGxWcLWheFqN9DJ/2TmngvjKXihe6efViPqc274+Fx/4fYj/r03+ESvBdTXK0V6tA3rgez1g==}
     engines: {node: '>= 0.4'}
-
-  is-retry-allowed@2.2.0:
-    resolution: {integrity: sha512-XVm7LOeLpTW4jV19QSH38vkswxoLud8sQ57YwJVTPWdiaI9I8keEhGFpBlslyVsgdQy4Opg8QOLb8YRgsyZiQg==}
-    engines: {node: '>=10'}
 
   is-set@2.0.3:
     resolution: {integrity: sha512-iPAjerrse27/ygGLxw+EBR9agv9Y6uLeYVJMu+QNCoouJ1/1ri0mGrcWpfCqFZuzzx3WjtwxG098X+n4OuRkPg==}
@@ -5290,9 +5237,6 @@ packages:
 
   require-package-name@2.0.1:
     resolution: {integrity: sha512-uuoJ1hU/k6M0779t3VMVIYpb2VMJk05cehCaABFhXaibcbvfgR8wKiozLjVFSzJPmQMRqIcO0HMyTFqfV09V6Q==}
-
-  requires-port@1.0.0:
-    resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -6806,8 +6750,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/runtime@7.27.6': {}
-
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -7490,16 +7432,6 @@ snapshots:
       - vue-tsc
       - yaml
 
-  '@nuxtjs/axios@5.13.6':
-    dependencies:
-      '@nuxtjs/proxy': 2.1.0
-      axios: 0.21.4
-      axios-retry: 3.9.1
-      consola: 2.15.3
-      defu: 5.0.1
-    transitivePeerDependencies:
-      - debug
-
   '@nuxtjs/dotenv@1.4.2':
     dependencies:
       consola: 3.4.2
@@ -7545,12 +7477,6 @@ snapshots:
       eslint-webpack-plugin: 2.7.0(eslint@8.57.1)(webpack@5.100.2)
     transitivePeerDependencies:
       - webpack
-
-  '@nuxtjs/proxy@2.1.0':
-    dependencies:
-      http-proxy-middleware: 1.3.1
-    transitivePeerDependencies:
-      - debug
 
   '@nuxtjs/svg@0.4.1(vue-template-compiler@2.7.16)(webpack@5.100.2)':
     dependencies:
@@ -7961,10 +7887,6 @@ snapshots:
   '@types/html-minifier-terser@7.0.2': {}
 
   '@types/http-errors@2.0.5': {}
-
-  '@types/http-proxy@1.17.16':
-    dependencies:
-      '@types/node': 24.1.0
 
   '@types/json-schema@7.0.15': {}
 
@@ -8836,17 +8758,6 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios-retry@3.9.1:
-    dependencies:
-      '@babel/runtime': 7.27.6
-      is-retry-allowed: 2.2.0
-
-  axios@0.21.4:
-    dependencies:
-      follow-redirects: 1.15.9
-    transitivePeerDependencies:
-      - debug
-
   b4a@1.6.7: {}
 
   balanced-match@1.0.2: {}
@@ -8925,7 +8836,7 @@ snapshots:
   browserslist@4.25.1:
     dependencies:
       caniuse-lite: 1.0.30001727
-      electron-to-chromium: 1.5.189
+      electron-to-chromium: 1.5.190
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.1)
 
@@ -9449,8 +9360,6 @@ snapshots:
       is-descriptor: 1.0.3
       isobject: 3.0.1
 
-  defu@5.0.1: {}
-
   defu@6.1.4: {}
 
   denque@2.1.0: {}
@@ -9598,7 +9507,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  electron-to-chromium@1.5.189: {}
+  electron-to-chromium@1.5.190: {}
 
   emoji-regex@10.4.0: {}
 
@@ -10088,8 +9997,6 @@ snapshots:
 
   event-target-shim@5.0.1: {}
 
-  eventemitter3@4.0.7: {}
-
   eventemitter3@5.0.1: {}
 
   events@3.3.0: {}
@@ -10260,8 +10167,6 @@ snapshots:
   flatted@3.3.3: {}
 
   fn.name@1.1.0: {}
-
-  follow-redirects@1.15.9: {}
 
   for-each@0.3.5:
     dependencies:
@@ -10584,24 +10489,6 @@ snapshots:
       statuses: 2.0.1
       toidentifier: 1.0.1
 
-  http-proxy-middleware@1.3.1:
-    dependencies:
-      '@types/http-proxy': 1.17.16
-      http-proxy: 1.18.1
-      is-glob: 4.0.3
-      is-plain-obj: 3.0.0
-      micromatch: 4.0.8
-    transitivePeerDependencies:
-      - debug
-
-  http-proxy@1.18.1:
-    dependencies:
-      eventemitter3: 4.0.7
-      follow-redirects: 1.15.9
-      requires-port: 1.0.0
-    transitivePeerDependencies:
-      - debug
-
   http-shutdown@1.2.2: {}
 
   https-proxy-agent@7.0.6:
@@ -10830,8 +10717,6 @@ snapshots:
 
   is-plain-obj@2.1.0: {}
 
-  is-plain-obj@3.0.0: {}
-
   is-plain-object@2.0.4:
     dependencies:
       isobject: 3.0.1
@@ -10848,8 +10733,6 @@ snapshots:
       gopd: 1.2.0
       has-tostringtag: 1.0.2
       hasown: 2.0.2
-
-  is-retry-allowed@2.2.0: {}
 
   is-set@2.0.3: {}
 
@@ -12420,8 +12303,6 @@ snapshots:
   require-from-string@2.0.2: {}
 
   require-package-name@2.0.1: {}
-
-  requires-port@1.0.0: {}
 
   resolve-from@4.0.0: {}
 

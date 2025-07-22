@@ -15,11 +15,8 @@
                 </div>
             </div>
         </b-col>
-        <b-col align-self="end">
-            <TransactionCardFee
-                :transaction="props.transaction"
-                class="text-muted small d-flex justify-content-end pb-1"
-            />
+        <b-col class="text-right text-muted">
+            <TransactionCardFee :transaction="props.transaction" />
         </b-col>
         <b-col class="text-right" cols="3" xl="2">
             <TransactionAmount :transaction="props.transaction" />

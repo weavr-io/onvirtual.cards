@@ -238,7 +238,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { AxiosResponse } from 'axios'
+import type { ApiResponse } from '~/utils/api'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
 import {
@@ -457,7 +457,7 @@ const doRegister = () => {
         .catch(registrationFailed)
 }
 
-const onConsumerCreated = (res: AxiosResponse<ConsumerModel>) => {
+const onConsumerCreated = (res: ApiResponse<ConsumerModel>) => {
     createPassword(res.data.rootUser.id.id!)
 }
 

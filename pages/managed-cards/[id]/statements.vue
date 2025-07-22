@@ -43,7 +43,9 @@
                             <div class="card-balance">
                                 <div class="card-balance-label text-muted">balance</div>
                                 <div
-                                    v-if="managedCard.balances?.availableBalance"
+                                    v-if="
+                                        typeof managedCard.balances?.availableBalance === 'number'
+                                    "
                                     class="card-balance-value"
                                 >
                                     {{ currency }}
@@ -59,6 +61,7 @@
 
         <b-modal
             id="cardModal"
+            v-model="isCardModalVisible"
             body-class="p-0 transparent"
             centered
             content-class="transparent-modal"

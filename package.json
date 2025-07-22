@@ -15,11 +15,9 @@
         "precommit": "npm run lint",
         "pretty": "prettier --write \"**/*.{js,ts,jsx,vue,scss,css,json,html}\"",
         "generate": "nuxt generate",
-        "prepare": "husky",
-        "postinstall": "pnpm exec vue-demi-fix"
+        "prepare": "husky"
     },
     "dependencies": {
-        "@nuxtjs/axios": "^5.13.6",
         "@nuxtjs/dotenv": "^1.4.2",
         "@pinia/nuxt": "^0.5.2",
         "bootstrap-icons": "^1.11.3",
