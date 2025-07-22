@@ -12,6 +12,7 @@ import type { PaginatedManagedAccountsResponse } from '~/plugins/weavr-multi/api
 import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import type { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
+import { useAuthStore } from '~/store/auth'
 
 const initState = (): AccountState => {
     return {
@@ -25,7 +26,7 @@ const initState = (): AccountState => {
 export const useAccountsStore = defineStore('accounts', () => {
     const nuxtApp = computed(() => useNuxtApp())
     const apiMulti = computed(() => nuxtApp.value.$apiMulti)
-
+    const store = useAuthStore()
     const accountState: AccountState = reactive(initState())
 
     const totalAvailableBalance = computed(() => {
@@ -132,7 +133,15 @@ export const useAccountsStore = defineStore('accounts', () => {
         req.then((res) => {
             setAccounts(res.data)
             if (res.data.count && res.data.accounts) {
-                setAccount(res.data.accounts[0])
+                let _account = res.data.accounts[0]
+                const { pglIdentityId, pglManagedAccountId } = useRuntimeConfig().public
+                if (pglIdentityId && pglManagedAccountId && store.identityId === pglIdentityId) {
+                    const match = res.data.accounts.find((acc) => acc.id === pglManagedAccountId)
+                    if (match) {
+                        _account = match
+                    }
+                }
+                setAccount(_account)
             }
         })
 

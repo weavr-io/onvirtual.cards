@@ -94,7 +94,7 @@ const { account, accountId } = useAccounts()
 const { accounts } = useStores(['accounts'])
 
 const address = computed(() => {
-    return bankAccountDetails.value?.beneficiaryBankAddress?.split(',').join(', \n')
+    return bankAccountDetails.value?.beneficiaryBankAddress?.split(',').join(', \n') ?? '-'
 })
 
 const sepaBic = computed(() => {
@@ -142,11 +142,11 @@ const ibanDetails = computed(() => {
 })
 
 const beneficiaryNameAndSurname = computed(() => {
-    return bankAccountDetails.value?.beneficiaryNameAndSurname
+    return bankAccountDetails.value?.beneficiaryNameAndSurname ?? '-'
 })
 
 const beneficiaryBank = computed(() => {
-    return bankAccountDetails.value?.beneficiaryBank
+    return bankAccountDetails.value?.beneficiaryBank ?? '-'
 })
 
 const iban = computed(() => {
@@ -154,7 +154,7 @@ const iban = computed(() => {
         (bankAccountDetails.value?.details &&
             'iban' in bankAccountDetails.value.details &&
             bankAccountDetails.value.details.iban) ||
-        ''
+        '-'
     )
 })
 

@@ -11,6 +11,8 @@ export default defineNuxtConfig({
                 baseUrl: import.meta.env.MULTI_BASE_URL,
                 uiKey: import.meta.env.UI_KEY,
             },
+            pglIdentityId: import.meta.env.PGL_IDENTITY_ID,
+            pglManagedAccountId: import.meta.env.PGL_MANAGED_ACCOUNT_ID,
             profileId: {
                 consumers: import.meta.env.CONSUMERS_PROFILE_ID,
                 corporates: import.meta.env.CORPORATES_PROFILE_ID,
