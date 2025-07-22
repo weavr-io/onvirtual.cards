@@ -1,18 +1,13 @@
 <template>
-    <div :class="props.className" :style="props.baseStyle" />
+    <div ref="captureContainer" :class="props.className" :style="styleValue" />
 </template>
-<script lang="ts" setup>
-import {
-    Ref,
-    computed,
-    getCurrentInstance,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-} from '@nuxtjs/composition-api'
-import { SecureElementStyle, SecureSpan } from '~/plugins/weavr/components/api'
 
-const { proxy: root } = getCurrentInstance() || {}
+<script lang="ts" setup>
+import type { StyleValue } from 'vue'
+import type { SecureElementStyle, SecureSpan } from '~/plugins/weavr/components/api'
+
+const captureContainer = ref<HTMLDivElement | null>(null)
+const { $weavrComponents } = useNuxtApp()
 
 const props = withDefaults(
     defineProps<{
@@ -33,6 +28,8 @@ const emit = defineEmits(['onReady', 'onChange'])
 
 const span: Ref<any> = ref(null)
 
+const styleValue = computed(() => props.baseStyle as StyleValue)
+
 const _span = computed({
     get() {
         return span.value
@@ -40,6 +37,13 @@ const _span = computed({
     set(newValue) {
         span.value = newValue
     },
+})
+
+const spanOptions = computed(() => {
+    return {
+        ...props.options,
+        style: props.baseStyle,
+    }
 })
 
 const onReady = () => {
@@ -51,9 +55,11 @@ const onChange = (val) => {
 }
 
 onMounted(() => {
-    _span.value = root?.$weavrComponents.display.cvv(props.token, spanOptions.value)
-    _span.value?.mount(root?.$el)
-    _addListeners(_span.value)
+    if (captureContainer.value) {
+        _span.value = ($weavrComponents as any).display.cvv(props.token, spanOptions.value)
+        _span.value?.mount(captureContainer.value)
+        _addListeners(_span.value)
+    }
 })
 
 onBeforeUnmount(() => {
@@ -70,13 +76,4 @@ const _removeListeners = (input) => {
     input.off('ready', onReady)
     input.off('change', onChange)
 }
-
-const spanOptions = computed(() => {
-    return {
-        ...props.options,
-        style: props.baseStyle,
-    }
-})
 </script>
-
-<style lang="scss" scoped></style>

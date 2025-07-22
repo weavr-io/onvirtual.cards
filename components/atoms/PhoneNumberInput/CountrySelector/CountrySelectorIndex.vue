@@ -32,7 +32,7 @@
             @click.stop="toggleList"
         />
         <div class="country-selector-toggle" @click.stop="toggleList">
-            <img alt="Downward pointing arrow" src="@/assets/svg/statement/down_arrow.svg" />
+            <img alt="Downward pointing arrow" :src="downArrowIcon" />
         </div>
         <label
             ref="label"
@@ -51,7 +51,7 @@
             >
                 <RecycleScroller
                     v-slot="{ item }"
-                    :item-size="1"
+                    :item-size="scrollerSize"
                     :items="countriesSorted"
                     key-field="iso2"
                 >
@@ -85,22 +85,21 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
-import { CountryCode, getCountryCallingCode } from 'libphonenumber-js'
-import { RecycleScroller } from 'vue-virtual-scroller'
-import { nextTick, Ref } from '@nuxtjs/composition-api'
-import { PhoneCodeCountry } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
+import { type CountryCode, getCountryCallingCode } from 'libphonenumber-js'
+import type { PhoneCodeCountry } from '~/components/atoms/PhoneNumberInput/assets/ts/phoneCodeCountries'
+import downArrowIcon from '@/assets/svg/statement/down_arrow.svg?url'
 
-const emit = defineEmits(['input', 'open', 'close'])
+const emit = defineEmits(['update:value', 'open', 'close'])
 
 const props = withDefaults(
     defineProps<{
-        id: string
-        value: CountryCode
+        id?: string
+        value?: CountryCode
         label: string
         hint: string
         valid: boolean
         items: PhoneCodeCountry[]
-        onlyCountries: CountryCode[] | string[]
+        onlyCountries?: CountryCode[] | string[]
         ignoredCountries: CountryCode[]
         countriesHeight: number
         disabled?: boolean
@@ -122,6 +121,7 @@ const props = withDefaults(
 const parent = ref(null)
 const isFocus = ref(false)
 const hasListOpen = ref(false)
+const scrollerSize = ref<number>(30)
 const tmpValue = ref<CountryCode | undefined>(props.value)
 const query = ref('')
 const isHover = ref(false)
@@ -199,7 +199,7 @@ function toggleList() {
 
 const updateValue = async (val: CountryCode | undefined) => {
     tmpValue.value = val
-    emit('input', val || null)
+    emit('update:value', val || null)
     await nextTick()
     closeList()
 }

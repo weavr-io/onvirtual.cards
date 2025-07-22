@@ -1,4 +1,4 @@
-import { IDModel } from './IDModel'
+import type { IDModel } from './IDModel'
 
 export interface TypeIdModel {
     type: string

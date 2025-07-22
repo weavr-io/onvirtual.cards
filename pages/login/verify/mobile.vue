@@ -13,39 +13,28 @@
     </b-col>
 </template>
 
-<script lang="ts">
-import { defineComponent, useAsync, useRouter } from '@nuxtjs/composition-api'
+<script lang="ts" setup>
 import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAOtpChannelEnum'
 import { SCAFactorStatusEnum } from '~/plugins/weavr-multi/api/models/authentication/additional-factors/enums/SCAFactorStatusEnum'
 import { useStores } from '~/composables/useStores'
 import LogoOvc from '~/components/molecules/LogoOvc.vue'
 import MobileComponent from '~/components/molecules/MobileComponent.vue'
 
-export default defineComponent({
-    components: {
-        MobileComponent,
-        LogoOvc,
-    },
+definePageMeta({
     layout: 'auth',
-    middleware: 'kyVerified',
-    setup() {
-        const router = useRouter()
-
-        const { auth, identity } = useStores(['auth', 'identity'])
-
-        useAsync(() => auth?.indexAuthFactors())
-
-        const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
-            (factor) => factor.channel === SCAOtpChannelEnum.SMS,
-        )
-
-        if (
-            identity?.identityState.mobileNumberVerified &&
-            smsAuthFactors &&
-            smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION
-        ) {
-            return router.push('/')
-        }
-    },
+    middleware: 'ky-verified',
 })
+
+const router = useRouter()
+
+const { auth } = useStores(['auth'])
+auth?.indexAuthFactors()
+
+const smsAuthFactors = auth?.authState.authFactors?.factors?.filter(
+    (factor) => factor.channel === SCAOtpChannelEnum.SMS,
+)
+
+if (smsAuthFactors && smsAuthFactors[0].status !== SCAFactorStatusEnum.PENDING_VERIFICATION) {
+    router.push('/')
+}
 </script>

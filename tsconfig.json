@@ -1,12 +1,10 @@
 {
+    "extends": "./.nuxt/tsconfig.json",
     "compilerOptions": {
-        "target": "ES2018",
-        "module": "ESNext",
-        "moduleResolution": "Node",
+        "moduleResolution": "node",
         "resolveJsonModule": true,
         "lib": ["ESNext", "ESNext.AsyncIterable", "DOM"],
         "esModuleInterop": true,
-        "experimentalDecorators": true,
         "allowJs": true,
         "sourceMap": true,
         "strict": true,
@@ -17,9 +15,9 @@
             "~/*": ["./*"],
             "@/*": ["./*"]
         },
-        "types": ["@types/node", "@nuxt/types", "@nuxtjs/axios", "@pinia/nuxt"]
+        "types": ["@types/node", "nuxt", "@pinia/nuxt"]
     },
-    "exclude": [".nuxt", "dist", "node_modules"],
+    "exclude": ["dist", "node_modules"],
     "importHelpers": true,
     "emitHelpers": true
 }

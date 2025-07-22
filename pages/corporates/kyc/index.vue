@@ -3,11 +3,13 @@
         <b-container>
             <b-row :class="{ 'd-none': accessTokenError }">
                 <b-col>
-                    <weavr-kyc-beneficiaries
-                        :options="kybOptions"
-                        :reference="reference"
-                        @message="handleSumSubMessage"
-                    />
+                    <div class="p-5">
+                        <weavr-kyc-beneficiaries
+                            :options="kybOptions"
+                            :reference="reference"
+                            @message="handleSumSubMessage"
+                        />
+                    </div>
                 </b-col>
             </b-row>
         </b-container>
@@ -26,12 +28,11 @@
     </section>
 </template>
 <script lang="ts" setup>
-import { computed, ref, useRoute } from '@nuxtjs/composition-api'
-import { KYBOptions } from '~/plugins/weavr/components/api'
+import type { KYBOptions } from '~/plugins/weavr/components/api'
 
 const route = useRoute()
 
-const reference = ref(route.value.query.reference)
+const reference = ref(route.query.reference)
 const accessTokenError = ref(false)
 
 const kybOptions = computed(() => {

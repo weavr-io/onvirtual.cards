@@ -1,57 +1,53 @@
-import { AxiosResponse } from 'axios'
-import { $axiosMulti } from '~/utils/api'
-import { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
-import { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
-import { UsersFilterRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UsersFilterRequestModel'
-import { PaginatedUsersResponseModel } from '~/plugins/weavr-multi/api/models/users/response/PaginatedUsersResponseModel'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
-import { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
-import { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
-import { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
+import { apiFetch, type ApiResponse } from '~/utils/api'
+import type { CreateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/CreateUserRequestModel'
+import type { UserModel } from '~/plugins/weavr-multi/api/models/users/models/UserModel'
+import type { UsersFilterRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UsersFilterRequestModel'
+import type { PaginatedUsersResponseModel } from '~/plugins/weavr-multi/api/models/users/response/PaginatedUsersResponseModel'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import type { UpdateUserRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/UpdateUserRequestModel'
+import type { InviteValidateRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteValidateRequestModel'
+import type { InviteConsumeRequestModel } from '~/plugins/weavr-multi/api/models/users/requests/InviteConsumeRequestModel'
 
 export class UsersApi {
-    store(body: CreateUserRequestModel): Promise<AxiosResponse<UserModel>> {
-        return $axiosMulti.post<UserModel>('/users', body)
+    store(body: CreateUserRequestModel): Promise<ApiResponse<UserModel>> {
+        return apiFetch.post<UserModel>('/users', body)
     }
 
-    index(filters?: UsersFilterRequestModel): Promise<AxiosResponse<PaginatedUsersResponseModel>> {
-        return $axiosMulti.get<PaginatedUsersResponseModel>('/users', { data: filters })
+    index(filters?: UsersFilterRequestModel): Promise<ApiResponse<PaginatedUsersResponseModel>> {
+        return apiFetch.get<PaginatedUsersResponseModel>('/users', { query: filters })
     }
 
-    show(id: IDModel): Promise<AxiosResponse<UserModel>> {
-        return $axiosMulti.get<UserModel>('/users/' + id)
+    show(id: IDModel): Promise<ApiResponse<UserModel>> {
+        return apiFetch.get<UserModel>(`/users/${id}`)
     }
 
-    update(params: {
-        id: IDModel
-        data: UpdateUserRequestModel
-    }): Promise<AxiosResponse<UserModel>> {
-        return $axiosMulti.patch<UserModel>('/users/' + params.id, params.data)
+    update(params: { id: IDModel; data: UpdateUserRequestModel }): Promise<ApiResponse<UserModel>> {
+        return apiFetch.patch<UserModel>(`/users/${params.id}`, params.data)
     }
 
-    activate(id: IDModel): Promise<AxiosResponse> {
-        return $axiosMulti.post('/users/' + id + '/activate')
+    activate(id: IDModel): Promise<ApiResponse<unknown>> {
+        return apiFetch.post('/users/' + id + '/activate')
     }
 
-    deactivate(id: IDModel): Promise<AxiosResponse> {
-        return $axiosMulti.post('/users/' + id + '/deactivate')
+    deactivate(id: IDModel): Promise<ApiResponse<unknown>> {
+        return apiFetch.post('/users/' + id + '/deactivate')
     }
 
-    inviteSend(id: IDModel): Promise<AxiosResponse> {
-        return $axiosMulti.post('/users/' + id + '/invite')
+    inviteSend(id: IDModel): Promise<ApiResponse<unknown>> {
+        return apiFetch.post('/users/' + id + '/invite')
     }
 
     inviteValidate(params: {
         id: IDModel
         data: InviteValidateRequestModel
-    }): Promise<AxiosResponse> {
-        return $axiosMulti.post('/users/' + params.id + '/invite/validate', params.data)
+    }): Promise<ApiResponse<unknown>> {
+        return apiFetch.post('/users/' + params.id + '/invite/validate', params.data)
     }
 
     inviteConsume(params: {
         id: IDModel
         data: InviteConsumeRequestModel
-    }): Promise<AxiosResponse> {
-        return $axiosMulti.post('/users/' + params.id + '/invite/consume', params.data)
+    }): Promise<ApiResponse<unknown>> {
+        return apiFetch.post('/users/' + params.id + '/invite/consume', params.data)
     }
 }

@@ -1,19 +1,18 @@
 import { DateTime } from 'luxon'
 import { defineStore } from 'pinia'
-import { computed, reactive } from 'vue'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
-import { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
-import { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountModel'
-import { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
-import { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
-import { GetManagedAccountsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountsRequest'
-import { PaginatedManagedAccountsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/responses/PaginatedManagedAccountsResponse'
 import { TransactionTypeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/enums/TransactionTypeEnum'
-import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
-import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
+import type { Accounts as AccountState } from '~/local/models/store/accounts'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import type { ManagedAccountIBANModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountIBANModel'
+import type { ManagedAccountModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/models/ManagedAccountModel'
+import type { CreateManagedAccountRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/CreateManagedAccountRequest'
+import type { GetManagedAccountStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountStatementRequest'
+import type { GetManagedAccountsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/requests/GetManagedAccountsRequest'
+import type { PaginatedManagedAccountsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-account/responses/PaginatedManagedAccountsResponse'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
+import type { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
 import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
 import { useAuthStore } from '~/store/auth'
-import type { Accounts as AccountState } from '~/local/models/store/accounts'
 
 const initState = (): AccountState => {
     return {
@@ -25,6 +24,8 @@ const initState = (): AccountState => {
 }
 
 export const useAccountsStore = defineStore('accounts', () => {
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
     const store = useAuthStore()
     const accountState: AccountState = reactive(initState())
 
@@ -70,7 +71,7 @@ export const useAccountsStore = defineStore('accounts', () => {
             return true
         })
 
-        const _out = {}
+        const _out = {} as Record<number, StatementEntryModel[]>
 
         _entries.forEach((_entry) => {
             if (_entry.processedTimestamp) {
@@ -101,8 +102,18 @@ export const useAccountsStore = defineStore('accounts', () => {
         accountState.statements = null
     }
 
-    const setStatements = (statements: StatementResponseModel | null) => {
-        accountState.statements = statements
+    const setStatements = (statements: StatementResponseModel | null, append = false) => {
+        if (append && accountState.statements && statements) {
+            const existingEntries = accountState.statements.entry || []
+            const newEntries = statements.entry || []
+
+            accountState.statements = {
+                ...statements,
+                entry: [...existingEntries, ...newEntries],
+            }
+        } else {
+            accountState.statements = statements
+        }
     }
 
     const resetState = () => {
@@ -117,22 +128,15 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const index = (filters: GetManagedAccountsRequest) => {
-        const req = store.$nuxt.$apiMulti.managedAccounts.index(filters)
+        const req = apiMulti.value.managedAccounts.index(filters)
 
         req.then((res) => {
             setAccounts(res.data)
             if (res.data.count && res.data.accounts) {
                 let _account = res.data.accounts[0]
-                const pglIdentityId = store.$nuxt.$config.pglIdentityId
-                const pglManagedAccountId = store.$nuxt.$config.pglManagedAccountId
-                if (
-                    pglIdentityId &&
-                    pglManagedAccountId &&
-                    store.identityId === pglIdentityId
-                ) {
-                    const match = res.data.accounts.find(
-                        (acc) => acc.id === pglManagedAccountId,
-                    )
+                const { pglIdentityId, pglManagedAccountId } = useRuntimeConfig().public
+                if (pglIdentityId && pglManagedAccountId && store.identityId === pglIdentityId) {
+                    const match = res.data.accounts.find((acc) => acc.id === pglManagedAccountId)
                     if (match) {
                         _account = match
                     }
@@ -145,13 +149,13 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const create = (request: CreateManagedAccountRequest) => {
-        const req = store.$nuxt.$apiMulti.managedAccounts.store(request)
+        const req = apiMulti.value.managedAccounts.store(request)
 
         return req
     }
 
     const get = (id: string) => {
-        const req = store.$nuxt.$apiMulti.managedAccounts.show(id)
+        const req = apiMulti.value.managedAccounts.show(id)
 
         req.then((res) => {
             setAccount(res.data)
@@ -160,18 +164,21 @@ export const useAccountsStore = defineStore('accounts', () => {
         return req
     }
 
-    const getStatements = (request: { id: string; filters: GetManagedAccountStatementRequest }) => {
-        const req = store.$nuxt.$apiMulti.managedAccounts.statement(request)
+    const getStatements = (
+        request: { id: string; filters: GetManagedAccountStatementRequest },
+        append = false,
+    ) => {
+        const req = apiMulti.value.managedAccounts.statement(request)
 
         req.then((res) => {
-            setStatements(res.data)
+            setStatements(res.data, append)
         })
 
         return req
     }
 
     const getIBANDetails = (id: IDModel) => {
-        const req = store.$nuxt.$apiMulti.managedAccounts.retrieveIban(id)
+        const req = apiMulti.value.managedAccounts.retrieveIban(id)
 
         req.then((res) => {
             setIban(res.data)
@@ -181,7 +188,7 @@ export const useAccountsStore = defineStore('accounts', () => {
     }
 
     const upgradeIban = (id: IDModel) => {
-        const req = store.$nuxt.$apiMulti.managedAccounts.assignIban(id)
+        const req = apiMulti.value.managedAccounts.assignIban(id)
 
         req.then((res) => {
             setIban(res.data)

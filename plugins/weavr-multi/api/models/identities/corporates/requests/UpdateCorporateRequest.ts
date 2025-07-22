@@ -39,4 +39,8 @@ const INITIAL_UPDATE_CORPORATE_REQUEST = {
     dateOfBirth: undefined,
 } as unknown as UpdateCorporateRequest
 
-export { UpdateCorporateRequestSchema, UpdateCorporateRequest, INITIAL_UPDATE_CORPORATE_REQUEST }
+export {
+    UpdateCorporateRequestSchema,
+    type UpdateCorporateRequest,
+    INITIAL_UPDATE_CORPORATE_REQUEST,
+}

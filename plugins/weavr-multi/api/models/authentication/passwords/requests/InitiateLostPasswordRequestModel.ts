@@ -17,4 +17,4 @@ const INITIAL_RESET_REQUEST = () => {
     } as unknown as ResetRequest
 }
 
-export { ResetRequest, ResetSchema, INITIAL_RESET_REQUEST }
+export { type ResetRequest, ResetSchema, INITIAL_RESET_REQUEST }

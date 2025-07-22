@@ -18,80 +18,66 @@
                         <small class="text-muted">{{ kycErrorCode }}</small>
                     </template>
                     <template v-else>
-                        <weavr-kyc :options="options" :reference="reference" />
+                        <div class="p-5">
+                            <weavr-kyc :options="options" :reference="reference" />
+                        </div>
                     </template>
                 </b-col>
             </b-row>
         </b-container>
     </section>
 </template>
-<script lang="ts">
-import {
-    computed,
-    defineComponent,
-    Ref,
-    ref,
-    useContext,
-    useFetch,
-    useRouter,
-} from '@nuxtjs/composition-api'
+<script lang="ts" setup>
+import { useStores } from '~/composables/useStores'
+import { KYCErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCErrorCodeEnum'
+import type { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
+import { useGlobalAsyncData } from '~/composables/useGlobalAsyncData'
+import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 import LoadingSpinner from '~/components/atoms/LoadingSpinner.vue'
 import KYCAlert from '~/components/molecules/consumers/KYCAlert.vue'
 import DashboardHeader from '~/components/organisms/DashboardHeader.vue'
-import { useBase } from '~/composables/useBase'
-import { useStores } from '~/composables/useStores'
-import { KYCErrorCodeEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCErrorCodeEnum'
-import { ConsumerVerificationFlowOptions } from '~/plugins/weavr/components/api'
-import WeavrKyc from '~/plugins/weavr/components/WeavrKyc.vue'
 
-export default defineComponent({
-    components: {
-        LoadingSpinner,
-        DashboardHeader,
-        KYCAlert,
-        WeavrKyc,
-    },
-    middleware: 'kyVerified',
-    setup() {
-        const router = useRouter()
-        const { $weavrSetUserToken } = useContext()
-        const { pendingDataOrError } = useBase()
-        const { auth, consumers } = useStores(['auth', 'consumers'])
+definePageMeta({
+    middleware: 'ky-verified',
+})
+const router = useRouter()
+const { $weavrSetUserToken } = useNuxtApp()
+const { auth, consumers } = useStores(['auth', 'consumers'])
 
-        const reference = ref('')
-        const kycErrorCode: Ref<KYCErrorCodeEnum | null> = ref(null)
+const reference = ref('')
+const kycErrorCode: Ref<KYCErrorCodeEnum | null> = ref(null)
 
-        const isKycPending = computed(() => {
-            return kycErrorCode.value === KYCErrorCodeEnum.KYC_PENDING_REVIEW
+const isKycPending = computed(() => {
+    return kycErrorCode.value === KYCErrorCodeEnum.KYC_PENDING_REVIEW
+})
+
+const isKycRejected = computed(() => {
+    return kycErrorCode.value === KYCErrorCodeEnum.KYC_REJECTED
+})
+
+const onMessage = (message) => {
+    if (message === 'kycSubmitted') {
+        router.push('/managed-accounts/kyc/check')
+    }
+}
+
+const options: Ref<Pick<ConsumerVerificationFlowOptions, 'onMessage'>> = ref({
+    onMessage,
+})
+
+const startKYC = async () => {
+    await consumers
+        ?.startKYC()
+        .then((res) => {
+            ;($weavrSetUserToken as (token: string) => void)(`Bearer ${auth?.token}`)
+            reference.value = res.data.reference
         })
-
-        const isKycRejected = computed(() => {
-            return kycErrorCode.value === KYCErrorCodeEnum.KYC_REJECTED
+        .catch((res) => {
+            kycErrorCode.value = res.response.data.errorCode
         })
+}
 
-        const onMessage = (message) => {
-            if (message === 'kycSubmitted') {
-                router.push('/managed-accounts/kyc/check')
-            }
-        }
-
-        const options: Ref<Pick<ConsumerVerificationFlowOptions, 'onMessage'>> = ref({
-            onMessage,
-        })
-
-        useFetch(async () => {
-            await consumers
-                ?.startKYC()
-                .then((res) => {
-                    $weavrSetUserToken(`Bearer ${auth?.token}`)
-                    reference.value = res.data.reference
-                })
-                .catch((res) => {
-                    kycErrorCode.value = res.response.data.errorCode
-                })
-        })
-
-        return { pendingDataOrError, isKycPending, isKycRejected, kycErrorCode, options, reference }
-    },
+const { pendingDataOrError } = await useGlobalAsyncData('startKYC', async () => {
+    await startKYC()
 })
 </script>

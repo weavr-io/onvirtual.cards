@@ -3,7 +3,7 @@
         <b-row class="my-5">
             <b-card body-class="p-6">
                 <b-form @submit.prevent="tryToSubmitAccessCode">
-                    <h3 class="text-center font-weight-light mb-6">
+                    <h3 class="text-center fw-light mb-6">
                         Enter the access code for registration
                     </h3>
                     <template v-if="inviteCodeError.showMsg">
@@ -37,15 +37,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, reactive } from '@nuxtjs/composition-api'
-import { AxiosError } from 'axios'
+import type { FetchError } from 'ofetch'
 import { useStores } from '~/composables/useStores'
-import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import {
-    AccessCode,
+    type AccessCode,
     AccessCodeSchema,
     INITIAL_ACCESS_CODE_REQUEST,
 } from '~/plugins/weavr-multi/api/models/access-codes'
+import LoaderButton from '~/components/atoms/LoaderButton.vue'
 import useZodValidation from '~/composables/useZodValidation'
 
 interface IInviteCodeError {
@@ -78,7 +77,7 @@ const tryToSubmitAccessCode = async () => {
 
         return accessCodes
             ?.verifyAccessCode(form)
-            .catch((err: AxiosError) => {
+            .catch((err: FetchError) => {
                 const is403: boolean = err.response?.status === 403
 
                 inviteCodeError.value = {

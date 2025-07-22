@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
 import { useCorporatesStore } from '~/store/corporates'
 import { useConsumersStore } from '~/store/consumers'
 import { useAuthStore } from '~/store/auth'

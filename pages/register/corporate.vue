@@ -3,7 +3,7 @@
         <div class="mb-5">
             <LogoOvc classes="mb-5" />
             <b-card class="overflow-hidden" no-body>
-                <b-card-body class="px-4 mx-3 py-5 p-sm-card">
+                <b-card-body class="mx-3 py-5 p-sm-card">
                     <div class="form-screens">
                         <transition mode="out-in" name="fade">
                             <div v-if="screen === 0" key="1" class="form-screen">
@@ -24,165 +24,139 @@
         </div>
     </b-col>
 </template>
-<script lang="ts">
-import {
-    defineComponent,
-    reactive,
-    ref,
-    useAsync,
-    useContext,
-    useFetch,
-    useRouter,
-} from '@nuxtjs/composition-api'
-import { AxiosResponse } from 'axios'
-import LogoOvc from '~/components/molecules/LogoOvc.vue'
-import PersonalDetailsForm from '~/components/organisms/registration/PersonalDetails.vue'
-import RegisterForm from '~/components/organisms/registration/RegisterForm.vue'
+
+<script lang="ts" setup>
+import type { ApiResponse } from '~/utils/api'
 import { useBase } from '~/composables/useBase'
 import { useStores } from '~/composables/useStores'
-import {
+import type {
     CreatePasswordRequestModel,
     LoginWithPassword,
 } from '~/plugins/weavr-multi/api/models/authentication'
-import { CurrencyEnum, IDModel } from '~/plugins/weavr-multi/api/models/common'
-import { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
+import { CurrencyEnum, type IDModel } from '~/plugins/weavr-multi/api/models/common'
+import type { ConsumerModel } from '~/plugins/weavr-multi/api/models/identities/consumers/models/ConsumerModel'
 import {
-    CreateCorporateRequest,
+    type CreateCorporateRequest,
     INITIAL_CREATE_CORPORATE_REQUEST,
 } from '~/plugins/weavr-multi/api/models/identities/corporates'
+import LogoOvc from '~/components/molecules/LogoOvc.vue'
+import PersonalDetailsForm from '~/components/organisms/registration/PersonalDetails.vue'
+import RegisterForm from '~/components/organisms/registration/RegisterForm.vue'
+import type { ApiInterface } from '~/plugins/weavr-multi/api/ApiInterface'
 
-export default defineComponent({
-    components: {
-        LogoOvc,
-        RegisterForm,
-        PersonalDetailsForm,
-    },
+definePageMeta({
     layout: 'auth',
-    middleware: 'accessCodeVerified',
-    setup() {
-        const router = useRouter()
-        const { $apiMulti, $config } = useContext()
-        const { setSCAStorage, showErrorToast } = useBase()
-        const { accessCodes, auth, corporates } = useStores(['accessCodes', 'auth', 'corporates'])
-
-        const screen = ref(0)
-        const passwordStrength = ref(0)
-        let registrationRequest: CreateCorporateRequest & {
-            password?: string
-        } = reactive({
-            ...INITIAL_CREATE_CORPORATE_REQUEST(),
-            profileId: $config.profileId.corporates,
-            acceptedTerms: false,
-            baseCurrency: CurrencyEnum.EUR,
-            password: undefined,
-        })
-
-        const strengthCheck = (val) => {
-            passwordStrength.value = val.id
-        }
-
-        const goBack = () => {
-            screen.value--
-        }
-
-        useAsync(() => {
-            const isLoggedIn = auth?.isLoggedIn
-            if (isLoggedIn) {
-                router.replace('/dashboard')
-            }
-        })
-
-        useFetch(() => {
-            $apiMulti.ipify.get().then((ip) => {
-                registrationRequest.ipAddress = ip.data.ip
-            })
-        })
-
-        const form1Submit = (_data: {
-            email: string
-            password: string
-            acceptedTerms: boolean
-        }) => {
-            registrationRequest.rootUser.email = _data.email
-            registrationRequest.password = _data.password
-            registrationRequest.acceptedTerms = _data.acceptedTerms
-            screen.value = 1
-            stopRegistrationLoading()
-        }
-
-        const form2Submit = (_data) => {
-            registrationRequest = { ..._data }
-            doRegister()
-        }
-
-        const doRegister = () => {
-            corporates?.setIsLoadingRegistration(true)
-            corporates
-                ?.create(registrationRequest)
-                .then(onCorporateCreated)
-                .catch(registrationFailed)
-        }
-
-        const stopRegistrationLoading = () => {
-            corporates?.setIsLoadingRegistration(false)
-        }
-
-        const onCorporateCreated = (res: AxiosResponse<ConsumerModel>) => {
-            createPassword(res.data.rootUser.id.id!)
-        }
-
-        const createPassword = (rootUserId: IDModel) => {
-            const passwordRequest: CreatePasswordRequestModel = {
-                password: {
-                    value: registrationRequest.password as string,
-                },
-            }
-            $apiMulti.passwords
-                .store({
-                    userId: rootUserId,
-                    data: passwordRequest,
-                })
-                .then(onRegisteredSuccessfully.bind(this))
-                .catch(stopRegistrationLoading)
-        }
-
-        const onRegisteredSuccessfully = () => {
-            accessCodes?.deleteAccessCode()
-            if (!registrationRequest.rootUser) {
-                return
-            }
-            const loginRequest: LoginWithPassword = {
-                email: registrationRequest.rootUser.email as string,
-                password: {
-                    value: registrationRequest.password as string,
-                },
-            }
-            const _req = auth?.loginWithPassword(loginRequest)
-            _req?.then(() => {
-                setSCAStorage()
-                stopRegistrationLoading()
-                router.push({ path: '/profile/address' })
-            })
-        }
-
-        const registrationFailed = (err) => {
-            stopRegistrationLoading()
-            const _errCode = err.response.data.errorCode
-            if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
-                screen.value = 0
-            } else {
-                showErrorToast(_errCode)
-            }
-        }
-
-        return {
-            screen,
-            form1Submit,
-            form2Submit,
-            registrationRequest,
-            strengthCheck,
-            goBack,
-        }
-    },
+    middleware: 'access-code-verified',
 })
+
+const router = useRouter()
+const { $apiMulti } = useNuxtApp()
+
+const { setSCAStorage, showErrorToast } = useBase()
+const { accessCodes, auth, corporates } = useStores(['accessCodes', 'auth', 'corporates'])
+
+const screen = ref(0)
+const passwordStrength = ref(0)
+
+let registrationRequest: CreateCorporateRequest & {
+    password?: string
+} = reactive({
+    ...INITIAL_CREATE_CORPORATE_REQUEST(),
+    profileId: useRuntimeConfig().public.profileId.corporates,
+    acceptedTerms: false,
+    baseCurrency: CurrencyEnum.EUR,
+    password: undefined,
+})
+
+const strengthCheck = (val) => {
+    passwordStrength.value = val.id
+}
+
+const goBack = () => {
+    screen.value--
+}
+
+useAsyncData(async () => {
+    const isLoggedIn = auth?.isLoggedIn
+    if (isLoggedIn) {
+        await router.replace('/dashboard')
+    }
+})
+
+useAsyncData(async () => {
+    await ($apiMulti as ApiInterface).ipify.get().then((ip) => {
+        registrationRequest.ipAddress = ip.data.ip
+    })
+})
+
+const form1Submit = (_data: { email: string; password: string; acceptedTerms: boolean }) => {
+    registrationRequest.rootUser.email = _data.email
+    registrationRequest.password = _data.password
+    registrationRequest.acceptedTerms = _data.acceptedTerms
+    screen.value = 1
+    stopRegistrationLoading()
+}
+
+const form2Submit = (_data) => {
+    registrationRequest = { ..._data }
+    doRegister()
+}
+
+const doRegister = () => {
+    corporates?.setIsLoadingRegistration(true)
+    corporates?.create(registrationRequest).then(onCorporateCreated).catch(registrationFailed)
+}
+
+const stopRegistrationLoading = () => {
+    corporates?.setIsLoadingRegistration(false)
+}
+
+const onCorporateCreated = (res: ApiResponse<ConsumerModel>) => {
+    createPassword(res.data.rootUser.id.id!)
+}
+
+const createPassword = (rootUserId: IDModel) => {
+    const passwordRequest: CreatePasswordRequestModel = {
+        password: {
+            value: registrationRequest.password as string,
+        },
+    }
+
+    ;($apiMulti as ApiInterface).passwords
+        .store({
+            userId: rootUserId,
+            data: passwordRequest,
+        })
+        .then(onRegisteredSuccessfully.bind(this))
+        .catch(stopRegistrationLoading)
+}
+
+const onRegisteredSuccessfully = () => {
+    accessCodes?.deleteAccessCode()
+    if (!registrationRequest.rootUser) {
+        return
+    }
+    const loginRequest: LoginWithPassword = {
+        email: registrationRequest.rootUser.email as string,
+        password: {
+            value: registrationRequest.password as string,
+        },
+    }
+    const _req = auth?.loginWithPassword(loginRequest)
+    _req?.then(() => {
+        setSCAStorage()
+        stopRegistrationLoading()
+        router.push({ path: '/profile/address' })
+    })
+}
+
+const registrationFailed = (err) => {
+    stopRegistrationLoading()
+    const _errCode = err.response.data.errorCode
+    if (_errCode === 'ROOT_USERNAME_NOT_UNIQUE' || _errCode === 'ROOT_EMAIL_NOT_UNIQUE') {
+        screen.value = 0
+    } else {
+        showErrorToast(_errCode)
+    }
+}
 </script>

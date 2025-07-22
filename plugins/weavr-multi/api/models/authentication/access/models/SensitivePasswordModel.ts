@@ -17,4 +17,4 @@ const INITIAL_SENSITIVE_PASSWORD_REQUEST = () => {
     } as unknown as SensitivePassword
 }
 
-export { SensitivePassword, SensitivePasswordSchema, INITIAL_SENSITIVE_PASSWORD_REQUEST }
+export { type SensitivePassword, SensitivePasswordSchema, INITIAL_SENSITIVE_PASSWORD_REQUEST }

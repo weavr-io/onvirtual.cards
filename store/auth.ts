@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, reactive } from 'vue'
-import { $axiosMulti } from '~/utils/api'
-import { initialiseStores } from '~/utils/pinia-store-accessor'
+import { useStores } from '~/composables/useStores'
 import type { Auth as AuthState } from '~/local/models/store/auth'
 import type { LoginWithPasswordResponse } from '~/plugins/weavr-multi/api/models/authentication/access/responses/LoginWithPasswordResponse'
 import type { LoginWithPassword } from '~/plugins/weavr-multi/api/models/authentication/access/requests/LoginWithPassword'
@@ -16,8 +14,6 @@ import { SCAOtpChannelEnum } from '~/plugins/weavr-multi/api/models/authenticati
 import { IdentityTypeEnum } from '~/plugins/weavr-multi/api/models/common/enums/IdentityTypeEnum'
 import config from '~/config'
 
-const Cookie = process.client ? require('js-cookie') : undefined
-
 const initState = (): AuthState => {
     return {
         auth: null,
@@ -27,13 +23,15 @@ const initState = (): AuthState => {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-    const store = useAuthStore()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
+    const weavrSetUserToken = computed(() => nuxtApp.value.$weavrSetUserToken)
 
     const authState: AuthState = reactive(initState())
-
-    const isLoggedIn = computed(() => authState.auth && authState.auth.token)
+    const onvCookie = useCookie(config.ONV_COOKIE_NAME)
+    const isLoggedIn = computed(() => authState.auth?.token)
     const token = computed(() => authState.auth?.token)
-    const hasAuthToken = computed(() => !!authState.auth && !!authState.auth.token)
+    const hasAuthToken = computed(() => !!authState.auth?.token)
     const identityId = computed(() =>
         authState.auth?.identity ? authState.auth.identity.id : null,
     )
@@ -42,16 +40,14 @@ export const useAuthStore = defineStore('auth', () => {
     const isCorporate = computed(() => authState.auth?.identity.type === IdentityTypeEnum.CORPORATE)
     const identity = computed(() => authState.auth?.identity)
 
-    const setAuth = async (auth: LoginWithPasswordResponse | null) => {
+    const setAuth = (auth: LoginWithPasswordResponse | null) => {
         authState.auth = auth
-        await Cookie.set(config.ONV_COOKIE_NAME, JSON.stringify(authState.auth))
-        $axiosMulti.defaults.headers.Authorization = 'Bearer ' + authState.auth?.token
+        onvCookie.value = JSON.stringify(authState.auth)
     }
 
     const setToken = (res: CreatePasswordResponseModel) => {
         authState.auth!.token = res.token!
-        Cookie.set(config.ONV_COOKIE_NAME, JSON.stringify(authState.auth))
-        $axiosMulti.defaults.headers.Authorization = 'Bearer ' + authState.auth?.token
+        onvCookie.value = JSON.stringify(authState.auth)
     }
 
     const setAuthFactors = (res: GetAuthenticationFactorsResponse) => {
@@ -60,8 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const removeAuth = (auth: null) => {
         authState.auth = auth
-        Cookie.remove(config.ONV_COOKIE_NAME)
-        delete $axiosMulti.defaults.headers.Authorization
+        onvCookie.value = undefined
     }
 
     const resetState = () => {
@@ -72,10 +67,10 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const loginWithPassword = (request: LoginWithPassword) => {
-        const _req = store.$nuxt.$apiMulti.authentication.loginWithPassword(request)
+        const _req = apiMulti.value.authentication.loginWithPassword(request)
 
         _req.then((res) => {
-            store.$nuxt.$weavrSetUserToken('Bearer ' + res.data.token)
+            weavrSetUserToken.value(`Bearer ${res.data.token}`)
             setAuth(res.data)
         })
 
@@ -83,18 +78,17 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const resetTokenAndStates = () => {
-        store.$nuxt.$weavrSetUserToken(null)
+        weavrSetUserToken.value(null)
         removeAuth(null)
         resetState()
-        // TODO: refactor this if list gets too long
-        initialiseStores(
+        useStores(
             ['corporates', 'consumers', 'accounts', 'cards', 'identity', 'transfers', 'users'],
             true,
         )
     }
 
     const logout = () => {
-        const _req = store.$nuxt.$apiMulti.authentication.logout()
+        const _req = apiMulti.value.authentication.logout()
 
         _req.finally(() => {
             resetTokenAndStates()
@@ -104,7 +98,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const updatePassword = (request: UpdatePasswordRequestModel) => {
-        const _req = store.$nuxt.$apiMulti.passwords.update(request)
+        const _req = apiMulti.value.passwords.update(request)
 
         _req.then((res) => {
             setToken(res.data)
@@ -114,7 +108,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const indexAuthFactors = () => {
-        const _req = store.$nuxt.$apiMulti.additionalFactors.index()
+        const _req = apiMulti.value.additionalFactors.index()
 
         _req.then((res) => {
             setAuthFactors(res.data)
@@ -124,43 +118,43 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     const enrollAuthFactors = (channel: SCAOtpChannelEnum) => {
-        const _req = store.$nuxt.$apiMulti.additionalFactors.enroll(channel)
+        const _req = apiMulti.value.additionalFactors.enroll(channel)
 
         return _req
     }
 
     const enrollStepUp = (channel: SCAOtpChannelEnum) => {
-        const _req = store.$nuxt.$apiMulti.stepUp.enroll(channel)
+        const _req = apiMulti.value.stepUp.enroll(channel)
 
         return _req
     }
 
     const verifyAuthFactors = (request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol }) => {
-        const _req = store.$nuxt.$apiMulti.additionalFactors.verify(request)
+        const _req = apiMulti.value.additionalFactors.verify(request)
 
         return _req
     }
 
     const verifyStepUp = (request: { channel: SCAOtpChannelEnum; body: AuthVerifyEnrol }) => {
-        const _req = store.$nuxt.$apiMulti.stepUp.verify(request)
+        const _req = apiMulti.value.stepUp.verify(request)
 
         return _req
     }
 
     const lostPasswordInitiate = (request: InitiateLostPasswordRequestModel) => {
-        const _req = store.$nuxt.$apiMulti.passwords.initiate(request)
+        const _req = apiMulti.value.passwords.initiate(request)
 
         return _req
     }
 
     const lostPasswordResume = (request: ResumeLostPassword) => {
-        const _req = store.$nuxt.$apiMulti.passwords.resume(request)
+        const _req = apiMulti.value.passwords.resume(request)
 
         return _req
     }
 
     const validatePassword = (request: ValidatePasswordRequestModel) => {
-        const _req = store.$nuxt.$apiMulti.passwords.validate(request)
+        const _req = apiMulti.value.passwords.validate(request)
 
         return _req
     }

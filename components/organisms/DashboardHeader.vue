@@ -3,17 +3,21 @@
         <b-row
             align-h="between"
             align-v="end"
-            class="px-0 mb-4 border-bottom dashboard-header-height"
+            class="px-2 mb-4 border-bottom dashboard-header-height"
         >
             <b-col cols="7">
                 <b-nav class="dashboard-header">
-                    <b-nav-item active-class="active" to="/managed-cards">Cards</b-nav-item>
-                    <b-nav-item active-class="active" to="/managed-accounts"> Account</b-nav-item>
+                    <b-nav-item to="/managed-cards" :active="isRouteActive('/managed-cards')">
+                        Cards
+                    </b-nav-item>
+                    <b-nav-item to="/managed-accounts" :active="isRouteActive('/managed-accounts')">
+                        Account
+                    </b-nav-item>
                 </b-nav>
             </b-col>
             <b-col v-if="isManagedAccounts" class="pb-2">
                 <b-row v-if="account" align-h="end" align-v="end">
-                    <b-col v-if="canAddFunds" class="text-right mr-3 mr-sm-2" cols="2" lg="1">
+                    <b-col v-if="canAddFunds" class="text-right me-3 me-sm-2" cols="2" lg="1">
                         <b-button
                             :to="`/managed-accounts/${account.id}/topup`"
                             class="add-funds"
@@ -37,9 +41,11 @@
             <b-col v-if="isManagedCards">
                 <b-col class="pb-2">
                     <b-row align-h="end" align-v="end">
-                        <div v-if="hasCards" class="account-balance">
-                            <p class="mb-0 text-muted account-balance-label">total balance</p>
-                            <p v-if="cardCurrency" class="mb-0 account-balance-value">
+                        <div v-if="hasCards" class="account-balance w-auto px-0">
+                            <p class="mb-0 text-muted account-balance-label text-end">
+                                total balance
+                            </p>
+                            <p v-if="cardCurrency" class="mb-0 account-balance-value text-start">
                                 {{ currency }}
                             </p>
                         </div>
@@ -49,8 +55,8 @@
         </b-row>
     </b-container>
 </template>
+
 <script lang="ts" setup>
-import { ComputedRef, computed } from '@nuxtjs/composition-api'
 import { useBase } from '~/composables/useBase'
 import { useAccounts } from '~/composables/useAccounts'
 import { useCards } from '~/composables/useCards'
@@ -58,6 +64,12 @@ import { useStores } from '~/composables/useStores'
 import { KYBStatusEnum } from '~/plugins/weavr-multi/api/models/identities/corporates/enums/KYBStatusEnum'
 import { KYCStatusEnum } from '~/plugins/weavr-multi/api/models/identities/consumers/enums/KYCStatusEnum'
 import { weavrCurrency } from '~/utils/helper'
+
+const route = useRoute()
+
+const isRouteActive = (basePath: string) => {
+    return route.path.startsWith(basePath)
+}
 
 const { isConsumer, isCorporate } = useBase()
 const { account, isManagedAccounts } = useAccounts()
@@ -92,7 +104,7 @@ const currency = computed(() => weavrCurrency(cardsBalance.value, cardCurrency.v
     }
 }
 
-.add-funds {
+:deep(.add-funds) {
     border-radius: 100%;
     padding: 13px 10px 18px;
     line-height: 0;

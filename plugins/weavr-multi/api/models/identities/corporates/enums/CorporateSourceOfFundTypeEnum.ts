@@ -25,7 +25,7 @@ type CorporateSourceOfFundTypeEnumType = z.infer<typeof CorporateSourceOfFundTyp
 
 export {
     CorporateSourceOfFundTypeEnumSchema,
-    CorporateSourceOfFundTypeEnumType,
+    type CorporateSourceOfFundTypeEnumType,
     PREDEFINED_CORPORATE_SOURCE_OF_FUND,
     CorporateSourceOfFundTypeEnum,
 }

@@ -1,4 +1,4 @@
-import { z, ZodTypeAny } from 'zod'
+import { z, type ZodTypeAny } from 'zod'
 
 function preprocessEmptyAsUndefined(schema: ZodTypeAny) {
     return z.preprocess(emptyAsUndefined, schema)

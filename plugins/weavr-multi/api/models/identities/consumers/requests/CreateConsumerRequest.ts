@@ -64,6 +64,6 @@ const INITIAL_CREATE_CONSUMER_REQUEST = () => {
 export {
     CreateConsumerRequestSchema,
     CreateConsumerFormSchema,
-    CreateConsumerRequest,
+    type CreateConsumerRequest,
     INITIAL_CREATE_CONSUMER_REQUEST,
 }

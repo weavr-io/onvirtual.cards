@@ -1,21 +1,19 @@
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { DateTime } from 'luxon'
-import { computed } from '@nuxtjs/composition-api'
 import type { Cards as CardState } from '~/local/models/store/cards'
-import { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
+import type { ManagedCardModel } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/models/ManagedCardModel'
+import type { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
+import type { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
+import type { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
+import type { CreateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCard'
+import type { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
+import type { UpdateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
+import type { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
+import type { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 import { TransactionStateTypeEnum } from '~/plugins/weavr-multi/api/models/transfers/enums/TransactionStateTypeEnum'
 import { TransactionTypeEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/enums/TransactionTypeEnum'
-import { PaginatedManagedCardsResponse } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/responses/PaginatedManagedCardsResponse'
-import { StatementResponseModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/responses/StatementResponseModel'
-import { GetManagedCardsRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/GetManagedCardsRequest'
 import { ManagedInstrumentStateEnum } from '~/plugins/weavr-multi/api/models/managed-instruments/enums/ManagedInstrumentStateEnum'
-import { CreateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/CreateManagedCard'
-import { IDModel } from '~/plugins/weavr-multi/api/models/common/models/IDModel'
-import { UpdateManagedCard } from '~/plugins/weavr-multi/api/models/managed-instruments/managed-cards/requests/UpdateManagedCard'
-import { ManagedCardStatementRequest } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/requests/ManagedCardStatementRequest'
-import { useAuthStore } from '~/store/auth'
-import { StatementEntryModel } from '~/plugins/weavr-multi/api/models/managed-instruments/statements/models/StatementEntryModel'
 
 const initState = (): CardState => {
     return {
@@ -28,7 +26,9 @@ const initState = (): CardState => {
 }
 
 export const useCardsStore = defineStore('cards', () => {
-    const store = useAuthStore()
+    const nuxtApp = computed(() => useNuxtApp())
+    const apiMulti = computed(() => nuxtApp.value.$apiMulti)
+
     const cardState: CardState = reactive(initState())
 
     const currency = computed(() =>
@@ -105,16 +105,22 @@ export const useCardsStore = defineStore('cards', () => {
         cardState.isLoading = _isLoading
     }
 
-    const setStatement = (statements: StatementResponseModel | null) => {
-        resetStatement()
-        resetFilteredStatement()
-        if (statements?.entry) {
-            if (cardState.statements?.entry) {
-                cardState.statements.entry = statements.entry
-            } else {
-                cardState.statements = statements
-            }
+    const setStatement = (statements: StatementResponseModel | null, append = false) => {
+        if (!statements) {
+            resetStatement()
+            return
         }
+
+        if (append && cardState.statements && statements.entry) {
+            cardState.statements = {
+                ...statements,
+                entry: [...(cardState.statements.entry || []), ...(statements.entry || [])],
+            }
+        } else {
+            cardState.statements = statements
+        }
+
+        setFilteredStatement()
     }
 
     const resetStatement = () => {
@@ -144,7 +150,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const getCards = (filters?: GetManagedCardsRequest) => {
-        const req = store.$nuxt.$apiMulti.managedCards.index(filters)
+        const req = apiMulti.value.managedCards.index(filters)
 
         req.then((res) => {
             setCards(res.data)
@@ -154,7 +160,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const hasDestroyedCards = () => {
-        return store.$nuxt.$apiMulti.managedCards
+        return apiMulti.value.managedCards
             .index({
                 state: ManagedInstrumentStateEnum.DESTROYED,
                 limit: 1,
@@ -166,7 +172,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const addCard = (request: CreateManagedCard) => {
-        const req = store.$nuxt.$apiMulti.managedCards.store(request)
+        const req = apiMulti.value.managedCards.store(request)
 
         req.finally(() => {
             setIsLoading(false)
@@ -176,7 +182,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const update = (params: { id: IDModel; request: UpdateManagedCard }) => {
-        const req = store.$nuxt.$apiMulti.managedCards.update(params)
+        const req = apiMulti.value.managedCards.update(params)
 
         req.finally(() => {
             setIsLoading(false)
@@ -185,14 +191,13 @@ export const useCardsStore = defineStore('cards', () => {
         return req
     }
 
-    const getCardStatement = (req: ManagedCardStatementRequest) => {
+    const getCardStatement = (req: ManagedCardStatementRequest, append = false) => {
         setIsLoading(true)
 
-        const xhr = store.$nuxt.$apiMulti.managedCards.statement(req.id, req.request)
+        const xhr = apiMulti.value.managedCards.statement(req.id, req.request)
 
         xhr.then((res) => {
-            setStatement(res.data)
-            setFilteredStatement()
+            setStatement(res.data, append)
         }).finally(() => {
             setIsLoading(false)
         })
@@ -205,7 +210,7 @@ export const useCardsStore = defineStore('cards', () => {
     }
 
     const getManagedCard = (id: string) => {
-        const req = store.$nuxt.$apiMulti.managedCards.show(id)
+        const req = apiMulti.value.managedCards.show(id)
 
         req.then((res) => {
             setManagedCard(res.data)
@@ -217,7 +222,7 @@ export const useCardsStore = defineStore('cards', () => {
     const block = (id: IDModel) => {
         setIsLoading(true)
 
-        const req = store.$nuxt.$apiMulti.managedCards.block(id)
+        const req = apiMulti.value.managedCards.block(id)
 
         req.finally(() => {
             setIsLoading(false)
@@ -229,7 +234,7 @@ export const useCardsStore = defineStore('cards', () => {
     const unblock = (id: IDModel) => {
         setIsLoading(true)
 
-        const req = store.$nuxt.$apiMulti.managedCards.unblock(id)
+        const req = apiMulti.value.managedCards.unblock(id)
 
         req.finally(() => {
             setIsLoading(false)
@@ -241,7 +246,7 @@ export const useCardsStore = defineStore('cards', () => {
     const remove = (id: string) => {
         setIsLoading(true)
 
-        const req = store.$nuxt.$apiMulti.managedCards.remove(id)
+        const req = apiMulti.value.managedCards.remove(id)
 
         req.then(() => {
             clearManagedCard()
@@ -260,6 +265,7 @@ export const useCardsStore = defineStore('cards', () => {
         totalAvailableBalance,
         resetState,
         resetStatement,
+        resetFilteredStatement,
         appendStatement,
         getCards,
         hasDestroyedCards,
@@ -267,6 +273,7 @@ export const useCardsStore = defineStore('cards', () => {
         update,
         getCardStatement,
         clearCardStatements,
+        setStatement,
         getManagedCard,
         block,
         unblock,
