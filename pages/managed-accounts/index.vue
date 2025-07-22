@@ -45,7 +45,7 @@ export default defineComponent({
     middleware: 'kyVerified',
     setup() {
         const router = useRouter()
-        const { accounts } = useStores(['accounts'])
+        const { auth, accounts } = useStores(['auth', 'accounts'])
         const {
             accountJurisdictionProfileId,
             showErrorToast,
@@ -63,7 +63,16 @@ export default defineComponent({
                 })
                 .then((res) => {
                     if (parseInt(res.data.count!) >= 1 && res.data.accounts) {
-                        const _accountId = res.data.accounts[0].id
+                        let _accountId = res.data.accounts[0].id
+                        const pglIdentityId = router.app.$config.pglIdentityId
+                        const pglManagedAccountId = router.app.$config.pglManagedAccountId
+                        if (
+                            pglIdentityId &&
+                            pglManagedAccountId &&
+                            auth?.identityId === pglIdentityId
+                        ) {
+                            _accountId = pglManagedAccountId
+                        }
                         router.push(`/managed-accounts/${_accountId}`)
                     }
                 })

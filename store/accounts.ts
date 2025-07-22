@@ -122,7 +122,22 @@ export const useAccountsStore = defineStore('accounts', () => {
         req.then((res) => {
             setAccounts(res.data)
             if (res.data.count && res.data.accounts) {
-                setAccount(res.data.accounts[0])
+                let _account = res.data.accounts[0]
+                const pglIdentityId = store.$nuxt.$config.pglIdentityId
+                const pglManagedAccountId = store.$nuxt.$config.pglManagedAccountId
+                if (
+                    pglIdentityId &&
+                    pglManagedAccountId &&
+                    store.identityId === pglIdentityId
+                ) {
+                    const match = res.data.accounts.find(
+                        (acc) => acc.id === pglManagedAccountId,
+                    )
+                    if (match) {
+                        _account = match
+                    }
+                }
+                setAccount(_account)
             }
         })
 
