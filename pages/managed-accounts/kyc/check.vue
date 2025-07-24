@@ -64,10 +64,10 @@ export default defineComponent({
 
             if (_accounts && +_accounts.data.count! >= 1 && _accounts.data.accounts) {
                 let _accountId = _accounts.data.accounts[0].id
-                const pglIdentityId = root!.$config.pglIdentityId
-                const pglManagedAccountId = root!.$config.pglManagedAccountId
-                if (pglIdentityId && pglManagedAccountId && auth?.identityId === pglIdentityId) {
-                    _accountId = pglManagedAccountId
+                const pmlIdentityId = root!.$config.pmlIdentityId
+                const pmlManagedAccountId = root!.$config.pmlManagedAccountId
+                if (pmlIdentityId && pmlManagedAccountId && auth?.identityId === pmlIdentityId) {
+                    _accountId = pmlManagedAccountId
                 }
                 router.push('/managed-accounts/' + _accountId)
             } else {

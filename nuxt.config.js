@@ -25,8 +25,8 @@ const config = {
             transfers: process.env.TRANSFERS_PROFILE_ID,
             send: process.env.SEND_PROFILE_ID,
         },
-        pglIdentityId: process.env.PGL_IDENTITY_ID,
-        pglManagedAccountId: process.env.PGL_MANAGED_ACCOUNT_ID,
+        pmlIdentityId: process.env.PML_IDENTITY_ID,
+        pmlManagedAccountId: process.env.PML_MANAGED_ACCOUNT_ID,
         app: {
             view_register: process.env.VIEW_REGISTER ? JSON.parse(process.env.VIEW_REGISTER) : true,
             sumsub_enabled: process.env.SUM_SUB ? JSON.parse(process.env.SUM_SUB) : true,

@@ -201,14 +201,14 @@ export default defineComponent({
                     })
                     if (_accounts?.data.count && _accounts?.data.accounts) {
                         let destinationAccountId = _accounts.data.accounts[0].id
-                        const pglIdentityId = root!.$config.pglIdentityId
-                        const pglManagedAccountId = root!.$config.pglManagedAccountId
+                        const pmlIdentityId = root!.$config.pmlIdentityId
+                        const pmlManagedAccountId = root!.$config.pmlManagedAccountId
                         if (
-                            pglIdentityId &&
-                            pglManagedAccountId &&
-                            auth?.identityId === pglIdentityId
+                            pmlIdentityId &&
+                            pmlManagedAccountId &&
+                            auth?.identityId === pmlIdentityId
                         ) {
-                            destinationAccountId = pglManagedAccountId
+                            destinationAccountId = pmlManagedAccountId
                         }
 
                         const _request: CreateTransferRequest = {
