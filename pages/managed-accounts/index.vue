@@ -64,14 +64,14 @@ export default defineComponent({
                 .then((res) => {
                     if (parseInt(res.data.count!) >= 1 && res.data.accounts) {
                         let _accountId = res.data.accounts[0].id
-                        const pglIdentityId = router.app.$config.pglIdentityId
-                        const pglManagedAccountId = router.app.$config.pglManagedAccountId
+                        const pmlIdentityId = router.app.$config.pmlIdentityId
+                        const pmlManagedAccountId = router.app.$config.pmlManagedAccountId
                         if (
-                            pglIdentityId &&
-                            pglManagedAccountId &&
-                            auth?.identityId === pglIdentityId
+                            pmlIdentityId &&
+                            pmlManagedAccountId &&
+                            auth?.identityId === pmlIdentityId
                         ) {
-                            _accountId = pglManagedAccountId
+                            _accountId = pmlManagedAccountId
                         }
                         router.push(`/managed-accounts/${_accountId}`)
                     }
