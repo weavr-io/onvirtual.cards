@@ -55,4 +55,13 @@ jobs:
         run: az acr login --name ${{ secrets.REGISTRY }}
       - name: Build and Push Docker Image
         run: |
-          docker buildx build . --push --platform linux/amd64 --tag ${{ secrets.REGISTRY }}.azurecr.io/onvirtual-cards-app:${{ env.DOCKER_TAG }}
+          docker buildx build . --push --platform linux/amd64 --tag ${{ secrets.REGISTRY }}.azurecr.io/onvirtual-cards-app-prod:${{ env.DOCKER_TAG }}
+      - name: Update
+        env:
+          ACA_NAME: ${{ secrets.PROD_ACA_NAME }}
+          AZURE_RG: ${{ secrets.PROD_RESOURCE_GROUP }}
+        run: |
+          az containerapp update \
+            --name "$ACA_NAME" \
+            --resource-group "$AZURE_RG" \
+            --image "${{ secrets.REGISTRY }}.azurecr.io/onvirtual-cards-app-prod:${{ env.DOCKER_TAG }"
