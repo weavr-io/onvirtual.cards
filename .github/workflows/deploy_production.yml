@@ -64,4 +64,4 @@ jobs:
           az containerapp update \
             --name "$ACA_NAME" \
             --resource-group "$AZURE_RG" \
-            --image "${{ secrets.REGISTRY }}.azurecr.io/onvirtual-cards-app-prod:${{ env.DOCKER_TAG }"
+            --image "${{ secrets.REGISTRY }}.azurecr.io/onvirtual-cards-app-prod:${{ env.DOCKER_TAG }}"
