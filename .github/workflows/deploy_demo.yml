@@ -9,6 +9,9 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  DOCKER_TAG: ${{ github.sha }}
+
 jobs:
   build_test:
     runs-on: ubuntu-latest
